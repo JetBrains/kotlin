@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -25,9 +26,21 @@ internal class KtFirAnnotationListForType private constructor(
     override val annotations: List<KtAnnotationApplication>
         get() = withValidityAssertion { coneType.customAnnotations.map { it.toKtAnnotationApplication(useSiteSession) } }
 
+    override fun hasAnnotation(
+        classId: ClassId,
+        useSiteTarget: AnnotationUseSiteTarget?,
+        acceptAnnotationsWithoutUseSite: Boolean,
+    ): Boolean = withValidityAssertion {
+        coneType.customAnnotations.any {
+            (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) &&
+                    it.fullyExpandedClassId(useSiteSession) == classId
+        }
+    }
 
     override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
-        coneType.customAnnotations.any { it.fullyExpandedClassId(useSiteSession) == classId }
+        coneType.customAnnotations.any {
+            it.fullyExpandedClassId(useSiteSession) == classId
+        }
     }
 
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {

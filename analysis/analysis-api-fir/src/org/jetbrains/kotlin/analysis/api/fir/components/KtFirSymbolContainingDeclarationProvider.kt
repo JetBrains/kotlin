@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,6 +31,10 @@ internal class KtFirSymbolContainingDeclarationProvider(
     override val token: KtLifetimeToken
 ) : KtSymbolContainingDeclarationProvider(), KtFirAnalysisSessionComponent {
     override fun getContainingDeclaration(symbol: KtSymbol): KtDeclarationSymbol? {
+        if (symbol is KtReceiverParameterSymbol) {
+            return symbol.owningCallableSymbol
+        }
+
         if (symbol !is KtDeclarationSymbol) return null
         if (symbol is KtSymbolWithKind && symbol.symbolKind == KtSymbolKind.TOP_LEVEL) return null
         fun getParentSymbolByPsi() = getContainingPsi(symbol).let { with(analysisSession) { it.getSymbol() } }
@@ -50,8 +54,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
             }
 
             is KtValueParameterSymbol -> {
-                // todo that does not work for parameters not from source, corresponding info should be added to the fir tree
-                getParentSymbolByPsi()
+                firSymbolBuilder.callableBuilder.buildCallableSymbol(symbol.firSymbol.fir.containingFunctionSymbol)
             }
 
             is KtCallableSymbol -> {
@@ -83,12 +86,9 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 withSymbolAttachment("symbolForContainingPsi", symbol, analysisSession)
             }
 
-            KtFakeSourceElementKind.ImplicitConstructor ->
-                return source.psi as KtDeclaration
-
+            KtFakeSourceElementKind.ImplicitConstructor -> return source.psi as KtDeclaration
             KtFakeSourceElementKind.PropertyFromParameter -> return source.psi?.parentOfType<KtPrimaryConstructor>()!!
-            KtFakeSourceElementKind.DefaultAccessor -> return source.psi as KtProperty
-            KtFakeSourceElementKind.ItLambdaParameter -> return source.psi as KtFunctionLiteral
+            KtFakeSourceElementKind.EnumInitializer -> return source.psi as KtEnumEntry
             KtRealSourceElementKind -> source.psi!!
             else ->
                 buildErrorWithAttachment("errorWithAttachment FirSourceElement: kind=${source.kind} element=${source.psi!!::class.simpleName}") {

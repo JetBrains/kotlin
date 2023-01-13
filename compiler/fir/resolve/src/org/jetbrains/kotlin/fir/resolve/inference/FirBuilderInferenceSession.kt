@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.replaceStubsAndTypeVariablesToErrors
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -35,6 +36,7 @@ class FirBuilderInferenceSession(
     resolutionContext: ResolutionContext,
     private val stubsForPostponedVariables: Map<ConeTypeVariable, ConeStubType>,
 ) : FirInferenceSessionForChainedResolve(resolutionContext) {
+    private val session = resolutionContext.session
     private val commonCalls: MutableList<Pair<FirStatement, Candidate>> = mutableListOf()
     private var lambdaImplicitReceivers: MutableList<ImplicitExtensionReceiverValue> = mutableListOf()
 
@@ -72,7 +74,7 @@ class FirBuilderInferenceSession(
         return when {
             extensionReceiver == null && dispatchReceiver == null -> false
             dispatchReceiver?.type?.containsStubType() == true -> true
-            extensionReceiver?.type?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation()
+            extensionReceiver?.type?.containsStubType() == true -> symbol.fir.hasBuilderInferenceAnnotation(session)
             else -> false
         }
     }
@@ -127,7 +129,6 @@ class FirBuilderInferenceSession(
         }
 
         val context = commonSystem.asConstraintSystemCompleterContext()
-        @Suppress("UNCHECKED_CAST")
         components.callCompleter.completer.complete(
             context,
             completionMode,
@@ -230,10 +231,11 @@ class FirBuilderInferenceSession(
         return introducedConstraint
     }
 
-    private fun getResultingSubstitutor(commonSystem: NewConstraintSystemImpl): ChainedSubstitutor {
+    private fun getResultingSubstitutor(commonSystem: NewConstraintSystemImpl): ConeSubstitutor {
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
         val commonSystemSubstitutor = commonSystem.buildCurrentSubstitutor() as ConeSubstitutor
         return ChainedSubstitutor(nonFixedToVariablesSubstitutor, commonSystemSubstitutor)
+            .replaceStubsAndTypeVariablesToErrors(resolutionContext.typeContext, stubsForPostponedVariables.values.map { it.constructor })
     }
 
     private fun updateCalls(substitutor: ConeSubstitutor) {
@@ -241,7 +243,8 @@ class FirBuilderInferenceSession(
         lambda.transformSingle(stubTypeSubstitutor, null)
 
         for (receiver in lambdaImplicitReceivers) {
-            receiver.replaceType(substitutor.substituteOrSelf(receiver.type))
+            @Suppress("DEPRECATION_ERROR")
+            receiver.updateTypeInBuilderInference(substitutor.substituteOrSelf(receiver.type))
         }
 
         // TODO: support diagnostics, see [CoroutineInferenceSession#updateCalls]
@@ -267,11 +270,9 @@ class FirStubTypeTransformer(
         substitutor.substituteOrNull(resolvedTypeRef.type)?.let {
             resolvedTypeRef.withReplacedConeType(it)
         } ?: resolvedTypeRef
-
-    override fun transformArgumentList(argumentList: FirArgumentList, data: Nothing?): FirArgumentList =
-        argumentList.transformArguments(this, data)
 }
 
 private val BUILDER_INFERENCE_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(BUILDER_INFERENCE_ANNOTATION_FQ_NAME)
 
-fun FirDeclaration.hasBuilderInferenceAnnotation(): Boolean = hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID)
+fun FirDeclaration.hasBuilderInferenceAnnotation(session: FirSession): Boolean =
+    hasAnnotation(BUILDER_INFERENCE_ANNOTATION_CLASS_ID, session)

@@ -588,7 +588,7 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
                     irClass.defaultType,
                     irClass.enumEntries.map {
                         irBranch(
-                            irEquals(irString(it.name.identifier), irGet(nameParameter)), irReturn(irCall(it.getInstanceFun!!))
+                            irEquals(irGet(nameParameter), irString(it.name.identifier)), irReturn(irCall(it.getInstanceFun!!))
                         )
                     } + irElseBranch(irBlock {
                         +irCall(irClass.initEntryInstancesFun!!)

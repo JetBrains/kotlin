@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.*
 
@@ -61,10 +61,7 @@ class FirConstructorSymbol(
         get() = fir.isPrimary
 
     val resolvedDelegatedConstructor: FirConstructorSymbol?
-        get() {
-            val delegatedConstructorCall = resolvedDelegatedConstructorCall ?: return null
-            return delegatedConstructorCall.calleeReference.resolvedSymbol as? FirConstructorSymbol
-        }
+        get() = resolvedDelegatedConstructorCall?.calleeReference?.toResolvedConstructorSymbol()
 
     val resolvedDelegatedConstructorCall: FirDelegatedConstructorCall?
         get() {
@@ -107,6 +104,7 @@ class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunc
 class FirPropertyAccessorSymbol : FirFunctionWithoutNameSymbol<FirPropertyAccessor>(Name.identifier("accessor")) {
     val isGetter: Boolean get() = fir.isGetter
     val isSetter: Boolean get() = fir.isSetter
+    val propertySymbol get() = fir.propertySymbol
 }
 
 class FirErrorFunctionSymbol : FirFunctionWithoutNameSymbol<FirErrorFunction>(Name.identifier("error"))

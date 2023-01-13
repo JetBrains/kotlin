@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -125,6 +125,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiImportOptimizerTe
         @Test
         public void testAllFilesPresentInReferencesWithErrors() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("unusedTypeHiddenByTypeParameter_invalidAsArgument.kt")
+        public void testUnusedTypeHiddenByTypeParameter_invalidAsArgument() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unusedTypeHiddenByTypeParameter_invalidAsArgument.kt");
         }
 
         @Test

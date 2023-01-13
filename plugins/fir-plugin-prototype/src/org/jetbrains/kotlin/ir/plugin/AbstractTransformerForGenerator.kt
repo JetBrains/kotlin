@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-abstract class AbstractTransformerForGenerator(protected val context: IrPluginContext) : IrElementVisitorVoid {
+abstract class AbstractTransformerForGenerator(
+    protected val context: IrPluginContext,
+    private val visitBodies: Boolean
+) : IrElementVisitorVoid {
     protected val irFactory = context.irFactory
     protected val irBuiltIns = context.irBuiltIns
 
@@ -29,25 +32,38 @@ abstract class AbstractTransformerForGenerator(protected val context: IrPluginCo
     abstract fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey): IrBody?
 
     final override fun visitElement(element: IrElement) {
-        when (element) {
-            is IrDeclaration,
-            is IrFile,
-            is IrModuleFragment -> element.acceptChildrenVoid(this)
-            else -> {}
+        if (visitBodies) {
+            element.acceptChildrenVoid(this)
+        } else {
+            when (element) {
+                is IrDeclaration,
+                is IrFile,
+                is IrModuleFragment -> element.acceptChildrenVoid(this)
+                else -> {}
+            }
         }
     }
 
     final override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         val origin = declaration.origin
-        if (origin !is GeneratedByPlugin || !interestedIn(origin.pluginKey)) return
+        if (origin !is GeneratedByPlugin || !interestedIn(origin.pluginKey)) {
+            if (visitBodies) {
+                visitElement(declaration)
+            }
+            return
+        }
         require(declaration.body == null)
         declaration.body = generateBodyForFunction(declaration, origin.pluginKey)
     }
 
     final override fun visitConstructor(declaration: IrConstructor) {
         val origin = declaration.origin
-        if (origin !is GeneratedByPlugin || !interestedIn(origin.pluginKey)) return
-        require(declaration.body == null)
+        if (origin !is GeneratedByPlugin || !interestedIn(origin.pluginKey) || declaration.body != null) {
+            if (visitBodies) {
+                visitElement(declaration)
+            }
+            return
+        }
         declaration.body = generateBodyForConstructor(declaration, origin.pluginKey)
     }
 

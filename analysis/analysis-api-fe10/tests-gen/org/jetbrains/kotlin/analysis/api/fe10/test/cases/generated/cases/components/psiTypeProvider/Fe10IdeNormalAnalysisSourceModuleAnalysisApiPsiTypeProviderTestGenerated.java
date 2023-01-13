@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,6 +42,18 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGene
     }
 
     @Test
+    @TestMetadata("actual_jvmInline_typealias.kt")
+    public void testActual_jvmInline_typealias() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_jvmInline_typealias.kt");
+    }
+
+    @Test
+    @TestMetadata("actual_typealias.kt")
+    public void testActual_typealias() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/actual_typealias.kt");
+    }
+
+    @Test
     public void testAllFilesPresentInForDeclaration() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
@@ -50,6 +62,12 @@ public class Fe10IdeNormalAnalysisSourceModuleAnalysisApiPsiTypeProviderTestGene
     @TestMetadata("anonymousObject_exposedAsReturnValue.kt")
     public void testAnonymousObject_exposedAsReturnValue() throws Exception {
         runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/anonymousObject_exposedAsReturnValue.kt");
+    }
+
+    @Test
+    @TestMetadata("errorTypeInNestedTypeArgument.kt")
+    public void testErrorTypeInNestedTypeArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forDeclaration/errorTypeInNestedTypeArgument.kt");
     }
 
     @Test

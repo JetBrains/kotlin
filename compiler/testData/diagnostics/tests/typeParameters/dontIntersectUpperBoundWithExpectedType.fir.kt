@@ -9,9 +9,9 @@ fun <T : Foo> foo(): T? {
 }
 
 fun main() {
-    val a: Bar? = <!DEBUG_INFO_EXPRESSION_TYPE("Foo?"), INITIALIZER_TYPE_MISMATCH, NEW_INFERENCE_ERROR!>foo()<!>
+    val a: Bar? = <!DEBUG_INFO_EXPRESSION_TYPE("Foo? & Bar?")!><!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>foo<!>()<!>
 }
 
 
 fun <T : Appendable> wtf(): T = TODO()
-val bar: Int = <!INITIALIZER_TYPE_MISMATCH, NEW_INFERENCE_ERROR!>wtf()<!> // happily compiles
+val bar: Int = wtf() // happily compiles

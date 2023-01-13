@@ -1,6 +1,6 @@
 // SKIP_TXT
 
-// FILE: functions.kt
+// FILE: testFunctions.kt
 
 package functions
 

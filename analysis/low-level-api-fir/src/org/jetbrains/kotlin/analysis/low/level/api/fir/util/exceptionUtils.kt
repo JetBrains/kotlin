@@ -43,7 +43,7 @@ fun ExceptionAttachmentBuilder.withConeTypeEntry(name: String, coneType: ConeKot
 
 fun errorWithFirSpecificEntries(
     message: String,
-    cause: Throwable? = null,
+    cause: Exception? = null,
     fir: FirElement? = null,
     coneType: ConeKotlinType? = null,
     psi: PsiElement? = null,

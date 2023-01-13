@@ -39,3 +39,6 @@ class Fir2IrPropertySymbol(
 ) : Fir2IrBindableSymbol<PropertyDescriptor, IrProperty>(signature, containerSource),
     IrPropertySymbol
 
+class Fir2IrScriptSymbol(signature: IdSignature) :
+    Fir2IrBindableSymbol<ScriptDescriptor, IrScript>(signature),
+    IrScriptSymbol

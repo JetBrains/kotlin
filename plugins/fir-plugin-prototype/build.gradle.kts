@@ -9,6 +9,7 @@ dependencies {
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:resolve"))
+    compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:fir:checkers"))
     compileOnly(project(":compiler:fir:fir2ir"))
     compileOnly(project(":compiler:ir.backend.common"))
@@ -24,6 +25,7 @@ dependencies {
     testApi(project(":compiler:fir:checkers"))
     testApi(project(":compiler:fir:checkers:checkers.jvm"))
     testApi(project(":compiler:fir:checkers:checkers.js"))
+    testApi(project(":compiler:fir:plugin-utils"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))

@@ -4,6 +4,7 @@ KtSuccessCallInfo:
       dispatchReceiver = KtSmartCastedReceiverValue:
         original = KtImplicitReceiverValue:
           symbol = KtReceiverParameterSymbol:
+            annotationsList: []
             origin: SOURCE
             owningCallableSymbol: KtFunctionSymbol(/test)
             type: kotlin/Any

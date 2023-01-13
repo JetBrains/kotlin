@@ -15,20 +15,18 @@ class KotlinMultiplatformCommonOptionsCompat(
 ) : KotlinMultiplatformCommonOptions {
 
     override var freeCompilerArgs: List<String>
-        get() = if (isTaskExecuting) {
-            options.freeCompilerArgs.get()
-                .union(task().additionalFreeCompilerArgs)
-                .toList()
-        } else {
-            options.freeCompilerArgs.get()
+        get() {
+            val executionTimeFreeCompilerArgs = task().executionTimeFreeCompilerArgs
+            return if (isTaskExecuting && executionTimeFreeCompilerArgs != null) {
+                executionTimeFreeCompilerArgs
+            } else {
+                options.freeCompilerArgs.get()
+            }
         }
 
         set(value) = if (isTaskExecuting) {
-            task().logger.warn(
-                "kotlinOptions.freeCompilerArgs were changed on task execution phase: ${value.joinToString()}\n" +
-                        "This behaviour will be deprecated and become an error in future releases!"
-            )
-            task().additionalFreeCompilerArgs = value
+            task().nagUserFreeArgsModifiedOnExecution(value)
+            task().executionTimeFreeCompilerArgs = value
         } else {
             options.freeCompilerArgs.set(value)
         }

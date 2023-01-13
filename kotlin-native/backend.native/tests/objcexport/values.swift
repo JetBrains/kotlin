@@ -726,8 +726,11 @@ func testClashes() throws {
     let test2: TestClashes2 = test
 
     try assertEquals(actual: 1, expected: test1.clashingProperty)
+
+#if !DISABLE_MEMBER_NAME_MANGLING
     try assertEquals(actual: 1, expected: test2.clashingProperty_ as! Int32)
     try assertEquals(actual: 2, expected: test2.clashingProperty__ as! Int32)
+#endif
 }
 
 func testInvalidIdentifiers() throws {
@@ -742,7 +745,9 @@ func testInvalidIdentifiers() throws {
 
     try assertEquals(actual: TestInvalidIdentifiers.CompanionS()._42, expected: 42)
 
+#if !DISABLE_MEMBER_NAME_MANGLING
     try assertEquals(actual: Set([test.__, test.___]), expected: Set(["_".utf16.first, "_".utf16.first]))
+#endif
 }
 
 class ImplementingHiddenSubclass : TestDeprecation.ImplementingHidden {

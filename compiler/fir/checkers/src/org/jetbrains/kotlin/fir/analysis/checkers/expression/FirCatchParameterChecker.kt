@@ -5,12 +5,13 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.defaultValueForParameter
 import org.jetbrains.kotlin.fir.analysis.checkers.isSubtypeOfThrowable
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirTryExpression
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -23,7 +24,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker() {
             val catchParameter = catchEntry.parameter
             val source = catchParameter.source ?: continue
 
-            if (catchParameter.defaultValue != null) {
+            if (catchParameter.source?.defaultValueForParameter != null) {
                 reporter.reportOn(source, FirErrors.CATCH_PARAMETER_WITH_DEFAULT_VALUE, context)
             }
 

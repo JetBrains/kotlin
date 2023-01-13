@@ -53,6 +53,7 @@ ext.target = platformManager.targetManager(project.testTarget).target
 ext.testLibraryDir = "${ext.testOutputRoot}/klib/platform/${project.target.name}"
 
 // Add executor to run tests depending on a target
+// NOTE: If this persists in a gradle daemon, environment update (e.g. an Xcode update) may lead to execution failures.
 project.extensions.executor = ExecutorServiceKt.create(project)
 
 
@@ -180,16 +181,13 @@ TaskCollection<Task> tasksOf(Class<? extends Task> type, Closure<Boolean> filter
 }
 
 run {
+    dependsOn("sanity")
+    // Note: sanity contains subsets of the tests listed below.
+
     dependsOn(tasksOf(KonanTest))
     // Add framework tests
     dependsOn(tasksOf(FrameworkTest))
-    dependsOn(tasksOf(MetadataComparisonTest))
-    // Add regular gradle test tasks
-    dependsOn(tasksOf(Test))
-    dependsOn(tasksOf(CoverageTest))
     dependsOn(tasksOf(FileCheckTest))
-    dependsOn(":kotlin-native:Interop:Indexer:check")
-    dependsOn(":kotlin-native:Interop:StubGenerator:check")
 }
 
 task sanity {
@@ -212,6 +210,7 @@ task sanity {
     })
     dependsOn(":kotlin-native:Interop:Indexer:check")
     dependsOn(":kotlin-native:Interop:StubGenerator:check")
+    dependsOn(":kotlin-native-shared:check")
 }
 
 // Collect reports in one json.
@@ -2736,15 +2735,10 @@ task extend_exception(type: KonanLocalTest) {
     source = "runtime/exceptions/extend0.kt"
 }
 
-standaloneTest("check_stacktrace_format") {
-    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
-    flags = ['-g']
-    source = "runtime/exceptions/check_stacktrace_format.kt"
-}
-
 standaloneTest("check_stacktrace_format_coresymbolication") {
     disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
+    arguments = ['coresymbolication']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
 
@@ -2752,9 +2746,7 @@ standaloneTest("stack_trace_inline") {
     disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xbinary=sourceInfoType=coresymbolication']
     source = "runtime/exceptions/stack_trace_inline.kt"
-    // test on simulator is writing Invalid connection: com.apple.coresymbolicationd by unknown reason
-    // so we need to use custom checker as workaround
-    outputChecker = { str -> str.split("\n").contains("0") }
+    arguments = ['coresymbolication']
 }
 
 standaloneTest("kt-49240-stack-trace-completeness") {
@@ -2772,30 +2764,41 @@ standaloneTest("stack_trace_out_of_bounds") {
 standaloneTest("kt-37572") {
     disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
+    arguments = ['coresymbolication']
     source = "runtime/exceptions/kt-37572.kt"
-    // test on simulator is writing Invalid connection: com.apple.coresymbolicationd by unknown reason
-    // so we need to use custom checker as workaround
-    outputChecker = { str -> str.split("\n").contains("0") }
 }
 
 standaloneTest("check_stacktrace_format_libbacktrace") {
     disabled = !supportsLibBacktrace(project)|| project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
+    arguments = ['libbacktrace']
     source = "runtime/exceptions/check_stacktrace_format.kt"
 }
 
 standaloneTest("stack_trace_inline_libbacktrace") {
     disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
+    arguments = ['libbacktrace']
     source = "runtime/exceptions/stack_trace_inline.kt"
-    outputChecker = { str -> str.split("\n").contains("1") }
 }
 
 standaloneTest("kt-37572-libbacktrace") {
     disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
+    arguments = ['libbacktrace']
     source = "runtime/exceptions/kt-37572.kt"
-    outputChecker = { str -> str.split("\n").contains("2") }
+}
+
+standaloneTest("except_constr_w_default") {
+    disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
+    flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
+    source = "runtime/exceptions/except_constr_w_default.kt"
+}
+
+standaloneTest("throw_from_except_constr") {
+    disabled = !supportsLibBacktrace(project) || project.globalTestArgs.contains('-opt')
+    flags = ['-g', '-Xbinary=sourceInfoType=libbacktrace']
+    source = "runtime/exceptions/throw_from_except_constr.kt"
 }
 
 standaloneTest("custom_hook") {
@@ -3426,6 +3429,12 @@ standaloneTest("leakMemoryWithTestRunner") {
     }
 }
 
+standaloneTest("gcStats") {
+    source = "runtime/memory/gcStats.kt"
+    flags = ['-tr', "-Xbinary=gcSchedulerType=disabled"]
+    enabled = isExperimentalMM && !isNoopGC && !isAggressiveGC
+}
+
 standaloneTest("stress_gc_allocations") {
     // TODO: Support obtaining peak RSS on more platforms.
     enabled = (project.testTarget != "wasm32") &&
@@ -3435,9 +3444,28 @@ standaloneTest("stress_gc_allocations") {
         (project.testTarget != "watchos_x64") &&
         (project.testTarget != "watchos_simulator_arm64") &&
         !isNoopGC &&
-        !isAggressiveGC // TODO: Investigate why too slow
+        !isAggressiveGC && // TODO: Investigate why too slow
+        (project.testTarget != "mingw_x64") // TODO: Fix on mingw.
     source = "runtime/memory/stress_gc_allocations.kt"
     flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']
+}
+
+standaloneTest("array_out_of_memory") {
+    source = "runtime/memory/array_out_of_memory.kt"
+    flags = ['-tr']
+    switch(project.target.architecture) {
+        case Architecture.X64:
+        case Architecture.ARM64:
+            break;
+        case Architecture.X86:
+        case Architecture.ARM32:
+        case Architecture.MIPS32:
+        case Architecture.MIPSEL32:
+        case Architecture.WASM32:
+            expectedExitStatusChecker = { it != 0 }
+            outputChecker = { s -> s.contains("Out of memory trying to allocate") }
+            break;
+    }
 }
 
 standaloneTest("mpp1") {
@@ -4289,6 +4317,11 @@ createInterop("kt54284") {
     it.defFile 'interop/kt54284/kt54284.def'
 }
 
+createInterop("kt54284_fmodules") {
+    it.defFile 'interop/kt54284/kt54284.def'
+    it.extraOpts '-compiler-option', '-fmodules'
+}
+
 createInterop("kt43502") {
     it.defFile 'interop/kt43502/kt43502.def'
     it.headers "$projectDir/interop/kt43502/kt43502.h"
@@ -4766,6 +4799,12 @@ interopTest("interop_kt44283") {
 interopTest("interop_kt54284") {
     disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     interop = 'kt54284'
+    source = "interop/kt54284/main.kt"
+}
+
+interopTest("interop_kt54284_fmodules") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    interop = 'kt54284_fmodules'
     source = "interop/kt54284/main.kt"
 }
 
@@ -5680,6 +5719,38 @@ if (isAppleTarget(project)) {
         }
     }
 
+    frameworkTest('testObjCExportNoSwiftMemberNameMangling') {
+        final String frameworkName = 'KtNoSwiftMemberNameMangling'
+        final String frameworkArtifactName = 'Kt'
+        final String dir = "$testOutputFramework/testObjCExportNoSwiftMemberNameMangling"
+
+        def libraryName = frameworkName + "Library"
+        konanArtifacts {
+            library(libraryName, targets: [target.name]) {
+                srcDir "objcexport/library"
+                artifactName "test-library"
+
+                if (!useCustomDist) {
+                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
+                }
+
+                extraOpts "-Xshort-module-name=MyLibrary"
+                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
+            }
+        }
+        framework(frameworkName) {
+            sources = ['objcexport']
+            artifact = frameworkArtifactName
+            library = libraryName
+            opts = ["-Xbinary=objcExportDisableSwiftMemberNameMangling=true"]
+        }
+        swiftSources = ['objcexport']
+        swiftExtraOpts = [ '-D', 'DISABLE_MEMBER_NAME_MANGLING' ]
+        if (isNoopGC) {
+            swiftExtraOpts += ["-D", "NOOP_GC"]
+        }
+    }
+
     frameworkTest('testObjCExportStatic') {
         final String frameworkName = 'KtStatic'
         final String frameworkArtifactName = 'Kt'
@@ -6242,6 +6313,11 @@ fileCheckTest("filecheck_replace_invoke_with_call") {
     annotatedSource = project.file('filecheck/replace_invoke_with_call.kt')
 }
 
+fileCheckTest("filecheck_no_frame_on_constant_object_access") {
+    annotatedSource = project.file('filecheck/no_frame_on_constant_object_access.kt')
+    enabled = project.globalTestArgs.contains('-opt')
+}
+
 fileCheckTest("filecheck_kt49847_simple_function_reference") {
     annotatedSource = project.file('filecheck/kt49847_simple_function_reference.kt')
     enabled = project.globalTestArgs.contains('-opt')
@@ -6421,6 +6497,10 @@ fileCheckTest("filecheck_escape_analysis_disabled") {
 
 fileCheckTest("filecheck_suspend_returnNothing") {
     annotatedSource = project.file('filecheck/suspend_returnNothing.kt')
+}
+
+fileCheckTest("filecheck_suspend_tailcalls") {
+    annotatedSource = project.file('filecheck/suspend_tailcalls.kt')
 }
 
 fileCheckTest("filecheck_bce") {

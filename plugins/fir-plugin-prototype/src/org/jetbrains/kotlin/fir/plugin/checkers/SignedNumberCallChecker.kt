@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.InternalDiagnosticFactoryMethod
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.argumentMapping
+import org.jetbrains.kotlin.fir.expressions.resolvedArgumentMapping
 import org.jetbrains.kotlin.fir.plugin.types.ConeNumberSignAttribute
 import org.jetbrains.kotlin.fir.plugin.types.numberSign
 import org.jetbrains.kotlin.fir.types.coneType
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.types.coneType
 object SignedNumberCallChecker : FirFunctionCallChecker() {
     @OptIn(InternalDiagnosticFactoryMethod::class)
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val argumentMapping = expression.argumentMapping ?: return
+        val argumentMapping = expression.resolvedArgumentMapping ?: return
         for ((argument, parameter) in argumentMapping.entries) {
             val expectedSign = parameter.returnTypeRef.coneType.attributes.numberSign ?: continue
             val actualSign = argument.typeRef.coneType.attributes.numberSign

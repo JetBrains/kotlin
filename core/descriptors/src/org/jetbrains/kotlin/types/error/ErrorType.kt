@@ -15,7 +15,7 @@ class ErrorType @JvmOverloads internal constructor(
     val kind: ErrorTypeKind,
     override val arguments: List<TypeProjection> = emptyList(),
     override val isMarkedNullable: Boolean = false,
-    private vararg val formatParams: String
+    vararg val formatParams: String
 ) : SimpleType() {
     val debugMessage = String.format(kind.debugMessage, *formatParams)
 

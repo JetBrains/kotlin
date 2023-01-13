@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: MINOR: CONST_EQUIVALENCE
-
 object A {
     const val a: String = "$"
     const val b = "1234$a"

@@ -1,4 +1,6 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K2: ANY
+// FIR_STATUS: KT-35565
 
 // This test should become irrelevant after KT-35565 is fixed.
 

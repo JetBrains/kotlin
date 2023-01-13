@@ -13,9 +13,7 @@ import java.io.RandomAccessFile
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.*
-import java.nio.file.attribute.BasicFileAttributeView
 import java.nio.file.attribute.BasicFileAttributes
-import java.nio.file.attribute.FileTime
 
 data class File constructor(internal val javaPath: Path) {
     constructor(parent: Path, child: String): this(parent.resolve(child))
@@ -62,12 +60,6 @@ data class File constructor(internal val javaPath: Path) {
 
     fun copyTo(destination: File) {
         Files.copy(javaPath, destination.javaPath, StandardCopyOption.REPLACE_EXISTING)
-    }
-
-    fun recursiveCopyTo(destination: File, resetTimeAttributes: Boolean = false) {
-        val sourcePath = javaPath
-        val destPath = destination.javaPath
-        sourcePath.recursiveCopyTo(destPath, resetTimeAttributes = resetTimeAttributes)
     }
 
     fun renameTo(destination: File) = javaPath.toFile().renameTo(destination.javaPath.toFile())
@@ -197,30 +189,6 @@ fun createTempFile(name: String, suffix: String? = null)
         = Files.createTempFile(name, suffix).File()
 fun createTempDir(name: String): File
         = Files.createTempDirectory(name).File()
-
-fun Path.recursiveCopyTo(destPath: Path, resetTimeAttributes: Boolean = false) {
-    val sourcePath = this
-    Files.walk(sourcePath).forEach next@ { oldPath ->
-
-        val relative = sourcePath.relativize(oldPath)
-        val destFs = destPath.getFileSystem()
-        // We are copying files between file systems, 
-        // so pass the relative path through the String.
-        val newPath = destFs.getPath(destPath.toString(), relative.toString())
-
-        // File systems don't allow replacing an existing root.
-        if (newPath == newPath.getRoot()) return@next
-        if (Files.isDirectory(newPath)) {
-            Files.createDirectories(newPath)
-        } else {
-            Files.copy(oldPath, newPath, StandardCopyOption.REPLACE_EXISTING)
-        }
-        if (resetTimeAttributes) {
-            val zero = FileTime.fromMillis(0)
-            Files.getFileAttributeView(newPath, BasicFileAttributeView::class.java).setTimes(zero, zero, zero);
-        }
-    }
-}
 
 fun bufferedReader(errorStream: InputStream?) = BufferedReader(InputStreamReader(errorStream))
 

@@ -53,6 +53,12 @@ internal val Project.kotlinExtensionOrNull: KotlinProjectExtension?
 val Project.kotlinExtension: KotlinProjectExtension
     get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
+internal val Project.kotlinJvmExtensionOrNull: KotlinJvmProjectExtension?
+    get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware()
+
+internal val Project.kotlinJvmExtension: KotlinJvmProjectExtension
+    get() = extensions.getByName(KOTLIN_PROJECT_EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
+
 internal val Project.multiplatformExtensionOrNull: KotlinMultiplatformExtension?
     get() = extensions.findByName(KOTLIN_PROJECT_EXTENSION_NAME)?.castIsolatedKotlinPluginClassLoaderAware()
 
@@ -401,5 +407,16 @@ enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputK
     companion object {
         fun byCompilerArgument(argument: String): NativeCacheKind? =
             NativeCacheKind.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
+    }
+}
+
+// This is a temporary parameter for the translation period.
+enum class NativeCacheOrchestration {
+    Gradle,
+    Compiler;
+
+    companion object {
+        fun byCompilerArgument(argument: String): NativeCacheOrchestration? =
+            NativeCacheOrchestration.values().firstOrNull { it.name.equals(argument, ignoreCase = true) }
     }
 }

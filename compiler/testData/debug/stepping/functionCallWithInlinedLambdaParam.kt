@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+
 // FILE: test.kt
 
 fun box() {
@@ -34,3 +34,8 @@ inline fun foo(f: () -> Unit) {
 // test.kt:12 box
 
 // EXPECTATIONS JS_IR
+// test.kt:15 box
+// test.kt:6 box
+// test.kt:15 box
+// test.kt:10 box
+// test.kt:12 box

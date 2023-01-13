@@ -4,7 +4,7 @@
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value=":js:js.tests:cleanTest :js:js.tests:test --tests &quot;org.jetbrains.kotlin.js.testOld.ApiTest&quot; -Poverwrite.output=true --parallel" />
+      <option name="scriptParameters" value=":js:js.tests:cleanTest :js:js.tests:jsStdlibApiTest -Poverwrite.output=true --parallel" />
       <option name="taskDescriptions">
         <list />
       </option>

@@ -16,6 +16,8 @@ dependencies {
     compileOnly(intellijCore())
 
     testApi(projectTests(":compiler:tests-common"))
+    testRuntimeOnly(intellijCore())
+    testRuntimeOnly("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", kotlinxSerializationVersion)
 
     embedded("org.jetbrains.kotlinx", "kotlinx-serialization-runtime", kotlinxSerializationVersion) { isTransitive = false }
 }

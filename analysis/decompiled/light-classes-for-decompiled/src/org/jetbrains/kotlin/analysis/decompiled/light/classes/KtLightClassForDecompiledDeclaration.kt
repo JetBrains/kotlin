@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache
 import org.jetbrains.kotlin.asJava.classes.LightClassesLazyCreator
+import org.jetbrains.kotlin.asJava.classes.getEnumEntriesPsiMethod
 import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.asJava.isGetEntriesMethod
 import org.jetbrains.kotlin.asJava.isSyntheticValuesOrValueOfMethod
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -159,8 +161,12 @@ open class KtLightClassForDecompiledDeclaration(
 
     private val _methods: MutableList<PsiMethod> by lazyPub {
         mutableListOf<PsiMethod>().also {
+            val isEnum = isEnum
             clsDelegate.methods.mapNotNullTo(it) { psiMethod ->
                 if (isSyntheticValuesOrValueOfMethod(psiMethod)) return@mapNotNullTo null
+                if (isEnum && isGetEntriesMethod(psiMethod)) {
+                    return@mapNotNullTo getEnumEntriesPsiMethod(this)
+                }
                 KtLightMethodForDecompiledDeclaration(
                     funDelegate = psiMethod,
                     funParent = this,

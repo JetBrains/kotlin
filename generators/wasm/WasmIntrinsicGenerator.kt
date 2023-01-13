@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.wasm.ir.WasmOp
 import java.io.File
 import java.io.FileWriter
 
-
 fun FileWriter.generateStandardWasmInternalHeader() {
-    appendLine(File("license/COPYRIGHT.txt").readText())
+    appendLine(File("license/COPYRIGHT_HEADER.txt").readText())
+    appendLine()
     appendLine("package kotlin.wasm.internal")
     appendLine()
     appendLine("//")

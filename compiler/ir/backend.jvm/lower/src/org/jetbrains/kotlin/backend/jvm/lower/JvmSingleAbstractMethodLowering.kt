@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val singleAbstractMethodPhase = makeIrFilePhase(
     ::JvmSingleAbstractMethodLowering,
@@ -42,7 +41,7 @@ private class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sing
         context.state.languageVersionSettings.supportsFeature(LanguageFeature.JavaSamConversionEqualsHashCode)
 
     override val inInlineFunctionScope: Boolean
-        get() = allScopes.any { it.irElement.safeAs<IrDeclaration>()?.isInPublicInlineScope == true }
+        get() = allScopes.any { (it.irElement as? IrDeclaration)?.isInPublicInlineScope == true }
 
     override fun getWrapperVisibility(expression: IrTypeOperatorCall, scopes: List<ScopeWithIr>) =
         if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY

@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // `doRemove` means should expect-declaration be removed from IR
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -229,7 +228,7 @@ class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, private va
         // Nothing we can do with those.
         // TODO they may not actually have the defaults though -- may be a frontend bug.
         val expectFunction =
-            function.descriptor.findExpectForActual().safeAs<FunctionDescriptor>()?.let { symbolTable.referenceFunction(it).owner }
+            (function.descriptor.findExpectForActual() as? FunctionDescriptor)?.let { symbolTable.referenceFunction(it).owner }
                 ?: return
 
         val defaultValue = expectFunction.valueParameters[index].defaultValue ?: return

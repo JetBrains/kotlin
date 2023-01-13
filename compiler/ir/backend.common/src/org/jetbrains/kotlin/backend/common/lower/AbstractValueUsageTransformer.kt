@@ -77,7 +77,7 @@ abstract class AbstractValueUsageTransformer(
     protected open fun IrExpression.useAsResult(enclosing: IrExpression): IrExpression =
         this.useAs(enclosing.type)
 
-    protected open fun IrExpression.useAsVarargElement(expression: IrVararg): IrExpression = this
+    protected open fun useAsVarargElement(element: IrExpression, expression: IrVararg): IrExpression = element
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
         TODO()
@@ -233,7 +233,7 @@ abstract class AbstractValueUsageTransformer(
                 is IrSpreadElement ->
                     element.expression = element.expression.useAs(expression.type)
                 is IrExpression -> {
-                    expression.putElement(i, element.useAsVarargElement(expression))
+                    expression.putElement(i, useAsVarargElement(element, expression))
                 }
             }
         }

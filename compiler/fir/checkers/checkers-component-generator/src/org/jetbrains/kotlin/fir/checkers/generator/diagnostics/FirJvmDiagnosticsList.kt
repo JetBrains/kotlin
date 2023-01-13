@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.*
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
@@ -21,7 +20,7 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 
-@Suppress("UNUSED_VARIABLE", "LocalVariableName", "ClassName", "unused")
+@Suppress("ClassName", "unused")
 @OptIn(PrivateForInline::class)
 object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     val DECLARATIONS by object : DiagnosticGroup("Declarations") {
@@ -70,7 +69,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             ProhibitJvmOverloadsOnConstructorsOfAnnotationClasses
         )
         val OVERLOADS_PRIVATE by warning<KtAnnotationEntry>()
-        val DEPRECATED_JAVA_ANNOTATION by warning<KtAnnotationEntry>() {
+        val DEPRECATED_JAVA_ANNOTATION by warning<KtAnnotationEntry> {
             parameter<FqName>("kotlinName")
         }
 
@@ -87,7 +86,7 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     }
 
     val SUPER by object : DiagnosticGroup("Super") {
-        val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error<PsiElement>() {
+        val SUPER_CALL_WITH_DEFAULT_PARAMETERS by error<PsiElement> {
             parameter<String>("name")
         }
         val INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED)
@@ -191,5 +190,9 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             PositioningStrategy.SPREAD_OPERATOR
         )
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
+        val JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE by error<PsiElement> {
+            parameter<ClassId>("containerClass")
+            parameter<ClassId>("shadowingClass")
+        }
     }
 }

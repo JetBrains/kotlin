@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -177,6 +177,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class WrongLongSuffix : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = WrongLongSuffix::class
+    }
+
+    abstract class UnsignedLiteralWithoutDeclarationsOnClasspath : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = UnsignedLiteralWithoutDeclarationsOnClasspath::class
     }
 
     abstract class DivisionByZero : KtFirDiagnostic<KtExpression>() {
@@ -443,6 +447,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val candidates: List<KtType>
     }
 
+    abstract class WrongMultipleInheritance : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = WrongMultipleInheritance::class
+        abstract val symbol: KtCallableSymbol
+    }
+
     abstract class ConstructorInObject : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ConstructorInObject::class
     }
@@ -691,6 +700,89 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class AnnotationInWhereClauseError : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = AnnotationInWhereClauseError::class
+    }
+
+    abstract class PluginAnnotationAmbiguity : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = PluginAnnotationAmbiguity::class
+        abstract val typeFromCompilerPhase: KtType
+        abstract val typeFromTypesPhase: KtType
+    }
+
+    abstract class WrongJsQualifier : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = WrongJsQualifier::class
+    }
+
+    abstract class JsModuleProhibitedOnVar : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsModuleProhibitedOnVar::class
+    }
+
+    abstract class JsModuleProhibitedOnNonNative : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsModuleProhibitedOnNonNative::class
+    }
+
+    abstract class NestedJsModuleProhibited : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NestedJsModuleProhibited::class
+    }
+
+    abstract class RuntimeAnnotationNotSupported : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = RuntimeAnnotationNotSupported::class
+    }
+
+    abstract class RuntimeAnnotationOnExternalDeclaration : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = RuntimeAnnotationOnExternalDeclaration::class
+    }
+
+    abstract class NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NativeAnnotationsAllowedOnlyOnMemberOrExtensionFun::class
+        abstract val type: KtType
+    }
+
+    abstract class NativeIndexerKeyShouldBeStringOrNumber : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NativeIndexerKeyShouldBeStringOrNumber::class
+        abstract val kind: String
+    }
+
+    abstract class NativeIndexerWrongParameterCount : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NativeIndexerWrongParameterCount::class
+        abstract val parametersCount: Int
+        abstract val kind: String
+    }
+
+    abstract class NativeIndexerCanNotHaveDefaultArguments : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NativeIndexerCanNotHaveDefaultArguments::class
+        abstract val kind: String
+    }
+
+    abstract class NativeGetterReturnTypeShouldBeNullable : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = NativeGetterReturnTypeShouldBeNullable::class
+    }
+
+    abstract class NativeSetterWrongReturnType : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = NativeSetterWrongReturnType::class
+    }
+
+    abstract class JsNameIsNotOnAllAccessors : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameIsNotOnAllAccessors::class
+    }
+
+    abstract class JsNameProhibitedForNamedNative : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameProhibitedForNamedNative::class
+    }
+
+    abstract class JsNameProhibitedForOverride : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameProhibitedForOverride::class
+    }
+
+    abstract class JsNameOnPrimaryConstructorProhibited : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameOnPrimaryConstructorProhibited::class
+    }
+
+    abstract class JsNameOnAccessorAndProperty : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameOnAccessorAndProperty::class
+    }
+
+    abstract class JsNameProhibitedForExtensionProperty : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = JsNameProhibitedForExtensionProperty::class
     }
 
     abstract class OptInUsage : KtFirDiagnostic<PsiElement>() {
@@ -983,13 +1075,21 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ValueClassCannotBeRecursive::class
     }
 
+    abstract class MultiFieldValueClassPrimaryConstructorDefaultParameter : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = MultiFieldValueClassPrimaryConstructorDefaultParameter::class
+    }
+
+    abstract class SecondaryConstructorWithBodyInsideValueClass : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = SecondaryConstructorWithBodyInsideValueClass::class
+    }
+
     abstract class ReservedMemberInsideValueClass : KtFirDiagnostic<KtFunction>() {
         override val diagnosticClass get() = ReservedMemberInsideValueClass::class
         abstract val name: String
     }
 
-    abstract class SecondaryConstructorWithBodyInsideValueClass : KtFirDiagnostic<PsiElement>() {
-        override val diagnosticClass get() = SecondaryConstructorWithBodyInsideValueClass::class
+    abstract class TypeArgumentOnTypedValueClassEquals : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = TypeArgumentOnTypedValueClassEquals::class
     }
 
     abstract class InnerClassInsideValueClass : KtFirDiagnostic<KtDeclaration>() {
@@ -998,6 +1098,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class ValueClassCannotBeCloneable : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ValueClassCannotBeCloneable::class
+    }
+
+    abstract class AnnotationOnIllegalMultiFieldValueClassTypedTarget : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = AnnotationOnIllegalMultiFieldValueClassTypedTarget::class
+        abstract val name: String
     }
 
     abstract class NoneApplicable : KtFirDiagnostic<PsiElement>() {
@@ -1015,6 +1120,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val expectedType: KtType
         abstract val actualType: KtType
         abstract val isMismatchDueToNullability: Boolean
+    }
+
+    abstract class TypeInferenceOnlyInputTypesError : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = TypeInferenceOnlyInputTypesError::class
+        abstract val typeParameter: KtTypeParameterSymbol
     }
 
     abstract class ThrowableTypeMismatch : KtFirDiagnostic<PsiElement>() {
@@ -1362,6 +1472,14 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val isMismatchDueToNullability: Boolean
     }
 
+    abstract class ImplicitNothingReturnType : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ImplicitNothingReturnType::class
+    }
+
+    abstract class ImplicitNothingPropertyType : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ImplicitNothingPropertyType::class
+    }
+
     abstract class CyclicGenericUpperBound : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = CyclicGenericUpperBound::class
     }
@@ -1374,8 +1492,16 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = MisplacedTypeParameterConstraints::class
     }
 
+    abstract class DynamicSupertype : KtFirDiagnostic<KtTypeReference>() {
+        override val diagnosticClass get() = DynamicSupertype::class
+    }
+
     abstract class DynamicUpperBound : KtFirDiagnostic<KtTypeReference>() {
         override val diagnosticClass get() = DynamicUpperBound::class
+    }
+
+    abstract class DynamicReceiverNotAllowed : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = DynamicReceiverNotAllowed::class
     }
 
     abstract class IncompatibleTypes : KtFirDiagnostic<KtElement>() {
@@ -1989,6 +2115,27 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class LocalVariableWithTypeParameters : KtFirDiagnostic<KtProperty>() {
         override val diagnosticClass get() = LocalVariableWithTypeParameters::class
+    }
+
+    abstract class ExplicitTypeArgumentsInPropertyAccess : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = ExplicitTypeArgumentsInPropertyAccess::class
+    }
+
+    abstract class LateinitIntrinsicCallOnNonLiteral : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = LateinitIntrinsicCallOnNonLiteral::class
+    }
+
+    abstract class LateinitIntrinsicCallOnNonLateinit : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = LateinitIntrinsicCallOnNonLateinit::class
+    }
+
+    abstract class LateinitIntrinsicCallInInlineFunction : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = LateinitIntrinsicCallInInlineFunction::class
+    }
+
+    abstract class LateinitIntrinsicCallOnNonAccessibleProperty : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = LateinitIntrinsicCallOnNonAccessibleProperty::class
+        abstract val declaration: KtSymbol
     }
 
     abstract class ExpectedDeclarationWithBody : KtFirDiagnostic<KtDeclaration>() {
@@ -2704,9 +2851,9 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = RedundantInlineSuspendFunctionType::class
     }
 
-    abstract class InefficientEqualsOverridingInInlineClass : KtFirDiagnostic<KtNamedFunction>() {
-        override val diagnosticClass get() = InefficientEqualsOverridingInInlineClass::class
-        abstract val className: String
+    abstract class InefficientEqualsOverridingInValueClass : KtFirDiagnostic<KtNamedFunction>() {
+        override val diagnosticClass get() = InefficientEqualsOverridingInValueClass::class
+        abstract val type: KtType
     }
 
     abstract class CannotAllUnderImportFromSingleton : KtFirDiagnostic<KtImportDirective>() {
@@ -3145,6 +3292,107 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class JavaSamInterfaceConstructorReference : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = JavaSamInterfaceConstructorReference::class
+    }
+
+    abstract class JavaShadowedProtectedFieldReference : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = JavaShadowedProtectedFieldReference::class
+        abstract val containerClass: ClassId
+        abstract val shadowingClass: ClassId
+    }
+
+    abstract class ImplementingFunctionInterface : KtFirDiagnostic<KtClassOrObject>() {
+        override val diagnosticClass get() = ImplementingFunctionInterface::class
+    }
+
+    abstract class OverridingExternalFunWithOptionalParams : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = OverridingExternalFunWithOptionalParams::class
+    }
+
+    abstract class OverridingExternalFunWithOptionalParamsWithFake : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = OverridingExternalFunWithOptionalParamsWithFake::class
+        abstract val function: KtFunctionLikeSymbol
+    }
+
+    abstract class CallToDefinedExternallyFromNonExternalDeclaration : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = CallToDefinedExternallyFromNonExternalDeclaration::class
+    }
+
+    abstract class ExternalClassConstructorPropertyParameter : KtFirDiagnostic<KtParameter>() {
+        override val diagnosticClass get() = ExternalClassConstructorPropertyParameter::class
+    }
+
+    abstract class ExternalEnumEntryWithBody : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ExternalEnumEntryWithBody::class
+    }
+
+    abstract class ExternalAnonymousInitializer : KtFirDiagnostic<KtAnonymousInitializer>() {
+        override val diagnosticClass get() = ExternalAnonymousInitializer::class
+    }
+
+    abstract class ExternalDelegation : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ExternalDelegation::class
+    }
+
+    abstract class ExternalDelegatedConstructorCall : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ExternalDelegatedConstructorCall::class
+    }
+
+    abstract class WrongBodyOfExternalDeclaration : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = WrongBodyOfExternalDeclaration::class
+    }
+
+    abstract class WrongInitializerOfExternalDeclaration : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = WrongInitializerOfExternalDeclaration::class
+    }
+
+    abstract class WrongDefaultValueForExternalFunParameter : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = WrongDefaultValueForExternalFunParameter::class
+    }
+
+    abstract class NestedExternalDeclaration : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = NestedExternalDeclaration::class
+    }
+
+    abstract class WrongExternalDeclaration : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = WrongExternalDeclaration::class
+        abstract val classKind: String
+    }
+
+    abstract class NestedClassInExternalInterface : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = NestedClassInExternalInterface::class
+    }
+
+    abstract class ExternalTypeExtendsNonExternalType : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ExternalTypeExtendsNonExternalType::class
+    }
+
+    abstract class InlineExternalDeclaration : KtFirDiagnostic<KtDeclaration>() {
+        override val diagnosticClass get() = InlineExternalDeclaration::class
+    }
+
+    abstract class InlineClassInExternalDeclarationWarning : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = InlineClassInExternalDeclarationWarning::class
+    }
+
+    abstract class InlineClassInExternalDeclaration : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = InlineClassInExternalDeclaration::class
+    }
+
+    abstract class ExtensionFunctionInExternalDeclaration : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ExtensionFunctionInExternalDeclaration::class
+    }
+
+    abstract class NonAbstractMemberOfExternalInterface : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = NonAbstractMemberOfExternalInterface::class
+    }
+
+    abstract class NonExternalDeclarationInInappropriateFile : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NonExternalDeclarationInInappropriateFile::class
+        abstract val type: KtType
+    }
+
+    abstract class DelegationByDynamic : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = DelegationByDynamic::class
     }
 
     abstract class Syntax : KtFirDiagnostic<PsiElement>() {

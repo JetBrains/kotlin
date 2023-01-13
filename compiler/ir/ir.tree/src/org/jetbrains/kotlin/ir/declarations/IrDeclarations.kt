@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.declarations
 
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.MultiFieldValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
@@ -38,7 +39,11 @@ val IrFile.name: String get() = File(path).name
 
 @ObsoleteDescriptorBasedAPI
 fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =
-    valueParameters.getOrElse(parameter.index) {
+    getIrValueParameter(parameter, parameter.index)
+
+@ObsoleteDescriptorBasedAPI
+fun IrFunction.getIrValueParameter(parameter: ParameterDescriptor, index: Int): IrValueParameter =
+    valueParameters.getOrElse(index) {
         throw AssertionError("No IrValueParameter for $parameter")
     }.also { found ->
         assert(found.descriptor == parameter) {

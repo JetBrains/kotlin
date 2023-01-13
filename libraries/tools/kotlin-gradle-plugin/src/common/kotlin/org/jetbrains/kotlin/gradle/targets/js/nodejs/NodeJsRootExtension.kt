@@ -42,7 +42,11 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
     var download by Property(true)
 
     var nodeDownloadBaseUrl by Property("https://nodejs.org/dist")
-    var nodeVersion by Property("16.13.0")
+
+    // Release schedule: https://github.com/nodejs/Release
+    // Actual LTS and Current versions: https://nodejs.org/en/download/
+    // Older versions and more information, e.g. V8 version inside: https://nodejs.org/en/download/releases/
+    var nodeVersion by Property("18.12.1")
 
     var nodeCommand by Property("node")
 

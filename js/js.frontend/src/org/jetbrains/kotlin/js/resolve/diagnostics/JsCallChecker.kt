@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 import com.google.gwt.dev.js.parserExceptions.AbortParsingException
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
-import com.google.gwt.dev.js.rhino.Utils.isEndOfLine
+import com.google.gwt.dev.js.rhino.offsetOf
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -146,35 +146,6 @@ class JsCodeErrorReporter(
             val quotesLength = nodeToReport.firstChild.textLength
             return nodeToReport.textOffset + quotesLength + code.offsetOf(this)
         }
-}
-
-/**
- * Calculates an offset from the start of a text for a position,
- * defined by line and offset in that line.
- */
-private fun String.offsetOf(position: CodePosition): Int {
-    var i = 0
-    var lineCount = 0
-    var offsetInLine = 0
-
-    while (i < length) {
-        val c = this[i]
-
-        if (lineCount == position.line && offsetInLine == position.offset) {
-            return i
-        }
-
-        i++
-        offsetInLine++
-
-        if (isEndOfLine(c.code)) {
-            offsetInLine = 0
-            lineCount++
-            assert(lineCount <= position.line)
-        }
-    }
-
-    return length
 }
 
 private val KtExpression.isConstantStringLiteral: Boolean

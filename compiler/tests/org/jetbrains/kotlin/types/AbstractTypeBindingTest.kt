@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.typeBinding.TypeBinding
 import org.jetbrains.kotlin.resolve.typeBinding.createTypeBindingForReturnType
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils.assertEqualsToFile
-import org.jetbrains.kotlin.test.KotlinTestUtils.loadJetFile
+import org.jetbrains.kotlin.test.KotlinTestUtils.loadKtFile
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
@@ -36,7 +36,7 @@ abstract class AbstractTypeBindingTest : KotlinTestWithEnvironment() {
 
     protected fun doTest(path: String) {
         val testFile = File(path)
-        val testKtFile = loadJetFile(project, testFile)
+        val testKtFile = loadKtFile(project, testFile)
 
         val analyzeResult = JvmResolveUtil.analyze(testKtFile, environment)
 

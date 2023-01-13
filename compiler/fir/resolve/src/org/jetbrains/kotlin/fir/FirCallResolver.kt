@@ -30,12 +30,11 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
-import org.jetbrains.kotlin.fir.resolve.transformers.StoreReceiver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
+import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -66,21 +66,7 @@ class FirCallResolver(
     val conflictResolver: ConeCallConflictResolver =
         session.callConflictResolverFactory.create(TypeSpecificityComparator.NONE, session.inferenceComponents, components)
 
-    @PrivateForInline
-    var needTransformArguments: Boolean = true
-
-    @OptIn(PrivateForInline::class)
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall): FirFunctionCall {
-        @Suppress("NAME_SHADOWING")
-        val functionCall = if (needTransformArguments) {
-            functionCall.transformExplicitReceiver().also {
-                components.dataFlowAnalyzer.enterQualifiedAccessExpression()
-                functionCall.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
-            }
-        } else {
-            functionCall
-        }
-
         val name = functionCall.calleeReference.name
         val result = collectCandidates(functionCall, name, origin = functionCall.origin)
 
@@ -103,7 +89,7 @@ class FirCallResolver(
             expectedCandidates = forceCandidates
         )
 
-        val resultExpression = functionCall.transformCalleeReference(StoreNameReference, nameReference)
+        functionCall.replaceCalleeReference(nameReference)
         val candidate = (nameReference as? FirNamedReferenceWithCandidate)?.candidate
         val resolvedReceiver = functionCall.explicitReceiver
         if (candidate != null && resolvedReceiver is FirResolvedQualifier) {
@@ -120,7 +106,7 @@ class FirCallResolver(
                 contextReceiverArguments.addAll(candidate.contextReceiverArguments())
             }
         } else {
-            resultExpression
+            functionCall
         }
         val typeRef = components.typeFromCallee(resultFunctionCall)
         if (typeRef.type is ConeErrorType) {
@@ -128,29 +114,6 @@ class FirCallResolver(
         }
 
         return resultFunctionCall
-    }
-
-    private inline fun <reified Q : FirQualifiedAccess> Q.transformExplicitReceiver(): Q {
-        val explicitReceiver =
-            explicitReceiver as? FirQualifiedAccessExpression
-                ?: return transformExplicitReceiver(transformer, ResolutionMode.ReceiverResolution) as Q
-
-        (explicitReceiver.calleeReference as? FirSuperReference)?.let {
-            transformer.transformSuperReceiver(it, explicitReceiver, this)
-            return this
-        }
-
-        if (explicitReceiver is FirPropertyAccessExpression) {
-            this.replaceExplicitReceiver(
-                transformer.transformQualifiedAccessExpression(
-                    explicitReceiver, ResolutionMode.ReceiverResolution,
-                    isUsedAsReceiver = true
-                ) as FirExpression
-            )
-            return this
-        }
-
-        return transformExplicitReceiver(transformer, ResolutionMode.ReceiverResolution) as Q
     }
 
     private data class ResolutionResult(
@@ -247,7 +210,7 @@ class FirCallResolver(
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
         @Suppress("NAME_SHADOWING")
-        val qualifiedAccess = qualifiedAccess.transformExplicitReceiver<FirQualifiedAccess>()
+        val qualifiedAccess = transformer.transformExplicitReceiver(qualifiedAccess)
         val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
 
         val basicResult by lazy(LazyThreadSafetyMode.NONE) {
@@ -320,6 +283,7 @@ class FirCallResolver(
 
         val diagnostic = when (nameReference) {
             is FirErrorReferenceWithCandidate -> nameReference.diagnostic
+            is FirResolvedErrorReference -> nameReference.diagnostic
             is FirErrorNamedReference -> nameReference.diagnostic
             else -> null
         }
@@ -354,15 +318,17 @@ class FirCallResolver(
             }
         }
 
-        var resultExpression = qualifiedAccess.transformCalleeReference(StoreNameReference, nameReference)
+        qualifiedAccess.replaceCalleeReference(nameReference)
         if (reducedCandidates.size == 1) {
             val candidate = reducedCandidates.single()
-            resultExpression = resultExpression.transformDispatchReceiver(StoreReceiver, candidate.dispatchReceiverExpression())
-            resultExpression = resultExpression.transformExtensionReceiver(StoreReceiver, candidate.chosenExtensionReceiverExpression())
-            resultExpression.replaceContextReceiverArguments(candidate.contextReceiverArguments())
+            qualifiedAccess.apply {
+                replaceDispatchReceiver(candidate.dispatchReceiverExpression())
+                replaceExtensionReceiver(candidate.chosenExtensionReceiverExpression())
+                replaceContextReceiverArguments(candidate.contextReceiverArguments())
+            }
         }
-        if (resultExpression is FirExpression) transformer.storeTypeFromCallee(resultExpression)
-        return resultExpression
+        if (qualifiedAccess is FirExpression) transformer.storeTypeFromCallee(qualifiedAccess)
+        return qualifiedAccess
     }
 
     fun resolveCallableReference(
@@ -406,7 +372,7 @@ class FirCallResolver(
 
         when {
             noSuccessfulCandidates -> {
-                val errorReference = buildErrorReference(
+                val errorReference = buildReferenceWithErrorCandidate(
                     info,
                     if (applicability == CandidateApplicability.K2_UNSUPPORTED) {
                         val unsupportedResolutionDiagnostic = reducedCandidates.firstOrNull()?.diagnostics?.firstOrNull() as? Unsupported
@@ -421,7 +387,7 @@ class FirCallResolver(
             }
             reducedCandidates.size > 1 -> {
                 if (resolvedCallableReferenceAtom.hasBeenPostponed) {
-                    val errorReference = buildErrorReference(
+                    val errorReference = buildReferenceWithErrorCandidate(
                         info,
                         ConeAmbiguityError(info.name, applicability, reducedCandidates),
                         callableReferenceAccess.source
@@ -469,7 +435,8 @@ class FirCallResolver(
 
     fun resolveDelegatingConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall,
-        constructedType: ConeClassLikeType?
+        constructedType: ConeClassLikeType?,
+        derivedClassLookupTag: ConeClassLikeLookupTag
     ): FirDelegatedConstructorCall {
         val name = SpecialNames.INIT
         val symbol = constructedType?.lookupTag?.toSymbol(components.session)
@@ -500,12 +467,15 @@ class FirCallResolver(
                 transformer.resolutionContext,
                 components.resolutionStageRunner
             )
-            return delegatedConstructorCall.transformCalleeReference(StoreNameReference, errorReference)
+            return delegatedConstructorCall.apply {
+                replaceCalleeReference(errorReference)
+            }
         }
 
         val result = towerResolver.runResolverForDelegatingConstructor(
             callInfo,
             constructedType,
+            derivedClassLookupTag,
             transformer.resolutionContext
         )
 
@@ -535,7 +505,7 @@ class FirCallResolver(
 
     fun resolveAnnotationCall(annotation: FirAnnotationCall): FirAnnotationCall? {
         val reference = annotation.calleeReference as? FirSimpleNamedReference ?: return null
-        annotation.argumentList.transformArguments(transformer, ResolutionMode.ContextDependent)
+        annotation.replaceArgumentList(annotation.argumentList.transform(transformer, ResolutionMode.ContextDependent))
 
         val callInfo = CallInfo(
             annotation,
@@ -563,7 +533,7 @@ class FirCallResolver(
                 explicitReceiver = null
             )
         } else {
-            buildErrorReference(
+            buildReferenceWithErrorCandidate(
                 callInfo,
                 if (annotationClassSymbol != null) ConeIllegalAnnotationError(reference.name)
                 //calleeReference and annotationTypeRef are both error nodes so we need to avoid doubling of the diagnostic report
@@ -572,7 +542,9 @@ class FirCallResolver(
             )
         }
 
-        return annotation.transformCalleeReference(StoreNameReference, resolvedReference)
+        return annotation.apply {
+            replaceCalleeReference(resolvedReference)
+        }
     }
 
     private fun createCandidateForAnnotationCall(
@@ -601,17 +573,6 @@ class FirCallResolver(
         return ResolutionResult(callInfo, applicability, listOf(candidate))
     }
 
-    @OptIn(PrivateForInline::class)
-    inline fun <T> withNoArgumentsTransform(block: () -> T): T {
-        val oldValue = needTransformArguments
-        needTransformArguments = false
-        return try {
-            block()
-        } finally {
-            needTransformArguments = oldValue
-        }
-    }
-
     private fun selectDelegatingConstructorCall(
         call: FirDelegatedConstructorCall, name: Name, result: CandidateCollector, callInfo: CallInfo
     ): FirDelegatedConstructorCall {
@@ -630,12 +591,13 @@ class FirCallResolver(
             result.currentApplicability,
         )
 
-        return call.transformCalleeReference(StoreNameReference, nameReference).apply {
+        return call.apply {
+            call.replaceCalleeReference(nameReference)
             val singleCandidate = reducedCandidates.singleOrNull()
             if (singleCandidate != null) {
                 val symbol = singleCandidate.symbol
                 if (symbol is FirConstructorSymbol && symbol.fir.isInner) {
-                    transformDispatchReceiver(StoreReceiver, singleCandidate.dispatchReceiverExpression())
+                    replaceDispatchReceiver(singleCandidate.dispatchReceiverExpression())
                 }
                 replaceContextReceiverArguments(singleCandidate.contextReceiverArguments())
             }
@@ -679,133 +641,132 @@ class FirCallResolver(
         expectedCandidates: Collection<Candidate>? = null
     ): FirNamedReference {
         val source = reference.source
-        return when {
+
+        val diagnostic = when {
             expectedCallKind != null -> {
                 fun isValueParametersNotEmpty(candidate: Candidate): Boolean {
                     return (candidate.symbol.fir as? FirFunction)?.valueParameters?.size?.let { it > 0 } ?: false
                 }
 
-                val candidate = candidates.singleOrNull()
+                when (expectedCallKind) {
+                    CallKind.Function -> ConeFunctionCallExpectedError(name, candidates.any { isValueParametersNotEmpty(it) }, candidates)
+                    else -> {
+                        val singleExpectedCandidate = expectedCandidates?.singleOrNull()
 
-                val diagnostic = if (expectedCallKind == CallKind.Function) {
-                    ConeFunctionCallExpectedError(name, candidates.any { isValueParametersNotEmpty(it) }, candidates)
-                } else {
-                    val singleExpectedCandidate = expectedCandidates?.singleOrNull()
+                        var fir = singleExpectedCandidate?.symbol?.fir
+                        if (fir is FirTypeAlias) {
+                            fir = (fir.expandedTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol)?.fir
+                        }
 
-                    var fir = singleExpectedCandidate?.symbol?.fir
-                    if (fir is FirTypeAlias) {
-                        fir = (fir.expandedTypeRef.coneType.fullyExpandedType(session).toSymbol(session) as? FirRegularClassSymbol)?.fir
-                    }
-
-                    if (fir is FirRegularClass) {
-                        ConeResolutionToClassifierError(singleExpectedCandidate!!, fir.symbol)
-                    } else {
-                        val coneType = explicitReceiver?.typeRef?.coneType
-                        when {
-                            coneType != null && !coneType.isUnit -> {
-                                ConeFunctionExpectedError(
-                                    name.asString(),
-                                    (fir as? FirCallableDeclaration)?.returnTypeRef?.coneType ?: coneType
-                                )
+                        when (fir) {
+                            is FirRegularClass -> {
+                                ConeResolutionToClassifierError(singleExpectedCandidate!!, fir.symbol)
                             }
-                            singleExpectedCandidate != null && !singleExpectedCandidate.currentApplicability.isSuccess -> {
-                                createConeDiagnosticForCandidateWithError(
-                                    singleExpectedCandidate.currentApplicability,
-                                    singleExpectedCandidate
-                                )
+                            else -> {
+                                val coneType = explicitReceiver?.typeRef?.coneType
+                                when {
+                                    coneType != null && !coneType.isUnit -> {
+                                        ConeFunctionExpectedError(
+                                            name.asString(),
+                                            (fir as? FirCallableDeclaration)?.returnTypeRef?.coneType ?: coneType
+                                        )
+                                    }
+                                    singleExpectedCandidate != null && !singleExpectedCandidate.currentApplicability.isSuccess -> {
+                                        createConeDiagnosticForCandidateWithError(
+                                            singleExpectedCandidate.currentApplicability,
+                                            singleExpectedCandidate
+                                        )
+                                    }
+                                    else -> ConeUnresolvedNameError(name)
+                                }
                             }
-                            else -> ConeUnresolvedNameError(name)
                         }
                     }
-                }
-
-                if (candidate != null) {
-                    createErrorReferenceWithExistingCandidate(
-                        candidate,
-                        diagnostic,
-                        source,
-                        transformer.resolutionContext,
-                        components.resolutionStageRunner
-                    )
-                } else {
-                    buildErrorReference(callInfo, diagnostic, source)
                 }
             }
 
             candidates.isEmpty() -> {
-                val diagnostic = if (name.asString() == "invoke" && explicitReceiver is FirConstExpression<*>) {
+                if (name.asString() == "invoke" && explicitReceiver is FirConstExpression<*>) {
                     ConeFunctionExpectedError(explicitReceiver.value?.toString() ?: "", explicitReceiver.typeRef.coneType)
                 } else {
                     ConeUnresolvedNameError(name)
                 }
-
-                buildErrorReference(
-                    callInfo,
-                    diagnostic,
-                    source
-                )
             }
 
-            candidates.size > 1 -> buildErrorReference(
-                callInfo,
-                ConeAmbiguityError(name, applicability, candidates),
-                source
-            )
+            candidates.size > 1 -> ConeAmbiguityError(name, applicability, candidates)
 
             !applicability.isSuccess -> {
                 val candidate = candidates.single()
-                val diagnostic = createConeDiagnosticForCandidateWithError(applicability, candidate)
-                createErrorReferenceWithExistingCandidate(
-                    candidate,
-                    diagnostic,
-                    source,
-                    transformer.resolutionContext,
-                    components.resolutionStageRunner
-                )
+                createConeDiagnosticForCandidateWithError(applicability, candidate)
             }
 
-            else -> {
-                val candidate = candidates.single()
-                val coneSymbol = candidate.symbol
-                if (coneSymbol is FirBackingFieldSymbol) {
-                    coneSymbol.fir.propertySymbol.fir.isReferredViaField = true
-                    return buildBackingFieldReference {
-                        this.source = source
-                        resolvedSymbol = coneSymbol
-                    }
-                }
-                if ((coneSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true) {
-                    return FirPropertyWithExplicitBackingFieldResolvedNamedReference(
-                        source, name, candidate.symbol, candidate.hasVisibleBackingField
-                    )
-                }
-                /*
-                 * This `if` is an optimization for local variables and properties without type parameters
-                 * Since they have no type variables, so we can don't run completion on them at all and create
-                 *   resolved reference immediately
-                 *
-                 * But for callable reference resolution we should keep candidate, because it was resolved
-                 *   with special resolution stages, which saved in candidate additional reference info,
-                 *   like `resultingTypeForCallableReference`
-                 */
-                if (
-                    createResolvedReferenceWithoutCandidateForLocalVariables &&
-                    explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() == null &&
-                    coneSymbol is FirVariableSymbol &&
-                    (coneSymbol !is FirPropertySymbol || (coneSymbol.fir as FirMemberDeclaration).typeParameters.isEmpty())
-                ) {
-                    return buildResolvedNamedReference {
-                        this.source = source
-                        this.name = name
-                        resolvedSymbol = coneSymbol
-                    }
-                }
-                FirNamedReferenceWithCandidate(source, name, candidate)
+            else -> null
+        }
+
+        if (diagnostic != null) {
+            return createErrorReferenceForSingleCandidate(candidates.singleOrNull(), diagnostic, callInfo, source)
+        }
+
+        // successful candidate
+
+        val candidate = candidates.single()
+        val coneSymbol = candidate.symbol
+        if (coneSymbol is FirBackingFieldSymbol) {
+            coneSymbol.fir.propertySymbol.fir.isReferredViaField = true
+            return buildBackingFieldReference {
+                this.source = source
+                resolvedSymbol = coneSymbol
             }
+        }
+        if ((coneSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true) {
+            return FirPropertyWithExplicitBackingFieldResolvedNamedReference(
+                source, name, candidate.symbol, candidate.hasVisibleBackingField
+            )
+        }
+        /*
+         * This `if` is an optimization for local variables and properties without type parameters
+         * Since they have no type variables, so we can don't run completion on them at all and create
+         *   resolved reference immediately
+         *
+         * But for callable reference resolution we should keep candidate, because it was resolved
+         *   with special resolution stages, which saved in candidate additional reference info,
+         *   like `resultingTypeForCallableReference`
+         */
+        if (
+            createResolvedReferenceWithoutCandidateForLocalVariables &&
+            explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() == null &&
+            coneSymbol is FirVariableSymbol &&
+            (coneSymbol !is FirPropertySymbol || (coneSymbol.fir as FirMemberDeclaration).typeParameters.isEmpty())
+        ) {
+            return buildResolvedNamedReference {
+                this.source = source
+                this.name = name
+                resolvedSymbol = coneSymbol
+            }
+        }
+        return FirNamedReferenceWithCandidate(source, name, candidate)
+    }
+
+    private fun createErrorReferenceForSingleCandidate(
+        candidate: Candidate?,
+        diagnostic: ConeDiagnostic,
+        callInfo: CallInfo,
+        source: KtSourceElement?
+    ): FirNamedReference {
+        if (candidate == null) return buildReferenceWithErrorCandidate(callInfo, diagnostic, source)
+        return when (diagnostic) {
+            is ConeUnresolvedError, is ConeHiddenCandidateError -> buildReferenceWithErrorCandidate(callInfo, diagnostic, source)
+            else -> createErrorReferenceWithExistingCandidate(
+                candidate,
+                diagnostic,
+                source,
+                transformer.resolutionContext,
+                components.resolutionStageRunner
+            )
         }
     }
 
-    private fun buildErrorReference(
+    private fun buildReferenceWithErrorCandidate(
         callInfo: CallInfo,
         diagnostic: ConeDiagnostic,
         source: KtSourceElement?

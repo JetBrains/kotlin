@@ -1,0 +1,35 @@
+annotationsList: []
+classId: A.B
+classSymbol: KtNamedClassOrObjectSymbol(<local>/B)
+nullability: NON_NULLABLE
+ownTypeArguments: [
+  annotationsList: []
+  classId: kotlin/Int
+  classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+  nullability: NON_NULLABLE
+  ownTypeArguments: []
+  qualifiers: [
+    qualifier:
+      name: Int
+      symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+      typeArguments: []
+  ]
+]
+qualifiers: [
+  qualifier:
+    name: B
+    symbol: KtNamedClassOrObjectSymbol(<local>/B)
+    typeArguments: [
+      annotationsList: []
+      classId: kotlin/Int
+      classSymbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+      nullability: NON_NULLABLE
+      ownTypeArguments: []
+      qualifiers: [
+        qualifier:
+          name: Int
+          symbol: KtNamedClassOrObjectSymbol(kotlin/Int)
+          typeArguments: []
+      ]
+    ]
+]

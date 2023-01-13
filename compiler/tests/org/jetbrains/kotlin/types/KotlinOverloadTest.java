@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.container.DslKt;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor;
 import org.jetbrains.kotlin.psi.KtNamedFunction;
-import org.jetbrains.kotlin.psi.KtPsiFactoryKt;
+import org.jetbrains.kotlin.psi.KtPsiFactory;
 import org.jetbrains.kotlin.resolve.FunctionDescriptorResolver;
 import org.jetbrains.kotlin.resolve.OverloadChecker;
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator;
@@ -168,7 +168,7 @@ public class KotlinOverloadTest extends KotlinTestWithEnvironment {
     }
 
     private FunctionDescriptor makeFunction(String funDecl) {
-        KtNamedFunction function = KtPsiFactoryKt.KtPsiFactory(getProject()).createFunction(funDecl);
+        KtNamedFunction function = new KtPsiFactory(getProject()).createFunction(funDecl);
         LexicalScope scope = TypeTestUtilsKt.builtInPackageAsLexicalScope(module);
         return functionDescriptorResolver.resolveFunctionDescriptor(
                 module, scope, function, DummyTraces.DUMMY_TRACE, DataFlowInfoFactory.EMPTY, null

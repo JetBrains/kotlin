@@ -18,12 +18,15 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
-import org.jetbrains.kotlin.build.report.*
+import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.debug
+import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute.*
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -80,12 +83,12 @@ abstract class IncrementalCompilerRunner<
         allSourceFiles: List<File>,
         args: Args,
         messageCollector: MessageCollector,
-        // when [providedChangedFiles] is not null, changes are provided by external system (e.g. Gradle)
+        // when `changedFiles` is not null, changes are provided by external system (e.g. Gradle)
         // otherwise we track source files changes ourselves.
-        providedChangedFiles: ChangedFiles?,
+        changedFiles: ChangedFiles?,
         projectDir: File? = null
     ): ExitCode = reporter.measure(BuildTime.INCREMENTAL_COMPILATION_DAEMON) {
-        return when (val result = tryCompileIncrementally(allSourceFiles, providedChangedFiles, args, projectDir, messageCollector)) {
+        return when (val result = tryCompileIncrementally(allSourceFiles, changedFiles, args, projectDir, messageCollector)) {
             is ICResult.Completed -> {
                 reporter.debug { "Incremental compilation completed" }
                 result.exitCode
@@ -95,7 +98,7 @@ abstract class IncrementalCompilerRunner<
                 reporter.addAttribute(result.reason)
 
                 compileNonIncrementally(
-                    result.reason, allSourceFiles, args, projectDir, trackChangedFiles = providedChangedFiles == null, messageCollector
+                    result.reason, allSourceFiles, args, projectDir, trackChangedFiles = changedFiles == null, messageCollector
                 )
             }
             is ICResult.Failed -> {
@@ -114,7 +117,7 @@ abstract class IncrementalCompilerRunner<
                 reporter.addAttribute(result.reason)
 
                 compileNonIncrementally(
-                    result.reason, allSourceFiles, args, projectDir, trackChangedFiles = providedChangedFiles == null, messageCollector
+                    result.reason, allSourceFiles, args, projectDir, trackChangedFiles = changedFiles == null, messageCollector
                 )
             }
         }
@@ -141,23 +144,37 @@ abstract class IncrementalCompilerRunner<
      */
     private fun tryCompileIncrementally(
         allSourceFiles: List<File>,
-        providedChangedFiles: ChangedFiles?,
+        changedFiles: ChangedFiles?,
         args: Args,
         projectDir: File?,
         messageCollector: MessageCollector
     ): ICResult {
-        if (providedChangedFiles is ChangedFiles.Unknown) {
+        if (changedFiles is ChangedFiles.Unknown) {
             return ICResult.RequiresRebuild(UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
         }
-        providedChangedFiles as ChangedFiles.Known?
+        changedFiles as ChangedFiles.Known?
+
+        // Because `caches` is a Closeable resource, it is important to close them in the event of an exception or before any return
+        // statements.
+        // Note: Historically, closing caches used to throw an exception sometimes, so currently we want to collect those exceptions. In the
+        // future, if closing caches is safe, and we are no longer interested in those exceptions, we can simplify this code by using
+        // Kotlin's `Closable.use` function (see `compileNonIncrementally`).
+        fun closeCaches(caches: CacheManager, activeException: Throwable) {
+            try {
+                caches.close()
+            } catch (e: Throwable) {
+                activeException.addSuppressed(e)
+            }
+        }
 
         val caches = createCacheManager(args, projectDir)
         val exitCode: ExitCode
         try {
             // Step 1: Get changed files
-            val changedFiles: ChangedFiles.Known = try {
-                getChangedFiles(providedChangedFiles, allSourceFiles, caches)
+            val knownChangedFiles: ChangedFiles.Known = try {
+                getChangedFiles(changedFiles, allSourceFiles, caches)
             } catch (e: Throwable) {
+                closeCaches(caches, e)
                 return ICResult.Failed(IC_FAILED_TO_GET_CHANGED_FILES, e)
             }
 
@@ -166,9 +183,10 @@ abstract class IncrementalCompilerRunner<
             // Step 2: Compute files to recompile
             val compilationMode = try {
                 reporter.measure(BuildTime.IC_CALCULATE_INITIAL_DIRTY_SET) {
-                    calculateSourcesToCompile(caches, changedFiles, args, messageCollector, classpathAbiSnapshot ?: emptyMap())
+                    calculateSourcesToCompile(caches, knownChangedFiles, args, messageCollector, classpathAbiSnapshot ?: emptyMap())
                 }
             } catch (e: Throwable) {
+                closeCaches(caches, e)
                 return ICResult.Failed(IC_FAILED_TO_COMPUTE_FILES_TO_RECOMPILE, e)
             }
 
@@ -192,16 +210,11 @@ abstract class IncrementalCompilerRunner<
             exitCode = try {
                 compileImpl(compilationMode as CompilationMode.Incremental, allSourceFiles, args, caches, abiSnapshotData, messageCollector)
             } catch (e: Throwable) {
+                closeCaches(caches, e)
                 return ICResult.Failed(IC_FAILED_TO_COMPILE_INCREMENTALLY, e)
             }
         } catch (e: Throwable) {
-            // Because `caches` is a Closeable resource, it is good practice to close them in the event of an exception (in addition to
-            // closing them after a normal use).
-            try {
-                caches.close()
-            } catch (e2: Throwable) {
-                e.addSuppressed(e2)
-            }
+            closeCaches(caches, e)
             throw e
         }
         try {
@@ -227,7 +240,7 @@ abstract class IncrementalCompilerRunner<
                 check(it.containsAll(mainOutputDirs)) { "outputDirs is missing classesDir and workingDir: $it" }
             } ?: mainOutputDirs
 
-            reporter.debug { "Cleaning output directories" }
+            reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
             cleanOrCreateDirectories(outputDirsToClean)
         }
         return createCacheManager(args, projectDir).use { caches ->
@@ -266,20 +279,20 @@ abstract class IncrementalCompilerRunner<
     }
 
     private fun getChangedFiles(
-        providedChangedFiles: ChangedFiles.Known?,
+        changedFiles: ChangedFiles.Known?,
         allSourceFiles: List<File>,
         caches: CacheManager
     ): ChangedFiles.Known {
         return when {
-            providedChangedFiles == null -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
-            providedChangedFiles.forDependencies -> {
+            changedFiles == null -> caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
+            changedFiles.forDependencies -> {
                 val moreChangedFiles = caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
                 ChangedFiles.Known(
-                    modified = providedChangedFiles.modified + moreChangedFiles.modified,
-                    removed = providedChangedFiles.removed + moreChangedFiles.removed
+                    modified = changedFiles.modified + moreChangedFiles.modified,
+                    removed = changedFiles.removed + moreChangedFiles.removed
                 )
             }
-            else -> providedChangedFiles
+            else -> changedFiles
         }
     }
 
@@ -431,7 +444,7 @@ abstract class IncrementalCompilerRunner<
 
             dirtySources.addAll(compiledSources)
             allDirtySources.addAll(dirtySources)
-            val text = allDirtySources.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
+            val text = allDirtySources.joinToString(separator = System.getProperty("line.separator")) { it.normalize().absolutePath }
             dirtySourcesSinceLastTimeFile.writeText(text)
 
 
@@ -581,8 +594,24 @@ abstract class IncrementalCompilerRunner<
         defaultPerformanceManager.getMeasurementResults().forEach {
             when (it) {
                 is CompilerInitializationMeasurement -> reporter.addTimeMetricMs(BuildTime.COMPILER_INITIALIZATION, it.milliseconds)
-                is CodeAnalysisMeasurement -> reporter.addTimeMetricMs(BuildTime.CODE_ANALYSIS, it.milliseconds)
-                is CodeGenerationMeasurement -> reporter.addTimeMetricMs(BuildTime.CODE_GENERATION, it.milliseconds)
+                is CodeAnalysisMeasurement -> {
+                    reporter.addTimeMetricMs(BuildTime.CODE_ANALYSIS, it.milliseconds)
+                    it.lines?.apply {
+                        reporter.addMetric(BuildPerformanceMetric.ANALYZED_LINES_NUMBER, this.toLong())
+                        if (it.milliseconds > 0) {
+                            reporter.addMetric(BuildPerformanceMetric.ANALYSIS_LPS, this * 1000 / it.milliseconds)
+                        }
+                    }
+                }
+                is CodeGenerationMeasurement -> {
+                    reporter.addTimeMetricMs(BuildTime.CODE_GENERATION, it.milliseconds)
+                    it.lines?.apply {
+                        reporter.addMetric(BuildPerformanceMetric.CODE_GENERATED_LINES_NUMBER, this.toLong())
+                        if (it.milliseconds > 0) {
+                            reporter.addMetric(BuildPerformanceMetric.CODE_GENERATION_LPS, this * 1000 / it.milliseconds)
+                        }
+                    }
+                }
             }
         }
     }

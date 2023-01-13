@@ -21,8 +21,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaType
 
 class FirJavaTypeRef(
     val type: JavaType,
-    annotationBuilder: () -> List<FirAnnotation>,
-    override val qualifier: MutableList<FirQualifierPart>
+    annotationBuilder: () -> List<FirAnnotation>
 ) : FirUserTypeRef() {
     override val customRenderer: Boolean
         get() = true
@@ -34,6 +33,9 @@ class FirJavaTypeRef(
         get() = null
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
+
+    override val qualifier: List<FirQualifierPart>
+        get() = emptyList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         for (part in qualifier) {
@@ -49,6 +51,10 @@ class FirJavaTypeRef(
         return this
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Mutating annotations for FirJava* is not supported")
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirUserTypeRef {
         return this
     }
@@ -62,10 +68,9 @@ class FirJavaTypeRef(
 class FirJavaTypeRefBuilder {
     lateinit var annotationBuilder: () -> List<FirAnnotation>
     lateinit var type: JavaType
-    val qualifier: MutableList<FirQualifierPart> = mutableListOf()
 
     fun build(): FirJavaTypeRef {
-        return FirJavaTypeRef(type, annotationBuilder, qualifier)
+        return FirJavaTypeRef(type, annotationBuilder)
     }
 }
 

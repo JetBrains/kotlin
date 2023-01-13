@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -81,6 +80,7 @@ class JvmMappedScope(
             FirFakeOverrideGenerator.createCopyForFirFunction(
                 newSymbol,
                 baseFunction = symbol.fir,
+                derivedClassLookupTag = firKotlinClass.symbol.toLookupTag(),
                 session,
                 symbol.fir.origin,
                 newDispatchReceiverType = kotlinDispatchReceiverType,
@@ -125,6 +125,7 @@ class JvmMappedScope(
                 newSymbol,
                 session,
                 oldConstructor,
+                derivedClassLookupTag = firKotlinClass.symbol.toLookupTag(),
                 symbol.fir.origin,
                 newDispatchReceiverType = null,
                 newReturnType = substitutor.substituteOrSelf(oldConstructor.returnTypeRef.coneType),
@@ -133,9 +134,7 @@ class JvmMappedScope(
                 newContextReceiverTypes = emptyList(),
                 isExpect = false,
                 fakeOverrideSubstitution = null
-            ).apply {
-                containingClassForStaticMemberAttr = firKotlinClass.symbol.toLookupTag()
-            }
+            )
             newSymbol
         }
     }
@@ -197,14 +196,11 @@ class JvmMappedScope(
             add("java/lang/Enum.<init>(Ljava/lang/String;I)V")
         }
 
-        // TODO: remove after the end of getDeclaringClass/declaringClass deprecation period
-        private val additionalVisibleSignatures = inJavaLang("Enum", "getDeclaringClass()Ljava/lang/Class;")
-
         fun prepareSignatures(klass: FirRegularClass, isMutable: Boolean): Signatures {
 
             val signaturePrefix = klass.symbol.classId.toString()
             val visibleMethodsByName = mutableMapOf<Name, MutableSet<String>>()
-            (JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES + additionalVisibleSignatures).filter { signature ->
+            (JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES).filter { signature ->
                 signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES == isMutable &&
                         signature.startsWith(signaturePrefix)
             }.map { signature ->

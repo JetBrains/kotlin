@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR
 // FIR status: scripts aren't supported yet
 // IGNORE_LIGHT_ANALYSIS
 // WITH_STDLIB

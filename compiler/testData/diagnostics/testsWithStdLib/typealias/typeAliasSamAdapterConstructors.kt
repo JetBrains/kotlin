@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: test.kt
 typealias RunnableT = java.lang.Runnable
 typealias ComparatorT<T> = java.util.Comparator<T>

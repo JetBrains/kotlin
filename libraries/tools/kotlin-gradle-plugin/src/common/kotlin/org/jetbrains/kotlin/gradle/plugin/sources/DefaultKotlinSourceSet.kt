@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
+import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -25,9 +27,11 @@ import javax.inject.Inject
 const val METADATA_CONFIGURATION_NAME_SUFFIX = "DependenciesMetadata"
 
 abstract class DefaultKotlinSourceSet @Inject constructor(
-    private val project: Project,
+    final override val project: Project,
     val displayName: String
 ) : AbstractKotlinSourceSet() {
+
+    override val extras: MutableExtras = mutableExtrasOf()
 
     override val apiConfigurationName: String
         get() = disambiguateName(API)
@@ -41,15 +45,19 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
     override val runtimeOnlyConfigurationName: String
         get() = disambiguateName(RUNTIME_ONLY)
 
+    @Deprecated("KT-55312")
     override val apiMetadataConfigurationName: String
         get() = lowerCamelCaseName(apiConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
+    @Deprecated("KT-55312")
     override val implementationMetadataConfigurationName: String
         get() = lowerCamelCaseName(implementationConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
+    @Deprecated("KT-55312")
     override val compileOnlyMetadataConfigurationName: String
         get() = lowerCamelCaseName(compileOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
+    @Deprecated(message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation")
     override val runtimeOnlyMetadataConfigurationName: String
         get() = lowerCamelCaseName(runtimeOnlyConfigurationName, METADATA_CONFIGURATION_NAME_SUFFIX)
 
@@ -113,7 +121,11 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
 
-    internal val dependencyTransformations: MutableMap<KotlinDependencyScope, GranularMetadataTransformation> = mutableMapOf()
+    /**
+     * Returns [GranularMetadataTransformation] for all requested compile dependencies
+     * scopes: API, IMPLEMENTATION, COMPILE_ONLY; See [KotlinDependencyScope.compileScopes]
+     */
+    internal var compileDependenciesTransformation: GranularMetadataTransformation? = null
 
     private val _requiresVisibilityOf = mutableSetOf<KotlinSourceSet>()
 
@@ -137,26 +149,21 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         val useFilesForSourceSets: Map<String, Iterable<File>>
     )
 
-    @Suppress("unused") // Used in IDE import
+    @Suppress("unused", "UNUSED_PARAMETER") // Used in IDE import, [configurationName] is kept for backward compatibility
     fun getDependenciesTransformation(configurationName: String): Iterable<MetadataDependencyTransformation> {
-        val scope = KotlinDependencyScope.values().find {
-            project.sourceSetMetadataConfigurationByScope(this, it).name == configurationName
-        } ?: return emptyList()
-
-        return getDependenciesTransformation(scope)
+        return getDependenciesTransformation()
     }
 
     fun getAdditionalVisibleSourceSets(): List<KotlinSourceSet> = getVisibleSourceSetsFromAssociateCompilations(this)
 
-    internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
+    internal fun getDependenciesTransformation(): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
-            dependencyTransformations[scope]?.metadataDependencyResolutions
-                ?.associateBy { ModuleIds.fromComponent(project, it.dependency) }
-                ?: emptyMap()
+            compileDependenciesTransformation.metadataDependencyResolutionsOrEmpty
+                .associateBy { ModuleIds.fromComponent(project, it.dependency) }
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
             val (group, name) = groupAndName
-            val projectPath = resolution.projectDependency?.path
+            val projectPath = resolution.dependency.currentBuildProjectIdOrNull?.projectPath
             when (resolution) {
                 // No metadata transformation leads to original dependency being used during import
                 is MetadataDependencyResolution.KeepOriginalDependency -> null
@@ -209,8 +216,6 @@ val KotlinSourceSet.dependsOnClosure: Set<KotlinSourceSet> get() = this.internal
 @Deprecated("Use InternalKotlinSourceSet.withDependsOnClosure instead. Will be removed in Kotlin 1.9")
 val KotlinSourceSet.withDependsOnClosure: Set<KotlinSourceSet> get() = this.internal.withDependsOnClosure
 
-@Suppress("Unused") // Still part of public API
-@Deprecated("Use InternalKotlinSourceSet.withDependsOnClosure instead. Will be removed in Kotlin 1.9")
 val Iterable<KotlinSourceSet>.dependsOnClosure: Set<KotlinSourceSet>
     get() = flatMap { it.internal.dependsOnClosure }.toSet() - this.toSet()
 
@@ -220,3 +225,8 @@ val Iterable<KotlinSourceSet>.withDependsOnClosure: Set<KotlinSourceSet>
 fun KotlinMultiplatformExtension.findSourceSetsDependingOn(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
     return sourceSet.closure { seedSourceSet -> sourceSets.filter { otherSourceSet -> seedSourceSet in otherSourceSet.dependsOn } }
 }
+
+internal val DefaultKotlinSourceSet.compileDependenciesTransformationOrFail: GranularMetadataTransformation
+    get() = compileDependenciesTransformation
+        ?: error("Accessing Compile Dependencies Transformations that is not yet initialised; " +
+                 "Check when compileDependenciesTransformation is set")

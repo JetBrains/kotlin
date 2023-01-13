@@ -8,24 +8,18 @@ package org.jetbrains.kotlin.ir.interpreter
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
-import org.jetbrains.kotlin.ir.interpreter.state.Common
-import org.jetbrains.kotlin.ir.interpreter.state.Complex
-import org.jetbrains.kotlin.ir.interpreter.state.ExceptionState
-import org.jetbrains.kotlin.ir.interpreter.state.Primitive
-import org.jetbrains.kotlin.ir.interpreter.state.State
-import org.jetbrains.kotlin.ir.interpreter.state.Wrapper
+import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isSubclassOf
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
+import org.jetbrains.kotlin.ir.util.properties
 
 class IrInterpreterEnvironment(
     val irBuiltIns: IrBuiltIns,
@@ -144,7 +138,7 @@ class IrInterpreterEnvironment(
     }
 
     private fun IrClassSymbol.getIrClassOfReflectionFromList(name: String): IrClassSymbol? {
-        val property = this.owner.declarations.singleOrNull { it.nameForIrSerialization.asString() == name } as? IrProperty
+        val property = this.owner.properties.singleOrNull { it.name.asString() == name }
         val list = property?.getter?.returnType as? IrSimpleType
         return list?.arguments?.single()?.typeOrNull?.classOrNull
     }

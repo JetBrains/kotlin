@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.attributes.Usage
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.JsSourceMapEmbedMode
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.libsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -26,6 +27,9 @@ open class KotlinJsIrTargetConfigurator() :
 
     override val archiveType: String
         get() = KLIB_TYPE
+
+    override val archiveTaskType: Class<out Zip>
+        get() = Zip::class.java
 
     override fun createTestRun(
         name: String,
@@ -61,7 +65,10 @@ open class KotlinJsIrTargetConfigurator() :
 
     override fun createArchiveTasks(target: KotlinJsIrTarget): TaskProvider<out Zip> {
         return super.createArchiveTasks(target).apply {
-            configure { it.archiveExtension.set(KLIB_TYPE) }
+            configure {
+                it.archiveExtension.set(KLIB_TYPE)
+                it.destinationDirectory.set(it.project.libsDirectory)
+            }
         }
     }
 
@@ -71,7 +78,7 @@ open class KotlinJsIrTargetConfigurator() :
         target.compilations.all { compilation ->
             compilation.compilerOptions.configure {
                 configureOptions()
-                
+
                 if (target.platformType == KotlinPlatformType.wasm) {
                     freeCompilerArgs.add(WASM_BACKEND)
                 }

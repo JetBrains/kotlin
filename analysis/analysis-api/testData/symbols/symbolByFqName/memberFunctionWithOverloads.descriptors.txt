@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -15,7 +16,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -30,6 +31,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/List.listIterator
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -43,7 +45,7 @@ KtFunctionSymbol:
   modality: ABSTRACT
   name: listIterator
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -61,7 +63,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []

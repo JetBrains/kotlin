@@ -132,15 +132,15 @@ public final class FunctionBodyTranslator extends AbstractTranslator {
 
     @NotNull
     private JsBlock translate() {
-        KtExpression jetBodyExpression = declaration.getBodyExpression();
-        assert jetBodyExpression != null : "Cannot translate a body of an abstract function.";
+        KtExpression ktExpression = declaration.getBodyExpression();
+        assert ktExpression != null : "Cannot translate a body of an abstract function.";
         JsBlock jsBlock = new JsBlock();
 
 
-        JsNode jsBody = Translation.translateExpression(jetBodyExpression, context(), jsBlock);
+        JsNode jsBody = Translation.translateExpression(ktExpression, context(), jsBlock);
         jsBlock.getStatements().addAll(mayBeWrapWithReturn(jsBody).getStatements());
 
-        if (jetBodyExpression instanceof KtBlockExpression &&
+        if (ktExpression instanceof KtBlockExpression &&
             descriptor.getReturnType() != null && KotlinBuiltIns.isUnit(descriptor.getReturnType()) &&
             !KotlinBuiltIns.isUnit(TranslationUtils.getReturnTypeForCoercion(descriptor))) {
             ClassDescriptor unit = context().getCurrentModule().getBuiltIns().getUnit();

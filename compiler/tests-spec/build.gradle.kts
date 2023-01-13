@@ -10,8 +10,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common-new"))
 
     testApi(commonDependency("com.google.code.gson:gson"))
-    testApi(commonDependency("org.codehaus.groovy:groovy"))
-    testApi(commonDependency("org.codehaus.groovy:groovy-xml"))
+    testApi(commonDependency("org.jetbrains.intellij.deps:jdom"))
 
     api("org.jsoup:jsoup:1.14.2")
 

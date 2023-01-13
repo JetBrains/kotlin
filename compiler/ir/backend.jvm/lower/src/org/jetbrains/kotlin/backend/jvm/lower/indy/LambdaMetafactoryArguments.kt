@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.findSuperDeclaration
 import org.jetbrains.kotlin.backend.jvm.ir.getSingleAbstractMethod
 import org.jetbrains.kotlin.backend.jvm.ir.isCompiledToJvmDefault
 import org.jetbrains.kotlin.backend.jvm.lower.findInterfaceImplementation
+import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -445,13 +446,19 @@ internal class LambdaMetafactoryArgumentsBuilder(
         val oldToNew = HashMap<IrValueParameter, IrValueParameter>()
         var newParameterIndex = 0
 
+        lambda.valueParameters.take(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
+            oldParameter.copy(lambda, newParameterIndex++).also {
+                oldToNew[oldParameter] = it
+            }
+        }
+
         newValueParameters.add(
-            oldExtensionReceiver.copy(lambda, newParameterIndex++, Name.identifier("\$receiver")).also {
+            oldExtensionReceiver.copy(lambda, newParameterIndex++, oldExtensionReceiver.name).also {
                 oldToNew[oldExtensionReceiver] = it
             }
         )
 
-        lambda.valueParameters.mapTo(newValueParameters) { oldParameter ->
+        lambda.valueParameters.drop(lambda.contextReceiverParametersCount).mapTo(newValueParameters) { oldParameter ->
             oldParameter.copy(lambda, newParameterIndex++).also {
                 oldToNew[oldParameter] = it
             }
@@ -596,6 +603,13 @@ internal class LambdaMetafactoryArgumentsBuilder(
                 // => box it
                 TypeAdaptationConstraint.FORCE_BOXING
             }
+        }
+
+        // ** Value classes **
+        // All Kotlin inline classes are final,
+        // and their supertypes are trivially mapped to reference types.
+        if (adapteeType.needsMfvcFlattening()) {
+            return TypeAdaptationConstraint.CONFLICT
         }
 
         // Other cases don't enforce type adaptation

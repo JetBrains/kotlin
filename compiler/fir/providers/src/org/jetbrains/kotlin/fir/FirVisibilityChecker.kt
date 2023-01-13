@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
+import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -72,6 +72,25 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
     }
 
+    fun isClassLikeVisible(
+        declaration: FirClassLikeDeclaration,
+        session: FirSession,
+        useSiteFile: FirFile,
+        containingDeclarations: List<FirDeclaration>,
+    ): Boolean {
+        return isVisible(
+            declaration,
+            session,
+            useSiteFile,
+            containingDeclarations,
+            dispatchReceiver = null,
+            isCallToPropertySetter = false,
+            staticQualifierClassForCallable = null,
+            skipCheckForContainingClassVisibility = false,
+            supertypeSupplier = SupertypeSupplier.Default
+        )
+    }
+
     fun isVisible(
         declaration: FirMemberDeclaration,
         session: FirSession,
@@ -79,6 +98,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         containingDeclarations: List<FirDeclaration>,
         dispatchReceiver: ReceiverValue?,
         isCallToPropertySetter: Boolean = false,
+        staticQualifierClassForCallable: FirRegularClass? = null,
         // There's no need to check if containing class is visible in case we check if a member might be overridden in a subclass
         // because visibility for its supertype that contain overridden member is being checked when resolving the type reference.
         // Such flag is not necessary in FE1.0, since there are full structure of fake overrides and containing declaration for overridden
@@ -87,7 +107,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default
     ): Boolean {
         if (!isSpecificDeclarationVisible(
-                declaration,
+                if (declaration is FirCallableDeclaration) declaration.originalOrSelf() else declaration,
                 session,
                 useSiteFile,
                 containingDeclarations,
@@ -101,6 +121,17 @@ abstract class FirVisibilityChecker : FirSessionComponent {
 
         if (skipCheckForContainingClassVisibility) return true
 
+        if (staticQualifierClassForCallable != null) {
+            return isSpecificDeclarationVisible(
+                staticQualifierClassForCallable,
+                session,
+                useSiteFile,
+                containingDeclarations,
+                dispatchReceiver = null,
+                isCallToPropertySetter,
+                supertypeSupplier
+            )
+        }
         val parentClass = declaration.containingNonLocalClass(
             session,
             dispatchReceiver,
@@ -148,9 +179,12 @@ abstract class FirVisibilityChecker : FirSessionComponent {
     ): FirClassLikeDeclaration? {
         return when (this) {
             is FirCallableDeclaration -> {
-                if (dispatchReceiverValue != null && dispatchReceiverType != null) {
-                    dispatchReceiverValue.type.findClassRepresentation(dispatchReceiverType!!, session)?.toSymbol(session)?.fir?.let {
-                        return it
+                if (dispatchReceiverValue != null) {
+                    val baseReceiverType = dispatchReceiverClassTypeOrNull()
+                    if (baseReceiverType != null) {
+                        dispatchReceiverValue.type.findClassRepresentation(baseReceiverType, session)?.toSymbol(session)?.fir?.let {
+                            return it
+                        }
                     }
                 }
 
@@ -160,7 +194,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 if (isStatic && containingClass != null) {
                     containingUseSiteDeclarations.firstNotNullOfOrNull {
                         if (it !is FirClass) return@firstNotNullOfOrNull null
-                        it.takeIf { it.isSubClass(containingLookupTag, session, supertypeSupplier) }
+                        it.takeIf { it.isSubclassOf(containingLookupTag, session, isStrict = false, supertypeSupplier) }
                     }?.let { return it }
                 }
 
@@ -301,7 +335,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             val dispatchReceiverParameterClassSymbol =
                 (fir as? FirCallableDeclaration)
                     ?.propertyIfAccessor?.propertyIfBackingField
-                    ?.dispatchReceiverClassOrNull()?.toSymbol(session)
+                    ?.dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)
                     ?: return true
 
             val dispatchReceiverParameterClassLookupTag = dispatchReceiverParameterClassSymbol.toLookupTag()
@@ -346,10 +380,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         return false
     }
 
-    // 'local' isn't taken into account here
-    private fun ClassId.isSame(other: ClassId): Boolean =
-        packageFqName == other.packageFqName && relativeClassName == other.relativeClassName
-
     private fun ConeClassLikeLookupTag.ownerIfCompanion(session: FirSession): ConeClassLikeLookupTag? {
         if (classId.isLocal) return null
         val outerClassId = classId.outerClassId ?: return null
@@ -371,11 +401,11 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         supertypeSupplier: SupertypeSupplier
     ): Boolean {
         dispatchReceiver?.ownerIfCompanion(session)?.let { companionOwnerLookupTag ->
-            if (containingUseSiteClass.isSubClass(companionOwnerLookupTag, session, supertypeSupplier)) return true
+            if (containingUseSiteClass.isSubclassOf(companionOwnerLookupTag, session, isStrict = false, supertypeSupplier)) return true
         }
 
         return when {
-            !containingUseSiteClass.isSubClass(ownerLookupTag, session, supertypeSupplier) -> false
+            !containingUseSiteClass.isSubclassOf(ownerLookupTag, session, isStrict = false, supertypeSupplier) -> false
             isVariableOrNamedFunction -> doesReceiverFitForProtectedVisibility(
                 dispatchReceiver,
                 containingUseSiteClass,
@@ -424,26 +454,6 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         }
 
         return false
-    }
-
-    private fun FirClass.isSubClass(
-        ownerLookupTag: ConeClassLikeLookupTag,
-        session: FirSession,
-        supertypeSupplier: SupertypeSupplier
-    ): Boolean {
-        if (classId.isSame(ownerLookupTag.classId)) return true
-
-        return lookupSuperTypes(
-            this,
-            lookupInterfaces = true,
-            deep = true,
-            session,
-            substituteTypes = false,
-            supertypeSupplier
-        ).any { superType ->
-            // Note: We check just classId here, so type substitution isn't needed   ^ (we aren't interested in type arguments)
-            (superType as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag?.classId?.isSame(ownerLookupTag.classId) == true
-        }
     }
 
     private fun ReceiverValue?.ownerIfCompanion(session: FirSession): ConeClassLikeLookupTag? =
@@ -522,6 +532,7 @@ fun FirBasedSymbol<*>.getOwnerLookupTag(): ConeClassLikeLookupTag? {
         is FirBackingFieldSymbol -> fir.propertySymbol.getOwnerLookupTag()
         is FirClassLikeSymbol<*> -> getContainingClassLookupTag()
         is FirCallableSymbol<*> -> containingClassLookupTag()
+        is FirScriptSymbol -> null
         else -> error("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")
     }
 }

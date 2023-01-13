@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -56,6 +56,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     @TestMetadata("AnnotationInsideFunction.kt")
     public void testAnnotationInsideFunction() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/AnnotationInsideFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("AnnotationOnCallSite.kt")
+    public void testAnnotationOnCallSite() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/AnnotationOnCallSite.kt");
     }
 
     @Test
@@ -152,6 +158,18 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     @TestMetadata("EnumValues.kt")
     public void testEnumValues() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/EnumValues.kt");
+    }
+
+    @Test
+    @TestMetadata("EqualsOperator.kt")
+    public void testEqualsOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/EqualsOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("EqualsOperatorNoInfix.kt")
+    public void testEqualsOperatorNoInfix() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/EqualsOperatorNoInfix.kt");
     }
 
     @Test
@@ -344,6 +362,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     @TestMetadata("NamedClassObject.kt")
     public void testNamedClassObject() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/NamedClassObject.kt");
+    }
+
+    @Test
+    @TestMetadata("NotEqualsOperator.kt")
+    public void testNotEqualsOperator() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/NotEqualsOperator.kt");
     }
 
     @Test
@@ -617,6 +641,48 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     }
 
     @Test
+    @TestMetadata("typeArgument_tooFewTypeArguments1.kt")
+    public void testTypeArgument_tooFewTypeArguments1() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooFewTypeArguments1.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooFewTypeArguments1a.kt")
+    public void testTypeArgument_tooFewTypeArguments1a() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooFewTypeArguments1a.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooFewTypeArguments2.kt")
+    public void testTypeArgument_tooFewTypeArguments2() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooFewTypeArguments2.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooManyTypeArguments1.kt")
+    public void testTypeArgument_tooManyTypeArguments1() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments1.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooManyTypeArguments1a.kt")
+    public void testTypeArgument_tooManyTypeArguments1a() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments1a.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooManyTypeArguments2.kt")
+    public void testTypeArgument_tooManyTypeArguments2() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments2.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument_tooManyTypeArguments2a.kt")
+    public void testTypeArgument_tooManyTypeArguments2a() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments2a.kt");
+    }
+
+    @Test
     @TestMetadata("ValueParameter.kt")
     public void testValueParameter() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ValueParameter.kt");
@@ -655,6 +721,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
             runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/setOperator.kt");
         }
 
+        @Test
+        @TestMetadata("SetOperatorInc.kt")
+        public void testSetOperatorInc() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/SetOperatorInc.kt");
+        }
+
         @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors")
         @TestDataPath("$PROJECT_ROOT")
@@ -674,6 +746,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
             @TestMetadata("setFunction.kt")
             public void testSetFunction() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors/setFunction.kt");
+            }
+
+            @Test
+            @TestMetadata("SetOperatorInc.kt")
+            public void testSetOperatorInc() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/arrayAccess/withErrors/SetOperatorInc.kt");
             }
         }
     }
@@ -697,6 +775,40 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
         @TestMetadata("toSecondary.kt")
         public void testToSecondary() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/constructorDelegatingReference/toSecondary.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/danglingAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class DanglingAnnotations {
+        @Test
+        public void testAllFilesPresentInDanglingAnnotations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/danglingAnnotations"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("DanglingAnnotationsResolvedAnonymous.kt")
+        public void testDanglingAnnotationsResolvedAnonymous() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/danglingAnnotations/DanglingAnnotationsResolvedAnonymous.kt");
+        }
+
+        @Test
+        @TestMetadata("DanglingAnnotationsResolvedClass.kt")
+        public void testDanglingAnnotationsResolvedClass() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/danglingAnnotations/DanglingAnnotationsResolvedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("DanglingAnnotationsResolvedLocal.kt")
+        public void testDanglingAnnotationsResolvedLocal() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/danglingAnnotations/DanglingAnnotationsResolvedLocal.kt");
+        }
+
+        @Test
+        @TestMetadata("DanglingAnnotationsResolvedTopLevel.kt")
+        public void testDanglingAnnotationsResolvedTopLevel() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/danglingAnnotations/DanglingAnnotationsResolvedTopLevel.kt");
         }
     }
 
@@ -1562,6 +1674,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
         }
 
         @Test
+        @TestMetadata("ByReturnExpression.kt")
+        public void testByReturnExpression() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/withErrors/ByReturnExpression.kt");
+        }
+
+        @Test
         @TestMetadata("ClassNameBeforeDot.kt")
         public void testClassNameBeforeDot() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/withErrors/ClassNameBeforeDot.kt");
@@ -1583,6 +1701,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
         @TestMetadata("CoroutineSuspensionPoint.kt")
         public void testCoroutineSuspensionPoint() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/withErrors/CoroutineSuspensionPoint.kt");
+        }
+
+        @Test
+        @TestMetadata("DanglingAnnotations.kt")
+        public void testDanglingAnnotations() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/withErrors/DanglingAnnotations.kt");
         }
 
         @Test

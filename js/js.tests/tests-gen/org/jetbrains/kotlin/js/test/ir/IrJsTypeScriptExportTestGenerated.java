@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -634,6 +634,22 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
         @TestMetadata("primitives.kt")
         public void testPrimitives() throws Exception {
             runTest("js/js.translator/testData/typescript-export/primitives-in-exported-file/primitives.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("js/js.translator/testData/typescript-export/private-primary-constructor")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Private_primary_constructor {
+        @Test
+        public void testAllFilesPresentInPrivate_primary_constructor() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/private-primary-constructor"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+
+        @Test
+        @TestMetadata("private-primary-constructor.kt")
+        public void testPrivate_primary_constructor() throws Exception {
+            runTest("js/js.translator/testData/typescript-export/private-primary-constructor/private-primary-constructor.kt");
         }
     }
 

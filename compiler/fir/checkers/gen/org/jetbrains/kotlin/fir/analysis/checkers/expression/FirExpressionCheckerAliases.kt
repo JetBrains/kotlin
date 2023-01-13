@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
+import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -47,6 +48,7 @@ typealias FirQualifiedAccessChecker = FirExpressionChecker<FirQualifiedAccess>
 typealias FirQualifiedAccessExpressionChecker = FirExpressionChecker<FirQualifiedAccessExpression>
 typealias FirCallChecker = FirExpressionChecker<FirCall>
 typealias FirFunctionCallChecker = FirExpressionChecker<FirFunctionCall>
+typealias FirPropertyAccessExpressionChecker = FirExpressionChecker<FirPropertyAccessExpression>
 typealias FirIntegerLiteralOperatorCallChecker = FirExpressionChecker<FirIntegerLiteralOperatorCall>
 typealias FirVariableAssignmentChecker = FirExpressionChecker<FirVariableAssignment>
 typealias FirTryExpressionChecker = FirExpressionChecker<FirTryExpression>

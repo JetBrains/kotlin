@@ -97,8 +97,20 @@ public enum class DeprecationLevel {
 @MustBeDocumented
 public annotation class ExtensionFunctionType
 
+/**
+ * Signifies that the annotated functional type has the prefix of size `count` for context receivers.
+ * Thus, `@ContextFunctionTypeParams(2) @ExtensionFunctionType Function4<String, Int, Double, Byte, Unit>` is a normalized representation of
+ * `context(String, Int) Double.(Byte) -> Unit`.
+ *
+ * Just the same as @ExtensionFunctionType, this annotation is not assumed to be used in source code, preferring the explicit function type
+ * syntax, like in the example above.
+ *
+ * There's no need in any additional opt-in limitations because this annotation might only be referenced by users
+ * who turned on an experimental `-Xcontext-receivers` compiler flag, for which there are no backward/forward compatibilities guarantees.
+ */
 @Target(TYPE)
 @MustBeDocumented
+@SinceKotlin("1.7")
 public annotation class ContextFunctionTypeParams(val count: Int)
 
 /**

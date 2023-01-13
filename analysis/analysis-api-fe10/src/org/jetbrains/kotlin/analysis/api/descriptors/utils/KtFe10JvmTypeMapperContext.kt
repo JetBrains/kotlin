@@ -43,7 +43,13 @@ internal class KtFe10JvmTypeMapperContext(private val resolveSession: ResolveSes
         }
     }
 
-    class NestedType(val root: PossiblyInnerType, val nested: List<PossiblyInnerType>)
+    class NestedType(val root: PossiblyInnerType, val nested: List<PossiblyInnerType>) {
+        val allInnerTypes: List<PossiblyInnerType>
+            get() = buildList {
+                add(root)
+                addAll(nested)
+            }
+    }
 
     override val typeContext = KtFe10TypeSystemCommonBackendContextForTypeMapping(resolveSession)
 

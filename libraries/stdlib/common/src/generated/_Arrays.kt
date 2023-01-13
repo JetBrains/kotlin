@@ -12531,6 +12531,10 @@ public infix fun CharArray.union(other: Iterable<Char>): Set<Char> {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
@@ -12540,6 +12544,10 @@ public inline fun <T> Array<out T>.all(predicate: (T) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
@@ -12551,6 +12559,10 @@ public inline fun ByteArray.all(predicate: (Byte) -> Boolean): Boolean {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
@@ -12560,6 +12572,10 @@ public inline fun ShortArray.all(predicate: (Short) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
@@ -12571,6 +12587,10 @@ public inline fun IntArray.all(predicate: (Int) -> Boolean): Boolean {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
@@ -12580,6 +12600,10 @@ public inline fun LongArray.all(predicate: (Long) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */
@@ -12591,6 +12615,10 @@ public inline fun FloatArray.all(predicate: (Float) -> Boolean): Boolean {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
@@ -12601,6 +12629,10 @@ public inline fun DoubleArray.all(predicate: (Double) -> Boolean): Boolean {
 /**
  * Returns `true` if all elements match the given [predicate].
  * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
  * @sample samples.collections.Collections.Aggregates.all
  */
 public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
@@ -12610,6 +12642,10 @@ public inline fun BooleanArray.all(predicate: (Boolean) -> Boolean): Boolean {
 
 /**
  * Returns `true` if all elements match the given [predicate].
+ * 
+ * Note that if the array contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
  * 
  * @sample samples.collections.Collections.Aggregates.all
  */

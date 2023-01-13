@@ -397,8 +397,8 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitTypeProjection(typeProjection, null);
     }
 
-    public void visitWhenEntry(@NotNull KtWhenEntry jetWhenEntry) {
-        super.visitWhenEntry(jetWhenEntry, null);
+    public void visitWhenEntry(@NotNull KtWhenEntry ktWhenEntry) {
+        super.visitWhenEntry(ktWhenEntry, null);
     }
 
     public void visitIsExpression(@NotNull KtIsExpression expression) {
@@ -993,8 +993,8 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     @Override
-    public final Void visitWhenEntry(@NotNull KtWhenEntry jetWhenEntry, Void data) {
-        visitWhenEntry(jetWhenEntry);
+    public final Void visitWhenEntry(@NotNull KtWhenEntry ktWhenEntry, Void data) {
+        visitWhenEntry(ktWhenEntry);
         return null;
     }
 

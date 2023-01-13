@@ -67,7 +67,7 @@ abstract class BaseJvmAbiTest : TestCase() {
             dep.abiDir
         }
 
-        val directives = if (compilation.directives.exists()) compilation.directives.readText() else null
+        val directives = if (compilation.directives.exists()) compilation.directives.readText() else ""
 
         val messageCollector = LocationReportingTestMessageCollector()
         val compiler = K2JVMCompiler()
@@ -80,8 +80,8 @@ abstract class BaseJvmAbiTest : TestCase() {
                 if (useLegacyAbiGen) abiOption("useLegacyAbiGen", "true") else null
             ).toTypedArray()
             destination = compilation.destinationDir.canonicalPath
-            noSourceDebugExtension =
-                directives != null && InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
+            noSourceDebugExtension = InTextDirectivesUtils.findStringWithPrefixes(directives, "// NO_SOURCE_DEBUG_EXTENSION") != null
+            useK2 = InTextDirectivesUtils.findStringWithPrefixes(directives, "// USE_K2") != null
         }
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
         if (exitCode != ExitCode.OK || messageCollector.errors.isNotEmpty()) {

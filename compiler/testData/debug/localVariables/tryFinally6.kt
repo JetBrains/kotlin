@@ -43,7 +43,7 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:42 box:
 // test.kt:27 compute:
 // test.kt:28 compute:
@@ -62,3 +62,20 @@ fun box() {
 // test.kt:42 box:
 // test.kt:43 box: result:java.lang.String="b":java.lang.String
 // test.kt:44 box: result:java.lang.String="b":java.lang.String, localX:java.lang.String="OK":java.lang.String
+
+// EXPECTATIONS JS_IR
+// test.kt:42 box:
+// test.kt:28 compute:
+// test.kt:28 compute:
+// test.kt:28 compute:
+// test.kt:28 compute:
+// test.kt:17 compute: a="a":kotlin.String
+// test.kt:8 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String
+// test.kt:30 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String, hLocal="hLocal":kotlin.String
+// test.kt:30 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String, hLocal="hLocal":kotlin.String
+// test.kt:30 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String, hLocal="hLocal":kotlin.String
+// test.kt:30 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String, hLocal="hLocal":kotlin.String
+// test.kt:31 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String, hLocal="hLocal":kotlin.String, b="b":kotlin.String
+// test.kt:11 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String, hLocal="hLocal":kotlin.String, b="b":kotlin.String
+// test.kt:20 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String, hLocal="hLocal":kotlin.String, b="b":kotlin.String, h="h":kotlin.String
+// test.kt:36 compute: a="a":kotlin.String, gLocal="gLocal":kotlin.String, hLocal="hLocal":kotlin.String, b="b":kotlin.String, h="h":kotlin.String, g="g":kotlin.String

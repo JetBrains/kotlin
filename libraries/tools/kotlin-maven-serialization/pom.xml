@@ -5,7 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <maven.version>3.0.5</maven.version>
         <serialization.common.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.common/src</serialization.common.src>
         <serialization.k1.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.k1/src</serialization.k1.src>
         <serialization.k2.src>${basedir}/../../../plugins/kotlinx-serialization/kotlinx-serialization.k2/src</serialization.k2.src>
@@ -38,6 +37,12 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${maven.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

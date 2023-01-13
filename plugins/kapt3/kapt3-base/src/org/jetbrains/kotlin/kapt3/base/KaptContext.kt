@@ -127,8 +127,8 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
             @Suppress("SpellCheckingInspection")
             putJavacOption("PROCESSORPATH", "PROCESSOR_PATH", options.processingClasspath.makePathsString())
 
-            put(Option.S, options.sourcesOutputDir.canonicalPath)
-            put(Option.D, options.classesOutputDir.canonicalPath)
+            put(Option.S, options.sourcesOutputDir.normalize().absolutePath)
+            put(Option.D, options.classesOutputDir.normalize().absolutePath)
             put(Option.ENCODING, "UTF-8")
         }
 
@@ -168,6 +168,6 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
     companion object {
         const val MODULE_INFO_FILE = "module-info.java"
 
-        private fun Iterable<File>.makePathsString(): String = joinToString(File.pathSeparator) { it.canonicalPath }
+        private fun Iterable<File>.makePathsString(): String = joinToString(File.pathSeparator) { it.normalize().absolutePath }
     }
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.stubs
 
+import com.intellij.psi.PsiElement
 import com.sun.tools.javac.code.Flags
 import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.parser.Tokens
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_PARAMETER_NAME
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -51,6 +53,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ArrayFqNames
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedValueArgument
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
@@ -63,9 +66,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.source.getPsi
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isEnum
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -141,6 +144,10 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
     private var done = false
 
     fun convert(): List<KaptStub> {
+        if (kaptContext.logger.isVerbose) {
+            dumpDeclarationOrigins()
+        }
+
         if (done) error(ClassFileToSourceStubConverter::class.java.simpleName + " can convert classes only once")
         done = true
 
@@ -151,6 +158,19 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         }
 
         return stubs
+    }
+
+    private fun dumpDeclarationOrigins() {
+        kaptContext.logger.info("Declaration origins:")
+        for ((key, value) in kaptContext.origins) {
+            val element = when (key) {
+                is ClassNode -> "class ${key.name}"
+                is FieldNode -> "field ${key.name}:${key.desc}"
+                is MethodNode -> "method ${key.name}${key.desc}"
+                else -> key.javaClass.toString()
+            }
+            kaptContext.logger.info("$element -> $value")
+        }
     }
 
     private fun generateNonExistentClass(): JCCompilationUnit {
@@ -188,7 +208,6 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
     private fun convertTopLevelClass(clazz: ClassNode): KaptStub? {
         val origin = kaptContext.origins[clazz] ?: return null
-        val ktFile = origin.element?.containingFile as? KtFile ?: return null
         val descriptor = origin.descriptor ?: return null
 
         // Nested classes will be processed during the outer classes conversion
@@ -196,23 +215,21 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
 
         val lineMappings = KaptLineMappingCollector(kaptContext)
 
-        val packageName = ktFile.packageFqName.asString()
+        val packageName = DescriptorUtils.getParentOfType(descriptor, PackageFragmentDescriptor::class.java, false)?.fqName?.asString()
+            ?: return null
+
         val packageClause = if (packageName.isEmpty()) null else treeMaker.FqName(packageName)
 
         val classDeclaration = convertClass(clazz, lineMappings, packageName, true) ?: return null
 
         classDeclaration.mods.annotations = classDeclaration.mods.annotations
 
-        val imports = if (correctErrorTypes) convertImports(ktFile, classDeclaration) else JavacList.nil()
-
-        val nonEmptyImports: JavacList<JCTree> = when {
-            imports.size > 0 -> imports
-            else -> JavacList.of(treeMaker.Import(treeMaker.FqName("java.lang.System"), false))
-        }
+        val ktFile = origin.element?.containingFile as? KtFile
+        val imports = if (ktFile != null && correctErrorTypes) convertImports(ktFile, classDeclaration) else JavacList.nil()
 
         val classes = JavacList.of<JCTree>(classDeclaration)
 
-        val topLevel = treeMaker.TopLevelJava9Aware(packageClause, nonEmptyImports + classes)
+        val topLevel = treeMaker.TopLevelJava9Aware(packageClause, imports + classes)
         if (kdocCommentKeeper != null) {
             topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
         }
@@ -1017,39 +1034,71 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val genericSignature = signatureParser.parseMethodSignature(
             method.signature, parameters, exceptionTypes, jcReturnType,
             nonErrorParameterTypeProvider = { index, lazyType ->
-                if (descriptor is PropertySetterDescriptor && valueParametersFromDescriptor.size == 1 && index == 0) {
-                    getNonErrorType(descriptor.correspondingProperty.returnType, METHOD_PARAMETER_TYPE,
-                                    ktTypeProvider = {
-                                        val setterOrigin = (psiElement as? KtCallableDeclaration)
-                                            ?.takeIf { it !is KtFunction }
+                fun getNonErrorMethodParameterType(descriptor: ValueDescriptor, ktTypeProvider: () -> KtTypeReference?): JCExpression =
+                    getNonErrorType(descriptor.type, METHOD_PARAMETER_TYPE, ktTypeProvider, lazyType)
 
-                                        setterOrigin?.typeReference
-                                    },
-                                    ifNonError = { lazyType() })
-                } else if (descriptor is FunctionDescriptor && valueParametersFromDescriptor.size == parameters.size) {
-                    val parameterDescriptor = valueParametersFromDescriptor[index]
-                    val sourceElement = when {
-                        psiElement is KtFunction -> psiElement
-                        descriptor is ConstructorDescriptor && descriptor.isPrimary -> (psiElement as? KtClassOrObject)?.primaryConstructor
-                        else -> null
+                fun PsiElement.getCallableDeclaration(): KtCallableDeclaration? = when (this) {
+                    is KtCallableDeclaration -> if (this is KtFunction) null else this
+                    is KtPropertyAccessor -> property
+                    else -> null
+                }
+
+                when (descriptor) {
+                    is PropertyGetterDescriptor -> {
+                        if (valueParametersFromDescriptor.isEmpty() && index == 0) {
+                            getNonErrorMethodParameterType(descriptor.correspondingProperty) {
+                                psiElement?.getCallableDeclaration()?.receiverTypeReference
+                            }
+                        } else {
+                            lazyType()
+                        }
                     }
 
-                    getNonErrorType(
-                        parameterDescriptor.type, METHOD_PARAMETER_TYPE,
-                        ktTypeProvider = {
-                            if (sourceElement == null) return@getNonErrorType null
-
-                            if (sourceElement.hasDeclaredReturnType() && isContinuationParameter(parameterDescriptor)) {
-                                val continuationTypeFqName = StandardNames.CONTINUATION_INTERFACE_FQ_NAME
-                                val functionReturnType = sourceElement.typeReference!!.text
-                                KtPsiFactory(kaptContext.project).createType("$continuationTypeFqName<$functionReturnType>")
-                            } else {
-                                sourceElement.valueParameters.getOrNull(index)?.typeReference
+                    is PropertySetterDescriptor -> when {
+                        valueParametersFromDescriptor.size != 1 -> lazyType()
+                        index == 0 && descriptor.extensionReceiverParameter != null ->
+                            getNonErrorMethodParameterType(descriptor.extensionReceiverParameter!!) {
+                                psiElement?.getCallableDeclaration()?.receiverTypeReference
                             }
-                        },
-                        ifNonError = { lazyType() })
-                } else {
-                    lazyType()
+                        index == (if (descriptor.extensionReceiverParameter == null) 0 else 1) -> {
+                            getNonErrorMethodParameterType(valueParametersFromDescriptor[0]) {
+                                psiElement?.getCallableDeclaration()?.typeReference
+                            }
+                        }
+                        else -> lazyType()
+                    }
+
+                    is FunctionDescriptor -> {
+                        val extensionReceiverParameter = descriptor.extensionReceiverParameter
+                        val offset = if (extensionReceiverParameter == null) 0 else 1
+                        if (extensionReceiverParameter != null && index == 0) {
+                            getNonErrorMethodParameterType(extensionReceiverParameter) {
+                                (psiElement as? KtCallableDeclaration)?.receiverTypeReference
+                            }
+                        } else if (valueParametersFromDescriptor.size + offset == parameters.size) {
+                            val parameterDescriptor = valueParametersFromDescriptor[index - offset]
+                            val sourceElement = when {
+                                psiElement is KtFunction -> psiElement
+                                descriptor is ConstructorDescriptor && descriptor.isPrimary -> (psiElement as? KtClassOrObject)?.primaryConstructor
+                                else -> null
+                            }
+                            getNonErrorMethodParameterType(parameterDescriptor) {
+                                if (sourceElement == null) return@getNonErrorMethodParameterType null
+
+                                if (sourceElement.hasDeclaredReturnType() && isContinuationParameter(parameterDescriptor)) {
+                                    val continuationTypeFqName = StandardNames.CONTINUATION_INTERFACE_FQ_NAME
+                                    val functionReturnType = sourceElement.typeReference!!.text
+                                    KtPsiFactory(kaptContext.project).createType("$continuationTypeFqName<$functionReturnType>")
+                                } else {
+                                    sourceElement.valueParameters.getOrNull(index)?.typeReference
+                                }
+                            }
+                        } else {
+                            lazyType()
+                        }
+                    }
+
+                    else -> lazyType()
                 }
             })
 
@@ -1074,7 +1123,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         val containingCallable = descriptor.containingDeclaration
 
         return containingCallable.valueParameters.lastOrNull() == descriptor
-                && descriptor.name == CONTINUATION_PARAMETER_NAME
+                && (descriptor.name == CONTINUATION_PARAMETER_NAME || descriptor.name.asString() == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME)
                 && descriptor.source == SourceElement.NO_SOURCE
                 && descriptor.type.constructor.declarationDescriptor?.fqNameSafe == StandardNames.CONTINUATION_INTERFACE_FQ_NAME
     }
@@ -1175,7 +1224,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
                 seenAnnotations += it
             }
             val annotationTree = convertAnnotation(containingClass, annotation, packageFqName, annotationDescriptor) ?: return list
-            return list.prepend(annotationTree)
+            return list.append(annotationTree)
         }
 
         var annotations = visibleAnnotations?.fold(JavacList.nil<JCAnnotation>(), ::convertAndAdd) ?: JavacList.nil()

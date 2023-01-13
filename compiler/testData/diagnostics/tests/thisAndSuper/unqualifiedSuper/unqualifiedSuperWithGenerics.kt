@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 open class GenericBaseClass<T> {
     open fun foo(x: T): T = x

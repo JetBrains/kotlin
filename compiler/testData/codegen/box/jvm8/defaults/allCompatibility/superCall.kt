@@ -1,7 +1,5 @@
 // CHECK_BYTECODE_LISTING
 // FIR_IDENTICAL
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: questionable bytecode listing difference (open/final methods in final class)
 // !JVM_DEFAULT_MODE: all-compatibility
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8

@@ -236,6 +236,11 @@ open class FastMethodAnalyzer<V : Value>
         }
     }
 
+    /**
+     * Updates frame at the index [dest] with its old value if provided and previous control flow node frame [frame].
+     * Reuses old frame when possible and when [canReuse] is true.
+     * If updated, adds the frame to the queue
+     */
     private fun mergeControlFlowEdge(dest: Int, frame: Frame<V>, canReuse: Boolean = false) {
         val oldFrame = frames[dest]
         val changes = when {

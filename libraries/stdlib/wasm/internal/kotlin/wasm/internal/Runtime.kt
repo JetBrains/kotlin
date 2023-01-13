@@ -19,14 +19,10 @@ internal fun unsafeRawMemoryToWasmCharArray(srcAddr: Int, dstOffset: Int, dstLen
     }
 }
 
-// Returns a pointer into a temporary scratch segment in the raw wasm memory. Aligned by 4.
-// Note: currently there is single such segment for a whole wasm module, so use with care.
+// Returns starting address of unused linear memory.
 @ExcludedFromCodegen
-internal fun unsafeGetScratchRawMemory(sizeBytes: Int): Int =
-    implementedAsIntrinsic
-
-@ExcludedFromCodegen
-internal fun unsafeGetScratchRawMemorySize(): Int =
+@PublishedApi
+internal fun unsafeGetScratchRawMemory(): Int =
     implementedAsIntrinsic
 
 // Assumes there is enough space at the destination, fails with wasm trap otherwise.
@@ -81,3 +77,43 @@ internal class Void private constructor()
 @WasmOp(WasmOp.DROP)
 internal fun consumeAnyIntoVoid(a: Any?): Void =
     implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeBooleanIntoVoid(a: Boolean): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeByteIntoVoid(a: Byte): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeShortIntoVoid(a: Short): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeCharIntoVoid(a: Char): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeIntIntoVoid(a: Int): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeLongIntoVoid(a: Long): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeFloatIntoVoid(a: Float): Void =
+    implementedAsIntrinsic
+
+@WasmOp(WasmOp.DROP)
+internal fun consumeDoubleIntoVoid(a: Double): Void =
+    implementedAsIntrinsic
+
+@ExcludedFromCodegen
+internal fun stringGetPoolSize(): Int =
+    implementedAsIntrinsic
+
+// This initializer is a special case in FieldInitializersLowering
+@EagerInitialization
+internal val stringPool: Array<String?> = arrayOfNulls(stringGetPoolSize())

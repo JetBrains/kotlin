@@ -8,6 +8,7 @@ package org.jetbrains.buildInfo
 import org.jetbrains.report.*
 import org.jetbrains.report.json.*
 
+@JsExport
 data class Build(val buildNumber: String, val startTime: String, val finishTime: String, val branch: String,
                  val commits: String, val failuresNumber: Int) {
 

@@ -53,7 +53,11 @@ private fun specificFeaturesForTests(): Map<LanguageFeature, LanguageFeature.Sta
 fun parseLanguageVersionSettingsOrDefault(directiveMap: Directives): CompilerTestLanguageVersionSettings =
     parseLanguageVersionSettings(directiveMap) ?: defaultLanguageVersionSettings()
 
-fun parseLanguageVersionSettings(directives: Directives): CompilerTestLanguageVersionSettings? {
+@JvmOverloads
+fun parseLanguageVersionSettings(
+    directives: Directives,
+    extraLanguageFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap()
+): CompilerTestLanguageVersionSettings? {
     val apiVersionString = directives[API_VERSION_DIRECTIVE]
     val languageFeaturesString = directives[LANGUAGE_DIRECTIVE]
 
@@ -81,7 +85,7 @@ fun parseLanguageVersionSettings(directives: Directives): CompilerTestLanguageVe
 
     val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
 
-    val languageFeatures = languageFeaturesString?.let(::collectLanguageFeatureMap).orEmpty()
+    val languageFeatures = languageFeaturesString?.let(::collectLanguageFeatureMap).orEmpty() + extraLanguageFeatures
 
     return CompilerTestLanguageVersionSettings(languageFeatures, apiVersion, languageVersion, mapOf(*analysisFlags.toTypedArray()))
 }

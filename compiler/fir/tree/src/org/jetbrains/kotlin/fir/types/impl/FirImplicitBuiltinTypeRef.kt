@@ -43,6 +43,10 @@ sealed class FirImplicitBuiltinTypeRef(
         return this
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Replacing annotations in FirImplicitBuiltinTypeRef is not supported")
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef {
         return this
     }
@@ -71,6 +75,10 @@ class FirImplicitAnnotationTypeRef(
 class FirImplicitBooleanTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Boolean)
+
+class FirImplicitNumberTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Number)
 
 class FirImplicitByteTypeRef(
     source: KtSourceElement?
@@ -124,6 +132,14 @@ class FirImplicitThrowableTypeRef(
     source: KtSourceElement?
 ) : FirImplicitBuiltinTypeRef(source, StandardClassIds.Throwable)
 
+class FirImplicitCharSequenceTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.CharSequence)
+
+class FirImplicitCharIteratorTypeRef(
+    source: KtSourceElement?
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.CharIterator)
+
 class FirImplicitKPropertyTypeRef(
     source: KtSourceElement?,
     typeArgument: ConeTypeProjection
@@ -171,10 +187,9 @@ class FirImplicitKMutableProperty2TypeRef(
     arrayOf(dispatchReceiverTypeArgument, extensionReceiverTypeArgument, propertyTypeArgument)
 )
 
-fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): FirImplicitBuiltinTypeRef {
+fun FirImplicitBuiltinTypeRef.withNewSource(newSource: KtSourceElement?): FirImplicitBuiltinTypeRef {
     val source = source ?: return this
-    if (source.kind == kind) return this
-    val newSource = source.fakeElement(kind)
+    if (source.kind == newSource?.kind) return this
     return when (this) {
         is FirImplicitUnitTypeRef -> FirImplicitUnitTypeRef(newSource)
         is FirImplicitAnyTypeRef -> FirImplicitAnyTypeRef(newSource)
@@ -183,6 +198,7 @@ fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): Fir
         is FirImplicitAnnotationTypeRef -> FirImplicitAnnotationTypeRef(newSource)
         is FirImplicitBooleanTypeRef -> FirImplicitBooleanTypeRef(newSource)
         is FirImplicitByteTypeRef -> FirImplicitByteTypeRef(newSource)
+        is FirImplicitNumberTypeRef -> FirImplicitNumberTypeRef(newSource)
         is FirImplicitShortTypeRef -> FirImplicitShortTypeRef(newSource)
         is FirImplicitIntTypeRef -> FirImplicitIntTypeRef(newSource)
         is FirImplicitLongTypeRef -> FirImplicitLongTypeRef(newSource)
@@ -195,6 +211,8 @@ fun FirImplicitBuiltinTypeRef.withFakeSource(kind: KtFakeSourceElementKind): Fir
         is FirImplicitCharTypeRef -> FirImplicitCharTypeRef(newSource)
         is FirImplicitStringTypeRef -> FirImplicitStringTypeRef(newSource)
         is FirImplicitThrowableTypeRef -> FirImplicitThrowableTypeRef(newSource)
+        is FirImplicitCharSequenceTypeRef -> FirImplicitCharSequenceTypeRef(newSource)
+        is FirImplicitCharIteratorTypeRef -> FirImplicitCharIteratorTypeRef(newSource)
         is FirImplicitKPropertyTypeRef -> FirImplicitKPropertyTypeRef(
             newSource,
             typeArgument = type.typeArguments[0]

@@ -15,6 +15,7 @@ import org.gradle.api.tasks.testing.TestResult.ResultType.*
 import org.gradle.internal.operations.OperationIdentifier
 import org.gradle.process.internal.ExecHandle
 import org.jetbrains.kotlin.gradle.internal.LogType
+import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.testing.KotlinTestFailure
 import org.jetbrains.kotlin.gradle.utils.LegacyTestDescriptorInternal
@@ -35,7 +36,8 @@ data class TCServiceMessagesClientSettings(
 internal open class TCServiceMessagesClient(
     private val results: TestResultProcessor,
     val settings: TCServiceMessagesClientSettings,
-    val log: Logger
+    val log: Logger,
+    val testReporter: MppTestReportHelper,
 ) : ServiceMessageParserCallback {
     lateinit var rootOperationId: OperationIdentifier
     var afterMessage = false
@@ -155,7 +157,8 @@ internal open class TCServiceMessagesClient(
     }
 
     private fun TestNode.failure(
-        message: TestFailed
+        message: TestFailed,
+        isAssertionFailure: Boolean = true,
     ) {
         hasFailures = true
 
@@ -173,18 +176,16 @@ internal open class TCServiceMessagesClient(
         val parsedStackTrace = settings.stackTraceParser(stacktrace)
 
         val failMessage = parsedStackTrace?.message ?: message.failureMessage
-        results.failure(
-            descriptor.id,
-            KotlinTestFailure(
-                failMessage?.let { extractExceptionClassName(it) }
-                    ?: "Unknown",
-                failMessage,
-                stacktrace,
-                patchStackTrace(this, parsedStackTrace?.stackTrace),
-                message.expected,
-                message.actual
-            )
+        val exceptionClassName = failMessage?.let { extractExceptionClassName(it) } ?: "Unknown"
+        val rawFailure = KotlinTestFailure(
+            exceptionClassName,
+            failMessage,
+            stacktrace,
+            patchStackTrace(this, parsedStackTrace?.stackTrace),
+            message.expected,
+            message.actual,
         )
+        testReporter.reportFailure(results, descriptor.id, rawFailure, isAssertionFailure)
     }
 
     private fun extractExceptionClassName(message: String): String =
@@ -527,7 +528,7 @@ internal open class TCServiceMessagesClient(
                     if (currentLeaf is TestNode) {
                         currentTest = currentLeaf
                         output.append(currentLeaf.allOutput)
-                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, null as Throwable?))
+                        currentLeaf.failure(TestFailed(currentLeaf.cleanName, null as Throwable?), false)
                     }
 
                     close(ts, currentLeaf.localId)

@@ -69,6 +69,9 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: MutableMap<KtElement, FirElement>) {
         cacheElement(constExpression, data)
+        constExpression.annotations.forEach {
+            it.accept(this, data)
+        }
         // KtPrefixExpression(-, KtConstExpression(n)) is represented as FirConstExpression(-n) with converted constant value.
         // If one queries FIR for KtConstExpression, we still return FirConstExpression(-n) even though its source is KtPrefixExpression.
         // Here, we cache FirConstExpression(n) for KtConstExpression(n) to make everything natural and intuitive!
@@ -113,6 +116,7 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                         it.kind == KtFakeSourceElementKind.DesugaredPrefixNameReference ||
                         it.kind == KtFakeSourceElementKind.DesugaredPostfixNameReference ||
                         it.kind == KtFakeSourceElementKind.SmartCastExpression ||
+                        it.kind == KtFakeSourceElementKind.DanglingModifierList ||
                         it.isSourceForCompoundAccess(element)
             }.psi as? KtElement
             ?: return

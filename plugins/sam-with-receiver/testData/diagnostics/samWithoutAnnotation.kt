@@ -1,4 +1,4 @@
-// FILE: SamConstructor.kt
+// FILE: Sam.java
 public interface Sam {
     String run(String a, String b);
 }
@@ -10,9 +10,9 @@ fun test() {
         ""
     }
 
-    Sam <!ARGUMENT_TYPE_MISMATCH!>{ b ->
-        val a = this<!UNRESOLVED_LABEL!>@Sam<!>
-        System.out.<!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(a)
+    Sam <!TYPE_MISMATCH!>{ <!EXPECTED_PARAMETERS_NUMBER_MISMATCH!>b<!> ->
+        val a = <!NO_THIS!>this@Sam<!>
+        System.out.<!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>)
         ""
     }<!>
 }

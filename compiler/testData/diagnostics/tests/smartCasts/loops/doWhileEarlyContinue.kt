@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun x(): Boolean { return true }
 
 fun y(): Boolean { return false }

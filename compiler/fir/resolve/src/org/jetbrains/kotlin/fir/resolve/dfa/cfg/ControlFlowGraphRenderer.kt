@@ -26,27 +26,12 @@ class FirControlFlowGraphRenderVisitor(
         private const val BLUE = "blue"
 
         private val DIGIT_REGEX = """\d""".toRegex()
-
-        private val EDGE_STYLE = EnumMap(
-            mapOf(
-                EdgeKind.Forward to "",
-                EdgeKind.DeadForward to "[style=dotted]",
-                EdgeKind.CfgForward to "[color=green]",
-                EdgeKind.DfgForward to "[color=red]",
-                EdgeKind.CfgBackward to "[color=green style=dashed]",
-                EdgeKind.DeadBackward to "[color=green style=dotted]"
-            )
-        )
     }
 
     private val printer = Printer(builder)
 
     private var nodeCounter = 0
     private var clusterCounter = 0
-    private val indices = mutableMapOf<CFGNode<*>, Int>()
-
-    private val topLevelGraphs = mutableSetOf<ControlFlowGraph>()
-    private val allGraphs = mutableSetOf<ControlFlowGraph>()
 
     override fun visitFile(file: FirFile) {
         var name = file.name.replace(".", "_")
@@ -61,28 +46,14 @@ class FirControlFlowGraphRenderVisitor(
             .println("edge [penwidth=2]")
             .println()
         visitElement(file)
-
-        for (topLevelGraph in topLevelGraphs) {
-            printer.renderNodes(topLevelGraph)
-            printer.renderEdges(topLevelGraph)
-            printer.println()
-        }
-
         printer
             .popIndent()
             .println("}")
     }
 
-    private fun ControlFlowGraph.collectNodes() {
-        for (node in nodes) {
-            indices[node] = nodeCounter++
-        }
-    }
-
-    private fun Printer.renderNodes(graph: ControlFlowGraph) {
+    private fun Printer.renderNodes(nodes: Map<CFGNode<*>, Int>) {
         var color = RED
-        val sortedNodes = graph.sortedNodes()
-        for (node in sortedNodes) {
+        for ((node, index) in nodes) {
             if (node is EnterNodeMarker) {
                 enterCluster(color)
                 color = BLUE
@@ -96,81 +67,53 @@ class FirControlFlowGraphRenderVisitor(
             }
             attributes += "label=\"$label\""
 
-            fun fillColor(color: String) {
+            when {
+                node.isDead -> "gray"
+                node == node.owner.enterNode || node == node.owner.exitNode -> "red"
+                node is UnionNodeMarker -> "yellow"
+                else -> null
+            }?.let {
                 attributes += "style=\"filled\""
-                attributes += "fillcolor=$color"
+                attributes += "fillcolor=$it"
             }
-
-            if (node == node.owner.enterNode || node == node.owner.exitNode) {
-                fillColor("red")
-            }
-            if (node.isDead) {
-                fillColor("gray")
-            } else if (node is UnionFunctionCallArgumentsNode) {
-                fillColor("yellow")
-            }
-            println(indices.getValue(node), attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
+            println(index, attributes.joinToString(separator = " ", prefix = " [", postfix = "];"))
             if (node is ExitNodeMarker) {
                 exitCluster()
             }
         }
     }
 
-    private fun Printer.renderEdges(graph: ControlFlowGraph) {
-        for (node in graph.nodes) {
-            if (node.followingNodes.isEmpty()) continue
+    private val Edge.style: String?
+        get() = listOfNotNull(
+            when {
+                !kind.usedInDfa && !kind.usedInDeadDfa -> "color=green"
+                !kind.usedInCfa -> "color=red"
+                else -> null
+            },
+            when {
+                kind.isDead -> "style=dotted"
+                kind.isBack -> "style=dashed"
+                else -> null
+            },
+            label.label?.let { "label=\"$it\"" }
+        ).ifEmpty { null }?.joinToString(prefix = "[", separator = " ", postfix = "]")
 
-            fun renderEdges(kind: EdgeKind) {
-                val edges = node.followingNodes.filter { node.outgoingEdges.getValue(it).kind == kind }
-                if (edges.isEmpty()) return
-
-                fun renderEdgesWithoutLabel(edges: List<CFGNode<*>>) {
-                    print(
-                        indices.getValue(node),
-                        EDGE,
-                        edges.joinToString(prefix = "{", postfix = "}", separator = " ") { indices.getValue(it).toString() }
-                    )
-                    EDGE_STYLE.getValue(kind).takeIf { it.isNotBlank() }?.let { printWithNoIndent(" $it") }
-                    printlnWithNoIndent(";")
-                }
-
-                if (edges.any { node.outgoingEdges[it]?.label?.label != null }) {
-                    val edgeGroups = edges.groupBy { node.outgoingEdges[it]?.label?.label != null }
-                    edgeGroups[false]?.let { renderEdgesWithoutLabel(it) }
-                    for (edge in edgeGroups[true]!!) {
-                        print(
-                            indices.getValue(node),
-                            EDGE,
-                            "{", indices.getValue(edge), "}"
-                        )
-                        EDGE_STYLE.getValue(kind).takeIf { it.isNotBlank() }?.let { printWithNoIndent(" $it") }
-                        print("[label=${node.outgoingEdges[edge]!!.label}]")
-                        printlnWithNoIndent(";")
-                    }
-                } else {
-                    renderEdgesWithoutLabel(edges)
-                }
-            }
-
-            for (kind in EdgeKind.values()) {
-                renderEdges(kind)
+    private fun Printer.renderEdges(nodes: Map<CFGNode<*>, Int>) {
+        for ((node, index) in nodes) {
+            for ((style, group) in node.followingNodes.groupBy { node.edgeTo(it).style }.entries.sortedBy { it.key }) {
+                val mappedGroup = group.map { nodes.getValue(it) }.sorted()
+                print(index, EDGE, mappedGroup.joinToString(prefix = "{", postfix = "}", separator = " "))
+                style?.let { printWithNoIndent(" $it") }
+                printlnWithNoIndent(";")
             }
 
             if (node is CFGNodeWithSubgraphs<*>) {
-                val subNodes = node.subGraphs
+                val subNodes = node.subGraphs.mapNotNull { nodes[it.enterNode] }.sorted()
                 if (subNodes.isNotEmpty()) {
-                    print(
-                        indices.getValue(node),
-                        EDGE,
-                        subNodes.mapNotNull { indices[it.enterNode] }.joinToString(prefix = "{", postfix = "}", separator = " ")
-                    )
-                    printWithNoIndent(" [style=dashed]")
-                    printlnWithNoIndent(";")
+                    print(index, EDGE, subNodes.joinToString(prefix = "{", postfix = "}", separator = " "))
+                    printlnWithNoIndent(" [style=dashed];")
                 }
             }
-        }
-        for (subGraph in graph.subGraphs) {
-            renderEdges(subGraph)
         }
     }
 
@@ -180,19 +123,15 @@ class FirControlFlowGraphRenderVisitor(
 
     override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
         val controlFlowGraph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
-        initializeNodes(controlFlowGraph)
-    }
+        if (controlFlowGraph.isSubGraph) return
 
-    private fun initializeNodes(graph: ControlFlowGraph) {
-        if (graph in allGraphs) return
-        graph.collectNodes()
-        if (graph.owner == null) {
-            topLevelGraphs += graph
-        }
-        allGraphs += graph
-        for (subGraph in graph.subGraphs) {
-            initializeNodes(subGraph)
-        }
+        // TODO: nodes are already in a topological order, but grouping nodes into clusters requires something more.
+        //  But what exactly? And is there a way to do `renderNodes` differently so that any topological order is ok?
+        val nodes = DFS.topologicalOrder(listOf(controlFlowGraph.enterNode)) { it.followingNodes }
+            .associateWithTo(linkedMapOf()) { nodeCounter++ }
+        printer.renderNodes(nodes)
+        printer.renderEdges(nodes)
+        printer.println()
     }
 
     private fun Printer.enterCluster(color: String) {
@@ -204,31 +143,5 @@ class FirControlFlowGraphRenderVisitor(
     private fun Printer.exitCluster() {
         popIndent()
         println("}")
-    }
-}
-
-private fun ControlFlowGraph.sortedNodes(): List<CFGNode<*>> {
-    val nodesToSort = nodes.filterTo(mutableListOf()) { it != enterNode }
-    val graphs = mutableSetOf(this)
-    forEachSubGraph {
-        nodesToSort += it.nodes
-        graphs += it
-    }
-
-    val topologicalOrder = DFS.topologicalOrder(nodesToSort) {
-        val result = if (it !is WhenBranchConditionExitNode || it.followingNodes.size < 2) {
-            it.followingNodes
-        } else {
-            it.followingNodes.sortedBy { node -> if (node is BlockEnterNode) 1 else 0 }
-        }.filter { node -> node.owner in graphs }
-        result
-    }
-    return listOf(enterNode) + topologicalOrder
-}
-
-private fun ControlFlowGraph.forEachSubGraph(block: (ControlFlowGraph) -> Unit) {
-    for (subGraph in subGraphs) {
-        block(subGraph)
-        subGraph.forEachSubGraph(block)
     }
 }

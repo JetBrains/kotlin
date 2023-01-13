@@ -14,7 +14,7 @@ FILE: receiverInjection.kt
         R|<local>/b1|.<Unresolved name: plus>#(R|<local>/b2|)
         R|/injectAlgebra|<R|A|>()
         (this@R|/test_1|, R|<local>/a1|).R|SubstitutionOverride</Algebra.plus: R|A|>|(R|<local>/a2|)
-        (this@R|/test_1|, R|<local>/b1|).<None of the following candidates is applicable because of receiver type mismatch: [/Algebra.plus]>#(R|<local>/b2|)
+        (this@R|/test_1|, R|<local>/b1|).R|SubstitutionOverride</Algebra.plus: R|A|><None of the following candidates is applicable because of receiver type mismatch: [/Algebra.plus]>#|(R|<local>/b2|)
         R|/injectAlgebra|<R|B|>()
         (this@R|/test_1|, R|<local>/a1|).R|SubstitutionOverride</Algebra.plus: R|A|>|(R|<local>/a2|)
         (this@R|/test_1|, R|<local>/b1|).R|SubstitutionOverride</Algebra.plus: R|B|>|(R|<local>/b2|)

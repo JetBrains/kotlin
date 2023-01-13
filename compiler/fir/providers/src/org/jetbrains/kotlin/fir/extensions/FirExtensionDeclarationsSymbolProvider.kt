@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.ownerGenerator
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.impl.groupExtensionsByName
+import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
+import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -59,17 +58,6 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
             extensions.flatGroupBy { it.topLevelClassIdsCache.getValue() }
         }
 
-    private val extensionsByNestedClassifierClassId: FirCache<ClassId, Map<ClassId, List<FirDeclarationGenerationExtension>>, Nothing?> =
-        session.firCachesFactory.createCache cache@{ outerClassId, _ ->
-            val outerClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(outerClassId) as? FirClassSymbol<*>
-                ?: return@cache emptyMap()
-            session.groupExtensionsByName(
-                outerClassSymbol.fir,
-                nameExtractor = { nestedClassifierNamesCache.getValue(outerClassSymbol) },
-                nameTransformer = { outerClassId.createNestedClassId(it) }
-            )
-        }
-
     private val extensionsByTopLevelCallableId: FirLazyValue<Map<CallableId, List<FirDeclarationGenerationExtension>>, Nothing?> =
         session.firCachesFactory.createLazyValue {
             extensions.flatGroupBy { it.topLevelCallableIdsCache.getValue() }
@@ -78,21 +66,34 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
     // ------------------------------------------ generators ------------------------------------------
 
     private fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
-        val matchedExtensions = when {
-            classId.isNestedClass -> extensionsByNestedClassifierClassId.getValue(classId.outerClassId!!)[classId]
-            else -> extensionsByTopLevelClassId.getValue()[classId]
-        } ?: return null
-        val generatedClasses = matchedExtensions
-            .mapNotNull { generatorExtension ->
-                generatorExtension.generateClassLikeDeclaration(classId)?.also { symbol ->
-                    symbol.fir.ownerGenerator = generatorExtension
+        return when {
+            classId.isLocal -> null
+            classId.isNestedClass -> {
+                val owner = session.symbolProvider.getClassLikeSymbolByClassId(classId.outerClassId!!) as? FirClassSymbol<*> ?: return null
+                val nestedClassifierScope = session.nestedClassifierScope(owner.fir) ?: return null
+                var result: FirClassLikeSymbol<*>? = null
+                nestedClassifierScope.processClassifiersByName(classId.shortClassName) {
+                    if (it is FirClassLikeSymbol<*>) {
+                        result = it
+                    }
+                }
+                result
+            }
+            else -> {
+                val matchedExtensions = extensionsByTopLevelClassId.getValue()[classId] ?: return null
+                val generatedClasses = matchedExtensions
+                    .mapNotNull { generatorExtension ->
+                        generatorExtension.generateTopLevelClassLikeDeclaration(classId)?.also { symbol ->
+                            symbol.fir.ownerGenerator = generatorExtension
+                        }
+                    }
+                    .onEach { it.fir.validate() }
+                when (generatedClasses.size) {
+                    0 -> null
+                    1 -> generatedClasses.first()
+                    else -> error("Multiple plugins generated classes with same classId $classId\n${generatedClasses.joinToString("\n") { it.fir.render() }}")
                 }
             }
-            .onEach { it.fir.validate() }
-        return when (generatedClasses.size) {
-            0 -> null
-            1 -> generatedClasses.first()
-            else -> error("Multiple plugins generated classes with same classId $classId\n${generatedClasses.joinToString("\n") { it.fir.render() }}")
         }
     }
 

@@ -20,6 +20,10 @@ object FirStubStatement : FirPureAbstractElement(), FirStatement {
     override val annotations: List<FirAnnotation>
         get() = emptyList()
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Mutating annotations of FirStubStatement is not supported")
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirStatement {
         return this
     }

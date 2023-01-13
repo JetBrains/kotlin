@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // WITH_STDLIB
 // FILE: test.kt
@@ -6,6 +7,7 @@ import kotlinx.serialization.encoding.*
 
 enum class SimpleEnum { A, B }
 
+// Annotated enums do not require @Serializable if runtime has proper factory funciton (runtime ver. >= 1.5.0)
 <!EXPLICIT_SERIALIZABLE_IS_REQUIRED!>enum<!> class MarkedNameEnum { @SerialName("a") A, B}
 
 @Serializable

@@ -39,12 +39,12 @@ fun bar(o: Any) {
 
 fun baz(o: Boolean?) {
     if (o ?: false) {
-        o<!UNSAFE_CALL!>.<!>hashCode()
+        o.hashCode()
     }
     if (o ?: true) {
 
     }
     else {
-        o<!UNSAFE_CALL!>.<!>hashCode()
+        o.hashCode()
     }
 }

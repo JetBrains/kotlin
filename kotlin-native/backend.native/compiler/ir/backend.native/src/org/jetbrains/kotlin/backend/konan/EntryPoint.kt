@@ -22,14 +22,15 @@ import org.jetbrains.kotlin.name.Name
 
 internal object DECLARATION_ORIGIN_ENTRY_POINT : IrDeclarationOriginImpl("ENTRY_POINT")
 
-internal fun makeEntryPoint(context: Context): IrFunction {
+internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction {
+    val context = generationState.context
     val actualMain = context.ir.symbols.entryPoint!!.owner
     // TODO: Do we need to do something with the offsets if <main> is in a cached library?
-    val startOffset = if (context.llvmModuleSpecification.containsDeclaration(actualMain))
+    val startOffset = if (generationState.llvmModuleSpecification.containsDeclaration(actualMain))
         actualMain.startOffset
     else
         SYNTHETIC_OFFSET
-    val endOffset = if (context.llvmModuleSpecification.containsDeclaration(actualMain))
+    val endOffset = if (generationState.llvmModuleSpecification.containsDeclaration(actualMain))
         actualMain.endOffset
     else
         SYNTHETIC_OFFSET

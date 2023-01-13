@@ -27,9 +27,7 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.oldFashionedDescription
-import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtReferenceExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
@@ -177,15 +175,17 @@ object CheckerTestUtil {
         //noinspection unchecked
 
         val factoryListForDiagnosticsOnExpression = listOf(
-            BindingContext.EXPRESSION_TYPE_INFO to DebugInfoDiagnosticFactory1.EXPRESSION_TYPE,
-            BindingContext.SMARTCAST to DebugInfoDiagnosticFactory0.SMARTCAST,
-            BindingContext.IMPLICIT_RECEIVER_SMARTCAST to DebugInfoDiagnosticFactory0.IMPLICIT_RECEIVER_SMARTCAST,
-            BindingContext.SMARTCAST_NULL to DebugInfoDiagnosticFactory0.CONSTANT,
-            BindingContext.LEAKING_THIS to DebugInfoDiagnosticFactory0.LEAKING_THIS,
-            BindingContext.IMPLICIT_EXHAUSTIVE_WHEN to DebugInfoDiagnosticFactory0.IMPLICIT_EXHAUSTIVE
+            BindingContext.EXPRESSION_TYPE_INFO to listOf(DebugInfoDiagnosticFactory1.EXPRESSION_TYPE),
+            BindingContext.SMARTCAST to listOf(DebugInfoDiagnosticFactory0.SMARTCAST),
+            BindingContext.IMPLICIT_RECEIVER_SMARTCAST to listOf(DebugInfoDiagnosticFactory0.IMPLICIT_RECEIVER_SMARTCAST),
+            BindingContext.SMARTCAST_NULL to listOf(DebugInfoDiagnosticFactory0.CONSTANT),
+            BindingContext.LEAKING_THIS to listOf(DebugInfoDiagnosticFactory0.LEAKING_THIS),
+            BindingContext.IMPLICIT_EXHAUSTIVE_WHEN to listOf(DebugInfoDiagnosticFactory0.IMPLICIT_EXHAUSTIVE)
         )
 
-        val factoryListForDiagnosticsOnCall = listOf(BindingContext.RESOLVED_CALL to DebugInfoDiagnosticFactory1.CALL)
+        val factoryListForDiagnosticsOnCall = listOf(
+            BindingContext.RESOLVED_CALL to listOf(DebugInfoDiagnosticFactory1.CALL, DebugInfoDiagnosticFactory1.CALLABLE_OWNER)
+        )
 
         renderDiagnosticsByFactoryList(
             factoryListForDiagnosticsOnExpression, root, bindingContext, configuration,
@@ -195,13 +195,13 @@ object CheckerTestUtil {
         renderDiagnosticsByFactoryList(
             factoryListForDiagnosticsOnCall, root, bindingContext, configuration,
             dataFlowValueFactory, moduleDescriptor, diagnosedRanges, debugAnnotations
-        ) { it.callElement as? KtExpression }
+        ) { it.callElement }
 
         return debugAnnotations
     }
 
     private fun <T, K> renderDiagnosticsByFactoryList(
-        factoryList: List<Pair<WritableSlice<out T, out K>, DebugInfoDiagnosticFactory>>,
+        factoryList: List<Pair<WritableSlice<out T, out K>, List<DebugInfoDiagnosticFactory>>>,
         root: PsiElement,
         bindingContext: BindingContext,
         configuration: DiagnosticsRenderingConfiguration,
@@ -209,23 +209,25 @@ object CheckerTestUtil {
         moduleDescriptor: ModuleDescriptorImpl?,
         diagnosedRanges: Map<IntRange, MutableSet<String>>?,
         debugAnnotations: MutableList<ActualDiagnostic>,
-        toExpression: (T) -> KtExpression? = { it as? KtExpression }
+        elementProvider: (T) -> KtElement? = { it as? KtElement }
     ) {
-        for ((context, factory) in factoryList) {
+        for ((context, factories) in factoryList) {
             for ((element, _) in bindingContext.getSliceContents(context)) {
-                renderDiagnostics(
-                    factory,
-                    toExpression(element) ?: continue,
-                    root, bindingContext, configuration, dataFlowValueFactory, moduleDescriptor, diagnosedRanges,
-                    debugAnnotations
-                )
+                for (factory in factories) {
+                    renderDiagnostics(
+                        factory,
+                        elementProvider(element) ?: continue,
+                        root, bindingContext, configuration, dataFlowValueFactory, moduleDescriptor, diagnosedRanges,
+                        debugAnnotations
+                    )
+                }
             }
         }
     }
 
     private fun renderDiagnostics(
         factory: DebugInfoDiagnosticFactory,
-        expression: KtExpression,
+        element: KtElement,
         root: PsiElement,
         bindingContext: BindingContext,
         configuration: DiagnosticsRenderingConfiguration,
@@ -237,11 +239,11 @@ object CheckerTestUtil {
         if (factory !is DiagnosticFactory<*>) return
 
         val needRender = !factory.withExplicitDefinitionOnly
-                || diagnosedRanges?.get(expression.startOffset..expression.endOffset)?.contains(factory.name) == true
+                || diagnosedRanges?.get(element.startOffset..element.endOffset)?.contains(factory.name) == true
 
-        if (PsiTreeUtil.isAncestor(root, expression, false) && needRender) {
+        if (PsiTreeUtil.isAncestor(root, element, false) && needRender) {
             val diagnostic = factory.createDiagnostic(
-                expression,
+                element,
                 bindingContext,
                 dataFlowValueFactory,
                 configuration.languageVersionSettings,

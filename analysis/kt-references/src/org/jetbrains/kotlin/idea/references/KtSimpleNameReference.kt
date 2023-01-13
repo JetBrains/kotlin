@@ -56,8 +56,6 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
     ): PsiElement =
         getKtReferenceMutateService().bindToFqName(this, fqName, shorteningMode, targetElement)
 
-    override fun getCanonicalText(): String = expression.text
-
     override val resolvesByNames: Collection<Name>
         get() {
             val element = element

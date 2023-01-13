@@ -1,19 +1,19 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +CustomEqualsInInlineClasses
+// LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
+// CHECK_BYTECODE_LISTING
 
 import java.lang.AssertionError
 import kotlin.math.abs
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC1(val x: Double) {
     fun equals(other: IC1): Boolean {
         return abs(x - other.x) < 0.5
     }
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC2(val x: Int) {
     override fun equals(other: Any?): Boolean {
         if (other !is IC2) {

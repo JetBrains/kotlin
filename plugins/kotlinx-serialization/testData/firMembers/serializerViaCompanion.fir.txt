@@ -101,13 +101,13 @@ FILE: serializerViaCompanion.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/buildClassSerialDescriptor|(String(Partially-Overridden), <L> = buildClassSerialDescriptor@fun R|kotlinx/serialization/descriptors/ClassSerialDescriptorBuilder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            public open override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/buildClassSerialDescriptor|(String(Partially-Overridden), <L> = buildClassSerialDescriptor@fun R|kotlinx/serialization/descriptors/ClassSerialDescriptorBuilder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 this@R|special/anonymous|.R|kotlinx/serialization/descriptors/ClassSerialDescriptorBuilder.element|(String(i), R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(i), Q|kotlinx/serialization/descriptors/PrimitiveKind.INT|))
             }
             )
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/PartiallyOverridden|): R|kotlin/Unit| {
+            public open override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/PartiallyOverridden|): R|kotlin/Unit| {
                 lval compositeOutput: R|kotlinx/serialization/encoding/CompositeEncoder| = R|<local>/encoder|.R|kotlinx/serialization/encoding/Encoder.beginStructure|(Q|com/example/PartiallyOverridden|.R|com/example/PartiallyOverridden.Companion.descriptor|)
                 R|<local>/compositeOutput|.R|kotlinx/serialization/encoding/CompositeEncoder.encodeIntElement|(Q|com/example/PartiallyOverridden|.R|com/example/PartiallyOverridden.Companion.descriptor|, Int(0), R|<local>/value|.R|com/example/PartiallyOverridden.i|.R|kotlin/Int.plus|(Int(10)))
                 R|<local>/compositeOutput|.R|kotlinx/serialization/encoding/CompositeEncoder.endStructure|(Q|com/example/PartiallyOverridden|.R|com/example/PartiallyOverridden.Companion.descriptor|)
@@ -137,7 +137,7 @@ FILE: serializerViaCompanion.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/PartiallyWithoutType| {
+            public open override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/PartiallyWithoutType| {
                 lval dec: R|kotlinx/serialization/encoding/CompositeDecoder| = R|<local>/decoder|.R|kotlinx/serialization/encoding/Decoder.beginStructure|(this@R|com/example/PartiallyWithoutType.Companion|.R|com/example/PartiallyWithoutType.Companion.descriptor|)
                 lvar iv: R|kotlin/Int?| = Null(null)
                 loop@while(Boolean(true)) {
@@ -186,14 +186,14 @@ FILE: serializerViaCompanion.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(FullyOverridden), Q|kotlinx/serialization/descriptors/PrimitiveKind.STRING|)
+            public open override val descriptor: R|kotlinx/serialization/descriptors/SerialDescriptor| = R|kotlinx/serialization/descriptors/PrimitiveSerialDescriptor|(String(FullyOverridden), Q|kotlinx/serialization/descriptors/PrimitiveKind.STRING|)
                 public get(): R|kotlinx/serialization/descriptors/SerialDescriptor|
 
-            public final override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/FullyOverridden|): R|kotlin/Unit| {
+            public open override fun serialize(encoder: R|kotlinx/serialization/encoding/Encoder|, value: R|com/example/FullyOverridden|): R|kotlin/Unit| {
                 R|<local>/encoder|.R|kotlinx/serialization/encoding/Encoder.encodeString|(<strcat>(String(i=), R|<local>/value|.R|com/example/FullyOverridden.i|))
             }
 
-            public final override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/FullyOverridden| {
+            public open override fun deserialize(decoder: R|kotlinx/serialization/encoding/Decoder|): R|com/example/FullyOverridden| {
                 lval i: R|kotlin/Int| = R|<local>/decoder|.R|kotlinx/serialization/encoding/Decoder.decodeString|().R|kotlin/text/substringAfter|(Char(=)).R|kotlin/text/toInt|()
                 ^deserialize R|com/example/FullyOverridden.FullyOverridden|(R|<local>/i|)
             }

@@ -85,8 +85,10 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
 ): KotlinJsTargetDsl {
     val existingTarget = getExistingTarget(name, compiler)
 
-    val compilerOrDefault = compiler
-        ?: existingTarget?.calculateJsCompilerType()
+    val kotlinJsCompilerType = (compiler
+        ?: existingTarget?.calculateJsCompilerType())
+
+    val compilerOrDefault = kotlinJsCompilerType
         ?: defaultJsCompilerType
 
     val targetName = getTargetName(name, compilerOrDefault)
@@ -111,7 +113,7 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
         ) as KotlinTargetPreset<KotlinJsTargetDsl>,
         configure
     ).also { target ->
-        warnAboutDeprecatedCompiler(target.project, compiler ?: compilerTypeFromProperties)
+        warnAboutDeprecatedCompiler(target.project, kotlinJsCompilerType ?: compilerTypeFromProperties)
     }
 }
 

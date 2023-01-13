@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 abstract class ControlFlowGraphVisitor<out R, in D> {
     abstract fun visitNode(node: CFGNode<*>, data: D): R
 
+    abstract fun <T> visitUnionNode(node: T, data: D): R where T : CFGNode<*>, T : UnionNodeMarker
+
     // ----------------------------------- Simple function -----------------------------------
 
     open fun visitFunctionEnterNode(node: FunctionEnterNode, data: D): R {
@@ -24,7 +26,7 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
 
     // ----------------------------------- Default arguments -----------------------------------
 
-    open fun visitExitDefaultArgumentsNode(node: ExitDefaultArgumentsNode, data: D): R {
+    open fun visitEnterValueParameterNode(node: EnterValueParameterNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -32,9 +34,17 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
+    open fun visitExitDefaultArgumentsNode(node: ExitDefaultArgumentsNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitExitValueParameterNode(node: ExitValueParameterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
     // ----------------------------------- Anonymous function -----------------------------------
 
-    open fun visitPostponedLambdaEnterNode(node: PostponedLambdaEnterNode, data: D): R {
+    open fun visitSplitPostponedLambdasNode(node: SplitPostponedLambdasNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -42,25 +52,17 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitUnionFunctionCallArgumentsNode(node: UnionFunctionCallArgumentsNode, data: D): R {
-        return visitNode(node, data)
-    }
-
     open fun visitMergePostponedLambdaExitsNode(node: MergePostponedLambdaExitsNode, data: D): R {
         return visitNode(node, data)
     }
 
-    open fun visitAnonymousFunctionExpressionExitNode(node: AnonymousFunctionExpressionExitNode, data: D): R {
+    open fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode, data: D): R {
         return visitNode(node, data)
     }
 
     // ----------------------------------- Classes -----------------------------------
 
     open fun visitAnonymousObjectEnterNode(node: AnonymousObjectEnterNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitAnonymousObjectExitNode(node: AnonymousObjectExitNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -80,9 +82,13 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    // ----------------------------------- Initialization -----------------------------------
+    // ----------------------------------- Scripts ------------------------------------------
 
-    open fun visitPartOfClassInitializationNode(node: PartOfClassInitializationNode, data: D): R {
+    open fun visitScriptEnterNode(node: ScriptEnterNode, data: D): R {
+        return visitNode(node, data)
+    }
+
+    open fun visitScriptExitNode(node: ScriptExitNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -94,6 +100,10 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
 
     open fun visitPropertyInitializerExitNode(node: PropertyInitializerExitNode, data: D): R {
         return visitNode(node, data)
+    }
+
+    open fun visitDelegateExpressionExitNode(node: DelegateExpressionExitNode, data: D): R {
+        return visitUnionNode(node, data)
     }
 
     // ----------------------------------- Field -----------------------------------
@@ -286,7 +296,7 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     // ----------------------------------- Check not null call -----------------------------------
 
     open fun visitCheckNotNullCallNode(node: CheckNotNullCallNode, data: D): R {
-        return visitNode(node, data)
+        return visitUnionNode(node, data)
     }
 
     // ----------------------------------- Resolvable call -----------------------------------
@@ -300,7 +310,7 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     }
 
     open fun visitFunctionCallNode(node: FunctionCallNode, data: D): R {
-        return visitNode(node, data)
+        return visitUnionNode(node, data)
     }
 
     open fun visitCallableReferenceNode(node: CallableReferenceNode, data: D): R {
@@ -312,11 +322,11 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     }
 
     open fun visitDelegatedConstructorCallNode(node: DelegatedConstructorCallNode, data: D): R {
-        return visitNode(node, data)
+        return visitUnionNode(node, data)
     }
 
     open fun visitStringConcatenationCallNode(node: StringConcatenationCallNode, data: D): R {
-        return visitNode(node, data)
+        return visitUnionNode(node, data)
     }
 
     open fun visitThrowExceptionNode(node: ThrowExceptionNode, data: D): R {
@@ -327,23 +337,11 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
         return visitNode(node, data)
     }
 
-    open fun visitContractDescriptionEnterNode(node: ContractDescriptionEnterNode, data: D): R {
-        return visitNode(node, data)
-    }
-
     open fun visitVariableDeclarationNode(node: VariableDeclarationNode, data: D): R {
         return visitNode(node, data)
     }
 
     open fun visitVariableAssignmentNode(node: VariableAssignmentNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitEnterContractNode(node: EnterContractNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitExitContractNode(node: ExitContractNode, data: D): R {
         return visitNode(node, data)
     }
 
@@ -378,14 +376,6 @@ abstract class ControlFlowGraphVisitor<out R, in D> {
     }
 
     // ----------------------------------- Other -----------------------------------
-
-    open fun visitAnnotationEnterNode(node: AnnotationEnterNode, data: D): R {
-        return visitNode(node, data)
-    }
-
-    open fun visitAnnotationExitNode(node: AnnotationExitNode, data: D): R {
-        return visitNode(node, data)
-    }
 
     open fun visitSmartCastExpressionExitNode(node: SmartCastExpressionExitNode, data: D): R {
         return visitNode(node, data)

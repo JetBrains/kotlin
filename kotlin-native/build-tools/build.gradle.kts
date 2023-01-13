@@ -12,25 +12,16 @@ plugins {
     groovy
     `kotlin-dsl`
     id("gradle-plugin-dependency-configuration")
+    id("org.jetbrains.kotlin.plugin.sam.with.receiver")
 }
 
 buildscript {
     val rootBuildDirectory by extra(project.file("../.."))
 
-    repositories {
-        project.bootstrapKotlinRepo?.let {
-            maven(url = it)
-        }
-    }
-
     apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
     dependencies {
         classpath(commonDependency("com.google.code.gson:gson"))
-        classpath("org.jetbrains.kotlin:kotlin-sam-with-receiver:${project.bootstrapKotlinVersion}")
     }
-}
-apply {
-    plugin("kotlin-sam-with-receiver")
 }
 
 val rootProperties = Properties().apply {

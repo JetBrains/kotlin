@@ -14,7 +14,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -38,7 +38,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -68,7 +68,13 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: kotlin/Int
+    receiverParameter: KtReceiverParameterSymbol:
+      annotationsList: []
+      origin: SOURCE
+      owningCallableSymbol: KtKotlinPropertySymbol(/A.y)
+      type: kotlin/Int
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -92,7 +98,13 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: y
   origin: SOURCE
-  receiverType: kotlin/Int
+  receiverParameter: KtReceiverParameterSymbol:
+    annotationsList: []
+    origin: SOURCE
+    owningCallableSymbol: KtKotlinPropertySymbol(/A.y)
+    type: kotlin/Int
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER

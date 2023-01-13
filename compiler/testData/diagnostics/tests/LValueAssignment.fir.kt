@@ -11,18 +11,18 @@ class C() : B() {
         this.x = 34
         this.b = 123
         super.b = 23
-        this.c = 34
-        super.c = 3535 //repeat for 'c'
+        this.<!VAL_REASSIGNMENT!>c<!> = 34
+        super.<!VAL_REASSIGNMENT!>c<!> = 3535 //repeat for 'c'
 
         <!VARIABLE_EXPECTED!>getInt()<!> = 12
     }
 
     fun foo1(c: C) {
-        super.c = 34
+        super.<!VAL_REASSIGNMENT!>c<!> = 34
     }
 
     fun bar(c: C) {
-        this = c  //should be an error
+        <!VARIABLE_EXPECTED!>this<!> = c  //should be an error
     }
 }
 
@@ -31,7 +31,7 @@ fun getInt() = 0
 class D() {
     inner class B() {
         fun foo() {
-            this@D = D()
+            <!VARIABLE_EXPECTED!>this@D<!> = D()
         }
     }
 }
@@ -93,7 +93,7 @@ class Test() {
         ++<!VARIABLE_EXPECTED!>2<!>
         --(r@ <!VARIABLE_EXPECTED!>2<!>)
 
-        this<!UNRESOLVED_REFERENCE!>++<!>
+        <!VARIABLE_EXPECTED!>this<!><!UNRESOLVED_REFERENCE!>++<!>
 
         var s : String = "r"
         s += "ss"

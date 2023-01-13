@@ -304,8 +304,8 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 when (callee) {
                     is IrConstructor ->
                         IrConstructorCallImpl(
-                            startOffset,
-                            endOffset,
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
                             callee.parentAsClass.defaultType,
                             callee.symbol,
                             callee.countContextTypeParameters(),
@@ -315,8 +315,8 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                         )
                     is IrSimpleFunction ->
                         IrCallImpl(
-                            startOffset,
-                            endOffset,
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
                             callee.returnType,
                             callee.symbol,
                             callee.typeParameters.size,
@@ -393,14 +393,17 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 }
             }
 
-            body = factory.createBlockBody(reference.startOffset, reference.endOffset, listOf(reference.run {
-                IrReturnImpl(
-                    startOffset,
-                    endOffset, nothingType,
-                    symbol,
-                    buildInvoke()
+            body = factory.createBlockBody(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                    IrReturnImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        nothingType,
+                        symbol,
+                        buildInvoke()
+                    )
                 )
-            }))
+            )
         }
 
         private fun createNameProperty(clazz: IrClass) {

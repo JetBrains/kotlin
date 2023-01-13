@@ -362,7 +362,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
      *  - type for type parameter
      *  - captured type
      *
-     * Such types can contains error types in our arguments, but type constructor isn't errorTypeConstructor
+     * Such types can contain error types in our arguments, but type constructor isn't errorTypeConstructor
      */
     override fun SimpleTypeMarker.isSingleClassifierType(): Boolean {
         require(this is SimpleType, this::errorMessage)
@@ -901,6 +901,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.isTypeVariableType(): Boolean {
         return this is UnwrappedType && constructor is NewTypeVariableConstructor
     }
+
+    override val isK2: Boolean
+        get() = false
 
     class WA // Workaround for KT-52313
 }

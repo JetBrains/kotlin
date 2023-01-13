@@ -1,2 +1,2 @@
-@ERROR
+@`<Error class: unknown class>`
 class WithGeneratedCompanion

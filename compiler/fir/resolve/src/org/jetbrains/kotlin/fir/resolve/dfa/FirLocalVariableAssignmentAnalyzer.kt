@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 /**
  *  Helper that checks if an access to a local variable access is stable.
@@ -25,108 +24,68 @@ import org.jetbrains.kotlin.utils.addToStdlib.popLast
  *  [isAccessToUnstableLocalVariable] only works for an access during the natural FIR tree traversal. This class will not work if one
  *  queries after the traversal is done.
  **/
-internal class FirLocalVariableAssignmentAnalyzer(
-    private val assignedLocalVariablesByFunction: Map<FirFunctionSymbol<*>, FunctionFork>
-) {
-    /**
-     * Stack storing concurrent lambda arguments for the current visited anonymous function. For example
-     * ```
-     * callWithMultipleLambdaExactlyOnceEach(
-     *   l1 = { x.length },
-     *   l2 = { x = null }
-     * )
-     * ```
-     * From the call, it's nondeterministic whether `l1` runs before `l2` or vice versa. So when handling `l1`, we must mark all variables
-     * touched in `l2` unstable.
-     */
-    private val concurrentLambdaArgsStack: MutableList<MutableSet<FirAnonymousFunction>> = mutableListOf()
+internal class FirLocalVariableAssignmentAnalyzer {
+    private var rootFunction: FirFunctionSymbol<*>? = null
+    private var assignedLocalVariablesByDeclaration: Map<FirBasedSymbol<*>, Fork>? = null
 
-    /**
-     * Stack whose element tracks all concurrently modified variables in execution paths other than this one. It's a stack because after
-     * exiting a local function, we must restore the variables to the state before entering this local function. Initially, there is an
-     * empty set for the root function when we starts the analysis.
-     */
-    private val concurrentlyAssignedLocalVariablesStack: MutableList<MutableSet<FirProperty>> = mutableListOf(mutableSetOf())
+    private val scopes: Stack<Pair<Fork?, MutableSet<FirProperty>>> = stackOf()
 
-    /**
-     * Temporary storage that tracks concurrently modified variables during function call resolution. For example, consider the following,
-     *
-     * ```
-     * foo(bar { x= null }, x.length)
-     * ```
-     *
-     * Sometimes during resolution, when stability of `x` is retrieved with [isAccessToUnstableLocalVariable], the resolution of `foo` and
-     * `bar` is not yet finished. Hence, the lambda arg passed to `bar` is not traversed. In this case, the resolution logic first calls
-     * [visitPostponedAnonymousFunction], then [isAccessToUnstableLocalVariable]. Next, it calls [enterLocalFunction] and starts traversing
-     * the lambda passed to `bar`.
-     */
-    private val ephemeralConcurrentlyAssignedLocalVariables: MutableSet<FirProperty> = mutableSetOf()
+    // Example of control-flow-postponed lambdas: callBoth({ a.x }, { a = null })
+    // Lambdas are called in an unknown order, so control flow edges to both of them go from before the call.
+    // However, the assignment in the second lambda should invalidate the smart cast in the first.
+    //
+    // Example of data-flow-postponed lambdas: genericFunction(run { a = null }, a.x)
+    // Although in control flow the first lambda always executes before the second argument, in order to determine
+    // the type arguments to `run` - and thus resolve its argument lambda - we may have to resolve `a.x` first.
+    // Because smart casts can only get information from statements that have previously been resolved, data flows
+    // from the result of `run` to the result of `genericFunction` so smart casts should be prohibited in `a.x`.
+    //
+    // This mirrors `ControlFlowGraphBuilder.postponedLambdaExits`.
+    private val postponedLambdas: Stack<MutableMap<Fork, Boolean /* data-flow only */>> = stackOf()
 
-    private val functionStack = mutableListOf<FunctionFork>()
+    fun reset() {
+        rootFunction = null
+        assignedLocalVariablesByDeclaration = null
+        postponedLambdas.reset()
+        scopes.reset()
+    }
 
     /** Checks whether the given access is an unstable access to a local variable at this moment. */
-    fun isAccessToUnstableLocalVariable(qualifiedAccessExpression: FirQualifiedAccessExpression): Boolean {
-        val property = qualifiedAccessExpression.referredPropertySymbol?.fir ?: return false
-        return property in ephemeralConcurrentlyAssignedLocalVariables || property in concurrentlyAssignedLocalVariablesStack.last()
-    }
+    @OptIn(DfaInternals::class)
+    fun isAccessToUnstableLocalVariable(fir: FirExpression): Boolean {
+        if (assignedLocalVariablesByDeclaration == null) return false
 
-    fun visitPostponedAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
-        // Postponed anonymous function is visited before the current function call with lambda is resolved. Hence, the invocationKind is
-        // always null and hence there is no need to check it. In addition, since multiple lambda can be passed, we accumulate the
-        // effects by appending to `ephemeralConcurrentlyAssignedLocalVariables`.  After the function call is resolved,
-        // `exitAnonymousFunction` will be invoked at some point to properly set up the `persistentConcurrentlyAssignedLocalVariables`.
-        assignedLocalVariablesByFunction[anonymousFunction.symbol]?.assignedInside?.let {
-            ephemeralConcurrentlyAssignedLocalVariables.addAll(it)
+        val realFir = fir.unwrapElement() as? FirQualifiedAccessExpression ?: return false
+        val property = realFir.calleeReference.toResolvedPropertySymbol()?.fir ?: return false
+        // Have data => have a root function => `scopes` is not empty.
+        return property in scopes.top().second || postponedLambdas.all().any { lambdas ->
+            // Control-flow-postponed lambdas' assignments should be in `functionScopes.top()`.
+            // The reason we can't check them here is that one of the entries may be the lambda
+            // that is currently being analyzed, and assignments in it are, in fact, totally fine.
+            lambdas.any { (lambda, dataFlowOnly) -> dataFlowOnly && property in lambda.assignedInside }
         }
     }
 
-    fun finishPostponedAnonymousFunction() {
-        // Clear the temporarily assigned local variables in `visitPostponedAnonymousFunction`.
-        ephemeralConcurrentlyAssignedLocalVariables.clear()
+    private fun getInfoForDeclaration(symbol: FirBasedSymbol<*>): Fork? {
+        val root = rootFunction ?: return null
+        if (root == symbol) return null
+        val cachedMap = assignedLocalVariablesByDeclaration ?: run {
+            val data = MiniCfgBuilder.MiniCfgData()
+            MiniCfgBuilder().visitElement(root.fir, data)
+            data.forks.also { assignedLocalVariablesByDeclaration = it }
+        }
+        return cachedMap[symbol]
     }
 
-    fun enterLocalFunction(function: FirFunction) {
-        val concurrentlyAssignedLocalVariables = concurrentlyAssignedLocalVariablesStack.last().toMutableSet()
-        concurrentlyAssignedLocalVariablesStack.add(concurrentlyAssignedLocalVariables)
-
-        // 1. As mentioned in the comment above, we don't know whether other lambda arguments passed to the same call will be
-        //    called before or after this lambda, so their assignments might have executed. Unless they're not called at all.
-        // 2. While lambdas from outer calls are not concurrent from control flow point of view, they are concurrent in data flow
-        //    because the way this lambda resolves may affect the way those lambdas resolve, thus we need to forbid dependencies
-        //    from smartcasts in this lambda to statements in these other lambdas.
-        for (concurrentLambdas in concurrentLambdaArgsStack) {
-            for (otherLambda in concurrentLambdas) {
-                if (otherLambda != function && otherLambda.invocationKind != EventOccurrencesRange.ZERO) {
-                    assignedLocalVariablesByFunction[otherLambda.symbol]?.assignedInside?.let {
-                        concurrentlyAssignedLocalVariables += it
-                    }
-                }
-            }
-        }
-
-        assignedLocalVariablesByFunction[function.symbol]?.let {
-            functionStack.add(it)
-            if (function !is FirAnonymousFunction || !function.invocationKind.isInPlace) {
-                // The function may be called twice concurrently in an SMT environment, which means any assignment it executes
-                // might in theory happen in between any check it does and a subsequent use of the variable. So if this function
-                // does any assignments, it cannot smartcast the target variables.
-                concurrentlyAssignedLocalVariables += it.assignedInside
-                // The function may also be stored and called later, so assignments done outside its scope after the definition
-                // might also have executed.
-                for (outerScope in functionStack) {
-                    concurrentlyAssignedLocalVariables += outerScope.assignedLater
-                }
-            }
-        }
-    }
-
-    fun exitLocalFunction(function: FirFunction) {
-        concurrentlyAssignedLocalVariablesStack.removeLast()
-        assignedLocalVariablesByFunction[function.symbol]?.let {
-            functionStack.popLast()
-            if (function !is FirAnonymousFunction || !function.invocationKind.isInPlace) {
-                // The function may be stored and then called later, so any access to the variables it touches
-                // is no longer smartcastable ever.
+    private fun enterScope(symbol: FirBasedSymbol<*>, evaluatedInPlace: Boolean): Pair<Fork?, MutableSet<FirProperty>> {
+        val currentInfo = getInfoForDeclaration(symbol)
+        val prohibitInThisScope = scopes.top().second.toMutableSet()
+        scopes.push(currentInfo to prohibitInThisScope)
+        if (!evaluatedInPlace) {
+            for ((outerInfo, prohibitInOuterScope) in scopes.all()) {
+                // The callable may be stored and then called later
+                // => any access of the variables it touches is no longer smartcastable ever,
+                // including within the callable itself (can recurse).
                 //
                 // TODO: this incorrectly affects separate branches that are visited after this one:
                 //    if (p is Something) {
@@ -139,27 +98,63 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 //        p.memberOfSomething // Bad
                 //    }
                 //   FE1.0 has the same behavior.
-                for (outerScope in concurrentlyAssignedLocalVariablesStack) {
-                    outerScope += it.assignedInside
+                currentInfo?.assignedInside?.let(prohibitInOuterScope::addAll)
+                // => any write to a variable outside the callable invalidates smart casts inside it
+                outerInfo?.assignedLater?.let(prohibitInThisScope::addAll)
+            }
+        }
+        return scopes.top()
+    }
+
+    fun enterFunction(function: FirFunction) {
+        if (rootFunction == null) {
+            rootFunction = function.symbol
+            scopes.push(null to mutableSetOf())
+            return
+        }
+        val (info, prohibitSmartCasts) =
+            enterScope(function.symbol, function is FirAnonymousFunction && function.invocationKind.isInPlace)
+        for (concurrentLambdas in postponedLambdas.all()) {
+            for ((otherLambda, dataFlowOnly) in concurrentLambdas) {
+                if (!dataFlowOnly && otherLambda != info) {
+                    prohibitSmartCasts += otherLambda.assignedInside
                 }
             }
         }
     }
 
-    fun enterFunctionCall(lambdaArgs: MutableSet<FirAnonymousFunction>, level: Int) {
-        while (concurrentLambdaArgsStack.size < level) {
-            // This object is only created on first local anonymous function, so we might have missed some
-            // `enterFunctionCall`s. None of them have lambda arguments.
-            concurrentLambdaArgsStack.add(mutableSetOf())
+    fun exitFunction() {
+        scopes.pop()
+        if (scopes.isEmpty) {
+            rootFunction = null
+            assignedLocalVariablesByDeclaration = null
         }
-        concurrentLambdaArgsStack.add(lambdaArgs)
+    }
+
+    fun enterClass(klass: FirClass) {
+        if (rootFunction == null) return
+        val (info, prohibitSmartCasts) = enterScope(klass.symbol, klass is FirAnonymousObject)
+        if (klass is FirAnonymousObject && info != null) {
+            // Assignments in initializers and methods invalidate smart casts in other members.
+            // TODO: initializers shouldn't invalidate smart casts in themselves.
+            prohibitSmartCasts.addAll(info.assignedInside)
+        }
+    }
+
+    fun exitClass() {
+        if (rootFunction == null) return
+        scopes.pop()
+    }
+
+    fun enterFunctionCall(lambdaArgs: Collection<FirAnonymousFunction>) {
+        // If not inside a function at all, then there is no concept of a local and nothing to track.
+        if (rootFunction == null) return
+        postponedLambdas.push(lambdaArgs.mapNotNull { getInfoForDeclaration(it.symbol) }.associateWithTo(mutableMapOf()) { false })
     }
 
     fun exitFunctionCall(callCompleted: Boolean) {
-        // If we had anonymous functions but no calls with lambdas, the stack might have never been initialized.
-        if (concurrentLambdaArgsStack.isEmpty()) return
-
-        val lambdasInCall = concurrentLambdaArgsStack.popLast()
+        if (rootFunction == null) return
+        val lambdasInCall = postponedLambdas.pop()
         if (!callCompleted) {
             // TODO: this has the same problem as above:
             //   if (p is Something) {
@@ -172,7 +167,10 @@ internal class FirLocalVariableAssignmentAnalyzer(
             //       )
             //   }
             //  And also as above, FE1.0 produces the same error.
-            concurrentLambdaArgsStack.lastOrNull()?.addAll(lambdasInCall)
+            //
+            // TODO: this should never return null. Also somehow throwing an exception here leads to weird effects:
+            //  apparently the compiler attempts to continue somewhere...
+            lambdasInCall.keys.associateWithTo(postponedLambdas.topOrNull() ?: return) { true }
         }
     }
 
@@ -254,13 +252,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
          * so that shadowed names are handled correctly. This works because local variables at any scope have higher priority
          * than members on implicit receivers, even if the implicit receiver is introduced by a later scope.
          */
-        fun analyzeFunction(rootFunction: FirFunction): FirLocalVariableAssignmentAnalyzer {
-            val data = MiniCfgBuilder.MiniCfgData()
-            MiniCfgBuilder().visitElement(rootFunction, data)
-            return FirLocalVariableAssignmentAnalyzer(data.functionForks)
-        }
-
-        class FunctionFork(
+        class Fork(
             val assignedLater: Set<FirProperty>,
             val assignedInside: Set<FirProperty>,
         )
@@ -280,25 +272,35 @@ internal class FirLocalVariableAssignmentAnalyzer(
                 element.acceptChildren(this, data)
             }
 
+            private fun visitElementWithLexicalScope(element: FirElement, data: MiniCfgData): Set<FirProperty> {
+                // Detach the flow so that variables declared inside the structure do not leak into the outside.
+                val flow = MiniFlow.start()
+                val freeVariables = data.variableDeclarations.flatMapTo(mutableSetOf()) { it.values }
+                data.flow = flow
+                element.acceptChildren(this, data)
+                return flow.assignedLater.apply { retainAll(freeVariables) }
+            }
+
             override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: MiniCfgData) =
-                visitFunction(anonymousFunction, data)
+                visitLocalDeclaration(anonymousFunction, data)
 
             override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MiniCfgData) =
-                visitFunction(simpleFunction, data)
+                visitLocalDeclaration(simpleFunction, data)
 
-            override fun visitFunction(function: FirFunction, data: MiniCfgData) {
-                val freeVariables = data.variableDeclarations.flatMapTo(mutableSetOf()) { it.values }
+            override fun visitRegularClass(regularClass: FirRegularClass, data: MiniCfgData) =
+                visitLocalDeclaration(regularClass, data)
+
+            override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: MiniCfgData) =
+                visitLocalDeclaration(anonymousObject, data)
+
+            private fun visitLocalDeclaration(declaration: FirDeclaration, data: MiniCfgData) {
                 val flow = data.flow
-                // Detach the function flow so that variables declared inside don't leak into the outside.
-                val flowInto = MiniFlow.start()
-                data.flow = flowInto
-                function.acceptChildren(this, data)
-                flowInto.assignedLater.retainAll(freeVariables)
+                val assignedInside = visitElementWithLexicalScope(declaration, data)
                 // Now that the inner variables have been discarded, the rest can be propagated to prevent smartcasts
-                // in lambdas declared before this one.
-                flow.recordAssignments(flowInto.assignedLater)
+                // in declarations that came before this one.
+                flow.recordAssignments(assignedInside)
                 data.flow = flow.fork()
-                data.functionForks[function.symbol] = FunctionFork(data.flow.assignedLater, flowInto.assignedLater)
+                data.forks[declaration.symbol] = Fork(data.flow.assignedLater, assignedInside)
             }
 
             override fun visitWhenExpression(whenExpression: FirWhenExpression, data: MiniCfgData) {
@@ -327,24 +329,21 @@ internal class FirLocalVariableAssignmentAnalyzer(
             private fun Set<MiniFlow>.join(): MiniFlow =
                 singleOrNull() ?: MiniFlow(this)
 
-            override fun visitWhileLoop(whileLoop: FirWhileLoop, data: MiniCfgData) {
-                // Loop entry is a merge point, so need a new node.
-                val start = data.flow.fork()
-                data.flow = start
-                whileLoop.condition.accept(this, data)
-                whileLoop.block.accept(this, data)
+            override fun visitLoop(loop: FirLoop, data: MiniCfgData) {
+                val entry = data.flow
+                val assignedInside = visitElementWithLexicalScope(loop, data)
                 // All forks in the loop should have the same set of variables assigned later, equal to the set
                 // at the start of the loop.
-                data.flow.recordAssignments(start.assignedLater)
+                data.flow.recordAssignments(assignedInside)
+                // The loop flows are detached from the entry flow, so we need to re-join them.
+                data.flow = setOf(entry, data.flow).join()
             }
 
-            override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: MiniCfgData) {
-                val start = data.flow.fork()
-                data.flow = start
-                doWhileLoop.block.accept(this, data)
-                doWhileLoop.condition.accept(this, data)
-                data.flow.recordAssignments(start.assignedLater)
-            }
+            override fun visitWhileLoop(whileLoop: FirWhileLoop, data: MiniCfgData) =
+                visitLoop(whileLoop, data)
+
+            override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: MiniCfgData) =
+                visitLoop(doWhileLoop, data)
 
             // TODO: liveness analysis - return/throw/break/continue terminate the flow.
             //   This is somewhat problematic though because try-catch and loops can restore it.
@@ -407,7 +406,7 @@ internal class FirLocalVariableAssignmentAnalyzer(
             class MiniCfgData {
                 var flow: MiniFlow = MiniFlow.start()
                 val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque(listOf(mutableMapOf()))
-                val functionForks: MutableMap<FirFunctionSymbol<*>, FunctionFork> = mutableMapOf()
+                val forks: MutableMap<FirBasedSymbol<*>, Fork> = mutableMapOf()
             }
         }
     }

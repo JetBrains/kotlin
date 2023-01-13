@@ -6,6 +6,7 @@ KtSuccessCallInfo:
       extensionReceiver = KtSmartCastedReceiverValue:
         original = KtImplicitReceiverValue:
           symbol = KtReceiverParameterSymbol:
+            annotationsList: []
             origin: SOURCE
             owningCallableSymbol: KtFunctionSymbol(/test)
             type: kotlin/Any

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,6 +30,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxWasmJsInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
     }
 
+    @TestMetadata("callingWasmDirectly.kt")
+    public void testCallingWasmDirectly() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/callingWasmDirectly.kt");
+    }
+
     @TestMetadata("defaultValues.kt")
     public void testDefaultValues() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/defaultValues.kt");
@@ -48,6 +53,16 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
     @TestMetadata("functionTypes.kt")
     public void testFunctionTypes() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/functionTypes.kt");
+    }
+
+    @TestMetadata("imperativeWrapperInitialised.kt")
+    public void testImperativeWrapperInitialised() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/imperativeWrapperInitialised.kt");
+    }
+
+    @TestMetadata("imperativeWrapperUninitialised.kt")
+    public void testImperativeWrapperUninitialised() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/imperativeWrapperUninitialised.kt");
     }
 
     @TestMetadata("jsExport.kt")
@@ -70,6 +85,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");
     }
 
+    @TestMetadata("nameClash.kt")
+    public void testNameClash() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/nameClash.kt");
+    }
+
     @TestMetadata("nullableExternRefs.kt")
     public void testNullableExternRefs() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/nullableExternRefs.kt");
@@ -78,5 +98,15 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
     @TestMetadata("types.kt")
     public void testTypes() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
+    }
+
+    @TestMetadata("vararg.kt")
+    public void testVararg() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/vararg.kt");
+    }
+
+    @TestMetadata("wasmImport.kt")
+    public void testWasmImport() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/wasmImport.kt");
     }
 }

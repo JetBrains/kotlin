@@ -4,6 +4,7 @@ KtSuccessCallInfo:
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
       dispatchReceiver = KtImplicitReceiverValue:
         symbol = KtReceiverParameterSymbol:
+          annotationsList: []
           origin: SOURCE
           owningCallableSymbol: KtAnonymousFunctionSymbol(<local>/<no name provided>)
           type: test/Target<kotlin/String>

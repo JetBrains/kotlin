@@ -9,8 +9,8 @@ class Foo {
 }
 
 fun main() {
-    with("", {
-        <!ARGUMENT_TYPE_MISMATCH!>Foo.<!UNRESOLVED_REFERENCE!>findByName<!>("")<!>
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>("", {
+        Foo.<!UNRESOLVED_REFERENCE!>findByName<!>("")
     })
     with(Foo) {
         findByName("")

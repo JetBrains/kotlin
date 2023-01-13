@@ -1,0 +1,30 @@
+package
+
+public fun foo(/*0*/ some: Some? = ...): kotlin.Unit
+public fun test(): kotlin.Unit
+
+@kotlin.RequiresOptIn public final annotation class Marker : kotlin.Annotation {
+    public constructor Marker()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Other {
+    @Marker public constructor Other()
+    @kotlin.OptIn(markerClass = {Marker::class}) public constructor Other(/*0*/ some: Some)
+    public constructor Other(/*0*/ x: kotlin.Int)
+    @kotlin.OptIn(markerClass = {Marker::class}) public constructor Other(/*0*/ y: kotlin.Long, /*1*/ some: Some? = ...)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@Marker public final class Some {
+    public constructor Some(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

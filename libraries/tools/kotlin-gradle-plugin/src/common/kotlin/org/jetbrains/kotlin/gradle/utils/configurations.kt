@@ -61,3 +61,13 @@ private constructor(
         return artifactsByComponentId[componentId] ?: emptyList()
     }
 }
+
+internal fun Configuration.markConsumable(): Configuration = apply {
+    this.isCanBeConsumed = true
+    this.isCanBeResolved = false
+}
+
+internal fun Configuration.markResolvable(): Configuration = apply {
+    this.isCanBeConsumed = false
+    this.isCanBeResolved = true
+}

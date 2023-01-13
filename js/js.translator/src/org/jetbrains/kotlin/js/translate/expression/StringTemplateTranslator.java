@@ -80,7 +80,7 @@ public final class StringTemplateTranslator extends AbstractTranslator {
         public void visitStringTemplateEntryWithExpression(@NotNull KtStringTemplateEntryWithExpression entry) {
             KtExpression entryExpression = entry.getExpression();
             assert entryExpression != null :
-                    "JetStringTemplateEntryWithExpression must have not null entry expression.";
+                    "KtStringTemplateEntryWithExpression must have not null entry expression.";
             JsExpression translatedExpression = Translation.translateAsExpression(entryExpression, context());
 
             KotlinType type = context().bindingContext().getType(entryExpression);

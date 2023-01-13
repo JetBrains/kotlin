@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
+import java.io.IOException
 import java.util.*
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -29,9 +30,21 @@ internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: 
 internal class KotlinNativeHome(val dir: File) {
     val librariesDir: File = dir.resolve("klib")
     val stdlibFile: File = librariesDir.resolve("common/stdlib")
-
     val properties: Properties by lazy {
         dir.resolve("konan/konan.properties").inputStream().use { Properties().apply { load(it) } }
+    }
+}
+
+internal class LLDB(nativeHome: KotlinNativeHome) {
+    val prettyPrinters: File = nativeHome.dir.resolve("tools/konan_lldb.py")
+
+    val isAvailable: Boolean by lazy {
+        try {
+            val exitCode = ProcessBuilder("lldb", "-version").start().waitFor()
+            exitCode == 0
+        } catch (e: IOException) {
+            false
+        }
     }
 }
 
@@ -58,6 +71,19 @@ internal enum class TestMode(private val description: String) {
     );
 
     override fun toString() = description
+}
+
+/**
+ * The set of custom (external) klibs that should be passed to the Kotlin/Native compiler.
+ */
+@JvmInline
+internal value class CustomKlibs(val klibs: Set<File>) {
+    init {
+        val invalidKlibs = klibs.filterNot { it.isDirectory || (it.isFile && it.extension == "klib") }
+        assertTrue(invalidKlibs.isEmpty()) {
+            "There are invalid KLIBs that should be passed for the Kotlin/Native compiler: ${klibs.joinToString { "[$it]" }}"
+        }
+    }
 }
 
 /**
@@ -208,7 +234,14 @@ internal sealed interface CacheMode {
             return if (kotlinNativeTargets.testTarget in cacheableTargets) Alias.STATIC_ONLY_DIST else Alias.NO
         }
 
-        private fun computeCacheDirName(testTarget: KonanTarget, cacheKind: String, debuggable: Boolean) =
+        fun computeCacheDirName(testTarget: KonanTarget, cacheKind: String, debuggable: Boolean) =
             "$testTarget${if (debuggable) "-g" else ""}$cacheKind"
     }
+}
+
+internal enum class PipelineType(val compilerFlag: String?) {
+    K1(null),
+    K2("-Xuse-k2");
+
+    override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }

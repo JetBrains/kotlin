@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +GenericInlineClassParameter
+// LANGUAGE: +ValueClasses, +GenericInlineClassParameter, +ValueClassesSecondaryConstructorWithBody
 
 var global = "wrong"
 
@@ -10,7 +10,6 @@ value class Foo<T: Int>(val x: T) {
 
     constructor(z: Long) : this((z.toInt() + 1) as T)
 
-    @Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS")
     constructor(other: Char) : this(other.toInt().toString()) {
         global = "OK"
     }

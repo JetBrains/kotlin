@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -697,7 +696,7 @@ class MethodInliner(
         if (lambdaInfo !is PsiExpressionLambda || !lambdaInfo.invokeMethodDescriptor.isSuspend) return
         val sources = analyzeMethodNodeWithInterpreter(processingNode, Aload0Interpreter(processingNode))
         val cfg = ControlFlowGraph.build(processingNode)
-        val aload0s = processingNode.instructions.asSequence().filter { it.opcode == Opcodes.ALOAD && it.safeAs<VarInsnNode>()?.`var` == 0 }
+        val aload0s = processingNode.instructions.asSequence().filter { it.opcode == Opcodes.ALOAD && (it as? VarInsnNode)?.`var` == 0 }
 
         val visited = hashSetOf<AbstractInsnNode>()
         fun findMeaningfulSuccs(insn: AbstractInsnNode): Collection<AbstractInsnNode> {

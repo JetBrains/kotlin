@@ -12,6 +12,7 @@ dependencies {
     compileOnly(project(":compiler:fir:cones"))
     compileOnly(project(":compiler:fir:tree"))
     compileOnly(project(":compiler:fir:resolve"))
+    compileOnly(project(":compiler:fir:plugin-utils"))
     compileOnly(project(":compiler:fir:checkers"))
     compileOnly(project(":compiler:fir:checkers:checkers.jvm"))
     compileOnly(project(":compiler:ir.backend.common"))

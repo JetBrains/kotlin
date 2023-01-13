@@ -28,9 +28,9 @@ open class FirValueParameterRenderer {
     }
 
     fun renderParameter(valueParameter: FirValueParameter) {
-        declarationRenderer.renderPhaseAndAttributes(valueParameter)
+        declarationRenderer?.renderPhaseAndAttributes(valueParameter)
         annotationRenderer?.render(valueParameter)
-        modifierRenderer.renderModifiers(valueParameter)
+        modifierRenderer?.renderModifiers(valueParameter)
         if (valueParameter.name != SpecialNames.NO_NAME_PROVIDED) {
             printer.print(valueParameter.name.toString() + ": ")
         }

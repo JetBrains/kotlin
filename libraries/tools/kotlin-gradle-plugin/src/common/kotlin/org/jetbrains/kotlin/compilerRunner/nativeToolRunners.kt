@@ -10,6 +10,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.plugin.mpp.nativeUseEmbeddableCompilerJar
@@ -46,6 +47,10 @@ internal fun Project.getKonanCacheKind(target: KonanTarget): NativeCacheKind {
         commonCacheKind != null -> commonCacheKind
         else -> KonanPropertiesBuildService.registerIfAbsent(gradle).get().defaultCacheKindForTarget(target)
     }
+}
+
+internal fun Project.getKonanCacheOrchestration(): NativeCacheOrchestration {
+    return PropertiesProvider(this).nativeCacheOrchestration ?: NativeCacheOrchestration.Compiler
 }
 
 private val Project.kotlinNativeCompilerJar: String

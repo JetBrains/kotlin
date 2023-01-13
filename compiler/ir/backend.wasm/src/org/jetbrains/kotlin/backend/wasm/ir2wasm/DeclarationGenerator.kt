@@ -54,7 +54,10 @@ class DeclarationGenerator(
     }
 
     private fun jsCodeName(declaration: IrFunction): String {
-        return declaration.fqNameWhenAvailable!!.asString() + "_" + (declaration as IrSimpleFunction).wasmSignature(irBuiltIns).hashCode()
+        require(declaration is IrSimpleFunction)
+        val fqName = declaration.fqNameWhenAvailable!!.asString()
+        val hashCode = declaration.wasmSignature(irBuiltIns).hashCode() + declaration.file.path.hashCode()
+        return "${fqName}_$hashCode"
     }
 
     override fun visitFunction(declaration: IrFunction) {
@@ -67,11 +70,24 @@ class DeclarationGenerator(
             return
         }
 
-        val jsCode = declaration.getJsFunAnnotation() ?: if (declaration.isExternal) declaration.name.asString() else null
-        val importedName = jsCode?.let {
-            val jsCodeName = jsCodeName(declaration)
-            context.addJsFun(jsCodeName, it)
-            WasmImportPair("js_code", jsCodeName(declaration))
+        val wasmImportModule = declaration.getWasmImportDescriptor()
+        val jsCode = if (declaration.isExternal) declaration.getJsFunAnnotation() else null
+        val importedName = when {
+            wasmImportModule != null -> {
+                check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
+                context.addJsModuleImport(wasmImportModule.moduleName)
+                wasmImportModule
+            }
+            jsCode != null -> {
+                // TODO: check consistency (currently fails with generated __convertKotlinClosureToJsClosure)
+                // check(declaration.isExternal) { "Non-external fun with @JsFun ${declaration.fqNameWhenAvailable}"}
+                val jsCodeName = jsCodeName(declaration)
+                context.addJsFun(jsCodeName, jsCode)
+                WasmImportDescriptor("js_code", jsCodeName(declaration))
+            }
+            else -> {
+                null
+            }
         }
 
         if (declaration.isFakeOverride)
@@ -115,7 +131,7 @@ class DeclarationGenerator(
         }
 
         val function = WasmFunction.Defined(watName, functionTypeSymbol)
-        val functionCodegenContext = WasmFunctionCodegenContextImpl(
+        val functionCodegenContext = WasmFunctionCodegenContext(
             declaration,
             function,
             backendContext,
@@ -128,10 +144,15 @@ class DeclarationGenerator(
 
         val exprGen = functionCodegenContext.bodyGen
         val bodyBuilder = BodyGenerator(
-            context = functionCodegenContext,
+            context = context,
+            functionContext = functionCodegenContext,
             hierarchyDisjointUnions = hierarchyDisjointUnions,
             isGetUnitFunction = declaration == unitGetInstanceFunction
         )
+
+        if (declaration is IrConstructor) {
+            bodyBuilder.generateObjectCreationPrefixIfNeeded(declaration)
+        }
 
         require(declaration.body is IrBlockBody) { "Only IrBlockBody is supported" }
         declaration.body?.acceptVoid(bodyBuilder)
@@ -372,13 +393,19 @@ class DeclarationGenerator(
         //TODO("FqName for inner classes could be invalid due to topping it out from outer class")
         val packageName = if (fqnShouldBeEmitted) classMetadata.klass.kotlinFqName.parentOrNull()?.asString() ?: "" else ""
         val simpleName = classMetadata.klass.kotlinFqName.shortName().asString()
+
+        val (packageNameAddress, packageNamePoolId) = context.referenceStringLiteralAddressAndId(packageName)
+        val (simpleNameAddress, simpleNamePoolId) = context.referenceStringLiteralAddressAndId(simpleName)
+
         val typeInfo = ConstantDataStruct(
             name = "TypeInfo",
             elements = listOf(
                 ConstantDataIntField("TypePackageNameLength", packageName.length),
-                ConstantDataIntField("TypePackageNamePtr", context.referenceStringLiteral(packageName)),
+                ConstantDataIntField("TypePackageNameId", packageNamePoolId),
+                ConstantDataIntField("TypePackageNamePtr", packageNameAddress),
                 ConstantDataIntField("TypeNameLength", simpleName.length),
-                ConstantDataIntField("TypeNamePtr", context.referenceStringLiteral(simpleName))
+                ConstantDataIntField("TypeNameId", simpleNamePoolId),
+                ConstantDataIntField("TypeNamePtr", simpleNameAddress)
             )
         )
 
@@ -424,8 +451,8 @@ class DeclarationGenerator(
 
         val initValue: IrExpression? = declaration.initializer?.expression
         if (initValue != null) {
-            check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String && initValue.kind !is IrConstKind.Null) {
-                "Static field initializer should be non-string const or null"
+            check(initValue is IrConst<*> && initValue.kind !is IrConstKind.String) {
+                "Static field initializer should be string or const"
             }
             generateConstExpression(initValue, wasmExpressionGenerator, context)
         } else {
@@ -466,7 +493,7 @@ fun IrFunction.isExported(): Boolean =
     isJsExport()
 
 
-fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmBaseCodegenContext) {
+fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder, context: WasmModuleCodegenContext) {
     when (val kind = expression.kind) {
         is IrConstKind.Null -> {
             val bottomType = if (expression.type.getClass()?.isExternal == true) WasmRefNullExternrefType else WasmRefNullNoneType
@@ -481,9 +508,14 @@ fun generateConstExpression(expression: IrConst<*>, body: WasmExpressionBuilder,
         is IrConstKind.Float -> body.buildConstF32(kind.valueOf(expression))
         is IrConstKind.Double -> body.buildConstF64(kind.valueOf(expression))
         is IrConstKind.String -> {
-            body.buildConstI32Symbol(context.referenceStringLiteral(kind.valueOf(expression)))
-            body.buildConstI32(kind.valueOf(expression).length)
+            val stringValue = kind.valueOf(expression)
+            val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
+            body.commentGroupStart { "const string: \"$stringValue\"" }
+            body.buildConstI32Symbol(literalPoolId)
+            body.buildConstI32Symbol(literalAddress)
+            body.buildConstI32(stringValue.length)
             body.buildCall(context.referenceFunction(context.backendContext.wasmSymbols.stringGetLiteral))
+            body.commentGroupEnd()
         }
         else -> error("Unknown constant kind")
     }

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.library.resolver.impl
+package org.jetbrains.kotlin.library.metadata.resolver.impl
 
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolver
-import org.jetbrains.kotlin.library.resolver.KotlinResolvedLibrary
-import org.jetbrains.kotlin.library.resolver.LibraryOrder
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolver
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
+import org.jetbrains.kotlin.library.metadata.resolver.LibraryOrder
 import org.jetbrains.kotlin.util.WithLogger
 
 fun <L: KotlinLibrary> SearchPathResolver<L>.libraryResolver(resolveManifestDependenciesLenient: Boolean = false)

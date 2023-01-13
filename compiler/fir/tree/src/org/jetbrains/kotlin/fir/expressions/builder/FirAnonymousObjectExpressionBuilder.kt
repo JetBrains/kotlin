@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirAnonymousObjectExpressionImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -24,7 +25,7 @@ class FirAnonymousObjectExpressionBuilder : FirAnnotationContainerBuilder, FirEx
     lateinit var anonymousObject: FirAnonymousObject
 
     override val annotations: MutableList<FirAnnotation>
-        get() = error("Should not be called")
+        get() = shouldNotBeCalled()
 
     override fun build(): FirAnonymousObjectExpression {
         return FirAnonymousObjectExpressionImpl(

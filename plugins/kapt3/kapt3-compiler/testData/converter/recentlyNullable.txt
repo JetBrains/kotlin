@@ -21,8 +21,6 @@ import java.lang.annotation.*;
 
 package app;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class KBox implements androidx.annotation.Box {
     @org.jetbrains.annotations.NotNull()
@@ -38,8 +36,8 @@ public final class KBox implements androidx.annotation.Box {
         return null;
     }
 
-    @androidx.annotation.RecentlyNullable()
     @java.lang.Override()
+    @androidx.annotation.RecentlyNullable()
     public java.lang.String foo() {
         return null;
     }

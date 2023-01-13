@@ -5,12 +5,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-allprojects {
-    repositories {
-        jcenter()
-    }
-}
-
 val sdkName: String? = System.getenv("SDK_NAME")
 
 enum class Target(val simulator: Boolean, val key: String) {

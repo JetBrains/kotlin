@@ -16,7 +16,7 @@ fun foo(): Int {
         k.run()
         val d: Int = c
         // a is captured so smart cast is not possible
-        return d + a
+        return d <!NONE_APPLICABLE!>+<!> a
     }
     else return -1
 }

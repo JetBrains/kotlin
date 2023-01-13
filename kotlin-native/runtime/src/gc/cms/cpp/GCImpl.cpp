@@ -34,6 +34,10 @@ ALWAYS_INLINE void gc::GC::ThreadData::SafePointLoopBody() noexcept {
     SafePointRegular(*this, GCSchedulerThreadData::kLoopBodyWeight);
 }
 
+void gc::GC::ThreadData::Schedule() noexcept {
+    impl_->gc().Schedule();
+}
+
 void gc::GC::ThreadData::ScheduleAndWaitFullGC() noexcept {
     impl_->gc().ScheduleAndWaitFullGC();
 }
@@ -43,19 +47,31 @@ void gc::GC::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
 }
 
 void gc::GC::ThreadData::Publish() noexcept {
+#ifndef CUSTOM_ALLOCATOR
     impl_->objectFactoryThreadQueue().Publish();
+#endif
 }
 
 void gc::GC::ThreadData::ClearForTests() noexcept {
+#ifndef CUSTOM_ALLOCATOR
     impl_->objectFactoryThreadQueue().ClearForTests();
+#endif
 }
 
 ALWAYS_INLINE ObjHeader* gc::GC::ThreadData::CreateObject(const TypeInfo* typeInfo) noexcept {
+#ifndef CUSTOM_ALLOCATOR
     return impl_->objectFactoryThreadQueue().CreateObject(typeInfo);
+#else
+    return impl_->alloc().CreateObject(typeInfo);
+#endif
 }
 
-ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeInfo, uint32_t elements) {
+ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept {
+#ifndef CUSTOM_ALLOCATOR
     return impl_->objectFactoryThreadQueue().CreateArray(typeInfo, elements);
+#else
+    return impl_->alloc().CreateArray(typeInfo, elements);
+#endif
 }
 
 void gc::GC::ThreadData::OnStoppedForGC() noexcept {

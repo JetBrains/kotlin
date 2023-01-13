@@ -526,6 +526,7 @@ public final class kotlin/UnsignedKt {
 }
 
 public final class kotlin/_Assertions {
+	public static final field ENABLED Z
 	public static final field INSTANCE Lkotlin/_Assertions;
 }
 
@@ -5948,6 +5949,7 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static fun equals-impl (JLjava/lang/Object;)Z
 	public static final fun equals-impl0 (JJ)Z
 	public static final fun getAbsoluteValue-UwyO8pc (J)J
+	public static final fun getHoursComponent-impl (J)I
 	public static final fun getInDays-impl (J)D
 	public static final fun getInHours-impl (J)D
 	public static final fun getInMicroseconds-impl (J)D
@@ -5962,6 +5964,9 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final fun getInWholeMinutes-impl (J)J
 	public static final fun getInWholeNanoseconds-impl (J)J
 	public static final fun getInWholeSeconds-impl (J)J
+	public static final fun getMinutesComponent-impl (J)I
+	public static final fun getNanosecondsComponent-impl (J)I
+	public static final fun getSecondsComponent-impl (J)I
 	public fun hashCode ()I
 	public static fun hashCode-impl (J)I
 	public static final fun isFinite-impl (J)Z

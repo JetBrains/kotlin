@@ -17,7 +17,11 @@ swiftBenchmark {
     applicationName = "swiftInterop"
     commonSrcDirs = listOf("$toolsPath/benchmarks/shared/src/main/kotlin/report", "src", "../shared/src/main/kotlin")
     nativeSrcDirs = listOf("../shared/src/main/kotlin-native/common", "../shared/src/main/kotlin-native/posix")
-    swiftSources = listOf("$projectDir/swiftSrc/benchmarks.swift", "$projectDir/swiftSrc/main.swift")
+    swiftSources = listOf(
+        "$projectDir/swiftSrc/benchmarks.swift",
+        "$projectDir/swiftSrc/main.swift",
+        "$projectDir/swiftSrc/weakRefBenchmarks.swift",
+    )
     compileTasks = listOf("compileKotlinNative", "linkBenchmark${buildType.name.toLowerCase().capitalize()}FrameworkNative")
     cleanBeforeRunTask = "compileKotlinNative"
 }

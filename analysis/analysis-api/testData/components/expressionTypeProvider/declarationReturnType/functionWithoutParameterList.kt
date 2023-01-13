@@ -1,0 +1,1 @@
+inline fun <reified A, reified B> Pair<*,*>.

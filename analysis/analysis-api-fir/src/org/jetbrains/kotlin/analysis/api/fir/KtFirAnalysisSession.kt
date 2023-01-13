@@ -77,8 +77,7 @@ private constructor(
 
     override val importOptimizerImpl: KtImportOptimizer = KtFirImportOptimizer(token, firResolveSession)
 
-    override val symbolDeclarationRendererProviderImpl: KtSymbolDeclarationRendererProvider =
-        KtFirSymbolDeclarationRendererProvider(this, token)
+    override val symbolDeclarationRendererProviderImpl: KtSymbolDeclarationRendererProvider = KtFirRendererProvider(this, token)
 
     override val expressionInfoProviderImpl = KtFirExpressionInfoProvider(this, token)
 

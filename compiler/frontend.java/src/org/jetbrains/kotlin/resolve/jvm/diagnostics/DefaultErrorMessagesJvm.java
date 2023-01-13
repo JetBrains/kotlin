@@ -237,6 +237,25 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
         MAP.put(REDUNDANT_REPEATABLE_ANNOTATION,
                 "Please, remove the ''{0}'' annotation, as ''{1}'' is already enough", TO_STRING, TO_STRING);
+
+        MAP.put(BASE_CLASS_FIELD_SHADOWS_DERIVED_CLASS_PROPERTY,
+                "Now field from base class {0} shadows the property with custom getter from derived class {1}. " +
+                "This behavior will be changed soon in favor of the property. " +
+                "Please use explicit cast to {0} if you wish to preserve current behavior. " +
+                "See https://youtrack.jetbrains.com/issue/KT-55017 for details", STRING, STRING);
+
+        MAP.put(BASE_CLASS_FIELD_MAY_SHADOW_DERIVED_CLASS_PROPERTY,
+                "Field from base class {0} may shadow the open property from derived class {1}. " +
+                "This behavior will be changed soon in favor of the property. " +
+                "Please use explicit cast to {0} if you wish to preserve current behavior. " +
+                "See https://youtrack.jetbrains.com/issue/KT-55017 for details", STRING, STRING);
+
+        MAP.put(BACKING_FIELD_ACCESSED_DUE_TO_PROPERTY_FIELD_CONFLICT,
+                "Property backing field in derived class {1} is accessed instead of the property itself. " +
+                "This happens because of field with the same name in the base class {0}. " +
+                "This behavior will be changed soon in favor of the property. " +
+                "Please use explicit cast to {0} if you wish to preserve current behavior. " +
+                "See https://youtrack.jetbrains.com/issue/KT-55017 for details", STRING, STRING);
     }
 
     @NotNull

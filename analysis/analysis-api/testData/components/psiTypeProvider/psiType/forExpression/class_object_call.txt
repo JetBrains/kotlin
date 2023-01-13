@@ -1,0 +1,2 @@
+KtType: getInner
+PsiType: null

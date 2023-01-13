@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.util.DeclarationStubGenerator
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.properties.ReadWriteProperty
 
 interface AbstractFir2IrLazyDeclaration<F> :
@@ -36,7 +37,7 @@ interface AbstractFir2IrLazyDeclaration<F> :
     }
 
     override val stubGenerator: DeclarationStubGenerator
-        get() = error("Should not be called")
+        get() = shouldNotBeCalled()
     override val typeTranslator: TypeTranslator
-        get() = error("Should not be called")
+        get() = shouldNotBeCalled()
 }

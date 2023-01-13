@@ -6,7 +6,7 @@ public val kotlin.Char.code: kotlin.Int { get; }
 
 @kotlin.SinceKotlin(version = "1.2")
 @kotlin.internal.InlineOnly
-public val kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
+/*∆*/ public val kotlin.reflect.KProperty0<*>.isInitialized: kotlin.Boolean { get; }
 
 @kotlin.SinceKotlin(version = "1.4")
 public val kotlin.Throwable.suppressedExceptions: kotlin.collections.List<kotlin.Throwable> { get; }
@@ -879,6 +879,11 @@ public inline fun kotlin.Long.toUShort(): kotlin.UShort
 @kotlin.internal.InlineOnly
 public inline fun kotlin.Short.toUShort(): kotlin.UShort
 
+@kotlin.SinceKotlin(version = "1.8")
+@kotlin.ExperimentalStdlibApi
+@kotlin.internal.InlineOnly
+public inline fun <T : kotlin.AutoCloseable?, R> T.use(block: (T) -> R): R
+
 public interface Annotation {
 }
 
@@ -923,6 +928,12 @@ public open class AssertionError : kotlin.Error {
 
     @kotlin.SinceKotlin(version = "1.4")
     public constructor AssertionError(message: kotlin.String?, cause: kotlin.Throwable?)
+}
+
+@kotlin.SinceKotlin(version = "1.8")
+@kotlin.ExperimentalStdlibApi
+public interface AutoCloseable {
+    public abstract fun close(): kotlin.Unit
 }
 
 public final class Boolean : kotlin.Comparable<kotlin.Boolean> {
@@ -1325,6 +1336,7 @@ public open class ConcurrentModificationException : kotlin.RuntimeException {
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE})
 @kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.7")
 public final annotation class ContextFunctionTypeParams : kotlin.Annotation {
     public constructor ContextFunctionTypeParams(count: kotlin.Int)
 

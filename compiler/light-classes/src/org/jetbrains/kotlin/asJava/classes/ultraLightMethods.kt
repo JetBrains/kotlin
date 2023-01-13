@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.codegen.FunctionCodegen
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
@@ -85,7 +86,7 @@ internal abstract class KtUltraLightMethod(
     lightMemberOrigin: LightMemberOriginForDeclaration?,
     protected val support: KtUltraLightSupport,
     containingClass: KtLightClass,
-    private val methodIndex: Int
+    protected val methodIndex: Int
 ) : KtLightMethodImpl(
     lightMemberOrigin,
     containingClass
@@ -234,7 +235,20 @@ internal class KtUltraLightMethodForSourceDeclaration(
         else LightTypeParameterListBuilder(manager, language)
     }
 
-    private val methodDescriptor get() = kotlinOrigin?.resolve() as? FunctionDescriptor
+    private val methodDescriptor: FunctionDescriptor?
+        get() {
+            return when (val descriptor = kotlinOrigin?.resolve()) {
+                is FunctionDescriptor -> descriptor
+                is PropertyDescriptor -> {
+                    when (methodIndex) {
+                        METHOD_INDEX_FOR_GETTER -> descriptor.getter
+                        METHOD_INDEX_FOR_SETTER -> descriptor.setter
+                        else -> null
+                    }
+                }
+                else -> null
+            }
+        }
 
     private val _throwsList: PsiReferenceList by lazyPub { computeThrowsList(methodDescriptor) }
     override fun getThrowsList(): PsiReferenceList = _throwsList

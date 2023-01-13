@@ -17,6 +17,7 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
     ARGUMENTS_OF_ANNOTATIONS,
     CONTRACTS,
     IMPLICIT_TYPES_BODY_RESOLVE,
+    ANNOTATIONS_ARGUMENTS_MAPPING,
     EXPECT_ACTUAL_MATCHING,
     BODY_RESOLVE;
 

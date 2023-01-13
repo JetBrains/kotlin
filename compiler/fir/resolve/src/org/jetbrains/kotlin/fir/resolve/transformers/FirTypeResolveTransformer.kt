@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCyclicTypeBound
 import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.scopes.FirScope
@@ -21,11 +22,14 @@ import org.jetbrains.kotlin.fir.scopes.impl.nestedClassifierScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.whileAnalysing
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class FirTypeResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.TYPES) {
     override val transformer = FirTypeResolveTransformer(session, scopeSession)
 }
 
@@ -74,16 +78,18 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
-        withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
-            withScopeCleanup {
-                regularClass.addTypeParametersScope()
-                regularClass.typeParameters.forEach {
-                    it.accept(this, data)
+        whileAnalysing(session, regularClass) {
+            withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
+                withScopeCleanup {
+                    regularClass.addTypeParametersScope()
+                    regularClass.typeParameters.forEach {
+                        it.accept(this, data)
+                    }
+                    unboundCyclesInTypeParametersSupertypes(regularClass)
                 }
-                unboundCyclesInTypeParametersSupertypes(regularClass)
-            }
 
-            return resolveClassContent(regularClass, data)
+                return resolveClassContent(regularClass, data)
+            }
         }
     }
 
@@ -93,33 +99,37 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: Any?): FirConstructor {
+    override fun transformConstructor(constructor: FirConstructor, data: Any?): FirConstructor = whileAnalysing(session, constructor) {
         return withScopeCleanup {
             constructor.addTypeParametersScope()
             transformDeclaration(constructor, data)
         } as FirConstructor
     }
 
-    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirTypeAlias {
+    override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirTypeAlias = whileAnalysing(session, typeAlias) {
         return withScopeCleanup {
             typeAlias.addTypeParametersScope()
             transformDeclaration(typeAlias, data)
         } as FirTypeAlias
     }
 
-    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?): FirEnumEntry {
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Any?): FirEnumEntry = whileAnalysing(session, enumEntry) {
         enumEntry.transformReturnTypeRef(this, data)
         enumEntry.transformTypeParameters(this, data)
         enumEntry.transformAnnotations(this, data)
         return enumEntry
     }
 
-    override fun transformProperty(property: FirProperty, data: Any?): FirProperty {
+    override fun transformReceiverParameter(receiverParameter: FirReceiverParameter, data: Any?): FirReceiverParameter {
+        return receiverParameter.transformAnnotations(this, data).transformTypeRef(this, data)
+    }
+
+    override fun transformProperty(property: FirProperty, data: Any?): FirProperty = whileAnalysing(session, property) {
         return withScopeCleanup {
             property.addTypeParametersScope()
             property.transformTypeParameters(this, data)
                 .transformReturnTypeRef(this, data)
-                .transformReceiverTypeRef(this, data)
+                .transformReceiverParameter(this, data)
                 .transformContextReceivers(this, data)
                 .transformGetter(this, data)
                 .transformSetter(this, data)
@@ -142,18 +152,21 @@ open class FirTypeResolveTransformer(
     }
 
     private fun setAccessorTypesByPropertyType(property: FirProperty) {
-        property.getter?.transformReturnTypeRef(StoreType, property.returnTypeRef)
-        property.setter?.valueParameters?.map { it.transformReturnTypeRef(StoreType, property.returnTypeRef) }
+        property.getter?.replaceReturnTypeRef(property.returnTypeRef)
+        property.setter?.valueParameters?.map { it.replaceReturnTypeRef(property.returnTypeRef) }
     }
 
-    override fun transformField(field: FirField, data: Any?): FirField {
+    override fun transformField(field: FirField, data: Any?): FirField = whileAnalysing(session, field) {
         return withScopeCleanup {
             field.transformReturnTypeRef(this, data).transformAnnotations(this, data)
             field
         }
     }
 
-    override fun transformSimpleFunction(simpleFunction: FirSimpleFunction, data: Any?): FirSimpleFunction {
+    override fun transformSimpleFunction(
+        simpleFunction: FirSimpleFunction,
+        data: Any?
+    ): FirSimpleFunction = whileAnalysing(session, simpleFunction) {
         return withScopeCleanup {
             simpleFunction.addTypeParametersScope()
             transformDeclaration(simpleFunction, data).also {
@@ -204,7 +217,7 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement {
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement = whileAnalysing(session, valueParameter) {
         valueParameter.transformReturnTypeRef(this, data)
         valueParameter.transformAnnotations(this, data)
         valueParameter.transformVarargTypeToArrayType()
@@ -216,12 +229,45 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformAnnotation(annotation: FirAnnotation, data: Any?): FirStatement {
-        annotation.transformAnnotationTypeRef(this, data)
-        return annotation
+        shouldNotBeCalled()
     }
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement {
-        return transformAnnotation(annotationCall, data)
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement = whileAnalysing(session, annotationCall) {
+        when (val originalTypeRef = annotationCall.annotationTypeRef) {
+            is FirResolvedTypeRef -> {
+                when (annotationCall.annotationResolvePhase) {
+                    FirAnnotationResolvePhase.Unresolved -> when (originalTypeRef){
+                        is FirErrorTypeRef -> return annotationCall.also { it.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types) }
+                        else -> shouldNotBeCalled()
+                    }
+                    FirAnnotationResolvePhase.CompilerRequiredAnnotations -> {
+                        annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
+                        val alternativeResolvedTypeRef = originalTypeRef.delegatedTypeRef?.transformSingle(this, data) ?: return annotationCall
+                        val coneTypeFromCompilerRequiredPhase = originalTypeRef.coneType
+                        val coneTypeFromTypesPhase = alternativeResolvedTypeRef.coneType
+                        if (coneTypeFromTypesPhase != coneTypeFromCompilerRequiredPhase) {
+                            val errorTypeRef = buildErrorTypeRef {
+                                source = originalTypeRef.source
+                                type = coneTypeFromCompilerRequiredPhase
+                                delegatedTypeRef = originalTypeRef.delegatedTypeRef
+                                diagnostic = ConeAmbiguouslyResolvedAnnotationFromPlugin(
+                                    coneTypeFromCompilerRequiredPhase,
+                                    coneTypeFromTypesPhase
+                                )
+                            }
+                            annotationCall.replaceAnnotationTypeRef(errorTypeRef)
+                        }
+                    }
+                    FirAnnotationResolvePhase.Types -> {}
+                }
+            }
+            else -> {
+                val transformedTypeRef = originalTypeRef.transformSingle(this, data)
+                annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
+                annotationCall.replaceAnnotationTypeRef(transformedTypeRef)
+            }
+        }
+        return annotationCall
     }
 
     private inline fun <T> withScopeCleanup(crossinline l: () -> T): T {

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirOperation
@@ -49,7 +48,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
             throw IllegalStateException(
                 "Exception while determining type compatibility: lType: $lType, rType: $rType, " +
                         "equality ${expression.render()}, " +
-                        "file ${context.containingDeclarations.filterIsInstance<FirFile>().firstOrNull()?.name}",
+                        "file ${context.containingFile?.name}",
                 e
             )
         }
@@ -131,8 +130,9 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
             }
         }
         // We only report `SENSELESS_NULL_IN_WHEN` if `lType = type` because `lType` is the type of the when subject. This diagnostic is
-        // only intended for cases where the branch condition contains a null.
-        if (expression.source?.elementType != KtNodeTypes.BINARY_EXPRESSION && type === lType) {
+        // only intended for cases where the branch condition contains a null. Also, the error message for SENSELESS_NULL_IN_WHEN
+        // says the value is *never* equal to null, so we can't report it if the value is *always* equal to null.
+        if (expression.source?.elementType != KtNodeTypes.BINARY_EXPRESSION && type === lType && !compareResult) {
             reporter.reportOn(expression.source, FirErrors.SENSELESS_NULL_IN_WHEN, context)
         } else {
             reporter.reportOn(expression.source, FirErrors.SENSELESS_COMPARISON, expression, compareResult, context)

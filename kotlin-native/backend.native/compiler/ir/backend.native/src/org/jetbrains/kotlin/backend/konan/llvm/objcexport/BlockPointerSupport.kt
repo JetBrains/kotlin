@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
-import llvm.*
+import llvm.LLVMLinkage
+import llvm.LLVMSetLinkage
+import llvm.LLVMStoreSizeOfType
+import llvm.LLVMValueRef
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.BlockPointerBridge
-import org.jetbrains.kotlin.descriptors.konan.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.simpleFunctions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -312,11 +314,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
                 ret(llvm.kNullInt8Ptr)
             }
 
-            val isa = codegen.importGlobal(
-                    "_NSConcreteStackBlock",
-                    llvm.int8PtrType,
-                    CurrentKlibModuleOrigin
-            )
+            val isa = codegen.importObjCGlobal("_NSConcreteStackBlock", llvm.int8PtrType)
 
             val flags = llvm.int32((1 shl 25) or (1 shl 30) or (1 shl 31))
             val reserved = llvm.int32(0)
@@ -347,12 +345,8 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
 }
 
 private val ObjCExportCodeGeneratorBase.retainBlock: LlvmCallable
-    get() {
-        val functionProto = LlvmFunctionProto(
-                "objc_retainBlock",
-                LlvmRetType(llvm.int8PtrType),
-                listOf(LlvmParamType(llvm.int8PtrType)),
-                origin = CurrentKlibModuleOrigin
-        )
-        return llvm.externalFunction(functionProto)
-    }
+    get() = llvm.externalNativeRuntimeFunction(
+            "objc_retainBlock",
+            LlvmRetType(llvm.int8PtrType),
+            listOf(LlvmParamType(llvm.int8PtrType))
+    )

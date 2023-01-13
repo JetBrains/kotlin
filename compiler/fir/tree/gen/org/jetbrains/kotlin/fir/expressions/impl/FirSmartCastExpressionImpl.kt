@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -23,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirSmartCastExpressionImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var typeRef: FirTypeRef,
     override var originalExpression: FirExpression,
     override val typesFromSmartCast: Collection<ConeKotlinType>,
@@ -58,6 +60,10 @@ internal class FirSmartCastExpressionImpl(
     override fun <D> transformOriginalExpression(transformer: FirTransformer<D>, data: D): FirSmartCastExpressionImpl {
         originalExpression = originalExpression.transform(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

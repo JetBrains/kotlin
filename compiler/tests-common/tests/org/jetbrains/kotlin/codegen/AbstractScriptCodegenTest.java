@@ -17,25 +17,23 @@
 package org.jetbrains.kotlin.codegen;
 
 import com.intellij.openapi.util.Pair;
+import kotlin.io.FilesKt;
+import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.util.List;
 
 import static org.jetbrains.kotlin.script.ScriptTestUtilKt.loadScriptingPlugin;
 
 public abstract class AbstractScriptCodegenTest extends CodegenTestCase {
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY);
-    }
-
     @Override
     protected void updateConfiguration(@NotNull CompilerConfiguration configuration) {
         super.updateConfiguration(configuration);
@@ -44,6 +42,10 @@ public abstract class AbstractScriptCodegenTest extends CodegenTestCase {
 
     @Override
     protected void doTest(@NotNull String filename) {
+        configurationKind = InTextDirectivesUtils.findLinesWithPrefixesRemoved(
+                FilesKt.readText(new File(filename), Charsets.UTF_8), "// WITH_REFLECT"
+        ).isEmpty() ? ConfigurationKind.JDK_ONLY : ConfigurationKind.ALL;
+        createEnvironmentWithMockJdkAndIdeaAnnotations(configurationKind);
         loadFileByFullPath(filename);
 
         try {

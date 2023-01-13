@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,7 +36,7 @@ abstract class FirComponentCall : FirFunctionCall() {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitComponentCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformComponentCall(this, data) as E
 
     @FirImplementationDetail
@@ -44,9 +44,15 @@ abstract class FirComponentCall : FirFunctionCall() {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+
+    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+
+    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 
@@ -59,10 +65,6 @@ abstract class FirComponentCall : FirFunctionCall() {
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirComponentCall
 
     abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirComponentCall
-
-    abstract override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall
-
-    abstract override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirComponentCall
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirComponentCall
 

@@ -111,8 +111,8 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitBlockExpression(@NotNull KtBlockExpression jetBlock, @NotNull TranslationContext context) {
-        List<KtExpression> statements = jetBlock.getStatements();
+    public JsNode visitBlockExpression(@NotNull KtBlockExpression ktBlockExpression, @NotNull TranslationContext context) {
+        List<KtExpression> statements = ktBlockExpression.getStatements();
         JsBlock jsBlock = new JsBlock();
         for (KtExpression statement : statements) {
             JsNode jsNode = Translation.translateExpression(statement, context, jsBlock);
@@ -131,9 +131,9 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     public JsNode visitDestructuringDeclaration(@NotNull KtDestructuringDeclaration multiDeclaration, @NotNull TranslationContext context) {
-        KtExpression jetInitializer = multiDeclaration.getInitializer();
-        assert jetInitializer != null : "Initializer for multi declaration must be not null";
-        JsExpression initializer = Translation.translateAsExpression(jetInitializer, context);
+        KtExpression ktInitializer = multiDeclaration.getInitializer();
+        assert ktInitializer != null : "Initializer for multi declaration must be not null";
+        JsExpression initializer = Translation.translateAsExpression(ktInitializer, context);
         JsName parameterName = JsScope.declareTemporary();
         JsVars tempVarDeclaration = JsAstUtils.newVar(parameterName, initializer);
         MetadataProperties.setSynthetic(tempVarDeclaration, true);
@@ -143,20 +143,20 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
     @Override
     @NotNull
-    public JsNode visitReturnExpression(@NotNull KtReturnExpression jetReturnExpression, @NotNull TranslationContext context) {
-        KtExpression returned = jetReturnExpression.getReturnedExpression();
+    public JsNode visitReturnExpression(@NotNull KtReturnExpression ktReturnExpression, @NotNull TranslationContext context) {
+        KtExpression returned = ktReturnExpression.getReturnedExpression();
 
         // TODO: add related descriptor to context and use it here
-        KtDeclarationWithBody parent = PsiTreeUtil.getParentOfType(jetReturnExpression, KtDeclarationWithBody.class);
+        KtDeclarationWithBody parent = PsiTreeUtil.getParentOfType(ktReturnExpression, KtDeclarationWithBody.class);
         if (parent instanceof KtSecondaryConstructor) {
             ClassDescriptor classDescriptor = context.getClassDescriptor();
             assert classDescriptor != null : "Missing class descriptor in context while translating constructor: " +
-                    PsiUtilsKt.getTextWithLocation(jetReturnExpression);
+                    PsiUtilsKt.getTextWithLocation(ktReturnExpression);
             JsExpression ref = ReferenceTranslator.translateAsValueReference(classDescriptor.getThisAsReceiverParameter(), context);
-            return new JsReturn(ref.source(jetReturnExpression));
+            return new JsReturn(ref.source(ktReturnExpression));
         }
 
-        FunctionDescriptor returnTarget = getNonLocalReturnTarget(jetReturnExpression, context);
+        FunctionDescriptor returnTarget = getNonLocalReturnTarget(ktReturnExpression, context);
 
         JsReturn jsReturn;
         if (returned == null) {
@@ -172,7 +172,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
             KotlinType returnedType = context.bindingContext().getType(returned);
             assert returnedType != null : "Resolved return expression is expected to have type: " +
-                                          PsiUtilsKt.getTextWithLocation(jetReturnExpression);
+                                          PsiUtilsKt.getTextWithLocation(ktReturnExpression);
 
             CallableDescriptor returnTargetOrCurrentFunction = returnTarget;
             if (returnTargetOrCurrentFunction == null) {
@@ -188,7 +188,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
 
         MetadataProperties.setReturnTarget(jsReturn, returnTarget);
 
-        return jsReturn.source(jetReturnExpression);
+        return jsReturn.source(ktReturnExpression);
     }
 
     @Nullable

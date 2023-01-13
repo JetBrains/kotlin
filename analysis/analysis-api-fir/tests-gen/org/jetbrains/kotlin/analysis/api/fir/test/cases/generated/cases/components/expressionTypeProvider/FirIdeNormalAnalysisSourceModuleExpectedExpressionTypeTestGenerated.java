@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -230,6 +230,24 @@ public class FirIdeNormalAnalysisSourceModuleExpectedExpressionTypeTestGenerated
     @TestMetadata("samAsReturn.kt")
     public void testSamAsReturn() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samAsReturn.kt");
+    }
+
+    @Test
+    @TestMetadata("samReferenceAsArgument.kt")
+    public void testSamReferenceAsArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samReferenceAsArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("samReferenceAsVararg.kt")
+    public void testSamReferenceAsVararg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samReferenceAsVararg.kt");
+    }
+
+    @Test
+    @TestMetadata("samReferenceWithTypeCast.kt")
+    public void testSamReferenceWithTypeCast() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expectedExpressionType/samReferenceWithTypeCast.kt");
     }
 
     @Test

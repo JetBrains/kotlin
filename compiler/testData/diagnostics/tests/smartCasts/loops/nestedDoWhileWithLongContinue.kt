@@ -5,7 +5,7 @@ public fun foo(p: String?, r: String?): Int {
         do {
             p!!.length
             if (!x()) continue@outer
-        } while (r == null)  
+        } while (r == null)
     } while (!x())
     // Auto cast NOT possible due to long continue
     r<!UNSAFE_CALL!>.<!>length

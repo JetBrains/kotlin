@@ -370,7 +370,7 @@ class DelegatedPropertyResolver(
         val hasThis = propertyDescriptor.extensionReceiverParameter != null || propertyDescriptor.dispatchReceiverParameter != null
 
         val arguments = Lists.newArrayList<KtExpression>()
-        val psiFactory = KtPsiFactory(delegateExpression, markGenerated = false)
+        val psiFactory = KtPsiFactory(delegateExpression.project, markGenerated = false)
         arguments.add(psiFactory.createExpression(if (hasThis) "this" else "null"))
         arguments.add(psiFactory.createExpressionForProperty())
 
@@ -458,7 +458,7 @@ class DelegatedPropertyResolver(
         context: ExpressionTypingContext
     ): OverloadResolutionResults<FunctionDescriptor> {
         val propertyHasReceiver = propertyDescriptor.dispatchReceiverParameter != null
-        val arguments = KtPsiFactory(delegateExpression, markGenerated = false).run {
+        val arguments = KtPsiFactory(delegateExpression.project, markGenerated = false).run {
             listOf(
                 createExpression(if (propertyHasReceiver) "this" else "null"),
                 createExpressionForProperty()

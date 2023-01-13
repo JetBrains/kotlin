@@ -57,7 +57,7 @@ internal object DWARF {
 
 fun KonanConfig.debugInfoVersion(): Int = configuration[KonanConfigKeys.DEBUG_INFO_VERSION] ?: 1
 
-internal class DebugInfo(override val context: Context) : ContextUtils {
+internal class DebugInfo(override val generationState: NativeGenerationState) : ContextUtils {
     private val config = context.config
 
     val builder: DIBuilderRef = LLVMCreateDIBuilder(llvm.module)!!
@@ -66,7 +66,7 @@ internal class DebugInfo(override val context: Context) : ContextUtils {
     val objHeaderPointerType: DITypeOpaqueRef
 
     init {
-        val path = context.generationState.outputFile.toFileAndFolder(config)
+        val path = generationState.outputFile.toFileAndFolder(config)
         compilationUnit = DICreateCompilationUnit(
                 builder = builder,
                 lang = DWARF.language(config),
@@ -266,29 +266,26 @@ internal fun String?.toFileAndFolder(config: KonanConfig): FileAndFolder {
 
 internal fun alignTo(value: Long, align: Long): Long = (value + align - 1) / align * align
 
-internal fun setupBridgeDebugInfo(context: Context, function: LLVMValueRef): LocationInfo? {
-    if (!context.shouldContainLocationDebugInfo()) {
+internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, function: LLVMValueRef): LocationInfo? {
+    if (!generationState.shouldContainLocationDebugInfo()) {
         return null
     }
 
-    val debugInfo = context.generationState.debugInfo
+    val debugInfo = generationState.debugInfo
     val file = debugInfo.compilerGeneratedFile
 
     // TODO: can we share the scope among all bridges?
-    val scope: DIScopeOpaqueRef = DICreateFunction(
+    val scope: DIScopeOpaqueRef = DICreateBridgeFunction(
             builder = debugInfo.builder,
             scope = file.reinterpret(),
-            name = function.name,
-            linkageName = function.name,
+            function = function,
             file = file,
             lineNo = 0,
-            type = debugInfo.subroutineType(context.generationState.runtime.targetData, emptyList()), // TODO: use proper type.
+            type = debugInfo.subroutineType(generationState.runtime.targetData, emptyList()), // TODO: use proper type.
             isLocal = 0,
             isDefinition = 1,
             scopeLine = 0
-    )!!.also {
-        DIFunctionAddSubprogram(function, it)
-    }.reinterpret()
+    )!!.reinterpret()
 
     return LocationInfo(scope, 1, 0)
 }

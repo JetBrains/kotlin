@@ -1,9 +1,7 @@
 package test.another;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Anno {
 
     public abstract java.lang.String value();
@@ -12,8 +10,6 @@ public abstract @interface Anno {
 ////////////////////
 
 package test.another;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class TopLevelKt {
@@ -43,12 +39,12 @@ public final class TopLevelKt {
         return null;
     }
 
-    public static final void extensionFunction(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "rec")
-    java.lang.String $this$extensionFunction, @org.jetbrains.annotations.NotNull()
-    @Anno(value = "1")
-    java.lang.String a, @org.jetbrains.annotations.NotNull()
-    @Anno(value = "2")
+    public static final void extensionFunction(@Anno(value = "rec")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String $this$extensionFunction, @Anno(value = "1")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String a, @Anno(value = "2")
+    @org.jetbrains.annotations.NotNull()
     java.lang.String b) {
     }
 
@@ -58,16 +54,16 @@ public final class TopLevelKt {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "propRec")
+    public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@Anno(value = "propRec")
+    @org.jetbrains.annotations.NotNull()
     T $this$extensionProperty) {
         return null;
     }
 
-    public static final <T extends java.lang.Object>void setExtensionProperty(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "propRec")
-    T $this$extensionProperty, @org.jetbrains.annotations.NotNull()
-    @Anno(value = "setparam")
+    public static final <T extends java.lang.Object>void setExtensionProperty(@Anno(value = "propRec")
+    @org.jetbrains.annotations.NotNull()
+    T $this$extensionProperty, @Anno(value = "setparam")
+    @org.jetbrains.annotations.NotNull()
     java.lang.String setParamName) {
     }
 }

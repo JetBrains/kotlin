@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -733,7 +733,7 @@ public expect fun log10(x: Float): Float
 public expect fun log2(x: Float): Float
 
 /**
- * Computes `ln(a + 1)`.
+ * Computes `ln(x + 1)`.
  *
  * This function can be implemented to produce more precise result for [x] near zero.
  *

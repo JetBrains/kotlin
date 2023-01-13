@@ -37,6 +37,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val callableDeclarationCheckers: Set<FirCallableDeclarationChecker>
         get() = setOf(
             FirKClassWithIncorrectTypeArgumentChecker,
+            FirImplicitNothingReturnTypeChecker,
+            FirDynamicReceiverChecker,
         )
 
     override val functionCheckers: Set<FirFunctionChecker>
@@ -52,7 +54,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirFunctionTypeParametersSyntaxChecker,
             FirOperatorModifierChecker,
             FirTailrecFunctionChecker,
-            FirTopLevelFunctionsChecker,
             FirMemberFunctionsChecker,
             FirDataObjectContentChecker,
         )
@@ -91,6 +92,8 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirImplementationMismatchChecker,
             FirTypeParametersInObjectChecker,
             FirSupertypesChecker,
+            FirPrimaryConstructorSuperTypeChecker,
+            FirDynamicSupertypeChecker,
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>
@@ -98,7 +101,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirAnnotationClassDeclarationChecker,
             FirOptInAnnotationClassChecker,
             FirCommonConstructorDelegationIssuesChecker,
-            FirConstructorInInterfaceChecker,
             FirDelegationSuperCallInEnumConstructorChecker,
             FirDelegationInInterfaceSyntaxChecker,
             FirEnumClassSimpleChecker,
@@ -106,10 +108,9 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirManyCompanionObjectsChecker,
             FirMethodOfAnyImplementedInInterfaceChecker,
             FirDataClassPrimaryConstructorChecker,
-            FirPrimaryConstructorSuperTypeChecker,
             FirFunInterfaceDeclarationChecker,
             FirNestedClassChecker,
-            FirInlineClassDeclarationChecker,
+            FirValueClassDeclarationChecker,
             FirOuterClassArgumentsRequiredChecker,
             FirPropertyInitializationChecker,
         )
@@ -166,7 +167,5 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         )
 
     override val valueParameterCheckers: Set<FirValueParameterChecker>
-        get() = setOf(
-            FirUnsupportedDefaultValueInFunctionTypeChecker
-        )
+        get() = setOf()
 }

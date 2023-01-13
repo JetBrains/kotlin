@@ -41,3 +41,14 @@ val Project.distsDirectory
         .variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
         .getInstance(this)
         .distsDirectory
+
+/**
+ * Returns the directory to generate JAR archives into.
+ *
+ * @return The directory. Never returns null.
+ */
+val Project.libsDirectory
+    get() = gradle
+        .variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
+        .getInstance(this)
+        .libsDirectory

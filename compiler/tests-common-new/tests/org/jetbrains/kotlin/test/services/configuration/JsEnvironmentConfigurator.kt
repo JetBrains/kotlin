@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags.allowFullyQualifiedNameInKClass
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.js.config.*
@@ -37,10 +38,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
-import org.jetbrains.kotlin.test.model.ArtifactKinds
-import org.jetbrains.kotlin.test.model.DependencyDescription
-import org.jetbrains.kotlin.test.model.DependencyRelation
-import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
@@ -155,7 +153,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
                     ConfigurationDirectives.WITH_STDLIB in module.directives
 
             val names = if (needsFullIrRuntime) listOf("full.stdlib", "kotlin.test") else listOf("reduced.stdlib")
-            names.mapNotNullTo(result) { System.getProperty("kotlin.js.$it.path") }
+            names.mapNotNullTo(result) { System.getProperty("kotlin.js.$it.path")?.let { File(it).absolutePath } }
             val runtimeClasspaths = testServices.runtimeClasspathProviders.flatMap { it.runtimeClassPaths(module) }
             runtimeClasspaths.mapTo(result) { it.absolutePath }
             return result
@@ -163,20 +161,27 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         fun getKlibDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<File> {
             val visited = mutableSetOf<TestModule>()
-            fun getRecursive(module: TestModule, kind: DependencyRelation) {
-                val dependencies = if (kind == DependencyRelation.FriendDependency) module.friendDependencies else module.regularDependencies
-                dependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
-                    if (it !in visited) {
-                        visited += it
-                        getRecursive(it, kind)
-                    }
+            fun getRecursive(module: TestModule, relation: DependencyRelation) {
+                val dependencies = if (relation == DependencyRelation.FriendDependency) {
+                    module.friendDependencies
+                } else {
+                    module.regularDependencies
                 }
+                dependencies
+                    // See: `dependencyKind =` in AbstractJsBlackBoxCodegenTestBase.kt
+                    .filter { it.kind != DependencyKind.Source }
+                    .map { testServices.dependencyProvider.getTestModule(it.moduleName) }.forEach {
+                        if (it !in visited) {
+                            visited += it
+                            getRecursive(it, relation)
+                        }
+                    }
             }
             getRecursive(module, kind)
             return visited.map { testServices.dependencyProvider.getArtifact(it, ArtifactKinds.KLib).outputFile }
         }
 
-        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptorImpl> {
+        fun getDependencies(module: TestModule, testServices: TestServices, kind: DependencyRelation): List<ModuleDescriptor> {
             return getKlibDependencies(module, testServices, kind)
                 .map { testServices.jsLibraryProvider.getDescriptorByPath(it.absolutePath) }
         }
@@ -190,7 +195,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
 
         fun getAllRecursiveDependenciesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
             val visited = mutableSetOf<ModuleDescriptorImpl>()
-            fun getRecursive(descriptor: ModuleDescriptorImpl) {
+            fun getRecursive(descriptor: ModuleDescriptor) {
                 descriptor.allDependencyModules.forEach {
                     if (it is ModuleDescriptorImpl && it !in visited) {
                         visited += it

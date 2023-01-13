@@ -36,12 +36,12 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENCODER_CLASS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUMS_FILE
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.KSERIALIZER_CLASS
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.MISSING_FIELD_EXC
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.PLUGIN_EXCEPTIONS_FILE
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_CTOR_MARKER_NAME
@@ -329,10 +329,21 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(expressionCode
                 }
                 checkcast(doubleAnnotationArrayType)
 
+                val classAnnotationsTuples = classDescriptor.annotationsWithArguments()
+                if (classAnnotationsTuples.isEmpty()) {
+                    aconst(null)
+                } else {
+                    fillArray(annotationType, classAnnotationsTuples) { _, annotation ->
+                        val (annotationClass, args, consParams) = annotation
+                        expressionCodegen.generateSyntheticAnnotationOnStack(annotationClass, args, consParams)
+                    }
+                }
+                checkcast(annotationArrayType)
+
                 invokestatic(
                     enumFactoriesType.internalName,
-                    MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME.asString(),
-                    "(${stringType.descriptor}${javaEnumArray.descriptor}${stringArrayType.descriptor}${doubleAnnotationArrayType.descriptor})${kSerializerType.descriptor}",
+                    ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME.asString(),
+                    "(${stringType.descriptor}${javaEnumArray.descriptor}${stringArrayType.descriptor}${doubleAnnotationArrayType.descriptor}${annotationArrayType.descriptor})${kSerializerType.descriptor}",
                     false
                 )
             } else {

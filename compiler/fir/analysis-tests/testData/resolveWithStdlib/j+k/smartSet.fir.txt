@@ -4,22 +4,22 @@ FILE: smartSet.kt
             super<R|java/util/AbstractSet<T>|>()
         }
 
-        public final override var size: R|kotlin/Int| = Int(0)
+        public open override var size: R|kotlin/Int| = Int(0)
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final override operator fun iterator(): R|kotlin/collections/MutableIterator<T>| {
+        public open override operator fun iterator(): R|kotlin/collections/MutableIterator<T>| {
             ^iterator R|kotlin/TODO|()
         }
 
-        public final override fun add(element: R|T|): R|kotlin/Boolean| {
+        public open override fun add(element: R|T|): R|kotlin/Boolean| {
             ^add Boolean(true)
         }
 
-        public final override fun clear(): R|kotlin/Unit| {
+        public open override fun clear(): R|kotlin/Unit| {
         }
 
-        public final override operator fun contains(element: R|T|): R|kotlin/Boolean| {
+        public open override operator fun contains(element: R|T|): R|kotlin/Boolean| {
             ^contains Boolean(false)
         }
 

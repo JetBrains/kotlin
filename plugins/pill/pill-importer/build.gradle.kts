@@ -30,7 +30,7 @@ fun runPillTask(taskName: String) {
     val runMethod = pillImporterClass.declaredMethods.single { it.name == "run" }
     require(Modifier.isStatic(runMethod.modifiers))
 
-    val platformDir = IntellijRootUtils.getIntellijRootDir(project)
+    val platformDir = rootProject.ideaHomePathForTests()
     val resourcesDir = File(project.projectDir, "resources")
     val isIdePluginAttached = project.rootProject.intellijSdkVersionForIde() != null
 
@@ -41,6 +41,7 @@ val jar: Jar by tasks
 
 val pill by tasks.creating {
     dependsOn(jar)
+    dependsOn(":createIdeaHomeForTests")
     doLast { runPillTask("pill") }
 }
 

@@ -122,7 +122,7 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
                                     "bool": {
                                         "must": [
                                             { "match": { "benchmarks.metric": "$metricName" } },
-                                            { "terms": { "benchmarks.name": [${samples.map { "\"${it.lowercase()}\"" }.joinToString()}] }}
+                                            { "terms": { "benchmarks.name": [${samples.joinToString { "\"$it\"" }}] }}
                                         ]
                                     }  
                                 }, "inner_hits": {
@@ -380,4 +380,6 @@ class BenchmarksIndexesDispatcher(connector: ElasticSearchConnector, val feature
             )
         }
     }
+
+    val createMappingQueries get() = benchmarksIndexes.values.map { it.createMappingQuery }
 }

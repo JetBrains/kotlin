@@ -1,3 +1,5 @@
+// KT-55828
+// IGNORE_BACKEND_K2: NATIVE
 // WITH_STDLIB
 
 import Game.*

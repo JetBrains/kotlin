@@ -527,8 +527,8 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             val lambdaType = lambdaInfo.lambdaClass.defaultType
             val instanceVal = JsIrBuilder.buildVar(lambdaType, factoryFunction, "i").apply {
                 val newCtorCall = IrConstructorCallImpl(
-                    lambdaInfo.lambdaClass.startOffset,
-                    lambdaInfo.lambdaClass.endOffset,
+                    UNDEFINED_OFFSET,
+                    UNDEFINED_OFFSET,
                     lambdaType,
                     constructor.symbol,
                     lambdaInfo.lambdaClass.typeParameters.size,
@@ -598,7 +598,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             statements.add(JsIrBuilder.buildReturn(factoryFunction.symbol, functionExpression, context.irBuiltIns.nothingType))
         }
 
-        return context.irFactory.createBlockBody(lambdaInfo.lambdaClass.startOffset, lambdaInfo.lambdaClass.endOffset, statements)
+        return context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, statements)
     }
 
     private fun createLambdaDeclaration(
@@ -621,7 +621,15 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         lambdaDeclaration.parent = parent
 
         lambdaDeclaration.valueParameters = superInvokeFun.valueParameters.mapIndexed { id, vp ->
-            vp.copyTo(lambdaDeclaration, type = anyNType, name = invokeFun.valueParameters[id].name)
+            val originalValueParameter = invokeFun.valueParameters[id]
+            vp.copyTo(
+                irFunction = lambdaDeclaration,
+                origin = originalValueParameter.origin,
+                startOffset = originalValueParameter.startOffset,
+                endOffset = originalValueParameter.endOffset,
+                name = originalValueParameter.name,
+                type = anyNType,
+            )
         }
         return lambdaDeclaration
     }

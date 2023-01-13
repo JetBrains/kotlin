@@ -5,7 +5,7 @@
 
 package kotlinx.metadata.klib.impl
 
-import kotlinx.metadata.impl.ReadContextExtension
+import kotlinx.metadata.internal.ReadContextExtension
 import kotlinx.metadata.klib.KlibSourceFile
 
 class SourceFileIndexReadExtension(

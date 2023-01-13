@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.js.translate.extensions.JsSyntheticTranslateExtension
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 import org.jetbrains.kotlin.serialization.js.JsSerializerProtocol
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationPluginDeclarationChecker
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationConfigurationKeys.DISABLE_INTRINSIC
+import org.jetbrains.kotlinx.serialization.compiler.fir.FirSerializationExtensionRegistrar
 
 object SerializationConfigurationKeys {
     val DISABLE_INTRINSIC: CompilerConfigurationKey<Boolean> =
@@ -57,7 +59,7 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
         if (configuration.get(DISABLE_INTRINSIC) == true) SerializationIntrinsicsState.DISABLED else SerializationIntrinsicsState.NORMAL
 
     override val supportsK2: Boolean
-        get() = false
+        get() = true
 
     companion object {
         fun registerExtensions(extensionStorage: ExtensionStorage, intrinsicsState: SerializationIntrinsicsState = SerializationIntrinsicsState.NORMAL) = with(extensionStorage) {
@@ -76,6 +78,8 @@ class SerializationComponentRegistrar : CompilerPluginRegistrar() {
             IrGenerationExtension.registerExtension(SerializationLoweringExtension(serializationDescriptorSerializer, intrinsicsState))
 
             StorageComponentContainerContributor.registerExtension(SerializationPluginComponentContainerContributor())
+
+            FirExtensionRegistrarAdapter.registerExtension(FirSerializationExtensionRegistrar())
         }
 
         private fun registerProtoExtensions() {

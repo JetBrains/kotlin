@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: String) :
     KotlinJsIrSubTarget(target, classifier) {
@@ -25,7 +26,7 @@ abstract class KotlinJsIrSubTargetBase(target: KotlinJsIrTarget, classifier: Str
 
     private fun configureRun(binary: JsIrBinary) {
         val binaryRunName = disambiguateCamelCased(
-            binary.mode.name.toLowerCase(),
+            binary.mode.name.toLowerCaseAsciiOnly(),
             RUN_TASK_NAME
         )
 

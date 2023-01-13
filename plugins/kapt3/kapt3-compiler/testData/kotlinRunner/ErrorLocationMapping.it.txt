@@ -1,14 +1,10 @@
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface MyAnnotation {
 }
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class Subject {

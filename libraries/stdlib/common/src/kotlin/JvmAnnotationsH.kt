@@ -122,8 +122,16 @@ public expect annotation class JvmInline()
 public expect annotation class JvmRecord()
 
 /**
- * Marks the JVM backing field of the annotated property as `volatile`, meaning that writes to this field
- * are immediately made visible to other threads.
+ * Marks the JVM backing field of the annotated `var` property as `volatile`, meaning that reads and writes to this field
+ * are atomic and writes are always made visible to other threads. If another thread reads the value of this field (e.g. through its accessor),
+ * it sees not only that value, but all side effects that led to writing that value.
+ *
+ * This annotation has effect only in Kotlin/JVM. It's recommended to use [kotlin.concurrent.Volatile] annotation instead
+ * in multiplatform projects.
+ *
+ * Note that only _backing field_ operations are atomic when the field is annotated with `Volatile`.
+ * For example, if the property getter or setter make several operations with the backing field,
+ * a _property_ operation, i.e. reading or setting it through these accessors, is not guaranteed to be atomic.
  */
 @Target(FIELD)
 @MustBeDocumented
@@ -160,6 +168,8 @@ public expect annotation class Strictfp()
 @Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
 @MustBeDocumented
 @OptionalExpectation
+@Deprecated("Synchronizing methods on a class instance is not supported on platforms other than JVM. If you need to annotate a common method as JVM-synchronized, introduce your own optional-expectation annotation and actualize it with a typealias to kotlin.jvm.Synchronized.")
+@DeprecatedSinceKotlin(warningSince = "1.8")
 public expect annotation class Synchronized()
 
 
@@ -179,4 +189,4 @@ internal expect annotation class JvmPackageName(val name: String)
 @Retention(AnnotationRetention.SOURCE)
 @SinceKotlin("1.8")
 @OptionalExpectation
-public expect annotation class JvmSerializableLambda
+public expect annotation class JvmSerializableLambda()

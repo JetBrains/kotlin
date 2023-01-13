@@ -1,0 +1,33 @@
+FILE: danglingAnnotationsClassLevel.kt
+    public? final? class A : R|kotlin/Any| {
+        public? constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+    }
+    public? final? class B : R|kotlin/Any| {
+        public? constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+    }
+    public? final? class Outer : R|kotlin/Any| {
+        public? constructor(): R|Outer| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? class Inner : R|kotlin/Any| {
+            public? constructor(): R|Outer.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            @Suppress(String()) @MustBeDocumented() <DANGLING MODIFIER: Top level declaration expected>
+        }
+
+        public? final? fun withLocal(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? interface I : R|kotlin/Any| {
+    }

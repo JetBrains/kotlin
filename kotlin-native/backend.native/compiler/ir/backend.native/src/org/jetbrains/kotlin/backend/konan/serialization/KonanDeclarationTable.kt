@@ -23,7 +23,7 @@ class KonanDeclarationTable(
 
     // TODO: We should get rid of this extension point in favor of proper support in IR-based mangler.
     override fun tryComputeBackendSpecificSignature(declaration: IrDeclaration): IdSignature? =
-            if (declaration.descriptor.module.isFromInteropLibrary()) {
+            if (declaration.descriptor.isFromInteropLibrary()) {
                 signatureIdComposer.computeSignature(declaration)
             } else null
 }

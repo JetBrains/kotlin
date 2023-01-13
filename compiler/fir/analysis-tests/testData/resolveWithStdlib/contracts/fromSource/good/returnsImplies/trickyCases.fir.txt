@@ -5,7 +5,13 @@ FILE: trickyCases.kt
             Returns(NOT_NULL) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returnsNotNull|().R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^test1 R|<local>/x|
     }
     @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun test2(x: R|kotlin/String?|): R|kotlin/Any?|
@@ -14,7 +20,13 @@ FILE: trickyCases.kt
             Returns(TRUE) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|(Boolean(true)).R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^test2 when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 Boolean(true)
@@ -31,7 +43,13 @@ FILE: trickyCases.kt
             Returns(NOT_NULL) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returnsNotNull|().R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^test3 when () {
             Boolean(true) ->  {
                 R|<local>/x|
@@ -48,7 +66,13 @@ FILE: trickyCases.kt
             Returns(NOT_NULL) -> x != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returnsNotNull|().R|kotlin/contracts/SimpleEffect.implies|(!=(R|<local>/x|, Null(null)))
+            }
+            )
+        }
+
         ^test4 when () {
             !=(R|<local>/x|, Null(null)) ->  {
                 when () {

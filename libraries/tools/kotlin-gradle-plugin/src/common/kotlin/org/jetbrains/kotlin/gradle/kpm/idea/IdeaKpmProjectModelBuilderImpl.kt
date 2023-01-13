@@ -9,12 +9,14 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.api.Project
 import org.gradle.tooling.provider.model.ToolingModelBuilder
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProjectContainer
+import org.jetbrains.kotlin.gradle.idea.proto.kpm.toByteArray
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.*
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmExtrasSerializationExtension
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
-import org.jetbrains.kotlin.kpm.idea.proto.toByteArray
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal class IdeaKpmProjectModelBuilderImpl @UnsafeApi("Use factory methods instead") constructor(
@@ -46,7 +48,7 @@ internal class IdeaKpmProjectModelBuilderImpl @UnsafeApi("Use factory methods in
     private val registeredDependencyResolvers = mutableListOf<RegisteredDependencyResolver>()
     private val registeredDependencyTransformers = mutableListOf<RegisteredDependencyTransformer>()
     private val registeredDependencyEffects = mutableListOf<RegisteredDependencyEffect>()
-    private val registeredExtrasSerializationExtensions = mutableListOf<IdeaKpmExtrasSerializationExtension>()
+    private val registeredExtrasSerializationExtensions = mutableListOf<IdeaKotlinExtrasSerializationExtension>()
 
     override fun registerDependencyResolver(
         resolver: IdeaKpmDependencyResolver,
@@ -79,13 +81,13 @@ internal class IdeaKpmProjectModelBuilderImpl @UnsafeApi("Use factory methods in
     }
 
     override fun registerExtrasSerializationExtension(
-        extension: IdeaKpmExtrasSerializationExtension
+        extension: IdeaKotlinExtrasSerializationExtension
     ) {
         registeredExtrasSerializationExtensions.add(extension)
     }
 
-    override fun buildSerializationContext(): IdeaKpmSerializationContext {
-        return IdeaKpmSerializationContext(
+    override fun buildSerializationContext(): IdeaKotlinSerializationContext {
+        return IdeaSerializationContext(
             logger = extension.project.logger,
             extrasSerializationExtensions = registeredExtrasSerializationExtensions.toList()
         )

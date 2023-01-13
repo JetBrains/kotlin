@@ -83,73 +83,73 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
           RETURN type=kotlin.Nothing from='private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ms type:kotlin.collections.MutableSet<<root>.IT> visibility:private [final]' type=kotlin.collections.MutableSet<<root>.IT> origin=null
               receiver: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.<get-ms>' type=<root>.InlineMutableSet origin=null
-    PROPERTY name:size visibility:public modality:FINAL [val]
+    PROPERTY name:size visibility:public modality:OPEN [val]
       overridden:
         public abstract size: kotlin.Int [fake_override,val]
-      FUN name:<get-size> visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet) returnType:kotlin.Int
-        correspondingProperty: PROPERTY name:size visibility:public modality:FINAL [val]
+      FUN name:<get-size> visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.Int
+        correspondingProperty: PROPERTY name:size visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-size> (): kotlin.Int [fake_override] declared in kotlin.collections.MutableSet
         $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-size> (): kotlin.Int declared in <root>.InlineMutableSet'
+          RETURN type=kotlin.Nothing from='public open fun <get-size> (): kotlin.Int declared in <root>.InlineMutableSet'
             CALL 'public abstract fun <get-size> (): kotlin.Int [fake_override] declared in kotlin.collections.MutableSet' type=kotlin.Int origin=GET_PROPERTY
               $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.<get-size>' type=<root>.InlineMutableSet origin=null
-    FUN name:contains visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet, element:<root>.IT) returnType:kotlin.Boolean [operator]
+    FUN name:contains visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet, element:<root>.IT) returnType:kotlin.Boolean [operator]
       overridden:
         public abstract fun contains (element: E of kotlin.collections.MutableSet): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
       VALUE_PARAMETER name:element index:0 type:<root>.IT
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun contains (element: <root>.IT): kotlin.Boolean [operator] declared in <root>.InlineMutableSet'
+        RETURN type=kotlin.Nothing from='public open fun contains (element: <root>.IT): kotlin.Boolean [operator] declared in <root>.InlineMutableSet'
           CALL 'public abstract fun contains (element: E of kotlin.collections.MutableSet): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.MutableSet' type=kotlin.Boolean origin=null
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.contains' type=<root>.InlineMutableSet origin=null
             element: GET_VAR 'element: <root>.IT declared in <root>.InlineMutableSet.contains' type=<root>.IT origin=null
-    FUN name:containsAll visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet, elements:kotlin.collections.Collection<<root>.IT>) returnType:kotlin.Boolean
+    FUN name:containsAll visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet, elements:kotlin.collections.Collection<<root>.IT>) returnType:kotlin.Boolean
       overridden:
         public abstract fun containsAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableSet>): kotlin.Boolean [fake_override] declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<<root>.IT>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun containsAll (elements: kotlin.collections.Collection<<root>.IT>): kotlin.Boolean declared in <root>.InlineMutableSet'
+        RETURN type=kotlin.Nothing from='public open fun containsAll (elements: kotlin.collections.Collection<<root>.IT>): kotlin.Boolean declared in <root>.InlineMutableSet'
           CALL 'public abstract fun containsAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableSet>): kotlin.Boolean [fake_override] declared in kotlin.collections.MutableSet' type=kotlin.Boolean origin=null
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.containsAll' type=<root>.InlineMutableSet origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<<root>.IT> declared in <root>.InlineMutableSet.containsAll' type=kotlin.collections.Collection<<root>.IT> origin=null
-    FUN name:isEmpty visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet) returnType:kotlin.Boolean
+    FUN name:isEmpty visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.Boolean
       overridden:
         public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun isEmpty (): kotlin.Boolean declared in <root>.InlineMutableSet'
+        RETURN type=kotlin.Nothing from='public open fun isEmpty (): kotlin.Boolean declared in <root>.InlineMutableSet'
           CALL 'public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in kotlin.collections.MutableSet' type=kotlin.Boolean origin=null
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.isEmpty' type=<root>.InlineMutableSet origin=null
-    FUN name:add visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet, element:<root>.IT) returnType:kotlin.Boolean
+    FUN name:add visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet, element:<root>.IT) returnType:kotlin.Boolean
       overridden:
         public abstract fun add (element: E of kotlin.collections.MutableSet): kotlin.Boolean declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
       VALUE_PARAMETER name:element index:0 type:<root>.IT
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun add (element: <root>.IT): kotlin.Boolean declared in <root>.InlineMutableSet'
+        RETURN type=kotlin.Nothing from='public open fun add (element: <root>.IT): kotlin.Boolean declared in <root>.InlineMutableSet'
           CALL 'public abstract fun add (element: E of kotlin.collections.MutableSet): kotlin.Boolean declared in kotlin.collections.MutableSet' type=kotlin.Boolean origin=null
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.add' type=<root>.InlineMutableSet origin=null
             element: GET_VAR 'element: <root>.IT declared in <root>.InlineMutableSet.add' type=<root>.IT origin=null
-    FUN name:addAll visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet, elements:kotlin.collections.Collection<<root>.IT>) returnType:kotlin.Boolean
+    FUN name:addAll visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet, elements:kotlin.collections.Collection<<root>.IT>) returnType:kotlin.Boolean
       overridden:
         public abstract fun addAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableSet>): kotlin.Boolean declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<<root>.IT>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun addAll (elements: kotlin.collections.Collection<<root>.IT>): kotlin.Boolean declared in <root>.InlineMutableSet'
+        RETURN type=kotlin.Nothing from='public open fun addAll (elements: kotlin.collections.Collection<<root>.IT>): kotlin.Boolean declared in <root>.InlineMutableSet'
           CALL 'public abstract fun addAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableSet>): kotlin.Boolean declared in kotlin.collections.MutableSet' type=kotlin.Boolean origin=null
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.addAll' type=<root>.InlineMutableSet origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<<root>.IT> declared in <root>.InlineMutableSet.addAll' type=kotlin.collections.Collection<<root>.IT> origin=null
-    FUN name:clear visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet) returnType:kotlin.Unit
+    FUN name:clear visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.Unit
       overridden:
         public abstract fun clear (): kotlin.Unit declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
@@ -157,44 +157,44 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
         CALL 'public abstract fun clear (): kotlin.Unit declared in kotlin.collections.MutableSet' type=kotlin.Unit origin=null
           $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.clear' type=<root>.InlineMutableSet origin=null
-    FUN name:iterator visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet) returnType:kotlin.collections.MutableIterator<<root>.IT> [operator]
+    FUN name:iterator visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet) returnType:kotlin.collections.MutableIterator<<root>.IT> [operator]
       overridden:
         public abstract fun iterator (): kotlin.collections.MutableIterator<E of kotlin.collections.MutableSet> [operator] declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun iterator (): kotlin.collections.MutableIterator<<root>.IT> [operator] declared in <root>.InlineMutableSet'
+        RETURN type=kotlin.Nothing from='public open fun iterator (): kotlin.collections.MutableIterator<<root>.IT> [operator] declared in <root>.InlineMutableSet'
           CALL 'public abstract fun iterator (): kotlin.collections.MutableIterator<E of kotlin.collections.MutableSet> [operator] declared in kotlin.collections.MutableSet' type=kotlin.collections.MutableIterator<<root>.IT> origin=null
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.iterator' type=<root>.InlineMutableSet origin=null
-    FUN name:remove visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet, element:<root>.IT) returnType:kotlin.Boolean
+    FUN name:remove visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet, element:<root>.IT) returnType:kotlin.Boolean
       overridden:
         public abstract fun remove (element: E of kotlin.collections.MutableSet): kotlin.Boolean declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
       VALUE_PARAMETER name:element index:0 type:<root>.IT
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun remove (element: <root>.IT): kotlin.Boolean declared in <root>.InlineMutableSet'
+        RETURN type=kotlin.Nothing from='public open fun remove (element: <root>.IT): kotlin.Boolean declared in <root>.InlineMutableSet'
           CALL 'public abstract fun remove (element: E of kotlin.collections.MutableSet): kotlin.Boolean declared in kotlin.collections.MutableSet' type=kotlin.Boolean origin=null
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.remove' type=<root>.InlineMutableSet origin=null
             element: GET_VAR 'element: <root>.IT declared in <root>.InlineMutableSet.remove' type=<root>.IT origin=null
-    FUN name:removeAll visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet, elements:kotlin.collections.Collection<<root>.IT>) returnType:kotlin.Boolean
+    FUN name:removeAll visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet, elements:kotlin.collections.Collection<<root>.IT>) returnType:kotlin.Boolean
       overridden:
         public abstract fun removeAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableSet>): kotlin.Boolean declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<<root>.IT>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun removeAll (elements: kotlin.collections.Collection<<root>.IT>): kotlin.Boolean declared in <root>.InlineMutableSet'
+        RETURN type=kotlin.Nothing from='public open fun removeAll (elements: kotlin.collections.Collection<<root>.IT>): kotlin.Boolean declared in <root>.InlineMutableSet'
           CALL 'public abstract fun removeAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableSet>): kotlin.Boolean declared in kotlin.collections.MutableSet' type=kotlin.Boolean origin=null
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.removeAll' type=<root>.InlineMutableSet origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<<root>.IT> declared in <root>.InlineMutableSet.removeAll' type=kotlin.collections.Collection<<root>.IT> origin=null
-    FUN name:retainAll visibility:public modality:FINAL <> ($this:<root>.InlineMutableSet, elements:kotlin.collections.Collection<<root>.IT>) returnType:kotlin.Boolean
+    FUN name:retainAll visibility:public modality:OPEN <> ($this:<root>.InlineMutableSet, elements:kotlin.collections.Collection<<root>.IT>) returnType:kotlin.Boolean
       overridden:
         public abstract fun retainAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableSet>): kotlin.Boolean declared in kotlin.collections.MutableSet
       $this: VALUE_PARAMETER name:<this> type:<root>.InlineMutableSet
       VALUE_PARAMETER name:elements index:0 type:kotlin.collections.Collection<<root>.IT>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun retainAll (elements: kotlin.collections.Collection<<root>.IT>): kotlin.Boolean declared in <root>.InlineMutableSet'
+        RETURN type=kotlin.Nothing from='public open fun retainAll (elements: kotlin.collections.Collection<<root>.IT>): kotlin.Boolean declared in <root>.InlineMutableSet'
           CALL 'public abstract fun retainAll (elements: kotlin.collections.Collection<E of kotlin.collections.MutableSet>): kotlin.Boolean declared in kotlin.collections.MutableSet' type=kotlin.Boolean origin=null
             $this: CALL 'private final fun <get-ms> (): kotlin.collections.MutableSet<<root>.IT> declared in <root>.InlineMutableSet' type=kotlin.collections.MutableSet<<root>.IT> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.retainAll' type=<root>.InlineMutableSet origin=null

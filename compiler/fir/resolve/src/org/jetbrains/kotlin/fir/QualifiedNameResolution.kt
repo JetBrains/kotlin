@@ -48,13 +48,11 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
     for (scope in createCurrentScopeList()) {
         scope.getSingleVisibleClassifier(session, this, name)?.let {
             if (it is FirRegularClassSymbol) {
-                val isVisible = session.visibilityChecker.isVisible(
+                val isVisible = session.visibilityChecker.isClassLikeVisible(
                     it.fir,
                     session,
                     file,
                     containingDeclarations,
-                    null,
-                    false,
                 )
                 if (!isVisible) {
                     return@let

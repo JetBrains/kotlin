@@ -43,7 +43,7 @@ abstract class AbstractAsmLikeInstructionListingTestBase<R : ResultingArtifact.F
             +CHECK_ASM_LIKE_INSTRUCTIONS
         }
 
-        commonConfigurationForCodegenTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
+        commonConfigurationForTest(targetFrontend, frontendFacade, frontendToBackendConverter, backendFacade)
 
         configureClassicFrontendHandlersStep {
             useHandlers(

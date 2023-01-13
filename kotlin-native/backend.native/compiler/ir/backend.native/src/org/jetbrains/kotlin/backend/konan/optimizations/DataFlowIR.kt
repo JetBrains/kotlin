@@ -13,8 +13,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.computeSymbolName
 import org.jetbrains.kotlin.backend.konan.llvm.isExported
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -112,8 +110,7 @@ internal object DataFlowIR {
     }
 
     object FunctionAttributes {
-        val IS_TOP_LEVEL_FIELD_INITIALIZER = 1
-        val IS_GLOBAL_INITIALIZER = 2
+        val IS_STATIC_FIELD_INITIALIZER = 1
         val RETURNS_UNIT = 4
         val RETURNS_NOTHING = 8
         val EXPLICITLY_EXPORTED = 16
@@ -125,8 +122,7 @@ internal object DataFlowIR {
         lateinit var parameters: Array<FunctionParameter>
         lateinit var returnParameter: FunctionParameter
 
-        val isTopLevelFieldInitializer = attributes.and(FunctionAttributes.IS_TOP_LEVEL_FIELD_INITIALIZER) != 0
-        val isGlobalInitializer = attributes.and(FunctionAttributes.IS_GLOBAL_INITIALIZER) != 0
+        val isStaticFieldInitializer = attributes.and(FunctionAttributes.IS_STATIC_FIELD_INITIALIZER) != 0
         val returnsUnit = attributes.and(FunctionAttributes.RETURNS_UNIT) != 0
         val returnsNothing = attributes.and(FunctionAttributes.RETURNS_NOTHING) != 0
         val explicitlyExported = attributes.and(FunctionAttributes.EXPLICITLY_EXPORTED) != 0
@@ -607,9 +603,6 @@ internal object DataFlowIR {
                     || it.hasAnnotation(RuntimeNames.objCMethodImp)) {
                 attributes = attributes or FunctionAttributes.EXPLICITLY_EXPORTED
             }
-            if (it.origin == DECLARATION_ORIGIN_MODULE_GLOBAL_INITIALIZER
-                    || it.origin == DECLARATION_ORIGIN_MODULE_THREAD_LOCAL_INITIALIZER)
-                attributes = attributes or FunctionAttributes.IS_GLOBAL_INITIALIZER
             val symbol = when {
                 it.isExternal || it.isBuiltInOperator -> {
                     val escapesAnnotation = it.annotations.findAnnotation(FQ_NAME_ESCAPES)
@@ -663,8 +656,8 @@ internal object DataFlowIR {
         private fun mapPropertyInitializer(irField: IrField): FunctionSymbol {
             functionMap[irField]?.let { return it }
 
-            assert(irField.parent !is IrClass) { "All local properties initializers should've been lowered" }
-            val attributes = FunctionAttributes.IS_TOP_LEVEL_FIELD_INITIALIZER or FunctionAttributes.RETURNS_UNIT
+            assert(irField.isStatic) { "All local properties initializers should've been lowered" }
+            val attributes = FunctionAttributes.IS_STATIC_FIELD_INITIALIZER or FunctionAttributes.RETURNS_UNIT
             val symbol = FunctionSymbol.Private(privateFunIndex++, module, -1, attributes, irField, null, takeName { "${irField.computeSymbolName()}_init" })
 
             functionMap[irField] = symbol

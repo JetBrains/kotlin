@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
@@ -18,8 +17,8 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolved
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -55,15 +54,9 @@ inline val FirCall.dynamicVarargArguments: List<FirExpression>?
     get() = dynamicVararg?.arguments
 
 inline val FirFunctionCall.isCalleeDynamic: Boolean
-    get() = (calleeReference.resolvedSymbol?.fir as? FirFunction)?.origin == FirDeclarationOrigin.DynamicScope
+    get() = calleeReference.toResolvedFunctionSymbol()?.origin == FirDeclarationOrigin.DynamicScope
 
-inline val FirCall.resolvedArgumentMapping: Map<FirExpression, FirValueParameter>?
-    get() = when (val argumentList = argumentList) {
-        is FirResolvedArgumentList -> argumentList.mapping
-        else -> null
-    }
-
-inline val FirCall.argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
+inline val FirCall.resolvedArgumentMapping: LinkedHashMap<FirExpression, FirValueParameter>?
     get() = when (val argumentList = argumentList) {
         is FirResolvedArgumentList -> argumentList.mapping
         else -> null
@@ -80,11 +73,7 @@ fun FirExpression.toReference(): FirReference? {
 }
 
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
-    return toResolvedCallableReference()?.resolvedSymbol as FirCallableSymbol<*>?
-}
-
-fun FirReference.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
-    return this.resolvedSymbol as? FirCallableSymbol<*>
+    return toResolvedCallableReference()?.resolvedSymbol as? FirCallableSymbol<*>?
 }
 
 fun buildErrorLoop(source: KtSourceElement?, diagnostic: ConeDiagnostic): FirErrorLoop {
@@ -115,13 +104,14 @@ fun <D> FirBlock.transformStatementsIndexed(transformer: FirTransformer<D>, data
     return this
 }
 
-fun FirBlock.replaceFirstStatement(statement: FirStatement): FirStatement {
+fun <T : FirStatement> FirBlock.replaceFirstStatement(factory: (T) -> FirStatement): T {
     require(this is FirBlockImpl) {
         "replaceFirstStatement should not be called for ${this::class.simpleName}"
     }
-    val existed = statements[0]
-    statements[0] = statement
-    return existed
+    @Suppress("UNCHECKED_CAST")
+    val existing = statements[0] as T
+    statements[0] = factory(existing)
+    return existing
 }
 
 fun FirExpression.unwrapArgument(): FirExpression = (this as? FirWrappedArgumentExpression)?.expression ?: this

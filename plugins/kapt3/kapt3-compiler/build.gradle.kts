@@ -7,19 +7,18 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    api(project(":compiler:cli"))
-    api(project(":compiler:backend"))
-    api(project(":compiler:frontend"))
-    api(project(":compiler:frontend.java"))
-    api(project(":compiler:plugin-api"))
-    implementation(project(":compiler:backend.jvm.entrypoint"))
-
-    compileOnly(toolsJarApi())
+    compileOnly(project(":compiler:util"))
+    compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:backend"))
+    compileOnly(project(":compiler:backend.jvm.entrypoint"))
+    compileOnly(project(":compiler:frontend"))
+    compileOnly(project(":compiler:frontend.java"))
+    compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":kotlin-annotation-processing-cli"))
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":kotlin-annotation-processing-runtime"))
     compileOnly(intellijCore())
+    compileOnly(toolsJarApi())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
 
     testImplementation(intellijCore())

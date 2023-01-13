@@ -13,6 +13,7 @@ import org.gradle.api.plugins.PluginContainer
 import org.gradle.api.tasks.TaskContainer
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.jvm.toolchain.JavaToolchainSpec
+import org.jetbrains.kotlin.gradle.tasks.DefaultKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.UsesKotlinJavaToolchain
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.newInstance
@@ -45,28 +46,25 @@ internal abstract class DefaultToolchainSupport @Inject constructor(
             .toolchain
 
     init {
-        configureToolchain()
+        wireToolchainToTasks()
     }
 
     override fun applyToolchain(
         action: Action<JavaToolchainSpec>
     ) {
         action.execute(toolchainSpec)
-        configureToolchain()
     }
 
-    private fun configureToolchain() {
+    private fun wireToolchainToTasks() {
         plugins.withId("org.gradle.java-base") {
+            val toolchainService = extensions.findByType(JavaToolchainService::class.java)
+                ?: error("Gradle JavaToolchainService is not available!")
+            val javaLauncher = toolchainService.launcherFor(toolchainSpec)
             tasks
                 .withType<UsesKotlinJavaToolchain>()
                 .configureEach {
-                    // Only set when toolchain is configured
-                    if (toolchainSpec.languageVersion.isPresent) {
-                        val toolchainService = extensions.findByType(JavaToolchainService::class.java)!!
-                        it.kotlinJavaToolchain.toolchain.use(
-                            toolchainService.launcherFor(toolchainSpec)
-                        )
-                    }
+                    (it.kotlinJavaToolchain.toolchain as DefaultKotlinJavaToolchain.DefaultJavaToolchainSetter)
+                        .useAsConvention(javaLauncher)
                 }
         }
     }

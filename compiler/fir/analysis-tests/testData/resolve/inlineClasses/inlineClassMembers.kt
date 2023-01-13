@@ -1,4 +1,4 @@
-// !LANGUAGE: +CustomEqualsInInlineClasses
+// !LANGUAGE: +CustomEqualsInValueClasses, +ValueClasses
 
 <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class BackingFields(val x: Int) {
     <!PROPERTY_WITH_BACKING_FIELD_INSIDE_VALUE_CLASS!>val y<!> = 0
@@ -14,11 +14,19 @@ inline class DelegatedProp(val x: Int) {
     val testVal by <!DELEGATED_PROPERTY_INSIDE_VALUE_CLASS!>Val()<!>
 }
 
-inline class ReversedMembers(val x: Int) {
+inline class ReservedMembers(val x: Int) {
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
     fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
 
-    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS!>equals<!>(other: Any?) = true
+    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS!>equals<!>(other: Any?) = true
+    override fun hashCode() = 1
+}
+
+inline class ReservedMembersMfvc(val x: Int, val y: Int) {
+    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>box<!>() {}
+    fun <!RESERVED_MEMBER_INSIDE_VALUE_CLASS!>unbox<!>() {}
+
+    override fun <!INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS!>equals<!>(other: Any?) = true
     override fun hashCode() = 1
 }
 

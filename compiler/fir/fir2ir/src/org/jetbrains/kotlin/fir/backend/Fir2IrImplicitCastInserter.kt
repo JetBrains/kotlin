@@ -12,8 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolvedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -278,7 +277,7 @@ class Fir2IrImplicitCastInserter(
         calleeReference: FirReference,
         conversionTypeContext: ConversionTypeContext,
     ): IrExpression {
-        val referencedDeclaration = (calleeReference.resolvedSymbol as? FirCallableSymbol<*>)?.unwrapCallRepresentative()?.fir
+        val referencedDeclaration = calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative()?.fir
 
         val dispatchReceiverType =
             referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType

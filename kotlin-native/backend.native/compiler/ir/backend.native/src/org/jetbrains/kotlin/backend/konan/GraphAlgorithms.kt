@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
+
 internal interface DirectedGraphNode<out K> {
     val key: K
     val directEdges: List<K>?
@@ -45,45 +47,45 @@ internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(
             }
         }
 
-        // Topsort of built condensation.
-        multiNodes.forEach { multiNode ->
-            multiNode.nodes.forEach { nodeToMultiNodeMap.put(graph.get(it), multiNode) }
-        }
-        visited.clear()
-        multiNodes.forEach {
-            if (!visited.contains(it.nodes.first()))
-                findMultiNodesOrder(it)
-        }
-
-        return DirectedGraphCondensation(multiNodesOrder.reversed())
+        return DirectedGraphCondensation(multiNodes)
     }
 
     private fun findOrder(node: N) {
+        val stack = mutableListOf<Pair<N, Iterator<K>>>()
         visited += node.key
-        node.directEdges?.forEach {
-            if (!visited.contains(it))
-                findOrder(graph.get(it))
+        stack.add(node to (node.directEdges ?: emptyList()).iterator())
+        while (stack.isNotEmpty()) {
+            if (stack.last().second.hasNext()) {
+                val nextKey = stack.last().second.next()
+                if (!visited.contains(nextKey)) {
+                    visited += nextKey
+                    val nextNode = graph.get(nextKey)
+                    stack.add(nextNode to (nextNode.directEdges ?: emptyList()).iterator())
+                }
+            } else {
+                order += stack.last().first
+                stack.popLast()
+            }
         }
-        order += node
     }
 
     private fun paint(node: N, multiNode: MutableSet<K>) {
+        val stack = mutableListOf<Pair<N, Iterator<K>>>()
         visited += node.key
         multiNode += node.key
-        node.reversedEdges?.forEach {
-            if (!visited.contains(it))
-                paint(graph.get(it), multiNode)
-        }
-    }
-
-    private fun findMultiNodesOrder(node: DirectedGraphMultiNode<K>) {
-        visited.addAll(node.nodes)
-        node.nodes.forEach {
-            graph.get(it).directEdges?.forEach {
-                if (!visited.contains(it))
-                    findMultiNodesOrder(nodeToMultiNodeMap[graph.get(it)]!!)
+        stack.add(node to (node.reversedEdges ?: emptyList()).iterator())
+        while (stack.isNotEmpty()) {
+            if (stack.last().second.hasNext()) {
+                val nextKey = stack.last().second.next()
+                if (!visited.contains(nextKey)) {
+                    visited += nextKey
+                    multiNode += nextKey
+                    val nextNode = graph.get(nextKey)
+                    stack.add(nextNode to (nextNode.reversedEdges ?: emptyList()).iterator())
+                }
+            } else {
+                stack.popLast()
             }
         }
-        multiNodesOrder += node
     }
 }

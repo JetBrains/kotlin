@@ -239,7 +239,6 @@ enum class LanguageFeature(
     // 1.8
 
     DontLoseDiagnosticsDuringOverloadResolutionByReturnType(KOTLIN_1_8),
-    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(KOTLIN_1_8, kind = BUG_FIX), // KT-36770
     ProhibitConfusingSyntaxInWhenBranches(KOTLIN_1_8, kind = BUG_FIX), // KT-48385
     UseConsistentRulesForPrivateConstructorsOfSealedClasses(sinceVersion = KOTLIN_1_8, kind = BUG_FIX), // KT-44866
     ProgressionsChangingResolve(KOTLIN_1_8), // KT-49276
@@ -251,7 +250,6 @@ enum class LanguageFeature(
     ForbidUsingExtensionPropertyTypeParameterInDelegate(KOTLIN_1_8, kind = BUG_FIX), // KT-24643
     SynchronizedSuspendError(KOTLIN_1_8, kind = BUG_FIX), // KT-48516
     ReportNonVarargSpreadOnGenericCalls(KOTLIN_1_8, kind = BUG_FIX), // KT-48162
-    RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_8, kind = BUG_FIX), // KT-46727
     RangeUntilOperator(KOTLIN_1_8), // KT-15613
     GenericInlineClassParameter(sinceVersion = KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-32162
 
@@ -273,22 +271,25 @@ enum class LanguageFeature(
     KeepNullabilityWhenApproximatingLocalType(KOTLIN_1_9, kind = BUG_FIX), // KT-53982
     SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, kind = OTHER), // KT-52525
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_9, kind = BUG_FIX), // KT-49264
-    BreakContinueInInlineLambdas(KOTLIN_1_9), // KT-1436
     EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, kind = UNSTABLE_FEATURE), // KT-48872
     EnableDfaWarningsInK2(KOTLIN_1_9, kind = OTHER), // KT-50965
     ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_9, kind = BUG_FIX), // KT-49017
     DataObjects(KOTLIN_1_9), // KT-4107
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_9, kind = BUG_FIX), // KT-49110
-    ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
-    CustomEqualsInInlineClasses(KOTLIN_1_9), // KT-24874
     EnhanceNullabilityOfPrimitiveArrays(KOTLIN_1_9, kind = BUG_FIX), // KT-54521
+    RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_9, kind = BUG_FIX), // KT-46727
+    ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
+    ValueClassesSecondaryConstructorWithBody(sinceVersion = KOTLIN_1_9, kind = UNSTABLE_FEATURE), // KT-55333
+    NativeJsProhibitLateinitIsInitalizedIntrinsicWithoutPrivateAccess(KOTLIN_1_9, kind = BUG_FIX), // KT-27002
 
+
+    // This feature effectively might be removed because we decided to disable it until K2 and there it will be unconditionally enabled.
+    // But we leave it here just to minimize the changes in K1 and also to allow use the feature once somebody needs it.
+    // The reason for it's being disabled is described at KT-55357
+    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(sinceVersion = null), // KT-36770
 
     // Disabled for indefinite time. See KT-53751
     IgnoreNullabilityForErasedValueParameters(sinceVersion = null, kind = BUG_FIX),
-
-    // Disabled for indefinite time. See KT-48535 and related discussion
-    ApproximateIntegerLiteralTypesInReceiverPosition(sinceVersion = null),
 
     // Disabled for indefinite time. Disables restrictions of builder inference without annotation
     // Note: In 1.7.0, builder inference without annotation was introduced.
@@ -299,6 +300,7 @@ enum class LanguageFeature(
 
     // Experimental features
 
+    BreakContinueInInlineLambdas(null), // KT-1436
     LightweightLambdas(null),
     JsEnableExtensionFunctionInExternals(null, kind = OTHER),
     PackagePrivateFileClassesWithAllPrivateMembers(null), // Disabled until the breaking change is approved by the committee, see KT-10884.
@@ -310,11 +312,15 @@ enum class LanguageFeature(
     ExplicitBackingFields(sinceVersion = null, kind = UNSTABLE_FEATURE),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null),
     JsAllowInvalidCharsIdentifiersEscaping(sinceVersion = null, kind = UNSTABLE_FEATURE),
-    JsAllowValueClassesInExternals(sinceVersion = null, kind = UNSTABLE_FEATURE),
+    JsAllowValueClassesInExternals(sinceVersion = null, kind = OTHER),
     ContextReceivers(sinceVersion = null),
     ValueClasses(sinceVersion = null, kind = UNSTABLE_FEATURE),
     JavaSamConversionEqualsHashCode(sinceVersion = null, kind = UNSTABLE_FEATURE),
     UnitConversionsOnArbitraryExpressions(sinceVersion = null),
+    JsAllowImplementingFunctionInterface(sinceVersion = null, kind = UNSTABLE_FEATURE),
+    CustomEqualsInValueClasses(sinceVersion = null, kind = OTHER), // KT-24874
+    InlineLateinit(sinceVersion = null, kind = OTHER), // KT-23814
+
     ;
 
     init {

@@ -5,7 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <maven.version>3.0.5</maven.version>
         <allopen.common.src>${basedir}/../../../plugins/allopen/allopen.common/src</allopen.common.src>
         <allopen.k1.src>${basedir}/../../../plugins/allopen/allopen.k1/src</allopen.k1.src>
         <allopen.k2.src>${basedir}/../../../plugins/allopen/allopen.k2/src</allopen.k2.src>
@@ -36,6 +35,12 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-maven-plugin</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <version>${maven.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

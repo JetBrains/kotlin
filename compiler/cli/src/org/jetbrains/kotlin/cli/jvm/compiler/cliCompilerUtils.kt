@@ -122,13 +122,17 @@ fun writeOutput(
     outputFiles.writeAll(outputDir, messageCollector, reportOutputFiles)
 }
 
-fun writeOutputs(
+fun writeOutputsIfNeeded(
     project: Project?,
     projectConfiguration: CompilerConfiguration,
     chunk: List<Module>,
     outputs: List<GenerationState>,
     mainClassFqName: FqName?
 ): Boolean {
+    if (projectConfiguration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).hasErrors()) {
+        return false
+    }
+
     try {
         for (state in outputs) {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()

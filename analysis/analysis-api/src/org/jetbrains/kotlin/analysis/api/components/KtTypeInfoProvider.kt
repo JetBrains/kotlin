@@ -21,6 +21,8 @@ public abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
     public abstract fun getFunctionClassKind(type: KtType): FunctionClassKind?
     public abstract fun canBeNull(type: KtType): Boolean
     public abstract fun isDenotable(type: KtType): Boolean
+    public abstract fun isArrayOrPrimitiveArray(type: KtType): Boolean
+    public abstract fun isNestedArray(type: KtType): Boolean
 }
 
 public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
@@ -99,6 +101,17 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
                 else -> null
             }
         }
+
+    /**
+     * Returns whether the given [KtType] is an array or a primitive array type or not.
+     */
+    public fun KtType.isArrayOrPrimitiveArray(): Boolean =
+        withValidityAssertion { analysisSession.typeInfoProvider.isArrayOrPrimitiveArray(this) }
+
+    /**
+     * Returns whether the given [KtType] is an array or a primitive array type and its element is also an array type or not.
+     */
+    public fun KtType.isNestedArray(): Boolean = withValidityAssertion { analysisSession.typeInfoProvider.isNestedArray(this) }
 
     public fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean = withValidityAssertion {
         if (this !is KtNonErrorClassType) return false

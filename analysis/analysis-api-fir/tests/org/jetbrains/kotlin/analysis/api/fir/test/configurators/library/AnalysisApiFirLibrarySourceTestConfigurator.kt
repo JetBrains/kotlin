@@ -41,6 +41,7 @@ object AnalysisApiFirLibrarySourceTestConfigurator : AnalysisApiTestConfigurator
     ) {
         builder.apply {
             useAdditionalServices(ServiceRegistrationData(CompiledLibraryProvider::class, ::CompiledLibraryProvider))
+            useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
         }
     }

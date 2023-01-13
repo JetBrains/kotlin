@@ -29,8 +29,10 @@ private func testVar() throws {
 
 private func testTwoProperties() throws {
     let t = KT38641.TwoProperties()
+#if !DISABLE_MEMBER_NAME_MANGLING
     try assertEquals(actual: t.description_, expected: "description")
     try assertEquals(actual: t.description__, expected: "description_")
+#endif
 }
 
 private func testOverrideVal() throws {

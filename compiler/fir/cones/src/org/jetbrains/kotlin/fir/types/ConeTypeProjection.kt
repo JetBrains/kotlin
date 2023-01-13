@@ -61,8 +61,26 @@ val ConeTypeProjection.type: ConeKotlinType?
     get() = when (this) {
         ConeStarProjection -> null
         is ConeKotlinTypeProjection -> type
-        is ConeKotlinType -> this
     }
 
 val ConeTypeProjection.isStarProjection: Boolean
     get() = this == ConeStarProjection
+
+fun ConeTypeProjection.replaceType(newType: ConeKotlinType?): ConeTypeProjection {
+    return when (this) {
+        is ConeStarProjection -> this
+        is ConeKotlinTypeProjection -> {
+            requireNotNull(newType) { "Type for non star projection should be not null" }
+            replaceType(newType)
+        }
+    }
+}
+
+fun ConeKotlinTypeProjection.replaceType(newType: ConeKotlinType): ConeKotlinTypeProjection {
+    return when (this) {
+        is ConeKotlinType -> newType
+        is ConeKotlinTypeProjectionIn -> ConeKotlinTypeProjectionIn(newType)
+        is ConeKotlinTypeProjectionOut -> ConeKotlinTypeProjectionOut(newType)
+        is ConeKotlinTypeConflictingProjection -> ConeKotlinTypeConflictingProjection(newType)
+    }
+}

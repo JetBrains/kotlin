@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 class FirCfgConsistencyHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        info.firFiles.values.forEach { it.accept(FirCfgConsistencyChecker(assertions)) }
+        info.mainFirFiles.values.forEach { it.accept(FirCfgConsistencyChecker(assertions)) }
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

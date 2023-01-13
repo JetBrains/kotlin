@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+
 // FILE: test.kt
 
 fun box() {
@@ -26,3 +26,6 @@ fun box() {
 // test.kt:10 box
 
 // EXPECTATIONS JS_IR
+// test.kt:8 box
+// test.kt:6 box$bar
+// test.kt:10 box

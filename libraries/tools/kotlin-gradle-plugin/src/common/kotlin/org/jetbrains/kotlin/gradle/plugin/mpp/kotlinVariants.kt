@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal interface KotlinTargetComponentWithPublication : KotlinTargetComponent {
     // This property is declared in the separate parent type to allow the usages to reference it without forcing the subtypes to load,
@@ -74,13 +75,21 @@ open class KotlinVariant(
     override val publishableOnCurrentHost: Boolean
         get() = publishable && target.publishable
 
-    override var sourcesArtifacts: Set<PublishArtifact> = emptySet()
-        internal set
+    @Deprecated(
+        message = "Sources artifacts are now published as separate variant " +
+                "use target.sourcesElementsConfigurationName to obtain necessary information",
+        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")    )
+    override val sourcesArtifacts: Set<PublishArtifact> get() = target
+        .project
+        .configurations
+        .findByName(target.sourcesElementsConfigurationName)
+        ?.artifacts
+        ?: emptySet()
 
     internal var defaultArtifactIdSuffix: String? = null
 
     override val defaultArtifactId: String
-        get() = dashSeparatedName(target.project.name, artifactTargetName.toLowerCase(), defaultArtifactIdSuffix)
+        get() = dashSeparatedName(target.project.name, artifactTargetName.toLowerCaseAsciiOnly(), defaultArtifactIdSuffix)
 
     override var publicationDelegate: MavenPublication? = null
 }
@@ -102,8 +111,7 @@ class KotlinVariantWithMetadataVariant(
 class JointAndroidKotlinTargetComponent(
     override val target: KotlinAndroidTarget,
     private val nestedVariants: Set<KotlinVariant>,
-    val flavorNames: List<String>,
-    override val sourcesArtifacts: Set<PublishArtifact>
+    val flavorNames: List<String>
 ) : KotlinTargetComponentWithCoordinatesAndPublication, SoftwareComponentInternal {
 
     override fun getUsages(): Set<KotlinUsageContext> = nestedVariants.filter { it.publishable }.flatMap { it.usages }.toSet()
@@ -119,9 +127,16 @@ class JointAndroidKotlinTargetComponent(
     override val defaultArtifactId: String =
         dashSeparatedName(
             target.project.name,
-            target.targetName.toLowerCase(),
-            *flavorNames.map { it.toLowerCase() }.toTypedArray()
+            target.targetName.toLowerCaseAsciiOnly(),
+            *flavorNames.map { it.toLowerCaseAsciiOnly() }.toTypedArray()
         )
 
     override var publicationDelegate: MavenPublication? = null
+
+    @Deprecated(
+        message = "Sources artifacts are now published as separate variant " +
+                "use target.sourcesElementsConfigurationName to obtain necessary information",
+        replaceWith = ReplaceWith("target.sourcesElementsConfigurationName")
+    )
+    override val sourcesArtifacts: Set<PublishArtifact> = emptySet()
 }

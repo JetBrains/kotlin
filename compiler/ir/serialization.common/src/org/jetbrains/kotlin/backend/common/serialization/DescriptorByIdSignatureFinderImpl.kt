@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INVISIBLE_FAKE
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.util.DescriptorByIdSignatureFinder
@@ -43,13 +44,21 @@ class DescriptorByIdSignatureFinderImpl(
         MODULE_ONLY
     }
 
-    override fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? =
-        when (signature) {
+    override fun findDescriptorBySignature(signature: IdSignature): DeclarationDescriptor? {
+        val descriptor = when (signature) {
             is IdSignature.AccessorSignature -> resolveAccessorSignature(signature)
             is IdSignature.CommonSignature -> resolveCommonSignature(signature)
             is IdSignature.CompositeSignature -> resolveCompositeSignature(signature)
             else -> error("Unexpected signature kind: $signature")
         }
+
+        return when (descriptor) {
+            null -> null
+            is PropertyAccessorDescriptor -> descriptor.takeIf { it.visibility != INVISIBLE_FAKE && it.correspondingProperty.visibility != INVISIBLE_FAKE }
+            is DeclarationDescriptorWithVisibility -> descriptor.takeIf { it.visibility != INVISIBLE_FAKE }
+            else -> descriptor
+        }
+    }
 
     private fun resolveCompositeSignature(signature: IdSignature.CompositeSignature): DeclarationDescriptor? {
         val container = findDescriptorBySignature(signature.nearestPublicSig()) ?: return null

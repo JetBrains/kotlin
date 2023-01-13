@@ -22,18 +22,22 @@ internal sealed interface TestRunCheck {
     }
 
     class OutputDataFile(val file: File) : TestRunCheck
+
+    class OutputMatcher(val match: (String) -> Boolean): TestRunCheck
 }
 
 internal class TestRunChecks(
     val executionTimeoutCheck: ExecutionTimeout,
     private val exitCodeCheck: ExitCode,
-    val outputDataFile: OutputDataFile?
+    val outputDataFile: OutputDataFile?,
+    val outputMatcher: OutputMatcher?
 ) : Iterable<TestRunCheck> {
 
     override fun iterator() = iterator {
         yield(executionTimeoutCheck)
         yield(exitCodeCheck)
         yieldIfNotNull(outputDataFile)
+        yieldIfNotNull(outputMatcher)
     }
 
     companion object {
@@ -42,7 +46,8 @@ internal class TestRunChecks(
         fun Default(timeout: Duration) = TestRunChecks(
             executionTimeoutCheck = ExecutionTimeout.ShouldNotExceed(timeout),
             exitCodeCheck = ExitCode.Expected(0),
-            outputDataFile = null
+            outputDataFile = null,
+            outputMatcher = null
         )
     }
 }

@@ -74,8 +74,10 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     private boolean multiPlatform = false;
 
     protected List<String> getSourceFilePaths() {
-        if (sourceDirs != null && !sourceDirs.isEmpty()) return sourceDirs;
-        return project.getCompileSourceRoots();
+        List<String> list = new ArrayList<>();
+        if (sourceDirs != null && !sourceDirs.isEmpty()) list.addAll(sourceDirs);
+        list.addAll(project.getCompileSourceRoots());
+        return list;
     }
 
     @NotNull
@@ -251,19 +253,16 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
                     String valueString;
                     if (value instanceof Object[]) {
                         valueString = Arrays.deepToString((Object[]) value);
-                    }
-                    else if (value != null) {
+                    } else if (value != null) {
                         valueString = String.valueOf(value);
-                    }
-                    else {
+                    } else {
                         valueString = "(null)";
                     }
 
                     getLog().debug(f.getName() + "=" + valueString);
                 }
                 getLog().debug("End of arguments");
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 getLog().warn("Failed to print compiler arguments: " + e, e);
             }
         }
@@ -277,6 +276,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
     protected abstract void configureSpecificCompilerArguments(@NotNull A arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException;
 
+    @NotNull
     private List<String> getCompilerPluginClassPaths() {
         ArrayList<String> result = new ArrayList<>();
 
@@ -443,10 +443,13 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
 
         configureSpecificCompilerArguments(arguments, sourceRoots);
 
+        if (args != null && args.contains(null)) {
+            throw new MojoExecutionException("Empty compiler argument passed in the <configuration> section");
+        }
+
         try {
             compiler.parseArguments(ArrayUtil.toStringArray(args), arguments);
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new MojoExecutionException(e.getMessage());
         }
 
@@ -455,7 +458,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         }
 
         List<String> pluginClassPaths = getCompilerPluginClassPaths();
-        if (pluginClassPaths != null && !pluginClassPaths.isEmpty()) {
+        if (!pluginClassPaths.isEmpty()) {
             if (arguments.getPluginClasspaths() == null || arguments.getPluginClasspaths().length == 0) {
                 arguments.setPluginClasspaths(pluginClassPaths.toArray(new String[pluginClassPaths.size()]));
             } else {

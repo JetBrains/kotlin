@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
 class FirBuiltinAnnotationDeserializer(
     session: FirSession
-) : AbstractAnnotationDeserializer(session) {
+) : AbstractAnnotationDeserializer(session, BuiltInSerializerProtocol) {
 
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
         if (!Flags.HAS_ANNOTATIONS.get(typeProto.flags)) return emptyList()

@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
@@ -15,7 +16,9 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPointerForLocalLibraryDeclarationException
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
@@ -39,7 +42,7 @@ internal class KtFirAnonymousFunctionSymbol(
         }
 
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }
-    override val receiverType: KtType? get() = withValidityAssertion { firSymbol.receiverType(builder) }
+    override val receiverParameter: KtReceiverParameterSymbol? get() = withValidityAssertion { firSymbol.receiver(builder) }
 
     override val contextReceivers: List<KtContextReceiver> by cached { firSymbol.createContextReceivers(builder) }
 
@@ -52,9 +55,10 @@ internal class KtFirAnonymousFunctionSymbol(
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
 
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtAnonymousFunctionSymbol> = withValidityAssertion {
-        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)?.let { return it }
-        error("Could not create a pointer for anonymous function from library")
+        KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
+            ?: throw CanNotCreateSymbolPointerForLocalLibraryDeclarationException(this::class)
     }
 
     override fun equals(other: Any?): Boolean = symbolEquals(other)

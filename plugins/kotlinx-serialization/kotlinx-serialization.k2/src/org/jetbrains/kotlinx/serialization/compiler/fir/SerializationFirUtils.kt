@@ -13,10 +13,14 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.resolve.createSubstitutionForSupertype
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySerializationInfoProvider
@@ -35,43 +39,45 @@ object AnnotationParameterNames {
 
 // ---------------------- annotations utils ----------------------
 
+context(FirSession)
 val FirBasedSymbol<*>.isSerialInfoAnnotation: Boolean
-    get() = hasAnnotation(serialInfoClassId)
-            || hasAnnotation(inheritableSerialInfoClassId)
-            || hasAnnotation(metaSerializableAnnotationClassId)
+    get() = hasAnnotation(serialInfoClassId, this@FirSession)
+            || hasAnnotation(inheritableSerialInfoClassId, this@FirSession)
+            || hasAnnotation(metaSerializableAnnotationClassId, this@FirSession)
 
-val FirBasedSymbol<*>.isInheritableSerialInfoAnnotation: Boolean
-    get() = hasAnnotation(inheritableSerialInfoClassId)
+fun FirBasedSymbol<*>.isInheritableSerialInfoAnnotation(session: FirSession): Boolean =
+    hasAnnotation(inheritableSerialInfoClassId, session)
 
-val FirBasedSymbol<*>.serialNameAnnotation: FirAnnotation?
-    get() = resolvedAnnotationsWithArguments.getAnnotationByClassId(serialNameAnnotationClassId)
+fun FirBasedSymbol<*>.getSerialNameAnnotation(session: FirSession): FirAnnotation? =
+    resolvedAnnotationsWithArguments.getAnnotationByClassId(serialNameAnnotationClassId, session)
 
-val FirBasedSymbol<*>.serialNameValue: String?
-    get() = serialNameAnnotation?.getStringArgument(AnnotationParameterNames.VALUE)
+fun FirBasedSymbol<*>.getSerialNameValue(session: FirSession): String? =
+    getSerialNameAnnotation(session)?.getStringArgument(AnnotationParameterNames.VALUE)
 
-val FirBasedSymbol<*>.serialRequired: Boolean
-    get() = hasAnnotation(SerializationAnnotations.requiredAnnotationClassId)
+fun FirBasedSymbol<*>.getSerialRequired(session: FirSession): Boolean =
+    hasAnnotation(SerializationAnnotations.requiredAnnotationClassId, session)
 
-val FirBasedSymbol<*>.hasSerialTransient: Boolean
-    get() = serialTransientAnnotation != null
+fun FirBasedSymbol<*>.hasSerialTransient(session: FirSession): Boolean = getSerialTransientAnnotation(session) != null
 
-val FirBasedSymbol<*>.serialTransientAnnotation: FirAnnotation?
-    get() = getAnnotationByClassId(SerializationAnnotations.serialTransientClassId)
+fun FirBasedSymbol<*>.getSerialTransientAnnotation(session: FirSession): FirAnnotation? =
+    getAnnotationByClassId(SerializationAnnotations.serialTransientClassId, session)
 
+context(FirSession)
+@Suppress("IncorrectFormatting") // KTIJ-22227
 val FirClassSymbol<*>.hasSerializableAnnotation: Boolean
-    get() = serializableAnnotation(needArguments = false) != null
+    get() = serializableAnnotation(needArguments = false, this@FirSession) != null
 
-fun FirBasedSymbol<*>.serializableAnnotation(needArguments: Boolean): FirAnnotation? {
+fun FirBasedSymbol<*>.serializableAnnotation(needArguments: Boolean, session: FirSession): FirAnnotation? {
     val annotations = if (needArguments) resolvedAnnotationsWithClassIds else resolvedAnnotationsWithArguments
-    return annotations.serializableAnnotation()
+    return annotations.serializableAnnotation(session)
 }
 
-fun List<FirAnnotation>.serializableAnnotation(): FirAnnotation? {
-    return getAnnotationByClassId(SerializationAnnotations.serializableAnnotationClassId)
+fun List<FirAnnotation>.serializableAnnotation(session: FirSession): FirAnnotation? {
+    return getAnnotationByClassId(SerializationAnnotations.serializableAnnotationClassId, session)
 }
 
-val FirClassSymbol<*>.hasSerializableAnnotationWithoutArgs: Boolean
-    get() = serializableAnnotation(needArguments = false)?.let {
+fun FirClassSymbol<*>.hasSerializableAnnotationWithoutArgs(session: FirSession): Boolean =
+    serializableAnnotation(needArguments = false, session)?.let {
         if (it is FirAnnotationCall) {
             it.arguments.isEmpty()
         } else {
@@ -79,27 +85,26 @@ val FirClassSymbol<*>.hasSerializableAnnotationWithoutArgs: Boolean
         }
     } ?: false
 
-internal val FirBasedSymbol<*>.serializableWith: ConeKotlinType?
-    get() = serializableAnnotation(needArguments = true)?.getKClassArgument(AnnotationParameterNames.WITH)
+internal fun FirBasedSymbol<*>.getSerializableWith(session: FirSession): ConeKotlinType? =
+    serializableAnnotation(needArguments = true, session)?.getKClassArgument(AnnotationParameterNames.WITH)
 
-internal val List<FirAnnotation>.serializableWith: ConeKotlinType?
-    get() = serializableAnnotation()?.getKClassArgument(AnnotationParameterNames.WITH)
+internal fun List<FirAnnotation>.getSerializableWith(session: FirSession): ConeKotlinType? =
+    serializableAnnotation(session)?.getKClassArgument(AnnotationParameterNames.WITH)
 
 fun FirAnnotation.getGetKClassArgument(name: Name): FirGetClassCall? {
     return findArgumentByName(name) as? FirGetClassCall
 }
 
-internal val FirClassSymbol<*>.serializerAnnotation: FirAnnotation?
-    get() = getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId)
+internal fun FirClassSymbol<*>.getSerializerAnnotation(session: FirSession): FirAnnotation? =
+    getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId, session)
 
 // ---------------------- class utils ----------------------
-internal val FirClassSymbol<*>.serializerForClass: ConeKotlinType?
-    get() = resolvedAnnotationsWithArguments
-        .getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId)
-        ?.getKClassArgument(AnnotationParameterNames.FOR_CLASS)
+internal fun FirClassSymbol<*>.getSerializerForClass(session: FirSession): ConeKotlinType? = resolvedAnnotationsWithArguments
+    .getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId, session)
+    ?.getKClassArgument(AnnotationParameterNames.FOR_CLASS)
 
-internal val FirClassLikeDeclaration.serializerFor: FirGetClassCall?
-    get() = getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId)
+internal fun FirClassLikeDeclaration.getSerializerFor(session: FirSession): FirGetClassCall? =
+    getAnnotationByClassId(SerializationAnnotations.serializerAnnotationClassId, session)
         ?.getGetKClassArgument(AnnotationParameterNames.FOR_CLASS)
 
 context(FirSession)
@@ -143,7 +148,8 @@ internal val FirClassSymbol<*>.isInternalSerializable: Boolean
 
 context(FirSession)
 val FirClassSymbol<*>.hasSerializableOrMetaAnnotationWithoutArgs: Boolean
-    get() = hasSerializableAnnotationWithoutArgs || (!hasSerializableAnnotation && hasMetaSerializableAnnotation)
+    get() = hasSerializableAnnotationWithoutArgs(this@FirSession) ||
+            (!hasSerializableAnnotation && hasMetaSerializableAnnotation)
 
 context(FirSession)
 @Suppress("IncorrectFormatting") // KTIJ-22227
@@ -180,11 +186,29 @@ val ConeKotlinType.isKSerializer: Boolean
 fun ConeKotlinType.serializerForType(session: FirSession): ConeKotlinType? {
     return this.fullyExpandedType(session)
         .toRegularClassSymbol(session)
-        ?.resolvedSuperTypes
+        ?.getAllSubstitutedSupertypes(session)
         ?.find { it.isKSerializer }
         ?.typeArguments
         ?.firstOrNull()
         ?.type
+}
+
+fun FirRegularClassSymbol.getAllSubstitutedSupertypes(session: FirSession): Set<ConeKotlinType> {
+    val result = mutableSetOf<ConeKotlinType>()
+
+    fun process(symbol: FirRegularClassSymbol, substitutor: ConeSubstitutor) {
+        for (superType in symbol.resolvedSuperTypes) {
+            if (result.add(substitutor.substituteOrSelf(superType))) {
+                val superClassSymbol = superType.fullyExpandedType(session).toRegularClassSymbol(session) ?: continue
+                val superSubstitutor =
+                    (superType as? ConeLookupTagBasedType)?.let { createSubstitutionForSupertype(it, session) } ?: ConeSubstitutor.Empty
+                process(superClassSymbol, ChainedSubstitutor(superSubstitutor, substitutor))
+            }
+        }
+    }
+
+    process(this, ConeSubstitutor.Empty)
+    return result
 }
 
 val ConeKotlinType.isTypeParameter: Boolean

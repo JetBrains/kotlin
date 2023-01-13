@@ -245,11 +245,6 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
-    val RUN_NEW_IR_2_JS by directive(
-        description = "",
-        applicability = DirectiveApplicability.Global
-    )
-
     val NO_COMMON_FILES by directive(
         """
             Don't added helper files to prevent linking issues.

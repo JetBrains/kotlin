@@ -18,7 +18,7 @@ class ObjCExportTranslatorMobile internal constructor(private val delegate: ObjC
 
     fun translateBaseFunction(descriptor: FunctionDescriptor): ObjCMethod {
         val classDescriptor = descriptor.containingDeclaration as? ClassDescriptor
-        val scope = classDescriptor?.let { delegate.createGenericExportScope(it) } ?: ObjCNoneExportScope
+        val scope = classDescriptor?.let { delegate.createGenericExportScope(it) } ?: ObjCRootExportScope
         return delegate.buildMethod(descriptor, descriptor, scope)
     }
 }

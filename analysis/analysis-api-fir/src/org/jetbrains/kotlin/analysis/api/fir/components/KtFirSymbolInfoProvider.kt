@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertyS
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -34,8 +35,8 @@ internal class KtFirSymbolInfoProvider(
     private val apiVersion = analysisSession.useSiteSession.languageVersionSettings.apiVersion
 
     override fun getDeprecation(symbol: KtSymbol): DeprecationInfo? {
-        if (symbol is KtFirBackingFieldSymbol || symbol is KtFirPackageSymbol) return null
-        require(symbol is KtFirSymbol<*>)
+        if (symbol is KtFirBackingFieldSymbol || symbol is KtFirPackageSymbol || symbol is KtReceiverParameterSymbol) return null
+        require(symbol is KtFirSymbol<*>) { "${this::class}" }
         return when (val firSymbol = symbol.firSymbol) {
             is FirPropertySymbol -> {
                 firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY)
@@ -44,7 +45,6 @@ internal class KtFirSymbolInfoProvider(
                 firSymbol.getDeprecationForCallSite(apiVersion)
             }
         }
-
     }
 
     override fun getDeprecation(symbol: KtSymbol, annotationUseSiteTarget: AnnotationUseSiteTarget?): DeprecationInfo? {
@@ -95,19 +95,19 @@ internal class KtFirSymbolInfoProvider(
     }
 
     private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
-        if (property.hasAnnotation(StandardClassIds.Annotations.JvmField)) return property.name
+        if (property.hasAnnotation(StandardClassIds.Annotations.JvmField, analysisSession.useSiteSession)) return property.name
         return Name.identifier(getJvmNameAsString(property, isSetter))
     }
 
     private fun getJvmNameAsString(property: FirProperty, isSetter: Boolean): String {
         val useSiteTarget = if (isSetter) AnnotationUseSiteTarget.PROPERTY_SETTER else AnnotationUseSiteTarget.PROPERTY_GETTER
-        val jvmNameFromProperty = property.getJvmNameFromAnnotation(useSiteTarget)
+        val jvmNameFromProperty = property.getJvmNameFromAnnotation(analysisSession.useSiteSession, useSiteTarget)
         if (jvmNameFromProperty != null) {
             return jvmNameFromProperty
         }
 
         val accessor = if (isSetter) property.setter else property.getter
-        val jvmNameFromAccessor = accessor?.getJvmNameFromAnnotation()
+        val jvmNameFromAccessor = accessor?.getJvmNameFromAnnotation(analysisSession.useSiteSession)
         if (jvmNameFromAccessor != null) {
             return jvmNameFromAccessor
         }

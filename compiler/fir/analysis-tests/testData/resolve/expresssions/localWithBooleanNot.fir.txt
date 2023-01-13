@@ -13,7 +13,7 @@ FILE: foo.kt
                 ^bar this@R|/<anonymous>|.R|/<anonymous>.result|.R|kotlin/Boolean.not|()
             }
 
-            public final override fun result(): R|kotlin/Boolean| {
+            public open override fun result(): R|kotlin/Boolean| {
                 ^result this@R|/<anonymous>|.R|/<anonymous>.result|
             }
 

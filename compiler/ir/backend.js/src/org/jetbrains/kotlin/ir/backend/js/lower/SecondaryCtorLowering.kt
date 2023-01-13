@@ -179,6 +179,8 @@ private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, 
     val functionName = "${constructorName}_\$Init\$"
 
     return irFactory.buildFun {
+        startOffset = constructor.startOffset
+        endOffset = constructor.endOffset
         name = Name.identifier(functionName)
         returnType = type
         visibility = DescriptorVisibilities.INTERNAL
@@ -201,6 +203,8 @@ private fun JsIrBackendContext.buildFactoryDeclaration(constructor: IrConstructo
     val functionName = "${constructorName}_\$Create\$"
 
     return irFactory.buildFun {
+        startOffset = constructor.startOffset
+        endOffset = constructor.endOffset
         name = Name.identifier(functionName)
         returnType = type
         visibility = constructor.visibility

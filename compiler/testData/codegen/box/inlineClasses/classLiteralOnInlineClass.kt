@@ -1,23 +1,22 @@
 // WITH_STDLIB
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
 package root
 
 import kotlin.reflect.KClass
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IcInt(val x: Int)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IcLong(val l: Long)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IcAny(val a: Any?)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IcOverIc(val o: IcLong)
 
 fun check(c: KClass<*>, s: String) {

@@ -4,7 +4,7 @@ FILE: B.kt
             super<R|A|>()
         }
 
-        protected final override infix fun foo(s: R|kotlin/String|): R|kotlin/String| {
+        protected open override infix fun foo(s: R|kotlin/String|): R|kotlin/String| {
             ^foo String()
         }
 
@@ -24,5 +24,5 @@ FILE: A.kt
     }
 FILE: main.kt
     public final fun test(b: R|B|): R|kotlin/String| {
-        ^test R|<local>/b|.<HIDDEN: /B.foo is invisible>#(String(hello))
+        ^test R|<local>/b|.R|/B.foo<HIDDEN: /B.foo is invisible>#|(String(hello))
     }

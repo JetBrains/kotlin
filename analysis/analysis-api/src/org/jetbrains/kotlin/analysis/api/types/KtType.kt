@@ -5,9 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.types
 
-import org.jetbrains.kotlin.analysis.api.KtTypeArgument
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
+import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
+import org.jetbrains.kotlin.analysis.api.base.KtContextReceiversOwner
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
@@ -29,19 +30,33 @@ public enum class KtTypeNullability(public val isNullable: Boolean) {
     }
 }
 
+public sealed interface KtErrorType : KtType {
+    // todo should be replaced with diagnostics
+    public val errorMessage: String
+}
+
+public abstract class KtTypeErrorType : KtErrorType {
+    public abstract fun tryRenderAsNonErrorType(): String?
+}
+
 public sealed class KtClassType : KtType {
     override fun toString(): String = asStringForDebugging()
+
+    public abstract val qualifiers: List<KtClassTypeQualifier>
 }
 
 public sealed class KtNonErrorClassType : KtClassType() {
     public abstract val classId: ClassId
     public abstract val classSymbol: KtClassLikeSymbol
-    public abstract val typeArguments: List<KtTypeArgument>
+    public abstract val ownTypeArguments: List<KtTypeProjection>
+
+    abstract override val qualifiers: List<KtClassTypeQualifier.KtResolvedClassTypeQualifier>
 }
 
-public abstract class KtFunctionalType : KtNonErrorClassType() {
+public abstract class KtFunctionalType : KtNonErrorClassType(), KtContextReceiversOwner {
     public abstract val isSuspend: Boolean
     public abstract val arity: Int
+    public abstract val hasContextReceivers: Boolean
     public abstract val receiverType: KtType?
     public abstract val hasReceiver: Boolean
     public abstract val parameterTypes: List<KtType>
@@ -50,8 +65,7 @@ public abstract class KtFunctionalType : KtNonErrorClassType() {
 
 public abstract class KtUsualClassType : KtNonErrorClassType()
 
-public abstract class KtClassErrorType : KtClassType() {
-    public abstract val error: String
+public abstract class KtClassErrorType : KtClassType(), KtErrorType {
     public abstract val candidateClassSymbols: Collection<KtClassLikeSymbol>
 }
 
@@ -61,6 +75,7 @@ public abstract class KtTypeParameterType : KtType {
 }
 
 public abstract class KtCapturedType : KtType {
+    public abstract val projection: KtTypeProjection
     override fun toString(): String = asStringForDebugging()
 }
 

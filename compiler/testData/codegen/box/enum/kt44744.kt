@@ -1,3 +1,5 @@
+// KT-55828
+// IGNORE_BACKEND_K2: NATIVE
 enum class ContentType {
 
     PLAIN_TEXT {

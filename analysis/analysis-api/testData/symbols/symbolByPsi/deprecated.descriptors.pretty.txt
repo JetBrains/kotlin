@@ -6,7 +6,6 @@ val i2: kotlin.Int
   get()
 
 var i3: kotlin.Int
-  get()
   @kotlin.Deprecated(message = "don't use getter of i3")
   set(value: kotlin.Int)
 
@@ -19,10 +18,10 @@ var i4: kotlin.Int
 @kotlin.Deprecated(message = "don't use f")
 fun f(): kotlin.Int
 
-@kotlin.Deprecated(level = kotlin.DeprecationLevel.ERROR, message = "don't use j")
+@kotlin.Deprecated(message = "don't use j", level = kotlin.DeprecationLevel.ERROR)
 val j: kotlin.Int
 
-@kotlin.Deprecated(level = kotlin.DeprecationLevel.HIDDEN, message = "don't use j2")
+@kotlin.Deprecated(message = "don't use j2", level = kotlin.DeprecationLevel.HIDDEN)
 val j2: kotlin.Int
 
 val j2: kotlin.Int

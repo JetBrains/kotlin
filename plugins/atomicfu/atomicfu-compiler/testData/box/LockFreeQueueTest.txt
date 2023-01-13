@@ -23,7 +23,7 @@ public final class LockFreeQueue {
     public method <init>(): void
     public final method dequeue(): int
     public final method enqueue(p0: int): void
-    public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.Nullable p2: java.lang.Object): void
+    private final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
     private final inner class LockFreeQueue$Node
 }
 

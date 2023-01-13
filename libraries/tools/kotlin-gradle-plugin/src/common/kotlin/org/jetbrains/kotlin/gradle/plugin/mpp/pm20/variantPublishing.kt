@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.publishedConfigurationName
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.*
 import javax.inject.Inject
 
@@ -192,7 +193,7 @@ open class GradleKpmVariantPublishingConfigurator @Inject constructor(
                         publishedModuleHolder.assignMavenPublication(this)
                         artifactId = dashSeparatedName(
                             project.name, publishedModuleHolder.defaultPublishedModuleSuffix
-                        ).toLowerCase(Locale.ENGLISH)
+                        ).toLowerCaseAsciiOnly()
                     }
                 }
             }

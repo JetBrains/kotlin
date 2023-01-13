@@ -17,6 +17,7 @@ public abstract class KtPsiTypeProvider : KtAnalysisSessionComponent() {
         useSitePosition: PsiElement,
         mode: KtTypeMappingMode,
         isAnnotationMethod: Boolean,
+        allowErrorTypes: Boolean
     ): PsiType?
 }
 
@@ -32,16 +33,19 @@ public interface KtPsiTypeProviderMixIn : KtAnalysisSessionMixIn {
      * still use such local type. Otherwise, e.g., exposed to public as a return type, the resulting
      * type will be approximated accordingly.
      *
-     * Returns `null` if the conversion encounters any erroneous cases, e.g., errors in type arguments.
+     * If [allowErrorTypes] set to false then method returns `null` if the conversion encounters any
+     * erroneous cases, e.g., errors in type arguments.
      * A client can handle such case in its own way. For instance,
      *   * UAST will return `UastErrorType` as a default error type.
-     *   * LC will return `NonExistentClass` created from the [useSitePosition].
+     *
+     * If [allowErrorTypes] set to true then erroneous types will be replaced with `error.NonExistentClass` type
      */
     public fun KtType.asPsiType(
         useSitePosition: PsiElement,
+        allowErrorTypes: Boolean,
         mode: KtTypeMappingMode = KtTypeMappingMode.DEFAULT,
-        isAnnotationMethod: Boolean = false,
-    ): PsiType? =
-        withValidityAssertion { analysisSession.psiTypeProvider.asPsiType(this, useSitePosition, mode, isAnnotationMethod) }
-
+        isAnnotationMethod: Boolean = false
+    ): PsiType? = withValidityAssertion {
+        analysisSession.psiTypeProvider.asPsiType(this, useSitePosition, mode, isAnnotationMethod, allowErrorTypes)
+    }
 }

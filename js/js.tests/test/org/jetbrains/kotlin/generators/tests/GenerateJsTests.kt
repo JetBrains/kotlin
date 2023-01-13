@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.incremental.AbstractInvalidationTest
 import org.jetbrains.kotlin.js.test.*
+import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
 import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
@@ -22,6 +23,8 @@ fun main(args: Array<String>) {
     val jvmOnlyBoxTests = listOf(
         "compileKotlinAgainstKotlin",
     )
+
+    val excludedFirTestdataPattern = "^(.+)\\.fir\\.kts?\$"
 
     // TODO: repair these tests
     //generateTestDataForReservedWords()
@@ -120,9 +123,19 @@ fun main(args: Array<String>) {
                 model("lineNumbers/")
             }
 
-            testClass<AbstractFirJsTest> {
+            testClass<AbstractFirJsBoxTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$")
             }
+
+            // see todo on defining class
+//            testClass<AbstractFirJsTypeScriptExportTest> {
+//                model("typescript-export/", pattern = "^([^_](.+))\\.kt$")
+//            }
+
+            // see todo on defining class
+//            testClass<AbstractJsFirLineNumberTest> {
+//                model("lineNumbers/")
+//            }
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
@@ -158,11 +171,40 @@ fun main(args: Array<String>) {
                 model("debug/stepping")
             }
 
+            testClass<AbstractIrJsLocalVariableTest> {
+                model("debug/localVariables")
+            }
+
+            testClass<AbstractFirJsDiagnosticTest>(suiteTestClassName = "FirJsOldFrontendDiagnosticsTestGenerated") {
+                model("diagnostics/testsWithJsStdLib", pattern = "^([^_](.+))\\.kt$", excludedPattern = excludedFirTestdataPattern)
+            }
+
             testClass<AbstractFir2IrJsTextTest>(
                 suiteTestClassName = "Fir2IrJsTextTestGenerated"
             ) {
                 model("ir/irJsText")
             }
+
+            testClass<AbstractFirJsCodegenBoxTest> {
+                model("codegen/box", excludeDirs = jvmOnlyBoxTests)
+            }
+
+            testClass<AbstractFirJsCodegenBoxErrorTest> {
+                model("codegen/boxError", excludeDirs = jvmOnlyBoxTests)
+            }
+
+            testClass<AbstractFirJsCodegenInlineTest> {
+                model("codegen/boxInline")
+            }
+
+            testClass<AbstractFirJsCodegenWasmJsInteropTest> {
+                model("codegen/boxWasmJsInterop")
+            }
+
+            // see todo on AbstractFirJsSteppingTest
+//            testClass<AbstractFirJsSteppingTest> {
+//                model("debug/stepping")
+//            }
         }
     }
 }

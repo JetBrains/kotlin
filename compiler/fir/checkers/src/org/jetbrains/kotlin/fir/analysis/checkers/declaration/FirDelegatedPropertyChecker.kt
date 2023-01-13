@@ -18,10 +18,9 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirImplicitInvokeCall
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableWrongReceiver
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.isError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -66,15 +65,16 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
              * @return true if any error was reported; false otherwise.
              */
             private fun checkFunctionReferenceErrors(functionCall: FirFunctionCall): Boolean {
-                val errorNamedReference = functionCall.calleeReference as? FirErrorNamedReference ?: return false
-                if (errorNamedReference.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return false
+                val reference = functionCall.calleeReference
+                val diagnostic = if (reference.isError()) reference.diagnostic else return false
+                if (reference.source?.kind != KtFakeSourceElementKind.DelegatedPropertyAccessor) return false
                 val expectedFunctionSignature =
                     (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.typeRef.coneType.renderReadable() }})"
                 val delegateDescription = if (isGet) "delegate" else "delegate for var (read-write property)"
 
                 fun reportInapplicableDiagnostics(candidates: Collection<FirBasedSymbol<*>>) {
                     reporter.reportOn(
-                        errorNamedReference.source,
+                        reference.source,
                         FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
                         expectedFunctionSignature,
                         candidates,
@@ -82,23 +82,22 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                     )
                 }
 
-                return when (val diagnostic = errorNamedReference.diagnostic) {
-                    is ConeUnresolvedNameError -> {
-                        reporter.reportOn(
-                            errorNamedReference.source,
-                            FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
-                            expectedFunctionSignature,
-                            delegateType,
-                            delegateDescription,
-                            context
-                        )
-                        true
-                    }
+                var errorReported = true
+                when (diagnostic) {
+                    is ConeUnresolvedNameError -> reporter.reportOn(
+                        reference.source,
+                        FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
+                        expectedFunctionSignature,
+                        delegateType,
+                        delegateDescription,
+                        context
+                    )
+
                     is ConeAmbiguityError -> {
                         if (diagnostic.applicability.isSuccess) {
                             // Match is successful but there are too many matches! So we report DELEGATE_SPECIAL_FUNCTION_AMBIGUITY.
                             reporter.reportOn(
-                                errorNamedReference.source,
+                                reference.source,
                                 FirErrors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
                                 expectedFunctionSignature,
                                 diagnostic.candidates.map { it.symbol },
@@ -107,25 +106,24 @@ object FirDelegatedPropertyChecker : FirPropertyChecker() {
                         } else {
                             reportInapplicableDiagnostics(diagnostic.candidates.map { it.symbol })
                         }
-                        true
                     }
-                    is ConeInapplicableWrongReceiver -> {
-                        reporter.reportOn(
-                            errorNamedReference.source,
-                            FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
-                            expectedFunctionSignature,
-                            delegateType,
-                            delegateDescription,
-                            context
-                        )
-                        true
+
+                    is ConeInapplicableWrongReceiver -> reporter.reportOn(
+                        reference.source,
+                        FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
+                        expectedFunctionSignature,
+                        delegateType,
+                        delegateDescription,
+                        context
+                    )
+                    is ConeInapplicableCandidateError -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
+                    is ConeConstraintSystemHasContradiction -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
+
+                    else -> {
+                        errorReported = false
                     }
-                    is ConeInapplicableCandidateError -> {
-                        reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
-                        true
-                    }
-                    else -> false
                 }
+                return errorReported
             }
 
             private fun checkReturnType(functionCall: FirFunctionCall) {

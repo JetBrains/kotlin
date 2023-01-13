@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildArrayOfCall
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.isArrayType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 /**
  * A transformer that converts resolved arrayOf() call to [FirArrayOfCall].
@@ -30,7 +30,7 @@ internal class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
             return function is FirSimpleFunction &&
                     function.returnTypeRef.isArrayType &&
                     isArrayOf(function, arguments) &&
-                    function.receiverTypeRef == null
+                    function.receiverParameter == null
         }
 
     private fun toArrayOfCall(functionCall: FirFunctionCall): FirArrayOfCall? {
@@ -80,6 +80,7 @@ internal class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
 
 private fun FirFunctionCall.getOriginalFunction(): FirCallableDeclaration? {
     val symbol: FirBasedSymbol<*>? = when (val reference = calleeReference) {
+        is FirResolvedErrorReference -> null
         is FirResolvedNamedReference -> reference.resolvedSymbol
         is FirNamedReferenceWithCandidate -> reference.candidateSymbol
         else -> null

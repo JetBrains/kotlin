@@ -418,8 +418,8 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitKtElement(typeProjection, data);
     }
 
-    public R visitWhenEntry(@NotNull KtWhenEntry jetWhenEntry, D data) {
-        return visitKtElement(jetWhenEntry, data);
+    public R visitWhenEntry(@NotNull KtWhenEntry ktWhenEntry, D data) {
+        return visitKtElement(ktWhenEntry, data);
     }
 
     public R visitIsExpression(@NotNull KtIsExpression expression, D data) {

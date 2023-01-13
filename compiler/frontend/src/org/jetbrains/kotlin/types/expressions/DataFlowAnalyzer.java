@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingTrace;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker;
+import org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.*;
@@ -446,6 +447,8 @@ public class DataFlowAnalyzer {
         else {
             expressionType = ((TypedCompileTimeConstant<?>) value).getType();
         }
+
+        NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(context.expectedType, expression, context.trace, module);
 
         return createCheckedTypeInfo(expressionType, context, expression);
     }

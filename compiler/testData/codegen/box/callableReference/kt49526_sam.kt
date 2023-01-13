@@ -1,7 +1,7 @@
 // IGNORE_BACKEND: JVM
 // IGNORE_LIGHT_ANALYSIS
 
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // FIR_STATUS: LambdaConversionException: Type mismatch for lambda argument 1: class java.lang.Object is not convertible to interface I1
 // JVM_IR it this case has an approximated type 'KFun<out Any>', which has a projected top-level argument.
 

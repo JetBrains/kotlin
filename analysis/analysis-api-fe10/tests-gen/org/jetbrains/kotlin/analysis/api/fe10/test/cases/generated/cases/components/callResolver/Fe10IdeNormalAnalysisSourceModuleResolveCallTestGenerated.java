@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -245,6 +245,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("companionObjectReference.kt")
+    public void testCompanionObjectReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/companionObjectReference.kt");
+    }
+
+    @Test
     @TestMetadata("comparisonCall.kt")
     public void testComparisonCall() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/comparisonCall.kt");
@@ -362,6 +368,24 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     @TestMetadata("eqEqCall_fromAny.kt")
     public void testEqEqCall_fromAny() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromAny.kt");
+    }
+
+    @Test
+    @TestMetadata("eqEqCall_fromDataClass.kt")
+    public void testEqEqCall_fromDataClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromDataClass.kt");
+    }
+
+    @Test
+    @TestMetadata("eqEqCall_fromDataClass_overridden.kt")
+    public void testEqEqCall_fromDataClass_overridden() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromDataClass_overridden.kt");
+    }
+
+    @Test
+    @TestMetadata("eqEqCall_fromSealedClass.kt")
+    public void testEqEqCall_fromSealedClass() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromSealedClass.kt");
     }
 
     @Test
@@ -521,6 +545,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("javaClassReference.kt")
+    public void testJavaClassReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/javaClassReference.kt");
+    }
+
+    @Test
     @TestMetadata("javaFunctionCall.kt")
     public void testJavaFunctionCall() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/javaFunctionCall.kt");
@@ -671,6 +701,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("recursiveTypeParameter.kt")
+    public void testRecursiveTypeParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/recursiveTypeParameter.kt");
+    }
+
+    @Test
     @TestMetadata("resolveCallInSuperConstructorParam.kt")
     public void testResolveCallInSuperConstructorParam() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/resolveCallInSuperConstructorParam.kt");
@@ -710,6 +746,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     @TestMetadata("smartCastImplicitExtensionReceiver.kt")
     public void testSmartCastImplicitExtensionReceiver() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/smartCastImplicitExtensionReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("superTypeCallEntryResolveToCallInfo.kt")
+    public void testSuperTypeCallEntryResolveToCallInfo() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/superTypeCallEntryResolveToCallInfo.kt");
     }
 
     @Test
@@ -867,6 +909,30 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
         @TestMetadata("getterAssignment.kt")
         public void testGetterAssignment() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/getterAssignment.kt");
+        }
+
+        @Test
+        @TestMetadata("incompleteCodeNoParenthesis.kt")
+        public void testIncompleteCodeNoParenthesis() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/incompleteCodeNoParenthesis.kt");
+        }
+
+        @Test
+        @TestMetadata("incompleteCodeWithAmbiguity.kt")
+        public void testIncompleteCodeWithAmbiguity() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/incompleteCodeWithAmbiguity.kt");
+        }
+
+        @Test
+        @TestMetadata("incorrectCodeJavaDeclaration.kt")
+        public void testIncorrectCodeJavaDeclaration() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/incorrectCodeJavaDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("typeParameterAsValue.kt")
+        public void testTypeParameterAsValue() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/typeParameterAsValue.kt");
         }
     }
 

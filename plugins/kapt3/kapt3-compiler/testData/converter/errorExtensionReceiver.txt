@@ -1,0 +1,55 @@
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class TypeHook {
+    @org.jetbrains.annotations.NotNull()
+    public static final TypeHook.Companion Companion = null;
+
+    public TypeHook() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final UnknownType getCustomProperty() {
+        return null;
+    }
+
+    public final void setCustomProperty(@org.jetbrains.annotations.NotNull()
+    UnknownType value) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final UnknownType getReceiverProperty(@org.jetbrains.annotations.NotNull()
+    UnknownType $this$receiverProperty) {
+        return null;
+    }
+
+    public final void setReceiverProperty(@org.jetbrains.annotations.NotNull()
+    UnknownType $this$receiverProperty, @org.jetbrains.annotations.NotNull()
+    UnknownType value) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final UnknownType receiverFunction(@org.jetbrains.annotations.NotNull()
+    UnknownType $this$receiverFunction) {
+        return null;
+    }
+
+    @kotlin.Metadata()
+    public static final class Companion {
+
+        private Companion() {
+            super();
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public final UnknownType getExtensionProperty(@org.jetbrains.annotations.NotNull()
+        UnknownType $this$extensionProperty) {
+            return null;
+        }
+
+        public final void setExtensionProperty(@org.jetbrains.annotations.NotNull()
+        UnknownType $this$extensionProperty, @org.jetbrains.annotations.NotNull()
+        UnknownType value) {
+        }
+    }
+}

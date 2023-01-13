@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.daemon.client.launchProcessWithFallback
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
@@ -59,7 +60,7 @@ internal fun loadCompilerVersion(compilerClasspath: Iterable<File>): String {
     try {
         val versionClassFileName = KotlinCompilerVersion::class.java.name.replace('.', '/') + ".class"
         for (cpFile in compilerClasspath) {
-            if (cpFile.isFile && cpFile.extension.toLowerCase() == "jar") {
+            if (cpFile.isFile && cpFile.extension.toLowerCaseAsciiOnly() == "jar") {
                 ZipFile(cpFile).use { jar ->
                     val versionFileEntry = jar.getEntry(KotlinCompilerVersion.VERSION_FILE_PATH)
                     if (versionFileEntry != null) {

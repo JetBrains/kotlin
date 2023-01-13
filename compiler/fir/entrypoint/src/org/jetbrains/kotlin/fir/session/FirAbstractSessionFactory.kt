@@ -32,7 +32,7 @@ abstract class FirAbstractSessionFactory {
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         languageVersionSettings: LanguageVersionSettings,
-        registerExtraComponents: ((FirSession) -> Unit)?,
+        registerExtraComponents: ((FirSession) -> Unit),
         createKotlinScopeProvider: () -> FirKotlinScopeProvider,
         createProviders: (FirSession, FirModuleData, FirKotlinScopeProvider) -> List<FirSymbolProvider>
     ): FirSession {
@@ -44,17 +44,17 @@ abstract class FirAbstractSessionFactory {
 
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
-            registerExtraComponents?.invoke(this)
+            registerExtraComponents(this)
 
             val kotlinScopeProvider = createKotlinScopeProvider.invoke()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
-            val builtinsModuleData = DependencyListForCliModule.createDependencyModuleData(
-                Name.special("<builtins of ${mainModuleName.identifier}"),
+            val builtinsModuleData = BinaryModuleData.createDependencyModuleData(
+                Name.special("<builtins of ${mainModuleName.asString()}"),
                 moduleDataProvider.platform,
                 moduleDataProvider.analyzerServices,
             )
-            builtinsModuleData.bindSession(this@session)
+            builtinsModuleData.bindSession(this)
 
             val providers = createProviders(this, builtinsModuleData, kotlinScopeProvider)
 
@@ -72,7 +72,7 @@ abstract class FirAbstractSessionFactory {
         lookupTracker: LookupTracker?,
         enumWhenTracker: EnumWhenTracker?,
         init: FirSessionConfigurator.() -> Unit,
-        registerExtraComponents: ((FirSession) -> Unit)?,
+        registerExtraComponents: ((FirSession) -> Unit),
         registerExtraCheckers: ((FirSessionConfigurator) -> Unit)?,
         createKotlinScopeProvider: () -> FirKotlinScopeProvider,
         createProviders: (
@@ -88,7 +88,7 @@ abstract class FirAbstractSessionFactory {
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
             registerResolveComponents(lookupTracker, enumWhenTracker)
-            registerExtraComponents?.invoke(this)
+            registerExtraComponents(this)
 
             val kotlinScopeProvider = createKotlinScopeProvider.invoke()
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)

@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.util.asReversedFrozen
 
 abstract class Stack<T> {
@@ -46,62 +42,4 @@ private class StackImpl<T>(vararg values: T) : Stack<T>() {
     }
 
     override fun all(): List<T> = stack.asReversedFrozen()
-}
-
-class NodeStorage<T : FirElement, N : CFGNode<T>> : Stack<N>(){
-    private val stack: Stack<N> = StackImpl()
-    private val map: MutableMap<T, N> = mutableMapOf()
-
-    override val size: Int get() = stack.size
-
-    override fun top(): N = stack.top()
-
-    override fun pop(): N = stack.pop().also {
-        map.remove(it.fir)
-    }
-
-    override fun push(value: N) {
-        stack.push(value)
-        map[value.fir] = value
-    }
-
-    operator fun get(key: T): N? {
-        return map[key]
-    }
-
-    override fun reset() {
-        stack.reset()
-        map.clear()
-    }
-
-    override fun all(): List<N> = stack.all()
-}
-
-class SymbolBasedNodeStorage<T, N : CFGNode<T>> : Stack<N>() where T : FirElement {
-    private val stack: Stack<N> = StackImpl()
-    private val map: MutableMap<FirBasedSymbol<*>, N> = mutableMapOf()
-
-    override val size: Int get() = stack.size
-
-    override fun top(): N = stack.top()
-
-    override fun pop(): N = stack.pop().also {
-        map.remove((it.fir as FirDeclaration).symbol)
-    }
-
-    override fun push(value: N) {
-        stack.push(value)
-        map[(value.fir as FirDeclaration).symbol] = value
-    }
-
-    operator fun get(key: FirBasedSymbol<*>): N? {
-        return map[key]
-    }
-
-    override fun reset() {
-        stack.reset()
-        map.clear()
-    }
-
-    override fun all(): List<N> = stack.all()
 }

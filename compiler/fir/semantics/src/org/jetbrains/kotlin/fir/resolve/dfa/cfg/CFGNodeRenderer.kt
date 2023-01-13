@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
@@ -18,9 +17,9 @@ fun CFGNode<*>.render(): String =
     buildString {
         append(
             when (this@render) {
-                is FunctionEnterNode -> "Enter function \"${fir.name()}\""
-                is FunctionExitNode -> "Exit function \"${fir.name()}\""
-                is LocalFunctionDeclarationNode -> "Local function declaration ${owner.name}"
+                is FunctionEnterNode -> "Enter function ${owner.name}"
+                is FunctionExitNode -> "Exit function ${owner.name}"
+                is LocalFunctionDeclarationNode -> "Local function declaration"
 
                 is BlockEnterNode -> "Enter block"
                 is BlockExitNode -> "Exit block"
@@ -38,7 +37,7 @@ fun CFGNode<*>.render(): String =
                 is LoopBlockExitNode -> "Exit loop block"
                 is LoopConditionEnterNode -> "Enter loop condition"
                 is LoopConditionExitNode -> "Exit loop condition"
-                is LoopExitNode -> "Exit ${fir.type()}loop"
+                is LoopExitNode -> "Exit ${fir.type()} loop"
 
                 is QualifiedAccessNode -> "Access variable ${CfgRenderer.renderElementAsString(fir.calleeReference)}"
                 is ResolvedQualifierNode -> "Access qualifier ${fir.classId}"
@@ -82,43 +81,39 @@ fun CFGNode<*>.render(): String =
                 is BinaryOrEnterRightOperandNode -> "Enter right part of ||"
                 is BinaryOrExitNode -> "Exit ||"
 
-                is PartOfClassInitializationNode -> "Part of class initialization"
                 is PropertyInitializerEnterNode -> "Enter property"
                 is PropertyInitializerExitNode -> "Exit property"
+                is DelegateExpressionExitNode -> "Exit property delegate"
                 is FieldInitializerEnterNode -> "Enter field"
                 is FieldInitializerExitNode -> "Exit field"
                 is InitBlockEnterNode -> "Enter init block"
                 is InitBlockExitNode -> "Exit init block"
-                is AnnotationEnterNode -> "Enter annotation"
-                is AnnotationExitNode -> "Exit annotation"
-
-                is EnterContractNode -> "Enter contract"
-                is ExitContractNode -> "Exit contract"
 
                 is EnterSafeCallNode -> "Enter safe call"
                 is ExitSafeCallNode -> "Exit safe call"
 
                 is WhenSubjectExpressionExitNode -> "Exit ${'$'}subj"
 
-                is PostponedLambdaEnterNode -> "Postponed enter to lambda"
+                is SplitPostponedLambdasNode -> "Postponed enter to lambda"
                 is PostponedLambdaExitNode -> "Postponed exit from lambda"
-
-                is AnonymousFunctionExpressionExitNode -> "Exit anonymous function expression"
-
-                is UnionFunctionCallArgumentsNode -> "Call arguments union"
                 is MergePostponedLambdaExitsNode -> "Merge postponed lambda exits"
+                is AnonymousFunctionExpressionNode -> "Exit anonymous function expression"
 
                 is ClassEnterNode -> "Enter class ${owner.name}"
                 is ClassExitNode -> "Exit class ${owner.name}"
-                is LocalClassExitNode -> "Exit local class ${owner.name}"
+                is LocalClassExitNode -> "Local class declaration"
                 is AnonymousObjectEnterNode -> "Enter anonymous object"
-                is AnonymousObjectExitNode -> "Exit anonymous object"
                 is AnonymousObjectExpressionExitNode -> "Exit anonymous object expression"
 
-                is ContractDescriptionEnterNode -> "Enter contract description"
+                is ScriptEnterNode -> "Enter class ${fir.name}"
+                is ScriptExitNode -> "Exit class ${fir.name}"
 
+                is FakeExpressionEnterNode -> "Enter fake expression"
+
+                is EnterValueParameterNode -> "Enter default value of ${fir.name}"
                 is EnterDefaultArgumentsNode -> "Enter default value of ${fir.name}"
                 is ExitDefaultArgumentsNode -> "Exit default value of ${fir.name}"
+                is ExitValueParameterNode -> "Exit default value of ${fir.name}"
 
                 is ElvisLhsExitNode -> "Exit lhs of ?:"
                 is ElvisLhsIsNotNullNode -> "Lhs of ?: is not null"
@@ -136,15 +131,6 @@ fun CFGNode<*>.render(): String =
 // NB: renderer has a state, so we have to create it each time
 private val CfgRenderer
     get() = FirRenderer(annotationRenderer = null, callArgumentsRenderer = FirCallNoArgumentsRenderer())
-
-private fun FirFunction.name(): String = when (this) {
-    is FirSimpleFunction -> name.asString()
-    is FirAnonymousFunction -> "anonymousFunction"
-    is FirConstructor -> "<init>"
-    is FirPropertyAccessor -> if (isGetter) "getter" else "setter"
-    is FirErrorFunction -> "errorFunction"
-    else -> TODO(toString())
-}
 
 private fun FirLoop.type(): String = when (this) {
     is FirWhileLoop -> "while"

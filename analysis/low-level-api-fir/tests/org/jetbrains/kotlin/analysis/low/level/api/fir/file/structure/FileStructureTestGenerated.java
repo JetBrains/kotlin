@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,6 +34,18 @@ public class FileStructureTestGenerated extends AbstractFileStructureTest {
     @TestMetadata("classMemberProperty.kt")
     public void testClassMemberProperty() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/classMemberProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationClassLevel.kt")
+    public void testDanglingAnnotationClassLevel() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/danglingAnnotationClassLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevel.kt")
+    public void testDanglingAnnotationTopLevel() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/danglingAnnotationTopLevel.kt");
     }
 
     @Test

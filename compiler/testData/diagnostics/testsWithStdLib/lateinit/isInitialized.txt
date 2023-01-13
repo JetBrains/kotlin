@@ -1,5 +1,6 @@
 package
 
+public lateinit var topLevel: kotlin.String
 public fun onNonAccessible(): kotlin.Unit
 public fun onNonLateinit(): kotlin.Unit
 
@@ -76,3 +77,4 @@ public object Unrelated {
     public final fun onNonAccessible(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+

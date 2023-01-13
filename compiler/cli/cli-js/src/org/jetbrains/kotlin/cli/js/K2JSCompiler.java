@@ -172,10 +172,6 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @Nullable KotlinPaths paths
     ) {
         MessageCollector messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY);
-        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            messageCollector.report(ERROR, "K2 does not support JS target right now", null);
-            return ExitCode.COMPILATION_ERROR;
-        }
 
         ExitCode exitCode = OK;
 
@@ -184,6 +180,13 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         }
         if (K2JSCompilerArgumentsKt.isPreIrBackendDisabled(arguments)) {
             return exitCode;
+        }
+
+        LanguageVersionSettings languageVersionSettings = CommonConfigurationKeysKt.getLanguageVersionSettings(configuration);
+
+        if (CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.getValue() != "true" && languageVersionSettings.getLanguageVersion().compareTo(LanguageVersion.KOTLIN_1_9) >= 0) {
+            messageCollector.report(ERROR, "Old Kotlin/JS compiler is no longer supported. Please migrate to the new JS IR backend", null);
+            return COMPILATION_ERROR;
         }
 
         String deprecatedMessage = "==========\n" +

@@ -13,6 +13,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import javax.inject.Inject
 
 /*
@@ -164,7 +165,7 @@ abstract class KotlinNativeBinaryContainer @Inject constructor(
             return if (name == suffix)
                 ""
             else
-                name.substringBeforeLast(suffix.capitalize())
+                name.substringBeforeLast(suffix.capitalizeAsciiOnly())
         }
 
         // TODO: Remove in 1.3.50.

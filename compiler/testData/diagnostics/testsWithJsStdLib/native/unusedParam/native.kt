@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 external fun foo(a: String): Int = definedExternally
 
 external class Bar(b: Int, c: Char) {

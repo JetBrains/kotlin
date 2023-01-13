@@ -1,6 +1,5 @@
-package org.jetbrains.kotlin.backend.common.serialization.metadata.impl
+package org.jetbrains.kotlin.library.metadata.impl
 
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataDeserializedPackageFragmentsFactory
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -15,7 +14,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
-import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.Printer
 
@@ -27,22 +26,38 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         packageFragmentNames: List<String>,
         moduleDescriptor: ModuleDescriptor,
         packageAccessedHandler: PackageAccessHandler?,
-        storageManager: StorageManager
-    ) = packageFragmentNames.flatMap {
-        val fqName = FqName(it)
-        val parts = library.packageMetadataParts(fqName.asString())
-        val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
-        parts.map { partName ->
-            if (isBuiltInModule)
-                BuiltInKlibMetadataDeserializedPackageFragment(
-                    fqName,
-                    library,
-                    packageAccessedHandler,
-                    storageManager,
-                    moduleDescriptor,
-                    partName
-                ) else
-                KlibMetadataDeserializedPackageFragment(fqName, library, packageAccessedHandler, storageManager, moduleDescriptor, partName)
+        storageManager: StorageManager,
+        configuration: DeserializationConfiguration
+    ): List<KlibMetadataDeserializedPackageFragment> {
+        val libraryHeader = (packageAccessedHandler ?: SimplePackageAccessHandler).loadModuleHeader(library)
+
+        return packageFragmentNames.flatMap {
+            val fqName = FqName(it)
+            val containerSource = KlibDeserializedContainerSource(library, libraryHeader, configuration, fqName)
+            val parts = library.packageMetadataParts(fqName.asString())
+            val isBuiltInModule = moduleDescriptor.builtIns.builtInsModule === moduleDescriptor
+            parts.map { partName ->
+                if (isBuiltInModule)
+                    BuiltInKlibMetadataDeserializedPackageFragment(
+                        fqName,
+                        library,
+                        packageAccessedHandler,
+                        storageManager,
+                        moduleDescriptor,
+                        partName,
+                        containerSource
+                    )
+                else
+                    KlibMetadataDeserializedPackageFragment(
+                        fqName,
+                        library,
+                        packageAccessedHandler,
+                        storageManager,
+                        moduleDescriptor,
+                        partName,
+                        containerSource
+                    )
+            }
         }
     }
 
@@ -188,4 +203,3 @@ enum class ExportedForwardDeclarationChecker(val fqName: FqName) {
             getAllSuperClassifiers().any { it.fqNameSafe == cStructVarFqName }
     }
 }
-

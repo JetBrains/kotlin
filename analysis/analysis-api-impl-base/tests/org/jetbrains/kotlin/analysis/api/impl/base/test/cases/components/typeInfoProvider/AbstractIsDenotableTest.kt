@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 import java.io.File
 
 abstract class AbstractIsDenotableTest : AbstractAnalysisApiSingleFileTest() {
@@ -68,7 +69,7 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiSingleFileTest() {
                             true -> append("@Denotable")
                             false -> append("@Nondenotable")
                         }
-                        append("(\"${ktType.render()}\") ")
+                        append("(\"${ktType.render(position = Variance.INVARIANT)}\") ")
                         append(base.text)
                     }
                 }

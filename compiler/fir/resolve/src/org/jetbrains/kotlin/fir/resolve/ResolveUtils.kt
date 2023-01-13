@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,18 +10,21 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -37,7 +40,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -46,6 +49,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -61,12 +65,46 @@ import kotlin.contracts.contract
 fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
     asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
 
+fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirExpression>): Boolean =
+    isLambda && returnStatements.any { it is FirUnitExpression }
+
+fun FirAnonymousFunction.isExplicitlySuspend(session: FirSession): Boolean =
+    typeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendFunctionType(session) == true
+
+fun FirAnonymousFunction.addReturnToLastStatementIfNeeded() {
+    // If this lambda's resolved, expected return type is Unit, we don't need an explicit return statement.
+    // During conversion (to backend IR), the last expression will be coerced to Unit if needed.
+    if (returnTypeRef.isUnit) return
+
+    val body = this.body ?: return
+    val lastStatement = body.statements.lastOrNull() as? FirExpression ?: return
+    if (lastStatement is FirReturnExpression) return
+
+    val returnType = (body.typeRef as? FirResolvedTypeRef) ?: return
+    if (returnType.isNothing || returnType.isUnit) return
+
+    val returnTarget = FirFunctionTarget(null, isLambda = isLambda).also { it.bind(this) }
+    val returnExpression = buildReturnExpression {
+        source = lastStatement.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromLastStatement)
+        result = lastStatement
+        target = returnTarget
+    }
+    body.transformStatements(
+        object : FirTransformer<Nothing?>() {
+            override fun <E : FirElement> transformElement(element: E, data: Nothing?): E =
+                @Suppress("UNCHECKED_CAST")
+                if (element == lastStatement) returnExpression as E else element
+        }, null
+    )
+}
+
 fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {
-        is FirSimpleFunction -> receiverTypeRef
-        is FirAnonymousFunction -> receiverTypeRef
+        is FirSimpleFunction -> receiverParameter
+        is FirAnonymousFunction -> receiverParameter
         else -> null
-    }
+    }?.typeRef
+
     val parameters = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(
             ConeSimpleDiagnostic(
@@ -220,7 +258,14 @@ internal fun typeForQualifierByDeclaration(declaration: FirDeclaration, resultTy
     return null
 }
 
-private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(): FirBasedSymbol<*> {
+private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
+    if (isFinal) return true
+    val containingClass = dispatchReceiverType?.toRegularClassSymbol(session)
+        ?: return false
+    return containingClass.modality == Modality.FINAL && containingClass.classKind != ClassKind.ENUM_CLASS
+}
+
+private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(session: FirSession): FirBasedSymbol<*> {
     val propertyReceiver = resolvedSymbol as? FirPropertySymbol ?: return resolvedSymbol
 
     // This can happen in case of 2 properties referencing
@@ -233,7 +278,7 @@ private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowe
     }
 
     if (
-        propertyReceiver.isFinal &&
+        propertyReceiver.isEffectivelyFinal(session) &&
         hasVisibleBackingField &&
         propertyReceiver.canNarrowDownGetterType
     ) {
@@ -254,7 +299,7 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             typeFromSymbol(newCallee.candidateSymbol, false)
         }
         is FirPropertyWithExplicitBackingFieldResolvedNamedReference -> {
-            val symbol = newCallee.getNarrowedDownSymbol()
+            val symbol = newCallee.getNarrowedDownSymbol(session)
             typeFromSymbol(symbol, false)
         }
         is FirResolvedNamedReference -> {
@@ -523,7 +568,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
     return when (origin) {
         FirDeclarationOrigin.Source, FirDeclarationOrigin.Precompiled, FirDeclarationOrigin.Library -> null
         FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.getAsForbiddenNamedArgumentsTarget(session)
-        FirDeclarationOrigin.ImportedFromObject -> importedFromObjectData?.original?.getAsForbiddenNamedArgumentsTarget(session)
+        FirDeclarationOrigin.ImportedFromObjectOrStatic -> importedFromObjectOrStaticData?.original?.getAsForbiddenNamedArgumentsTarget(session)
         is FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
         FirDeclarationOrigin.SamConstructor -> null
         FirDeclarationOrigin.IntersectionOverride, FirDeclarationOrigin.SubstitutionOverride -> {
@@ -541,7 +586,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
         }
         // referenced function of a Kotlin function type
         FirDeclarationOrigin.BuiltIns -> {
-            if (dispatchReceiverClassOrNull()?.isBuiltinFunctionalType() == true) {
+            if (dispatchReceiverClassLookupTagOrNull()?.isBuiltinFunctionalType() == true) {
                 ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
             } else {
                 null
@@ -551,6 +596,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
         FirDeclarationOrigin.DynamicScope -> null
         FirDeclarationOrigin.RenamedForOverride -> null
         FirDeclarationOrigin.WrappedIntegerOperator -> null
+        FirDeclarationOrigin.ScriptCustomization -> null
         is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
     }
 }

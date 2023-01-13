@@ -30,14 +30,23 @@ internal fun setAdapter(adapter: FrameworkAdapter) {
  */
 
 internal fun suite(name: String, ignored: Boolean, suiteFn: () -> Unit) {
-    currentAdapter.suite(name, ignored, suiteFn)
+    adapter().suite(name, ignored, suiteFn)
 }
 
 internal fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
-    currentAdapter.test(name, ignored, testFn)
+    adapter().test(name, ignored, testFn)
 }
 
-internal var currentAdapter: FrameworkAdapter = TeamcityAdapter()
+internal var currentAdapter: FrameworkAdapter? = null
+
+@JsFun("() => typeof describe === 'function' && typeof it === 'function'")
+private external fun isJasmine(): Boolean
+
+internal fun adapter(): FrameworkAdapter {
+    val result = currentAdapter ?: if (isJasmine()) JasmineLikeAdapter() else TeamcityAdapter()
+    currentAdapter = result
+    return result
+}
 
 // This is called from the js-launcher alongside wasm start function
 @JsExport

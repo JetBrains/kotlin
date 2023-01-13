@@ -13,8 +13,14 @@ expect annotation class B(val a: Array<String>)
 @OptionalExpectation
 expect annotation class C()
 
+@OptionalExpectation
+expect annotation class D()
+
+actual annotation class D actual constructor()
+
 @Suppress("OPTIONAL_DECLARATION_USAGE_IN_NON_COMMON_SOURCE")
 @A(42)
 @B(["OK", ""])
 @C
+@D()
 fun ok() {}

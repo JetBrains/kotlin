@@ -23,11 +23,10 @@ import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.konan.util.visibleName
-import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
-
     internal val distribution = run {
         val overridenProperties = mutableMapOf<String, String>().apply {
             configuration.get(KonanConfigKeys.OVERRIDE_KONAN_PROPERTIES)?.let(this::putAll)
@@ -48,7 +47,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     internal val targetManager = platformManager.targetManager(configuration.get(KonanConfigKeys.TARGET))
     internal val target = targetManager.target
     val targetHasAddressDependency get() = target.hasAddressDependencyInMemoryModel()
-    internal val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)!!
+    internal val flexiblePhaseConfig = configuration.get(CLIConfigurationKeys.FLEXIBLE_PHASE_CONFIG)!!
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
     val debug: Boolean get() = configuration.getBoolean(KonanConfigKeys.DEBUG)
@@ -184,7 +183,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.mimallocUseDefaultOptions) ?: false
     }
 
-    val mimallocUseCompaction by lazy {
+    val mimallocUseCompaction: Boolean by lazy {
         // Turned off by default, because it slows down allocation.
         configuration.get(BinaryOptions.mimallocUseCompaction) ?: false
     }
@@ -220,9 +219,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val resolvedLibraries get() = resolve.resolvedLibraries
 
+    internal val externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File)
+
     internal val userVisibleIrModulesSupport = KonanUserVisibleIrModulesSupport(
             externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.from(
-                    externalDependenciesFile = configuration.get(KonanConfigKeys.EXTERNAL_DEPENDENCIES)?.let(::File),
+                    externalDependenciesFile = externalDependenciesFile,
                     onMalformedExternalDependencies = { warningMessage ->
                         configuration.report(CompilerMessageSeverity.STRONG_WARNING, warningMessage)
                     }),
@@ -239,6 +240,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.get(KonanConfigKeys.SHORT_MODULE_NAME)
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
+
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
         return resolvedLibraries.filterRoots { (!it.isDefault && !this.purgeUserLibs) || it.isNeededForLink }.getFullList(TopologicalLibraryOrder).map { it as KonanLibrary }
     }
@@ -266,6 +268,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                     AllocationMode.STD
                 }
             }
+            AllocationMode.CUSTOM -> {
+                if (gc != GC.CONCURRENT_MARK_AND_SWEEP) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                            "Custom allocator is currently only integrated with concurrent mark and sweep gc. Performance will not be ideal with selected gc.")
+                }
+                AllocationMode.CUSTOM
+            }
         }
     }
 
@@ -291,7 +300,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                         add("noop_gc.bc")
                     }
                     GC.CONCURRENT_MARK_AND_SWEEP -> {
-                        add("concurrent_ms_gc.bc")
+                        if (allocationMode == AllocationMode.CUSTOM) {
+                            add("concurrent_ms_gc_custom.bc")
+                        } else {
+                            add("concurrent_ms_gc.bc")
+                        }
                     }
                 }
             }
@@ -311,6 +324,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
             AllocationMode.STD -> {
                 add("std_alloc.bc")
+            }
+            AllocationMode.CUSTOM -> {
+                add("custom_alloc.bc")
             }
         }
     }.map {
@@ -338,6 +354,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val friendModuleFiles: Set<File> =
             configuration.get(KonanConfigKeys.FRIEND_MODULES)?.map { File(it) }?.toSet() ?: emptySet()
+
+    internal val refinesModuleFiles: Set<File> =
+            configuration.get(KonanConfigKeys.REFINES_MODULES)?.map { File(it) }?.toSet().orEmpty()
 
     internal val manifestProperties = configuration.get(KonanConfigKeys.MANIFEST_FILE)?.let {
         File(it).loadProperties()
@@ -372,33 +391,65 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val useDebugInfoInNativeLibs= configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
-    internal val cacheSupport = run {
-        val ignoreCacheReason = when {
-            optimizationsEnabled -> "for optimized compilation"
-            memoryModel != defaultMemoryModel -> "with ${memoryModel.name.lowercase()} memory model"
-            propertyLazyInitialization != defaultPropertyLazyInitialization -> {
-                "with${if (propertyLazyInitialization) "" else "out"} lazy top levels initialization"
-            }
-            useDebugInfoInNativeLibs -> "with native libs debug info"
-            allocationMode != defaultAllocationMode -> "with ${allocationMode.name.lowercase()} allocator"
-            memoryModel == MemoryModel.EXPERIMENTAL && gc != defaultGC -> "with ${gc.name.lowercase()} garbage collector"
-            memoryModel == MemoryModel.EXPERIMENTAL && gcSchedulerType != defaultGCSchedulerType -> {
-                "with ${gcSchedulerType.name.lowercase()} garbage collector scheduler"
-            }
-            freezing != defaultFreezing -> "with ${freezing.name.replaceFirstChar { it.lowercase() }} freezing mode"
-            runtimeAssertsMode != RuntimeAssertsMode.IGNORE -> "with runtime assertions"
-            sanitizer != null -> "with sanitizers enabled"
-            runtimeLogs != null -> "with runtime logs"
-            else -> null
-        }
-        CacheSupport(
-                configuration = configuration,
-                resolvedLibraries = resolvedLibraries,
-                ignoreCacheReason = ignoreCacheReason,
-                target = target,
-                produce = produce
-        )
+    internal val partialLinkage = configuration.get(KonanConfigKeys.PARTIAL_LINKAGE) == true
+
+    internal val additionalCacheFlags by lazy { platformManager.loader(target).additionalCacheFlags }
+
+    private fun StringBuilder.appendCommonCacheFlavor() {
+        append(target.toString())
+        if (debug) append("-g")
+        append("STATIC")
+
+        if (memoryModel != defaultMemoryModel)
+            append("-mm=$memoryModel")
+        if (freezing != defaultFreezing)
+            append("-freezing=${freezing.name}")
+        if (propertyLazyInitialization != defaultPropertyLazyInitialization)
+            append("-lazy_init=${if (propertyLazyInitialization) "enable" else "disable"}")
     }
+
+    private val systemCacheFlavorString = buildString {
+        appendCommonCacheFlavor()
+
+        if (useDebugInfoInNativeLibs)
+            append("-runtime_debug")
+        if (allocationMode != defaultAllocationMode)
+            append("-allocator=${allocationMode.name}")
+        if (memoryModel == MemoryModel.EXPERIMENTAL && gc != defaultGC)
+            append("-gc=${gc.name}")
+        if (memoryModel == MemoryModel.EXPERIMENTAL && gcSchedulerType != defaultGCSchedulerType)
+            append("-gc-scheduler=${gcSchedulerType.name}")
+        if (runtimeAssertsMode != RuntimeAssertsMode.IGNORE)
+            append("-runtime_asserts=${runtimeAssertsMode.name}")
+    }
+
+    private val userCacheFlavorString = buildString {
+        appendCommonCacheFlavor()
+
+        if (partialLinkage) append("-pl")
+    }
+
+    private val systemCacheRootDirectory = File(distribution.konanHome).child("klib").child("cache")
+    internal val systemCacheDirectory = systemCacheRootDirectory.child(systemCacheFlavorString)
+    private val autoCacheRootDirectory = configuration.get(KonanConfigKeys.AUTO_CACHE_DIR)?.let { File(it) } ?: systemCacheRootDirectory
+    internal val autoCacheDirectory = autoCacheRootDirectory.child(userCacheFlavorString)
+
+    internal val ignoreCacheReason = when {
+        optimizationsEnabled -> "for optimized compilation"
+        sanitizer != null -> "with sanitizers enabled"
+        runtimeLogs != null -> "with runtime logs"
+        else -> null
+    }
+
+    internal val cacheSupport = CacheSupport(
+            configuration = configuration,
+            resolvedLibraries = resolvedLibraries,
+            ignoreCacheReason = ignoreCacheReason,
+            systemCacheDirectory = systemCacheDirectory,
+            autoCacheDirectory = autoCacheDirectory,
+            target = target,
+            produce = produce
+    )
 
     internal val cachedLibraries: CachedLibraries
         get() = cacheSupport.cachedLibraries

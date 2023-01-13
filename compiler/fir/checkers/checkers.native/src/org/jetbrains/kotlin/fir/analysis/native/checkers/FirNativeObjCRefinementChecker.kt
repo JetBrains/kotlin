@@ -46,7 +46,7 @@ object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker() {
         for (annotation in annotations) {
             val metaAnnotations = annotation.coneClassLikeType?.lookupTag?.toSymbol(session)?.resolvedAnnotationsWithClassIds.orEmpty()
             for (metaAnnotation in metaAnnotations) {
-                when (metaAnnotation.toAnnotationClassId()) {
+                when (metaAnnotation.toAnnotationClassId(session)) {
                     hidesFromObjCClassId -> {
                         objCAnnotations.add(annotation)
                         break

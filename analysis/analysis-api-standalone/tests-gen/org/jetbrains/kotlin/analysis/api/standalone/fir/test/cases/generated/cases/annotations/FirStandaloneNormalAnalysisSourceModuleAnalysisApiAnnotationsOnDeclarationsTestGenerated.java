@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -68,6 +68,12 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDecl
         }
 
         @Test
+        @TestMetadata("emptyJavaSpreadParameter.kt")
+        public void testEmptyJavaSpreadParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/emptyJavaSpreadParameter.kt");
+        }
+
+        @Test
         @TestMetadata("onClass.kt")
         public void testOnClass() throws Exception {
             runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onClass.kt");
@@ -92,15 +98,39 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiAnnotationsOnDecl
         }
 
         @Test
+        @TestMetadata("onProperty_javaAnnotation_targets.kt")
+        public void testOnProperty_javaAnnotation_targets() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onProperty_javaAnnotation_targets.kt");
+        }
+
+        @Test
         @TestMetadata("onTypeAlias.kt")
         public void testOnTypeAlias() throws Exception {
             runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/onTypeAlias.kt");
         }
 
         @Test
+        @TestMetadata("varargComplexParameter.kt")
+        public void testVarargComplexParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargComplexParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("varargNamedParameter.kt")
+        public void testVarargNamedParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargNamedParameter.kt");
+        }
+
+        @Test
         @TestMetadata("varargParameter.kt")
         public void testVarargParameter() throws Exception {
             runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("varargSpreadParameter.kt")
+        public void testVarargSpreadParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargSpreadParameter.kt");
         }
     }
 

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -109,10 +108,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             testConfigurationCacheOf(
                 "build",
                 executedTaskNames = expectedTasks,
-                checkConfigurationCacheFileReport = false,
                 buildOptions = defaultBuildOptions.copy(
-                    configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
-                    warningMode = WarningMode.All,
                     freeArgs = listOf(
                         // remove after KT-49933 is fixed
                         "-x", ":lib:transformCommonMainDependenciesMetadata",
@@ -129,22 +125,13 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
-            val buildOptions = defaultBuildOptions.copy(
-                configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL,
-                warningMode = WarningMode.All
-            )
             build(
                 ":lib:commonizeCInterop",
                 ":commonizeNativeDistribution",
-                buildOptions = buildOptions
             ) {
                 // Reduce the problem numbers when a Task become compatible with GCC.
                 // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
-                assertOutputContains("1 problem was found storing the configuration cache.")
-                assertOutputContains(
-                    """Task `\S+` of type `[\w.]+CInteropMetadataDependencyTransformationTask`: .+(at execution time is unsupported)|(not supported with the configuration cache)"""
-                        .toRegex()
-                )
+                assertOutputContains("0 problems were found storing the configuration cache.")
             }
         }
     }
@@ -212,7 +199,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @MppGradlePluginTests
     @DisplayName("works in MPP withJava project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0, maxVersion = TestVersions.Gradle.G_7_1)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     @GradleTest
     fun testJvmWithJavaConfigurationCache(gradleVersion: GradleVersion) {
         project("mppJvmWithJava", gradleVersion) {
@@ -268,14 +255,12 @@ abstract class AbstractConfigurationCacheIT : KGPBaseTest() {
         vararg taskNames: String,
         executedTaskNames: List<String>? = null,
         checkUpToDateOnRebuild: Boolean = true,
-        checkConfigurationCacheFileReport: Boolean = true,
         buildOptions: BuildOptions = defaultBuildOptions
     ) {
         assertSimpleConfigurationCacheScenarioWorks(
             *taskNames,
             executedTaskNames = executedTaskNames,
             checkUpToDateOnRebuild = checkUpToDateOnRebuild,
-            checkConfigurationCacheFileReport = checkConfigurationCacheFileReport,
             buildOptions = buildOptions,
         )
     }

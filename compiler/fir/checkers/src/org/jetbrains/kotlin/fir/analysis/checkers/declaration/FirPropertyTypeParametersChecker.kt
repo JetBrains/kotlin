@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,12 +28,14 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker() {
                 }
             }
         }
-        declaration.receiverTypeRef?.let { collectAllTypes(it.coneType) }
+        declaration.receiverParameter?.typeRef?.let { collectAllTypes(it.coneType) }
         declaration.contextReceivers.forEach { collectAllTypes(it.typeRef.coneType) }
 
         val usedNames = usedTypes.filterIsInstance<ConeTypeParameterType>().map { it.lookupTag.name }
-        declaration.typeParameters.filterNot { usedNames.contains(it.name) }.forEach { danglingParam ->
-            reporter.reportOn(danglingParam.source, FirErrors.TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, context)
+        if (!declaration.isLocal) {
+            declaration.typeParameters.filterNot { usedNames.contains(it.name) }.forEach { danglingParam ->
+                reporter.reportOn(danglingParam.source, FirErrors.TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, context)
+            }
         }
     }
 

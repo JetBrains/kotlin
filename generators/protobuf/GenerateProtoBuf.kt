@@ -22,7 +22,8 @@ import kotlin.system.exitProcess
 //       make
 //       make install
 // * macOS:
-//     brew install https://raw.githubusercontent.com/udalov/protobuf261/master/protobuf261.rb
+//     curl -L https://raw.githubusercontent.com/udalov/protobuf261/master/protobuf261.rb > protobuf261.rb
+//     brew install protobuf261.rb
 //
 // You may need to provide custom path to protoc executable, just modify this constant:
 private const val PROTOC_EXE = "protoc"

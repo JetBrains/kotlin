@@ -29,8 +29,6 @@ public final class Box$Companion : java/lang/Object {
 
     public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 
-    private final kotlinx.serialization.descriptors.SerialDescriptor get$cachedDescriptor()
-
     public final kotlinx.serialization.KSerializer serializer(kotlinx.serialization.KSerializer typeSerial0)
 }
 
@@ -46,8 +44,6 @@ public final class Box : java/lang/Object {
     public void <init>(java.lang.Object boxed)
 
     public void <init>(int seen1, java.lang.Object boxed, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
-
-    public final static kotlinx.serialization.descriptors.SerialDescriptor access$get$cachedDescriptor$cp()
 
     public final java.lang.Object component1()
 
@@ -191,8 +187,8 @@ public final class IntrinsicsKt : java/lang/Object {
     }
 }
 
-final class SerializableObject$$cachedSerializer$delegate$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
-    public final static SerializableObject$$cachedSerializer$delegate$1 INSTANCE
+final class SerializableObject$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static SerializableObject$1 INSTANCE
 
     static void <clinit>()
 
@@ -212,7 +208,7 @@ public final class SerializableObject : java/lang/Object {
 
     private void <init>()
 
-    private final kotlin.Lazy get$cachedSerializer$delegate()
+    private final kotlinx.serialization.KSerializer get$cachedSerializer()
 
     public final kotlinx.serialization.KSerializer serializer()
 }

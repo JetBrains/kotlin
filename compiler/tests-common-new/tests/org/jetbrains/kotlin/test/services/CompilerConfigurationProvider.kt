@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
@@ -129,6 +129,10 @@ fun createCompilerConfiguration(module: TestModule, configurators: List<Abstract
 
     if (JsEnvironmentConfigurationDirectives.GENERATE_STRICT_IMPLICIT_EXPORT in module.directives) {
         configuration.put(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT, true)
+    }
+
+    if (JsEnvironmentConfigurationDirectives.GENERATE_DTS in module.directives) {
+        configuration.put(JSConfigurationKeys.GENERATE_DTS, true)
     }
 
     if (module.frontendKind == FrontendKinds.FIR) {

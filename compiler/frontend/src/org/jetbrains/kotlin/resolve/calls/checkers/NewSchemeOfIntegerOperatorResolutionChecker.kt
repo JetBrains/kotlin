@@ -6,11 +6,8 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -33,14 +30,13 @@ import org.jetbrains.kotlin.types.typeUtil.*
 
 object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (context.languageVersionSettings.supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition)) return
         for ((valueParameter, arguments) in resolvedCall.valueArguments) {
             val expectedType = if (valueParameter.isVararg) {
                 valueParameter.varargElementType ?: continue
             } else {
                 valueParameter.type
             }.unwrap().lowerIfFlexible()
-            if (!expectedType.isPrimitiveNumberOrNullableType()) {
+            if (!needToCheck(expectedType)) {
                 continue
             }
             for (argument in arguments.arguments) {
@@ -54,15 +50,17 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
     fun checkArgument(
         expectedType: KotlinType,
         argument: KtExpression,
-        languageVersionSettings: LanguageVersionSettings,
         trace: BindingTrace,
         moduleDescriptor: ModuleDescriptor
     ) {
-        if (languageVersionSettings.supportsFeature(LanguageFeature.ApproximateIntegerLiteralTypesInReceiverPosition)) return
-        val type = expectedType.lowerIfFlexible()
-        if (type.isPrimitiveNumberOrNullableType()) {
-            checkArgumentImpl(type, KtPsiUtil.deparenthesize(argument)!!, trace, moduleDescriptor)
+        if (needToCheck(expectedType)) {
+            checkArgumentImpl(expectedType.lowerIfFlexible(), KtPsiUtil.deparenthesize(argument)!!, trace, moduleDescriptor)
         }
+    }
+
+    fun needToCheck(expectedType: KotlinType): Boolean {
+        if (TypeUtils.noExpectedType(expectedType)) return false
+        return expectedType.lowerIfFlexible().isPrimitiveNumberOrNullableType()
     }
 
     private fun checkArgumentImpl(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -30,6 +31,8 @@ import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -38,16 +41,16 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirAnonymousFunctionImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
-    override var receiverTypeRef: FirTypeRef?,
+    override var receiverParameter: FirReceiverParameter?,
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override val contextReceivers: MutableList<FirContextReceiver>,
+    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override var controlFlowGraphReference: FirControlFlowGraphReference?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
@@ -72,7 +75,7 @@ internal class FirAnonymousFunctionImpl(
         annotations.forEach { it.accept(visitor, data) }
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
+        receiverParameter?.accept(visitor, data)
         contextReceivers.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
@@ -86,7 +89,7 @@ internal class FirAnonymousFunctionImpl(
         transformAnnotations(transformer, data)
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
+        transformReceiverParameter(transformer, data)
         contextReceivers.transformInplace(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
@@ -112,8 +115,8 @@ internal class FirAnonymousFunctionImpl(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        receiverParameter = receiverParameter?.transform(transformer, data)
         return this
     }
 
@@ -136,12 +139,16 @@ internal class FirAnonymousFunctionImpl(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
+
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
-        receiverTypeRef = newReceiverTypeRef
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {
+        receiverParameter = newReceiverParameter
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
@@ -149,8 +156,7 @@ internal class FirAnonymousFunctionImpl(
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        contextReceivers.clear()
-        contextReceivers.addAll(newContextReceivers)
+        contextReceivers = newContextReceivers.toMutableOrEmpty()
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {

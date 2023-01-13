@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public enum Em {
     /*public static final*/ FOO /* = new Em() */,
@@ -11,8 +9,6 @@ public enum Em {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {

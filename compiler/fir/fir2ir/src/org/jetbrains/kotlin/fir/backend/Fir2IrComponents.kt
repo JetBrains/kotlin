@@ -24,7 +24,7 @@ interface Fir2IrComponents {
     val converter: Fir2IrConverter
 
     val symbolTable: SymbolTable
-    val irBuiltIns: IrBuiltIns
+    val irBuiltIns: IrBuiltInsOverFir
     val builtIns: Fir2IrBuiltIns
     val irFactory: IrFactory
     val irProviders: List<IrProvider>

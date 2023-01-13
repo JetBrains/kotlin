@@ -84,7 +84,12 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             firstProject,
             secondProject,
             listOf("assemble"),
-            listOf(":libraryProject:compileKotlinJs", ":mainProject:compileKotlinJs", ":mainProject:compileProductionExecutableKotlinJs")
+            listOf(
+                ":libraryProject:compileKotlinJs",
+                ":mainProject:compileKotlinJs",
+                ":mainProject:compileProductionExecutableKotlinJs",
+                ":mainProject:browserProductionWebpack"
+            )
         )
     }
 
@@ -300,16 +305,19 @@ class BuildCacheRelocationIT : KGPBaseTest() {
             assertTasksPackedToCache(*cacheableTasks.toTypedArray())
         }
 
+        firstProject.build("clean")
+
         secondProject.build(*tasksToExecute.toTypedArray()) {
             assertTasksFromCache(*cacheableTasks.toTypedArray())
         }
     }
 
     @JvmGradlePluginTests
-    @DisplayName("Kotlin incremental compilation should work correctly")
+    @DisplayName("Kotlin incremental compilation should work correctly after cache hint")
     @GradleTest
     fun testKotlinIncrementalCompilation(gradleVersion: GradleVersion) {
-        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion) {
+        val options = defaultBuildOptions.copy(useGradleClasspathSnapshot = false)
+        checkKotlinIncrementalCompilationAfterCacheHit(gradleVersion, options) {
             assertNonIncrementalCompilation()
         }
     }

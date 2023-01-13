@@ -157,14 +157,6 @@ fun Project.configureKotlinCompilationOptions() {
             ":kotlin-native:klib",
             // Requires serialization plugin
             ":js:js.tests",
-            // ISE "Expected FirResolvedTypeRef with ConeKotlinType but was FirImplicitTypeRefImpl <implicit>"
-            // from Platform.kt serialization (looks as related to KT-54212)
-            // Workaround: set all types explicitly in Configurables interface
-            ":kotlin-native-shared",
-            // Same as kotlin-native-shared ^
-            ":kotlin-native:Interop:StubGenerator",
-            // Exception in Task :kotlin-native:backend.native:genEnvInteropStubs (see comments in KT-54209)
-            ":kotlin-native:backend.native",
         )
 
         // TODO: fix remaining warnings and remove this property.
@@ -296,4 +288,5 @@ fun skipJvmDefaultAllForModule(path: String): Boolean =
             //     java.lang.IllegalAccessError: tried to access method kotlin.reflect.jvm.internal.impl.types.checker.ClassicTypeSystemContext$substitutionSupertypePolicy$2.<init>(
             //       Lkotlin/reflect/jvm/internal/impl/types/checker/ClassicTypeSystemContext;Lkotlin/reflect/jvm/internal/impl/types/TypeSubstitutor;
             //     )V from class kotlin.reflect.jvm.internal.impl.resolve.OverridingUtilTypeSystemContext
+            // KT-54749
             path == ":core:descriptors"

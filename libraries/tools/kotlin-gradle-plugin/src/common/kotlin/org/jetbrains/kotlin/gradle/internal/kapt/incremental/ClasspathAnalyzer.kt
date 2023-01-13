@@ -9,6 +9,7 @@ import org.gradle.api.artifacts.transform.*
 import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.*
@@ -72,7 +73,7 @@ private fun visitDirectory(directory: File): ClasspathEntryData {
 
     directory.walk().filter {
         it.extension == "class"
-                && !it.relativeTo(directory).toString().toLowerCase().startsWith("meta-inf")
+                && !it.relativeTo(directory).toString().toLowerCaseAsciiOnly().startsWith("meta-inf")
                 && it.name != MODULE_INFO
     }.forEach {
         val internalName = it.relativeTo(directory).invariantSeparatorsPath.dropLast(".class".length)
@@ -93,7 +94,7 @@ private fun visitJar(jar: File): ClasspathEntryData {
             val entry = entries.nextElement()
 
             if (entry.name.endsWith("class")
-                && !entry.name.toLowerCase().startsWith("meta-inf")
+                && !entry.name.toLowerCaseAsciiOnly().startsWith("meta-inf")
                 && entry.name != MODULE_INFO
             ) {
                 BufferedInputStream(zipFile.getInputStream(entry)).use { inputStream ->

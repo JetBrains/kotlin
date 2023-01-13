@@ -14,7 +14,7 @@ FILE: main.kt
             ^ R|<local>/x|.R|kotlin/Number.toInt|().R|kotlin/Int.toString|()
         }
         ))
-        <Inapplicable(INAPPLICABLE): /foo2>#(R|/MyFunction|<R|kotlin/Int!|, R|kotlin/String!|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String!| <inline=NoInline>  {
+        R|/foo2<Inapplicable(INAPPLICABLE): /foo2>#|(R|/MyFunction|<R|kotlin/Int!|, R|kotlin/String!|>(<L> = MyFunction@fun <anonymous>(x: R|kotlin/Int|): R|kotlin/String!| <inline=NoInline>  {
             ^ R|<local>/x|.R|kotlin/Int.toString|()
         }
         ))

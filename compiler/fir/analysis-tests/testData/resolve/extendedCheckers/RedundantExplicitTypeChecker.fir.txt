@@ -49,10 +49,10 @@ FILE: RedundantExplicitTypeChecker.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override val x: R|kotlin/Int| = R|<local>/x|
+        public open override val x: R|kotlin/Int| = R|<local>/x|
             public get(): R|kotlin/Int|
 
-        public final override val y: R|kotlin/Int| = R|<local>/y|
+        public open override val y: R|kotlin/Int| = R|<local>/y|
             public get(): R|kotlin/Int|
 
     }

@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
 abstract class IrBuilder(
     override val context: IrGeneratorContext,
@@ -107,9 +105,11 @@ class IrBlockBuilder(
 
     override fun doBuild(): IrContainerExpression {
         val resultType = this.resultType
-                ?: statements.lastOrNull().safeAs<IrExpression>()?.type
-                ?: context.irBuiltIns.unitType
-        val irBlock = if (isTransparent) IrCompositeImpl(startOffset, endOffset, resultType, origin) else IrBlockImpl(startOffset, endOffset, resultType, origin)
+            ?: (statements.lastOrNull() as? IrExpression)?.type
+            ?: context.irBuiltIns.unitType
+        val irBlock =
+            if (isTransparent) IrCompositeImpl(startOffset, endOffset, resultType, origin)
+            else IrBlockImpl(startOffset, endOffset, resultType, origin)
         irBlock.statements.addAll(statements)
         return irBlock
     }

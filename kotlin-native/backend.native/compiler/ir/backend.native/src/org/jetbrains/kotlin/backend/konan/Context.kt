@@ -9,15 +9,18 @@ import llvm.LLVMTypeRef
 import org.jetbrains.kotlin.backend.common.DefaultDelegateFactory
 import org.jetbrains.kotlin.backend.common.DefaultMapping
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.descriptors.BridgeDirections
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysisResult
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
+import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrOutput
 import org.jetbrains.kotlin.backend.konan.ir.KonanIr
 import org.jetbrains.kotlin.backend.konan.llvm.CodegenClassMetadata
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
-import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.lower.*
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
 import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
@@ -33,10 +36,10 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContextImpl
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
 import org.jetbrains.kotlin.konan.target.Architecture
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.needSmallBinary
 import org.jetbrains.kotlin.library.SerializedIrModule
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.name.FqName
@@ -44,33 +47,46 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.reflect.KProperty
 
 internal class NativeMapping : DefaultMapping() {
     data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
 
     val outerThisFields = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrField>()
-    val enumImplObjects = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrClass>()
     val enumValueGetters = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrFunction>()
     val enumEntriesMaps = mutableMapOf<IrClass, Map<Name, LoweredEnumEntryDescription>>()
     val bridges = mutableMapOf<BridgeKey, IrSimpleFunction>()
     val notLoweredInlineFunctions = mutableMapOf<IrFunctionSymbol, IrFunction>()
-    val companionObjectCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val outerThisCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
     val lateinitPropertyCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrProperty, IrSimpleFunction>()
-    val enumValuesCacheAccessors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val objectInstanceGetter = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val boxFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val unboxFunctions = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrClass, IrSimpleFunction>()
+    val loweredInlineClassConstructors = DefaultDelegateFactory.newDeclarationToDeclarationMapping<IrConstructor, IrSimpleFunction>()
 }
 
-internal class Context(config: KonanConfig) : KonanBackendContext(config), ConfigChecks {
-    lateinit var frontendServices: FrontendServices
-    lateinit var environment: KotlinCoreEnvironment
-    lateinit var bindingContext: BindingContext
+internal class Context(
+        config: KonanConfig,
+        val environment: KotlinCoreEnvironment,
+        override var bindingContext: BindingContext,
+        val moduleDescriptor: ModuleDescriptor,
+) : KonanBackendContext(config), PsiToIrContext {
 
-    lateinit var moduleDescriptor: ModuleDescriptor
+    fun populateAfterPsiToIr(
+            psiToIrOutput: PsiToIrOutput
+    ) {
+        irModules = psiToIrOutput.irModules
+        irModule = psiToIrOutput.irModule
+        expectDescriptorToSymbol = psiToIrOutput.expectDescriptorToSymbol
+        ir = KonanIr(this, psiToIrOutput.irModule)
+        ir.symbols = psiToIrOutput.symbols
+        if (psiToIrOutput.irLinker is KonanIrLinker) {
+            irLinker = psiToIrOutput.irLinker
+        }
+    }
 
-    lateinit var objCExport: ObjCExport
+    override var symbolTable: SymbolTable? = null
 
-    lateinit var cAdapterGenerator: CAdapterGenerator
+    lateinit var cAdapterExportedElements: CAdapterExportedElements
 
     lateinit var expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>
 
@@ -84,52 +100,17 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
 
     override val optimizeLoopsOverUnsignedArrays = true
 
+    // TODO: Drop it to reduce code coupling and make it possible to have multiple
+    //  generationStates at the same time.
     lateinit var generationState: NativeGenerationState
-
-    fun disposeGenerationState() {
-        if (::generationState.isInitialized) generationState.dispose()
-    }
-
-    val phaseConfig = config.phaseConfig
 
     val innerClassesSupport by lazy { InnerClassesSupport(mapping, irFactory) }
     val bridgesSupport by lazy { BridgesSupport(mapping, irBuiltIns, irFactory) }
     val inlineFunctionsSupport by lazy { InlineFunctionsSupport(mapping) }
-    val enumsSupport by lazy { EnumsSupport(mapping, ir.symbols, irBuiltIns, irFactory) }
-    val cachesAbiSupport by lazy { CachesAbiSupport(mapping, ir.symbols, irFactory) }
+    val enumsSupport by lazy { EnumsSupport(mapping, irBuiltIns, irFactory) }
+    val cachesAbiSupport by lazy { CachesAbiSupport(mapping, irFactory) }
 
-    open class LazyMember<T>(val initializer: Context.() -> T) {
-        operator fun getValue(thisRef: Context, property: KProperty<*>): T = thisRef.getValue(this)
-    }
-
-    class LazyVarMember<T>(initializer: Context.() -> T) : LazyMember<T>(initializer) {
-        operator fun setValue(thisRef: Context, property: KProperty<*>, newValue: T) = thisRef.setValue(this, newValue)
-    }
-
-    companion object {
-        fun <T> lazyMember(initializer: Context.() -> T) = LazyMember<T>(initializer)
-
-        fun <K, V> lazyMapMember(initializer: Context.(K) -> V): LazyMember<(K) -> V> = lazyMember {
-            val storage = mutableMapOf<K, V>()
-            val result: (K) -> V = {
-                storage.getOrPut(it, { initializer(it) })
-            }
-            result
-        }
-
-        fun <T> nullValue() = LazyVarMember<T?>({ null })
-    }
-
-    private val lazyValues = mutableMapOf<LazyMember<*>, Any?>()
-
-    fun <T> getValue(member: LazyMember<T>): T =
-            @Suppress("UNCHECKED_CAST") (lazyValues.getOrPut(member, { member.initializer(this) }) as T)
-
-    fun <T> setValue(member: LazyVarMember<T>, newValue: T) {
-        lazyValues[member] = newValue
-    }
-
-    val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
+    override val reflectionTypes: KonanReflectionTypes by lazy(PUBLICATION) {
         KonanReflectionTypes(moduleDescriptor)
     }
 
@@ -151,19 +132,12 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
 
     lateinit var globalHierarchyAnalysisResult: GlobalHierarchyAnalysisResult
 
-    // We serialize untouched descriptor tree and IR.
-    // But we have to wait until the code generation phase,
-    // to dump this information into generated file.
-    var serializedMetadata: SerializedMetadata? = null
-    var serializedIr: SerializedIrModule? = null
-    var dataFlowGraph: ByteArray? = null
-
     val librariesWithDependencies by lazy {
         config.librariesWithDependencies(moduleDescriptor)
     }
 
     fun needGlobalInit(field: IrField): Boolean {
-        if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return false
+        if (field.descriptor.containingDeclaration !is PackageFragmentDescriptor) return field.isStatic
         // TODO: add some smartness here. Maybe if package of the field is in never accessed
         // assume its global init can be actually omitted.
         return true
@@ -189,18 +163,14 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
     override val typeSystem: IrTypeSystemContext
         get() = IrTypeSystemContextImpl(irBuiltIns)
 
-    val interopBuiltIns by lazy {
+    override val interopBuiltIns by lazy {
         InteropBuiltIns(this.builtIns)
     }
 
-    lateinit var bitcodeFileName: String
+    var objCExportedInterface: ObjCExportedInterface? = null
+    var objCExportCodeSpec: ObjCExportCodeSpec? = null
+
     lateinit var library: KonanLibraryLayout
-
-    val coverage by lazy { CoverageManager(this) }
-
-    fun separator(title: String) {
-        println("\n\n--- ${title} ----------------------\n")
-    }
 
     fun verifyBitCode() {
         if (::generationState.isInitialized)
@@ -229,18 +199,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
 
     var referencedFunctions: Set<IrFunction>? = null
 
-    internal val stdlibModule
+    override val stdlibModule
         get() = this.builtIns.any.module
-
-    lateinit var compilerOutput: List<ObjectFile>
-
-    val llvmModuleSpecification: LlvmModuleSpecification by lazy {
-        when {
-            config.produce.isCache ->
-                CacheLlvmModuleSpecification(this, config.cachedLibraries, config.libraryToCache!!)
-            else -> DefaultLlvmModuleSpecification(config.cachedLibraries)
-        }
-    }
 
     val declaredLocalArrays: MutableMap<String, LLVMTypeRef> = HashMap()
 
@@ -259,6 +219,8 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config), Confi
             }
         }
     }
+
+    override fun dispose() {}
 }
 
 internal class ContextLogger(val context: LoggingContext) {

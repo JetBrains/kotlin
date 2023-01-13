@@ -1,3 +1,5 @@
+// KT-55828
+// IGNORE_BACKEND_K2: NATIVE
 enum class Test(val x: String, val closure1: () -> String) {
     FOO("O", { FOO.x }) {
         override val y: String = "K"

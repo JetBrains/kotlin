@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -82,22 +82,6 @@ public class FirOldDiagnosticsTestWithJvmIrBackendGenerated extends AbstractFirD
     @TestMetadata("suspendInlineCycle_ir.kt")
     public void testSuspendInlineCycle_ir() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/suspendInlineCycle_ir.kt");
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/dataObjects")
-    @TestDataPath("$PROJECT_ROOT")
-    public class DataObjects {
-        @Test
-        public void testAllFilesPresentInDataObjects() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/dataObjects"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
-        }
-
-        @Test
-        @TestMetadata("customReadResolve.kt")
-        public void testCustomReadResolve() throws Exception {
-            runTest("compiler/testData/diagnostics/testsWithJvmBackend/dataObjects/customReadResolve.kt");
-        }
     }
 
     @Nested

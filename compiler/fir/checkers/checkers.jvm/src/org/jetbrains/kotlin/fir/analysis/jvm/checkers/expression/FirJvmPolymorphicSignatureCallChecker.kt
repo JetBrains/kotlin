@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 object FirJvmPolymorphicSignatureCallChecker : FirFunctionCallChecker() {
@@ -22,7 +23,7 @@ object FirJvmPolymorphicSignatureCallChecker : FirFunctionCallChecker() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!context.session.languageVersionSettings.supportsFeature(LanguageFeature.PolymorphicSignature)) return
         val callableSymbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
-        if (callableSymbol.getAnnotationByClassId(polymorphicSignatureClassId) == null) return
+        if (callableSymbol.getAnnotationByClassId(polymorphicSignatureClassId, context.session) == null) return
 
         for (valueArgument in expression.arguments) {
             if (valueArgument is FirVarargArgumentsExpression) {

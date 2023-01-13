@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -159,13 +158,13 @@ fun generateAssertionsDisabledFieldInitialization(classBuilder: ClassBuilder, cl
 }
 
 fun rewriteAssertionsDisabledFieldInitialization(methodNode: MethodNode, className: String) {
-    InsnSequence(methodNode.instructions).firstOrNull {
+    val node = InsnSequence(methodNode.instructions).firstOrNull {
         it is FieldInsnNode && it.opcode == Opcodes.PUTSTATIC && it.name == ASSERTIONS_DISABLED_FIELD_NAME
     }?.findPreviousOrNull {
         it is MethodInsnNode && it.opcode == Opcodes.INVOKEVIRTUAL
                 && it.owner == "java/lang/Class" && it.name == "desiredAssertionStatus" && it.desc == "()Z"
-    }?.previous?.safeAs<LdcInsnNode>()?.cst =
-        Type.getObjectType(className)
+    }?.previous
+    (node as? LdcInsnNode)?.cst = Type.getObjectType(className)
 }
 
 private fun <D : FunctionDescriptor> ResolvedCall<D>.replaceAssertWithAssertInner(): ResolvedCall<D> {

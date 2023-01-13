@@ -267,7 +267,6 @@ private val FirPropertyAccessExpression.propertyReferenceName: Name?
 private val FirQualifiedAccessExpression.referencedCallableSymbol: FirCallableSymbol<*>?
     get() {
         return toResolvedCallableSymbol()
-            ?: (calleeReference as? FirNamedReference)?.candidateSymbol as? FirCallableSymbol<*>
     }
 
 /**

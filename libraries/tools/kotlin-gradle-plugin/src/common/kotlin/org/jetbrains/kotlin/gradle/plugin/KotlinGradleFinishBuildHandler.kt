@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
-import org.jetbrains.kotlin.gradle.utils.relativeOrCanonical
+import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.utils.addToStdlib.sumByLong
 import java.io.File
 import java.lang.management.ManagementFactory
@@ -45,11 +45,11 @@ internal class KotlinGradleFinishBuildHandler {
             // it is expected that only one session file per build exists
             // afaik is is not possible to run multiple gradle builds in one project since gradle locks some dirs
             if (sessionFiles.size > 1) {
-                log.warn("w: Detected multiple Kotlin daemon sessions at ${sessionsDir.relativeOrCanonical(projectCacheDir)}")
+                log.warn("w: Detected multiple Kotlin daemon sessions at ${sessionsDir.relativeOrAbsolute(projectCacheDir)}")
             }
             for (file in sessionFiles) {
                 file.delete()
-                log.kotlinDebug { DELETED_SESSION_FILE_PREFIX + file.relativeOrCanonical(projectCacheDir) }
+                log.kotlinDebug { DELETED_SESSION_FILE_PREFIX + file.relativeOrAbsolute(projectCacheDir) }
             }
         }
 

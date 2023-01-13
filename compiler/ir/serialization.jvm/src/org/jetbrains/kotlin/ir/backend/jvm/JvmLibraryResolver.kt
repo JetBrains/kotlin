@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.ir.backend.jvm
 
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
 import org.jetbrains.kotlin.library.UnresolvedLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.util.Logger
 
 val jvmLibrariesProvidedByDefault = setOf("stdlib", "kotlin")

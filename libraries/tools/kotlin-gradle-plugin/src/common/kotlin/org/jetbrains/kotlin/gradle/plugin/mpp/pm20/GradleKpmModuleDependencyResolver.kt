@@ -42,7 +42,7 @@ class GradleKpmModuleDependencyResolver(
                     project,
                     component,
                     // TODO: consistent choice of configurations across multiple resolvers?
-                    configurationToResolveMetadataDependencies(requestingModule.project, requestingModule),
+                    configurationToResolveMetadataDependencies(requestingModule),
                     moduleDependency.moduleIdentifier
                 ) ?: return null
                 val result = projectStructureMetadataModuleBuilder.getModule(component, metadata)

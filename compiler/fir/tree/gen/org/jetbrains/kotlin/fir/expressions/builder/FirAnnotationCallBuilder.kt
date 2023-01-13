@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.FirCallBuilder
@@ -41,16 +43,18 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var calleeReference: FirReference
     var argumentMapping: FirAnnotationArgumentMapping = FirEmptyAnnotationArgumentMapping
+    var annotationResolvePhase: FirAnnotationResolvePhase = FirAnnotationResolvePhase.Unresolved
 
     override fun build(): FirAnnotationCall {
         return FirAnnotationCallImpl(
             source,
             useSiteTarget,
             annotationTypeRef,
-            typeArguments,
+            typeArguments.toMutableOrEmpty(),
             argumentList,
             calleeReference,
             argumentMapping,
+            annotationResolvePhase,
         )
     }
 
@@ -72,4 +76,21 @@ inline fun buildAnnotationCall(init: FirAnnotationCallBuilder.() -> Unit): FirAn
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
     return FirAnnotationCallBuilder().apply(init).build()
+}
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildAnnotationCallCopy(original: FirAnnotationCall, init: FirAnnotationCallBuilder.() -> Unit): FirAnnotationCall {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirAnnotationCallBuilder()
+    copyBuilder.source = original.source
+    copyBuilder.useSiteTarget = original.useSiteTarget
+    copyBuilder.annotationTypeRef = original.annotationTypeRef
+    copyBuilder.typeArguments.addAll(original.typeArguments)
+    copyBuilder.argumentList = original.argumentList
+    copyBuilder.calleeReference = original.calleeReference
+    copyBuilder.argumentMapping = original.argumentMapping
+    copyBuilder.annotationResolvePhase = original.annotationResolvePhase
+    return copyBuilder.apply(init).build()
 }

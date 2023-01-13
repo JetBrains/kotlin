@@ -1,0 +1,10 @@
+
+package pod1 {
+    var child: Int
+        @CCall(id = "knifunptr_pod10_child_getter") get
+        @CCall(id = "knifunptr_pod11_child_setter") set
+    var umbrella: Int
+        @CCall(id = "knifunptr_pod12_umbrella_getter") get
+        @CCall(id = "knifunptr_pod13_umbrella_setter") set
+}
+

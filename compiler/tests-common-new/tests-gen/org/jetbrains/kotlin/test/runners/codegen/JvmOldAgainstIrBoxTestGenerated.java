@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -512,6 +512,12 @@ public class JvmOldAgainstIrBoxTestGenerated extends AbstractJvmOldAgainstIrBoxT
         @TestMetadata("IrConstAcceptMultiModule.kt")
         public void testIrConstAcceptMultiModule() throws Exception {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/IrConstAcceptMultiModule.kt");
+        }
+
+        @Test
+        @TestMetadata("javaTypeParameterBy.kt")
+        public void testJavaTypeParameterBy() throws Exception {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir/javaTypeParameterBy.kt");
         }
 
         @Test

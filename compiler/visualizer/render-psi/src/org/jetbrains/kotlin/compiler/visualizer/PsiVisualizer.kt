@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.compiler.visualizer.Annotator.annotate
-import org.jetbrains.kotlin.contracts.parsing.isEqualsDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
@@ -227,9 +226,9 @@ class PsiVisualizer(private val file: KtFile, analysisResult: AnalysisResult) : 
             super.visitWhenExpression(expression)
         }
 
-        override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
-            addAnnotation(renderType(jetWhenEntry.expression), jetWhenEntry.expression!!)
-            super.visitWhenEntry(jetWhenEntry)
+        override fun visitWhenEntry(ktWhenEntry: KtWhenEntry) {
+            addAnnotation(renderType(ktWhenEntry.expression), ktWhenEntry.expression!!)
+            super.visitWhenEntry(ktWhenEntry)
         }
 
         override fun visitLambdaExpression(lambdaExpression: KtLambdaExpression) {

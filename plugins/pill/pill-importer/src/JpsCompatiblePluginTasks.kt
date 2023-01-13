@@ -263,16 +263,16 @@ class JpsCompatiblePluginTasks(
 
                 addOrReplaceOptionValue("ReservedCodeCacheSize", "128m", prefix = "-XX:")
                 addOrReplaceOptionValue("jna.nosys", "true")
-                addOrReplaceOptionValue("idea.platform.prefix", "Idea")
                 addOrReplaceOptionValue("idea.is.unit.test", "true")
                 addOrReplaceOptionValue("idea.ignore.disabled.plugins", "true")
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
+                addOrReplaceOptionValue("idea.use.native.fs.for.win", "false")
                 addOrReplaceOptionValue("use.jps", "true")
                 addOrReplaceOptionValue("kotlinVersion", project.rootProject.extra["kotlinVersion"].toString())
                 addOrReplaceOptionValue("java.awt.headless", "true")
 
                 val isAndroidStudioBunch = project.findProperty("versions.androidStudioRelease") != null
-                addOrReplaceOptionValue("idea.platform.prefix", if (isAndroidStudioBunch) "AndroidStudio" else null)
+                addOrReplaceOptionValue("idea.platform.prefix", if (isAndroidStudioBunch) "AndroidStudio" else "Idea")
 
                 val androidJarPath = project.configurations.findByName("androidJar")?.singleFile
                 val androidSdkPath = project.configurations.findByName("androidSdk")?.singleFile

@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.js.sourceMap
 
 import gnu.trove.TObjectIntHashMap
 import org.jetbrains.kotlin.js.parser.sourcemaps.*
-import org.jetbrains.kotlin.js.util.TextOutput
 import java.io.File
 import java.io.IOException
 import java.io.Reader
@@ -14,7 +13,7 @@ import java.util.function.Supplier
 
 class SourceMap3Builder(
     private val generatedFile: File?,
-    private val textOutput: TextOutput,
+    private val getCurrentOutputColumn: () -> Int,
     private val pathPrefix: String
 ) : SourceMapBuilder {
 
@@ -127,6 +126,18 @@ class SourceMap3Builder(
         sourceColumn: Int,
         name: String?,
     ) {
+        addMapping(source, fileIdentity, sourceContent, sourceLine, sourceColumn, name, getCurrentOutputColumn())
+    }
+
+    fun addMapping(
+        source: String,
+        fileIdentity: Any?,
+        sourceContent: Supplier<Reader?>,
+        sourceLine: Int,
+        sourceColumn: Int,
+        name: String?,
+        outputColumn: Int
+    ) {
         val sourceIndex = getSourceIndex(source.replace(File.separatorChar, '/'), fileIdentity, sourceContent)
 
         val nameIndex = name?.let(this::getNameIndex) ?: -1
@@ -139,7 +150,7 @@ class SourceMap3Builder(
             return
         }
 
-        startMapping()
+        startMapping(outputColumn)
 
         Base64VLQ.encode(out, sourceIndex - previousSourceIndex)
         previousSourceIndex = sourceIndex
@@ -160,23 +171,24 @@ class SourceMap3Builder(
 
     override fun addEmptyMapping() {
         if (!currentMappingIsEmpty) {
-            startMapping()
+            startMapping(getCurrentOutputColumn())
             currentMappingIsEmpty = true
         }
     }
 
-    private fun startMapping() {
+    private fun startMapping(column: Int) {
         val newGroupStarted = previousGeneratedColumn == -1
         if (newGroupStarted) {
             previousGeneratedColumn = 0
         }
-        val columnDiff = textOutput.column - previousGeneratedColumn
+
+        val columnDiff = column - previousGeneratedColumn
         if (!newGroupStarted) {
             out.append(',')
         }
         if (columnDiff > 0 || newGroupStarted) {
             Base64VLQ.encode(out, columnDiff)
-            previousGeneratedColumn = textOutput.column
+            previousGeneratedColumn = column
 
             previousMappingOffset = out.length
             previousPreviousSourceIndex = previousSourceIndex
@@ -190,12 +202,6 @@ class SourceMap3Builder(
             previousSourceColumn = previousPreviousSourceColumn
             previousNameIndex = previousPreviousNameIndex
         }
-    }
-
-    override fun addLink() {
-        textOutput.print("\n//# sourceMappingURL=")
-        textOutput.print(generatedFile!!.name)
-        textOutput.print(".map\n")
     }
 
     private object Base64VLQ {

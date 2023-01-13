@@ -41,6 +41,9 @@ object FirSupertypesChecker : FirClassChecker() {
         var classAppeared = false
         val superClassSymbols = hashSetOf<FirRegularClassSymbol>()
         for (superTypeRef in declaration.superTypeRefs) {
+            // skip implicit super types like Enum or Any
+            if (superTypeRef.source == null) continue
+
             val coneType = superTypeRef.coneType
             if (!nullableSupertypeReported && coneType.nullability == ConeNullability.NULLABLE) {
                 reporter.reportOn(superTypeRef.source, FirErrors.NULLABLE_SUPERTYPE, context)
@@ -169,10 +172,7 @@ object FirSupertypesChecker : FirClassChecker() {
     ) {
         for (subDeclaration in declaration.declarations) {
             if (subDeclaration is FirField) {
-                if (subDeclaration.visibility == Visibilities.Local &&
-                    subDeclaration.name.isSpecial &&
-                    subDeclaration.name.isDelegated
-                ) {
+                if (subDeclaration.visibility == Visibilities.Private && subDeclaration.name.isDelegated) {
                     val delegatedClassSymbol = subDeclaration.returnTypeRef.toRegularClassSymbol(context.session)
                     if (delegatedClassSymbol != null && delegatedClassSymbol.classKind != ClassKind.INTERFACE) {
                         reporter.reportOn(subDeclaration.returnTypeRef.source, FirErrors.DELEGATION_NOT_TO_INTERFACE, context)

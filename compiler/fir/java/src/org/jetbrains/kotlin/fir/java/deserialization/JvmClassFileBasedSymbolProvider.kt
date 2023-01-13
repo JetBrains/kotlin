@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.java.deserialization
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.deserialization.*
@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.*
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -49,7 +50,9 @@ class JvmClassFileBasedSymbolProvider(
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaFacade: FirJavaFacade,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
-) : AbstractFirDeserializedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin) {
+) : AbstractFirDeserializedSymbolProvider(
+    session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
+) {
     private val annotationsLoader = AnnotationsLoader(session, kotlinClassFinder)
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
@@ -81,7 +84,7 @@ class JvmClassFileBasedSymbolProvider(
                 FirDeserializationContext.createForPackage(
                     packageFqName, packageProto, nameResolver, moduleData,
                     JvmBinaryAnnotationDeserializer(session, kotlinJvmBinaryClass, kotlinClassFinder, byteContent),
-                    FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass),
+                    FirJvmConstDeserializer(session, facadeBinaryClass ?: kotlinJvmBinaryClass, BuiltInSerializerProtocol),
                     source
                 ),
             )
@@ -108,15 +111,15 @@ class JvmClassFileBasedSymbolProvider(
                 // Nested class of Kotlin class should have been a Kotlin class.
                 return null
             }
-            val javaClass = javaFacade.findClass(classId, (result as? KotlinClassFinder.Result.ClassFileContent)?.content)
-                ?: return null
+            val knownContent = (result as? KotlinClassFinder.Result.ClassFileContent)?.content
+            val javaClass = javaFacade.findClass(classId, knownContent) ?: return null
             return ClassMetadataFindResult.NoMetadata { symbol ->
                 javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
             }
         }
 
         val kotlinClass = result.kotlinJvmBinaryClass
-        if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS) return null
+        if (kotlinClass.classHeader.kind != KotlinClassHeader.Kind.CLASS || kotlinClass.classId != classId) return null
         val data = kotlinClass.classHeader.data ?: return null
         val strings = kotlinClass.classHeader.strings ?: return null
         val (nameResolver, classProto) = JvmProtoBufUtil.readClassDataFrom(data, strings)
@@ -141,7 +144,7 @@ class JvmClassFileBasedSymbolProvider(
         kotlinClass: KotlinClassFinder.Result.KotlinClass,
         symbol: FirRegularClassSymbol
     ) {
-        val annotations = symbol.fir.annotations as MutableList<FirAnnotation>
+        val annotations = mutableListOf<FirAnnotation>()
         kotlinClass.kotlinJvmBinaryClass.loadClassAnnotations(
             object : KotlinJvmBinaryClass.AnnotationVisitor {
                 override fun visitAnnotation(classId: ClassId, source: SourceElement): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
@@ -153,7 +156,8 @@ class JvmClassFileBasedSymbolProvider(
             },
             kotlinClass.byteContent,
         )
-        symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session.firCachesFactory))
+        symbol.fir.replaceAnnotations(annotations.toMutableOrEmpty())
+        symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session))
     }
 
     private fun String?.toPath(): Path? {

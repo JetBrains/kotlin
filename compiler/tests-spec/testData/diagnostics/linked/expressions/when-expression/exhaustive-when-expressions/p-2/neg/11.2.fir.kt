@@ -70,7 +70,7 @@ fun case_8(value_1: SealedClassMixed?): String = <!NO_ELSE_IN_WHEN!>when<!>(valu
  */
 fun case_9(value_1: Any?): String = <!NO_ELSE_IN_WHEN!>when<!> (value_1) {
     is Any -> ""
-    null -> ""
+    <!SENSELESS_COMPARISON!>null<!> -> ""
 }
 
 /*

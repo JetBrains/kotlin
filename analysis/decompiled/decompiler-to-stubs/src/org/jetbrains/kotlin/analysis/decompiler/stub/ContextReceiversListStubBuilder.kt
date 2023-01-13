@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 
 import com.intellij.psi.stubs.StubElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
-import org.jetbrains.kotlin.psi.KtContextReceiver
 import org.jetbrains.kotlin.psi.KtContextReceiverList
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinContextReceiverStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderStubImpl
 
 internal class ContextReceiversListStubBuilder(c: ClsStubBuilderContext) {
@@ -21,7 +21,7 @@ internal class ContextReceiversListStubBuilder(c: ClsStubBuilderContext) {
             KotlinPlaceHolderStubImpl<KtContextReceiverList>(parent, KtStubElementTypes.CONTEXT_RECEIVER_LIST)
         for (contextReceiverType in contextReceiverTypes) {
             val contextReceiverStub =
-                KotlinPlaceHolderStubImpl<KtContextReceiver>(contextReceiverListStub, KtStubElementTypes.CONTEXT_RECEIVER)
+                KotlinContextReceiverStubImpl(contextReceiverListStub, KtStubElementTypes.CONTEXT_RECEIVER, label = null)
             typeStubBuilder.createTypeReferenceStub(contextReceiverStub, contextReceiverType)
         }
     }

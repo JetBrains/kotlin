@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.psiUtil.isFunctionalExpression
 import org.jetbrains.kotlin.resolve.calls.model.ExpressionValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
 
 /**
  * That checker used to check that only anonymous functions are used as function arguments

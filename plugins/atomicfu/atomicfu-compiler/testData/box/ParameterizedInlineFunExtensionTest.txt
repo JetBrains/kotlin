@@ -5,10 +5,10 @@ public final class ParameterizedInlineFunExtensionTest {
     private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field tail: java.lang.Object
     static method <clinit>(): void
     public method <init>(): void
-    public final method bar$atomicfu$array(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int, p3: java.lang.Object, p4: java.lang.Object): java.lang.Object
-    public final method bar$atomicfu(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
-    public final method foo$atomicfu$array(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int, p3: java.lang.Object, p4: java.lang.Object, @org.jetbrains.annotations.NotNull p5: kotlin.jvm.functions.Function1): java.lang.Object
-    public final method foo$atomicfu(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: java.lang.Object, p3: java.lang.Object, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function1): java.lang.Object
+    private final method bar$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int, p3: java.lang.Object, p4: java.lang.Object): java.lang.Object
+    private final method bar$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: java.lang.Object, p3: java.lang.Object): java.lang.Object
+    private final method foo$atomicfu$array(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceArray, p2: int, p3: java.lang.Object, p4: java.lang.Object, p5: kotlin.jvm.functions.Function1): java.lang.Object
+    private final method foo$atomicfu(p0: java.lang.Object, p1: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p2: java.lang.Object, p3: java.lang.Object, p4: kotlin.jvm.functions.Function1): java.lang.Object
     public final method testClose(): void
 }
 

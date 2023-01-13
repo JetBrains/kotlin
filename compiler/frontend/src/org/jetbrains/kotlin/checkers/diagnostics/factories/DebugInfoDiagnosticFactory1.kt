@@ -13,9 +13,16 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.PositioningStrategies
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
-import org.jetbrains.kotlin.psi.KtExpression
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.calls.util.getCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
 class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
     DebugInfoDiagnosticFactory {
@@ -27,7 +34,7 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
     override val withExplicitDefinitionOnly: Boolean
 
     override fun createDiagnostic(
-        expression: KtExpression,
+        element: KtElement,
         bindingContext: BindingContext,
         dataFlowValueFactory: DataFlowValueFactory?,
         languageVersionSettings: LanguageVersionSettings?,
@@ -35,18 +42,32 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
     ) = when (privateName) {
         EXPRESSION_TYPE.privateName -> {
             val (type, dataFlowTypes) = CheckerTestUtil.getTypeInfo(
-                expression,
+                element,
                 bindingContext,
                 dataFlowValueFactory,
                 languageVersionSettings,
                 moduleDescriptor
             )
 
-            this.on(expression, Renderers.renderExpressionType(type, dataFlowTypes))
+            this.on(element, Renderers.renderExpressionType(type, dataFlowTypes))
         }
         CALL.privateName -> {
-            val (fqName, typeCall) = CheckerTestUtil.getCallDebugInfo(expression, bindingContext)
-            this.on(expression, Renderers.renderCallInfo(fqName, typeCall))
+            val (fqName, typeCall) = CheckerTestUtil.getCallDebugInfo(element, bindingContext)
+            this.on(element, Renderers.renderCallInfo(fqName, typeCall))
+        }
+        CALLABLE_OWNER.privateName -> {
+            val resolvedCall = element.getCall(bindingContext)?.getResolvedCall(bindingContext)
+            if (resolvedCall != null) {
+                val callableDescriptor = resolvedCall.resultingDescriptor
+                val text = renderCallableOwner(
+                    callableDescriptor.fqNameSafe,
+                    callableDescriptor.containingDeclaration.fqNameOrNull(),
+                    isImplicit = false
+                )
+                this.on(element, text)
+            } else {
+                this.on(element, "")
+            }
         }
         else -> throw NotImplementedError("Creation diagnostic '$name' isn't supported.")
     }
@@ -70,6 +91,11 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
             Severity.INFO,
             true
         )
+        val CALLABLE_OWNER = create(
+            "CALLABLE_OWNER",
+            Severity.INFO,
+            true
+        )
         val CALL = create(
             "CALL",
             Severity.INFO,
@@ -82,6 +108,21 @@ class DebugInfoDiagnosticFactory1 : DiagnosticFactory1<PsiElement, String>,
 
         fun create(name: String, severity: Severity, withExplicitDefinitionOnly: Boolean): DebugInfoDiagnosticFactory1 {
             return DebugInfoDiagnosticFactory1(name, severity, withExplicitDefinitionOnly)
+        }
+
+        fun renderCallableOwner(callableId: CallableId, ownerId: ClassId?, isExplicit: Boolean): String {
+            return renderCallableOwner(callableId.asFqNameForDebugInfo(), ownerId?.asSingleFqName(), isExplicit)
+        }
+
+        private fun renderCallableOwner(callableFqName: FqName, ownerFqName: FqName?, isImplicit: Boolean): String {
+            return buildString {
+                append(callableFqName.asString())
+                append(" in ")
+                if (isImplicit) {
+                    append("implicit ")
+                }
+                append(ownerFqName?.asString() ?: "<unknown>")
+            }
         }
     }
 }

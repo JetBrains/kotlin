@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -33,8 +34,8 @@ import org.jetbrains.kotlin.types.Variance
 @FirBuilderDsl
 class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    lateinit var moduleData: FirModuleData
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
@@ -48,8 +49,8 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
     override fun build(): FirTypeParameter {
         return FirTypeParameterImpl(
             source,
-            moduleData,
             resolvePhase,
+            moduleData,
             origin,
             attributes,
             name,
@@ -58,7 +59,7 @@ class FirTypeParameterBuilder : FirAnnotationContainerBuilder {
             variance,
             isReified,
             bounds,
-            annotations,
+            annotations.toMutableOrEmpty(),
         )
     }
 
@@ -79,8 +80,8 @@ inline fun buildTypeParameterCopy(original: FirTypeParameter, init: FirTypeParam
     }
     val copyBuilder = FirTypeParameterBuilder()
     copyBuilder.source = original.source
-    copyBuilder.moduleData = original.moduleData
     copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.name = original.name

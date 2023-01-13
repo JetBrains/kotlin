@@ -141,6 +141,23 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var cachedLibraries: Array<String>? = null
 
+    @Argument(
+        value = "-Xauto-cache-from",
+        valueDescription = "<path>",
+        description = "Path to the root directory from which dependencies are to be cached automatically.\n" +
+                "By default caches will be placed into the kotlin-native system cache directory.",
+        delimiter = ""
+    )
+    var autoCacheableFrom: Array<String>? = null
+
+    @Argument(
+        value = "-Xauto-cache-dir",
+        valueDescription = "<path>",
+        description = "Path to the directory where to put caches for auto-cacheable dependencies",
+        delimiter = ""
+    )
+    var autoCacheDir: String? = null
+
     @Argument(value="-Xcheck-dependencies", deprecatedName = "--check_dependencies", description = "Check dependencies and download the missing ones")
     var checkDependencies: Boolean = false
 
@@ -281,6 +298,16 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     )
     var friendModules: String? = null
 
+    /**
+     * @see K2MetadataCompilerArguments.refinesPaths
+     */
+    @Argument(
+        value = "-Xrefines-paths",
+        valueDescription = "<path>",
+        description = "Paths to output directories for refined modules (whose expects this module can actualize)"
+    )
+    var refinesPaths: Array<String>? = null
+
     @Argument(value = "-Xdebug-info-version", description = "generate debug info of given version (1, 2)")
     var debugInfoFormatVersion: String = "1" /* command line parser doesn't accept kotlin.Int type */
 
@@ -305,7 +332,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-Xoverride-clang-options", valueDescription = "<arg1,arg2,...>", description = "Explicit list of Clang options")
     var clangOptions: Array<String>? = null
 
-    @Argument(value="-Xallocator", valueDescription = "std | mimalloc", description = "Allocator used in runtime")
+    @Argument(value="-Xallocator", valueDescription = "std | mimalloc | custom", description = "Allocator used in runtime")
     var allocator: String? = null
 
     @Argument(value = "-Xmetadata-klib", description = "Produce a klib that only contains the declarations metadata")
@@ -380,9 +407,6 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling framework")
     var omitFrameworkBinary: Boolean = false
-
-    @Argument(value = "-Xforce-compiler-driver", description = "Force compiler to use specific compiler driver: static or dynamic")
-    var forceCompilerDriver: String? = null
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {

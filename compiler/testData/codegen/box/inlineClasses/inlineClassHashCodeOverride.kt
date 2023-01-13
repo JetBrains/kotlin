@@ -1,6 +1,7 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +CustomEqualsInInlineClasses
+// LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
+// CHECK_BYTECODE_LISTING
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class A(val value: MyClass) {

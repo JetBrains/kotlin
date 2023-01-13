@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 @ObsoleteDescriptorBasedAPI
 class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
@@ -352,7 +351,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
                 val ktParameter = DescriptorToSourceUtils.getSourceFromDescriptor(valueParameterDescriptor) as? KtParameter
                 irValueParameter.defaultValue = ktParameter?.defaultValue?.let { defaultValue ->
                     val inAnnotation =
-                        valueParameterDescriptor.containingDeclaration.safeAs<ConstructorDescriptor>()?.isAnnotationConstructor() ?: false
+                        (valueParameterDescriptor.containingDeclaration as? ConstructorDescriptor)?.isAnnotationConstructor() == true
                     if (inAnnotation) {
                         generateDefaultAnnotationParameterValue(defaultValue, valueParameterDescriptor)
                     } else if (context.configuration.generateBodies) {

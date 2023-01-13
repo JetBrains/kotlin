@@ -1,9 +1,11 @@
 KtReceiverParameterSymbol:
+  annotationsList: [
+    ReceiverAnnotation()
+      psi: KtAnnotationEntry
+  ]
   origin: SOURCE
   owningCallableSymbol: KtKotlinPropertySymbol(/prop)
   type: [
-    ReceiverAnnotation()
-      psi: KtAnnotationEntry
     ReceiverTypeAnnotation()
       psi: KtAnnotationEntry
-  ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Long
+  ] @R|ReceiverTypeAnnotation|()  kotlin/Long

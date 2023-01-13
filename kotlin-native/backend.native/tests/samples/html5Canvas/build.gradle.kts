@@ -6,10 +6,6 @@ plugins {
     kotlin("multiplatform")
 }
 
-repositories {
-    jcenter()
-}
-
 val hostOs = System.getProperty("os.name")
 val isWindows = hostOs.startsWith("Windows")
 

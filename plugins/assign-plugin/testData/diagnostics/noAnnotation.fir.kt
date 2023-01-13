@@ -14,16 +14,16 @@ data class Task(val input: StringProperty)
 
 fun `should not work with assignment when there is no annotation on a type`() {
     val task = Task(StringProperty("Fail"))
-    task.input = <!ASSIGNMENT_TYPE_MISMATCH!>"OK"<!>
-    task.input = StringProperty("OK")
+    task.<!VAL_REASSIGNMENT!>input<!> = <!ASSIGNMENT_TYPE_MISMATCH!>"OK"<!>
+    task.<!VAL_REASSIGNMENT!>input<!> = StringProperty("OK")
     task.apply {
-        input = <!ASSIGNMENT_TYPE_MISMATCH!>"OK"<!>
+        <!VAL_REASSIGNMENT!>input<!> = <!ASSIGNMENT_TYPE_MISMATCH!>"OK"<!>
     }
     task.apply {
-        input = StringProperty("OK")
+        <!VAL_REASSIGNMENT!>input<!> = StringProperty("OK")
     }
-    task.input = <!ASSIGNMENT_TYPE_MISMATCH!>42<!>
+    task.<!VAL_REASSIGNMENT!>input<!> = <!ASSIGNMENT_TYPE_MISMATCH!>42<!>
     task.apply {
-        input = <!ASSIGNMENT_TYPE_MISMATCH!>42<!>
+        <!VAL_REASSIGNMENT!>input<!> = <!ASSIGNMENT_TYPE_MISMATCH!>42<!>
     }
 }

@@ -42,7 +42,7 @@ open class GradleKpmCompilationTaskConfigurator(
         val result = project.tasks.named(compilationData.compileKotlinTaskName, KotlinCompile::class.java) {
             it.kotlinPluginData = project.compilerPluginProviderForPlatformCompilation(variant, compilationData)
         }
-        compilationData.output.classesDirs.from(result.map { it.destinationDirectory })
+        compilationData.output.classesDirs.from(result.flatMap { it.destinationDirectory })
         return result
     }
 

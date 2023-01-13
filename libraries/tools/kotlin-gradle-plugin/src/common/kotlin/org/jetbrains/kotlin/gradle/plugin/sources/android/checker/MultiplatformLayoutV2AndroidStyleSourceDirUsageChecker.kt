@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android.checker
 import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 import java.io.File
@@ -24,6 +26,7 @@ internal object MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker : KotlinA
         kotlinSourceSet: KotlinSourceSet,
         androidSourceSet: AndroidSourceSet
     ) {
+        if (target.project.kotlinPropertiesProvider.ignoreMppAndroidSourceSetLayoutV2AndroidStyleDirs) return
         val androidStyleSourceDir = target.project.file("src/${androidSourceSet.name}/kotlin")
         if (androidStyleSourceDir in kotlinSourceSet.kotlin.srcDirs && androidStyleSourceDir.exists()) {
             val kotlinStyleSourceDirToUse = target.project.file("src/${kotlinSourceSet.name}/kotlin")
@@ -39,6 +42,9 @@ internal object MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker : KotlinA
             get() = """
                 Usage of 'Android Style' source directory $androidStyleSourceDirInUse is deprecated.
                 Use $kotlinStyleSourceDirToUse instead.
+                
+                To suppress this warning: put the following in your gradle.properties:
+                ${PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN}=true
             """.trimIndent()
     }
 }

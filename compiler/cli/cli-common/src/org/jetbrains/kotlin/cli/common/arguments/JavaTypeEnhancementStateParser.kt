@@ -58,6 +58,7 @@ class JavaTypeEnhancementStateParser(
 
         return JavaTypeEnhancementState(jsr305Settings) {
             when {
+                it.isSubpackageOf(JSPECIFY_OLD_ANNOTATIONS_PACKAGE) -> jspecifyReportLevel
                 it.isSubpackageOf(JSPECIFY_ANNOTATIONS_PACKAGE) -> jspecifyReportLevel
                 it.isSubpackageOf(CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE) -> compatqualCheckerFrameworkAnnotationsReportLevel
                 else -> getReportLevelForAnnotation(it, nullabilityAnnotationReportLevels, kotlinVersion)

@@ -4,9 +4,7 @@
 // IGNORE_BACKEND: JS_IR_ES6
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
-
-@file:Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS")
+// LANGUAGE: +ValueClasses, +ValueClassesSecondaryConstructorWithBody
 
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class Foo(val x: String) {

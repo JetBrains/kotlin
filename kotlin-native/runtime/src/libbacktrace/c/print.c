@@ -51,15 +51,16 @@ struct print_data
 
 static int
 print_callback (void *data, uintptr_t pc, const char *filename, int lineno, int column,
-		const char *function)
+		const char *function, int is_nodebug)
 {
-  struct print_data *pdata = (struct print_data *) data;
-
-  fprintf (pdata->f, "0x%lx %s\n\t%s:%d:%d\n",
-	   (unsigned long) pc,
-	   function == NULL ? "???" : function,
-	   filename == NULL ? "???" : filename,
-	   lineno, column);
+  if (!is_nodebug) {
+    struct print_data *pdata = (struct print_data *) data;
+    fprintf (pdata->f, "0x%lx %s\n\t%s:%d:%d\n",
+  	   (unsigned long) pc,
+  	   function == NULL ? "???" : function,
+  	   filename == NULL ? "???" : filename,
+  	   lineno, column);
+  }
   return 0;
 }
 

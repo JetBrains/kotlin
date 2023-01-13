@@ -142,6 +142,11 @@ public interface Errors {
 
     DiagnosticFactory1<PsiElement, PropertyDescriptor> DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY = DiagnosticFactory1.create(WARNING);
 
+    DiagnosticFactory0<PsiElement> DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<KtEnumEntry> DEPRECATED_DECLARATION_OF_ENUM_ENTRY = DiagnosticFactory0.create(WARNING);
+
     DiagnosticFactory2<PsiElement, PropertyDescriptor, ClassDescriptor> DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY = DiagnosticFactory2.create(WARNING);
 
     DiagnosticFactory1<PsiElement, ConstructorDescriptor> PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL = DiagnosticFactory1.create(ERROR);
@@ -420,14 +425,19 @@ public interface Errors {
     DiagnosticFactory0<PsiElement> VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> VALUE_CLASS_CANNOT_EXTEND_CLASSES = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> VALUE_CLASS_CANNOT_BE_RECURSIVE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<PsiElement, String> RESERVED_MEMBER_INSIDE_VALUE_CLASS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<KtExpression> MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> RESERVED_MEMBER_INSIDE_VALUE_CLASS = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<KtTypeReference> TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INNER_CLASS_INSIDE_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> VALUE_CLASS_CANNOT_BE_CLONEABLE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INLINE_CLASS_DEPRECATED = DiagnosticFactory0.create(WARNING);
-    DiagnosticFactory0<KtContextReceiverList> INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory1<KtNamedFunction, String> INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS =
+    DiagnosticFactory0<KtContextReceiverList> VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<KtNamedFunction, KotlinType> INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS =
             DiagnosticFactory1.create(WARNING, DECLARATION_NAME);
+    
+    DiagnosticFactory1<KtAnnotationEntry, String> ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET =
+            DiagnosticFactory1.create(ERROR);
 
     // Result class
 
@@ -674,6 +684,13 @@ public interface Errors {
     DiagnosticFactory1<PsiElement, PropertyDescriptor> LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY =
             DiagnosticFactory1.create(ERROR);
 
+
+    DiagnosticFactory0<PsiElement> LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL_WARNING = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT_WARNING = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION_WARNING = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory1<PsiElement, PropertyDescriptor> LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY_WARNING =
+            DiagnosticFactory1.create(WARNING);
+
     DiagnosticFactory2<KtModifierListOwner, String, ClassDescriptor> ABSTRACT_PROPERTY_IN_NON_ABSTRACT_CLASS =
             DiagnosticFactory2.create(ERROR, ABSTRACT_MODIFIER);
 
@@ -889,6 +906,7 @@ public interface Errors {
     DiagnosticFactory0<KtExpression> RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS = DiagnosticFactory0.create(ERROR);
 
     DiagnosticFactory0<KtParenthesizedExpression> PARENTHESIZED_COMPANION_LHS_DEPRECATION = DiagnosticFactory0.create(WARNING);
+    DiagnosticFactory0<PsiElement> INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory0<PsiElement> RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS = DiagnosticFactory0.create(WARNING);
 
@@ -1271,6 +1289,7 @@ public interface Errors {
     //Inline and inlinable parameters
     DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> NON_PUBLIC_CALL_FROM_PUBLIC_INLINE =
             DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
+    DiagnosticFactory0<KtElement> DEPRECATED_IMPLICIT_NON_PUBLIC_API_ACCESS = DiagnosticFactory0.create(WARNING, CALL_ELEMENT);
     DiagnosticFactory2<KtElement, DeclarationDescriptor, DeclarationDescriptor> PRIVATE_CLASS_MEMBER_FROM_INLINE =
             DiagnosticFactory2.create(ERROR, CALL_ELEMENT);
     DiagnosticFactory1<KtElement, KtElement> NON_LOCAL_RETURN_NOT_ALLOWED = DiagnosticFactory1.create(ERROR, CALL_ELEMENT);

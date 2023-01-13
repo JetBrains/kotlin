@@ -8,13 +8,14 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isFromEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
+import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -22,8 +23,8 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
+import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -132,19 +133,13 @@ internal class ClassMemberGenerator(
                     val thisParameter =
                         conversionScope.dispatchReceiverParameter(irClass) ?: error("No found this parameter for $irClass")
 
-                    val receiver = IrGetValueImpl(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        thisParameter.type,
-                        thisParameter.symbol,
-                    )
-
                     for (index in containingClass.contextReceivers.indices) {
                         val irValueParameter = valueParameters[index]
                         body.statements.add(
                             IrSetFieldImpl(
                                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                                 contextReceiverFields[index].symbol,
-                                receiver,
+                                IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, thisParameter.type, thisParameter.symbol),
                                 IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
                                 components.irBuiltIns.unitType,
                             )
@@ -175,7 +170,7 @@ internal class ClassMemberGenerator(
                         irFunction.body = IrSyntheticBodyImpl(startOffset, endOffset, kind)
                     }
                     irFunction.parent is IrClass && irFunction.parentAsClass.isData -> {
-                        val lookupTag = firFunction?.symbol?.dispatchReceiverClassOrNull()
+                        val lookupTag = firFunction?.symbol?.dispatchReceiverClassLookupTagOrNull()
                         when {
                             DataClassResolver.isComponentLike(irFunction.name) ->
                                 firFunction?.body?.let { irFunction.body = visitor.convertToIrBlockBody(it) }
@@ -333,13 +328,20 @@ internal class ClassMemberGenerator(
 
     internal fun FirDelegatedConstructorCall.toIrDelegatingConstructorCall(): IrExpression {
         val constructedIrType = constructedTypeRef.toIrType()
-        val referencedSymbol = calleeReference.resolvedSymbol as? FirConstructorSymbol
+        val referencedSymbol = calleeReference.toResolvedConstructorSymbol()
             ?: return convertWithOffsets { startOffset, endOffset ->
                 IrErrorCallExpressionImpl(
                     startOffset, endOffset, constructedIrType, "Cannot find delegated constructor call"
                 )
             }
-        val constructorSymbol = referencedSymbol.unwrapCallRepresentative() as FirConstructorSymbol
+
+        // Unwrap substitution overrides from both derived class and a super class
+        val constructorSymbol = referencedSymbol
+            .unwrapCallRepresentative(referencedSymbol.containingClassLookupTag())
+            .unwrapCallRepresentative((referencedSymbol.resolvedReturnType as? ConeClassLikeType)?.lookupTag)
+
+        check(constructorSymbol is FirConstructorSymbol)
+
         val firDispatchReceiver = dispatchReceiver
         return convertWithOffsets { startOffset, endOffset ->
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol

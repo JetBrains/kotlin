@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
@@ -142,7 +141,6 @@ abstract class AbstractFirBaseDiagnosticsTest : BaseDiagnosticsTest() {
             val firBuilder = RawFirBuilder(
                 session,
                 firProvider.kotlinScopeProvider,
-                psiMode = if (useLazyBodiesModeForRawFir) PsiHandlingMode.IDE else PsiHandlingMode.COMPILER,
                 bodyBuildingMode = BodyBuildingMode.lazyBodies(useLazyBodiesModeForRawFir)
             )
             ktFiles.mapTo(firFiles) {

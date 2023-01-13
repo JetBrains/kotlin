@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 
-class TransformerForCompanionGenerator(context: IrPluginContext) : AbstractTransformerForGenerator(context) {
+class TransformerForCompanionGenerator(context: IrPluginContext) : AbstractTransformerForGenerator(context, visitBodies = true) {
     override fun interestedIn(key: GeneratedDeclarationKey): Boolean {
         return key == CompanionGenerator.Key
     }

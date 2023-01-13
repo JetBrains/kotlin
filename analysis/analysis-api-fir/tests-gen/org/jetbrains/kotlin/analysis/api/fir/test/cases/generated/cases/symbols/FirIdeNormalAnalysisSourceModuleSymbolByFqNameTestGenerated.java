@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -77,6 +77,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
     }
 
     @Test
+    @TestMetadata("kclass.kt")
+    public void testKclass() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/kclass.kt");
+    }
+
+    @Test
     @TestMetadata("listOf.kt")
     public void testListOf() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByFqName/listOf.kt");
@@ -98,6 +104,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByFqNameTestGenerated extends
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByFqName/nestedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("typealias.kt")
+    public void testTypealias() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByFqName/typealias.kt");
     }
 
     @Nested

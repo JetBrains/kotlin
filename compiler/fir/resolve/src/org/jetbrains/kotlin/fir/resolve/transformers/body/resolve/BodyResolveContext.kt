@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
-import org.jetbrains.kotlin.fir.resolve.dfa.PersistentFlow
 import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.inference.FirDelegatedPropertyInferenceSession
@@ -42,7 +41,7 @@ import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 
 class BodyResolveContext(
     val returnTypeCalculator: ReturnTypeCalculator,
-    val dataFlowAnalyzerContext: DataFlowAnalyzerContext<PersistentFlow>,
+    val dataFlowAnalyzerContext: DataFlowAnalyzerContext,
     val targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet(),
     val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = mutableMapOf()
 ) {
@@ -492,6 +491,42 @@ class BodyResolveContext(
         }
     }
 
+    fun <T> withScopesForScript(
+        owner: FirScript,
+        holder: SessionHolder,
+        f: () -> T
+    ): T {
+        val towerElementsForScript = holder.collectTowerDataElementsForScript(owner)
+
+        val base = towerDataContext.addNonLocalTowerDataElements(emptyList())
+        val statics = base
+            .addNonLocalScopeIfNotNull(towerElementsForScript.staticScope)
+
+        val parameterScope = owner.parameters.fold(FirLocalScope(holder.session)) { scope, parameter ->
+            scope.storeVariable(parameter, holder.session)
+        }
+
+        val forMembersResolution =
+            statics
+                .addLocalScope(parameterScope)
+                .addContextReceiverGroup(towerElementsForScript.implicitReceivers)
+
+        val newContexts = FirRegularTowerDataContexts(
+            regular = forMembersResolution,
+            forClassHeaderAnnotations = base,
+            forNestedClasses = forMembersResolution,
+            forCompanionObject = statics,
+            forConstructorHeaders = null,
+            forEnumEntries = null,
+            primaryConstructorPureParametersScope = null,
+            primaryConstructorAllParametersScope = null
+        )
+
+        return withTowerDataContexts(newContexts) {
+            f()
+        }
+    }
+
     @OptIn(PrivateForInline::class)
     inline fun <T> withWhenSubjectType(
         subjectType: ConeKotlinType?,
@@ -569,7 +604,7 @@ class BodyResolveContext(
                 for (parameter in function.valueParameters) {
                     storeVariable(parameter, holder.session)
                 }
-                val receiverTypeRef = function.receiverTypeRef
+                val receiverTypeRef = function.receiverParameter?.typeRef
                 val type = receiverTypeRef?.coneType
                 val additionalLabelName = type?.labelName()
                 withLabelAndReceiverType(function.name, function, type, holder, additionalLabelName, f)
@@ -622,11 +657,11 @@ class BodyResolveContext(
         }
         return withTowerDataCleanup {
             addLocalScope(FirLocalScope(holder.session))
-            val receiverTypeRef = anonymousFunction.receiverTypeRef
+            val receiverTypeRef = anonymousFunction.receiverParameter?.typeRef
             val labelName = anonymousFunction.label?.name?.let { Name.identifier(it) }
             withContainer(anonymousFunction) {
                 withLabelAndReceiverType(labelName, anonymousFunction, receiverTypeRef?.coneType, holder) {
-                    if (mode is ResolutionMode.LambdaResolution) {
+                    if (mode is ResolutionMode.LambdaResolution && mode.expectedReturnTypeRef == null) {
                         withLambdaBeingAnalyzedInDependentContext(anonymousFunction.symbol, f)
                     } else {
                         f()
@@ -717,7 +752,7 @@ class BodyResolveContext(
             }
         }
         return withTowerDataCleanup {
-            val receiverTypeRef = property.receiverTypeRef
+            val receiverTypeRef = property.receiverParameter?.typeRef
             addLocalScope(FirLocalScope(holder.session))
             if (!forContracts && receiverTypeRef == null && property.returnTypeRef !is FirImplicitTypeRef &&
                 !property.isLocal && property.delegate == null

@@ -18,8 +18,8 @@ fun case_1() {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
     }
 }
 
@@ -40,8 +40,8 @@ fun case_2() {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
     }
 }
 
@@ -106,8 +106,8 @@ fun case_5() {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
         }
 
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>b<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.String")!>b<!>.length
     }
 }
 

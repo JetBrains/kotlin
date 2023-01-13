@@ -192,11 +192,11 @@ internal fun AbstractSerialGenerator.serializerInstance(
                 packageScope,
                 SerialEntityNames.ENUM_SERIALIZER_FACTORY_FUNC_NAME
             )
-            val markedEnumSerializerFactoryFunc = DescriptorUtils.getFunctionByNameOrNull(
+            val annotatedEnumSerializerFactoryFunc = DescriptorUtils.getFunctionByNameOrNull(
                 packageScope,
-                SerialEntityNames.MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
+                SerialEntityNames.ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME
             )
-            if (enumSerializerFactoryFunc != null && markedEnumSerializerFactoryFunc != null) {
+            if (enumSerializerFactoryFunc != null && annotatedEnumSerializerFactoryFunc != null) {
                 // runtime contains enum serializer factory functions
                 val factoryFunc = if (enumDescriptor.isEnumWithSerialInfoAnnotation()) {
                     val enumEntries = enumDescriptor.enumEntries()
@@ -218,9 +218,24 @@ internal fun AbstractSerialGenerator.serializerInstance(
                             JsArrayLiteral(annotationsConstructors)
                         }
                     }
+
+                    val classAnnotationsConstructors = enumDescriptor.annotationsWithArguments().map { (annotationClass, args, _) ->
+                        val argExprs = args.map { arg ->
+                            Translation.translateAsExpression(arg.getArgumentExpression()!!, context)
+                        }
+                        val classRef = context.translateQualifiedReference(annotationClass)
+                        JsNew(classRef, argExprs)
+                    }
+                    val classAnnotations = if (classAnnotationsConstructors.isEmpty()) {
+                        JsNullLiteral()
+                    } else {
+                        JsArrayLiteral(classAnnotationsConstructors)
+                    }
+
                     enumArgs += JsArrayLiteral(entriesNames)
                     enumArgs += JsArrayLiteral(entriesAnnotations)
-                    markedEnumSerializerFactoryFunc
+                    enumArgs += classAnnotations
+                    annotatedEnumSerializerFactoryFunc
                 } else {
                     enumSerializerFactoryFunc
                 }

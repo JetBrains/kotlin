@@ -65,7 +65,7 @@ fun case_11(value_1: Any?): Boolean? {
 
 // TESTCASE NUMBER: 12
 fun Char.case_12() {
-    contract { returns() implies (this@case_12 == null) }
+    contract { returns() implies (<!SENSELESS_COMPARISON!>this@case_12 == null<!>) }
     if (<!SENSELESS_COMPARISON!>this@case_12 != null<!>) throw Exception()
 }
 

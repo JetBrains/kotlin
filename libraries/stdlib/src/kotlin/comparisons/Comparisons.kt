@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:kotlin.jvm.JvmName("ComparisonsKt")
@@ -225,6 +225,7 @@ public infix fun <T> Comparator<T>.thenDescending(comparator: Comparator<in T>):
 /**
  * Extends the given [comparator] of non-nullable values to a comparator of nullable values
  * considering `null` value less than any other value.
+ * Non-null values are compared with the provided [comparator].
  *
  * @sample samples.comparisons.Comparisons.nullsFirstLastWithComparator
  */
@@ -241,6 +242,7 @@ public fun <T : Any> nullsFirst(comparator: Comparator<in T>): Comparator<T?> =
 /**
  * Provides a comparator of nullable [Comparable] values
  * considering `null` value less than any other value.
+ * Non-null values are compared according to their [natural order][naturalOrder].
  *
  * @sample samples.comparisons.Comparisons.nullsFirstLastComparator
  */
@@ -250,6 +252,7 @@ public inline fun <T : Comparable<T>> nullsFirst(): Comparator<T?> = nullsFirst(
 /**
  * Extends the given [comparator] of non-nullable values to a comparator of nullable values
  * considering `null` value greater than any other value.
+ * Non-null values are compared with the provided [comparator].
  *
  * @sample samples.comparisons.Comparisons.nullsFirstLastWithComparator
  */
@@ -266,6 +269,7 @@ public fun <T : Any> nullsLast(comparator: Comparator<in T>): Comparator<T?> =
 /**
  * Provides a comparator of nullable [Comparable] values
  * considering `null` value greater than any other value.
+ * Non-null values are compared according to their [natural order][naturalOrder].
  *
  * @sample samples.comparisons.Comparisons.nullsFirstLastComparator
  */
@@ -275,12 +279,16 @@ public inline fun <T : Comparable<T>> nullsLast(): Comparator<T?> = nullsLast(na
 /**
  * Returns a comparator that compares [Comparable] objects in natural order.
  *
+ * The natural order of a `Comparable` type here means the order established by its `compareTo` function.
+ *
  * @sample samples.comparisons.Comparisons.naturalOrderComparator
  */
 public fun <T : Comparable<T>> naturalOrder(): Comparator<T> = @Suppress("UNCHECKED_CAST") (NaturalOrderComparator as Comparator<T>)
 
 /**
  * Returns a comparator that compares [Comparable] objects in reversed natural order.
+ *
+ * The natural order of a `Comparable` type here means the order established by its `compareTo` function.
  *
  * @sample samples.comparisons.Comparisons.nullsFirstLastWithComparator
  */

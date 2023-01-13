@@ -23,6 +23,7 @@ import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.util.PatternFilterable
 import org.gradle.api.tasks.util.PatternSet
+import org.gradle.util.GradleVersion
 import org.gradle.work.ChangeType
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -238,7 +239,7 @@ abstract class GradleCompileTaskProvider @Inject constructor(
     @get:Internal
     val errorsFile: Provider<File?> = objectFactory
         .property(
-            gradle.rootProject.rootDir.resolve(".gradle/build_errors/").also { it.mkdirs() }
+            gradle.rootProject.rootDir.resolve(".gradle/kotlin/errors/").also { it.mkdirs() }
                 .resolve("errors-${System.currentTimeMillis()}.log"))
 }
 
@@ -297,6 +298,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @get:Internal
     val startParameters = BuildReportsService.getStartParameters(project)
+
+    @get:Internal
+    internal abstract val suppressKotlinOptionsFreeArgsModificationWarning: Property<Boolean>
 
     internal fun reportingSettings() = buildReportsService.orNull?.parameters?.reportingSettings?.orNull ?: ReportingSettings()
 
@@ -384,7 +388,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @TaskAction
     fun execute(inputChanges: InputChanges) {
         val buildMetrics = metrics.get()
-        buildMetrics.measure(BuildTime.GRADLE_TASK_ACTION) {
+        buildMetrics.addTimeMetric(BuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
+        buildMetrics.measure(BuildTime.OUT_OF_WORKER_TASK_ACTION) {
             KotlinBuildStatsService.applyIfInitialised {
                 if (name.contains("Test"))
                     it.report(BooleanMetrics.TESTS_EXECUTED, true)
@@ -548,8 +553,6 @@ abstract class KotlinCompile @Inject constructor(
         compilerOptions.verbose.convention(logger.isDebugEnabled)
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
     final override val kotlinOptions: KotlinJvmOptions = KotlinJvmOptionsCompat(
         { this },
         compilerOptions
@@ -639,12 +642,9 @@ abstract class KotlinCompile @Inject constructor(
     internal abstract val associatedJavaCompileTaskTargetCompatibility: Property<String>
 
     @get:Internal
-    internal abstract val associatedJavaCompileTaskSources: ConfigurableFileCollection
-
-    @get:Internal
     internal abstract val associatedJavaCompileTaskName: Property<String>
 
-    @get:Internal
+    @get:Input
     internal abstract val jvmTargetValidationMode: Property<PropertiesProvider.JvmTargetValidationMode>
 
     @get:Internal
@@ -700,7 +700,7 @@ abstract class KotlinCompile @Inject constructor(
      * this input will always be empty.
      */
     @get:Internal
-    internal var additionalFreeCompilerArgs: List<String> = listOf()
+    internal var executionTimeFreeCompilerArgs: List<String>? = null
 
     override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         compilerArgumentsContributor.contributeArguments(
@@ -714,8 +714,9 @@ abstract class KotlinCompile @Inject constructor(
             args.reportPerf = true
         }
 
-        if (additionalFreeCompilerArgs.isNotEmpty()) {
-            args.freeArgs = compilerOptions.freeCompilerArgs.get().union(additionalFreeCompilerArgs).toList()
+        val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
+        if (localExecutionTimeFreeCompilerArgs != null) {
+            args.freeArgs = localExecutionTimeFreeCompilerArgs
         }
     }
 
@@ -730,11 +731,11 @@ abstract class KotlinCompile @Inject constructor(
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {
-        validateKotlinAndJavaHasSameTargetCompatibility(args, kotlinSources)
+        validateKotlinAndJavaHasSameTargetCompatibility(args)
 
         val scriptSources = scriptSources.asFileTree.files
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors,)
-        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector)
+        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 
@@ -773,7 +774,7 @@ abstract class KotlinCompile @Inject constructor(
             javaPackagePrefix,
             args,
             environment,
-            defaultKotlinJavaToolchain.get().providedJvm.get().javaHome,
+            defaultKotlinJavaToolchain.get().buildJvm.get().javaHome,
             taskOutputsBackup
         )
         compilerRunner.errorsFile?.also { gradleMessageCollector.flush(it) }
@@ -781,31 +782,35 @@ abstract class KotlinCompile @Inject constructor(
 
     private fun validateKotlinAndJavaHasSameTargetCompatibility(
         args: K2JVMCompilerArguments,
-        kotlinSources: Set<File>
     ) {
-        val mixedSourcesArePresent = !associatedJavaCompileTaskSources.isEmpty &&
-                kotlinSources.isNotEmpty()
-        if (mixedSourcesArePresent) {
-            associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
-                val normalizedJavaTarget = when (targetCompatibility) {
-                    "6" -> "1.6"
-                    "7" -> "1.7"
-                    "8" -> "1.8"
-                    "1.9" -> "9"
-                    else -> targetCompatibility
+        associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
+            val normalizedJavaTarget = when (targetCompatibility) {
+                "6" -> "1.6"
+                "7" -> "1.7"
+                "8" -> "1.8"
+                "1.9" -> "9"
+                else -> targetCompatibility
+            }
+
+            val jvmTarget = args.jvmTarget ?: JvmTarget.DEFAULT.toString()
+            if (normalizedJavaTarget != jvmTarget) {
+                val javaTaskName = associatedJavaCompileTaskName.get()
+
+                val errorMessage = buildString {
+                    append("'$javaTaskName' task (current target is $targetCompatibility) and ")
+                    append("'$name' task (current target is $jvmTarget) ")
+                    appendLine("jvm target compatibility should be set to the same Java version.")
+                    if (GradleVersion.current().baseVersion < GradleVersion.version("8.0")) {
+                        append("By default will become an error since Gradle 8.0+! ")
+                        appendLine("Read more: https://kotl.in/gradle/jvm/target-validation")
+                    }
+                    appendLine("Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain")
                 }
 
-                val jvmTarget = args.jvmTarget ?: JvmTarget.DEFAULT.toString()
-                if (normalizedJavaTarget != jvmTarget) {
-                    val javaTaskName = associatedJavaCompileTaskName.get()
-                    val errorMessage = "'$javaTaskName' task (current target is $targetCompatibility) and " +
-                            "'$name' task (current target is $jvmTarget) " +
-                            "jvm target compatibility should be set to the same Java version."
-                    when (jvmTargetValidationMode.get()) {
-                        PropertiesProvider.JvmTargetValidationMode.ERROR -> throw GradleException(errorMessage)
-                        PropertiesProvider.JvmTargetValidationMode.WARNING -> logger.warn(errorMessage)
-                        else -> Unit
-                    }
+                when (jvmTargetValidationMode.get()) {
+                    PropertiesProvider.JvmTargetValidationMode.ERROR -> throw GradleException(errorMessage)
+                    PropertiesProvider.JvmTargetValidationMode.WARNING -> logger.warn(errorMessage)
+                    else -> Unit
                 }
             }
         }
@@ -947,8 +952,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated("Replaced by compilerOptions input", replaceWith = ReplaceWith("compilerOptions"))
     override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsCompat(
         { this },
         compilerOptions
@@ -1004,7 +1007,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
      * this input will always be empty.
      */
     @get:Internal
-    internal var additionalFreeCompilerArgs: List<String> = listOf()
+    internal var executionTimeFreeCompilerArgs: List<String>? = null
 
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
@@ -1034,7 +1037,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
         // Overriding freeArgs from compilerOptions with enhanced one + additional one set on execution phase
         // containing additional arguments based on the js compilation configuration
-        args.freeArgs = enhancedFreeCompilerArgs.get().union(additionalFreeCompilerArgs).toList()
+        val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
+        args.freeArgs = if (localExecutionTimeFreeCompilerArgs != null) localExecutionTimeFreeCompilerArgs else enhancedFreeCompilerArgs.get()
     }
 
     @get:InputFiles
@@ -1145,7 +1149,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         val dependencies = libraries
             .filter { it.exists() && libraryFilter(it) }
-            .map { it.canonicalPath }
+            .map { it.normalize().absolutePath }
 
         args.libraries = dependencies.distinct().let {
             if (it.isNotEmpty())
@@ -1160,7 +1164,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
-        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector)
+        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 

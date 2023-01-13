@@ -38,7 +38,7 @@ digraph safeCallAndEqualityToBool_kt {
                     10 [label="Enter when branch condition "];
                     11 [label="Access variable R|<local>/s|"];
                     12 [label="Enter safe call"];
-                    13 [label="Function call: $subj$.R|/check|()"];
+                    13 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     14 [label="Exit safe call"];
                     15 [label="Const: Boolean(true)"];
                     16 [label="Equality operator =="];
@@ -54,7 +54,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     21 [label="Enter block"];
                     22 [label="Access variable R|<local>/s|"];
-                    23 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    23 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     24 [label="Exit block"];
                 }
                 25 [label="Exit when branch result"];
@@ -84,7 +84,7 @@ digraph safeCallAndEqualityToBool_kt {
     14 -> {15};
     15 -> {16};
     16 -> {17};
-    17 -> {26 18};
+    17 -> {18 26};
     18 -> {19};
     19 -> {20};
     20 -> {21};
@@ -117,7 +117,7 @@ digraph safeCallAndEqualityToBool_kt {
                     39 [label="Enter when branch condition "];
                     40 [label="Access variable R|<local>/s|"];
                     41 [label="Enter safe call"];
-                    42 [label="Function call: $subj$.R|/check|()"];
+                    42 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     43 [label="Exit safe call"];
                     44 [label="Const: Boolean(false)"];
                     45 [label="Equality operator =="];
@@ -133,7 +133,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     50 [label="Enter block"];
                     51 [label="Access variable R|<local>/s|"];
-                    52 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    52 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     53 [label="Exit block"];
                 }
                 54 [label="Exit when branch result"];
@@ -163,7 +163,7 @@ digraph safeCallAndEqualityToBool_kt {
     43 -> {44};
     44 -> {45};
     45 -> {46};
-    46 -> {55 47};
+    46 -> {47 55};
     47 -> {48};
     48 -> {49};
     49 -> {50};
@@ -196,7 +196,7 @@ digraph safeCallAndEqualityToBool_kt {
                     68 [label="Enter when branch condition "];
                     69 [label="Access variable R|<local>/s|"];
                     70 [label="Enter safe call"];
-                    71 [label="Function call: $subj$.R|/check|()"];
+                    71 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     72 [label="Exit safe call"];
                     73 [label="Const: Boolean(true)"];
                     74 [label="Equality operator !="];
@@ -222,7 +222,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     86 [label="Enter block"];
                     87 [label="Access variable R|<local>/s|"];
-                    88 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    88 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     89 [label="Exit block"];
                 }
                 90 [label="Exit when branch result"];
@@ -242,7 +242,7 @@ digraph safeCallAndEqualityToBool_kt {
     72 -> {73};
     73 -> {74};
     74 -> {75};
-    75 -> {85 76};
+    75 -> {76 85};
     76 -> {77};
     77 -> {78};
     78 -> {79};
@@ -275,7 +275,7 @@ digraph safeCallAndEqualityToBool_kt {
                     97 [label="Enter when branch condition "];
                     98 [label="Access variable R|<local>/s|"];
                     99 [label="Enter safe call"];
-                    100 [label="Function call: $subj$.R|/check|()"];
+                    100 [label="Function call: $subj$.R|/check|()" style="filled" fillcolor=yellow];
                     101 [label="Exit safe call"];
                     102 [label="Const: Boolean(false)"];
                     103 [label="Equality operator !="];
@@ -301,7 +301,7 @@ digraph safeCallAndEqualityToBool_kt {
                     color=blue
                     115 [label="Enter block"];
                     116 [label="Access variable R|<local>/s|"];
-                    117 [label="Access variable <Inapplicable(UNSAFE_CALL): kotlin/String.length>#"];
+                    117 [label="Access variable R|kotlin/String.length<Inapplicable(UNSAFE_CALL): kotlin/String.length>#|"];
                     118 [label="Exit block"];
                 }
                 119 [label="Exit when branch result"];
@@ -321,7 +321,7 @@ digraph safeCallAndEqualityToBool_kt {
     101 -> {102};
     102 -> {103};
     103 -> {104};
-    104 -> {114 105};
+    104 -> {105 114};
     105 -> {106};
     106 -> {107};
     107 -> {108};

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 open class FirDeclarationRenderer {
@@ -32,8 +33,12 @@ open class FirDeclarationRenderer {
                 is FirAnonymousFunction -> (declaration.label?.let { "${it.name}@" } ?: "") + "fun"
                 is FirSimpleFunction -> "fun"
                 is FirProperty -> {
-                    val prefix = if (declaration.isLocal) "l" else ""
-                    prefix + if (declaration.isVal) "val" else "var"
+                    if (declaration.isCatchParameter == true) {
+                        ""
+                    } else {
+                        val prefix = if (declaration.isLocal) "l" else ""
+                        prefix + if (declaration.isVal) "val" else "var"
+                    }
                 }
                 is FirPropertyAccessor -> if (declaration.isGetter) "get" else "set"
                 is FirField -> "field"

@@ -33,11 +33,11 @@ import kotlin.system.measureTimeMillis
  * of Kotlin Plugin and other classloaders
  */
 interface KotlinBuildStatsMXBean {
-    fun reportBoolean(name: String, value: Boolean, subprojectName: String?)
+    fun reportBoolean(name: String, value: Boolean, subprojectName: String?, weight: Long?): Boolean
 
-    fun reportNumber(name: String, value: Long, subprojectName: String?)
+    fun reportNumber(name: String, value: Long, subprojectName: String?, weight: Long?): Boolean
 
-    fun reportString(name: String, value: String, subprojectName: String?)
+    fun reportString(name: String, value: String, subprojectName: String?, weight: Long?): Boolean
 }
 
 
@@ -48,6 +48,9 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
 
         // Property name for disabling saving statistical information
         const val ENABLE_STATISTICS_PROPERTY_NAME = "enable_kotlin_performance_profile"
+
+        // Property used for tests. Build will fail fast if collected value doesn't fit regexp
+        const val FORCE_VALUES_VALIDATION = "kotlin_performance_profile_force_validation"
 
         // default state
         const val DEFAULT_STATISTICS_STATE = true
@@ -158,32 +161,29 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
 internal class JMXKotlinBuildStatsService(private val mbs: MBeanServer, private val beanName: ObjectName) :
     KotlinBuildStatsService() {
 
-    private fun callJmx(method: String, type: String, metricName: String, value: Any, subprojectName: String?) {
-        mbs.invoke(
+    private fun callJmx(method: String, type: String, metricName: String, value: Any, subprojectName: String?, weight: Long?): Any? {
+        return mbs.invoke(
             beanName,
             method,
-            arrayOf(metricName, value, subprojectName),
-            arrayOf("java.lang.String", type, "java.lang.String")
+            arrayOf(metricName, value, subprojectName, weight),
+            arrayOf("java.lang.String", type, "java.lang.String", "java.lang.Long")
         )
     }
 
-    override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?) {
+    override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?) =
         runSafe("report metric ${metric.name}") {
-            callJmx("reportBoolean", "boolean", metric.name, value, subprojectName)
-        }
-    }
+            callJmx("reportBoolean", "boolean", metric.name, value, subprojectName, weight)
+        } as? Boolean ?: false
 
-    override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?) {
+    override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?, weight: Long?) =
         runSafe("report metric ${metric.name}") {
-            callJmx("reportNumber", "long", metric.name, value, subprojectName)
-        }
-    }
+            callJmx("reportNumber", "long", metric.name, value, subprojectName, weight)
+        } as? Boolean ?: false
 
-    override fun report(metric: StringMetrics, value: String, subprojectName: String?) {
+    override fun report(metric: StringMetrics, value: String, subprojectName: String?, weight: Long?) =
         runSafe("report metric ${metric.name}") {
-            callJmx("reportString", "java.lang.String", metric.name, value, subprojectName)
-        }
-    }
+            callJmx("reportString", "java.lang.String", metric.name, value, subprojectName, weight)
+        } as? Boolean ?: false
 
     override fun buildFinished(result: BuildResult) {
         instance = null
@@ -194,7 +194,8 @@ internal class DefaultKotlinBuildStatsService internal constructor(
     gradle: Gradle,
     val beanName: ObjectName
 ) : KotlinBuildStatsService(), KotlinBuildStatsMXBean {
-    private val sessionLogger = BuildSessionLogger(gradle.gradleUserHomeDir)
+    private val forcePropertiesValidation = gradle.rootProject.properties[FORCE_VALUES_VALIDATION]?.toString()?.toBoolean() ?: false
+    private val sessionLogger = BuildSessionLogger(gradle.gradleUserHomeDir, forceValuesValidation = forcePropertiesValidation)
 
     private fun gradleBuildStartTime(gradle: Gradle): Long? {
         return (gradle as? DefaultGradle)?.services?.get(BuildRequestMetaData::class.java)?.startTime
@@ -217,27 +218,21 @@ internal class DefaultKotlinBuildStatsService internal constructor(
         instance = null
     }
 
-    override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?) {
-        KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName)
-    }
+    override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?): Boolean =
+        KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName, weight)
 
-    override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?) {
-        KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName)
-    }
+    override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?, weight: Long?): Boolean =
+        KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName, weight)
 
-    override fun report(metric: StringMetrics, value: String, subprojectName: String?) {
-        KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName)
-    }
+    override fun report(metric: StringMetrics, value: String, subprojectName: String?, weight: Long?): Boolean =
+        KotlinBuildStatHandler().report(sessionLogger, metric, value, subprojectName, weight)
 
-    override fun reportBoolean(name: String, value: Boolean, subprojectName: String?) {
-        report(BooleanMetrics.valueOf(name), value, subprojectName)
-    }
+    override fun reportBoolean(name: String, value: Boolean, subprojectName: String?, weight: Long?): Boolean =
+        report(BooleanMetrics.valueOf(name), value, subprojectName, weight)
 
-    override fun reportNumber(name: String, value: Long, subprojectName: String?) {
-        report(NumericalMetrics.valueOf(name), value, subprojectName)
-    }
+    override fun reportNumber(name: String, value: Long, subprojectName: String?, weight: Long?): Boolean =
+        report(NumericalMetrics.valueOf(name), value, subprojectName, weight)
 
-    override fun reportString(name: String, value: String, subprojectName: String?) {
-        report(StringMetrics.valueOf(name), value, subprojectName)
-    }
+    override fun reportString(name: String, value: String, subprojectName: String?, weight: Long?): Boolean =
+        report(StringMetrics.valueOf(name), value, subprojectName, weight)
 }

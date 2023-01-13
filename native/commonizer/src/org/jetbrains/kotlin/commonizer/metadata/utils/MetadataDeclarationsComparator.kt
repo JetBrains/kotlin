@@ -23,6 +23,7 @@ import kotlin.Unit
 import kotlin.apply
 import kotlin.arrayOf
 import kotlin.check
+import kotlin.contracts.ExperimentalContracts
 import kotlin.error
 import kotlin.let
 import kotlin.reflect.KProperty
@@ -493,6 +494,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         )
     }
 
+    @OptIn(ExperimentalContracts::class)
     private fun compareEffectExpressionLists(
         containerContext: Context,
         effectExpressionListA: List<KmEffectExpression>,
@@ -611,6 +613,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareNullableValues(propertyContext, propertyA.compileTimeValue, propertyB.compileTimeValue, EntityKind.CompileTimeValue)
     }
 
+    @OptIn(ExperimentalContracts::class)
     @Suppress("DuplicatedCode")
     private fun compareFunctions(
         functionContext: Context,
@@ -791,6 +794,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         compareTypeLists(typeParameterContext, typeParameterA.upperBounds, typeParameterB.upperBounds, TypeKind.UPPER_BOUND)
     }
 
+    @OptIn(ExperimentalContracts::class)
     private fun compareEffectExpressions(
         effectExpressionContext: Context,
         effectExpressionA: KmEffectExpression,

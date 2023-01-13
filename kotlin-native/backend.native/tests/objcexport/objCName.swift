@@ -17,7 +17,7 @@ private func testObjCNameParameterNames() throws {
 
 private func testObjCNameReceiverName() throws {
     let object = SwiftNameC2()
-    try assertEquals(actual: ObjCNameBKt.getSomeValue(object), expected: 0)
+    try assertEquals(actual: ObjCNameBKt.getSomeValue(of: object), expected: 0)
 }
 
 private func testObjCNameMySwiftArray() throws {
@@ -31,8 +31,8 @@ private func testObjCNameOverrides() throws {
     try assertEquals(actual: object.someOtherValue, expected: 0)
     object.someOtherValue = 1
     try assertEquals(actual: object.someOtherValue, expected: 1)
-    try assertEquals(actual: object.someOtherFunction(2, otherParam: 4), expected: 8)
-    try assertEquals(actual: ObjCNameC4().foo(3, objCParam: 5), expected: 15)
+    try assertEquals(actual: object.someOtherFunction(receiver: 2, otherParam: 4), expected: 8)
+    try assertEquals(actual: ObjCNameC4().foo(objCReceiver: 3, objCParam: 5), expected: 15)
 }
 
 private func testObjCNameNestedClass() throws {
@@ -60,6 +60,11 @@ private func testObjCNameEnum() throws {
     try assertEquals(actual: ObjCNameSwiftEnum.Companion.shared.foo(), expected: 0)
 }
 
+private func testObjCAvoidPreprocessorName() throws {
+    let instance = ObjCAvoidPreprocessorName(time: 42)
+    try assertEquals(actual: instance.time, expected: 42)
+}
+
 class ObjCNameTests : SimpleTestProvider {
     override init() {
         super.init()
@@ -74,5 +79,6 @@ class ObjCNameTests : SimpleTestProvider {
         test("TestObjCNameExact", testObjCNameExact)
         test("TestObjCNameObject", testObjCNameObject)
         test("TestObjCNameEnum", testObjCNameEnum)
+        test("TestObjCAvoidPreprocessorName", testObjCAvoidPreprocessorName)
     }
 }

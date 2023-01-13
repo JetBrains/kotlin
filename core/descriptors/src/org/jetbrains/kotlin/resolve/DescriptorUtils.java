@@ -470,6 +470,20 @@ public class DescriptorUtils {
 
     @NotNull
     @SuppressWarnings("unchecked")
+    public static <D extends CallableMemberDescriptor> D unwrapSubstitutionOverride(@NotNull D descriptor) {
+        while (descriptor.getKind() == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
+            Collection<? extends CallableMemberDescriptor> overridden = descriptor.getOverriddenDescriptors();
+            if (overridden.isEmpty()) {
+                throw new IllegalStateException("Fake override should have at least one overridden descriptor: " + descriptor);
+            }
+            if (overridden.size() > 1) return descriptor;
+            descriptor = (D) overridden.iterator().next();
+        }
+        return descriptor;
+    }
+
+    @NotNull
+    @SuppressWarnings("unchecked")
     public static <D extends DeclarationDescriptorWithVisibility> D unwrapFakeOverrideToAnyDeclaration(@NotNull D descriptor) {
         if (descriptor instanceof CallableMemberDescriptor) {
             return (D) unwrapFakeOverride((CallableMemberDescriptor) descriptor);

@@ -45,7 +45,7 @@ public class KtImportsFactory {
             return directive;
         }
 
-        KtImportDirective createdDirective = KtPsiFactoryKt.KtPsiFactory(project, false).createImportDirective(importPath);
+        KtImportDirective createdDirective = new KtPsiFactory(project, false).createImportDirective(importPath);
         importsCache.put(importPath, createdDirective);
 
         return createdDirective;
@@ -58,6 +58,6 @@ public class KtImportsFactory {
 
     @NotNull
     public Collection<KtImportDirective> createImportDirectivesNotCached(@NotNull Collection<ImportPath> importPaths) {
-        return KtPsiFactoryKt.KtPsiFactory(project, false).createImportDirectives(importPaths);
+        return new KtPsiFactory(project, false).createImportDirectives(importPaths);
     }
 }

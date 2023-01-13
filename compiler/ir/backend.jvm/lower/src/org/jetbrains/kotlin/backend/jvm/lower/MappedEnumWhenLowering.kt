@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val enumWhenPhase = makeIrFilePhase(
     ::MappedEnumWhenLowering,
@@ -114,7 +113,7 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
             val mapping = state!!.getMappingForClass(subject.type.getClass()!!)
 
             mapping.isPublicAbi = mapping.isPublicAbi ||
-                    (builder.scope.scopeOwnerSymbol.owner.safeAs<IrDeclaration>()?.isInPublicInlineScope ?: false)
+                    (builder.scope.scopeOwnerSymbol.owner as? IrDeclaration)?.isInPublicInlineScope == true
 
             dispatchReceiver = builder.irGetField(null, mapping.field)
             putValueArgument(0, super.mapRuntimeEnumEntry(builder, subject))

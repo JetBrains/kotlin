@@ -10,19 +10,17 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeRawScopeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.*
 
 class FirKotlinScopeProvider(
     val declaredMemberScopeDecorator: (
@@ -85,7 +83,10 @@ class FirKotlinScopeProvider(
 
 
 data class ConeSubstitutionScopeKey(
-    val lookupTag: ConeClassLikeLookupTag, val isFromExpectClass: Boolean, val substitutor: ConeSubstitutor
+    val lookupTag: ConeClassLikeLookupTag,
+    val isFromExpectClass: Boolean,
+    val substitutor: ConeSubstitutor,
+    val derivedClassLookupTag: ConeClassLikeLookupTag?
 ) : ScopeSessionKey<FirClass, FirClassSubstitutionScope>()
 
 fun FirClass.unsubstitutedScope(
@@ -109,35 +110,41 @@ fun FirClassSymbol<*>.unsubstitutedScope(
 fun FirClass.scopeForClass(
     substitutor: ConeSubstitutor,
     useSiteSession: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
+    memberOwnerLookupTag: ConeClassLikeLookupTag
 ): FirTypeScope = scopeForClassImpl(
     substitutor, useSiteSession, scopeSession,
     skipPrivateMembers = false,
     classFirDispatchReceiver = this,
     // TODO: why it's always false?
-    isFromExpectClass = false
+    isFromExpectClass = false,
+    memberOwnerLookupTag = memberOwnerLookupTag
 )
 
 fun ConeKotlinType.scopeForSupertype(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
-    subClass: FirClass,
+    derivedClass: FirClass,
 ): FirTypeScope? {
     if (this !is ConeClassLikeType) return null
     if (this is ConeErrorType) return null
-    val symbol = lookupTag.toSymbol(useSiteSession)
-    return if (symbol is FirRegularClassSymbol) {
-        symbol.fir.scopeForClassImpl(
-            substitutor(symbol, this, useSiteSession),
-            useSiteSession,
-            scopeSession,
-            skipPrivateMembers = true,
-            classFirDispatchReceiver = subClass,
-            isFromExpectClass = (subClass as? FirRegularClass)?.isExpect == true
-        )
-    } else {
-        null
+
+    val symbol = lookupTag.toSymbol(useSiteSession) as? FirRegularClassSymbol ?: return null
+
+    val substitutor = when {
+        this.type.attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
+        else -> substitutor(symbol, this, useSiteSession)
     }
+
+    return symbol.fir.scopeForClassImpl(
+        substitutor,
+        useSiteSession,
+        scopeSession,
+        skipPrivateMembers = true,
+        classFirDispatchReceiver = derivedClass,
+        isFromExpectClass = (derivedClass as? FirRegularClass)?.isExpect == true,
+        memberOwnerLookupTag = derivedClass.symbol.toLookupTag()
+    )
 }
 
 private fun substitutor(symbol: FirRegularClassSymbol, type: ConeClassLikeType, useSiteSession: FirSession): ConeSubstitutor {
@@ -152,22 +159,28 @@ private fun FirClass.scopeForClassImpl(
     scopeSession: ScopeSession,
     skipPrivateMembers: Boolean,
     classFirDispatchReceiver: FirClass,
-    isFromExpectClass: Boolean
+    isFromExpectClass: Boolean,
+    memberOwnerLookupTag: ConeClassLikeLookupTag?
 ): FirTypeScope {
     val basicScope = unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false)
     if (substitutor == ConeSubstitutor.Empty) return basicScope
 
-    val key = ConeSubstitutionScopeKey(classFirDispatchReceiver.symbol.toLookupTag(), isFromExpectClass, substitutor)
-    return scopeSession.getOrBuild(
-        this, key
-    ) {
+    val key = ConeSubstitutionScopeKey(
+        classFirDispatchReceiver.symbol.toLookupTag(),
+        isFromExpectClass,
+        substitutor,
+        memberOwnerLookupTag
+    )
+
+    return scopeSession.getOrBuild(this, key) {
         FirClassSubstitutionScope(
             useSiteSession,
             basicScope,
             key, substitutor,
-            substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()) as ConeClassLikeType,
+            substitutor.substituteOrSelf(classFirDispatchReceiver.defaultType()).lowerBoundIfFlexible() as ConeClassLikeType,
             skipPrivateMembers,
-            makeExpect = isFromExpectClass
+            makeExpect = isFromExpectClass,
+            memberOwnerLookupTag ?: classFirDispatchReceiver.symbol.toLookupTag()
         )
     }
 }

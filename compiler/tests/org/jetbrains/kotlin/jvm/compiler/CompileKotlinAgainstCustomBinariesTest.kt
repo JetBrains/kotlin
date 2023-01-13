@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.jvm.compiler
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.common.CLICompiler
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -60,7 +61,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     private fun analyzeFileToPackageView(vararg extraClassPath: File): PackageViewDescriptor {
         val environment = createEnvironment(extraClassPath.toList())
 
-        val ktFile = KotlinTestUtils.loadJetFile(environment.project, getTestDataFileWithExtension("kt"))
+        val ktFile = KotlinTestUtils.loadKtFile(environment.project, getTestDataFileWithExtension("kt"))
         val result = JvmResolveUtil.analyzeAndCheckForErrors(ktFile, environment)
 
         return result.moduleDescriptor.getPackage(LoadDescriptorUtil.TEST_PACKAGE_FQNAME).also {
@@ -101,7 +102,13 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
 
     private fun doTestKotlinLibraryWithWrongMetadataVersionJs(libraryName: String, vararg additionalOptions: String) {
         val library = compileJsLibrary(libraryName, additionalOptions = listOf("-Xmetadata-version=42.0.0"))
-        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(library), K2JSCompiler(), additionalOptions.toList())
+        compileKotlin(
+            "source.kt",
+            File(tmpdir, "usage.js"),
+            listOf(library),
+            K2JSCompiler(),
+            additionalOptions.toList()
+        )
     }
 
     private fun doTestPreReleaseKotlinLibrary(
@@ -129,6 +136,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
                 is K2JVMCompiler -> compileLibrary(libraryName, additionalOptions = libraryOptions)
                 else -> throw UnsupportedOperationException(compiler.toString())
             }
+
+        if (compiler is K2JSCompiler) {
+            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
+            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
+        }
 
         compileKotlin(
             "source.kt", usageDestination, listOf(result), compiler,
@@ -185,7 +197,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         val library = compileLibrary("library")
         val environment = createEnvironment(listOf(library))
 
-        val ktFile = KotlinTestUtils.loadJetFile(environment.project, getTestDataFileWithExtension("kt"))
+        val ktFile = KotlinTestUtils.loadKtFile(environment.project, getTestDataFileWithExtension("kt"))
         val result = JvmResolveUtil.analyze(ktFile, environment)
         result.throwIfError()
 
@@ -294,17 +306,19 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir)
     }
 
-    fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
-        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
-    }
+//    https://youtrack.jetbrains.com/issue/KT-54905
+//    fun testReleaseCompilerAgainstPreReleaseLibraryJs() {
+//        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"))
+//    }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipPrereleaseCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-prerelease-check")
     }
 
-    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() {
-        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
-    }
+//    https://youtrack.jetbrains.com/issue/KT-54905
+//    fun testReleaseCompilerAgainstPreReleaseLibraryJsSkipPrereleaseCheck() {
+//        doTestPreReleaseKotlinLibrary(K2JSCompiler(), "library", File(tmpdir, "usage.js"), "-Xskip-prerelease-check")
+//    }
 
     fun testReleaseCompilerAgainstPreReleaseLibrarySkipMetadataVersionCheck() {
         doTestPreReleaseKotlinLibrary(K2JVMCompiler(), "library", tmpdir, "-Xskip-metadata-version-check")
@@ -588,7 +602,12 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testInternalFromForeignModuleJs() {
-        compileKotlin("source.kt", File(tmpdir, "usage.js"), listOf(compileJsLibrary("library")), K2JSCompiler())
+        compileKotlin(
+            "source.kt",
+            File(tmpdir, "usage.js"),
+            listOf(compileJsLibrary("library")),
+            K2JSCompiler(),
+        )
     }
 
     fun testInternalFromFriendModuleJs() {

@@ -13,29 +13,37 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-fun FirCallableSymbol<*>.dispatchReceiverTypeOrNull(): ConeKotlinType? =
-    fir.dispatchReceiverType
+fun FirCallableSymbol<*>.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
+    fir.dispatchReceiverClassTypeOrNull()
 
-fun FirCallableSymbol<*>.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? =
-    fir.dispatchReceiverClassOrNull()
+fun FirCallableDeclaration.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
+    if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride)
+        baseForIntersectionOverride!!.dispatchReceiverClassTypeOrNull()
+    else
+        dispatchReceiverType as? ConeClassLikeType
 
-fun FirCallableDeclaration.dispatchReceiverClassOrNull(): ConeClassLikeLookupTag? {
-    if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride) return symbol.baseForIntersectionOverride!!.fir.dispatchReceiverClassOrNull()
+fun FirCallableSymbol<*>.dispatchReceiverClassLookupTagOrNull(): ConeClassLikeLookupTag? =
+    fir.dispatchReceiverClassLookupTagOrNull()
 
-    return (dispatchReceiverType as? ConeClassLikeType)?.lookupTag
-}
+fun FirCallableDeclaration.dispatchReceiverClassLookupTagOrNull(): ConeClassLikeLookupTag? =
+    dispatchReceiverClassTypeOrNull()?.lookupTag
 
-fun FirCallableSymbol<*>.containingClassLookupTag(): ConeClassLikeLookupTag? = fir.containingClassLookupTag()
-fun FirCallableDeclaration.containingClassLookupTag(): ConeClassLikeLookupTag? {
-    return (containingClassForStaticMemberAttr ?: dispatchReceiverClassOrNull())
-}
+fun FirCallableSymbol<*>.containingClassLookupTag(): ConeClassLikeLookupTag? =
+    fir.containingClassLookupTag()
+
+fun FirCallableDeclaration.containingClassLookupTag(): ConeClassLikeLookupTag? =
+    containingClassForStaticMemberAttr ?: dispatchReceiverClassLookupTagOrNull()
 
 fun FirRegularClass.containingClassForLocal(): ConeClassLikeLookupTag? =
     if (isLocal) containingClassForLocalAttr else null
 
+fun FirDanglingModifierList.containingClass(): ConeClassLikeLookupTag? =
+    containingClassAttr
+
 private object ContainingClassKey : FirDeclarationDataKey()
 var FirCallableDeclaration.containingClassForStaticMemberAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 var FirRegularClass.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
+var FirDanglingModifierList.containingClassAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 
 private object IsNewPlaceForBodyGeneration : FirDeclarationDataKey()
 var FirRegularClass.isNewPlaceForBodyGeneration: Boolean? by FirDeclarationDataRegistry.data(IsNewPlaceForBodyGeneration)
@@ -81,6 +89,15 @@ inline fun <reified D : FirCallableDeclaration> D.unwrapFakeOverrides(): D {
 
     do {
         val next = current.originalIfFakeOverride() ?: return current
+        current = next
+    } while (true)
+}
+
+inline fun <reified D : FirCallableDeclaration> D.unwrapSubstitutionOverrides(): D {
+    var current = this
+
+    do {
+        val next = current.originalForSubstitutionOverride ?: return current
         current = next
     } while (true)
 }
@@ -137,4 +154,8 @@ var FirRegularClass.isJavaRecord: Boolean? by FirDeclarationDataRegistry.data(Is
 
 private object IsJavaRecordComponentKey : FirDeclarationDataKey()
 var FirFunction.isJavaRecordComponent: Boolean? by FirDeclarationDataRegistry.data(IsJavaRecordComponentKey)
+
+private object IsCatchParameterProperty : FirDeclarationDataKey()
+
+var FirProperty.isCatchParameter: Boolean? by FirDeclarationDataRegistry.data(IsCatchParameterProperty)
 

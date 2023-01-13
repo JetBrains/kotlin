@@ -1,8 +1,4 @@
-STEP 0:
-    modifications:
-        U : proxy.0.kt -> proxy.kt
-    added file: proxy.kt
-STEP 1..7:
+STEP 0..7:
 STEP 8:
     dependencies: lib1
     modifications:

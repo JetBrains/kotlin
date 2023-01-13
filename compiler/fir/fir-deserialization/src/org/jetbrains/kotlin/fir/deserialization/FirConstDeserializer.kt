@@ -8,24 +8,25 @@ package org.jetbrains.kotlin.fir.deserialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 open class FirConstDeserializer(
-    val session: FirSession
+    val session: FirSession,
+    private val protocol: SerializerExtensionProtocol
 ) {
     protected val constantCache = mutableMapOf<CallableId, FirExpression>()
 
     open fun loadConstant(propertyProto: ProtoBuf.Property, callableId: CallableId, nameResolver: NameResolver): FirExpression? {
         if (!Flags.HAS_CONSTANT.get(propertyProto.flags)) return null
         constantCache[callableId]?.let { return it }
-        val value = propertyProto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue) ?: return null
+        val value = propertyProto.getExtensionOrNull(protocol.compileTimeValue) ?: return null
         return buildFirConstant(value, null, value.type.name, nameResolver)?.also { constantCache[callableId] = it }
     }
 }

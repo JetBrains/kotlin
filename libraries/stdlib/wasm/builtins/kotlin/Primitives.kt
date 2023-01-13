@@ -385,8 +385,9 @@ public class Byte private constructor(public val value: Byte) : Number(), Compar
     public override fun equals(other: Any?): Boolean =
         other is Byte && wasm_i32_eq(this.toInt(), other.toInt())
 
-    public inline fun equals(other: Byte): Boolean =
-        wasm_i32_eq(this.toInt(), other.toInt())
+    @WasmOp(WasmOp.I32_EQ)
+    public fun equals(other: Byte): Boolean =
+        implementedAsIntrinsic
 
     public override fun toString(): String =
         this.toInt().toString()
@@ -782,8 +783,9 @@ public class Short private constructor(public val value: Short) : Number(), Comp
     public override fun toDouble(): Double =
         wasm_f64_convert_i32_s(this.toInt())
 
-    public inline fun equals(other: Short): Boolean =
-        wasm_i32_eq(this.toInt(), other.toInt())
+    @WasmOp(WasmOp.I32_EQ)
+    public fun equals(other: Short): Boolean =
+        implementedAsIntrinsic
 
     public override fun equals(other: Any?): Boolean =
         other is Short && wasm_i32_eq(this.toInt(), other.toInt())
@@ -1216,8 +1218,9 @@ public class Int private constructor(val value: Int) : Number(), Comparable<Int>
     public override fun toDouble(): Double =
         wasm_f64_convert_i32_s(this)
 
-    public inline fun equals(other: Int): Boolean =
-        wasm_i32_eq(this, other)
+    @WasmOp(WasmOp.I32_EQ)
+    public fun equals(other: Int): Boolean =
+        implementedAsIntrinsic
 
     public override fun equals(other: Any?): Boolean =
         other is Int && wasm_i32_eq(this, other)
@@ -1668,8 +1671,9 @@ public class Long private constructor(val value: Long) : Number(), Comparable<Lo
     public override fun toDouble(): Double =
         wasm_f64_convert_i64_s(this)
 
-    public inline fun equals(other: Long): Boolean =
-        wasm_i64_eq(this, other)
+    @WasmOp(WasmOp.I64_EQ)
+    public fun equals(other: Long): Boolean =
+        implementedAsIntrinsic
 
     public override fun equals(other: Any?): Boolean =
         other is Long && wasm_i64_eq(this, other)

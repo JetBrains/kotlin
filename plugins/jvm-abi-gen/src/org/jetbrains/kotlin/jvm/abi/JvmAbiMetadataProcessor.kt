@@ -136,6 +136,7 @@ private fun AnnotationVisitor.visitKotlinMetadata(header: KotlinClassHeader) {
  * Class metadata adapter which removes private functions, properties, type aliases,
  * and local delegated properties.
  */
+@Suppress("DEPRECATION")
 private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(delegate) {
     override fun visitConstructor(flags: Flags): KmConstructorVisitor? {
         if (!isPrivateDeclaration(flags))
@@ -155,11 +156,7 @@ private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(deleg
         return null
     }
 
-    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitTypeAlias(flags, name)
-        return null
-    }
+    // TODO: do not serialize private type aliases once KT-17229 is fixed.
 
     override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? {
         val delegate = super.visitExtensions(type)
@@ -176,6 +173,7 @@ private class AbiKmClassVisitor(delegate: KmClassVisitor) : KmClassVisitor(deleg
  * Class metadata adapter which removes private functions, properties, type aliases,
  * and local delegated properties.
  */
+@Suppress("DEPRECATION")
 private class AbiKmPackageVisitor(delegate: KmPackageVisitor) : KmPackageVisitor(delegate) {
     override fun visitFunction(flags: Flags, name: String): KmFunctionVisitor? {
         if (!isPrivateDeclaration(flags))
@@ -189,11 +187,7 @@ private class AbiKmPackageVisitor(delegate: KmPackageVisitor) : KmPackageVisitor
         return null
     }
 
-    override fun visitTypeAlias(flags: Flags, name: String): KmTypeAliasVisitor? {
-        if (!isPrivateDeclaration(flags))
-            return super.visitTypeAlias(flags, name)
-        return null
-    }
+    // TODO: do not serialize private type aliases once KT-17229 is fixed.
 
     override fun visitExtensions(type: KmExtensionType): KmPackageExtensionVisitor? {
         val delegate = super.visitExtensions(type)

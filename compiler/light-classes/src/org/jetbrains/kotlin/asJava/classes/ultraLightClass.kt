@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.kotlinType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -56,16 +57,14 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private class KtUltraLightClassModifierList(
         private val containingClass: KtLightClassForSourceDeclaration,
         support: KtUltraLightSupport,
-        private val computeModifiers: () -> Set<String>
+        private val lazyModifiers: Lazy<Set<String>>,
+        private val lazyIsFinal: Lazy<Boolean>,
     ) : KtUltraLightModifierList<KtLightClassForSourceDeclaration>(containingClass, support) {
-        private val modifiers by lazyPub { computeModifiers() }
-
         override fun hasModifierProperty(name: String): Boolean =
-            if (name != PsiModifier.FINAL) name in modifiers else owner.isFinal(PsiModifier.FINAL in modifiers)
+            if (name != PsiModifier.FINAL) name in lazyModifiers.value else owner.isFinal(lazyIsFinal.value)
 
-        override fun copy(): PsiElement = KtUltraLightClassModifierList(containingClass, support, computeModifiers)
+        override fun copy(): PsiElement = KtUltraLightClassModifierList(containingClass, support, lazyModifiers, lazyIsFinal)
     }
-
 
     private val membersBuilder by lazyPub {
         UltraLightMembersCreator(
@@ -73,7 +72,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
             isNamedObject(),
             classOrObject.hasModifier(SEALED_KEYWORD),
             mangleInternalFunctions = true,
-            support = support
+            support = support,
         )
     }
 
@@ -82,7 +81,12 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     override fun isFinal(isFinalByPsi: Boolean) = isFinalByPsi
 
     private val _modifierList: PsiModifierList? by lazyPub {
-        KtUltraLightClassModifierList(this, support) { computeModifiers() }
+        KtUltraLightClassModifierList(
+            containingClass = this,
+            support = support,
+            lazyModifiers = lazyPub { computeModifiersByPsi() },
+            lazyIsFinal = lazyPub { computeIsFinal() },
+        )
     }
 
     override fun getModifierList(): PsiModifierList? = _modifierList
@@ -263,8 +267,8 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private fun propertyParameters() = classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() }
 
-    private fun ownMethods(): List<KtLightMethod> {
-        val result = mutableListOf<KtLightMethod>()
+    private fun ownMethods(): List<PsiMethod> {
+        val result = mutableListOf<PsiMethod>()
 
         for (declaration in this.classOrObject.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
             if (declaration.hasModifier(PRIVATE_KEYWORD) && isInterface) continue
@@ -316,18 +320,23 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         val lazyDescriptor = lazy { getDescriptor() }
         project.applyCompilerPlugins {
+            val methodsList = mutableListOf<KtLightMethod>()
             it.interceptMethodsBuilding(
                 declaration = kotlinOrigin,
                 descriptor = lazyDescriptor,
                 containingDeclaration = this,
-                methodsList = result
+                methodsList = methodsList
             )
+            result.addAll(methodsList)
+        }
+        if (isEnum && support.languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
+            result.add(getEnumEntriesPsiMethod(this))
         }
 
         return result
     }
 
-    private val _ownMethods: CachedValue<List<KtLightMethod>> = CachedValuesManager.getManager(project).createCachedValue(
+    private val _ownMethods: CachedValue<List<PsiMethod>> = CachedValuesManager.getManager(project).createCachedValue(
         {
             CachedValueProvider.Result.create(
                 ownMethods(),
@@ -336,7 +345,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         }, false
     )
 
-    private fun addMethodsFromDataClass(result: MutableList<KtLightMethod>) {
+    private fun addMethodsFromDataClass(result: MutableList<PsiMethod>) {
         if (!classOrObject.hasModifier(DATA_KEYWORD)) return
         val ktClass = classOrObject as? KtClass ?: return
         val descriptor = classOrObject.resolve() as? ClassDescriptor ?: return
@@ -378,7 +387,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
         }.generate()
     }
 
-    private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>) {
+    private fun addDelegatesToInterfaceMethods(result: MutableList<PsiMethod>) {
         classOrObject.superTypeListEntries.filterIsInstance<KtDelegatedSuperTypeEntry>().forEach {
             addDelegatesToInterfaceMethods(it, result)
         }
@@ -386,7 +395,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private fun addDelegatesToInterfaceMethods(
         superTypeEntry: KtDelegatedSuperTypeEntry,
-        result: MutableList<KtLightMethod>
+        result: MutableList<PsiMethod>
     ) {
         val classDescriptor = classOrObject.resolve() as? ClassDescriptor ?: return
         val typeReference = superTypeEntry.typeReference ?: return
@@ -472,7 +481,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private fun isJvmStatic(declaration: KtAnnotated): Boolean = declaration.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)
 
-    override fun getOwnMethods(): List<KtLightMethod> = _ownMethods.value
+    override fun getOwnMethods(): List<PsiMethod> = _ownMethods.value
 
     private fun KtAnnotated.hasAnnotation(name: FqName) = support.findAnnotation(this, name) != null
 

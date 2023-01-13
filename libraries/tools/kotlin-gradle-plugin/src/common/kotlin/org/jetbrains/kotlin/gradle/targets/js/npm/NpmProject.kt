@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import java.io.Serializable
 
@@ -129,14 +130,14 @@ open class NpmProject(@Transient val compilation: KotlinJsCompilation) : Seriali
             project.name
         } else null
 
-        val targetName = if (target.name.isNotEmpty() && target.name.toLowerCase() != "js") {
+        val targetName = if (target.name.isNotEmpty() && target.name.toLowerCaseAsciiOnly() != "js") {
             target.name
                 .replace(DECAMELIZE_REGEX) {
                     it.groupValues
                         .drop(1)
                         .joinToString(prefix = "-", separator = "-")
                 }
-                .toLowerCase()
+                .toLowerCaseAsciiOnly()
         } else null
 
         return sequenceOf(

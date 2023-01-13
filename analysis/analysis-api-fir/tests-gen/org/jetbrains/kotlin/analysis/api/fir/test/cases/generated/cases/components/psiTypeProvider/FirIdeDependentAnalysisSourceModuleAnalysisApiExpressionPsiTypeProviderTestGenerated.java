@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -44,6 +44,24 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiExpressionPsiTypeProv
     @Test
     public void testAllFilesPresentInForExpression() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("class_object_call.kt")
+    public void testClass_object_call() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_call.kt");
+    }
+
+    @Test
+    @TestMetadata("class_object_constructor.kt")
+    public void testClass_object_constructor() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/class_object_constructor.kt");
+    }
+
+    @Test
+    @TestMetadata("localClassWithUnresolvedSuperType.kt")
+    public void testLocalClassWithUnresolvedSuperType() throws Exception {
+        runTest("analysis/analysis-api/testData/components/psiTypeProvider/psiType/forExpression/localClassWithUnresolvedSuperType.kt");
     }
 
     @Test

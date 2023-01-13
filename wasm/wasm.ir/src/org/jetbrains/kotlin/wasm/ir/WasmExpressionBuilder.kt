@@ -5,12 +5,19 @@
 
 package org.jetbrains.kotlin.wasm.ir
 
+import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
+
 abstract class WasmExpressionBuilder {
-    abstract fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate)
+    abstract fun buildInstr(op: WasmOp, location: SourceLocation, vararg immediates: WasmImmediate)
+
+    fun buildInstr(op: WasmOp, vararg immediates: WasmImmediate) {
+        buildInstr(op, SourceLocation.TBDLocation, *immediates)
+    }
+
     abstract var numberOfNestedBlocks: Int
 
-    fun buildConstI32(value: Int) {
-        buildInstr(WasmOp.I32_CONST, WasmImmediate.ConstI32(value))
+    fun buildConstI32(value: Int, location: SourceLocation = SourceLocation.TBDLocation) {
+        buildInstr(WasmOp.I32_CONST, location, WasmImmediate.ConstI32(value))
     }
 
     fun buildConstI64(value: Long) {
@@ -105,8 +112,8 @@ abstract class WasmExpressionBuilder {
         buildBrInstr(WasmOp.BR_IF, absoluteBlockLevel)
     }
 
-    fun buildCall(symbol: WasmSymbol<WasmFunction>) {
-        buildInstr(WasmOp.CALL, WasmImmediate.FuncIdx(symbol))
+    fun buildCall(symbol: WasmSymbol<WasmFunction>, location: SourceLocation = SourceLocation.TBDLocation) {
+        buildInstr(WasmOp.CALL, location, WasmImmediate.FuncIdx(symbol))
     }
 
     fun buildCallIndirect(
@@ -156,12 +163,12 @@ abstract class WasmExpressionBuilder {
         )
     }
 
-    fun buildRefCastStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>) {
-        buildInstr(WasmOp.REF_CAST, WasmImmediate.TypeIdx(toType))
+    fun buildRefCastNullStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>) {
+        buildInstr(WasmOp.REF_CAST_DEPRECATED, WasmImmediate.TypeIdx(toType))
     }
 
     fun buildRefTestStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>) {
-        buildInstr(WasmOp.REF_TEST, WasmImmediate.TypeIdx(toType))
+        buildInstr(WasmOp.REF_TEST_DEPRECATED, WasmImmediate.TypeIdx(toType))
     }
 
     fun buildRefNull(type: WasmHeapType) {
@@ -171,5 +178,16 @@ abstract class WasmExpressionBuilder {
     fun buildDrop() {
         buildInstr(WasmOp.DROP)
     }
-}
 
+    inline fun commentPreviousInstr(text: () -> String) {
+        buildInstr(WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR, WasmImmediate.ConstString(text()))
+    }
+
+    inline fun commentGroupStart(text: () -> String) {
+        buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_START, WasmImmediate.ConstString(text()))
+    }
+
+    fun commentGroupEnd() {
+        buildInstr(WasmOp.PSEUDO_COMMENT_GROUP_END)
+    }
+}

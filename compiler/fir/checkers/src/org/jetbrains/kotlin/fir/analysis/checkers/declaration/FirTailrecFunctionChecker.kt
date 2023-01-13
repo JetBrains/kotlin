@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.analysis.cfa.util.TraverseDirection
-import org.jetbrains.kotlin.fir.analysis.cfa.util.traverse
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -19,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -34,12 +32,15 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
         }
         val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
 
+        // TODO: this is not how CFG works, tail calls inside try-catch should be detected by FIR tree traversal.
         var tryScopeCount = 0
         var catchScopeCount = 0
         var finallyScopeCount = 0
         var tailrecCount = 0
-        graph.traverse(TraverseDirection.Forward, object : ControlFlowGraphVisitorVoid() {
+        graph.traverse(object : ControlFlowGraphVisitorVoid() {
             override fun visitNode(node: CFGNode<*>) {}
+
+            override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
 
             override fun visitTryMainBlockEnterNode(node: TryMainBlockEnterNode) {
                 tryScopeCount++
@@ -98,7 +99,7 @@ object FirTailrecFunctionChecker : FirSimpleFunctionChecker() {
 
     private fun CFGNode<*>.hasMoreFollowingInstructions(tailrecFunction: FirSimpleFunction): Boolean {
         for (next in followingNodes) {
-            val edge = outgoingEdges.getValue(next)
+            val edge = edgeTo(next)
             if (!edge.kind.usedInCfa || edge.kind.isDead) continue
             if (edge.kind.isBack) return true
             val hasMore = when (next) {

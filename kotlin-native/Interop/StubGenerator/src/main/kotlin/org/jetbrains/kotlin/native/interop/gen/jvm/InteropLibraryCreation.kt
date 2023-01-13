@@ -6,29 +6,30 @@ package org.jetbrains.kotlin.native.interop.gen.jvm
 
 import kotlinx.metadata.*
 import kotlinx.metadata.KmModuleFragment
-import kotlinx.metadata.klib.fqName
-import kotlinx.metadata.klib.className
 import kotlinx.metadata.klib.KlibModuleFragmentWriteStrategy
 import kotlinx.metadata.klib.KlibModuleMetadata
+import kotlinx.metadata.klib.className
+import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryLayoutForWriter
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryWriterImpl
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
+import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import java.util.*
 
 fun createInteropLibrary(
         metadata: KlibModuleMetadata,
         outputPath: String,
         moduleName: String,
+        libraryVersion: String,
         nativeBitcodeFiles: List<String>,
         target: KonanTarget,
         manifest: Properties,
@@ -38,7 +39,7 @@ fun createInteropLibrary(
         staticLibraries: List<String>
 ) {
     val version = KotlinLibraryVersioning(
-            libraryVersion = null,
+            libraryVersion = libraryVersion,
             abiVersion = KotlinAbiVersion.CURRENT,
             compilerVersion = CompilerVersion.CURRENT.toString(),
             metadataVersion = KlibMetadataVersion.INSTANCE.toString(),

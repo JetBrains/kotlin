@@ -24,6 +24,7 @@ object StandaloneModeConfigurator : AnalysisApiTestConfigurator() {
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         with(builder) {
+            useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
         }
     }

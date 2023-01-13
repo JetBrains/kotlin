@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.test
 import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
 import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsBackendFacade
 import org.jetbrains.kotlin.js.test.handlers.*
+import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenTestBase
 import org.jetbrains.kotlin.js.test.utils.JsIncrementalEnvironmentConfigurator
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend

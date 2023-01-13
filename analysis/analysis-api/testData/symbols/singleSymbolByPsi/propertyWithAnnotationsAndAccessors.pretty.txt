@@ -1,5 +1,5 @@
 @PropertyAnnotation
-@FieldAnnotation
+@field:FieldAnnotation
 var x: kotlin.Int
   @ExplicitGetAnnotation
   @GetAnnotation

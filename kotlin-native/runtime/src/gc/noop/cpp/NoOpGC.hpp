@@ -41,6 +41,7 @@ public:
         void SafePointLoopBody() noexcept {}
         void SafePointAllocation(size_t size) noexcept {}
 
+        void Schedule() noexcept {}
         void ScheduleAndWaitFullGC() noexcept {}
         void ScheduleAndWaitFullGCWithFinalizers() noexcept {}
 

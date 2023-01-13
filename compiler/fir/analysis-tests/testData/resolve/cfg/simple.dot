@@ -27,9 +27,9 @@ digraph simple_kt {
             7 [label="Variable declaration: lval x: R|kotlin/Int|"];
             8 [label="Access variable R|<local>/x|"];
             9 [label="Const: Int(1)"];
-            10 [label="Function call: R|<local>/x|.R|kotlin/Int.plus|(...)"];
+            10 [label="Function call: R|<local>/x|.R|kotlin/Int.plus|(...)" style="filled" fillcolor=yellow];
             11 [label="Variable declaration: lval y: R|kotlin/Int|"];
-            12 [label="Function call: R|/foo|()"];
+            12 [label="Function call: R|/foo|()" style="filled" fillcolor=yellow];
             13 [label="Exit block"];
         }
         14 [label="Exit function test" style="filled" fillcolor=red];

@@ -31,3 +31,5 @@ enum class Visibility {
 }
 
 annotation class SupertypeWithTypeArgument(val kClass: KClass<*>)
+
+annotation class MetaSupertype

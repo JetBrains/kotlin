@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// FIR_IDE_IGNORE
 // API_VERSION: 1.5
 // LANGUAGE: +JvmRecordSupport
 // SCOPE_DUMP: MyRecord:x;y;z

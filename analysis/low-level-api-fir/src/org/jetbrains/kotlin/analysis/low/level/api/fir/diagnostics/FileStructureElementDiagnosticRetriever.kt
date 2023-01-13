@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponent
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.withSourceCodeAnalysisExceptionUnwrapping
 
 internal abstract class FileStructureElementDiagnosticRetriever {
     abstract fun retrieve(
@@ -33,11 +34,13 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
         moduleComponents: LLFirModuleResolveComponents,
     ): FileStructureElementDiagnosticList {
         val sessionHolder = SessionHolderImpl(moduleComponents.session, moduleComponents.scopeSessionProvider.getScopeSession())
-        val context = moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile) {
+        val context = moduleComponents.globalResolveComponents.lockProvider.withLock(firFile) {
             PersistenceContextCollector.collectContext(sessionHolder, firFile, structureElementDeclaration)
         }
-        return collector.collectForStructureElement(structureElementDeclaration) { components ->
-            Visitor(structureElementDeclaration, context, components)
+        return withSourceCodeAnalysisExceptionUnwrapping {
+            collector.collectForStructureElement(structureElementDeclaration) { components ->
+                Visitor(structureElementDeclaration, context, components)
+            }
         }
     }
 
@@ -57,11 +60,10 @@ internal class SingleNonLocalDeclarationDiagnosticRetriever(
                 return true
             }
 
-            @Suppress("IntroduceWhenSubject")
             return when {
                 structureElementDeclaration !is FirRegularClass -> true
                 structureElementDeclaration == declaration -> true
-                declaration.hasAnnotation(StandardClassIds.Annotations.Suppress) -> {
+                declaration.hasAnnotation(StandardClassIds.Annotations.Suppress, context.session) -> {
                     useRegularComponents = false
                     true
                 }
@@ -102,8 +104,10 @@ internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetrieve
         collector: FileStructureElementDiagnosticsCollector,
         moduleComponents: LLFirModuleResolveComponents,
     ): FileStructureElementDiagnosticList =
-        collector.collectForStructureElement(firFile) { components ->
-            Visitor(components, moduleComponents)
+        withSourceCodeAnalysisExceptionUnwrapping {
+            collector.collectForStructureElement(firFile) { components ->
+                Visitor(components, moduleComponents)
+            }
         }
 
     private class Visitor(

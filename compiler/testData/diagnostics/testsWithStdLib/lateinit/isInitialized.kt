@@ -1,5 +1,8 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
 // FILE: test.kt
+
+lateinit var topLevel: String
 
 interface Base {
     var x: String
@@ -12,6 +15,7 @@ open class Foo : Base {
     var nonLateInit: Int = 1
 
     fun ok() {
+        ::topLevel.isInitialized
         val b: Boolean = this::x.isInitialized
 
         val otherInstance = Foo()
@@ -83,5 +87,6 @@ class FooImpl : Foo() {
 class OtherFooImpl : Foo() {
     fun onNonAccessible() {
         this::x.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>isInitialized<!>
+        ::topLevel.<!LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY!>isInitialized<!>
     }
 }

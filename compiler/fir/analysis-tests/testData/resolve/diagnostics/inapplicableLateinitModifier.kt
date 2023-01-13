@@ -9,7 +9,7 @@ object Delegate {
 lateinit var good: String
 
 class A {
-    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val fest = "10"
+    <!INAPPLICABLE_LATEINIT_MODIFIER, INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val fest = "10"
     lateinit var mest: String
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var xest: String?
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var nest: Int
@@ -18,7 +18,7 @@ class A {
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var aest: Short
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var hest: Byte
     <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var jest: Long
-    <!INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val dest: String
+    <!INAPPLICABLE_LATEINIT_MODIFIER, INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> val dest: String
         get() = "KEKER"
 }
 

@@ -63,6 +63,14 @@ FILE: typeParameterOfTopSetter.kt
             ^ Unit#
         }
 
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: typeParameterOfTopSetter.kt
+    public final [ANNOTATIONS_ARGUMENTS_MAPPING] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public [ANNOTATIONS_ARGUMENTS_MAPPING] get(): R|kotlin/Int|
+        public [ANNOTATIONS_ARGUMENTS_MAPPING] set([ANNOTATIONS_ARGUMENTS_MAPPING] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+            ^ Unit#
+        }
+
 EXPECT_ACTUAL_MATCHING:
 FILE: typeParameterOfTopSetter.kt
     public final [EXPECT_ACTUAL_MATCHING] var x: R|kotlin/Int| = IntegerLiteral(2)

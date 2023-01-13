@@ -85,7 +85,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-daemon",
     ":kotlin-daemon-client",
     // TODO: uncomment when new daemon will be put back into dist
-//    ":kotlin-daemon-client-new",
     ":kotlin-imports-dumper-compiler-plugin",
     ":kotlin-main-kts",
     ":kotlin-preloader",
@@ -99,7 +98,6 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-scripting-compiler",
     ":kotlin-scripting-compiler-impl",
     ":kotlin-scripting-jvm",
-    ":kotlin-scripting-js",
     ":js:js.engines",
     ":kotlin-test:kotlin-test-junit",
     ":kotlin-test:kotlin-test-junit5",

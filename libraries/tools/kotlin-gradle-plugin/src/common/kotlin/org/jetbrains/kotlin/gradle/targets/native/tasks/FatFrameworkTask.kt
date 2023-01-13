@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.jetbrains.kotlin.konan.util.visibleName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.nio.file.Files
@@ -227,7 +228,7 @@ internal constructor(
 
             require(!archToFramework.containsKey(arch)) {
                 val alreadyAdded = archToFramework.getValue(arch)
-                "This fat framework already has a binary for architecture `${arch.name.toLowerCase()}` " +
+                "This fat framework already has a binary for architecture `${arch.name.toLowerCaseAsciiOnly()}` " +
                         "(${alreadyAdded.name} for target `${alreadyAdded.target.name}`)"
             }
 
@@ -236,8 +237,10 @@ internal constructor(
 
                 buildString {
                     append("Cannot create a fat framework from:\n")
-                    archToFramework.forEach { append("${it.value.name} - ${it.key.name.toLowerCase()} - ${staticName(it.value.isStatic)}\n") }
-                    append("${framework.name} - ${arch.name.toLowerCase()} - ${staticName(framework.isStatic)}\n")
+                    archToFramework.forEach {
+                        append("${it.value.name} - ${it.key.name.toLowerCaseAsciiOnly()} - ${staticName(it.value.isStatic)}\n")
+                    }
+                    append("${framework.name} - ${arch.name.toLowerCaseAsciiOnly()} - ${staticName(framework.isStatic)}\n")
                     append("All input frameworks must be either static or dynamic")
                 }
             }

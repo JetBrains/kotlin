@@ -48,7 +48,7 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
         }
 
         fun checkIfAnnotated(it: FirDeclaration) {
-            if (!it.hasAnnotation(StandardClassIds.Annotations.JvmStatic)) {
+            if (!it.hasAnnotation(StandardClassIds.Annotations.JvmStatic, context.session)) {
                 return
             }
             val targetSource = it.source ?: declaration.source

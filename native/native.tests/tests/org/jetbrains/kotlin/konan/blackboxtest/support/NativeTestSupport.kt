@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCr
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCreateTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTests
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.SimpleTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunProvider
@@ -79,7 +80,8 @@ private object NativeTestSupport {
             TestProcessSettings(
                 nativeHome,
                 computeNativeClassLoader(),
-                computeBaseDirs()
+                computeBaseDirs(),
+                LLDB(nativeHome)
             )
         } as TestProcessSettings
 
@@ -191,9 +193,12 @@ private object NativeTestSupport {
         output += sanitizer
         output += CacheMode::class to cacheMode
         output += computeTestMode(enforcedProperties)
+        output += computeCustomKlibs(enforcedProperties)
         output += computeForcedStandaloneTestKind(enforcedProperties)
         output += computeForcedNoopTestRunner(enforcedProperties)
         output += computeTimeouts(enforcedProperties)
+        // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
+        output += computePipelineType(testClass.get())
 
         return nativeTargets
     }
@@ -259,6 +264,15 @@ private object NativeTestSupport {
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
         ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.values(), default = TestMode.TWO_STAGE_MULTI_MODULE)
+
+    private fun computeCustomKlibs(enforcedProperties: EnforcedProperties): CustomKlibs =
+        CustomKlibs(
+            ClassLevelProperty.CUSTOM_KLIBS.readValue(
+                enforcedProperties,
+                { it.split(':', ';').mapToSet(::File) },
+                default = emptySet()
+            )
+        )
 
     private fun computeForcedStandaloneTestKind(enforcedProperties: EnforcedProperties): ForcedStandaloneTestKind =
         ForcedStandaloneTestKind(
@@ -394,7 +408,7 @@ private object NativeTestSupport {
             .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale generated sources.
 
         val sharedSourcesDir = testSourcesDir
-            .resolve("__shared_modules__")
+            .resolve(SHARED_MODULES_DIR_NAME)
             .ensureExistsAndIsEmptyDirectory()
 
         return GeneratedSources(testSourcesDir, sharedSourcesDir)
@@ -407,10 +421,20 @@ private object NativeTestSupport {
             .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale artifacts.
 
         val sharedBinariesDir = testBinariesDir
-            .resolve("__shared_modules__")
+            .resolve(SHARED_MODULES_DIR_NAME)
             .ensureExistsAndIsEmptyDirectory()
 
-        return Binaries(testBinariesDir, sharedBinariesDir)
+        val givenBinariesDir = testBinariesDir
+            .resolve(GIVEN_MODULES_DIR_NAME)
+            .ensureExistsAndIsEmptyDirectory()
+
+        return Binaries(testBinariesDir, sharedBinariesDir, givenBinariesDir)
+    }
+
+    private fun computePipelineType(testClass: Class<*>): PipelineType {
+        return if (testClass.annotations.any { it is K2Pipeline })
+            PipelineType.K2
+        else PipelineType.K1
     }
 
     /*************** Test class settings (simplified) ***************/

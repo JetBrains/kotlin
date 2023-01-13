@@ -1,4 +1,5 @@
 // !DUMP_CFG
+// !OPT_IN: kotlin.contracts.ExperimentalContracts
 
 import kotlin.contracts.*
 
@@ -13,7 +14,7 @@ fun atLeastOnce(x: () -> Unit) {
 }
 
 fun exactlyOnce(x: () -> Unit) {
-    contract { callsInPlace(x, InvocationKind.AT_LEAST_ONCE) }
+    contract { callsInPlace(x, InvocationKind.EXACTLY_ONCE) }
     x()
 }
 
@@ -28,6 +29,14 @@ fun test1() {
     unknown { x = 1 }
     x.<!UNRESOLVED_REFERENCE!>length<!>
     x.<!UNRESOLVED_REFERENCE!>inc<!>()
+}
+
+fun test1m() {
+    var x: Any?
+    x = ""
+    x.length
+    unknown { x = "" }
+    x.length
 }
 
 fun test2() {

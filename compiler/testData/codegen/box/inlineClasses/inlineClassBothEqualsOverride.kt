@@ -1,14 +1,14 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +CustomEqualsInInlineClasses
+// LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
+// CHECK_BYTECODE_LISTING
 
 
 interface I {
     fun getVal(): Int
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC1(val x: Int) : I {
     override fun getVal(): Int {
         return x
@@ -30,7 +30,7 @@ value class IC1(val x: Int) : I {
     }
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC2(val y: Int) : I {
     override fun getVal(): Int {
         return y * 10

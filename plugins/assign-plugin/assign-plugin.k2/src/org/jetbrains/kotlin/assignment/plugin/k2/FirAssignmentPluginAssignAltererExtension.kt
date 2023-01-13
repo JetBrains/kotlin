@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.extensions.FirAssignExpressionAltererExtension
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -34,7 +34,7 @@ class FirAssignmentPluginAssignAltererExtension(
     }
 
     private fun FirVariableAssignment.supportsTransformVariableAssignment(): Boolean {
-        return when (val lSymbol = lValue.resolvedSymbol as? FirVariableSymbol<*>) {
+        return when (val lSymbol = lValue.toResolvedVariableSymbol()) {
             is FirPropertySymbol -> lSymbol.isVal && !lSymbol.isLocal && lSymbol.hasSpecialAnnotation()
             is FirBackingFieldSymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
             is FirFieldSymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
@@ -47,7 +47,7 @@ class FirAssignmentPluginAssignAltererExtension(
 
     private fun buildFunctionCall(variableAssignment: FirVariableAssignment): FirFunctionCall {
         val leftArgument = variableAssignment.lValue
-        val leftSymbol = leftArgument.resolvedSymbol as FirVariableSymbol<*>
+        val leftSymbol = leftArgument.toResolvedVariableSymbol()!!
         val leftResolvedType = leftSymbol.resolvedReturnTypeRef
         val rightArgument = variableAssignment.rValue
         return buildFunctionCall {
@@ -67,7 +67,6 @@ class FirAssignmentPluginAssignAltererExtension(
             calleeReference = buildSimpleNamedReference {
                 source = variableAssignment.source
                 name = ASSIGN_METHOD
-                candidateSymbol = null
             }
             origin = FirFunctionCallOrigin.Regular
         }

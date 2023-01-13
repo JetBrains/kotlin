@@ -1,4 +1,3 @@
-
 //KT-9517 Wrong resolve for invoke convention after smart cast
 open class A {
     open val foo: () -> Number = null!!

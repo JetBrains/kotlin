@@ -34,7 +34,7 @@ public class KtWhenConditionInRange extends KtWhenCondition {
 
     @Nullable @IfNotParsed
     public KtExpression getRangeExpression() {
-        // Copied from JetBinaryExpression
+        // Copied from KtBinaryExpression
         ASTNode node = getOperationReference().getNode().getTreeNext();
         while (node != null) {
             PsiElement psi = node.getPsi();

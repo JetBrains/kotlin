@@ -1,9 +1,20 @@
+// test/D.class
+// ------------------------------------------
+public final annotation class test/D : kotlin/Annotation {
+
+  // signature: <init>()V
+  public constructor()
+
+  // module name: test-module
+}
 // test/OptionalAnnotationKt.class
 // ------------------------------------------
 package {
 
   // signature: ok()V
   public final fun ok(): kotlin/Unit
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

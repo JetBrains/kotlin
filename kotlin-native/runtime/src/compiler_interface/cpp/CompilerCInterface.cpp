@@ -31,8 +31,6 @@ touchType(KRefSharedHolder)
 
 touchFunction(AllocInstance)
 touchFunction(AllocArrayInstance)
-touchFunction(InitThreadLocalSingleton)
-touchFunction(InitSingleton)
 touchFunction(InitAndRegisterGlobal)
 touchFunction(UpdateHeapRef)
 touchFunction(UpdateStackRef)

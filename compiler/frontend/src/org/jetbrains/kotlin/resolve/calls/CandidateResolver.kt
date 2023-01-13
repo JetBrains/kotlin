@@ -277,7 +277,7 @@ class CandidateResolver(
         val expression = candidateCall.call.calleeExpression
 
         if (expression is KtSimpleNameExpression) {
-            // 'B' in 'class A: B()' is JetConstructorCalleeExpression
+            // 'B' in 'class A: B()' is KtConstructorCalleeExpression
             if (descriptor is ConstructorDescriptor) {
                 val modality = descriptor.constructedClass.modality
                 if (modality == Modality.ABSTRACT) {

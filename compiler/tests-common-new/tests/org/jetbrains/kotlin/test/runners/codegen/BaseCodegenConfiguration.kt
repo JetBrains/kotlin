@@ -21,40 +21,21 @@ import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurat
 import org.jetbrains.kotlin.test.services.configuration.ScriptingEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.*
 
-fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput<B>> TestConfigurationBuilder.commonConfigurationForCodegenAndDebugTest(
+fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput<B>> TestConfigurationBuilder.commonConfigurationForTest(
+    targetFrontend: FrontendKind<F>,
     frontendFacade: Constructor<FrontendFacade<F>>,
     frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
     backendFacade: Constructor<BackendFacade<B, BinaryArtifacts.Jvm>>,
+    commonServicesConfiguration: (FrontendKind<*>) -> Unit = { commonServicesConfigurationForCodegenTest(it) }
 ) {
+    commonServicesConfiguration(targetFrontend)
     facadeStep(frontendFacade)
     classicFrontendHandlersStep()
     firHandlersStep()
-    commonBackendStepsConfiguration(
-        frontendToBackendConverter,
-        irHandlersInit = {},
-        backendFacade,
-        jvmHandlersInit = {}
-    )
-}
-
-fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput<B>> TestConfigurationBuilder.commonConfigurationForCodegenTest(
-    targetFrontend: FrontendKind<F>,
-    frontendFacade: Constructor<FrontendFacade<F>>,
-    frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
-    backendFacade: Constructor<BackendFacade<B, BinaryArtifacts.Jvm>>,
-) {
-    commonServicesConfigurationForCodegenTest(targetFrontend)
-    commonConfigurationForCodegenAndDebugTest(frontendFacade, frontendToBackendConverter, backendFacade)
-}
-
-fun <F : ResultingArtifact.FrontendOutput<F>, B : ResultingArtifact.BackendInput<B>> TestConfigurationBuilder.commonConfigurationForDebugTest(
-    targetFrontend: FrontendKind<F>,
-    frontendFacade: Constructor<FrontendFacade<F>>,
-    frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
-    backendFacade: Constructor<BackendFacade<B, BinaryArtifacts.Jvm>>,
-) {
-    commonServicesConfigurationForDebugTest(targetFrontend)
-    commonConfigurationForCodegenAndDebugTest(frontendFacade, frontendToBackendConverter, backendFacade)
+    facadeStep(frontendToBackendConverter)
+    irHandlersStep(init = {})
+    facadeStep(backendFacade)
+    jvmArtifactsHandlersStep(init = {})
 }
 
 private fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(targetFrontend: FrontendKind<*>) {
@@ -94,18 +75,6 @@ fun TestConfigurationBuilder.commonServicesConfigurationForDebugTest(targetFront
     useAdditionalSourceProviders(
         ::MainFunctionForDebugTestsSourceProvider
     )
-}
-
-inline fun <B : ResultingArtifact.BackendInput<B>, F : ResultingArtifact.FrontendOutput<F>> TestConfigurationBuilder.commonBackendStepsConfiguration(
-    noinline frontendToBackendConverter: Constructor<Frontend2BackendConverter<F, B>>,
-    irHandlersInit: HandlersStepBuilder<IrBackendInput>.() -> Unit,
-    noinline backendFacade: Constructor<BackendFacade<B, BinaryArtifacts.Jvm>>,
-    jvmHandlersInit: HandlersStepBuilder<BinaryArtifacts.Jvm>.() -> Unit,
-) {
-    facadeStep(frontendToBackendConverter)
-    irHandlersStep(irHandlersInit)
-    facadeStep(backendFacade)
-    jvmArtifactsHandlersStep(jvmHandlersInit)
 }
 
 fun TestConfigurationBuilder.useInlineHandlers() {

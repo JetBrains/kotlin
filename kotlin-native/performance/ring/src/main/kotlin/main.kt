@@ -229,6 +229,9 @@ class RingLauncher : Launcher() {
                     "Calls.interfaceMethodHexamorphic" to BenchmarkEntryWithInit.create(::CallsBenchmark, { interfaceMethodCall_HexamorphicCallsite() }),
                     "LocalObjects.localArray" to BenchmarkEntryWithInit.create(::LocalObjectsBenchmark, { localArray() }),
                     "ComplexArrays.outerProduct" to BenchmarkEntryWithInit.create(::ComplexArraysBenchmark, { outerProduct() }),
+                    "WeakRefBenchmark.aliveReference" to BenchmarkEntryWithInit.create(::WeakRefBenchmark, { aliveReference() }),
+                    "WeakRefBenchmark.deadReference" to BenchmarkEntryWithInit.create(::WeakRefBenchmark, { deadReference() }),
+                    "WeakRefBenchmark.dyingReference" to BenchmarkEntryWithInit.create(::WeakRefBenchmark, { dyingReference() }),
             )
 
     init {

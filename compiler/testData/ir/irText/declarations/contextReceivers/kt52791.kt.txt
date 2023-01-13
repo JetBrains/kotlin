@@ -1,0 +1,12 @@
+class MyClass {
+  private /* final field */ val contextReceiverField0: Unit
+  private /* final field */ val contextReceiverField1: Int
+  constructor(_context_receiver_0: Unit, _context_receiver_1: Int) /* primary */ {
+    super/*Any*/()
+    <this>.#contextReceiverField0 = _context_receiver_0
+    <this>.#contextReceiverField1 = _context_receiver_1
+    /* <init>() */
+
+  }
+
+}

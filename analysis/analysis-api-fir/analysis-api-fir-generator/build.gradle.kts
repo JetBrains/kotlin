@@ -23,22 +23,13 @@ dependencies {
     implementation(project(":compiler:psi"))
 }
 
-val writeCopyright by task<tasks.WriteCopyrightToFile> {
-    outputFile.set(file("$buildDir/copyright/notice.txt"))
-    commented.set(true)
-}
-
 application {
     mainClass.set("org.jetbrains.kotlin.analysis.api.fir.generator.MainKt")
 }
 
-val processResources by tasks
-processResources.dependsOn(writeCopyright)
-
 sourceSets {
     "main" {
         projectDefault()
-        resources.srcDir("$buildDir/copyright")
     }
     "test" {}
 }

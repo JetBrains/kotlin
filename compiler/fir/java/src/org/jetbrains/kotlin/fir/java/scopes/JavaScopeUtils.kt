@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.dispatchReceiverClassOrNull
+import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.java.scopes.ClassicBuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
@@ -159,7 +159,7 @@ object ClassicBuiltinSpecialProperties {
 }
 
 private fun FirCallableSymbol<*>.isFromBuiltinClass(session: FirSession): Boolean {
-    return dispatchReceiverClassOrNull()?.toSymbol(session)?.fir?.origin == FirDeclarationOrigin.BuiltIns
+    return dispatchReceiverClassLookupTagOrNull()?.toSymbol(session)?.fir?.origin == FirDeclarationOrigin.BuiltIns
 }
 
 private fun FirNamedFunctionSymbol.firstOverriddenFunction(

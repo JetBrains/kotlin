@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class AnotherRootClass {
 
@@ -10,8 +8,6 @@ public final class AnotherRootClass {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class RootClass {
@@ -41,8 +37,6 @@ public @interface ClassRefAnnotation {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface PackedClass {
 
@@ -60,10 +54,8 @@ public abstract interface PackedClass {
 
 package test;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @ClassRefAnnotation(value = {RootClass.class})
+@kotlin.Metadata()
 public final class PackedWithAnnotation {
 
     public PackedWithAnnotation() {

@@ -12,7 +12,7 @@ FILE: defaultParametersFromDifferentScopes.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override fun some(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Unit| {
+        public open override fun some(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Unit| {
         }
 
     }

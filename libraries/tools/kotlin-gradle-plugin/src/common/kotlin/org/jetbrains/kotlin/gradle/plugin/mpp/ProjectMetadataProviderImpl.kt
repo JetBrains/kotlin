@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.pm20ExtensionOrNull
-import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
-import org.jetbrains.kotlin.gradle.dsl.topLevelExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.metadataCompilationRegistryByModuleId
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
@@ -55,7 +52,7 @@ private class ProjectMetadataProviderImpl(
         }
 
         val sourceSet = multiplatformExtension.sourceSets.findByName(sourceSetName) ?: return dependencyProject.files()
-        val dependent = CInteropCommonizerDependent.from(dependencyProject, sourceSet) ?: return dependencyProject.files()
+        val dependent = CInteropCommonizerDependent.from(sourceSet) ?: return dependencyProject.files()
         return commonizeCInteropTask.get().commonizedOutputLibraries(dependent)
     }
 }

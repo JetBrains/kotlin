@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -27,8 +27,6 @@ internal class FirResolvedCallableReferenceImpl(
     override val inferredTypeArguments: MutableList<ConeKotlinType>,
     override val mappedArguments: CallableReferenceMappedArguments,
 ) : FirResolvedCallableReference() {
-    override val candidateSymbol: FirBasedSymbol<*>? get() = null
-
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedCallableReferenceImpl {

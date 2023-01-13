@@ -68,6 +68,7 @@ object SerialEntityNames {
 
     const val CACHED_DESCRIPTOR_FIELD = "\$cachedDescriptor"
     const val CACHED_SERIALIZER_PROPERTY = "\$cachedSerializer"
+    const val CACHED_CHILD_SERIALIZERS_PROPERTY = "\$childSerializers"
 
     // classes
     val KCLASS_NAME_FQ = FqName("kotlin.reflect.KClass")
@@ -119,14 +120,12 @@ object SerialEntityNames {
     val SINGLE_MASK_FIELD_MISSING_FUNC_NAME = Name.identifier("throwMissingFieldException")
     val ARRAY_MASK_FIELD_MISSING_FUNC_NAME = Name.identifier("throwArrayMissingFieldException")
     val ENUM_SERIALIZER_FACTORY_FUNC_NAME = Name.identifier("createSimpleEnumSerializer")
-    val MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME = Name.identifier("createMarkedEnumSerializer")
+    val ANNOTATED_ENUM_SERIALIZER_FACTORY_FUNC_NAME = Name.identifier("createAnnotatedEnumSerializer")
     val SINGLE_MASK_FIELD_MISSING_FUNC_FQ = SerializationPackages.internalPackageFqName.child(SINGLE_MASK_FIELD_MISSING_FUNC_NAME)
     val ARRAY_MASK_FIELD_MISSING_FUNC_FQ = SerializationPackages.internalPackageFqName.child(ARRAY_MASK_FIELD_MISSING_FUNC_NAME)
     val CACHED_SERIALIZER_PROPERTY_NAME = Name.identifier(CACHED_SERIALIZER_PROPERTY)
+    val CACHED_CHILD_SERIALIZERS_PROPERTY_NAME = Name.identifier(CACHED_CHILD_SERIALIZERS_PROPERTY)
     val CACHED_DESCRIPTOR_FIELD_NAME = Name.identifier(CACHED_DESCRIPTOR_FIELD)
-
-    val ENUM_SERIALIZER_FACTORY_FUNC_FQ = SerializationPackages.internalPackageFqName.child(ENUM_SERIALIZER_FACTORY_FUNC_NAME)
-    val MARKED_ENUM_SERIALIZER_FACTORY_FUNC_FQ = SerializationPackages.internalPackageFqName.child(MARKED_ENUM_SERIALIZER_FACTORY_FUNC_NAME)
 
     // parameters
     val dummyParamName = Name.identifier("serializationConstructorMarker")
@@ -206,6 +205,8 @@ object SerializersClassIds {
     val sealedSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.sealedSerializer))
     val contextSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.contextSerializer))
     val generatedSerializerId = ClassId(SerializationPackages.internalPackageFqName, SerialEntityNames.GENERATED_SERIALIZER_CLASS)
+
+    val setOfSpecialSerializers = setOf(contextSerializerId, polymorphicSerializerId)
 }
 
 fun findStandardKotlinTypeSerializerName(typeName: String?): String? {

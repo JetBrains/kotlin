@@ -17,7 +17,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -40,7 +40,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: i
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
@@ -72,7 +72,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -95,7 +95,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: i2
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
@@ -124,7 +124,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -147,7 +147,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: i3
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: KtPropertySetterSymbol:
     annotationsList: [
@@ -175,15 +175,15 @@ KtKotlinPropertySymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
-      name: <set-?>
+      name: value
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -199,9 +199,9 @@ KtKotlinPropertySymbol:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
-        name: <set-?>
+        name: value
         origin: SOURCE
-        receiverType: null
+        receiverParameter: null
         returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
@@ -240,7 +240,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -263,7 +263,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: i4
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: KtPropertySetterSymbol:
     annotationsList: [
@@ -291,15 +291,15 @@ KtKotlinPropertySymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
-      name: <set-?>
+      name: value
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -315,9 +315,9 @@ KtKotlinPropertySymbol:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
-        name: <set-?>
+        name: value
         origin: SOURCE
-        receiverType: null
+        receiverParameter: null
         returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []
@@ -344,6 +344,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: /f
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -357,7 +358,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: f
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -411,7 +412,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -435,7 +436,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: i2
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -456,6 +457,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: /Foo.f2
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -469,7 +471,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: f2
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -521,7 +523,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -544,7 +546,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: j
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
@@ -576,7 +578,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -599,7 +601,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: j2
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
@@ -631,7 +633,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -654,7 +656,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: j2
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL

@@ -5,17 +5,18 @@ digraph elvis_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function foo" style="filled" fillcolor=red];
-        1 [label="Exit function foo" style="filled" fillcolor=red];
+        0 [label="Enter class A" style="filled" fillcolor=red];
+        1 [label="Exit class A" style="filled" fillcolor=red];
     }
-    0 -> {1};
-
     subgraph cluster_1 {
-        color=red
-        2 [label="Enter class A" style="filled" fillcolor=red];
-        3 [label="Exit class A" style="filled" fillcolor=red];
+        color=blue
+        2 [label="Enter function foo" style="filled" fillcolor=red];
+        3 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    2 -> {3} [color=green];
+    0 -> {1} [color=green];
+    1 -> {2} [color=green];
+    1 -> {2} [style=dashed];
+    2 -> {3};
 
     subgraph cluster_2 {
         color=red
@@ -48,7 +49,7 @@ digraph elvis_kt {
                     21 [label="Enter block"];
                     22 [label="Access variable R|<local>/x|"];
                     23 [label="Smart cast: R|<local>/x|"];
-                    24 [label="Function call: R|<local>/x|.R|/A.foo|()"];
+                    24 [label="Function call: R|<local>/x|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     25 [label="Exit block"];
                 }
                 26 [label="Exit when branch result"];
@@ -62,20 +63,18 @@ digraph elvis_kt {
     5 -> {6};
     6 -> {7};
     7 -> {8};
-    8 -> {9};
-    8 -> {11} [color=red];
-    8 -> {13} [color=green];
+    8 -> {9 13};
     9 -> {10};
     10 -> {11};
     11 -> {12};
-    12 -> {16 13};
+    12 -> {13 16};
     13 -> {14};
     14 -> {29};
     14 -> {15} [style=dotted];
     15 -> {17} [style=dotted];
     16 -> {17};
     17 -> {18};
-    18 -> {20 19};
+    18 -> {19 20};
     19 -> {27};
     20 -> {21};
     21 -> {22};
@@ -159,7 +158,7 @@ digraph elvis_kt {
     33 -> {34};
     34 -> {35};
     35 -> {36};
-    36 -> {38 37};
+    36 -> {37 38};
     37 -> {45};
     38 -> {39};
     39 -> {40};
@@ -174,7 +173,7 @@ digraph elvis_kt {
     47 -> {48};
     48 -> {49};
     49 -> {50};
-    50 -> {52 51};
+    50 -> {51 52};
     51 -> {59};
     52 -> {53};
     53 -> {54};
@@ -187,7 +186,7 @@ digraph elvis_kt {
     59 -> {60};
     60 -> {61};
     61 -> {62};
-    62 -> {66 63};
+    62 -> {63 66};
     63 -> {64};
     64 -> {65};
     65 -> {67};

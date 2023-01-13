@@ -65,8 +65,8 @@ abstract class KotlinWithJavaTarget<KotlinOptionsType : KotlinCommonOptions, CO 
 
 private fun sanitizeFileName(candidate: String): String = candidate.filter { it.isLetterOrDigit() }
 
-internal val KotlinWithJavaTarget<*, *>.javaSourceSets: SourceSetContainer
-    get() = project.gradle
+internal val Project.javaSourceSets: SourceSetContainer
+    get() = gradle
         .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
         .getInstance(project)
         .sourceSets

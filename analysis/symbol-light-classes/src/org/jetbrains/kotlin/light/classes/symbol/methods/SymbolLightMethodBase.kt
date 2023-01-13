@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.methods
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiImplUtil
 import com.intellij.psi.impl.PsiSuperMethodImplUtil
+import com.intellij.psi.impl.light.LightReferenceListBuilder
 import com.intellij.psi.util.MethodSignature
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
@@ -15,12 +16,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.KotlinLightReferenceListBuilder
-import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.cannotModify
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.mangleInternalName
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -29,21 +29,17 @@ import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasPublishedApiAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.tryGetEffectiveVisibility
-import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
-context(KtAnalysisSession)
 internal abstract class SymbolLightMethodBase(
     lightMemberOrigin: LightMemberOrigin?,
-    containingClass: KtLightClass,
-    private val methodIndex: Int
+    containingClass: SymbolLightClassBase,
+    protected val methodIndex: Int,
 ) : SymbolLightMemberBase<PsiMethod>(lightMemberOrigin, containingClass), KtLightMethod {
-
     override fun getBody(): PsiCodeBlock? = null
 
     override fun getReturnTypeElement(): PsiTypeElement? = null
 
-    override fun setName(p0: String): PsiElement = cannotModify()
+    override fun setName(name: String): PsiElement = cannotModify()
 
     override fun isVarArgs() = PsiImplUtil.isVarArgs(this)
 
@@ -85,27 +81,38 @@ internal abstract class SymbolLightMethodBase(
     abstract override fun hasTypeParameters(): Boolean
     abstract override fun getTypeParameterList(): PsiTypeParameterList?
 
-    override fun getThrowsList(): PsiReferenceList =
-        KotlinLightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST) //TODO()
+    private class SymbolLightThrowsReferencesListBuilder(
+        private val parentMethod: PsiMethod
+    ) : KotlinLightReferenceListBuilder(parentMethod.manager, parentMethod.language, PsiReferenceList.Role.THROWS_LIST) {
+        override fun getParent(): PsiElement = parentMethod
+
+        override fun getContainingFile(): PsiFile = parentMethod.containingFile
+    }
+
+    private val _throwsList by lazyPub {
+        val builder = SymbolLightThrowsReferencesListBuilder(this)
+        computeThrowsList(builder)
+        builder
+    }
+
+    protected open fun computeThrowsList(builder: LightReferenceListBuilder) {}
+
+    override fun getThrowsList(): PsiReferenceList = _throwsList
 
     override fun getDefaultValue(): PsiAnnotationMemberValue? = null
 
+    context(KtAnalysisSession)
     protected fun <T> T.computeJvmMethodName(
         defaultName: String,
         containingClass: SymbolLightClassBase,
-        annotationUseSiteTarget: AnnotationUseSiteTarget? = null
+        annotationUseSiteTarget: AnnotationUseSiteTarget?,
     ): String where T : KtAnnotatedSymbol, T : KtSymbolWithVisibility, T : KtCallableSymbol {
         getJvmNameFromAnnotation(annotationUseSiteTarget)?.let { return it }
-
-        val effectiveVisibilityIfNotInternal = (visibility != Visibilities.Internal).ifTrue {
-            tryGetEffectiveVisibility(this)
-        } ?: this.visibility
-
-        if (effectiveVisibilityIfNotInternal != Visibilities.Internal) return defaultName
+        if (visibility != Visibilities.Internal) return defaultName
         if (containingClass is KtLightClassForFacade) return defaultName
         if (hasPublishedApiAnnotation(annotationUseSiteTarget)) return defaultName
 
-        val moduleName = (getKtModule(project) as? KtSourceModule)?.moduleName ?: return defaultName
+        val moduleName = (ktModule as? KtSourceModule)?.moduleName ?: return defaultName
         return mangleInternalName(defaultName, moduleName)
     }
 

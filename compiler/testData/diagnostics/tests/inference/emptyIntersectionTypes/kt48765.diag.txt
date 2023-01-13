@@ -13,3 +13,4 @@ fun <T: String> foo(): T  {
 /kt48765.kt:13:15: warning: unchecked cast: String to T
     return "" as T // this cast is safe because String is final.
               ^
+

@@ -141,22 +141,27 @@ internal class TestCompilationFactory {
         val dependencies = collectDependencies(sourceModules, freeCompilerArgs, settings)
         val klibArtifact = KLIB(settings.artifactFileForKlib(sourceModules, freeCompilerArgs))
 
+        val isGivenKlibArtifact = sourceModules.singleOrNull() is TestModule.Given
+
         val staticCacheArtifactAndOptions: Pair<KLIBStaticCache, StaticCacheCompilation.Options>? = when (produceStaticCache) {
             is ProduceStaticCache.No -> null // No artifact means no static cache should be compiled.
             is ProduceStaticCache.Yes -> KLIBStaticCache(
-                cacheDir = klibArtifact.cacheDirForStaticCache(),
+                cacheDir = settings.cacheDirForStaticCache(klibArtifact, isGivenKlibArtifact),
                 klib = klibArtifact
             ) to produceStaticCache.options
         }
 
         return cachedKlibCompilations.computeIfAbsent(cacheKey) {
-            val klibCompilation = LibraryCompilation(
-                settings = settings,
-                freeCompilerArgs = freeCompilerArgs,
-                sourceModules = sourceModules,
-                dependencies = dependencies.forKlib(),
-                expectedArtifact = klibArtifact
-            )
+            val klibCompilation = if (isGivenKlibArtifact)
+                GivenLibraryCompilation(klibArtifact)
+            else
+                LibraryCompilation(
+                    settings = settings,
+                    freeCompilerArgs = freeCompilerArgs,
+                    sourceModules = sourceModules,
+                    dependencies = dependencies.forKlib(),
+                    expectedArtifact = klibArtifact
+                )
 
             val staticCacheCompilation: StaticCacheCompilation? =
                 staticCacheArtifactAndOptions?.let { (staticCacheArtifact, staticCacheOptions) ->
@@ -221,16 +226,30 @@ internal class TestCompilationFactory {
                 1 -> when (val module = modules.first()) {
                     is TestModule.Exclusive -> singleModuleArtifactFile(module, "klib")
                     is TestModule.Shared -> get<Binaries>().sharedBinariesDir.resolve("${module.name}-${prettyHash(freeCompilerArgs.hashCode())}.klib")
+                    is TestModule.Given -> module.klibFile
                 }
                 else -> {
                     assertTrue(modules.none { module -> module is TestModule.Shared }) {
                         "Can't compile shared module together with any other module"
                     }
+                    assertTrue(modules.none { module -> module is TestModule.Given }) {
+                        "Can't compile given module together with any other module"
+                    }
                     multiModuleArtifactFile(modules, "klib")
                 }
             }
 
-        private fun KLIB.cacheDirForStaticCache(): File = klibFile.parentFile.resolve(STATIC_CACHE_DIR_NAME).apply { mkdirs() }
+        private fun Settings.cacheDirForStaticCache(klibArtifact: KLIB, isGivenKlibArtifact: Boolean): File {
+            val artifactBaseDir = if (isGivenKlibArtifact) {
+                // Special case for the given (external) KLIB artifacts.
+                get<Binaries>().givenBinariesDir
+            } else {
+                // The KLIB artifact is located inside the build dir. This means it was built just a moment ago.
+                klibArtifact.klibFile.parentFile
+            }
+
+            return artifactBaseDir.resolve(STATIC_CACHE_DIR_NAME).apply { mkdirs() }
+        }
 
         private fun Settings.singleModuleArtifactFile(module: TestModule.Exclusive, extension: String): File {
             val artifactFileName = buildString {

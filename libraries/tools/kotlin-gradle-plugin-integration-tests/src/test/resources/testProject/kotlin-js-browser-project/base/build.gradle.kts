@@ -8,6 +8,7 @@ dependencies {
     implementation(kotlin("stdlib-js"))
 }
 
+@Suppress("DEPRECATION")
 kotlin {
     js("both")
     js(BOTH)

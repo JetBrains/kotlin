@@ -11,6 +11,7 @@ import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.*
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
@@ -25,7 +27,10 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.test.converters.ClassicJsBackendFacade
+import org.jetbrains.kotlin.js.test.utils.MODULE_EMULATION_FILE
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -33,20 +38,22 @@ import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.ComparisonFailure
 import java.io.File
 import java.util.EnumSet
 
 abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     companion object {
-        private const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
-        private const val BOX_FUNCTION_NAME = "box"
-        private const val STDLIB_ALIAS = "stdlib"
-
-        private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
+        private val OUT_DIR_PATH = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
 
-        private val KT_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.kt$")
+        private const val BOX_FUNCTION_NAME = "box"
+        private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
+
+        private val TEST_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.\\w\\w$")
+
+        private val JS_MODULE_KIND = ModuleKind.COMMON_JS
     }
 
     override fun createEnvironment(): KotlinCoreEnvironment {
@@ -60,6 +67,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     private fun parseModuleInfo(moduleName: String, infoFile: File): ModuleInfo {
         return ModuleInfoParser(infoFile).parse(moduleName)
     }
+
+    private val File.filesInDir
+        get() = listFiles() ?: error("cannot retrieve the file list for $absolutePath directory")
 
     protected fun doTest(testPath: String) {
         val testDirectory = File(testPath)
@@ -79,24 +89,22 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         val workingDir = testWorkingDir(projectInfo.name)
         val sourceDir = File(workingDir, "sources").also { it.invalidateDir() }
         val buildDir = File(workingDir, "build").also { it.invalidateDir() }
+        val jsDir = File(workingDir, "js").also { it.invalidateDir() }
 
         initializeWorkingDir(projectInfo, testDirectory, sourceDir, buildDir)
 
-        ProjectStepsExecutor(projectInfo, modulesInfos, testDirectory, sourceDir, buildDir).execute()
+        ProjectStepsExecutor(projectInfo, modulesInfos, testDirectory, sourceDir, buildDir, jsDir).execute()
     }
 
     private fun resolveModuleArtifact(moduleName: String, buildDir: File): File {
         return File(File(buildDir, moduleName), "$moduleName.klib")
     }
 
-    private fun resolveModuleCache(moduleName: String, buildDir: File): File {
-        return File(File(buildDir, moduleName), "cache")
-    }
-
     private fun createConfiguration(moduleName: String, language: List<String>): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
-        copy.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
+        copy.put(JSConfigurationKeys.GENERATE_DTS, true)
+        copy.put(JSConfigurationKeys.MODULE_KIND, JS_MODULE_KIND)
         copy.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
 
         copy.languageVersionSettings = with(LanguageVersionSettingsBuilder()) {
@@ -119,16 +127,18 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         private val moduleInfos: Map<String, ModuleInfo>,
         private val testDir: File,
         private val sourceDir: File,
-        private val buildDir: File
+        private val buildDir: File,
+        private val jsDir: File
     ) {
         private inner class TestStepInfo(
             val moduleName: String,
             val modulePath: String,
-            val icCacheDir: String,
-            val expectedFileStats: Map<String, Set<String>>
+            val friends: List<String>,
+            val expectedFileStats: Map<String, Set<String>>,
+            val expectedDTS: String?
         )
 
-        private fun setupTestStep(projStep: ProjectInfo.ProjectBuildStep, module: String): TestStepInfo {
+        private fun setupTestStep(projStep: ProjectInfo.ProjectBuildStep, module: String, buildKlib: Boolean): TestStepInfo {
             val projStepId = projStep.id
             val moduleTestDir = File(testDir, module)
             val moduleSourceDir = File(sourceDir, module)
@@ -139,29 +149,41 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it.name) }
             }
 
-            val dependencies = moduleStep.dependencies.mapTo(mutableListOf(File(STDLIB_KLIB))) {
-                resolveModuleArtifact(it.moduleName, buildDir)
+            val expectedFileStats = moduleStep.expectedFileStats.toMutableMap()
+            if (deletedFiles.isNotEmpty()) {
+                val removedFiles = expectedFileStats[DirtyFileState.REMOVED_FILE.str] ?: emptySet()
+                expectedFileStats[DirtyFileState.REMOVED_FILE.str] = removedFiles + deletedFiles
             }
-            val outputKlibFile = resolveModuleArtifact(module, buildDir)
-            val configuration = createConfiguration(module, projStep.language)
-            buildArtifact(configuration, module, moduleSourceDir, dependencies, outputKlibFile)
 
-            val expectedFileStats = if (deletedFiles.isEmpty()) {
-                moduleStep.expectedFileStats
-            } else {
-                moduleStep.expectedFileStats + (DirtyFileState.REMOVED_FILE.str to deletedFiles)
+            val outputKlibFile = resolveModuleArtifact(module, buildDir)
+
+            val friends = mutableListOf<File>()
+            if (buildKlib) {
+                val dependencies = mutableListOf(File(STDLIB_KLIB))
+                for (dep in moduleStep.dependencies) {
+                    val klibFile = resolveModuleArtifact(dep.moduleName, buildDir)
+                    dependencies += klibFile
+                    if (dep.isFriend) {
+                        friends += klibFile
+                    }
+                }
+                val configuration = createConfiguration(module, projStep.language)
+                buildArtifact(configuration, module, moduleSourceDir, dependencies, friends, outputKlibFile)
+            }
+
+            val dtsFile = moduleStep.expectedDTS.ifNotEmpty {
+                moduleTestDir.resolve(singleOrNull() ?: error("$module module may generate only one d.ts at step $projStepId"))
             }
             return TestStepInfo(
                 module.safeModuleName,
                 outputKlibFile.canonicalPath,
-                resolveModuleCache(module, buildDir).canonicalPath,
-                expectedFileStats
+                friends.map { it.canonicalPath },
+                expectedFileStats,
+                dtsFile?.readText()
             )
         }
 
-        private fun verifyCacheUpdateStats(
-            stepId: Int, stats: KotlinSourceFileMap<EnumSet<DirtyFileState>>, testInfo: List<TestStepInfo>
-        ) {
+        private fun verifyCacheUpdateStats(stepId: Int, stats: KotlinSourceFileMap<EnumSet<DirtyFileState>>, testInfo: List<TestStepInfo>) {
             val gotStats = stats.filter { it.key.path != STDLIB_KLIB }
 
             val checkedLibs = mutableSetOf<KotlinLibraryFile>()
@@ -174,7 +196,9 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                 val got = mutableMapOf<String, MutableSet<String>>()
                 for ((srcFile, dirtyStats) in updateStatus) {
                     for (dirtyStat in dirtyStats) {
-                        got.getOrPut(dirtyStat.str) { mutableSetOf() }.add(File(srcFile.path).name)
+                        if (dirtyStat != DirtyFileState.NON_MODIFIED_IR) {
+                            got.getOrPut(dirtyStat.str) { mutableSetOf() }.add(File(srcFile.path).name)
+                        }
                     }
                 }
 
@@ -190,33 +214,53 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             }
         }
 
-        private fun verifyJsExecutableProducerBuildModules(stepId: Int, gotRebuilt: Set<String>, expectedRebuilt: List<String>) {
+        private fun verifyJsExecutableProducerBuildModules(stepId: Int, gotRebuilt: List<String>, expectedRebuilt: List<String>) {
             val got = gotRebuilt.filter { it != STDLIB_MODULE_NAME }
             JUnit4Assertions.assertSameElements(got, expectedRebuilt) {
                 "Mismatched rebuilt modules at step $stepId"
             }
         }
 
-        fun writeJsFile(name: String, text: String): String {
-            val file = File(buildDir, "$name.js")
+        private fun File.writeAsJsModule(jsCode: String, moduleName: String) {
+            writeText(ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, JS_MODULE_KIND, moduleName))
+        }
+
+        private fun writeJsFile(name: String, text: String): String {
+            val moduleFileName = "./$name.js"
+            val file = File(jsDir, moduleFileName)
             if (file.exists()) {
                 file.delete()
             }
-            file.writeText(text)
+            file.writeAsJsModule(text, moduleFileName)
             return file.canonicalPath
         }
 
+        private fun prepareExternalJsFiles(): MutableList<String> {
+            jsDir.invalidateDir()
+            return testDir.filesInDir.mapNotNullTo(mutableListOf(MODULE_EMULATION_FILE)) { file ->
+                file.takeIf { it.name.isAllowedJsFile() }?.readText()?.let { jsCode ->
+                    val externalModule = jsDir.resolve(file.name)
+                    externalModule.writeAsJsModule(jsCode, file.nameWithoutExtension)
+                    externalModule.canonicalPath
+                }
+            }
+        }
+
+
         private fun verifyJsCode(stepId: Int, mainModuleName: String, jsOutput: CompilationOutputs) {
-            val files = jsOutput.dependencies.map { writeJsFile(it.first, it.second.jsCode) } + writeJsFile(mainModuleName, jsOutput.jsCode)
+            val files = prepareExternalJsFiles()
+            jsOutput.dependencies.mapTo(files) { writeJsFile(it.first, it.second.jsCode) }
+            files += writeJsFile(mainModuleName, jsOutput.jsCode)
+
             try {
                 V8IrJsTestChecker.checkWithTestFunctionArgs(
                     files = files,
-                    testModuleName = mainModuleName,
+                    testModuleName = "./$mainModuleName.js",
                     testPackageName = null,
                     testFunctionName = BOX_FUNCTION_NAME,
                     testFunctionArgs = "$stepId",
                     expectedResult = "OK",
-                    withModuleSystem = false
+                    withModuleSystem = true
                 )
             } catch (e: ComparisonFailure) {
                 throw ComparisonFailure("Mismatched box out at step $stepId", e.expected, e.actual)
@@ -225,16 +269,32 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             }
         }
 
+        private fun verifyDTS(stepId: Int, testInfo: List<TestStepInfo>, jsOutput: CompilationOutputs) {
+            for (info in testInfo) {
+                val expectedDTS = info.expectedDTS ?: continue
+                val output = jsOutput.dependencies.find { it.first == info.moduleName }?.second ?: jsOutput
+                val gotDTS = output.getFullTsDefinition(info.moduleName, JS_MODULE_KIND)
+                JUnit4Assertions.assertEquals(expectedDTS, gotDTS) {
+                    "Mismatched d.ts for module ${info.moduleName} at step $stepId"
+                }
+            }
+        }
+
         fun execute() {
-            val stdlibCacheDir = resolveModuleCache(STDLIB_ALIAS, buildDir).canonicalPath
             for (projStep in projectInfo.steps) {
-                val testInfo = projStep.order.map { setupTestStep(projStep, it) }
+                val testInfo = projStep.order.map { setupTestStep(projStep, it, true) }
+
+                val mainModuleInfo = testInfo.last()
+                testInfo.find { it != mainModuleInfo && it.friends.isNotEmpty() }?.let {
+                    error("module ${it.moduleName} has friends, but only main module may have the friends")
+                }
 
                 val configuration = createConfiguration(projStep.order.last(), projStep.language)
                 val cacheUpdater = CacheUpdater(
-                    mainModule = testInfo.last().modulePath,
+                    mainModule = mainModuleInfo.modulePath,
                     allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB)) { it.modulePath },
-                    icCachePaths = testInfo.mapTo(mutableListOf(stdlibCacheDir)) { it.icCacheDir },
+                    mainModuleFriends = mainModuleInfo.friends,
+                    cacheDir = buildDir.resolve("incremental-cache").absolutePath,
                     compilerConfiguration = configuration,
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                     mainArguments = null,
@@ -243,8 +303,10 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                     }
                 )
 
+                val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it, false) }
+
                 val icCaches = cacheUpdater.actualizeCaches()
-                verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileStats(), testInfo)
+                verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
 
                 val mainModuleName = icCaches.last().moduleExternalName
                 val jsExecutableProducer = JsExecutableProducer(
@@ -255,15 +317,17 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                     relativeRequirePath = true
                 )
 
-                val rebuiltModules = mutableSetOf<String>()
-                val jsOutput = jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true) { rebuiltModules += it }
+                val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true)
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, projStep.dirtyJS)
                 verifyJsCode(projStep.id, mainModuleName, jsOutput)
+                verifyDTS(projStep.id, testInfo, jsOutput)
             }
         }
     }
 
-    private fun String.isAllowedKtFile() = endsWith(".kt") && !KT_FILE_IGNORE_PATTERN.matches(this)
+    private fun String.isAllowedKtFile() = endsWith(".kt") && !TEST_FILE_IGNORE_PATTERN.matches(this)
+
+    private fun String.isAllowedJsFile() = endsWith(".js") && !TEST_FILE_IGNORE_PATTERN.matches(this)
 
     private fun File.filteredKtFiles(): Collection<File> {
         assert(isDirectory && exists())
@@ -282,7 +346,12 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     }
 
     private fun buildArtifact(
-        configuration: CompilerConfiguration, moduleName: String, sourceDir: File, dependencies: Collection<File>, outputKlibFile: File
+        configuration: CompilerConfiguration,
+        moduleName: String,
+        sourceDir: File,
+        dependencies: Collection<File>,
+        friends: Collection<File>,
+        outputKlibFile: File
     ) {
         if (outputKlibFile.exists()) outputKlibFile.delete()
 
@@ -291,11 +360,44 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
         val sourceFiles = sourceDir.filteredKtFiles().map { environment.createPsiFile(it) }
 
         val sourceModule = prepareAnalyzedSourceModule(
-            projectJs, sourceFiles, configuration, dependencies.map { it.canonicalPath }, emptyList(), // TODO
-            AnalyzerWithCompilerReport(configuration)
+            project = projectJs,
+            files = sourceFiles,
+            configuration = configuration,
+            dependencies = dependencies.map { it.canonicalPath },
+            friendDependencies = friends.map { it.canonicalPath },
+            analyzer = AnalyzerWithCompilerReport(configuration)
         )
 
-        generateKLib(sourceModule, IrFactoryImpl, outputKlibFile.canonicalPath, nopack = false, jsOutputName = moduleName)
+        val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
+        val icData = sourceModule.compilerConfiguration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
+        val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+        val (moduleFragment, _) = generateIrForKlibSerialization(
+            environment.project,
+            moduleSourceFiles,
+            configuration,
+            sourceModule.jsFrontEndResult.jsAnalysisResult,
+            sortDependencies(sourceModule.descriptors),
+            icData,
+            expectDescriptorToSymbol,
+            IrFactoryImpl,
+            verifySignatures = true
+        ) {
+            sourceModule.getModuleDescriptor(it)
+        }
+        val metadataSerializer =
+            KlibMetadataIncrementalSerializer(configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
+
+        generateKLib(
+            sourceModule,
+            outputKlibFile.canonicalPath,
+            nopack = false,
+            jsOutputName = moduleName,
+            icData = icData,
+            expectDescriptorToSymbol = expectDescriptorToSymbol,
+            moduleFragment = moduleFragment
+        ) { file ->
+            metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+        }
     }
 
     private fun initializeWorkingDir(projectInfo: ProjectInfo, testDir: File, sourceDir: File, buildDir: File) {
@@ -304,11 +406,10 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
             File(buildDir, module).invalidateDir()
             val testModuleDir = File(testDir, module)
 
-            testModuleDir.listFiles { _, fileName -> fileName.isAllowedKtFile() }!!.forEach { file ->
-                assert(!file.isDirectory)
-                val fileName = file.name
-                val workingFile = File(moduleSourceDir, fileName)
-                file.copyTo(workingFile)
+            testModuleDir.filesInDir.forEach { file ->
+                if (file.name.isAllowedKtFile()) {
+                    file.copyTo(moduleSourceDir.resolve(file.name))
+                }
             }
         }
     }
@@ -319,7 +420,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     }
 
     private fun testWorkingDir(testName: String): File {
-        val dir = File(File(File(TEST_DATA_DIR_PATH), "incrementalOut/invalidation"), testName)
+        val dir = File(File(File(OUT_DIR_PATH), "incrementalOut/invalidation"), testName)
 
         dir.invalidateDir()
 

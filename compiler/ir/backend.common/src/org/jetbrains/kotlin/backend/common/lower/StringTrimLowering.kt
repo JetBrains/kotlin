@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.types.isString
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -26,8 +26,8 @@ class StringTrimLowering(val context: CommonBackendContext) : FileLoweringPass, 
 
     override fun visitCall(expression: IrCall): IrExpression {
         return when {
-            trimIndentMatcher(expression) -> maybeComputeTrimIndent(expression)
-            trimMarginMatcher(expression) -> maybeComputeTrimMargin(expression)
+            matchTrimIndent(expression) -> maybeComputeTrimIndent(expression)
+            matchTrimMargin(expression) -> maybeComputeTrimMargin(expression)
             else -> super.visitCall(expression)
         }
     }
@@ -64,20 +64,21 @@ class StringTrimLowering(val context: CommonBackendContext) : FileLoweringPass, 
             return null
         }
 
-        private val trimIndentMatcher = SimpleCalleeMatcher {
-            extensionReceiver { it != null && it.type.isString() }
-            fqName { it == TRIM_INDENT_FQ_NAME }
-            parameterCount { it == 0 }
+        private fun matchTrimIndent(expression: IrCall): Boolean {
+            val callee = expression.symbol.owner
+            return callee.valueParameters.isEmpty() &&
+                    callee.extensionReceiverParameter?.type?.isString() == true &&
+                    callee.kotlinFqName == TRIM_INDENT_FQ_NAME
         }
 
-        private val trimMarginMatcher = SimpleCalleeMatcher {
-            extensionReceiver { it != null && it.type.isString() }
-            fqName { it == TRIM_MARGIN_FQ_NAME }
-            parameterCount { it == 1 }
-            parameter(0) { it.type.isString() }
+        private fun matchTrimMargin(expression: IrCall): Boolean {
+            val callee = expression.symbol.owner
+            return callee.valueParameters.singleOrNull()?.type?.isString() == true &&
+                    callee.extensionReceiverParameter?.type?.isString() == true &&
+                    callee.kotlinFqName == TRIM_MARGIN_FQ_NAME
         }
 
-        private val TRIM_MARGIN_FQ_NAME = FqName.fromSegments(listOf("kotlin", "text", "trimMargin"))
-        private val TRIM_INDENT_FQ_NAME = FqName.fromSegments(listOf("kotlin", "text", "trimIndent"))
+        private val TRIM_MARGIN_FQ_NAME = FqName("kotlin.text.trimMargin")
+        private val TRIM_INDENT_FQ_NAME = FqName("kotlin.text.trimIndent")
     }
 }

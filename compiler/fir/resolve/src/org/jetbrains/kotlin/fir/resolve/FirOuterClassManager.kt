@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.constructType
 
 class FirOuterClassManager(
     private val session: FirSession,
@@ -41,6 +42,6 @@ class FirOuterClassManager(
         return containingSymbol.constructType(
             fullyExpandedType.typeArguments.drop(currentTypeArgumentsNumber).toTypedArray(),
             isNullable = false
-        ) as ConeClassLikeType
+        )
     }
 }

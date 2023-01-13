@@ -27,7 +27,8 @@ public class GenerateKeywordStrings {
         StringBuilder sb = new StringBuilder();
         Printer p = new Printer(sb);
 
-        p.println(FileUtil.loadFile(new File("license/COPYRIGHT.txt")));
+        p.println(FileUtil.loadFile(new File("license/COPYRIGHT_HEADER.txt")));
+        p.println();
         p.println("package org.jetbrains.kotlin.renderer;");
         p.println();
         p.println("import java.util.Arrays;");

@@ -18,7 +18,7 @@ fun test() {
     callFun<String, Wrapper<String>>(::createWrapper)
     callFun<Int, Wrapper<Number>>(::createWrapper)
     callFun<String, Wrapper<*>>(::createWrapper)
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION!>callFun<!><String, Wrapper<Int>>(::createWrapper)
+    callFun<String, Wrapper<Int>>(::createWrapper)
 
     callFun<Int, Wrapper<Int>>(::createWrapper).baz(::foo)
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.ir.backend.js.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrModuleHeader
 import java.io.File
@@ -15,19 +16,21 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
         private const val JS_MODULE_HEADER = "js.module.header.bin"
         private const val CACHED_MODULE_JS = "module.js"
         private const val CACHED_MODULE_JS_MAP = "module.js.map"
+        private const val CACHED_MODULE_D_TS = "module.d.ts"
     }
 
     private enum class NameType(val typeMask: Int) {
-        DEFINITIONS(0b01), NAME_BINDINGS(0b10)
+        DEFINITIONS(0b1), NAME_BINDINGS(0b10), OPTIONAL_IMPORTS(0b100)
     }
 
     class CachedModuleInfo(val artifact: ModuleArtifact, val jsIrHeader: JsIrModuleHeader, var crossModuleReferencesHash: ICHash = ICHash())
 
-    private val headerToCachedInfo = mutableMapOf<JsIrModuleHeader, CachedModuleInfo>()
+    private val headerToCachedInfo = hashMapOf<JsIrModuleHeader, CachedModuleInfo>()
 
     private fun ModuleArtifact.fetchModuleInfo() = File(artifactsDir, JS_MODULE_HEADER).useCodedInputIfExists {
         val definitions = mutableSetOf<String>()
         val nameBindings = mutableMapOf<String, String>()
+        val optionalCrossModuleImports = hashSetOf<String>()
 
         val crossModuleReferencesHash = ICHash.fromProtoStream(this)
         val hasJsExports = readBool()
@@ -37,13 +40,24 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
             if (mask and NameType.DEFINITIONS.typeMask != 0) {
                 definitions += tag
             }
+            if (mask and NameType.OPTIONAL_IMPORTS.typeMask != 0) {
+                optionalCrossModuleImports += tag
+            }
             if (mask and NameType.NAME_BINDINGS.typeMask != 0) {
                 nameBindings[tag] = readString()
             }
         }
         CachedModuleInfo(
             artifact = this@fetchModuleInfo,
-            jsIrHeader = JsIrModuleHeader(moduleSafeName, moduleExternalName, definitions, nameBindings, hasJsExports, null),
+            jsIrHeader = JsIrModuleHeader(
+                moduleName = moduleSafeName,
+                externalModuleName = moduleExternalName,
+                definitions = definitions,
+                nameBindings = nameBindings,
+                optionalCrossModuleImports = optionalCrossModuleImports,
+                hasJsExports = hasJsExports,
+                associatedModule = null
+            ),
             crossModuleReferencesHash = crossModuleReferencesHash
         )
     }
@@ -53,6 +67,10 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
             val names = mutableMapOf<String, Pair<Int, String?>>()
             for ((tag, name) in jsIrHeader.nameBindings) {
                 names[tag] = NameType.NAME_BINDINGS.typeMask to name
+            }
+            for (tag in jsIrHeader.optionalCrossModuleImports) {
+                val maskAndName = names[tag]
+                names[tag] = ((maskAndName?.first ?: 0) or NameType.OPTIONAL_IMPORTS.typeMask) to maskAndName?.second
             }
             for (tag in jsIrHeader.definitions) {
                 val maskAndName = names[tag]
@@ -71,22 +89,26 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
         }
     }
 
+    private fun File.writeIfNotNull(data: String?) {
+        if (data != null) {
+            recreate()
+            writeText(data)
+        } else {
+            ifExists { delete() }
+        }
+    }
+
     fun fetchCompiledJsCode(artifact: ModuleArtifact) = artifact.artifactsDir?.let { cacheDir ->
         val jsCode = File(cacheDir, CACHED_MODULE_JS).ifExists { readText() }
         val sourceMap = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { readText() }
-        jsCode?.let { CompilationOutputs(it, null, sourceMap) }
+        val tsDefinitions = File(cacheDir, CACHED_MODULE_D_TS).ifExists { TypeScriptFragment(readText()) }
+        jsCode?.let { CompilationOutputs(it, tsDefinitions, null, sourceMap) }
     }
 
     fun commitCompiledJsCode(artifact: ModuleArtifact, compilationOutputs: CompilationOutputs) = artifact.artifactsDir?.let { cacheDir ->
-        val jsCodeCache = File(cacheDir, CACHED_MODULE_JS).apply { recreate() }
-        jsCodeCache.writeText(compilationOutputs.jsCode)
-        val jsMapCache = File(cacheDir, CACHED_MODULE_JS_MAP)
-        if (compilationOutputs.sourceMap != null) {
-            jsMapCache.recreate()
-            jsMapCache.writeText(compilationOutputs.sourceMap)
-        } else {
-            jsMapCache.ifExists { delete() }
-        }
+        File(cacheDir, CACHED_MODULE_JS).writeIfNotNull(compilationOutputs.jsCode)
+        File(cacheDir, CACHED_MODULE_JS_MAP).writeIfNotNull(compilationOutputs.sourceMap)
+        File(cacheDir, CACHED_MODULE_D_TS).writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
     }
 
     fun loadProgramHeadersFromCache(): List<CachedModuleInfo> {

@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeCodegenBoxTest
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibABITest
-import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeKlibBinaryCompatibilityTest
+import org.jetbrains.kotlin.konan.blackboxtest.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
@@ -25,6 +25,16 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenBoxTestGenerated",
                 annotations = listOf(codegen(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model("codegen/box", targetBackend = TargetBackend.NATIVE)
+                model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
+            }
+        }
+
+        testGroup("native/native.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "K2NativeCodegenBoxTestGenerated",
+                annotations = listOf(codegen(), provider<UseExtTestCaseGroupProvider>(), provider<K2Pipeline>())
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
@@ -59,10 +69,52 @@ fun main() {
                 model("binaryCompatibility/klibEvolution", recursive = false)
             }
         }
+
+        // CInterop tests.
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeCInteropFModulesTest>(
+                suiteTestClassName = "CInteropFModulesTestGenerated"
+            ) {
+                model("CInterop/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCInteropNoFModulesTest>(
+                suiteTestClassName = "CInteropNoFModulesTestGenerated"
+            ) {
+                model("CInterop/simple/simpleDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/framework/frameworkDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/framework.macros/macrosDefs", pattern = "^([^_](.+))$", recursive = false)
+                model("CInterop/builtins/builtinsDefs", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeCInteropKT39120Test>(
+                suiteTestClassName = "CInteropKT39120TestGenerated"
+            ) {
+                model("CInterop/KT-39120/defs", pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+
+        // LLDB integration tests.
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "LldbTestGenerated",
+                annotations = listOf(debugger(), provider<UseStandardTestCaseGroupProvider>(), debugOnly())
+            ) {
+                model("lldb")
+            }
+        }
     }
 }
 
 private inline fun <reified T : Annotation> provider() = annotation(T::class.java)
 
+private fun debugOnly() = annotation(
+    EnforcedProperty::class.java,
+    "property" to ClassLevelProperty.OPTIMIZATION_MODE,
+    "propertyValue" to "DEBUG"
+)
+
 private fun codegen() = annotation(Tag::class.java, "codegen")
+private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")

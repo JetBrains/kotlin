@@ -1,3 +1,5 @@
+// KT-55828
+// IGNORE_BACKEND_K2: NATIVE
 // KT-4423 Enum with function not compiled
 // SKIP_MANGLE_VERIFICATION
 

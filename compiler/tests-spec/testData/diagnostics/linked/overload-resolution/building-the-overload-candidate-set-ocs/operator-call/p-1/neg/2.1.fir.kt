@@ -18,7 +18,7 @@ fun C?.boo( c: ()->C) : String { //(2)
     this.<!DEBUG_INFO_CALL("fqName: testPackCase1.boo; typeCall: extension function")!>boo( x )<!>// ok to (1)
     this.boo( x )
 
-    this.<!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>boo( {<!ARGUMENT_TYPE_MISMATCH!>1<!>})<!> //to (2); {1} is ()->C
+    this.<!DEBUG_INFO_CALL("fqName: testPackCase1.boo; typeCall: extension function")!>boo( {<!ARGUMENT_TYPE_MISMATCH!>1<!>})<!> //to (2); {1} is ()->C
     this.boo( {<!ARGUMENT_TYPE_MISMATCH!>1<!>})
 
     return ""
@@ -39,7 +39,7 @@ fun C?.boo( c: ()->C, x : Int = 1) : String { //(2)
     this.<!DEBUG_INFO_CALL("fqName: testPackCase2.boo; typeCall: extension function")!>boo( x )<!>// ok to (1)
     this.boo( x )
 
-    this.<!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>boo( {<!ARGUMENT_TYPE_MISMATCH!>1<!>})<!> //to (2); {1} is ()->C
+    this.<!DEBUG_INFO_CALL("fqName: testPackCase2.boo; typeCall: extension function")!>boo( {<!ARGUMENT_TYPE_MISMATCH!>1<!>})<!> //to (2); {1} is ()->C
     this.boo( {<!ARGUMENT_TYPE_MISMATCH!>1<!>})
 
     return ""

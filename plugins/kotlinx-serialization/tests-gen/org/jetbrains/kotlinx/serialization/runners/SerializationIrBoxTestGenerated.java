@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -38,6 +38,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("constValInSerialName.kt")
+    public void testConstValInSerialName() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/constValInSerialName.kt");
+    }
+
+    @Test
     @TestMetadata("contextualByDefault.kt")
     public void testContextualByDefault() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/contextualByDefault.kt");
@@ -47,6 +53,24 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     @TestMetadata("enumsAreCached.kt")
     public void testEnumsAreCached() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/enumsAreCached.kt");
+    }
+
+    @Test
+    @TestMetadata("expectActual.kt")
+    public void testExpectActual() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/expectActual.kt");
+    }
+
+    @Test
+    @TestMetadata("externalSerialierJava.kt")
+    public void testExternalSerialierJava() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/externalSerialierJava.kt");
+    }
+
+    @Test
+    @TestMetadata("generatedClassifiersViaLibraryDependency.kt")
+    public void testGeneratedClassifiersViaLibraryDependency() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/generatedClassifiersViaLibraryDependency.kt");
     }
 
     @Test
@@ -80,9 +104,27 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("intrinsicsStarProjections.kt")
+    public void testIntrinsicsStarProjections() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsStarProjections.kt");
+    }
+
+    @Test
     @TestMetadata("metaSerializable.kt")
     public void testMetaSerializable() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/metaSerializable.kt");
+    }
+
+    @Test
+    @TestMetadata("mpp.kt")
+    public void testMpp() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/mpp.kt");
+    }
+
+    @Test
+    @TestMetadata("multiFieldValueClasses.kt")
+    public void testMultiFieldValueClasses() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/multiFieldValueClasses.kt");
     }
 
     @Test
@@ -119,5 +161,23 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     @TestMetadata("starProjections.kt")
     public void testStarProjections() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/starProjections.kt");
+    }
+
+    @Test
+    @TestMetadata("typealiasesTest.kt")
+    public void testTypealiasesTest() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/typealiasesTest.kt");
+    }
+
+    @Test
+    @TestMetadata("useSerializersChain.kt")
+    public void testUseSerializersChain() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/useSerializersChain.kt");
+    }
+
+    @Test
+    @TestMetadata("userDefinedSerializerInCompanion.kt")
+    public void testUserDefinedSerializerInCompanion() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/userDefinedSerializerInCompanion.kt");
     }
 }

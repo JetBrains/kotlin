@@ -26,7 +26,7 @@ FILE: incorrectSuperCall.kt
             super<R|B|>()
         }
 
-        public final override fun foo(): R|kotlin/Unit| {
+        public open override fun foo(): R|kotlin/Unit| {
             this@R|/C|.super<R|B|>.R|/B.foo|()
             this@R|/C|.super<<ERROR TYPE REF: Ambiguous supertype>>.<Unresolved name: bar>#()
             this@R|/C|.super<R|B|>.R|/B.baz|()

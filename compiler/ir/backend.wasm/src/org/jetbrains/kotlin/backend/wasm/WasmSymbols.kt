@@ -118,9 +118,23 @@ class WasmSymbols(
 
     val wasmUnreachable = getInternalFunction("wasm_unreachable")
 
-    val consumeAnyIntoVoid = getInternalFunction("consumeAnyIntoVoid")
     val voidClass = getIrClass(FqName("kotlin.wasm.internal.Void"))
     val voidType by lazy { voidClass.defaultType }
+
+    private val consumeAnyIntoVoid = getInternalFunction("consumeAnyIntoVoid")
+    private val consumePrimitiveIntoVoid = mapOf(
+        context.irBuiltIns.booleanType to getInternalFunction("consumeBooleanIntoVoid"),
+        context.irBuiltIns.byteType to getInternalFunction("consumeByteIntoVoid"),
+        context.irBuiltIns.shortType to getInternalFunction("consumeShortIntoVoid"),
+        context.irBuiltIns.charType to getInternalFunction("consumeCharIntoVoid"),
+        context.irBuiltIns.intType to getInternalFunction("consumeIntIntoVoid"),
+        context.irBuiltIns.longType to getInternalFunction("consumeLongIntoVoid"),
+        context.irBuiltIns.floatType to getInternalFunction("consumeFloatIntoVoid"),
+        context.irBuiltIns.doubleType to getInternalFunction("consumeDoubleIntoVoid")
+    )
+    
+    fun findVoidConsumer(type: IrType): IrSimpleFunctionSymbol =
+        consumePrimitiveIntoVoid[type] ?: consumeAnyIntoVoid
 
     val equalityFunctions = mapOf(
         context.irBuiltIns.booleanType to getInternalFunction("wasm_i32_eq"),
@@ -165,9 +179,10 @@ class WasmSymbols(
     val refEq = getInternalFunction("wasm_ref_eq")
     val refIsNull = getInternalFunction("wasm_ref_is_null")
     val externRefIsNull = getInternalFunction("wasm_externref_is_null")
-    val refTest = getInternalFunction("wasm_ref_test")
-    val refCast = getInternalFunction("wasm_ref_cast")
+    val refTest = getInternalFunction("wasm_ref_test_deprecated")
+    val refCastNull = getInternalFunction("wasm_ref_cast_deprecated")
     val wasmArrayCopy = getInternalFunction("wasm_array_copy")
+    val wasmArrayNewData0 = getInternalFunction("array_new_data0")
 
     val intToLong = getInternalFunction("wasm_i64_extend_i32_s")
 
@@ -178,6 +193,7 @@ class WasmSymbols(
     val unboxIntrinsic: IrSimpleFunctionSymbol = getInternalFunction("unboxIntrinsic")
 
     val stringGetLiteral = getFunction("stringLiteral", builtInsPackage)
+    val stringGetPoolSize = getInternalFunction("stringGetPoolSize")
 
     val testFun = maybeGetFunction("test", kotlinTestPackage)
     val suiteFun = maybeGetFunction("suite", kotlinTestPackage)
@@ -195,7 +211,10 @@ class WasmSymbols(
     val nullableDoubleIeee754Equals = getInternalFunction("nullableDoubleIeee754Equals")
 
     val unsafeGetScratchRawMemory = getInternalFunction("unsafeGetScratchRawMemory")
-    val unsafeGetScratchRawMemorySize = getInternalFunction("unsafeGetScratchRawMemorySize")
+
+    val newJsArray = getInternalFunction("newJsArray")
+    val jsArrayPush = getInternalFunction("jsArrayPush")
+
     val startCoroutineUninterceptedOrReturnIntrinsics =
         (0..2).map { getInternalFunction("startCoroutineUninterceptedOrReturnIntrinsic$it") }
 
@@ -271,6 +290,7 @@ class WasmSymbols(
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalFunction("kotlinToJsStringAdapter")
         val kotlinToJsAnyAdapter = getInternalFunction("kotlinToJsAnyAdapter")
+        val numberToDoubleAdapter = getInternalFunction("numberToDoubleAdapter")
 
         val jsCheckIsNullOrUndefinedAdapter = getInternalFunction("jsCheckIsNullOrUndefinedAdapter")
 

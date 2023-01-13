@@ -25,11 +25,6 @@
             <password>${kotlin.sonatype.password}</password>
         </server>
         <server>
-            <id>bintray</id>
-            <username>${kotlin.bintray.user}</username>
-            <password>${kotlin.bintray.password}</password>
-        </server>
-        <server>
             <id>space-packages</id>
             <username>${kotlin.space-packages.user}</username>
             <password>${kotlin.space-packages.password}</password>

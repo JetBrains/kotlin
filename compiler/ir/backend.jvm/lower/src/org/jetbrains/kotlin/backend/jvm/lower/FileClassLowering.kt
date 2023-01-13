@@ -46,10 +46,9 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_NAME_SHORT
 import org.jetbrains.kotlin.name.JvmNames.JVM_PACKAGE_NAME_SHORT
 import org.jetbrains.kotlin.name.JvmNames.MULTIFILE_PART_NAME_DELIMITER
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 
 internal val fileClassPhase = makeIrModulePhase(

@@ -32,11 +32,22 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.services.BuildServiceRegistry
+import org.gradle.internal.component.local.model.DefaultLocalComponentGraphResolveState
 import org.gradle.internal.component.model.AttributeConfigurationSelector
+import org.gradle.internal.component.model.ComponentResolveMetadata
+import org.gradle.internal.component.model.ConfigurationMetadata
+import org.gradle.internal.component.model.IvyArtifactName
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
+import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.io.File
 import java.nio.file.Path
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.functions
+import kotlin.reflect.full.staticFunctions
 
 data class AndroidDependency(
     val name: String? = null,
@@ -47,6 +58,9 @@ data class AndroidDependency(
     val collection: Set<File>? = null
 )
 
+/**
+ * Used in KMM
+ */
 @Suppress("unused")
 object AndroidDependencyResolver {
     private fun getAndroidSdkJar(project: Project, versions: List<String>): AndroidDependency? {
@@ -126,7 +140,7 @@ object AndroidDependencyResolver {
         return versions[0].toInt() >= 4 || versions[0].toInt() >= 3 && versions[1].toInt() >= 6
     }
 
-    private data class SourceSetConfigs(val implConfig: Configuration, val compileConfigs: MutableList<Configuration> = ArrayList())
+    private data class SourceSetConfigs(val implConfigs: List<Configuration>, val compileConfigs: MutableList<Configuration> = ArrayList())
 
     fun getAndroidSourceSetDependencies(project: Project): Map<String, List<AndroidDependency>?> {
         val androidPluginVersions = getAndroidPluginVersions() ?: return emptyMap()
@@ -138,11 +152,14 @@ object AndroidDependencyResolver {
 
         project.forAllAndroidVariants { variant ->
             val compileConfig = variant.compileConfiguration
-            variant.sourceSets.filterIsInstance(AndroidSourceSet::class.java).map {
-                val implConfig = project.configurations.getByName(it.implementationConfigurationName)
-                allImplConfigs.add(implConfig)
+            variant.sourceSets.filterIsInstance(AndroidSourceSet::class.java).map { androidSourceSet ->
+                val implConfigs = listOf(project.configurations.getByName(androidSourceSet.implementationConfigurationName)) +
+                        project.findKotlinSourceSet(androidSourceSet)?.internal?.compilations.orEmpty().map { compilation ->
+                            compilation.internal.configurations.implementationConfiguration
+                        }
+                allImplConfigs.addAll(implConfigs)
                 val sourceSetConfigs =
-                    sourceSet2Impl.computeIfAbsent(lowerCamelCaseName("android", it.name)) { SourceSetConfigs(implConfig) }
+                    sourceSet2Impl.computeIfAbsent(lowerCamelCaseName("android", androidSourceSet.name)) { SourceSetConfigs(implConfigs) }
                 // The same sourceset can be included into multiple variants (e.g. androidMain)
                 sourceSetConfigs.compileConfigs.add(compileConfig)
             }
@@ -179,7 +196,6 @@ object AndroidDependencyResolver {
         }.toMap()
     }
 
-    @Suppress("UnstableApiUsage")
     private fun collectDependencies(
         dependencies: List<ExternalModuleDependency>,
         compileClasspathConfigs: List<Configuration>
@@ -224,7 +240,6 @@ object AndroidDependencyResolver {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     private tailrec fun doCollectDependencies(
         modules: List<ModuleIdentifier>,
         resolutionResults: Map<ModuleIdentifier, ResolvedComponentResult>,
@@ -246,7 +261,7 @@ object AndroidDependencyResolver {
         val attributes = sourceSetConfigs.compileConfigs.first().attributes
 
         return HashSet<Dependency>().also {
-            doFindDependencies(implConfigs, listOf(sourceSetConfigs.implConfig), attributes, attributesSchema, it)
+            doFindDependencies(implConfigs, sourceSetConfigs.implConfigs, attributes, attributesSchema, it)
         }
     }
 
@@ -280,21 +295,54 @@ object AndroidDependencyResolver {
     private fun selectConfigurations(
         projectDependencies: List<ProjectDependencyInternal>,
         attributes: AttributeContainer,
-        attributesSchema: AttributesSchema
-    ): List<Configuration> {
-        return projectDependencies.mapNotNull { projectDependency ->
-            val rootComponentMetaData = (projectDependency.findProjectConfiguration() as? ConfigurationInternal)?.toRootComponentMetaData()
-                ?: return@mapNotNull null
+        attributesSchema: AttributesSchema,
+    ): List<Configuration> = if (isGradleVersionAtLeast(7, 6)) {
+        selectConfigurationsGradle76(projectDependencies, attributes, attributesSchema)
+    } else {
+        selectConfigurationsGradleLegacy(projectDependencies, attributes, attributesSchema)
+    }
 
-            val matching = AttributeConfigurationSelector.selectConfigurationUsingAttributeMatching(
-                (attributes as? AttributeContainerInternal)?.asImmutable() ?: return@mapNotNull null,
-                emptyList<Capability>(),
-                rootComponentMetaData,
-                (attributesSchema as? AttributesSchemaInternal) ?: return@mapNotNull null,
-                emptyList()
-            )
-            projectDependency.dependencyProject.configurations.findByName(matching.name)
-        }
+    private fun selectConfigurationsGradle76(
+        projectDependencies: List<ProjectDependencyInternal>,
+        attributes: AttributeContainer,
+        attributesSchema: AttributesSchema,
+    ) = projectDependencies.flatMap { projectDependency ->
+        val rootComponentMetaData = (projectDependency.findProjectConfiguration() as? ConfigurationInternal)?.toRootComponentMetaData()
+            ?: return@flatMap emptyList()
+
+        val matching = AttributeConfigurationSelector.selectVariantsUsingAttributeMatching(
+            (attributes as? AttributeContainerInternal)?.asImmutable() ?: return@flatMap emptyList(),
+            emptyList<Capability>(),
+            DefaultLocalComponentGraphResolveState(rootComponentMetaData),
+            (attributesSchema as? AttributesSchemaInternal) ?: return@flatMap emptyList(),
+            emptyList()
+        )
+        matching.variants.mapNotNull { projectDependency.dependencyProject.configurations.findByName(it.name) }
+    }
+
+    private fun selectConfigurationsGradleLegacy(
+        projectDependencies: List<ProjectDependencyInternal>,
+        attributes: AttributeContainer,
+        attributesSchema: AttributesSchema,
+    ) = projectDependencies.mapNotNull { projectDependency ->
+        val configurationInternal = projectDependency.findProjectConfiguration() as? ConfigurationInternal ?: return@mapNotNull null
+
+        @Suppress("UNCHECKED_CAST") val toRootComponentMetadata =
+            (configurationInternal::class.functions.find { it.name == "toRootComponentMetaData" } as? KFunction<ComponentResolveMetadata>
+                ?: error("Method ConfigurationInternal.toRootComponentMetaData does not exist"))
+        val rootComponentMetaData = toRootComponentMetadata.call(configurationInternal)
+
+        @Suppress("UNCHECKED_CAST") val selectConfiguration =
+            AttributeConfigurationSelector::class.staticFunctions.find { it.name == "selectConfigurationUsingAttributeMatching" } as? KFunction<ConfigurationMetadata>
+                ?: error("Static method AttributeConfigurationSelector.selectConfigurationUsingAttributeMatching does not exist")
+        val matching = selectConfiguration.call(
+            (attributes as? AttributeContainerInternal)?.asImmutable() ?: return@mapNotNull null,
+            emptyList<Capability>(),
+            rootComponentMetaData,
+            (attributesSchema as? AttributesSchemaInternal) ?: return@mapNotNull null,
+            emptyList<IvyArtifactName>()
+        )
+        projectDependency.dependencyProject.configurations.findByName(matching.name)
     }
 
     private inline fun <E, K> MutableSet<E>.addOrRetainAll(c: Collection<E>, crossinline selector: (E) -> K) {

@@ -83,6 +83,7 @@ void VLog(Level level, std::initializer_list<const char*> tags, const char* form
 
 inline constexpr const char* kTagGC = "gc";
 inline constexpr const char* kTagMM = "mm";
+inline constexpr const char* kTagTLS = "tls";
 
 } // namespace kotlin
 

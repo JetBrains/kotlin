@@ -1,7 +1,5 @@
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract class BundleProperty<AA extends java.lang.Object> extends test.NullableBundleProperty<AA> {
 
@@ -40,10 +38,8 @@ public abstract class BundleProperty<AA extends java.lang.Object> extends test.N
 
 package test;
 
-import java.lang.System;
-
-@kotlin.Suppress(names = {"NOTHING_TO_INLINE"})
 @kotlin.Metadata()
+@kotlin.Suppress(names = {"NOTHING_TO_INLINE"})
 public final class Kt27126Kt {
 
     public Kt27126Kt() {
@@ -61,8 +57,6 @@ public final class Kt27126Kt {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract class NullableBundleProperty<EE extends java.lang.Object> implements kotlin.properties.ReadWriteProperty<java.lang.Object, EE> {
     @org.jetbrains.annotations.Nullable()
@@ -77,8 +71,8 @@ public abstract class NullableBundleProperty<EE extends java.lang.Object> implem
         return null;
     }
 
-    @org.jetbrains.annotations.Nullable()
     @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
     public EE getValue(@org.jetbrains.annotations.NotNull()
     java.lang.Object thisRef, @org.jetbrains.annotations.NotNull()
     kotlin.reflect.KProperty<?> property) {

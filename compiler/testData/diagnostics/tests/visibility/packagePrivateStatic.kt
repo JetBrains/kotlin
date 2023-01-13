@@ -6,6 +6,8 @@ package foo;
 class Base {
     protected static void foo() {}
     protected void bar() {}
+
+    public static void baz() {}
 }
 
 // FILE: foo/Derived.java
@@ -23,4 +25,16 @@ class Impl : Derived() {
         foo()
         bar()
     }
+}
+
+fun test() {
+    Derived.baz()
+}
+
+// FILE: withImport.kt
+
+import foo.Derived.baz
+
+fun test() {
+    baz()
 }

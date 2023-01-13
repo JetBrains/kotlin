@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnaly
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KtFe10Type
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.load.java.sam.JavaSingleAbstractMethodUtils
@@ -27,23 +28,36 @@ internal class KtFe10TypeInfoProvider(
 
     override fun isFunctionalInterfaceType(type: KtType): Boolean {
         require(type is KtFe10Type)
-        return JavaSingleAbstractMethodUtils.isSamType(type.type)
+        return JavaSingleAbstractMethodUtils.isSamType(type.fe10Type)
     }
 
     override fun getFunctionClassKind(type: KtType): FunctionClassKind? {
         require(type is KtFe10Type)
-        return type.type.constructor.declarationDescriptor?.getFunctionalClassKind()
+        return type.fe10Type.constructor.declarationDescriptor?.getFunctionalClassKind()
     }
 
     override fun canBeNull(type: KtType): Boolean {
         require(type is KtFe10Type)
-        return TypeUtils.isNullableType(type.type)
+        return TypeUtils.isNullableType(type.fe10Type)
     }
 
     override fun isDenotable(type: KtType): Boolean {
         require(type is KtFe10Type)
-        val kotlinType = type.type
+        val kotlinType = type.fe10Type
         return kotlinType.isDenotable()
+    }
+
+    override fun isArrayOrPrimitiveArray(type: KtType): Boolean {
+        require(type is KtFe10Type)
+        return KotlinBuiltIns.isArrayOrPrimitiveArray(type.fe10Type)
+    }
+
+    override fun isNestedArray(type: KtType): Boolean {
+        if (!isArrayOrPrimitiveArray(type)) return false
+        require(type is KtFe10Type)
+        val unwrappedType = type.fe10Type
+        val elementType = unwrappedType.constructor.builtIns.getArrayElementType(unwrappedType)
+        return KotlinBuiltIns.isArrayOrPrimitiveArray(elementType)
     }
 
     private fun KotlinType.isDenotable(): Boolean {

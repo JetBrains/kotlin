@@ -2,10 +2,11 @@
  * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package kotlinx.metadata.klib.impl
 
-import kotlinx.metadata.impl.*
+import kotlinx.metadata.internal.*
 import kotlinx.metadata.klib.KlibSourceFile
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf

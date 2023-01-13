@@ -13,9 +13,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
-import org.gradle.api.attributes.Attribute
-import org.gradle.api.attributes.Category
-import org.gradle.api.attributes.Usage
+import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.artifacts.ArtifactAttributes
@@ -32,9 +30,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.util.concurrent.Callable
 import kotlin.reflect.KMutableProperty1
 import kotlin.reflect.full.memberProperties
@@ -143,7 +143,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 compilation.compileKotlinTaskProvider.map { it.outputs.files }
             })
 
-            if (compilation is KotlinJvmCompilation && compilation.target.withJavaEnabled) {
+            if (compilation is KotlinJvmCompilation && (compilation.target as? KotlinJvmTarget)?.withJavaEnabled == true) {
                 it.inputs.files({ compilation.compileJavaTaskProvider?.map { it.outputs.files } })
             }
 
@@ -197,6 +197,14 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
                 runtimeConfiguration?.let { extendsFrom(it) }
                 usesPlatformOf(target)
             }
+        }
+
+        configurations.maybeCreate(target.sourcesElementsConfigurationName).apply {
+            description = "Source files of main compilation of ${target.name}."
+            isVisible = false
+            isCanBeResolved = false
+            isCanBeConsumed = true
+            configureSourcesPublicationAttributes(target)
         }
 
         if (createTestCompilation) {
@@ -274,6 +282,9 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 ) : AbstractKotlinTargetConfigurator<KotlinTargetType>(createTestCompilation) {
     open val archiveType: String = ArtifactTypeDefinition.JAR_TYPE
 
+    open val archiveTaskType: Class<out Zip>
+        get() = Jar::class.java
+
     internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinCompilationProcessor<*>
 
     override fun configureCompilations(target: KotlinTargetType) {
@@ -282,15 +293,17 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
         target.compilations.all { compilation ->
             buildCompilationProcessor(compilation).run()
             if (compilation.isMain()) {
-                sourcesJarTask(compilation, target.targetName, target.targetName.toLowerCase())
+                sourcesJarTask(compilation, target.targetName, target.targetName.toLowerCaseAsciiOnly())
             }
         }
     }
 
     /** The implementations are expected to create a [Zip] task under the name [KotlinTarget.artifactsTaskName] of the [target]. */
     protected open fun createArchiveTasks(target: KotlinTargetType): TaskProvider<out Zip> {
-        //TODO Change Jar on Zip
-        return target.project.registerTask<Jar>(target.artifactsTaskName) {
+        return target.project.registerTask(
+            target.artifactsTaskName,
+            archiveTaskType
+        ) {
             it.description = "Assembles an archive containing the main classes."
             it.group = BasePlugin.BUILD_GROUP
             it.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
@@ -308,7 +321,7 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
         target.disambiguationClassifier?.let { classifier ->
             task.configure { taskInstance ->
-                taskInstance.archiveAppendix.set(classifier.toLowerCase())
+                taskInstance.archiveAppendix.set(classifier.toLowerCaseAsciiOnly())
             }
         }
 
@@ -388,6 +401,9 @@ internal fun Project.usageByName(usageName: String): Usage =
 
 internal fun Project.categoryByName(categoryName: String): Category =
     objects.named(Category::class.java, categoryName)
+
+internal inline fun <reified T : Named> Project.attributeValueByName(attributeValueName: String): T =
+    objects.named(T::class.java, attributeValueName)
 
 fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
     attributes.attribute(KotlinPlatformType.attribute, target.platformType)

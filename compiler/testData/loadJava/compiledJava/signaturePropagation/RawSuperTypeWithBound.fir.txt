@@ -3,7 +3,7 @@ public open class RawSuperTypeWithBound : R|kotlin/Any| {
 
     public abstract interface Bound : R|kotlin/Any| {
     }
-    public open inner class Derived : R|kotlin/Any|, R|test/RawSuperTypeWithBound.Super<test/RawSuperTypeWithBound.Bound!>| {
+    public open inner class Derived : R|kotlin/Any|, R|Raw type test/RawSuperTypeWithBound.Super<test/RawSuperTypeWithBound.Bound!>| {
         public open fun foo(o: R|kotlin/Any!|): R|kotlin/Unit|
 
         @R|java/lang/Override|() public open fun foo(o: R|test/RawSuperTypeWithBound.Bound!|): R|kotlin/Unit|

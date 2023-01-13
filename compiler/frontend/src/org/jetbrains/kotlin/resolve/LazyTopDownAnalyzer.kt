@@ -76,8 +76,8 @@ class LazyTopDownAnalyzer(
             var visitor: KtVisitorVoid? = null
             visitor = ExceptionWrappingKtVisitorVoid(object : KtVisitorVoid() {
                 private fun registerDeclarations(declarations: List<KtDeclaration>) {
-                    for (jetDeclaration in declarations) {
-                        jetDeclaration.accept(visitor!!)
+                    for (ktDeclaration in declarations) {
+                        ktDeclaration.accept(visitor!!)
                     }
                 }
 
@@ -128,17 +128,17 @@ class LazyTopDownAnalyzer(
 
                 private fun checkClassOrObjectDeclarations(classOrObject: KtClassOrObject, classDescriptor: ClassDescriptor) {
                     var companionObjectAlreadyFound = false
-                    for (jetDeclaration in classOrObject.declarations) {
-                        if (jetDeclaration is KtObjectDeclaration && jetDeclaration.isCompanion()) {
+                    for (ktDeclaration in classOrObject.declarations) {
+                        if (ktDeclaration is KtObjectDeclaration && ktDeclaration.isCompanion()) {
                             if (companionObjectAlreadyFound) {
-                                trace.report(MANY_COMPANION_OBJECTS.on(jetDeclaration))
+                                trace.report(MANY_COMPANION_OBJECTS.on(ktDeclaration))
                             }
                             companionObjectAlreadyFound = true
-                        } else if (jetDeclaration is KtSecondaryConstructor) {
+                        } else if (ktDeclaration is KtSecondaryConstructor) {
                             if (DescriptorUtils.isSingletonOrAnonymousObject(classDescriptor)) {
-                                trace.report(CONSTRUCTOR_IN_OBJECT.on(jetDeclaration))
+                                trace.report(CONSTRUCTOR_IN_OBJECT.on(ktDeclaration))
                             } else if (classDescriptor.kind == ClassKind.INTERFACE) {
-                                trace.report(CONSTRUCTOR_IN_INTERFACE.on(jetDeclaration))
+                                trace.report(CONSTRUCTOR_IN_INTERFACE.on(ktDeclaration))
                             }
                         }
                     }
@@ -150,11 +150,11 @@ class LazyTopDownAnalyzer(
                 }
 
                 private fun registerPrimaryConstructorParameters(klass: KtClass) {
-                    for (jetParameter in klass.primaryConstructorParameters) {
-                        if (jetParameter.hasValOrVar()) {
+                    for (ktParameter in klass.primaryConstructorParameters) {
+                        if (ktParameter.hasValOrVar()) {
                             c.primaryConstructorParameterProperties.put(
-                                jetParameter,
-                                lazyDeclarationResolver.resolveToDescriptor(jetParameter) as PropertyDescriptor
+                                ktParameter,
+                                lazyDeclarationResolver.resolveToDescriptor(ktParameter) as PropertyDescriptor
                             )
                         }
                     }

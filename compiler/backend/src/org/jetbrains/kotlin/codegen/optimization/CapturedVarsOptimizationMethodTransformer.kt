@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.codegen.optimization.fixStack.peek
 import org.jetbrains.kotlin.codegen.optimization.fixStack.top
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -143,8 +142,8 @@ class CapturedVarsOptimizationMethodTransformer : MethodTransformer() {
             }
         }
 
-        private fun BasicValue.getCapturedVarOrNull() =
-            safeAs<ProperTrackedReferenceValue>()?.descriptor?.safeAs<CapturedVarDescriptor>()
+        private fun BasicValue.getCapturedVarOrNull(): CapturedVarDescriptor? =
+            (this as? ProperTrackedReferenceValue)?.descriptor as? CapturedVarDescriptor
 
         private fun assignLocalVars(frames: Array<out Frame<BasicValue>?>) {
             for (localVar in methodNode.localVariables) {

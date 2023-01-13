@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -96,7 +95,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                 receiver.declarationDescriptor.extensionReceiverParameter!!.type.toIrType()
             is ContextReceiver -> {
                 val receiverParameter = receiver.declarationDescriptor.contextReceiverParameters.find {
-                    it.value == receiver
+                    it.value == receiver.original
                 } ?: error("Unknown receiver: $receiver")
                 receiverParameter.type.toIrType()
             }
@@ -134,7 +133,7 @@ fun StatementGenerator.generateReceiver(defaultStartOffset: Int, defaultEndOffse
                 }
                 is ContextReceiver -> {
                     val receiverParameter = receiver.declarationDescriptor.contextReceiverParameters
-                        .single { it.value == receiver }
+                        .single { it.value == receiver.original }
                     IrGetValueImpl(
                         defaultStartOffset, defaultStartOffset, irReceiverType,
                         context.symbolTable.referenceValueParameter(receiverParameter)
@@ -264,7 +263,8 @@ fun StatementGenerator.generateCallReceiver(
             extensionReceiverValue = generateReceiverOrNull(ktDefaultElement, extensionReceiver)
             contextReceiverValues = when (ktDefaultElement) {
                 is KtConstructorDelegationCall, is KtSuperTypeCallEntry -> contextReceivers.mapNotNull {
-                    generateContextReceiverForDelegatingConstructorCall(ktDefaultElement, it as ContextClassReceiver)
+                    if (it is ContextClassReceiver) generateContextReceiverForDelegatingConstructorCall(ktDefaultElement, it)
+                    else generateReceiverOrNull(ktDefaultElement, it)
                 }
                 else -> contextReceivers.mapNotNull { generateReceiverOrNull(ktDefaultElement, it) }
             }
@@ -629,7 +629,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
                 "$originalDescriptor has ${originalDescriptor.typeParameters}"
     }
 
-    val resolvedCallArguments = resolvedCall.safeAs<NewResolvedCallImpl<*>>()?.argumentMappingByOriginal?.values
+    val resolvedCallArguments = (resolvedCall as? NewResolvedCallImpl<*>)?.argumentMappingByOriginal?.values
     assert(resolvedCallArguments == null || resolvedCallArguments.size == underlyingValueParameters.size) {
         "Mismatching resolved call arguments:\n" +
                 "${resolvedCallArguments?.size} != ${underlyingValueParameters.size}"

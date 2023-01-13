@@ -1,2 +1,4 @@
-error: k2 does not support JS target right now
-COMPILATION_ERROR
+warning: ATTENTION!
+ This build uses experimental K2 compiler:
+  -Xuse-k2
+OK

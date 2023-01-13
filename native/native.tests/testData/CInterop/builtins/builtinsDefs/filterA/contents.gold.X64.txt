@@ -1,0 +1,31 @@
+
+package pod1 {
+
+    @CStruct(spelling = "struct  { unsigned int gp_offset; unsigned int fp_offset; void* overflow_arg_area; void* reg_save_area; }") class __va_list_tag constructor(rawPtr: NativePtr /* = NativePtr */) : CStructVar {
+        var fp_offset: UInt
+            @CStruct.MemberAt(offset = 4.toLong()) get
+            @CStruct.MemberAt(offset = 4.toLong()) set
+        var gp_offset: UInt
+            @CStruct.MemberAt(offset = 0.toLong()) get
+            @CStruct.MemberAt(offset = 0.toLong()) set
+        var overflow_arg_area: COpaquePointer? /* = CPointer<out CPointed>? */
+            @CStruct.MemberAt(offset = 8.toLong()) get
+            @CStruct.MemberAt(offset = 8.toLong()) set
+        var reg_save_area: COpaquePointer? /* = CPointer<out CPointed>? */
+            @CStruct.MemberAt(offset = 16.toLong()) get
+            @CStruct.MemberAt(offset = 16.toLong()) set
+        @CStruct.VarType(align = 8, size = 24.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(imports = {})) companion object : CStructVar.Type
+    }
+
+}
+
+package pod1 {
+    var A: Int
+        @CCall(id = "knifunptr_pod10_A_getter") get
+        @CCall(id = "knifunptr_pod11_A_setter") set
+    val A_va_list: __builtin_va_list /* = CPointer<__va_list_tag> */
+        @CCall(id = "knifunptr_pod12_A_va_list_getter") get
+    typealias __builtin_va_list = CArrayPointer<__va_list_tag>
+    typealias __builtin_va_listVar = CPointerVarOf<__builtin_va_list /* = CPointer<__va_list_tag> */>
+}
+

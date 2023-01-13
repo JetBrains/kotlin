@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.cValuesOf
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrConst
@@ -16,7 +17,7 @@ private fun ConstPointer.add(index: LLVMValueRef): ConstPointer {
     return constPointer(LLVMConstGEP(llvm, cValuesOf(index), 1)!!)
 }
 
-internal class KotlinStaticData(override val context: Context, override val llvm: Llvm, module: LLVMModuleRef) : ContextUtils, StaticData(module, llvm) {
+internal class KotlinStaticData(override val generationState: NativeGenerationState, override val llvm: Llvm, module: LLVMModuleRef) : ContextUtils, StaticData(module, llvm) {
     private val stringLiterals = mutableMapOf<String, ConstPointer>()
 
     // Must match OBJECT_TAG_PERMANENT_CONTAINER in C++.
@@ -103,11 +104,9 @@ internal class KotlinStaticData(override val context: Context, override val llvm
             UniqueKind.EMPTY_ARRAY -> context.ir.symbols.array.owner
         }
         return if (isExternal(descriptor)) {
-            constPointer(importGlobal(
-                    kind.llvmName, runtime.objHeaderType, origin = descriptor.llvmSymbolOrigin
-            ))
+            constPointer(importGlobal(kind.llvmName, runtime.objHeaderType, descriptor))
         } else {
-            context.generationState.llvmDeclarations.forUnique(kind).pointer
+            generationState.llvmDeclarations.forUnique(kind).pointer
         }
     }
 

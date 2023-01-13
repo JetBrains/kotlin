@@ -17,7 +17,7 @@ public abstract class KtOverrideInfoProvider : KtAnalysisSessionComponent() {
         parentClassSymbol: KtClassOrObjectSymbol
     ): ImplementationStatus?
 
-    public abstract fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol?
+    public abstract fun unwrapFakeOverrides(symbol: KtCallableSymbol): KtCallableSymbol
     public abstract fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol?
 }
 
@@ -35,8 +35,9 @@ public interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
         withValidityAssertion { analysisSession.overrideInfoProvider.getImplementationStatus(this, parentClassSymbol) }
 
     /**
-     * Gets the original symbol for the given callable symbol. In a class scope, a symbol may be derived from symbols declared in super
-     * classes. For example, consider
+     * Unwraps fake override [KtCallableSymbol]s until an original declared symbol is uncovered.
+     *
+     * In a class scope, a symbol may be derived from symbols declared in super classes. For example, consider
      *
      * ```
      * public interface  A<T> {
@@ -48,17 +49,17 @@ public interface KtMemberSymbolProviderMixin : KtAnalysisSessionMixIn {
      * ```
      *
      * In the class scope of `B`, there is a callable symbol `foo` that takes a `String`. This symbol is derived from the original symbol
-     * in `A` that takes the type parameter `T`. Given such a derived symbol, [originalOverriddenSymbol] recovers the original declared
-     * symbol.
+     * in `A` that takes the type parameter `T` (fake override). Given such a fake override symbol, [unwrapFakeOverrides] recovers the
+     * original declared symbol.
      *
      * Such situation can also happen for intersection symbols (in case of multiple super types containing symbols with identical signature
      * after specialization) and delegation.
      */
-    public val KtCallableSymbol.originalOverriddenSymbol: KtCallableSymbol?
-        get() = withValidityAssertion { analysisSession.overrideInfoProvider.getOriginalOverriddenSymbol(this) }
+    public val KtCallableSymbol.unwrapFakeOverrides: KtCallableSymbol
+        get() = withValidityAssertion { analysisSession.overrideInfoProvider.unwrapFakeOverrides(this) }
 
     /**
-     * Gets the class symbol where the given callable symbol is declared. See [originalOverriddenSymbol] for more details.
+     * Gets the class symbol where the given callable symbol is declared. See [unwrapFakeOverrides] for more details.
      */
     public val KtCallableSymbol.originalContainingClassForOverride: KtClassOrObjectSymbol?
         get() = withValidityAssertion { analysisSession.overrideInfoProvider.getOriginalContainingClassForOverride(this) }

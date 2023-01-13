@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: foo/Super.java
 package foo
 
@@ -26,7 +27,7 @@ package foo
 
 fun test(s: bar.Sub<String>) {
     s.<!INVISIBLE_REFERENCE!>name<!>
-    s.<!INVISIBLE_REFERENCE!>name<!> = ""
+    <!INVISIBLE_SETTER!>s.<!INVISIBLE_REFERENCE!>name<!><!> = ""
     s.name2
     <!INVISIBLE_SETTER!>s.name2<!> = ""
     s.<!INVISIBLE_REFERENCE!>doSomething<!>()

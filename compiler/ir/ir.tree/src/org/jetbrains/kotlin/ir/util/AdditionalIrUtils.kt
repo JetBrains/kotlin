@@ -26,7 +26,7 @@ val IrConstructor.constructedClass get() = this.parent as IrClass
 val IrDeclarationParent.fqNameForIrSerialization: FqName
     get() = when (this) {
         is IrPackageFragment -> this.fqName
-        is IrDeclaration -> this.parent.fqNameForIrSerialization.child(this.nameForIrSerialization)
+        is IrDeclarationWithName -> this.parent.fqNameForIrSerialization.child(this.name)
         else -> error(this)
     }
 
@@ -40,10 +40,10 @@ val IrDeclarationParent.kotlinFqName: FqName
             if (isFileClass) {
                 parent.kotlinFqName
             } else {
-                parent.kotlinFqName.child(nameForIrSerialization)
+                parent.kotlinFqName.child(name)
             }
         }
-        is IrDeclaration -> this.parent.kotlinFqName.child(nameForIrSerialization)
+        is IrDeclarationWithName -> this.parent.kotlinFqName.child(name)
         else -> error(this)
     }
 
@@ -54,12 +54,22 @@ val IrClass.classId: ClassId?
         else -> null
     }
 
+@Suppress("unused")
+@Deprecated(
+    "This function is deprecated because it has confusing name and behavior. " +
+            "Please use IrDeclarationWithName.name or IrDeclaration.getNameWithAssert",
+    ReplaceWith("(this as? IrDeclarationWithName)?.name", "org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName"),
+    DeprecationLevel.ERROR
+)
 val IrDeclaration.nameForIrSerialization: Name
     get() = when (this) {
         is IrDeclarationWithName -> this.name
         is IrConstructor -> SpecialNames.INIT
         else -> error(this)
     }
+
+fun IrDeclaration.getNameWithAssert(): Name =
+    if (this is IrDeclarationWithName) name else error(this)
 
 val IrValueParameter.isVararg get() = this.varargElementType != null
 

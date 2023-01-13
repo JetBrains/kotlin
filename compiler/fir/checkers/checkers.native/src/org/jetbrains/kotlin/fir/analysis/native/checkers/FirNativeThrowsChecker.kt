@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
@@ -43,7 +45,7 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
     )
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        val throwsAnnotation = declaration.getAnnotationByClassId(throwsClassId) as? FirAnnotationCall
+        val throwsAnnotation = declaration.getAnnotationByClassId(throwsClassId, context.session) as? FirAnnotationCall
 
         if (!checkInheritance(declaration, throwsAnnotation, context, reporter)) return
 
@@ -89,10 +91,10 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
         val (overriddenMember, overriddenThrows) = inherited.firstOrNull()
             ?: return true // Should not happen though.
 
-        if (decodeThrowsFilter(throwsAnnotation, context.session) != overriddenThrows) {
+        if (throwsAnnotation?.source != null && decodeThrowsFilter(throwsAnnotation, context.session) != overriddenThrows) {
             val containingClassSymbol = overriddenMember.containingClassLookupTag()?.toFirRegularClassSymbol(context.session)
             if (containingClassSymbol != null) {
-                reporter.reportOn(throwsAnnotation?.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol, context)
+                reporter.reportOn(throwsAnnotation.source, FirNativeErrors.INCOMPATIBLE_THROWS_OVERRIDE, containingClassSymbol, context)
             }
             return false
         }
@@ -121,7 +123,7 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
                         val annotation = if (overriddenFunction.isSubstitutionOrIntersectionOverride) {
                             null
                         } else {
-                            overriddenFunction.getAnnotationByClassId(throwsClassId) as? FirAnnotationCall
+                            overriddenFunction.getAnnotationByClassId(throwsClassId, context.session) as? FirAnnotationCall
                         }
                         getInheritedThrows(annotation, overriddenFunction)
                     }
@@ -141,10 +143,8 @@ object FirNativeThrowsChecker : FirBasicDeclarationChecker() {
             return expression.hasUnresolvedArgument()
         }
 
-        if (this is FirResolvable) {
-            if (this.calleeReference is FirErrorNamedReference) {
-                return true
-            }
+        if (this is FirResolvable && calleeReference.isError()) {
+            return true
         }
 
         if (this is FirVarargArgumentsExpression) {

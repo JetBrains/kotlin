@@ -429,14 +429,28 @@ open class SymbolTable(
 
     @ObsoleteDescriptorBasedAPI
     fun declareScript(
+        startOffset: Int,
+        endOffset: Int,
         descriptor: ScriptDescriptor,
         scriptFactory: (IrScriptSymbol) -> IrScript = { symbol: IrScriptSymbol ->
-            IrScriptImpl(symbol, nameProvider.nameForDeclaration(descriptor), irFactory)
+            IrScriptImpl(symbol, nameProvider.nameForDeclaration(descriptor), irFactory, startOffset, endOffset)
         }
     ): IrScript {
         return scriptSymbolTable.declare(
             descriptor,
             { IrScriptSymbolImpl(descriptor) },
+            scriptFactory
+        )
+    }
+
+    fun declareScript(
+        sig: IdSignature,
+        symbolFactory: () -> IrScriptSymbol,
+        scriptFactory: (IrScriptSymbol) -> IrScript
+    ): IrScript {
+        return scriptSymbolTable.declare(
+            sig,
+            symbolFactory,
             scriptFactory
         )
     }
@@ -649,6 +663,10 @@ open class SymbolTable(
             if (sig.isPubliclyVisible) referenced(sig, reg) { IrEnumEntryPublicSymbolImpl(sig) }
             else IrEnumEntrySymbolImpl()
         }
+
+    fun referenceEnumEntryIfAny(sig: IdSignature): IrEnumEntrySymbol? {
+        return enumEntrySymbolTable.get(sig)
+    }
 
     val unboundEnumEntries: Set<IrEnumEntrySymbol> get() = enumEntrySymbolTable.unboundSymbols
 

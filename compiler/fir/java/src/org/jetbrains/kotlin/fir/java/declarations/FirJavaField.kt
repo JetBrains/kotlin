@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFieldBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -44,7 +43,7 @@ class FirJavaField @FirImplementationDetail constructor(
     override val isVar: Boolean,
     annotationBuilder: () -> List<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
-    override var initializer: FirExpression?,
+    private var lazyInitializer: Lazy<FirExpression?>,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override val attributes: FirDeclarationAttributes,
 ) : FirField() {
@@ -52,7 +51,7 @@ class FirJavaField @FirImplementationDetail constructor(
         symbol.bind(this)
     }
 
-    override val receiverTypeRef: FirTypeRef? get() = null
+    override val receiverParameter: FirReceiverParameter? get() = null
     override val isVal: Boolean get() = !isVar
     override val getter: FirPropertyAccessor? get() = null
     override val setter: FirPropertyAccessor? get() = null
@@ -61,8 +60,11 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override val annotations: List<FirAnnotation> by lazy { annotationBuilder() }
 
+    override val initializer: FirExpression?
+        get() = lazyInitializer.value
+
     override val deprecationsProvider: DeprecationsProvider by lazy {
-        annotations.getDeprecationsProviderFromAnnotations(fromJava = true, moduleData.session.firCachesFactory)
+        annotations.getDeprecationsProviderFromAnnotations(moduleData.session, fromJava = true)
     }
 
     override val contextReceivers: List<FirContextReceiver>
@@ -87,11 +89,11 @@ class FirJavaField @FirImplementationDetail constructor(
 
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirField {
         transformAnnotations(transformer, data)
-        initializer = initializer?.transformSingle(transformer, data)
+        replaceInitializer(initializer?.transformSingle(transformer, data))
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirField {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirField {
         return this
     }
 
@@ -122,12 +124,16 @@ class FirJavaField @FirImplementationDetail constructor(
         returnTypeRef = newReturnTypeRef
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Mutating annotations for FirJava* is not supported")
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaField {
         return this
     }
 
     override fun replaceInitializer(newInitializer: FirExpression?) {
-        initializer = newInitializer
+        lazyInitializer = lazyOf(newInitializer)
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirField {
@@ -144,7 +150,7 @@ class FirJavaField @FirImplementationDetail constructor(
         return this
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {}
 
     override fun <D> transformDelegate(transformer: FirTransformer<D>, data: D): FirField {
@@ -169,6 +175,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
     var isStatic: Boolean by Delegates.notNull()
     var isFromSource: Boolean by Delegates.notNull()
     lateinit var annotationBuilder: () -> List<FirAnnotation>
+    var lazyInitializer: Lazy<FirExpression?>? = null
 
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
@@ -186,7 +193,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             isVar,
             annotationBuilder,
             typeParameters,
-            initializer,
+            lazyInitializer ?: lazyOf(initializer),
             dispatchReceiverType,
             attributes,
         )

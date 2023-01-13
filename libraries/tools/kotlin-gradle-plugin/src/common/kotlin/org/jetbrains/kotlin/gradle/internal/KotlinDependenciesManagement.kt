@@ -47,8 +47,8 @@ internal fun customizeKotlinDependencies(project: Project) {
         coreLibrariesVersion
     )
 
-    if (propertiesProvider.stdlibJdkVariantsSubstitution) {
-        project.configurations.configureStdlibSubstitution()
+    if (propertiesProvider.stdlibJdkVariantsVersionAlignment) {
+        project.configurations.configureStdlibVersionAlignment()
     }
 
     excludeStdlibAndKotlinTestCommonFromPlatformCompilations(project)
@@ -86,8 +86,6 @@ private fun KotlinTarget.excludeStdlibAndKotlinTestCommonFromPlatformCompilation
     compilations.all {
         listOfNotNull(
             it.compileDependencyConfigurationName,
-            it.defaultSourceSet.apiMetadataConfigurationName,
-            it.defaultSourceSet.implementationMetadataConfigurationName,
             (it as? KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName,
 
             // Additional configurations for (old) jvmWithJava-preset. Remove it when we drop it completely

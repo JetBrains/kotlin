@@ -1,5 +1,5 @@
-// !LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // IGNORE_FIR_DIAGNOSTICS
+// FIR status: KT-46419, ILT conversions to Byte and Short are not supported by design
 // TARGET_BACKEND: JVM
 
 // WITH_STDLIB

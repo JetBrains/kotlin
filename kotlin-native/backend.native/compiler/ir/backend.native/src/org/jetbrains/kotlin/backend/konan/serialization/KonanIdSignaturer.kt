@@ -23,7 +23,7 @@ class KonanIdSignaturer(private val mangler: KotlinMangler.DescriptorMangler) : 
          * [IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY] flag.
          */
         private fun markInteropDeclaration(descriptor: DeclarationDescriptor) {
-            if (descriptor.module.isFromInteropLibrary()) {
+            if (descriptor.isFromInteropLibrary()) {
                 mask = mask or IdSignature.Flags.IS_NATIVE_INTEROP_LIBRARY.encode(true)
             }
         }

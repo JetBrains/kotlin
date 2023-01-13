@@ -1,8 +1,6 @@
 // WITH_STDLIB
 // WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses
-
-@file:Suppress("SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS")
+// LANGUAGE: +ValueClasses, +ValueClassesSecondaryConstructorWithBody
 
 var global = "wrong"
 

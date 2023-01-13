@@ -19,8 +19,10 @@ private val presetsProperty = KotlinTargetsContainerWithPresets::presets.name
 
 private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     // Generate KotlinMultiplatformExtension subclass with member functions for the presets:
-    val functions = allPresetEntries.map {
-        generatePresetFunctions(it, presetsProperty, "configureOrCreate")
+    val functions = allPresetEntries.map { kotlinPreset ->
+        // magic indent is needed to make the result look pretty
+        val funPrefix = kotlinPreset.deprecation?.let { "\n    $it\n    @Suppress(\"DEPRECATION\")\n    " } ?: ""
+        generatePresetFunctions(kotlinPreset, presetsProperty, "configureOrCreate", funPrefix)
     }
 
     val parentInterfaceName =
@@ -29,9 +31,12 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     val className =
         typeName("org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions")
 
+    val deprecatedMessageVal = typeName("org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE")
+
     val imports = allPresetEntries
         .flatMap { it.typeNames() }
         .plus(parentInterfaceName)
+        .plus(deprecatedMessageVal)
         .plus(typeName(Action::class.java.canonicalName))
         .filter { it.packageName() != className.packageName() }
         .flatMap { it.collectFqNames() }
@@ -56,11 +61,12 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
 private fun generatePresetFunctions(
     presetEntry: KotlinPresetEntry,
     getPresetsExpression: String,
-    configureOrCreateFunctionName: String
+    configureOrCreateFunctionName: String,
+    funPrefix: String = ""
 ): String {
     val presetName = presetEntry.presetName
     return """
-    fun $presetName(
+    ${funPrefix}fun $presetName(
         name: String = "$presetName",
         configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
     ): ${presetEntry.targetType.renderShort()} =
@@ -70,9 +76,9 @@ private fun generatePresetFunctions(
             configure
         )
 
-    fun $presetName() = $presetName("$presetName") { }
-    fun $presetName(name: String) = $presetName(name) { }
-    fun $presetName(name: String, configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName(name) { configure.execute(this) }
-    fun $presetName(configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName { configure.execute(this) }
+    ${funPrefix}fun $presetName() = $presetName("$presetName") { }
+    ${funPrefix}fun $presetName(name: String) = $presetName(name) { }
+    ${funPrefix}fun $presetName(name: String, configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName(name) { configure.execute(this) }
+    ${funPrefix}fun $presetName(configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName { configure.execute(this) }
 """.trimIndent()
 }

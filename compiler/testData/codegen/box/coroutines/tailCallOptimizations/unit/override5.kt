@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR status: questionable bytecode listing difference (open/final methods in final class)
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB

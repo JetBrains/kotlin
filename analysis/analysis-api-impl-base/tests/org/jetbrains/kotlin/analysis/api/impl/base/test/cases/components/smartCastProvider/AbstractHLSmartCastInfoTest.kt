@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.smartCastProvider
 
-import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractHLSmartCastInfoTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
@@ -23,12 +24,12 @@ abstract class AbstractHLSmartCastInfoTest : AbstractAnalysisApiSingleFileTest()
                 buildString {
                     appendLine("expression: ${expression.text}")
                     appendLine("isStable: ${smartCastInfo?.isStable}")
-                    appendLine("smartCastType: ${smartCastInfo?.smartCastType?.render()}")
+                    appendLine("smartCastType: ${smartCastInfo?.smartCastType?.render(position = Variance.INVARIANT)}")
 
                     val receiverSmartCasts = expression.getImplicitReceiverSmartCast()
                     for (receiverSmartCast in receiverSmartCasts) {
                         appendLine("receiver: ${receiverSmartCast.kind}")
-                        appendLine("    smartCastType: ${receiverSmartCast.type.render()}")
+                        appendLine("    smartCastType: ${receiverSmartCast.type.render(position = Variance.INVARIANT)}")
                     }
                 }
             }

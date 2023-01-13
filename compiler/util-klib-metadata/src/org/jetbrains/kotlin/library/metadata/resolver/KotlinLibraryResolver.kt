@@ -1,6 +1,8 @@
-package org.jetbrains.kotlin.library.resolver
+package org.jetbrains.kotlin.library.metadata.resolver
 
-import org.jetbrains.kotlin.library.*
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.SearchPathResolver
+import org.jetbrains.kotlin.library.UnresolvedLibrary
 import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
 
 interface KotlinLibraryResolver<L: KotlinLibrary> {

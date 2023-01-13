@@ -86,6 +86,20 @@ fun assertCompiledKotlinSources(
 }
 
 /**
+ * Asserts all the .java files from [expectedSources] and only they are compiled
+ *
+ * Note: log level of output should be set to [LogLevel.DEBUG]
+ */
+fun GradleProject.assertCompiledJavaSources(
+    expectedSources: Iterable<Path>,
+    output: String,
+    errorMessageSuffix: String = ""
+) {
+    val actualSources = extractCompiledJavaFiles(projectPath.toRealPath().toFile(), output)
+    assertSameFiles(expectedSources, actualSources, "Compiled Java files differ${errorMessageSuffix}:\n")
+}
+
+/**
  * Asserts that compilation was non-incremental.
  *
  * Note: Log level of output must be set to [LogLevel.DEBUG].

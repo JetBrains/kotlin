@@ -50,6 +50,7 @@ internal class KotlinWasmNode(private val kotlinJsTest: KotlinJsTest) : KotlinJs
 
         val args = mutableListOf<String>()
         with(args) {
+            addAll(nodeJsArgs)
             addWasmExperimentalArguments()
             add(testRunnerFile.absolutePath)
             addAll(cliArgs.toList())

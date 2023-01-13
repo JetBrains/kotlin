@@ -83,6 +83,94 @@ data class SemVer(
                 build.takeIf { it.isNotBlank() }
             )
         }
+
+        /**
+         * Parses Gradle [rich versions](https://docs.gradle.org/current/userguide/single_versions.html) version string.
+         * In case of ranges, version prefixes or latest status - returned version will be closest using [Int.MAX_VALUE] as highest possible
+         * version number for major, minor or patch.
+         */
+        fun fromGradleRichVersion(version: String): SemVer {
+            return when {
+                version == "+" || version.startsWith("latest.") ->
+                    SemVer(Int.MAX_VALUE.toBigInteger(), Int.MAX_VALUE.toBigInteger(), Int.MAX_VALUE.toBigInteger())
+                version.matches(MAJOR_PREFIX_VERSION) ->
+                    from("${version.replaceFirst("+", Int.MAX_VALUE.toString())}.${Int.MAX_VALUE}", loose = true)
+                version.matches(MINOR_PREFIX_VERSION) ->
+                    from(version.replaceFirst("+", Int.MAX_VALUE.toString()), loose = true)
+                version.matches(FINITE_RANGE) -> {
+                    if (version.endsWith(CLOSE_INC)) {
+                        from(FINITE_RANGE.find(version)!!.groups[2]!!.value, loose = true)
+                    } else {
+                        from(FINITE_RANGE.find(version)!!.groups[2]!!.value, loose = true).decrement()
+                    }
+                }
+                version.matches(LOWER_INFINITE_RANGE) -> {
+                    if (version.endsWith(CLOSE_INC)) {
+                        from(LOWER_INFINITE_RANGE.find(version)!!.groups[1]!!.value, loose = true)
+                    } else {
+                        from(LOWER_INFINITE_RANGE.find(version)!!.groups[1]!!.value, loose = true).decrement()
+                    }
+                }
+                version.matches(UPPER_INFINITE_RANGE) -> {
+                    SemVer(Int.MAX_VALUE.toBigInteger(), Int.MAX_VALUE.toBigInteger(), Int.MAX_VALUE.toBigInteger())
+                }
+                version.matches(SINGLE_VALUE_RANGE) -> {
+                    from(SINGLE_VALUE_RANGE.find(version)!!.groups[1]!!.value, loose = true)
+                }
+                else -> from(version, loose = true)
+            }
+        }
+
+        private fun SemVer.decrement(): SemVer {
+            return if (patch == 0.toBigInteger()) {
+                if (minor == 0.toBigInteger()) {
+                    SemVer(major.dec(), Int.MAX_VALUE.toBigInteger(), Int.MAX_VALUE.toBigInteger())
+                } else {
+                    SemVer(major, minor.dec(), Int.MAX_VALUE.toBigInteger())
+                }
+            } else {
+                SemVer(major, minor, patch.dec())
+            }
+        }
+
+        private val MAJOR_PREFIX_VERSION = "^[0-9]+\\.\\+$".toRegex()
+        private val MINOR_PREFIX_VERSION = "^[0-9]+\\.[0-9]+\\.\\+$".toRegex()
+
+        // Following constants and logic around was peeked from
+        // https://github.com/gradle/gradle/blob/master/subprojects/dependency-management/src/main/java/org/gradle/api/internal/artifacts/ivyservice/ivyresolve/strategy/VersionRangeSelector.java
+        private const val OPEN_INC = "["
+        private const val OPEN_EXC = "]"
+        private const val OPEN_EXC_MAVEN = "("
+        private const val CLOSE_INC = "]"
+        private const val CLOSE_EXC = "["
+        private const val CLOSE_EXC_MAVEN = ")"
+        private const val LOWER_INFINITE = "("
+        private const val UPPER_INFINITE = ")"
+        private const val SEPARATOR = ","
+
+        private const val OPEN_INC_PATTERN = "\\" + OPEN_INC
+        private const val OPEN_EXC_PATTERN = "\\" + OPEN_EXC + "\\" + OPEN_EXC_MAVEN
+        private const val CLOSE_INC_PATTERN = "\\" + CLOSE_INC
+        private const val CLOSE_EXC_PATTERN = "\\" + CLOSE_EXC + "\\" + CLOSE_EXC_MAVEN
+        private const val LI_PATTERN = "\\" + LOWER_INFINITE
+        private const val UI_PATTERN = "\\" + UPPER_INFINITE
+        private const val SEP_PATTERN = "\\s*\\$SEPARATOR\\s*"
+        private const val OPEN_PATTERN = "[$OPEN_INC_PATTERN$OPEN_EXC_PATTERN]"
+        private const val CLOSE_PATTERN = "[$CLOSE_INC_PATTERN$CLOSE_EXC_PATTERN]"
+        private const val ANY_NON_SPECIAL_PATTERN = ("[^\\s" + SEPARATOR + OPEN_INC_PATTERN
+                + OPEN_EXC_PATTERN + CLOSE_INC_PATTERN + CLOSE_EXC_PATTERN + LI_PATTERN + UI_PATTERN
+                + "]")
+        private const val FINITE_PATTERN = (OPEN_PATTERN + "\\s*(" + ANY_NON_SPECIAL_PATTERN
+                + "+)" + SEP_PATTERN + "(" + ANY_NON_SPECIAL_PATTERN + "+)\\s*" + CLOSE_PATTERN)
+        private const val LOWER_INFINITE_PATTERN = (LI_PATTERN + SEP_PATTERN + "("
+                + ANY_NON_SPECIAL_PATTERN + "+)\\s*" + CLOSE_PATTERN)
+        private const val UPPER_INFINITE_PATTERN = (OPEN_PATTERN + "\\s*("
+                + ANY_NON_SPECIAL_PATTERN + "+)" + SEP_PATTERN + UI_PATTERN)
+        private const val SINGLE_VALUE_PATTERN = "$OPEN_INC_PATTERN\\s*($ANY_NON_SPECIAL_PATTERN+)$CLOSE_INC_PATTERN"
+        private val FINITE_RANGE = FINITE_PATTERN.toRegex()
+        private val LOWER_INFINITE_RANGE = LOWER_INFINITE_PATTERN.toRegex()
+        private val UPPER_INFINITE_RANGE = UPPER_INFINITE_PATTERN.toRegex()
+        private val SINGLE_VALUE_RANGE = SINGLE_VALUE_PATTERN.toRegex()
     }
 }
 

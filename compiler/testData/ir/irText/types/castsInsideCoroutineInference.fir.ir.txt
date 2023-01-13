@@ -168,7 +168,7 @@ FILE fqName:<root> fileName:/castsInsideCoroutineInference.kt
           RETURN type=kotlin.Nothing from='internal final fun <get-collector> (): <root>.FlowCollector<T of <root>.SafeCollector> declared in <root>.SafeCollector'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:collector type:<root>.FlowCollector<T of <root>.SafeCollector> visibility:private [final]' type=<root>.FlowCollector<T of <root>.SafeCollector> origin=null
               receiver: GET_VAR '<this>: <root>.SafeCollector<T of <root>.SafeCollector> declared in <root>.SafeCollector.<get-collector>' type=<root>.SafeCollector<T of <root>.SafeCollector> origin=null
-    FUN name:emit visibility:public modality:FINAL <> ($this:<root>.SafeCollector<T of <root>.SafeCollector>, value:T of <root>.SafeCollector) returnType:kotlin.Unit [suspend]
+    FUN name:emit visibility:public modality:OPEN <> ($this:<root>.SafeCollector<T of <root>.SafeCollector>, value:T of <root>.SafeCollector) returnType:kotlin.Unit [suspend]
       overridden:
         public abstract fun emit (value: T of <root>.FlowCollector): kotlin.Unit [suspend] declared in <root>.FlowCollector
       $this: VALUE_PARAMETER name:<this> type:<root>.SafeCollector<T of <root>.SafeCollector>

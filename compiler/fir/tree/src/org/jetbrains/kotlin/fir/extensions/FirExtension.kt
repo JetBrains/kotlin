@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
+import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import kotlin.reflect.KClass
@@ -38,8 +40,8 @@ data class FirExtensionPointName(val name: Name) {
 
 // todo: KDOC
 abstract class FirDeclarationPredicateRegistrar {
-    abstract fun register(vararg predicates: DeclarationPredicate)
-    abstract fun register(predicates: Collection<DeclarationPredicate>)
+    abstract fun register(vararg predicates: AbstractPredicate<*>)
+    abstract fun register(predicates: Collection<AbstractPredicate<*>>)
 }
 
 @RequiresOptIn

@@ -37,9 +37,16 @@ open internal class LeafQuantifierSet(var quantifier: Quantifier,
                                       type: Int
 ) : QuantifierSet(innerSet, next, type) {
 
+    init {
+        innerSet.next = FSet.possessiveFSet
+    }
+
     val leaf: LeafSet get() = super.innerSet as LeafSet
     val min: Int get() = quantifier.min
     val max: Int get() = quantifier.max
+
+    override val consumesFixedLength: Boolean
+        get() = (min == max)
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         var index = startIndex

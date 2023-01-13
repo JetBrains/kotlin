@@ -203,6 +203,10 @@ public class Node implements Cloneable {
         return first;
     }
 
+    public Node getLastChild() {
+        return last;
+    }
+
     public Node getNext() {
         return next;
     }

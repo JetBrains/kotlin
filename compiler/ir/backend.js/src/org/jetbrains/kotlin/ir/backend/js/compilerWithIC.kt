@@ -45,7 +45,7 @@ class JsIrCompilerWithIC(
             configuration = configuration,
             es6mode = es6mode,
             granularity = granularity,
-            icCompatibleIr2Js = IcCompatibleIr2Js.IC_MODE,
+            incrementalCacheEnabled = true
         )
     }
 
@@ -53,7 +53,7 @@ class JsIrCompilerWithIC(
         allModules: Collection<IrModuleFragment>,
         dirtyFiles: Collection<IrFile>,
         mainArguments: List<String>?
-    ): List<JsIrFragmentAndBinaryAst> {
+    ): List<() -> JsIrProgramFragment> {
         val shouldGeneratePolyfills = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
 
         allModules.forEach {
@@ -67,8 +67,8 @@ class JsIrCompilerWithIC(
 
         lowerPreservingTags(allModules, context, PhaseConfig(jsPhases), context.irFactory.stageController as WholeWorldStageController)
 
-        val transformer = IrModuleToJsTransformerTmp(context, mainArguments)
-        return transformer.generateBinaryAst(dirtyFiles, allModules)
+        val transformer = IrModuleToJsTransformer(context, mainArguments)
+        return transformer.makeIrFragmentsGenerators(dirtyFiles, allModules)
     }
 }
 

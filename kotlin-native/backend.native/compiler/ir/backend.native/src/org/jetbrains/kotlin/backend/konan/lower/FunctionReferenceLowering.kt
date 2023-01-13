@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -28,7 +28,38 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-internal class FunctionReferenceLowering(val context: Context) : FileLoweringPass {
+/**
+ * Transforms a function reference into a subclass of `kotlin.native.internal.KFunctionImpl` and `kotlin.FunctionN`,
+ * or `kotlin.native.internal.KSuspendFunctionImpl` and `kotlin.KSuspendFunctionN` (for suspend functions/lambdas),
+ * or `Any` (for simple lamdbas), or a custom superclass (in case of SAM conversion).
+ *
+ * For example, `::bar$lambda$0<BarTP>` in the following code:
+ * ```kotlin
+ * fun <FooTP> foo(v: FooTP, l: (FooTP) -> String): String {
+ *     return l(v)
+ * }
+ *
+ * private fun <T> bar$lambda$0(t: T): String { /* ... */ }
+ *
+ * fun <BarTP> bar(v: BarTP): String {
+ *     return foo(v, ::bar$lambda$0<BarTP>)
+ * }
+ * ```
+ *
+ * is lowered into:
+ * ```kotlin
+ * private class bar$lambda$0$FUNCTION_REFERENCE$0<T> : kotlin.native.internal.KFunctionImpl<String>, kotlin.Function1<T, String> {
+ *     override fun invoke(p1: T): String {
+ *         return bar$lambda$0<T>(p1)
+ *     }
+ * }
+ *
+ * fun <BarTP> bar(v: BarTP): String {
+ *     return foo(v, bar$lambda$0$FUNCTION_REFERENCE$0<BarTP>())
+ * }
+ * ```
+ */
+internal class FunctionReferenceLowering(val generationState: NativeGenerationState) : FileLoweringPass {
     private object DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL : IrDeclarationOriginImpl("FUNCTION_REFERENCE_IMPL")
 
     companion object {
@@ -136,9 +167,9 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
 
             fun transformFunctionReference(expression: IrFunctionReference, samSuperType: IrType? = null): IrExpression {
                 val parent: IrDeclarationContainer = (currentClass?.irElement as? IrClass) ?: irFile
-                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
+                val irBuilder = generationState.context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol,
                         expression.startOffset, expression.endOffset)
-                val (clazz, newExpression) = FunctionReferenceBuilder(irFile, parent, expression, context, irBuilder, samSuperType).build()
+                val (clazz, newExpression) = FunctionReferenceBuilder(irFile, parent, expression, generationState, irBuilder, samSuperType).build()
                 generatedClasses.add(clazz)
                 return newExpression
             }
@@ -153,16 +184,17 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             val irFile: IrFile,
             val parent: IrDeclarationParent,
             val functionReference: IrFunctionReference,
-            val context: Context,
+            val generationState: NativeGenerationState,
             val irBuilder: IrBuilderWithScope,
             val samSuperType: IrType? = null,
     ) {
         data class BuiltFunctionReference(val functionReferenceClass: IrClass, val functionReferenceExpression: IrExpression)
 
+        private val context = generationState.context
         private val irBuiltIns = context.irBuiltIns
         private val symbols = context.ir.symbols
         private val irFactory = context.irFactory
-        private val fileLowerState = context.generationState.fileLowerState
+        private val fileLowerState = generationState.fileLowerState
 
         private val startOffset = functionReference.startOffset
         private val endOffset = functionReference.endOffset
@@ -170,18 +202,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
         private val functionParameters = referencedFunction.explicitParameters
         private val boundFunctionParameters = functionReference.getArgumentsWithIr().map { it.first }
         private val unboundFunctionParameters = functionParameters - boundFunctionParameters
-
-        private val typeArgumentsMap = referencedFunction.typeParameters.associate { typeParam ->
-            typeParam.symbol to functionReference.getTypeArgument(typeParam.index)!!
-        }
-        private val functionParameterAndReturnTypes = (functionReference.type as IrSimpleType).arguments.map {
-            when (it) {
-                is IrTypeProjection -> it.type
-                else -> context.irBuiltIns.anyNType
-            }
-        }
-        private val functionParameterTypes = functionParameterAndReturnTypes.dropLast(1)
-        private val functionReturnType = functionParameterAndReturnTypes.last()
 
         private val isLambda = functionReference.origin.isLambda
         private val isKFunction = functionReference.type.isKFunction()
@@ -199,11 +219,20 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             visibility = DescriptorVisibilities.PRIVATE
         }.apply {
             parent = this@FunctionReferenceBuilder.parent
+            copyTypeParametersFrom(referencedFunction)
             createParameterDeclarations()
 
             // copy the generated name for IrClass, partially solves KT-47194
-            context.generationState.copyLocalClassName(functionReference, this)
+            generationState.copyLocalClassName(functionReference, this)
         }
+
+        private val typeArguments = functionReferenceClass.typeParameters.map { typeParam ->
+            typeParam.symbol to functionReference.getTypeArgument(typeParam.index)!!
+        }
+
+        private val typeParameterRemapper = IrTypeParameterRemapper(referencedFunction.typeParameters.zip(functionReferenceClass.typeParameters).toMap())
+        private val functionParameterTypes = unboundFunctionParameters.map { typeParameterRemapper.remapType(it.type) }
+        private val functionReturnType = typeParameterRemapper.remapType(referencedFunction.returnType)
 
         private val functionReferenceThis = functionReferenceClass.thisReceiver!!
 
@@ -217,8 +246,6 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                 isFinal = true
             }
         }
-
-        private fun IrClass.getInvokeFunction() = simpleFunctions().single { it.name.asString() == "invoke" }
 
         private val kFunctionImplSymbol = symbols.kFunctionImpl
         private val kFunctionImplConstructorSymbol = kFunctionImplSymbol.constructors.single()
@@ -239,14 +266,15 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                 transformedSuperMethod = samSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }.owner
             } else {
                 val numberOfParameters = unboundFunctionParameters.size
+                val functionParameterAndReturnTypes = functionParameterTypes + functionReturnType
                 if (isKSuspendFunction) {
                     val suspendFunctionClass = symbols.kSuspendFunctionN(numberOfParameters).owner
                     superTypes += suspendFunctionClass.typeWith(functionParameterAndReturnTypes)
-                    transformedSuperMethod = suspendFunctionClass.getInvokeFunction()
+                    transformedSuperMethod = suspendFunctionClass.invokeFun!!
                 } else {
                     val functionClass = (if (isKFunction) symbols.kFunctionN(numberOfParameters) else symbols.functionN(numberOfParameters)).owner
                     superTypes += functionClass.typeWith(functionParameterAndReturnTypes)
-                    transformedSuperMethod = functionClass.getInvokeFunction()
+                    transformedSuperMethod = functionClass.invokeFun!!
                 }
             }
             val originalSuperMethod = context.mapping.functionWithContinuationsToSuspendFunctions[transformedSuperMethod] ?: transformedSuperMethod
@@ -312,6 +340,8 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                     ignoredParentSymbols = listOf(transformedSuperMethod.symbol)
             )
 
+            functionReferenceClass.remapTypes(typeParameterRemapper)
+
             return functionReferenceClass
         }
 
@@ -321,6 +351,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             origin = DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL
             isPrimary = true
         }.apply {
+            val typeArgumentsMap = typeArguments.toMap()
             valueParameters += boundFunctionParameters.mapIndexed { index, parameter ->
                 parameter.copyTo(this, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
                         type = parameter.type.substitute(typeArgumentsMap))
@@ -345,10 +376,11 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
             val clazz = buildClass()
             val constructor = buildConstructor()
             val arguments = functionReference.getArgumentsWithIr()
+            val typeArguments = typeArguments.map { it.second }
             val expression = if (arguments.isEmpty()) {
-                irBuilder.irConstantObject(clazz, emptyMap())
+                irBuilder.irConstantObject(clazz, emptyMap(), typeArguments)
             } else {
-                irBuilder.irCall(constructor).apply {
+                irBuilder.irCallConstructor(constructor.symbol, typeArguments).apply {
                     arguments.forEachIndexed { index, argument ->
                         putValueArgument(index, argument.second)
                     }
@@ -448,7 +480,7 @@ internal class FunctionReferenceLowering(val context: Context) : FileLoweringPas
                             assert(unboundIndex == valueParameters.size) { "Not all arguments of <invoke> are used" }
 
                             referencedFunction.typeParameters.forEach { typeParam ->
-                                putTypeArgument(typeParam.index, functionReference.getTypeArgument(typeParam.index)!!)
+                                putTypeArgument(typeParam.index, functionReferenceClass.typeParameters[typeParam.index].defaultType)
                             }
                         }
                 )

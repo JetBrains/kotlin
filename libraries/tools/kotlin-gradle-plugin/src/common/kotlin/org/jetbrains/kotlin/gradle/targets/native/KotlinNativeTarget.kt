@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
 abstract class KotlinNativeTarget @Inject constructor(
@@ -60,7 +61,7 @@ abstract class KotlinNativeTarget @Inject constructor(
 
             if (hostSpecificSourceSets.isNotEmpty()) {
                 val hostSpecificMetadataJar = project.locateOrRegisterTask<Jar>(hostSpecificMetadataJarTaskName) { metadataJar ->
-                    metadataJar.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCase() })
+                    metadataJar.archiveAppendix.set(project.provider { disambiguationClassifier.orEmpty().toLowerCaseAsciiOnly() })
                     metadataJar.archiveClassifier.set("metadata")
                     metadataJar.group = BasePlugin.BUILD_GROUP
                     metadataJar.description = "Assembles Kotlin metadata of target '${name}'."
@@ -93,7 +94,7 @@ abstract class KotlinNativeTarget @Inject constructor(
                 mutableUsageContexts.add(
                     DefaultKotlinUsageContext(
                         mainCompilation,
-                        project.usageByName(javaApiUsageForMavenScoping()),
+                        KotlinUsageContext.MavenScope.COMPILE,
                         metadataConfiguration.name,
                         includeIntoProjectStructureMetadata = false
                     )
@@ -101,11 +102,15 @@ abstract class KotlinNativeTarget @Inject constructor(
             }
         }
 
-        val result = createKotlinVariant(targetName, mainCompilation, mutableUsageContexts)
-
-        result.sourcesArtifacts = setOf(
-            sourcesJarArtifact(mainCompilation, targetName, dashSeparatedName(targetName.toLowerCase()))
+        configureSourcesJarArtifact(mainCompilation, targetName, dashSeparatedName(targetName.toLowerCaseAsciiOnly()))
+        val sourcesUsage = DefaultKotlinUsageContext(
+            compilation = mainCompilation,
+            dependencyConfigurationName = sourcesElementsConfigurationName,
+            includeIntoProjectStructureMetadata = false,
         )
+        mutableUsageContexts += sourcesUsage
+
+        val result = createKotlinVariant(targetName, mainCompilation, mutableUsageContexts)
 
         setOf(result)
     }

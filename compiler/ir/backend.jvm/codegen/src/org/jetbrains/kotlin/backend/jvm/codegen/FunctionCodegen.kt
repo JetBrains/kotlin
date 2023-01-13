@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrClassReference
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -30,7 +33,6 @@ import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
@@ -235,14 +237,10 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         if (!classCodegen.irClass.isAnnotationClass) return null
         // TODO: any simpler way to get to the value expression?
         // Are there other valid IR structures that represent the default value?
-        return irFunction.safeAs<IrSimpleFunction>()
-            ?.correspondingPropertySymbol?.owner
-            ?.backingField
-            ?.initializer.safeAs<IrExpressionBody>()
-            ?.expression?.safeAs<IrGetValue>()
-            ?.symbol?.owner?.safeAs<IrValueParameter>()
-            ?.defaultValue?.safeAs<IrExpressionBody>()
-            ?.expression
+        val backingField = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.backingField
+        val getValue = backingField?.initializer?.expression as? IrGetValue
+        val parameter = getValue?.symbol?.owner as? IrValueParameter
+        return parameter?.defaultValue?.expression
     }
 
     private fun IrFunction.createFrameMapWithReceivers(): IrFrameMap {

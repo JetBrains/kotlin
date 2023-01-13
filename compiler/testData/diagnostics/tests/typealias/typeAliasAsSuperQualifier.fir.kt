@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 open class Base {
@@ -22,7 +23,7 @@ class TestSuperForBase : B() {
     override fun foo() {
         super<Base>.foo()
         super<B>.foo()
-        super<<!NOT_A_SUPERTYPE!>MyBase<!>>.foo()
+        super<MyBase>.foo()
         super<<!NOT_A_SUPERTYPE!>U<!>>.foo()
     }
 }
@@ -34,7 +35,7 @@ class TestSuperForGenericBase<T> : GB<T>() {
     override fun foo() {
         super<GenericBase>.foo()
         super<GB>.foo()
-        super<<!NOT_A_SUPERTYPE!>MyBase<!>>.foo()
+        super<MyBase>.foo()
         super<<!NOT_A_SUPERTYPE!>MyBaseInt<!>>.foo() // Type arguments don't matter here
         super<<!NOT_A_SUPERTYPE!>U<!>>.foo()
     }

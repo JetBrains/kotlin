@@ -1,0 +1,7 @@
+
+package pod1 {
+    var C: Int
+        @CCall(id = "knifunptr_pod10_C_getter") get
+        @CCall(id = "knifunptr_pod11_C_setter") set
+}
+

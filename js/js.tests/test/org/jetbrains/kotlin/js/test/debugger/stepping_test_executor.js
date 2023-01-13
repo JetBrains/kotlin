@@ -16,8 +16,11 @@ try {
     vm.runInContext(code, sandbox, testFilePath);
     // language=JavaScript
     vm.runInContext(`
+            const __continuation = main.testUtils.makeEmptyContinuation();
+            // noinspection JSUnusedLocalSymbols (called in debugger, see JsDebugRunner)
+            const __makeValueDescriptionForSteppingTests = main.testUtils.makeValueDescriptionForSteppingTests;
             debugger;
-            main.box();
+            main.box(__continuation);
         `,
         sandbox
     );

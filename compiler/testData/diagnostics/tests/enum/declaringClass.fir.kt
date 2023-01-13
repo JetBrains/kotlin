@@ -7,10 +7,10 @@ import java.util.*
 enum class SomeEnum { A }
 
 fun bar() {
-    SomeEnum.A.declaringClass
+    SomeEnum.A.<!UNRESOLVED_REFERENCE!>declaringClass<!>
 }
 
 fun <E : Enum<E>> foo(values: Array<E>) {
-    EnumSet.noneOf(values.first().declaringClass)
-    EnumSet.noneOf(values.first().getDeclaringClass())
+    EnumSet.noneOf(values.first().<!UNRESOLVED_REFERENCE!>declaringClass<!>)
+    EnumSet.noneOf(values.first().<!UNRESOLVED_REFERENCE!>getDeclaringClass<!>())
 }

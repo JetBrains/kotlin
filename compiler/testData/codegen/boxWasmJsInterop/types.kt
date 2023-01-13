@@ -63,7 +63,7 @@ function getObjectValueAny(x) {
 external fun isTestString(x: String): Boolean
 external fun getTestString(): String
 external fun concatStrings(x: String, y: String): String
-//external fun concatStringsNullable(x: String?, y: String?): String?
+external fun concatStringsNullable(x: String?, y: String?): String?
 
 external fun isTrueBoolean(x: Boolean): Boolean
 external fun isFalseBoolean(x: Boolean): Boolean
@@ -84,7 +84,7 @@ fun box(): String {
     if (getTestString() != "Test string") return "Fail getTestString"
     if (concatStrings("A", "B") != "AB") return "Fail concatStrings 1"
     if (concatStrings("Привет ", "😀\uD83D") != "Привет 😀\uD83D") return "Fail concatStrings 2"
-//    if (concatStringsNullable("A", "B") != "AB") return "Fail concatStringsNullable 1"
+    if (concatStringsNullable("A", "B") != "AB") return "Fail concatStringsNullable 1"
 
     // Boolean
     if (!isTrueBoolean(true)) return "Fail !isTrueBoolean"

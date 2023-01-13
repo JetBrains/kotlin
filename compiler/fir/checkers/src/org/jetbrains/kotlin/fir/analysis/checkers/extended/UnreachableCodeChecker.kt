@@ -49,6 +49,7 @@ object UnreachableCodeChecker : FirControlFlowChecker() {
         val skipType = this is ExitNodeMarker ||
                 this is EnterNodeMarker ||
                 this is StubNode ||
+                this is SplitPostponedLambdasNode ||
                 this is BinaryOrExitLeftOperandNode ||
                 this is BinaryOrEnterRightOperandNode ||
                 this is BinaryAndExitLeftOperandNode ||

@@ -29,12 +29,10 @@ interface ObjCNameI1 {
     @ObjCName("someOtherValue")
     val someValue: Int
     @ObjCName("someOtherFunction")
-    // KT-53317
-    fun /* @receiver:ObjCName("receiver") */ Int.someFunction(@ObjCName("otherParam") param: Int): Int
+    fun @receiver:ObjCName("receiver") Int.someFunction(@ObjCName("otherParam") param: Int): Int
 }
 
-// KT-53317
-fun /* @receiver:ObjCName("of") */ ObjCNameI1.getSomeValue(): Int = someValue
+fun @receiver:ObjCName("of") ObjCNameI1.getSomeValue(): Int = someValue
 
 @ObjCName(swiftName = "SwiftNameC2")
 class ObjCNameC2: ObjCNameI1 {
@@ -61,8 +59,7 @@ class ObjCNameC3 {
 }
 
 private interface ObjCNameI2 {
-    // KT-53317
-    fun /* @receiver:ObjCName("objCReceiver") */ Int.foo(@ObjCName("objCParam") param: Int): Int
+    fun @receiver:ObjCName("objCReceiver") Int.foo(@ObjCName("objCParam") param: Int): Int
 }
 
 class ObjCNameC4: ObjCNameI2 {
@@ -85,3 +82,5 @@ enum class ObjCNameKotlinEnum {
         fun foo(): Int = 0
     }
 }
+
+class ObjCAvoidPreprocessorName(@property:ObjCName("time") @ObjCName("time") val __TIME__: Int)

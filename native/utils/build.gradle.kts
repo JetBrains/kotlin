@@ -8,6 +8,7 @@ description = "Kotlin/Native utils"
 dependencies {
     compileOnly(kotlinStdlib())
     api(project(":kotlin-util-io"))
+    api(platform(project(":kotlin-gradle-plugins-bom")))
 
     testImplementation(commonDependency("junit:junit"))
     testImplementation(kotlinStdlib())

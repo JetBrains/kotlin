@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
@@ -41,10 +40,10 @@ internal class KtFe10OverrideInfoProvider(
         throw NotImplementedError("Method is not implemented for FE 1.0")
     }
 
-    override fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol?  {
-        val callableDescriptor = getSymbolDescriptor(symbol) as? CallableMemberDescriptor ?: return null
-        val originalCallableDescriptor = callableDescriptor.findOriginalTopMostOverriddenDescriptors().firstOrNull() ?: return null
-        return originalCallableDescriptor.toKtCallableSymbol(analysisContext)
+    override fun unwrapFakeOverrides(symbol: KtCallableSymbol): KtCallableSymbol {
+        val callableDescriptor = getSymbolDescriptor(symbol) as? CallableMemberDescriptor ?: return symbol
+        val originalCallableDescriptor = callableDescriptor.findOriginalTopMostOverriddenDescriptors().firstOrNull() ?: return symbol
+        return originalCallableDescriptor.toKtCallableSymbol(analysisContext) ?: symbol
     }
 
     override fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol?  {

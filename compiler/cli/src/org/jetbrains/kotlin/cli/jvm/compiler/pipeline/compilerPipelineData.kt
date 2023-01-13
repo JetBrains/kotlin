@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -42,14 +43,6 @@ data class ModuleCompilerOutput(
     val generationState: GenerationState
 )
 
-// ---
-
-data class ModuleCompilerAnalyzedOutput(
-    val session: FirSession,
-    val scopeSession: ScopeSession,
-    val fir: List<FirFile>
-)
-
 data class ModuleCompilerIrBackendInput(
     val targetId: TargetId,
     val configuration: CompilerConfiguration,
@@ -57,5 +50,6 @@ data class ModuleCompilerIrBackendInput(
     val irModuleFragment: IrModuleFragment,
     val symbolTable: SymbolTable,
     val components: Fir2IrComponents,
-    val firSession: FirSession
+    val firSession: FirSession,
+    val pluginContext: Fir2IrPluginContext
 )

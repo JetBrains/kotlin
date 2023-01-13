@@ -18,7 +18,7 @@ import java.io.IOException
 
 internal class TestExecutable(
     val executableFile: File,
-    val loggedCompilerCall: LoggedData.CompilerCall,
+    val loggedCompilationToolCall: LoggedData.CompilerCall,
     val testNames: Collection<TestName>
 ) {
     companion object {
@@ -43,7 +43,7 @@ internal class TestExecutable(
 
             return TestExecutable(
                 executableFile = compilationResult.resultingArtifact.executableFile,
-                loggedCompilerCall = compilationResult.loggedData,
+                loggedCompilationToolCall = compilationResult.loggedData,
                 testNames = testNames
             )
         }
@@ -96,9 +96,22 @@ internal sealed interface TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) = Unit
     }
 
+    class WithLLDB(val commands: List<String>) : TestRunParameter {
+        override fun applyTo(programArgs: MutableList<String>) {
+            programArgs.add(0, "lldb")
+            programArgs.addAll(commands)
+        }
+    }
+
     // Currently, used only for logging the data.
     class WithExpectedOutputData(val expectedOutputDataFile: File) : TestRunParameter {
         override fun applyTo(programArgs: MutableList<String>) = Unit
+    }
+
+    class WithFreeCommandLineArguments(val args: List<String>) : TestRunParameter {
+        override fun applyTo(programArgs: MutableList<String>) {
+            programArgs += args
+        }
     }
 }
 

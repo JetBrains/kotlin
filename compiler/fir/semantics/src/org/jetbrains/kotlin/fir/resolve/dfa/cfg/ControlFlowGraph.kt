@@ -6,20 +6,15 @@
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
-import org.jetbrains.kotlin.fir.expressions.FirLoopJump
+import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
-    private var _nodes: MutableList<CFGNode<*>> = mutableListOf()
+    @set:CfgInternals
+    var nodeCount = 0
 
-    val nodes: List<CFGNode<*>>
-        get() = _nodes
-
-    internal fun addNode(node: CFGNode<*>) {
-        assertState(State.Building)
-        _nodes.add(node)
-    }
+    lateinit var nodes: List<CFGNode<*>>
+        private set
 
     @set:CfgInternals
     lateinit var enterNode: CFGNode<*>
@@ -27,70 +22,41 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     @set:CfgInternals
     lateinit var exitNode: CFGNode<*>
 
-    var owner: ControlFlowGraph? = null
-        private set
+    val isSubGraph: Boolean
+        get() = enterNode.previousNodes.isNotEmpty()
 
-    var state: State = State.Building
-        private set
-
-    private val _subGraphs: MutableList<ControlFlowGraph> = mutableListOf()
-    val subGraphs: List<ControlFlowGraph> get() = _subGraphs
+    val subGraphs: List<ControlFlowGraph>
+        get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
 
     @CfgInternals
     fun complete() {
-        assertState(State.Building)
-        state = State.Completed
-        if (kind == Kind.Stub) return
-        val sortedNodes = orderNodes()
-        // TODO Fix this
-//        assert(sortedNodes.size == _nodes.size)
-//        for (node in _nodes) {
-//            assert(node in sortedNodes)
-//        }
-        _nodes.clear()
-        _nodes.addAll(sortedNodes)
+        nodes = orderNodes()
     }
 
-    @CfgInternals
-    fun addSubGraph(graph: ControlFlowGraph) {
-        assert(graph.owner == null) {
-            "SubGraph already has owner"
-        }
-        graph.owner = this
-        _subGraphs += graph
+    enum class Kind {
+        Class,
+        Function,
+        AnonymousFunction,
+        AnonymousFunctionCalledInPlace,
+        PropertyInitializer,
+        FieldInitializer,
+        FakeCall,
+        DefaultArgument,
     }
 
-    @CfgInternals
-    fun removeSubGraph(graph: ControlFlowGraph) {
-        assert(graph.owner == this)
-        _subGraphs.remove(graph)
-        graph.owner = null
-
-        CFGNode.removeAllIncomingEdges(graph.enterNode)
-        CFGNode.removeAllOutgoingEdges(graph.exitNode)
-    }
-
-    private fun assertState(state: State) {
-        assert(this.state == state) {
-            "This action can not be performed at $this state"
+    // NOTE: this is only for dynamic dispatch on node types. If you're collecting data from predecessors,
+    // use `collectDataForNode` instead to account for `finally` block deduplication. If you don't need that,
+    // then you probably don't need this either. Hint: if the only thing you need from nodes is the corresponding
+    // FIR structure, then traverse the `FirFile` instead.
+    fun <D> traverse(visitor: ControlFlowGraphVisitor<*, D>, data: D) {
+        for (node in nodes) {
+            node.accept(visitor, data)
+            (node as? CFGNodeWithSubgraphs<*>)?.subGraphs?.forEach { it.traverse(visitor, data) }
         }
     }
 
-    enum class State {
-        Building,
-        Completed;
-    }
-
-    enum class Kind(val withBody: Boolean) {
-        Function(withBody = true),
-        AnonymousFunction(withBody = true),
-        ClassInitializer(withBody = true),
-        PropertyInitializer(withBody = true),
-        FieldInitializer(withBody = true),
-        TopLevel(withBody = false),
-        AnnotationCall(withBody = true),
-        DefaultArgument(withBody = false),
-        Stub(withBody = true)
+    fun traverse(visitor: ControlFlowGraphVisitorVoid) {
+        traverse(visitor, null)
     }
 }
 
@@ -126,35 +92,18 @@ data class Edge(
 }
 
 sealed class EdgeLabel(val label: String?) {
-    open val isNormal: Boolean
-        get() = false
-
     override fun toString(): String {
         return label ?: ""
     }
 }
 
-object NormalPath : EdgeLabel(label = null) {
-    override val isNormal: Boolean
-        get() = true
-}
-
-object LoopBackPath : EdgeLabel(label = null) {
-    override val isNormal: Boolean
-        get() = true
-}
-
+object NormalPath : EdgeLabel(label = null)
 object UncaughtExceptionPath : EdgeLabel(label = "onUncaughtException")
 
-class LoopPath(
-    firLoopJump: FirLoopJump
-) : EdgeLabel("\"" + (if (firLoopJump is FirBreakExpression) "break" else "continue") +
-                      (firLoopJump.target.labeledElement.label?.let { "@${it.name}" } ?: "") + "\"")
-
 // TODO: Label `return`ing edge with this.
-class ReturnPath(
-    returnTargetSymbol: FirFunctionSymbol<*>
-) : EdgeLabel(label = "\"return@${returnTargetSymbol.callableId}\"")
+data class ReturnPath(val target: FirFunctionSymbol<*>) : EdgeLabel(label = "return@${target.callableId}")
+data class LoopBreakPath(val loop: FirLoop) : EdgeLabel(loop.label?.let { "break@${it.name}" } ?: "break")
+data class LoopContinuePath(val loop: FirLoop) : EdgeLabel(loop.label?.let { "continue@${it.name}" } ?: "continue")
 
 enum class EdgeKind(
     val usedInDfa: Boolean, // propagate flow to alive nodes
@@ -171,50 +120,39 @@ enum class EdgeKind(
     DeadBackward(usedInDfa = false, usedInDeadDfa = false, usedInCfa = true, isBack = true, isDead = true)
 }
 
-private fun ControlFlowGraph.orderNodes(): LinkedHashSet<CFGNode<*>> {
-    val visitedNodes = linkedSetOf<CFGNode<*>>()
-    /*
-     * [delayedNodes] is needed to accomplish next order contract:
-     *   for each node all previous node lays before it
-     */
-    val stack = ArrayDeque<CFGNode<*>>()
-    stack.addFirst(enterNode)
-    while (stack.isNotEmpty()) {
-        val node = stack.removeFirst()
-        val previousNodes = node.previousNodes
-        if (previousNodes.any { it !in visitedNodes && it.owner == this && !node.incomingEdges.getValue(it).kind.isBack }) {
-            stack.addLast(node)
-            continue
-        }
-        if (!visitedNodes.add(node)) continue
-        val followingNodes = node.followingNodes
+private val CFGNode<*>.previousNodeCount
+    get() = previousNodes.count { it.owner == owner && !edgeFrom(it).kind.isBack }
 
-        for (followingNode in followingNodes) {
-            if (followingNode.owner == this) {
-                if (followingNode !in visitedNodes) {
-                    stack.addFirst(followingNode)
+private fun ControlFlowGraph.orderNodes(): List<CFGNode<*>> {
+    // NOTE: this produces a BFS order. If desired, a DFS order can be created instead by using a linked list,
+    // iterating over `followingNodes` in reverse order, and inserting new nodes at the current iteration point.
+    val result = ArrayList<CFGNode<*>>(nodeCount).apply { add(enterNode) }
+    val countdowns = IntArray(nodeCount)
+    var i = 0
+    while (i < result.size) {
+        val node = result[i++]
+        for (next in node.followingNodes) {
+            if (next.owner != this) {
+                // Assume nodes in this graph can be ordered in isolation. If necessary, dead edges
+                // should be used to go around subgraphs that always execute.
+            } else if (next.previousNodes.size == 1) {
+                // Fast path: assume `next.previousNodes` is `listOf(node)`, and the edge is forward.
+                // In tests, the consistency checker will validate this assumption.
+                result.add(next)
+            } else if (!node.edgeTo(next).kind.isBack) {
+                // Can only read a 0 if never seen this node before.
+                val remaining = countdowns[next.id].let { if (it == 0) next.previousNodeCount else it } - 1
+                if (remaining == 0) {
+                    result.add(next)
                 }
-            } else {
-                walkThrowSubGraphs(followingNode.owner, visitedNodes, stack)
+                countdowns[next.id] = remaining
             }
         }
     }
-    return visitedNodes
-}
-
-private fun ControlFlowGraph.walkThrowSubGraphs(
-    otherGraph: ControlFlowGraph,
-    visitedNodes: Set<CFGNode<*>>,
-    stack: ArrayDeque<CFGNode<*>>
-) {
-    if (otherGraph.owner != this) return
-    for (otherNode in otherGraph.exitNode.followingNodes) {
-        if (otherNode.owner == this) {
-            if (otherNode !in visitedNodes) {
-                stack.addFirst(otherNode)
-            }
-        } else if (otherNode.owner != otherGraph) {
-            walkThrowSubGraphs(otherNode.owner, visitedNodes, stack)
-        }
+    assert(result.size == nodeCount) {
+        // TODO: can theoretically dump loop nodes into the output in some order so that `ControlFlowGraphRenderer`
+        //  could show them for debugging purposes.
+        "some nodes ${if (countdowns.all { it == 0 }) "are not reachable" else "form loops"} in control flow graph $name"
     }
+    return result
 }

@@ -64,7 +64,7 @@ interface Xcode {
     }
 }
 
-private class CurrentXcode : Xcode {
+internal class CurrentXcode : Xcode {
 
     override val toolchain by lazy {
         val ldPath = xcrun("-f", "ld") // = $toolchain/usr/bin/ld
@@ -87,10 +87,19 @@ private class CurrentXcode : Xcode {
     override val watchosSdk: String by lazy { getSdkPath("watchos") }
     override val watchsimulatorSdk: String by lazy { getSdkPath("watchsimulator") }
 
+    internal val xcodebuildVersion: String
+        get() = xcrun("xcodebuild", "-version")
+                .removePrefix("Xcode ")
+
+    internal val bundleVersion: String
+        get() = bash("""/usr/libexec/PlistBuddy "$(xcode-select -print-path)/../Info.plist" -c "Print :CFBundleShortVersionString"""")
 
     override val version by lazy {
-        xcrun("xcodebuild", "-version")
-                .removePrefix("Xcode ")
+        try {
+            bundleVersion
+        } catch (e: KonanExternalToolFailure) {
+            xcodebuildVersion
+        }
     }
 
     private fun xcrun(vararg args: String): String = try {
@@ -106,6 +115,8 @@ private class CurrentXcode : Xcode {
             """.trimIndent()
         throw MissingXcodeException(message, e)
     }
+
+    private fun bash(command: String): String = Command("/bin/bash", "-c", command).getOutputLines().joinToString("\n")
 
     private fun getSdkPath(sdk: String) = xcrun("--sdk", sdk, "--show-sdk-path")
 }

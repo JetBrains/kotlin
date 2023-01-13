@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.common.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.hasCCallAnnotation
@@ -16,9 +17,9 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstantPrimitiveImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNullable
@@ -134,7 +134,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType): IrExpression {
-        val conversion = symbols.getTypeConversion(actualType, expectedType)
+        val conversion = context.getTypeConversion(actualType, expectedType)
         return if (conversion == null) {
             this
         } else {
@@ -239,7 +239,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
 
         val field = expression.symbol.owner
         val parentClass = field.parentClassOrNull
-        return if (parentClass == null || !parentClass.isInlined())
+        return if (parentClass == null || !parentClass.isInlined() || field.isStatic)
             expression
         else {
             builder.at(expression)
@@ -254,7 +254,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     override fun visitSetField(expression: IrSetField): IrExpression {
         super.visitSetField(expression)
 
-        return if (expression.symbol.owner.parentClassOrNull?.isInlined() == true) {
+        return if (expression.symbol.owner.parentClassOrNull?.isInlined() == true && !expression.symbol.owner.isStatic) {
             // Happens in one of the cases:
             // 1. In primary constructor of the inlined class. Makes no sense, "has no effect", can be removed.
             //    The constructor will be lowered and used.
@@ -442,7 +442,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             lateinit var thisVar: IrValueDeclaration
 
             fun IrBuilderWithScope.genReturnValue(): IrExpression = if (irConstructor.isPrimary) {
-                irGetObject(irBuiltIns.unitClass)
+                irCall(symbols.theUnitInstance)
             } else {
                 irGet(thisVar)
             }
@@ -502,10 +502,10 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     }
 
     private fun getInlineClassBackingField(irClass: IrClass): IrField =
-            irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField }.single()
+            irClass.declarations.filterIsInstance<IrProperty>().mapNotNull { it.backingField?.takeUnless { it.isStatic } }.single()
 }
 
-private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpleFunction by Context.lazyMapMember { irConstructor ->
+private fun Context.getLoweredInlineClassConstructor(irConstructor: IrConstructor): IrSimpleFunction = mapping.loweredInlineClassConstructors.getOrPut(irConstructor) {
     require(irConstructor.constructedClass.isInlined())
 
     val returnType = if (irConstructor.isPrimary) {
@@ -518,23 +518,13 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
         irConstructor.returnType
     }
 
-    IrFunctionImpl(
-            irConstructor.startOffset, irConstructor.endOffset,
-            IrDeclarationOrigin.DEFINED,
-            IrSimpleFunctionSymbolImpl(),
-            Name.special("<constructor>"),
-            irConstructor.visibility,
-            Modality.FINAL,
-            isInline = false,
-            isExternal = false,
-            isTailrec = false,
-            isSuspend = false,
-            returnType = returnType,
-            isExpect = false,
-            isFakeOverride = false,
-            isOperator = false,
-            isInfix = false
-    ).apply {
+    irFactory.buildFun {
+        startOffset = irConstructor.startOffset
+        endOffset = irConstructor.endOffset
+        name = Name.special("<constructor>")
+        visibility = irConstructor.visibility
+        this.returnType = returnType
+    }.apply {
         parent = irConstructor.parent
 
         // Note: technically speaking, this function doesn't have access to class type parameters (since it is "static").
@@ -543,6 +533,6 @@ private val Context.getLoweredInlineClassConstructor: (IrConstructor) -> IrSimpl
         // So it is just a trick to make [copyTo] happy:
         val remapTypeMap = irConstructor.constructedClass.typeParameters.associateBy { it }
 
-        valueParameters += irConstructor.valueParameters.map { it.copyTo(this, remapTypeMap = remapTypeMap) }
+        valueParameters = irConstructor.valueParameters.map { it.copyTo(this, remapTypeMap = remapTypeMap) }
     }
 }

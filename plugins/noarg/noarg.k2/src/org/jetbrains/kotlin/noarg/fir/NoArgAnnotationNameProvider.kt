@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.noarg.fir
 
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.extensions.predicate.annotated
-import org.jetbrains.kotlin.fir.extensions.predicate.metaAnnotated
-import org.jetbrains.kotlin.fir.extensions.predicate.or
+import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.utils.AbstractSimpleClassPredicateMatchingService
 import org.jetbrains.kotlin.name.FqName
 
@@ -22,7 +20,7 @@ class FirNoArgPredicateMatcher(
         }
     }
 
-    override val predicate = run {
+    override val predicate = DeclarationPredicate.create {
         val annotationFqNames = noArgAnnotationFqNames.map { FqName(it) }
         annotated(annotationFqNames) or metaAnnotated(annotationFqNames)
     }

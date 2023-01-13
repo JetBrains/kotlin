@@ -24,6 +24,12 @@ class JvmAbiComponentRegistrar : CompilerPluginRegistrar() {
         if (configuration.get(JvmAbiConfigurationKeys.LEGACY_ABI_GEN, false)) {
             if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
                 messageCollector.report(CompilerMessageSeverity.ERROR, "Legacy jvm-abi-gen does not support K2 compiler.")
+            } else {
+                messageCollector.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "Legacy jvm-abi-gen is deprecated and will be removed in a future version. " +
+                            "Please migrate to the new jvm-abi-gen implementation."
+                )
             }
             // Use the two-pass implementation
             if (outputPath.endsWith(".jar")) {

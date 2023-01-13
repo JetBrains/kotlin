@@ -24,6 +24,6 @@ class NoDescriptorForDeclarationException @JvmOverloads constructor(declaration:
                 + (additionalDetails?.let { "\n---------------------------------------------------\n$it" } ?: "")
     ) {
     init {
-        withAttachment("declaration.kt", declaration.getElementTextWithContext())
+        withPsiAttachment("declaration.kt", declaration)
     }
 }

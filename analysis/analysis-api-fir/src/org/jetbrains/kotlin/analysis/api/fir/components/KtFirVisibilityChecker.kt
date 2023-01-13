@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.components.KtVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
@@ -84,6 +83,7 @@ internal class KtFirVisibilityChecker(
 
         return designation
             .toSequence(includeTarget = true) // we include the starting declaration in case it is a class or an object
+            .filterIsInstance<FirDeclaration>()
             .toList()
     }
 

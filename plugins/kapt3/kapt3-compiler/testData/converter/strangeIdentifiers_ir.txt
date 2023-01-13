@@ -1,7 +1,5 @@
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Anno {
 
     public abstract StrangeEnum size();
@@ -11,8 +9,6 @@ public abstract @interface Anno {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public enum StrangeEnum {
@@ -31,8 +27,6 @@ public enum StrangeEnum {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class Test {

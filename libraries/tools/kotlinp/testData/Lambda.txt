@@ -4,6 +4,8 @@ package {
 
   // signature: test()V
   public final fun test(): kotlin/Unit
+
+  // module name: test-module
 }
 // LambdaKt$test$f$1.class
 // ------------------------------------------

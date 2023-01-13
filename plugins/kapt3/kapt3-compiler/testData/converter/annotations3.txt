@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class B {
 
@@ -10,8 +8,6 @@ public final class B {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class BParceler implements Parceler<B> {
@@ -26,8 +22,6 @@ public final class BParceler implements Parceler<B> {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class C {
 
@@ -38,8 +32,6 @@ public final class C {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class CParceler implements Parceler<C> {
@@ -54,8 +46,6 @@ public final class CParceler implements Parceler<C> {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface Parceler<T extends java.lang.Object> {
 }
@@ -63,11 +53,9 @@ public abstract interface Parceler<T extends java.lang.Object> {
 ////////////////////
 
 
-import java.lang.System;
-
-@TypeParceler()
-@TypeParceler()
 @kotlin.Metadata()
+@TypeParceler()
+@TypeParceler()
 public final class Test {
 
     public Test() {
@@ -78,13 +66,11 @@ public final class Test {
 ////////////////////
 
 
-import java.lang.System;
-
-@kotlin.Metadata()
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
-@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY})
-@kotlin.annotation.Repeatable()
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+@kotlin.annotation.Repeatable()
+@kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
+@kotlin.Metadata()
 public abstract @interface TypeParceler<T extends java.lang.Object, P extends Parceler<? super T>> extends java.lang.annotation.Annotation {
 }

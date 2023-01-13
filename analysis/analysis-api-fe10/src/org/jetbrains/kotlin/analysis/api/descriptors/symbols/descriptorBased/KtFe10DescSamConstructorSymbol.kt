@@ -1,23 +1,23 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.calculateHashCode
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.*
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.isEqualTo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10DescSamConstructorSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
-import org.jetbrains.kotlin.analysis.api.symbols.KtSamConstructorSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.returnTypeOrNothing
@@ -46,8 +46,8 @@ internal class KtFe10DescSamConstructorSymbol(
     override val returnType: KtType
         get() = withValidityAssertion { descriptor.returnTypeOrNothing.toKtType(analysisContext) }
 
-    override val receiverType: KtType?
-        get() = withValidityAssertion { descriptor.extensionReceiverParameter?.type?.toKtType(analysisContext) }
+    override val receiverParameter: KtReceiverParameterSymbol?
+        get() = withValidityAssertion { descriptor.extensionReceiverParameter?.toKtReceiverParameterSymbol(analysisContext) }
 
     override val contextReceivers: List<KtContextReceiver>
         get() = withValidityAssertion { descriptor.createContextReceivers(analysisContext) }
@@ -62,10 +62,10 @@ internal class KtFe10DescSamConstructorSymbol(
         get() = withValidityAssertion { descriptor.typeParameters.map { KtFe10DescTypeParameterSymbol(it, analysisContext) } }
 
 
+    context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtSamConstructorSymbol> = withValidityAssertion {
-        val pointerByPsi = KtPsiBasedSymbolPointer.createForSymbolFromSource(this)
-        if (pointerByPsi != null) {
-            return pointerByPsi
+        KtPsiBasedSymbolPointer.createForSymbolFromSource<KtSamConstructorSymbol>(this)?.let {
+            return it
         }
 
         val classId = descriptor.baseDescriptorForSynthetic.classId
@@ -75,4 +75,7 @@ internal class KtFe10DescSamConstructorSymbol(
 
         return KtFe10NeverRestoringSymbolPointer()
     }
+
+    override fun equals(other: Any?): Boolean = isEqualTo(other)
+    override fun hashCode(): Int = calculateHashCode()
 }

@@ -22,6 +22,10 @@ import com.intellij.util.io.DataExternalizer
 import com.intellij.util.io.EnumeratorStringDescriptor
 import com.intellij.util.io.IOUtil
 import com.intellij.util.io.KeyDescriptor
+import org.jetbrains.kotlin.inline.InlineFunction
+import org.jetbrains.kotlin.inline.InlineFunctionOrAccessor
+import org.jetbrains.kotlin.inline.InlinePropertyAccessor
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMemberSignature
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -165,53 +169,6 @@ object StringToLongMapExternalizer : StringMapExternalizer<Long>() {
     }
 }
 
-/** [DataExternalizer] for a Kotlin constant. */
-object ConstantExternalizer : DataExternalizer<Any> {
-
-    override fun save(output: DataOutput, value: Any) {
-        when (value) {
-            is Int -> {
-                output.writeByte(Kind.INT.ordinal)
-                output.writeInt(value)
-            }
-            is Float -> {
-                output.writeByte(Kind.FLOAT.ordinal)
-                output.writeFloat(value)
-            }
-            is Long -> {
-                output.writeByte(Kind.LONG.ordinal)
-                output.writeLong(value)
-            }
-            is Double -> {
-                output.writeByte(Kind.DOUBLE.ordinal)
-                output.writeDouble(value)
-            }
-            is String -> {
-                output.writeByte(Kind.STRING.ordinal)
-                output.writeString(value)
-            }
-            else -> throw IllegalStateException("Unexpected constant class: ${value::class.java}")
-        }
-    }
-
-    override fun read(input: DataInput): Any {
-        return when (Kind.values()[input.readByte().toInt()]) {
-            Kind.INT -> input.readInt()
-            Kind.FLOAT -> input.readFloat()
-            Kind.LONG -> input.readLong()
-            Kind.DOUBLE -> input.readDouble()
-            Kind.STRING -> input.readString()
-        }
-    }
-
-    // The constants' values are provided by ASM, so their types can only be the following.
-    // See https://asm.ow2.io/javadoc/org/objectweb/asm/ClassVisitor.html#visitField(int,java.lang.String,java.lang.String,java.lang.String,java.lang.Object)
-    // (Note: Boolean constants have Integer (0, 1) values in ASM.)
-    private enum class Kind {
-        INT, FLOAT, LONG, DOUBLE, STRING
-    }
-}
-
 fun <T> DataExternalizer<T>.saveToFile(file: File, value: T) {
     return DataOutputStream(FileOutputStream(file).buffered()).use {
         save(it, value)
@@ -248,6 +205,16 @@ object LongExternalizer : DataExternalizer<Long> {
     override fun read(input: DataInput): Long = input.readLong()
 }
 
+object FloatExternalizer : DataExternalizer<Float> {
+    override fun save(output: DataOutput, value: Float) = output.writeFloat(value)
+    override fun read(input: DataInput): Float = input.readFloat()
+}
+
+object DoubleExternalizer : DataExternalizer<Double> {
+    override fun save(output: DataOutput, value: Double) = output.writeDouble(value)
+    override fun read(input: DataInput): Double = input.readDouble()
+}
+
 object StringExternalizer : DataExternalizer<String> {
     override fun save(output: DataOutput, value: String) = IOUtil.writeString(value, output)
     override fun read(input: DataInput): String = IOUtil.readString(input)
@@ -265,6 +232,33 @@ object PathStringDescriptor : EnumeratorStringDescriptor() {
         val path1 = FileUtil.toCanonicalPath(val1)
         val path2 = FileUtil.toCanonicalPath(val2)
         return path1 == path2
+    }
+}
+
+/** [DataExternalizer] that delegates to another [DataExternalizer] depending on the type of the object to externalize. */
+class DelegateDataExternalizer<T>(
+    val types: List<Class<out T>>,
+    val typesExternalizers: List<DataExternalizer<out T>>
+) : DataExternalizer<T> {
+
+    init {
+        check(types.size == typesExternalizers.size)
+        check(types.size < Byte.MAX_VALUE) // We will writeByte(index), so we need lastIndex (types.size - 1) <= Byte.MAX_VALUE
+    }
+
+    override fun save(output: DataOutput, objectToExternalize: T) {
+        val type = types.single { it.isAssignableFrom(objectToExternalize!!::class.java) }
+        val typeIndex = types.indexOf(type)
+
+        output.writeByte(typeIndex)
+        @Suppress("UNCHECKED_CAST")
+        (typesExternalizers[typeIndex] as DataExternalizer<T>).save(output, objectToExternalize)
+    }
+
+    override fun read(input: DataInput): T {
+        val typeIndex = input.readByte().toInt()
+        @Suppress("UNCHECKED_CAST")
+        return typesExternalizers[typeIndex].read(input) as T
     }
 }
 
@@ -401,3 +395,53 @@ class LinkedHashMapExternalizer<K, V>(
     keyExternalizer: DataExternalizer<K>,
     valueExternalizer: DataExternalizer<V>
 ) : MapExternalizer<K, V, LinkedHashMap<K, V>>(keyExternalizer, valueExternalizer, { size -> LinkedHashMap(size) })
+
+object JvmMethodSignatureExternalizer : DataExternalizer<JvmMemberSignature.Method> {
+
+    override fun save(output: DataOutput, method: JvmMemberSignature.Method) {
+        StringExternalizer.save(output, method.name)
+        StringExternalizer.save(output, method.desc)
+    }
+
+    override fun read(input: DataInput): JvmMemberSignature.Method {
+        return JvmMemberSignature.Method(
+            name = StringExternalizer.read(input),
+            desc = StringExternalizer.read(input)
+        )
+    }
+}
+
+object InlineFunctionOrAccessorExternalizer : DataExternalizer<InlineFunctionOrAccessor> by DelegateDataExternalizer(
+    types = listOf(InlineFunction::class.java, InlinePropertyAccessor::class.java),
+    typesExternalizers = listOf(InlineFunctionExternalizer, InlinePropertyAccessorExternalizer)
+)
+
+private object InlineFunctionExternalizer : DataExternalizer<InlineFunction> {
+
+    override fun save(output: DataOutput, function: InlineFunction) {
+        JvmMethodSignatureExternalizer.save(output, function.jvmMethodSignature)
+        StringExternalizer.save(output, function.kotlinFunctionName)
+    }
+
+    override fun read(input: DataInput): InlineFunction {
+        return InlineFunction(
+            jvmMethodSignature = JvmMethodSignatureExternalizer.read(input),
+            kotlinFunctionName = StringExternalizer.read(input)
+        )
+    }
+}
+
+private object InlinePropertyAccessorExternalizer : DataExternalizer<InlinePropertyAccessor> {
+
+    override fun save(output: DataOutput, accessor: InlinePropertyAccessor) {
+        JvmMethodSignatureExternalizer.save(output, accessor.jvmMethodSignature)
+        StringExternalizer.save(output, accessor.propertyName)
+    }
+
+    override fun read(input: DataInput): InlinePropertyAccessor {
+        return InlinePropertyAccessor(
+            jvmMethodSignature = JvmMethodSignatureExternalizer.read(input),
+            propertyName = StringExternalizer.read(input)
+        )
+    }
+}

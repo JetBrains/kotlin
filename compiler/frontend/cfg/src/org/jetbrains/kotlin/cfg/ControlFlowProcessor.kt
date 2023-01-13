@@ -938,7 +938,13 @@ class ControlFlowProcessor(
                     // See generateInitializersForClassOrObject && generateDeclarationForLocalClassOrObjectIfNeeded
                     labelExprEnclosingFunc is ConstructorDescriptor && !labelExprEnclosingFunc.isPrimary
                 ) {
-                    trace.report(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY.on(jumpExpression))
+                    val dependsOnInlineLambdas = !skipInlineFunctions &&
+                            getEnclosingFunctionDescriptor(bindingContext, jumpExpression, true) == getEnclosingFunctionDescriptor(bindingContext, jumpTarget, true)
+                    if (dependsOnInlineLambdas) {
+                        trace.report(UNSUPPORTED_FEATURE.on(jumpExpression, BreakContinueInInlineLambdas to languageVersionSettings))
+                    } else {
+                        trace.report(BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY.on(jumpExpression))
+                    }
                 }
                 false
             } else {

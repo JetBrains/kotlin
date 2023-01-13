@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -43,6 +43,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(anonymousObject)
+        impl(danglingModifierList)
         noImpl(anonymousObjectExpression)
 
         impl(typeAlias)
@@ -101,6 +102,9 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             default("argumentMapping") {
                 needAcceptAndTransform = false
             }
+            default("annotationResolvePhase") {
+                value = "FirAnnotationResolvePhase.Types"
+            }
         }
 
         impl(arrayOfCall)
@@ -108,7 +112,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(callableReferenceAccess)
 
         impl(componentCall) {
-            default("calleeReference", "FirSimpleNamedReference(source, Name.identifier(\"component\$componentIndex\"), null)")
+            default("calleeReference", "FirSimpleNamedReference(source, Name.identifier(\"component\$componentIndex\"))")
             useTypes(simpleNamedReferenceType, nameType)
             optInToInternals()
         }
@@ -123,6 +127,35 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
             useTypes(explicitThisReferenceType, explicitSuperReferenceType)
+        }
+
+        impl(delegatedConstructorCall, "FirLazyDelegatedConstructorCall") {
+            val error = """error("FirLazyDelegatedConstructorCall should be calculated before accessing")"""
+            default("source") {
+                value = error
+                withGetter = true
+            }
+            default("annotations") {
+                value = error
+                withGetter = true
+            }
+            default("argumentList") {
+                value = error
+                withGetter = true
+            }
+            default("contextReceiverArguments") {
+                value = error
+                withGetter = true
+            }
+            default("dispatchReceiver") {
+                value = error
+                withGetter = true
+            }
+            default("isSuper") {
+                value = "!isThis"
+                withGetter = true
+            }
+            publicImplementation()
         }
 
         impl(expression, "FirElseIfTrueCondition") {
@@ -142,6 +175,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(block, "FirLazyBlock") {
             val error = """error("FirLazyBlock should be calculated before accessing")"""
+            default("source") {
+                value = error
+                withGetter = true
+            }
             default("statements") {
                 value = error
                 withGetter = true
@@ -159,7 +196,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(errorLoop) {
             default("block", "FirEmptyExpressionBlock()")
-            default("condition", "FirErrorExpressionImpl(source, mutableListOf(), ConeStubDiagnostic(diagnostic), null, null)")
+            default("condition", "FirErrorExpressionImpl(source, MutableOrEmptyList.empty(), ConeStubDiagnostic(diagnostic), null, null)")
             useTypes(emptyExpressionBlock, coneStubDiagnosticType)
         }
 
@@ -219,7 +256,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultFalse("isVar", withGetter = true)
 
             defaultNull(
-                "receiverTypeRef",
+                "receiverParameter",
                 "initializer",
                 "delegate",
                 "getter", "setter",
@@ -236,13 +273,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
             publicImplementation()
 
-            defaultNull("receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
+            defaultNull("receiverParameter", "delegate", "getter", "setter", withGetter = true)
         }
 
         impl(enumEntry) {
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
-            defaultNull("receiverTypeRef", "delegate", "getter", "setter", withGetter = true)
+            defaultNull("receiverParameter", "delegate", "getter", "setter", withGetter = true)
         }
 
         impl(namedArgumentExpression) {
@@ -331,7 +368,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(anonymousFunctionExpression)
 
         impl(propertyAccessor) {
-            default("receiverTypeRef") {
+            default("receiverParameter") {
                 value = "null"
                 withGetter = true
             }
@@ -368,22 +405,21 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
-        impl(resolvedNamedReference) {
-            defaultNull("candidateSymbol", withGetter = true)
-        }
+        impl(resolvedNamedReference)
 
         impl(resolvedNamedReference, "FirPropertyFromParameterResolvedNamedReference") {
-            defaultNull("candidateSymbol", withGetter = true)
             publicImplementation()
         }
 
-        impl(resolvedCallableReference) {
-            defaultNull("candidateSymbol", withGetter = true)
-        }
+        impl(resolvedErrorReference)
+
+        impl(resolvedCallableReference)
 
         impl(namedReference, "FirSimpleNamedReference") {
-            kind = OpenClass
+            publicImplementation()
         }
+
+        noImpl(namedReferenceWithCandidateBase)
 
         impl(delegateFieldReference) {
             default("name") {
@@ -433,8 +469,13 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             useTypes(errorTypeRefImplType, coneStubDiagnosticType)
         }
 
+        impl(qualifiedErrorAccessExpression) {
+            default("typeRef", "FirErrorTypeRefImpl(source, null, ConeStubDiagnostic(diagnostic), false)")
+            useTypes(errorTypeRefImplType, coneStubDiagnosticType)
+        }
+
         impl(errorFunction) {
-            defaultNull("receiverTypeRef", "body", withGetter = true)
+            defaultNull("receiverParameter", "body", withGetter = true)
             default("returnTypeRef", "FirErrorTypeRefImpl(null, null, diagnostic, false)")
             useTypes(errorTypeRefImplType)
         }
@@ -469,7 +510,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(valueParameter) {
             defaultTrue("isVal", withGetter = true)
             defaultFalse("isVar", withGetter = true)
-            defaultNull("getter", "setter", "initializer", "delegate", "receiverTypeRef", withGetter = true)
+            defaultNull("getter", "setter", "initializer", "delegate", "receiverParameter", withGetter = true)
         }
 
         impl(valueParameter, "FirDefaultSetterValueParameter") {
@@ -511,7 +552,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(userTypeRef)
 
         impl(file) {
-            default("symbol", "FirFileSymbol()")
+            default("annotations") {
+                value = "annotationsContainer.annotations"
+                withGetter = true
+            }
         }
 
         noImpl(argumentList)
@@ -569,6 +613,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirArrayOfCallImpl",
             "FirIntegerLiteralOperatorCallImpl",
             "FirContextReceiverImpl",
+            "FirReceiverParameterImpl",
             "FirClassReferenceExpressionImpl",
             "FirGetClassCallImpl",
             "FirSmartCastExpressionImpl"

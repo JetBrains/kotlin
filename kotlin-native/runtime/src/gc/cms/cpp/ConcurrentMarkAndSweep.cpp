@@ -22,6 +22,10 @@
 #include "FinalizerProcessor.hpp"
 #include "GCStatistics.hpp"
 
+#ifdef CUSTOM_ALLOCATOR
+#include "Heap.hpp"
+#endif
+
 using namespace kotlin;
 
 namespace {
@@ -53,6 +57,12 @@ void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
     gcScheduler_.OnSafePointAllocation(size);
     mm::SuspendIfRequested();
 }
+
+void gc::ConcurrentMarkAndSweep::ThreadData::Schedule() noexcept {
+    ThreadStateGuard guard(ThreadState::kNative);
+    gc_.state_.schedule();
+}
+
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
     ThreadStateGuard guard(ThreadState::kNative);
     auto scheduled_epoch = gc_.state_.schedule();
@@ -88,11 +98,13 @@ NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendFo
 
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
+#ifndef CUSTOM_ALLOCATOR
     objectFactory_(objectFactory),
+#endif
     gcScheduler_(gcScheduler),
     finalizerProcessor_(std_support::make_unique<FinalizerProcessor>([this](int64_t epoch) {
-        state_.finalized(epoch);
         GCHandle::getByEpoch(epoch).finalizersDone();
+        state_.finalized(epoch);
     })) {
     gcScheduler_.SetScheduleGC([this]() NO_INLINE {
         RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
@@ -148,6 +160,10 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     WaitForThreadsReadyToMark();
     gcHandle.threadsAreSuspended();
 
+#ifdef CUSTOM_ALLOCATOR
+    heap_.PrepareForGC();
+#endif
+
     auto& scheduler = gcScheduler_;
     scheduler.gcData().OnPerformFullGC();
 
@@ -165,15 +181,18 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectDataFactory);
 
+#ifndef CUSTOM_ALLOCATOR
     auto objectFactoryIterable = objectFactory_.LockForIter();
-
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();
-
     auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, objectFactoryIterable);
-
+#else
+    mm::ResumeThreads();
+    gcHandle.threadsAreResumed();
+    SweepTraits::ObjectFactory::FinalizerQueue finalizerQueue;
+    heap_.Sweep();
+#endif
     kotlin::compactObjectPoolInMainThread();
-
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();

@@ -242,6 +242,10 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
         return !(parent instanceof KtFile || parent instanceof KtClassBody);
     }
 
+    public boolean isAnonymous() {
+        return getName() == null && isLocal();
+    }
+
     public boolean isTopLevel() {
         KotlinFunctionStub stub = getStub();
         if (stub != null) {
@@ -259,7 +263,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
 
     @Override
     public KtContractEffectList getContractDescription() {
-        return findChildByType(KtNodeTypes.CONTRACT_EFFECT_LIST);
+        return getStubOrPsiChild(KtStubElementTypes.CONTRACT_EFFECT_LIST);
     }
 
     public boolean mayHaveContract() {

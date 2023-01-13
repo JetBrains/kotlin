@@ -180,7 +180,7 @@ fun checkLog(wrapInEmptySuite: Boolean = true, body: SuiteContext.() -> Unit): S
     val actualLog = sortingContext.replayInto(LoggingContext()).log
 
     if (actualLog != expectedLog) {
-        return "Failed test structure check. Expected: ${expectedLog}; actual: ${actualLog}."
+        return "Failed test structure check. Expected: \"${expectedLog}\"; actual: \"${actualLog}\"."
     }
     else {
         return "OK"

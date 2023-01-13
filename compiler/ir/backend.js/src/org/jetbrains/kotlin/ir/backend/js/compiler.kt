@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnb
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
 import org.jetbrains.kotlin.ir.backend.js.lower.collectNativeImplementations
 import org.jetbrains.kotlin.ir.backend.js.lower.generateJsTests
 import org.jetbrains.kotlin.ir.backend.js.lower.moveBodilessDeclarationsToSeparatePlace
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.ir.backend.js.utils.NameTables
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
@@ -26,19 +26,30 @@ import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
 
 class CompilerResult(
     val outputs: Map<TranslationMode, CompilationOutputs>,
-    val tsDefinitions: String? = null
 )
 
 class CompilationOutputs(
     val jsCode: String,
+    val tsDefinitions: TypeScriptFragment? = null,
     val jsProgram: JsProgram? = null,
     val sourceMap: String? = null,
     val dependencies: Iterable<Pair<String, CompilationOutputs>> = emptyList()
-)
+) {
+    fun addDependencies(depends: Iterable<Pair<String, CompilationOutputs>>): CompilationOutputs {
+        return CompilationOutputs(jsCode, tsDefinitions, jsProgram, sourceMap, depends)
+    }
+
+    fun getFullTsDefinition(name: String, moduleKind: ModuleKind): String {
+        val allTsDefinitions = dependencies.mapNotNull { it.second.tsDefinitions } + listOfNotNull(tsDefinitions)
+        return allTsDefinitions.toTypeScript(name, moduleKind)
+    }
+}
 
 class LoweredIr(
     val context: JsIrBackendContext,
@@ -56,12 +67,10 @@ fun compile(
     dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
     es6mode: Boolean = false,
     verifySignatures: Boolean = true,
-    baseClassIntoMetadata: Boolean = false,
     safeExternalBoolean: Boolean = false,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     filesToLower: Set<String>? = null,
     granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
-    icCompatibleIr2Js: Boolean = false,
 ): LoweredIr {
 
     val (moduleFragment: IrModuleFragment, dependencyModules, irBuiltIns, symbolTable, deserializer, moduleToName) =
@@ -81,11 +90,9 @@ fun compile(
         keep,
         dceRuntimeDiagnostic,
         es6mode,
-        baseClassIntoMetadata,
         safeExternalBoolean,
         safeExternalBooleanDiagnostic,
         granularity,
-        icCompatibleIr2Js,
     )
 }
 
@@ -103,11 +110,9 @@ fun compileIr(
     keep: Set<String>,
     dceRuntimeDiagnostic: RuntimeDiagnostic?,
     es6mode: Boolean,
-    baseClassIntoMetadata: Boolean,
     safeExternalBoolean: Boolean,
     safeExternalBooleanDiagnostic: RuntimeDiagnostic?,
     granularity: JsGenerationGranularity,
-    icCompatibleIr2Js: Boolean,
 ): LoweredIr {
     val moduleDescriptor = moduleFragment.descriptor
     val irFactory = symbolTable.irFactory
@@ -128,11 +133,10 @@ fun compileIr(
         configuration,
         es6mode = es6mode,
         dceRuntimeDiagnostic = dceRuntimeDiagnostic,
-        baseClassIntoMetadata = baseClassIntoMetadata,
         safeExternalBoolean = safeExternalBoolean,
         safeExternalBooleanDiagnostic = safeExternalBooleanDiagnostic,
         granularity = granularity,
-        icCompatibleIr2Js = if (icCompatibleIr2Js) IcCompatibleIr2Js.COMPATIBLE else IcCompatibleIr2Js.DISABLED,
+        incrementalCacheEnabled = false
     )
 
     // Load declarations referenced during `context` initialization
@@ -158,21 +162,6 @@ fun compileIr(
     } ?: jsPhases.invokeToplevel(phaseConfig, context, allModules)
 
     return LoweredIr(context, moduleFragment, allModules, moduleToName)
-}
-
-fun generateJsCode(
-    context: JsIrBackendContext,
-    moduleFragment: IrModuleFragment,
-    nameTables: NameTables
-): String {
-    if (context.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)) {
-        collectNativeImplementations(context, moduleFragment)
-    }
-    moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
-    jsPhases.invokeToplevel(PhaseConfig(jsPhases), context, listOf(moduleFragment))
-
-    val transformer = IrModuleToJsTransformer(context, null, true, nameTables)
-    return transformer.generateModule(listOf(moduleFragment)).outputs[TranslationMode.FULL]!!.jsCode
 }
 
 fun CompilationOutputs.writeSourceMapIfPresent(outputJsFile: File) {

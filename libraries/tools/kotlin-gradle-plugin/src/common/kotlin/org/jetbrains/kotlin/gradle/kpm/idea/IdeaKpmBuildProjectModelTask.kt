@@ -14,7 +14,7 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
-import org.jetbrains.kotlin.kpm.idea.proto.writeTo
+import org.jetbrains.kotlin.gradle.idea.proto.kpm.writeTo
 import java.io.ByteArrayOutputStream
 import java.io.ObjectOutputStream
 

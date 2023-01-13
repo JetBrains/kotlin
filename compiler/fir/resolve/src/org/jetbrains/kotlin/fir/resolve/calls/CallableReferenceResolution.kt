@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
-import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -30,8 +29,10 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 
 internal object CheckCallableReferenceExpectedType : CheckerStage() {
@@ -71,8 +72,7 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
             }
 
             val declarationReceiverType: ConeKotlinType? =
-                fir.receiverTypeRef?.coneType
-                    ?.let(candidate.substitutor::substituteOrSelf)
+                fir.receiverParameter?.typeRef?.coneType?.let(candidate.substitutor::substituteOrSelf)
 
             if (resultingReceiverType != null && declarationReceiverType != null) {
                 val capturedReceiver = context.session.typeContext.captureFromExpression(resultingReceiverType) ?: resultingReceiverType
@@ -115,7 +115,7 @@ private fun buildReflectionType(
                 )
 
             val parameters = mutableListOf<ConeKotlinType>()
-            if (fir.receiverTypeRef == null && receiverType != null) {
+            if (fir.receiverParameter == null && receiverType != null) {
                 parameters += receiverType
             }
 
@@ -134,10 +134,11 @@ private fun buildReflectionType(
                     callableReferenceAdaptation?.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
             return createFunctionalType(
                 parameters,
-                receiverType = receiverType.takeIf { fir.receiverTypeRef != null },
+                receiverType = receiverType.takeIf { fir.receiverParameter != null },
                 rawReturnType = returnType,
                 isKFunctionType = true,
-                isSuspend = isSuspend
+                isSuspend = isSuspend,
+                contextReceivers = fir.contextReceivers.map { it.typeRef.coneType }
             ) to callableReferenceAdaptation
         }
         is FirVariable -> createKPropertyType(fir, receiverType, returnTypeRef, candidate) to null
@@ -371,25 +372,29 @@ class FirFakeArgumentForCallableReference(
         get() = null
 
     override val typeRef: FirTypeRef
-        get() = error("should not be called")
+        get() = shouldNotBeCalled()
 
     override val annotations: List<FirAnnotation>
-        get() = error("should not be called")
+        get() = shouldNotBeCalled()
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
-        error("should not be called")
+        shouldNotBeCalled()
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        shouldNotBeCalled()
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirNamedArgumentExpression {
-        error("should not be called")
+        shouldNotBeCalled()
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        error("should not be called")
+        shouldNotBeCalled()
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        error("should not be called")
+        shouldNotBeCalled()
     }
 }
 

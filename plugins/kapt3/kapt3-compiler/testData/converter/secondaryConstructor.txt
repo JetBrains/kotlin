@@ -1,7 +1,5 @@
 package secondary;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface Named {
 
@@ -13,15 +11,13 @@ public abstract interface Named {
 
 package secondary;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Product2 implements secondary.Named {
     @org.jetbrains.annotations.Nullable()
     private java.lang.String name;
 
-    @org.jetbrains.annotations.Nullable()
     @java.lang.Override()
+    @org.jetbrains.annotations.Nullable()
     public java.lang.String getName() {
         return null;
     }

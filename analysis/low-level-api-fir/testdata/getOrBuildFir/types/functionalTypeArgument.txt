@@ -1,5 +1,5 @@
 KT element: KtParameter
-FIR element: FirValueParameterImpl
+FIR element: FirFunctionTypeParameterImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:

@@ -1,0 +1,5 @@
+fun <J : A> foo(j: J): J
+
+fun <T> foo(j: T): T
+
+open class A

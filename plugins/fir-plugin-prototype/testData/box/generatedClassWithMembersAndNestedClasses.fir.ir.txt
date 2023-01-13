@@ -28,11 +28,11 @@ FILE fqName:bar fileName:/generatedClassWithMembersAndNestedClasses.kt
   FUN name:testConstructor visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:generatedClass type:foo.AllOpenGenerated [val]
-        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in foo.AllOpenGenerated' type=foo.AllOpenGenerated origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.AllOpenGenerated' type=foo.AllOpenGenerated origin=null
   FUN name:testNestedClasses visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:nestedFoo type:foo.AllOpenGenerated.NestedFoo [val]
-        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in foo.AllOpenGenerated.NestedFoo' type=foo.AllOpenGenerated.NestedFoo origin=null
+        CONSTRUCTOR_CALL 'public constructor <init> () declared in foo.AllOpenGenerated.NestedFoo' type=foo.AllOpenGenerated.NestedFoo origin=null
       RETURN type=kotlin.Nothing from='public final fun testNestedClasses (): kotlin.String declared in bar'
         CALL 'public final fun box (): kotlin.String declared in bar.Foo' type=kotlin.String origin=null
           $this: CALL 'public final fun materialize (): bar.Foo declared in foo.AllOpenGenerated.NestedFoo' type=bar.Foo origin=null

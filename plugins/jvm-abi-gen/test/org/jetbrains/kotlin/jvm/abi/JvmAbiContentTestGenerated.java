@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -53,6 +53,11 @@ public class JvmAbiContentTestGenerated extends AbstractJvmAbiContentTest {
     @TestMetadata("class")
     public void testClass() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/content/class/");
+    }
+
+    @TestMetadata("innerClasses")
+    public void testInnerClasses() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/content/innerClasses/");
     }
 
     @TestMetadata("kt50005")

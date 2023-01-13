@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan
 import kotlinx.cinterop.*
 import llvm.*
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.konan.target.*
 import java.io.Closeable
@@ -56,7 +57,7 @@ data class LlvmPipelineConfig(
         val sanitizer: SanitizerKind?,
 )
 
-private fun getCpuModel(context: Context): String {
+private fun getCpuModel(context: PhaseContext): String {
     val target = context.config.target
     val configurables: Configurables = context.config.platform.configurables
     return configurables.targetCpu ?: run {
@@ -65,10 +66,10 @@ private fun getCpuModel(context: Context): String {
     }
 }
 
-private fun getCpuFeatures(context: Context): String =
+private fun getCpuFeatures(context: PhaseContext): String =
         context.config.platform.configurables.targetCpuFeatures ?: ""
 
-private fun tryGetInlineThreshold(context: Context): Int? {
+private fun tryGetInlineThreshold(context: PhaseContext): Int? {
     val configurables: Configurables = context.config.platform.configurables
     return configurables.llvmInlineThreshold?.let {
         it.toIntOrNull() ?: run {
@@ -86,22 +87,23 @@ private fun tryGetInlineThreshold(context: Context): Int? {
  * Still, runtime is not intended to be debugged by user, and we can optimize it pretty aggressively
  * even in debug compilation.
  */
-internal fun createLTOPipelineConfigForRuntime(context: Context): LlvmPipelineConfig {
-    val configurables: Configurables = context.config.platform.configurables
+internal fun createLTOPipelineConfigForRuntime(generationState: NativeGenerationState): LlvmPipelineConfig {
+    val config = generationState.config
+    val configurables: Configurables = config.platform.configurables
     return LlvmPipelineConfig(
-            context.generationState.llvm.targetTriple,
-            getCpuModel(context),
-            getCpuFeatures(context),
+            generationState.llvm.targetTriple,
+            getCpuModel(generationState),
+            getCpuFeatures(generationState),
             LlvmOptimizationLevel.AGGRESSIVE,
             LlvmSizeLevel.NONE,
             LLVMCodeGenOptLevel.LLVMCodeGenLevelAggressive,
-            configurables.currentRelocationMode(context).translateToLlvmRelocMode(),
+            configurables.currentRelocationMode(generationState).translateToLlvmRelocMode(),
             LLVMCodeModel.LLVMCodeModelDefault,
             globalDce = false,
             internalize = false,
             objCPasses = configurables is AppleConfigurables,
             makeDeclarationsHidden = false,
-            inlineThreshold = tryGetInlineThreshold(context),
+            inlineThreshold = tryGetInlineThreshold(generationState),
             sanitizer = null
     )
 }
@@ -114,53 +116,54 @@ internal fun createLTOPipelineConfigForRuntime(context: Context): LlvmPipelineCo
  * In case of debug we do almost nothing (that's why we need [createLTOPipelineConfigForRuntime]),
  * but for release binaries we rely on "closed" world and enable a lot of optimizations.
  */
-internal fun createLTOFinalPipelineConfig(context: Context): LlvmPipelineConfig {
-    val target = context.config.target
-    val configurables: Configurables = context.config.platform.configurables
-    val cpuModel = getCpuModel(context)
-    val cpuFeatures = getCpuFeatures(context)
+internal fun createLTOFinalPipelineConfig(generationState: NativeGenerationState): LlvmPipelineConfig {
+    val config = generationState.config
+    val target = config.target
+    val configurables: Configurables = config.platform.configurables
+    val cpuModel = getCpuModel(generationState)
+    val cpuFeatures = getCpuFeatures(generationState)
     val optimizationLevel: LlvmOptimizationLevel = when {
-        context.shouldOptimize() -> LlvmOptimizationLevel.AGGRESSIVE
-        context.shouldContainDebugInfo() -> LlvmOptimizationLevel.NONE
+        generationState.shouldOptimize() -> LlvmOptimizationLevel.AGGRESSIVE
+        generationState.shouldContainDebugInfo() -> LlvmOptimizationLevel.NONE
         else -> LlvmOptimizationLevel.DEFAULT
     }
     val sizeLevel: LlvmSizeLevel = when {
         // We try to optimize code as much as possible on embedded targets.
         target is KonanTarget.ZEPHYR ||
                 target == KonanTarget.WASM32 -> LlvmSizeLevel.AGGRESSIVE
-        context.shouldOptimize() -> LlvmSizeLevel.NONE
-        context.shouldContainDebugInfo() -> LlvmSizeLevel.NONE
+        generationState.shouldOptimize() -> LlvmSizeLevel.NONE
+        generationState.shouldContainDebugInfo() -> LlvmSizeLevel.NONE
         else -> LlvmSizeLevel.NONE
     }
     val codegenOptimizationLevel: LLVMCodeGenOptLevel = when {
-        context.shouldOptimize() -> LLVMCodeGenOptLevel.LLVMCodeGenLevelAggressive
-        context.shouldContainDebugInfo() -> LLVMCodeGenOptLevel.LLVMCodeGenLevelNone
+        generationState.shouldOptimize() -> LLVMCodeGenOptLevel.LLVMCodeGenLevelAggressive
+        generationState.shouldContainDebugInfo() -> LLVMCodeGenOptLevel.LLVMCodeGenLevelNone
         else -> LLVMCodeGenOptLevel.LLVMCodeGenLevelDefault
     }
-    val relocMode: LLVMRelocMode = configurables.currentRelocationMode(context).translateToLlvmRelocMode()
+    val relocMode: LLVMRelocMode = configurables.currentRelocationMode(generationState).translateToLlvmRelocMode()
     val codeModel: LLVMCodeModel = LLVMCodeModel.LLVMCodeModelDefault
     val globalDce = true
     // Since we are in a "closed world" internalization can be safely used
     // to reduce size of a bitcode with global dce.
-    val internalize = context.llvmModuleSpecification.isFinal
+    val internalize = generationState.llvmModuleSpecification.isFinal
     // Hidden visibility makes symbols internal when linking the binary.
     // When producing dynamic library, this enables stripping unused symbols from binary with -dead_strip flag,
     // similar to DCE enabled by internalize but later:
     //
     // Important for binary size, workarounds references to undefined symbols from interop libraries.
-    val makeDeclarationsHidden = context.config.produce == CompilerOutputKind.STATIC_CACHE
+    val makeDeclarationsHidden = config.produce == CompilerOutputKind.STATIC_CACHE
     val objcPasses = configurables is AppleConfigurables
 
     // Null value means that LLVM should use default inliner params
     // for the provided optimization and size level.
     val inlineThreshold: Int? = when {
-        context.shouldOptimize() -> tryGetInlineThreshold(context)
-        context.shouldContainDebugInfo() -> null
+        generationState.shouldOptimize() -> tryGetInlineThreshold(generationState)
+        generationState.shouldContainDebugInfo() -> null
         else -> null
     }
 
     return LlvmPipelineConfig(
-            context.generationState.llvm.targetTriple,
+            generationState.llvm.targetTriple,
             cpuModel,
             cpuFeatures,
             optimizationLevel,
@@ -173,7 +176,7 @@ internal fun createLTOFinalPipelineConfig(context: Context): LlvmPipelineConfig 
             makeDeclarationsHidden,
             objcPasses,
             inlineThreshold,
-            context.config.sanitizer
+            config.sanitizer
     )
 }
 
@@ -296,7 +299,7 @@ class LlvmOptimizationPipeline(
     }
 }
 
-internal fun RelocationModeFlags.currentRelocationMode(context: Context): RelocationModeFlags.Mode =
+internal fun RelocationModeFlags.currentRelocationMode(context: PhaseContext): RelocationModeFlags.Mode =
         when (determineLinkerOutput(context)) {
             LinkerOutputKind.DYNAMIC_LIBRARY -> dynamicLibraryRelocationMode
             LinkerOutputKind.STATIC_LIBRARY -> staticLibraryRelocationMode

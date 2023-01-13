@@ -17,7 +17,9 @@ FILE: classWithGeneratedMembersAndNestedClass.kt
         public final fun materialize(): R|Foo|
 
         public final class Nested : R|kotlin/Any| {
-            public constructor(): R|Foo.Nested|
+            public constructor(): R|Foo.Nested| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 

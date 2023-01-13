@@ -10,7 +10,6 @@ import kotlinx.cinterop.*
 /**
  * An immutable compile-time array of bytes.
  */
-@ExportTypeInfo("theImmutableBlobTypeInfo")
 public final class ImmutableBlob private constructor() {
     public val size: Int
         get() = getArrayLength()

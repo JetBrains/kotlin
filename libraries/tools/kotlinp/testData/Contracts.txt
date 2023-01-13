@@ -63,6 +63,8 @@ package {
     contract {
       returns(true) implies (p#0 != null)
     }
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

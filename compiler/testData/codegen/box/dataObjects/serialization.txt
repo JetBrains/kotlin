@@ -17,7 +17,6 @@ public final class SerializableDataObject {
     private method <init>(): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public method hashCode(): int
-    private final method readResolve(): java.lang.Object
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
 }
 

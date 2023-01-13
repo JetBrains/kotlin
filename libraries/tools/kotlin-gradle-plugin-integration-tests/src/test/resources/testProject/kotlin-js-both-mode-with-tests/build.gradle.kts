@@ -11,6 +11,7 @@ repositories {
 }
 
 kotlin {
+    @Suppress("DEPRECATION")
     js(BOTH) {
         nodejs {
         }

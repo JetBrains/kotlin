@@ -59,6 +59,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /Outer.A.foo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -72,7 +73,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/collections/Map<X, kotlin/collections/Map<Y, O>>
   symbolKind: CLASS_MEMBER
   typeParameters: [
@@ -92,7 +93,7 @@ KtFunctionSymbol:
       isVararg: false
       name: x
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: X
       symbolKind: LOCAL
       typeParameters: []
@@ -109,7 +110,7 @@ KtFunctionSymbol:
       isVararg: false
       name: y
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: Y
       symbolKind: LOCAL
       typeParameters: []
@@ -131,7 +132,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/collections/Map<X, O>
     symbolKind: ACCESSOR
     typeParameters: []
@@ -152,7 +153,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: map
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/collections/Map<X, O>
   setter: null
   symbolKind: CLASS_MEMBER
@@ -162,6 +163,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.equals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -175,7 +177,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: equals
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -193,7 +195,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: LIBRARY
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
@@ -203,6 +205,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.hashCode
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -216,7 +219,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -226,6 +229,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Any.toString
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -239,7 +243,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []

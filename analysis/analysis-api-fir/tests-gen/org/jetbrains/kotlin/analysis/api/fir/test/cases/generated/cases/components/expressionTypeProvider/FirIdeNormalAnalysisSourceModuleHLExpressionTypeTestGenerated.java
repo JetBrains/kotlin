@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -44,6 +44,12 @@ public class FirIdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exten
     @Test
     public void testAllFilesPresentInExpressionType() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("anonymousFunction.kt")
+    public void testAnonymousFunction() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/anonymousFunction.kt");
     }
 
     @Test
@@ -134,6 +140,12 @@ public class FirIdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exten
     @TestMetadata("list_mutableListOf.kt")
     public void testList_mutableListOf() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/list_mutableListOf.kt");
+    }
+
+    @Test
+    @TestMetadata("nameReference.kt")
+    public void testNameReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/nameReference.kt");
     }
 
     @Test

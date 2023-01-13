@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -18,7 +19,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @GradleOption(
         value = DefaultValue.STRING_NULL_DEFAULT,
-        gradleInputType = GradleInputTypes.INTERNAL // handled by task 'outputFileProperty'
+        gradleInputType = GradleInputTypes.INTERNAL, // handled by task 'outputFileProperty'
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @GradleDeprecatedOption(
         message = "Only for legacy backend. For IR backend please use task.destinationDirectory and moduleName",
@@ -33,14 +35,16 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @GradleOption(
         value = DefaultValue.STRING_NULL_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-ir-output-name", description = "Base name of generated files")
     var moduleName: String? by NullableStringFreezableVar(null)
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-no-stdlib", description = "Don't automatically include the default Kotlin/JS stdlib into compilation dependencies")
     var noStdlib: Boolean by FreezableVar(false)
@@ -61,14 +65,16 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-source-map", description = "Generate source map")
     var sourceMap: Boolean by FreezableVar(false)
 
     @GradleOption(
         value = DefaultValue.STRING_NULL_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-source-map-prefix", description = "Add the specified prefix to paths in the source map")
     var sourceMapPrefix: String? by NullableStringFreezableVar(null)
@@ -87,7 +93,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
      */
     @GradleOption(
         value = DefaultValue.JS_SOURCE_MAP_CONTENT_MODES,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
             value = "-source-map-embed-sources",
@@ -98,7 +105,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @GradleOption(
         value = DefaultValue.JS_SOURCE_MAP_NAMES_POLICY,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
         value = "-source-map-names-policy",
@@ -109,14 +117,16 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-meta-info", description = "Generate .meta.js and .kjsm files with metadata. Use to create a library")
     var metaInfo: Boolean by FreezableVar(false)
 
     @GradleOption(
         value = DefaultValue.JS_ECMA_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-target", valueDescription = "{ v5 }", description = "Generate JS files for specific ECMA version")
     var target: String? by NullableStringFreezableVar(null)
@@ -130,7 +140,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @GradleOption(
         value = DefaultValue.JS_MODULE_KINDS,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
             value = "-module-kind",
@@ -141,7 +152,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @GradleOption(
         value = DefaultValue.JS_MAIN,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
         value = "-main",
@@ -252,11 +264,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var includes: String? by NullableStringFreezableVar(null)
 
     @Argument(
-        value = "-Xcache-directories",
+        value = "-Xcache-directory",
         valueDescription = "<path>",
-        description = "A path to cache directories"
+        description = "A path to cache directory"
     )
-    var cacheDirectories: String? by NullableStringFreezableVar(null)
+    var cacheDirectory: String? by NullableStringFreezableVar(null)
 
     @Argument(value = "-Xir-build-cache", description = "Use compiler to build cache")
     var irBuildCache: Boolean by FreezableVar(false)
@@ -281,14 +293,16 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays to JS typed arrays")
     var typedArrays: Boolean by FreezableVar(true)
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-Xfriend-modules-disabled", description = "Disable internal declaration export")
     var friendModulesDisabled: Boolean by FreezableVar(false)
@@ -336,6 +350,9 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xwasm-enable-asserts", description = "Turn on asserts")
     var wasmEnableAsserts: Boolean by FreezableVar(false)
 
+    @Argument(value = "-Xwasm-generate-wat", description = "Generate wat file")
+    var wasmGenerateWat: Boolean by FreezableVar(false)
+
     @Argument(
         value = "-Xuse-deprecated-legacy-compiler",
         description = "Use deprecated legacy compiler without error"
@@ -348,7 +365,25 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var legacyDeprecatedNoWarn: Boolean by FreezableVar(false)
 
+    private fun MessageCollector.deprecationWarn(value: Boolean, defaultValue: Boolean, name: String) {
+        if (value != defaultValue) {
+            report(CompilerMessageSeverity.WARNING, "'$name' is deprecated and ignored, it will be removed in a future release")
+        }
+    }
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
+        // TODO: 'enableJsScripting' is used in intellij tests
+        //   Drop it after removing the usage from the intellij repository:
+        //   https://github.com/JetBrains/intellij-community/blob/master/plugins/kotlin/gradle/gradle-java/tests/test/org/jetbrains/kotlin/gradle/CompilerArgumentsCachingTest.kt#L329
+        collector.deprecationWarn(enableJsScripting, false, "-Xenable-js-scripting")
+        collector.deprecationWarn(irBaseClassInMetadata, false, "-Xir-base-class-in-metadata")
+        collector.deprecationWarn(irNewIr2Js, true, "-Xir-new-ir2js")
+
+        if (languageVersion >= LanguageVersion.KOTLIN_1_9 && CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value != "true") {
+            collector.deprecationWarn(legacyDeprecatedNoWarn, false, "-Xlegacy-deprecated-no-warn")
+            collector.deprecationWarn(useDeprecatedLegacyCompiler, false, "-Xuse-deprecated-legacy-compiler")
+        }
+
         return super.configureAnalysisFlags(collector, languageVersion).also {
             it[allowFullyQualifiedNameInKClass] = wasm && wasmKClassFqn //Only enabled WASM BE supports this flag
         }
@@ -378,12 +413,15 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             if (isIrBackendEnabled()) {
                 this[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
             }
+            if (wasm) {
+                this[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
+            }
         }
     }
 }
 
 fun K2JSCompilerArguments.isPreIrBackendDisabled(): Boolean =
-    irOnly || irProduceJs || irProduceKlibFile || irBuildCache
+    irOnly || irProduceJs || irProduceKlibFile || irBuildCache || useK2
 
 fun K2JSCompilerArguments.isIrBackendEnabled(): Boolean =
-    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm || irBuildCache
+    irProduceKlibDir || irProduceJs || irProduceKlibFile || wasm || irBuildCache || useK2

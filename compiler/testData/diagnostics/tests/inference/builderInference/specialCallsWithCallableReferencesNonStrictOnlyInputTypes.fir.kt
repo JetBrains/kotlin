@@ -22,14 +22,14 @@ class Flow<out R>(private val block: suspend FlowCollector<R>.() -> Unit)
 
 fun poll81(): Flow<String> {
     return flow {
-        val inv = ::bar2 in setOf(::foo2)
+        val inv = ::bar2 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(::foo2)
         <!UNRESOLVED_REFERENCE!>inv<!>()
     }
 }
 
 fun poll83(): Flow<String> {
     return flow {
-        val inv = ::bar4 in setOf(::foo4)
+        val inv = ::bar4 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(::foo4)
         inv
     }
 }

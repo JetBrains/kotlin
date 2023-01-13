@@ -1,14 +1,20 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.symbols.pointers
 
-public class CanNotCreateSymbolPointerForLocalLibraryDeclarationException(description: String) :
-    IllegalStateException("Could not create a symbol pointer for local symbol $description")
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
+import kotlin.reflect.KClass
 
-public class WrongSymbolForSamConstructor(symbolKind: String) :
-    IllegalStateException(
-        "For symbol with kind = KtSymbolKind.SAM_CONSTRUCTOR, KtSamConstructorSymbol should be created, but was $symbolKind"
-    )
+public class CanNotCreateSymbolPointerForLocalLibraryDeclarationException(identifier: String) :
+    IllegalStateException("Could not create a symbol pointer for local symbol $identifier") {
+    public constructor(klass: KClass<*>) : this(klass.java.simpleName)
+}
+
+public class UnsupportedSymbolKind(identifier: String, kind: KtSymbolKind) : IllegalStateException(
+    "For symbol with kind = KtSymbolKind.${kind.name} was $identifier"
+) {
+    public constructor(clazz: KClass<*>, kind: KtSymbolKind) : this(clazz.java.simpleName, kind)
+}

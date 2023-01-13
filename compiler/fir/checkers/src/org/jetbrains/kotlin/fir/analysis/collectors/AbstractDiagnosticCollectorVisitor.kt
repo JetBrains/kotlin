@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractDiagnosticCollectorVisitor(
@@ -63,10 +66,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     private fun visitClassAndChildren(klass: FirClass, type: ConeClassLikeType) {
-        val typeRef = buildResolvedTypeRef {
-            this.type = type
+        val receiverParameter = buildReceiverParameter {
+            typeRef = buildResolvedTypeRef {
+                this.type = type
+            }
         }
-        visitWithDeclarationAndReceiver(klass, (klass as? FirRegularClass)?.name, typeRef)
+
+        visitWithDeclarationAndReceiver(klass, (klass as? FirRegularClass)?.name, receiverParameter)
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
@@ -87,7 +93,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: Nothing?) {
         withAnnotationContainer(simpleFunction) {
-            visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverTypeRef)
+            visitWithDeclarationAndReceiver(simpleFunction, simpleFunction.name, simpleFunction.receiverParameter)
         }
     }
 
@@ -107,7 +113,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
             visitWithDeclarationAndReceiver(
                 anonymousFunction,
                 labelName,
-                anonymousFunction.receiverTypeRef
+                anonymousFunction.receiverParameter
             )
         }
     }
@@ -127,7 +133,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
     override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?) {
         val property = context.containingDeclarations.last() as FirProperty
         withAnnotationContainer(propertyAccessor) {
-            visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverTypeRef)
+            visitWithDeclarationAndReceiver(propertyAccessor, property.name, property.receiverParameter)
+        }
+    }
+
+    override fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: Nothing?) {
+        withAnnotationContainer(receiverParameter) {
+            visitNestedElements(receiverParameter)
         }
     }
 
@@ -155,7 +167,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitBlock(block: FirBlock, data: Nothing?) {
         withAnnotationContainer(block) {
-            visitExpression(block, data)
+            if (block is FirContractCallBlock) {
+                insideContractBody {
+                    visitExpression(block, data)
+                }
+            } else {
+                visitExpression(block, data)
+            }
         }
     }
 
@@ -231,12 +249,12 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
-    private fun visitWithDeclarationAndReceiver(declaration: FirDeclaration, labelName: Name?, receiverTypeRef: FirTypeRef?) {
+    private fun visitWithDeclarationAndReceiver(declaration: FirDeclaration, labelName: Name?, receiverParameter: FirReceiverParameter?) {
         visitWithDeclaration(declaration) {
             withLabelAndReceiverType(
                 labelName,
                 declaration,
-                receiverTypeRef?.coneType
+                receiverParameter?.typeRef?.coneType
             ) {
                 visitNestedElements(declaration)
             }
@@ -260,7 +278,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall)
         try {
-            return block()
+            return whileAnalysing(context.session, qualifiedAccessOrAnnotationCall) {
+                block()
+            }
         } finally {
             existingContext.dropQualifiedAccessOrAnnotationCall()
             context = existingContext
@@ -273,7 +293,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addGetClassCall(getClassCall)
         try {
-            return block()
+            return whileAnalysing(context.session, getClassCall) {
+                block()
+            }
         } finally {
             existingContext.dropGetClassCall()
             context = existingContext
@@ -286,7 +308,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
         val existingContext = context
         context = context.addDeclaration(declaration)
         try {
-            return block()
+            return whileAnalysing(context.session, declaration) {
+                block()
+            }
         } finally {
             existingContext.dropDeclaration()
             context = existingContext
@@ -332,6 +356,16 @@ abstract class AbstractDiagnosticCollectorVisitor(
                 existingContext.dropAnnotationContainer()
             }
             context = existingContext
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    private inline fun <R> insideContractBody(block: () -> R): R {
+        context = context.enterContractBody()
+        return try {
+            block()
+        } finally {
+            context = context.exitContractBody()
         }
     }
 

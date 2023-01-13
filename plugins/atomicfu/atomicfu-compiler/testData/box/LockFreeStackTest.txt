@@ -17,14 +17,14 @@ public final class LockFreeStack {
     static method <clinit>(): void
     public method <init>(): void
     public final method clear(): void
-    public final @org.jetbrains.annotations.Nullable method getAndUpdate$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.Nullable p2: java.lang.Object): java.lang.Object
+    private final method getAndUpdate$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): java.lang.Object
     public final method isEmpty(): boolean
-    public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.Nullable p2: java.lang.Object): void
+    private final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
     public final @org.jetbrains.annotations.Nullable method popLoop(): java.lang.Object
     public final @org.jetbrains.annotations.Nullable method popUpdate(): java.lang.Object
     public final method pushLoop(p0: java.lang.Object): void
     public final method pushUpdate(p0: java.lang.Object): void
-    public final method update$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.Nullable p2: java.lang.Object): void
+    private final method update$atomicfu(p0: java.util.concurrent.atomic.AtomicReferenceFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
     private final inner class LockFreeStack$Node
 }
 

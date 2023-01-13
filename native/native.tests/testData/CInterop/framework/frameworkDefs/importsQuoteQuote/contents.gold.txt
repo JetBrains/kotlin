@@ -1,0 +1,13 @@
+
+package pod1 {
+    var podImportsQuoteQuote: Int
+        @CCall(id = "knifunptr_pod10_podImportsQuoteQuote_getter") get
+        @CCall(id = "knifunptr_pod11_podImportsQuoteQuote_setter") set
+    var podImportsQuoteQuoteA: Int
+        @CCall(id = "knifunptr_pod12_podImportsQuoteQuoteA_getter") get
+        @CCall(id = "knifunptr_pod13_podImportsQuoteQuoteA_setter") set
+    var podImportsQuoteQuote_umbrella: Int
+        @CCall(id = "knifunptr_pod14_podImportsQuoteQuote_umbrella_getter") get
+        @CCall(id = "knifunptr_pod15_podImportsQuoteQuote_umbrella_setter") set
+}
+

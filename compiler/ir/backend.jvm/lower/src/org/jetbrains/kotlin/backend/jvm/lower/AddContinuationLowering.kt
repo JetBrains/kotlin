@@ -340,6 +340,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                     }.apply {
                         copyAnnotationsFrom(view)
                         copyParameterDeclarationsFrom(view)
+                        context.remapMultiFieldValueClassStructure(view, this, parametersMappingOrNull = null)
                         copyAttributes(view)
                         generateErrorForInlineBody()
                     }
@@ -420,7 +421,7 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
         function.valueParameters += valueParameters.take(index).map {
             it.copyTo(function, index = it.index, type = it.type.substitute(substitutionMap))
         }
-        function.addValueParameter(
+        val continuationParameter = function.addValueParameter(
             SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME,
             continuationType(context).substitute(substitutionMap),
             JvmLoweredDeclarationOrigin.CONTINUATION_CLASS
@@ -428,6 +429,10 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
         function.valueParameters += valueParameters.drop(index).map {
             it.copyTo(function, index = it.index + 1, type = it.type.substitute(substitutionMap))
         }
+        context.remapMultiFieldValueClassStructure(
+            this, function,
+            parametersMappingOrNull = explicitParameters.zip(function.explicitParameters.filter { it != continuationParameter }).toMap()
+        )
     }
 }
 

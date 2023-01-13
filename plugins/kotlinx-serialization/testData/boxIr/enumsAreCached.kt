@@ -25,7 +25,7 @@ fun testSerializers(): String {
     if (!str1.contains("kotlinx.serialization.internal.EnumSerializer")) return str1
 
     /**
-     * Serialization 1.4.1+ have runtime factories to create EnumSerializer instead of synthetic $serializer, saving bytecode
+     * Serialization 1.5.0+ have runtime factories to create EnumSerializer instead of synthetic $serializer, saving bytecode
      * and bringing consistency. After updating the version, uncomment this block.
      */
 //    val str2 = cs[1].toString()

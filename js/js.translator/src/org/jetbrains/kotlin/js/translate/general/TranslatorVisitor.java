@@ -37,9 +37,9 @@ public abstract class TranslatorVisitor<T> extends KtVisitor<T, TranslationConte
         return emptyResult(context);
     }
 
-    public final void traverseContainer(@NotNull KtDeclarationContainer jetClass,
+    public final void traverseContainer(@NotNull KtDeclarationContainer ktClass,
             @NotNull TranslationContext context) {
-        for (KtDeclaration declaration : jetClass.getDeclarations()) {
+        for (KtDeclaration declaration : ktClass.getDeclarations()) {
             declaration.accept(this, context);
         }
     }

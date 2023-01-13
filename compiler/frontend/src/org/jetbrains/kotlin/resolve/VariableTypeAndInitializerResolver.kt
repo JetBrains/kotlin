@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtVariableDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorResolver.transformAnonymousTypeIfNeeded
-import org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
@@ -128,13 +127,6 @@ class VariableTypeAndInitializerResolver(
                     val initializer = variable.initializer
                     val initializerType =
                         expressionTypingServices.safeGetType(scope, initializer!!, variableType, dataFlowInfo, inferenceSession, trace)
-                    NewSchemeOfIntegerOperatorResolutionChecker.checkArgument(
-                        variableType,
-                        initializer,
-                        languageVersionSettings,
-                        trace,
-                        constantExpressionEvaluator.module
-                    )
                     val constant = constantExpressionEvaluator.evaluateExpression(initializer, trace, initializerType)
                         ?: return@computeInitializer null
 

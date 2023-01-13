@@ -22,19 +22,19 @@ import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.addRemoveModifier.addModifier
-import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
+import org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
     constructor(node: ASTNode) : super(node)
-    constructor(stub: KotlinPlaceHolderStub<KtPrimaryConstructor>) : super(stub, KtStubElementTypes.PRIMARY_CONSTRUCTOR)
+    constructor(stub: KotlinConstructorStub<KtPrimaryConstructor>) : super(stub, KtStubElementTypes.PRIMARY_CONSTRUCTOR)
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitPrimaryConstructor(this, data)
 
     override fun getContainingClassOrObject() = parent as KtClassOrObject
 
     private fun getOrCreateConstructorKeyword(): PsiElement {
-        return getConstructorKeyword() ?: addBefore(KtPsiFactory(this).createConstructorKeyword(), valueParameterList!!)
+        return getConstructorKeyword() ?: addBefore(KtPsiFactory(project).createConstructorKeyword(), valueParameterList!!)
     }
 
     fun removeRedundantConstructorKeywordAndSpace() {
@@ -53,7 +53,7 @@ class KtPrimaryConstructor : KtConstructor<KtPrimaryConstructor> {
             }
         } else {
             if (modifier == KtTokens.PUBLIC_KEYWORD) return
-            val newModifierList = KtPsiFactory(this).createModifierList(modifier)
+            val newModifierList = KtPsiFactory(project).createModifierList(modifier)
             addBefore(newModifierList, getOrCreateConstructorKeyword())
         }
     }

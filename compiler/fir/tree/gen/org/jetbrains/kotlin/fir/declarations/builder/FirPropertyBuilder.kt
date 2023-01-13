@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirPropertyBodyResolveState
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.UnresolvedDeprecationProvider
@@ -47,13 +49,13 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
-    override lateinit var moduleData: FirModuleData
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
+    override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var status: FirDeclarationStatus
     lateinit var returnTypeRef: FirTypeRef
-    var receiverTypeRef: FirTypeRef? = null
+    var receiverParameter: FirReceiverParameter? = null
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     var containerSource: DeserializedContainerSource? = null
     var dispatchReceiverType: ConeSimpleKotlinType? = null
@@ -75,13 +77,13 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
     override fun build(): FirProperty {
         return FirPropertyImpl(
             source,
-            moduleData,
             resolvePhase,
+            moduleData,
             origin,
             attributes,
             status,
             returnTypeRef,
-            receiverTypeRef,
+            receiverParameter,
             deprecationsProvider,
             containerSource,
             dispatchReceiverType,
@@ -92,8 +94,8 @@ class FirPropertyBuilder : FirDeclarationBuilder, FirTypeParametersOwnerBuilder,
             getter,
             setter,
             backingField,
-            annotations,
-            contextReceivers,
+            annotations.toMutableOrEmpty(),
+            contextReceivers.toMutableOrEmpty(),
             symbol,
             delegateFieldSymbol,
             isLocal,
@@ -119,13 +121,13 @@ inline fun buildPropertyCopy(original: FirProperty, init: FirPropertyBuilder.() 
     }
     val copyBuilder = FirPropertyBuilder()
     copyBuilder.source = original.source
-    copyBuilder.moduleData = original.moduleData
     copyBuilder.resolvePhase = original.resolvePhase
+    copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
     copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
-    copyBuilder.receiverTypeRef = original.receiverTypeRef
+    copyBuilder.receiverParameter = original.receiverParameter
     copyBuilder.deprecationsProvider = original.deprecationsProvider
     copyBuilder.containerSource = original.containerSource
     copyBuilder.dispatchReceiverType = original.dispatchReceiverType

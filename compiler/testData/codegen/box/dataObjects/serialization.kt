@@ -6,6 +6,7 @@
 // FIR_IDENTICAL
 
 import java.io.*
+import kotlin.test.*
 
 data object NonSerializableDataObject
 
@@ -14,7 +15,11 @@ data object SerializableDataObject: Serializable
 fun box(): String {
     ByteArrayOutputStream().use { baos ->
         ObjectOutputStream(baos).use { oos -> oos.writeObject(SerializableDataObject) }
-        ByteArrayInputStream(baos.toByteArray()).use { bais -> assert(java.io.ObjectInputStream(bais).readObject() === SerializableDataObject) }
+        ByteArrayInputStream(baos.toByteArray()).use { bais ->
+            val deseialized = ObjectInputStream(bais).readObject()
+            assertEquals(SerializableDataObject, deseialized)
+            assertNotSame(deseialized, SerializableDataObject)
+        }
     }
     return "OK"
 }

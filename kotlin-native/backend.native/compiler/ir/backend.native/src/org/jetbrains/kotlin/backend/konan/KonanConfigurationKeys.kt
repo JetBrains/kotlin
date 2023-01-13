@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 class KonanConfigKeys {
     companion object {
@@ -36,6 +35,10 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create<String?>("path to library that to be added to cache")
         val CACHE_DIRECTORIES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("paths to directories containing caches")
+        val AUTO_CACHEABLE_FROM: CompilerConfigurationKey<List<String>>
+                = CompilerConfigurationKey.create<List<String>>("paths to the root directories from which dependencies are to be cached automatically")
+        val AUTO_CACHE_DIR: CompilerConfigurationKey<String>
+                = CompilerConfigurationKey.create<String>("path to the directory where to put caches for auto-cacheable dependencies")
         val CACHED_LIBRARIES: CompilerConfigurationKey<Map<String, String>>
                 = CompilerConfigurationKey.create<Map<String, String>>("mapping from library paths to cache paths")
         val FILES_TO_CACHE: CompilerConfigurationKey<List<String>>
@@ -46,6 +49,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create<List<String>>("headers imported to framework header")
         val FRIEND_MODULES: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create<List<String>>("friend module paths")
+        val REFINES_MODULES: CompilerConfigurationKey<List<String>>
+                = CompilerConfigurationKey.create<List<String>>("refines module paths")
         val GENERATE_TEST_RUNNER: CompilerConfigurationKey<TestRunnerKind>
                 = CompilerConfigurationKey.create("generate test runner") 
         val INCLUDED_BINARY_FILES: CompilerConfigurationKey<List<String>>
@@ -156,7 +161,6 @@ class KonanConfigKeys {
         val PARTIAL_LINKAGE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("allows some symbols in klibs be missed")
         val TEST_DUMP_OUTPUT_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to a file to dump the list of all available tests")
         val OMIT_FRAMEWORK_BINARY: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("do not generate binary in framework")
-        val FORCE_COMPILER_DRIVER: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("explicitly pick compiler driver")
     }
 }
 

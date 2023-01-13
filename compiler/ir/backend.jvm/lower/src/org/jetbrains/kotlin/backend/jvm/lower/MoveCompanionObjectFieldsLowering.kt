@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.replaceThisByStaticReference
 import org.jetbrains.kotlin.backend.jvm.propertiesPhase
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.addProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -106,33 +107,27 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: JvmBackendCon
             }
         }
 
-    private fun copyConstProperty(oldProperty: IrProperty, newParent: IrClass): IrProperty =
-        newParent.addProperty() {
-            updateFrom(oldProperty)
-            name = oldProperty.name
-            isConst = true
-        }.also { property ->
-            val oldField = oldProperty.backingField!!
-            property.backingField = context.irFactory.buildField {
-                updateFrom(oldField)
-                name = oldField.name
-                isStatic = true
-            }.apply {
-                parent = newParent
-                correspondingPropertySymbol = property.symbol
-                annotations += oldField.annotations
-                initializer = oldField.initializer?.run {
-                    IrExpressionBodyImpl(startOffset, endOffset, (expression as IrConst<*>).shallowCopy())
-                }
-
-                if (oldProperty.parentAsClass.visibility == DescriptorVisibilities.PRIVATE) {
-                    context.createJvmIrBuilder(this.symbol).run {
-                        annotations = filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, annotations) +
-                                irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
-                    }
+    private fun copyConstProperty(oldProperty: IrProperty, newParent: IrClass): IrField {
+        val oldField = oldProperty.backingField!!
+        return newParent.addField {
+            updateFrom(oldField)
+            name = oldField.name
+            isStatic = true
+        }.apply {
+            parent = newParent
+            correspondingPropertySymbol = oldProperty.symbol
+            initializer = oldField.initializer?.run {
+                IrExpressionBodyImpl(startOffset, endOffset, (expression as IrConst<*>).shallowCopy())
+            }
+            annotations += oldField.annotations
+            if (oldProperty.parentAsClass.visibility == DescriptorVisibilities.PRIVATE) {
+                context.createJvmIrBuilder(this.symbol).run {
+                    annotations = filterOutAnnotations(DeprecationResolver.JAVA_DEPRECATED, annotations) +
+                            irCall(irSymbols.javaLangDeprecatedConstructorWithDeprecatedFlag)
                 }
             }
         }
+    }
 }
 
 private class RemapObjectFieldAccesses(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {

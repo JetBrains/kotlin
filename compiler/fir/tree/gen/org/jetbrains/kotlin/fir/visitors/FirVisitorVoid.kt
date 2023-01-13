@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
@@ -28,9 +30,11 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -42,6 +46,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -90,7 +95,9 @@ import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
+import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedErrorAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
@@ -119,11 +126,13 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
@@ -197,6 +206,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(contextReceiver)
     }
 
+    open fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase) {
+        visitElement(elementWithResolvePhase)
+    }
+
+    open fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer) {
+        visitElement(fileAnnotationsContainer)
+    }
+
     open fun visitDeclaration(declaration: FirDeclaration) {
         visitElement(declaration)
     }
@@ -237,6 +254,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(valueParameter)
     }
 
+    open fun visitReceiverParameter(receiverParameter: FirReceiverParameter) {
+        visitElement(receiverParameter)
+    }
+
     open fun visitProperty(property: FirProperty) {
         visitElement(property)
     }
@@ -247,6 +268,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitEnumEntry(enumEntry: FirEnumEntry) {
         visitElement(enumEntry)
+    }
+
+    open fun visitFunctionTypeParameter(functionTypeParameter: FirFunctionTypeParameter) {
+        visitElement(functionTypeParameter)
     }
 
     open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration) {
@@ -291,6 +316,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitFile(file: FirFile) {
         visitElement(file)
+    }
+
+    open fun visitScript(script: FirScript) {
+        visitElement(script)
     }
 
     open fun visitPackageDirective(packageDirective: FirPackageDirective) {
@@ -485,8 +514,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(errorProperty)
     }
 
+    open fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList) {
+        visitElement(danglingModifierList)
+    }
+
     open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
         visitElement(qualifiedAccessExpression)
+    }
+
+    open fun visitQualifiedErrorAccessExpression(qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression) {
+        visitElement(qualifiedErrorAccessExpression)
     }
 
     open fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
@@ -601,6 +638,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(namedReference)
     }
 
+    open fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase) {
+        visitElement(namedReferenceWithCandidateBase)
+    }
+
     open fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference) {
         visitElement(errorNamedReference)
     }
@@ -619,6 +660,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
         visitElement(resolvedNamedReference)
+    }
+
+    open fun visitResolvedErrorReference(resolvedErrorReference: FirResolvedErrorReference) {
+        visitElement(resolvedErrorReference)
     }
 
     open fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference) {
@@ -737,6 +782,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitContextReceiver(contextReceiver)
     }
 
+    final override fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: Nothing?) {
+        visitElementWithResolvePhase(elementWithResolvePhase)
+    }
+
+    final override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: Nothing?) {
+        visitFileAnnotationsContainer(fileAnnotationsContainer)
+    }
+
     final override fun visitDeclaration(declaration: FirDeclaration, data: Nothing?) {
         visitDeclaration(declaration)
     }
@@ -777,6 +830,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitValueParameter(valueParameter)
     }
 
+    final override fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: Nothing?) {
+        visitReceiverParameter(receiverParameter)
+    }
+
     final override fun visitProperty(property: FirProperty, data: Nothing?) {
         visitProperty(property)
     }
@@ -787,6 +844,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitEnumEntry(enumEntry: FirEnumEntry, data: Nothing?) {
         visitEnumEntry(enumEntry)
+    }
+
+    final override fun visitFunctionTypeParameter(functionTypeParameter: FirFunctionTypeParameter, data: Nothing?) {
+        visitFunctionTypeParameter(functionTypeParameter)
     }
 
     final override fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: Nothing?) {
@@ -831,6 +892,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitFile(file: FirFile, data: Nothing?) {
         visitFile(file)
+    }
+
+    final override fun visitScript(script: FirScript, data: Nothing?) {
+        visitScript(script)
     }
 
     final override fun visitPackageDirective(packageDirective: FirPackageDirective, data: Nothing?) {
@@ -1025,8 +1090,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitErrorProperty(errorProperty)
     }
 
+    final override fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: Nothing?) {
+        visitDanglingModifierList(danglingModifierList)
+    }
+
     final override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Nothing?) {
         visitQualifiedAccessExpression(qualifiedAccessExpression)
+    }
+
+    final override fun visitQualifiedErrorAccessExpression(qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression, data: Nothing?) {
+        visitQualifiedErrorAccessExpression(qualifiedErrorAccessExpression)
     }
 
     final override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: Nothing?) {
@@ -1141,6 +1214,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitNamedReference(namedReference)
     }
 
+    final override fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase, data: Nothing?) {
+        visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase)
+    }
+
     final override fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: Nothing?) {
         visitErrorNamedReference(errorNamedReference)
     }
@@ -1159,6 +1236,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: Nothing?) {
         visitResolvedNamedReference(resolvedNamedReference)
+    }
+
+    final override fun visitResolvedErrorReference(resolvedErrorReference: FirResolvedErrorReference, data: Nothing?) {
+        visitResolvedErrorReference(resolvedErrorReference)
     }
 
     final override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: Nothing?) {

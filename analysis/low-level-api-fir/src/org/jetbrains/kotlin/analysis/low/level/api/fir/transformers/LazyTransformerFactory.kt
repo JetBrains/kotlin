@@ -5,22 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirProviderInterceptor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
 
 internal object LazyTransformerFactory {
     fun createLazyTransformer(
         phase: FirResolvePhase,
-        designation: FirDeclarationDesignationWithFile,
+        designation: FirDesignationWithFile,
         scopeSession: ScopeSession,
-        lazyDeclarationResolver: LLFirModuleLazyDeclarationResolver,
+        lockProvider: LLFirLockProvider,
         towerDataContextCollector: FirTowerDataContextCollector?,
         firProviderInterceptor: FirProviderInterceptor?,
-        checkPCE: Boolean,
     ): LLFirLazyTransformer = when (phase) {
         FirResolvePhase.COMPANION_GENERATION -> LLFirDesignatedGeneratedCompanionObjectResolveTransformer(
             designation = designation,
@@ -31,10 +30,8 @@ internal object LazyTransformerFactory {
             designation = designation,
             session = designation.firFile.moduleData.session,
             scopeSession = scopeSession,
-            firLazyDeclarationResolver = lazyDeclarationResolver,
-            lockProvider = lazyDeclarationResolver.moduleComponents.globalResolveComponents.lockProvider,
+            lockProvider = lockProvider,
             firProviderInterceptor = firProviderInterceptor,
-            checkPCE = checkPCE,
         )
         FirResolvePhase.TYPES -> LLFirDesignatedTypeResolverTransformer(
             designation,
@@ -67,6 +64,11 @@ internal object LazyTransformerFactory {
             scopeSession,
             towerDataContextCollector
         )
+        FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING -> LLFirDesignatedAnnotationArgumentsMappingTransformer(
+            designation,
+            designation.firFile.moduleData.session,
+            scopeSession,
+        )
         FirResolvePhase.BODY_RESOLVE -> LLFirDesignatedBodyResolveTransformer(
             designation,
             designation.firFile.moduleData.session,
@@ -79,6 +81,7 @@ internal object LazyTransformerFactory {
             designation.firFile.moduleData.session,
             scopeSession
         )
-        else -> error("Non-lazy phase $phase")
+        FirResolvePhase.RAW_FIR -> error("Non-lazy phase $phase")
+        FirResolvePhase.IMPORTS -> error("Non-lazy phase $phase")
     }
 }

@@ -279,7 +279,7 @@ fun poll8() {
 }
 
 fun poll81() {
-    val inv = ::bar2 in setOf(::foo2)
+    val inv = ::bar2 <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(::foo2)
     <!UNRESOLVED_REFERENCE!>inv<!>()
 }
 
@@ -309,7 +309,7 @@ fun poll86() {
 }
 
 fun poll87() {
-    val inv = ::Foo7 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>in<!> setOf(foo7())
+    val inv = ::Foo7 <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>in<!> setOf(foo7())
     inv
 }
 

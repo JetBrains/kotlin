@@ -15,7 +15,7 @@ fun foo(): Int {
         }
         k.run()
         val d: Int = c
-        return a <!UNSAFE_OPERATOR_CALL!>+<!> d
+        return a + d
     }
     else return -1
 }

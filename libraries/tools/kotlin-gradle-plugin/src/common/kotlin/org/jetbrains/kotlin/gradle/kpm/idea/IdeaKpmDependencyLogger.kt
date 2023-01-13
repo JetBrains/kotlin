@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.path
 

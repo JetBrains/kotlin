@@ -1,0 +1,7 @@
+<import_mode_directive>
+
+platform :ios, '13.5'
+
+target 'ios-app' do
+    pod 'kotlin-library', :path => '../'
+end

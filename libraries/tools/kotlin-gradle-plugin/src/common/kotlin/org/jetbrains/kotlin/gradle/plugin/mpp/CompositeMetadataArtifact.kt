@@ -23,14 +23,18 @@ internal interface CompositeMetadataArtifact {
     fun open(): CompositeMetadataArtifactContent
 
     /**
-     * Safe shortcut function for opening and reading the content of this artifact.
-     * The [CompositeMetadataArtifactContent] will be closed after the [action] executed.
+     * Checks if physical files are present on disk
      */
-    fun <T> read(action: (artifactContent: CompositeMetadataArtifactContent) -> T): T {
-        return open().use(action)
-    }
+    fun exists(): Boolean
 }
 
+/**
+ * Safe shortcut function for opening and reading the content of this artifact.
+ * The [CompositeMetadataArtifactContent] will be closed after the [action] executed.
+ */
+internal inline fun <T> CompositeMetadataArtifact.read(action: (artifactContent: CompositeMetadataArtifactContent) -> T): T {
+    return open().use(action)
+}
 
 /**
  * This [CompositeMetadataArtifactContent] abstraction provides access into a metadata artifact published by a Multiplatform Library

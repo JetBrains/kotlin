@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,6 +45,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         }
 
         @Test
+        @TestMetadata("externalSerialierJava.kt")
+        public void testExternalSerialierJava() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/externalSerialierJava.kt");
+        }
+
+        @Test
         @TestMetadata("ExternalSerializers.kt")
         public void testExternalSerializers() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/ExternalSerializers.kt");
@@ -84,6 +90,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         @TestMetadata("LocalAndAnonymous.kt")
         public void testLocalAndAnonymous() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/diagnostics/LocalAndAnonymous.kt");
+        }
+
+        @Test
+        @TestMetadata("metaSerializableNested.kt")
+        public void testMetaSerializableNested() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/diagnostics/metaSerializableNested.kt");
         }
 
         @Test
@@ -226,6 +238,12 @@ public class SerializationFirDiagnosticTestGenerated extends AbstractSerializati
         @TestMetadata("serializableWithCompanion.kt")
         public void testSerializableWithCompanion() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/firMembers/serializableWithCompanion.kt");
+        }
+
+        @Test
+        @TestMetadata("serializerInLocalClass.kt")
+        public void testSerializerInLocalClass() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/firMembers/serializerInLocalClass.kt");
         }
 
         @Test

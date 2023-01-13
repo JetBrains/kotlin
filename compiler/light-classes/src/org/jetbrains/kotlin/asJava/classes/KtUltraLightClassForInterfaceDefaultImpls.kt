@@ -44,7 +44,8 @@ class KtUltraLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject, 
 
     override fun getTypeParameterList(): PsiTypeParameterList? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
-    override fun computeModifiers(): Set<String> = publicStaticFinal
+    override fun computeModifiersByPsi(): Set<String> = publicStaticFinal
+    override fun computeIsFinal(): Boolean = true
 
     override fun getOwnFields(): List<KtLightField> = emptyList()
     override fun isInterface(): Boolean = false

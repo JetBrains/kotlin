@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
  *    * for class & type alias symbols if its qualified name was not changed
  *    * for package symbol if the package is still exists
  *
- * @see org.jetbrains.kotlin.analysis.api.ReadActionConfinementKtLifetimeToken
+ * @see org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementLifetimeToken
  */
 public abstract class KtSymbolPointer<out S : KtSymbol> {
     /**
@@ -31,6 +31,11 @@ public abstract class KtSymbolPointer<out S : KtSymbol> {
      */
     @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
     public abstract fun restoreSymbol(analysisSession: KtAnalysisSession): S?
+
+    /**
+     * @return **true** if [other] pointer can be restored to the same symbol. The operation is symmetric and transitive.
+     */
+    public open fun pointsToTheSameSymbolAs(other: KtSymbolPointer<KtSymbol>): Boolean = this === other
 }
 
 public inline fun <S : KtSymbol> symbolPointer(crossinline getSymbol: (KtAnalysisSession) -> S?): KtSymbolPointer<S> =
@@ -38,3 +43,14 @@ public inline fun <S : KtSymbol> symbolPointer(crossinline getSymbol: (KtAnalysi
         @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
         override fun restoreSymbol(analysisSession: KtAnalysisSession): S? = getSymbol(analysisSession)
     }
+
+public inline fun <T : KtSymbol, R : KtSymbol> symbolPointerDelegator(
+    pointer: KtSymbolPointer<T>,
+    crossinline transformer: context(KtAnalysisSession) (T) -> R?,
+): KtSymbolPointer<R> = object : KtSymbolPointer<R>() {
+    @Deprecated("Consider using org.jetbrains.kotlin.analysis.api.KtAnalysisSession.restoreSymbol")
+    override fun restoreSymbol(analysisSession: KtAnalysisSession): R? = with(analysisSession) {
+        val symbol = pointer.restoreSymbol() ?: return null
+        transformer(this, symbol)
+    }
+}

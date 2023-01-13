@@ -60,6 +60,7 @@ void HandleCurrentExceptionWhenLeavingKotlinCode() {
 
 namespace {
 
+#if !KONAN_NO_EXCEPTIONS
 class {
     /**
      * Timeout 5 sec for concurrent (second) terminate attempt to give a chance the first one to finish.
@@ -81,9 +82,13 @@ class {
       _Exit(EXIT_FAILURE); // force exit
     }
 } concurrentTerminateWrapper;
+#endif
 
 void RUNTIME_NORETURN terminateWithUnhandledException(KRef exception) {
     kotlin::AssertThreadState(kotlin::ThreadState::kRunnable);
+#if KONAN_NO_EXCEPTIONS
+    RuntimeCheck(false, "Exceptions unsupported");
+#else
     concurrentTerminateWrapper([exception]() {
         ReportUnhandledException(exception);
 #if KONAN_REPORT_BACKTRACE_TO_IOS_CRASH_LOG
@@ -91,6 +96,7 @@ void RUNTIME_NORETURN terminateWithUnhandledException(KRef exception) {
 #endif
         konan::abort();
     });
+#endif
 }
 
 void processUnhandledException(KRef exception) noexcept {

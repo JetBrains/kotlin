@@ -14,7 +14,7 @@ fun test_2(
 ) {}
 
 fun test_3(
-    x: () -> Any = { y() to <!UNINITIALIZED_PARAMETER!>y<!>.invoke() }, // Error
+    x: () -> Any = { <!UNINITIALIZED_PARAMETER!>y<!>() to <!UNINITIALIZED_PARAMETER!>y<!>.invoke() }, // Error
     y: () -> String = { "OK" }
 ) {}
 

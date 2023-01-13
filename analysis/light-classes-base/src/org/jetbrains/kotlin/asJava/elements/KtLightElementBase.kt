@@ -18,6 +18,7 @@ abstract class KtLightElementBase(private var parent: PsiElement) : LightElement
 
     abstract val kotlinOrigin: KtElement?
 
+    @Deprecated("Hack for ULC", level = DeprecationLevel.ERROR)
     fun setParent(newParent: PsiElement) {
         parent = newParent
     }

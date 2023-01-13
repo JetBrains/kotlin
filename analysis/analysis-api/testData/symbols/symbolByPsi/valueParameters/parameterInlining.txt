@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /foo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -15,7 +16,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -33,7 +34,7 @@ KtFunctionSymbol:
       isVararg: false
       name: inlineParameter
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
@@ -52,7 +53,7 @@ KtFunctionSymbol:
       isVararg: false
       name: crossinlineParameter
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []
@@ -71,7 +72,7 @@ KtFunctionSymbol:
       isVararg: false
       name: noinlineParameter
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Function0<kotlin/Int>
       symbolKind: LOCAL
       typeParameters: []

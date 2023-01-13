@@ -2,7 +2,7 @@ package
 
 public fun test(): Foo<kotlin.String>
 
-@org.jspecify.nullness.NullMarked public open class Foo</*0*/ T> {
+@org.jspecify.annotations.NullMarked public open class Foo</*0*/ T> {
     public constructor Foo</*0*/ T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
-import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.ClassId
@@ -66,6 +65,7 @@ val propertyBodyResolveStateType = type("fir.declarations", "FirPropertyBodyReso
 val stubReferenceType = generatedType("references.impl", "FirStubReference", firType = true)
 
 val firBasedSymbolType = type("fir.symbols", "FirBasedSymbol")
+val functionSymbolType = type("fir.symbols.impl", "FirFunctionSymbol")
 val backingFieldSymbolType = type("fir.symbols.impl", "FirBackingFieldSymbol")
 val delegateFieldSymbolType = type("fir.symbols.impl", "FirDelegateFieldSymbol")
 val classSymbolType = type("fir.symbols.impl", "FirClassSymbol")
@@ -80,6 +80,7 @@ val coneEffectDeclarationType = type("fir.contracts.description", "ConeEffectDec
 val emptyContractDescriptionType = generatedType("contracts.impl", "FirEmptyContractDescription")
 val coneDiagnosticType = generatedType("diagnostics", "ConeDiagnostic")
 val coneStubDiagnosticType = generatedType("diagnostics", "ConeStubDiagnostic")
+val coneUnresolvedEffect = type("fir.contracts.description", "ConeUnresolvedEffect")
 
 val dslBuilderAnnotationType = generatedType("builder", "FirBuilderDsl")
 val firImplementationDetailType = generatedType("FirImplementationDetail")
@@ -101,3 +102,4 @@ val emptyAnnotationArgumentMappingType = type("fir.expressions.impl", "FirEmptyA
 val firPropertySymbolType = type("fir.symbols.impl", "FirPropertySymbol")
 val errorTypeRefImplType = type("fir.types.impl", "FirErrorTypeRefImpl", firType = true)
 
+val annotationResolvePhaseType = generatedType("expressions", "FirAnnotationResolvePhase")

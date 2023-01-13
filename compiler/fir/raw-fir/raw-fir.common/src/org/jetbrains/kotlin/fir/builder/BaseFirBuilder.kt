@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeUnderscoreIsReserved
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -810,7 +808,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             val indexVariables = indices.mapIndexed { i, index ->
                 generateTemporaryVariable(
                     baseModuleData,
-                    index.toFirSourceElement(),
+                    index.toFirSourceElement(KtFakeSourceElementKind.ArrayIndexExpressionReference),
                     name = SpecialNames.subscribeOperatorIndex(i),
                     index.convert()
                 ).also { statements += it }
@@ -957,7 +955,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
             return if (operation == FirOperation.ASSIGN) {
                 val result = unwrappedLhs.convert()
-                (result.annotations as MutableList<FirAnnotation>) += annotations
+                result.replaceAnnotations(result.annotations.smartPlus(annotations))
                 result.pullUpSafeCallIfNecessary()
             } else {
                 val receiver = unwrappedLhs.convert()
@@ -1122,8 +1120,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     source = parameterSource?.fakeElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
-                    returnTypeRef = firProperty.returnTypeRef
-                    receiverTypeRef = null
+                    returnTypeRef = firProperty.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
                     this.name = name
                     status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
                         isOperator = true
@@ -1157,6 +1154,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             createParameterTypeRefWithSourceKind(firProperty, KtFakeSourceElementKind.DataClassGeneratedMembers)
                         valueParameters += buildValueParameter {
                             source = parameterSource
+                            containingFunctionSymbol = this@buildSimpleFunction.symbol
                             moduleData = baseModuleData
                             origin = FirDeclarationOrigin.Source
                             returnTypeRef = propertyReturnTypeRef
@@ -1276,9 +1274,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         moduleData = baseModuleData
         origin = FirDeclarationOrigin.Source
         name = Name.special("<destructuring>")
-        diagnostic = ConeSimpleDiagnostic(
-            "Destructuring declarations are only allowed for local variables/values", DiagnosticKind.Syntax
-        )
+        diagnostic = ConeDestructuringDeclarationsOnTopLevel
         symbol = FirErrorPropertySymbol(diagnostic)
     }
 
@@ -1292,7 +1288,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         FUNCTION(shouldExplicitParameterTypeBePresent = true),
         CATCH(shouldExplicitParameterTypeBePresent = true),
         PRIMARY_CONSTRUCTOR(shouldExplicitParameterTypeBePresent = true),
-        FUNCTIONAL_TYPE(shouldExplicitParameterTypeBePresent = true),
         SETTER(shouldExplicitParameterTypeBePresent = false),
         LAMBDA(shouldExplicitParameterTypeBePresent = false),
         FOR_LOOP(shouldExplicitParameterTypeBePresent = false),

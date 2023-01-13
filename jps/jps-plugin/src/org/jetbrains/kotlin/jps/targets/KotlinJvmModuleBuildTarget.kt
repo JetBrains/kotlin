@@ -400,8 +400,8 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
                 }
 
                 callback.associate(
-                    FileUtil.toSystemIndependentName(output.outputFile.canonicalPath),
-                    sourceFiles.map { FileUtil.toSystemIndependentName(it.canonicalPath) },
+                    FileUtil.toSystemIndependentName(output.outputFile.normalize().absolutePath),
+                    sourceFiles.map { FileUtil.toSystemIndependentName(it.normalize().absolutePath) },
                     ClassReader(output.outputClass.fileContents)
                 )
             }

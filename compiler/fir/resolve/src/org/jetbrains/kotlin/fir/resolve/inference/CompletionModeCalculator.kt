@@ -127,7 +127,7 @@ private class CalculatorForNestedCall(
     ) {
         val unwrappedType = type.lowerBoundIfFlexible()
         val typeArgumentsCount = unwrappedType.argumentsCount()
-        if (typeArgumentsCount > 0) {
+        if (typeArgumentsCount > 0 && !unwrappedType.isError()) {
             for (position in 0 until typeArgumentsCount) {
                 val argument = unwrappedType.getArgument(position)
                 val parameter = unwrappedType.typeConstructor().getParameter(position)

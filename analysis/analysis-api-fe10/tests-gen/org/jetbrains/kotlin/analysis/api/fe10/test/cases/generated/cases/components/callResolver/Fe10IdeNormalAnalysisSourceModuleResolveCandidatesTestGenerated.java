@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -83,6 +83,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
         @TestMetadata("delegatedConstructor.kt")
         public void testDelegatedConstructor() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/delegatedConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("forEach.kt")
+        public void testForEach() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/forEach.kt");
+        }
+
+        @Test
+        @TestMetadata("groupBy.kt")
+        public void testGroupBy() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/multipleCandidates/groupBy.kt");
         }
 
         @Test
@@ -283,6 +295,30 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
         @TestMetadata("functionCallWithSpreadArgument.kt")
         public void testFunctionCallWithSpreadArgument() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/functionCallWithSpreadArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("functionCallWithTooFewTypeArguments.kt")
+        public void testFunctionCallWithTooFewTypeArguments() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/functionCallWithTooFewTypeArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("functionCallWithTooFewTypeArguments2.kt")
+        public void testFunctionCallWithTooFewTypeArguments2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/functionCallWithTooFewTypeArguments2.kt");
+        }
+
+        @Test
+        @TestMetadata("functionCallWithTooManyTypeArguments.kt")
+        public void testFunctionCallWithTooManyTypeArguments() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/functionCallWithTooManyTypeArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("functionCallWithTooManyTypeArguments2.kt")
+        public void testFunctionCallWithTooManyTypeArguments2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCandidates/singleCandidate/functionCallWithTooManyTypeArguments2.kt");
         }
 
         @Test

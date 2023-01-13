@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 annotation class NoArg
 
 class Outer {
@@ -7,8 +8,8 @@ class Outer {
 
 fun local() {
     @NoArg
-    class Local(val l: Any) {
+    class <!NOARG_ON_LOCAL_CLASS_ERROR!>Local<!>(val l: Any) {
         @NoArg
-        inner class InnerLocal(val x: Any)
+        inner class <!NOARG_ON_INNER_CLASS_ERROR!>InnerLocal<!>(val x: Any)
     }
 }

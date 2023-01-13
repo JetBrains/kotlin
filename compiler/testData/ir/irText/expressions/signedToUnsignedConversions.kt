@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 // WITH_STDLIB
 
 // FILE: signedToUnsignedConversions_annotation.kt

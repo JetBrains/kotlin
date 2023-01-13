@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirBackingField
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
@@ -23,30 +23,27 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullableNothing
 import org.jetbrains.kotlin.fir.types.makeConeTypeDefinitelyNotNullOrNotNull
 import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
     callInfo: CallInfo,
-    dispatchReceiverValue: ReceiverValue?
+    dispatchReceiverValue: ReceiverValue?,
+    importedQualifierForStatic: FirExpression?
 ): Boolean {
-    if (declaration is FirCallableDeclaration && (declaration.isIntersectionOverride || declaration.isSubstitutionOverride)) {
-        @Suppress("UNCHECKED_CAST")
-        return isVisible(declaration.originalIfFakeOverride() as FirMemberDeclaration, callInfo, dispatchReceiverValue)
+    val staticQualifierForCallable = runIf(declaration is FirCallableDeclaration && declaration.isStatic) {
+        val explicitReceiver = callInfo.explicitReceiver ?: importedQualifierForStatic
+        (explicitReceiver as? FirResolvedQualifier)?.symbol?.fir as? FirRegularClass
     }
-
-    val useSiteFile = callInfo.containingFile
-    val containingDeclarations = callInfo.containingDeclarations
-    val session = callInfo.session
-
     return isVisible(
         declaration,
-        session,
-        useSiteFile,
-        containingDeclarations,
+        callInfo.session,
+        callInfo.containingFile,
+        callInfo.containingDeclarations,
         dispatchReceiverValue,
-        callInfo.callSite is FirVariableAssignment
+        staticQualifierClassForCallable = staticQualifierForCallable,
+        isCallToPropertySetter = callInfo.callSite is FirVariableAssignment
     )
-
 }
 
 fun FirVisibilityChecker.isVisible(
@@ -54,26 +51,21 @@ fun FirVisibilityChecker.isVisible(
     candidate: Candidate
 ): Boolean {
     val callInfo = candidate.callInfo
+    val dispatchReceiverValue = candidate.dispatchReceiverValue
+    val importedQualifierForStatic = candidate.importedQualifierForStatic
 
-    if (!isVisible(declaration, callInfo, candidate.dispatchReceiverValue)) {
+    if (!isVisible(declaration, callInfo, dispatchReceiverValue, importedQualifierForStatic)) {
         val dispatchReceiverWithoutSmartCastType =
-            removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiverValue, candidate.callInfo.session) ?: return false
+            removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiverValue, candidate.callInfo.session) ?: return false
 
-        if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType)) return false
+        if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType, importedQualifierForStatic)) return false
 
         candidate.dispatchReceiverValue = dispatchReceiverWithoutSmartCastType
     }
 
     val backingField = declaration.getBackingFieldIfApplicable()
     if (backingField != null) {
-        candidate.hasVisibleBackingField = isVisible(
-            backingField,
-            callInfo.session,
-            callInfo.containingFile,
-            callInfo.containingDeclarations,
-            candidate.dispatchReceiverValue,
-            candidate.callInfo.callSite is FirVariableAssignment,
-        )
+        candidate.hasVisibleBackingField = isVisible(backingField, callInfo, dispatchReceiverValue, importedQualifierForStatic)
     }
 
     return true

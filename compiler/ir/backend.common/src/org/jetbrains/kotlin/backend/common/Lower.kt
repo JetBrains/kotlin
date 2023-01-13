@@ -192,7 +192,7 @@ private open class BodyLoweringVisitor(
     }
 
     override fun visitScript(declaration: IrScript, data: IrDeclaration?) {
-        declaration.thisReceiver.accept(this, declaration)
+        declaration.thisReceiver?.accept(this, declaration)
         ArrayList(declaration.statements).forEach { it.accept(this, declaration) }
     }
 }
@@ -308,7 +308,7 @@ interface DeclarationTransformer : FileLoweringPass {
             }
             declaration.statements.transformSubsetFlat(transformer::transformFlatRestricted)
 
-            declaration.thisReceiver.accept(this, null)
+            declaration.thisReceiver?.accept(this, null)
         }
     }
 }

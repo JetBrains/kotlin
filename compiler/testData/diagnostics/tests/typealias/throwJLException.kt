@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // +JDK
 
 typealias Exn = java.lang.Exception

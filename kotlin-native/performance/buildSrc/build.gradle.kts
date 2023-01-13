@@ -2,10 +2,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 import java.io.FileReader
 
-extra["versions.native-platform"] = "0.14"
-
-
-
 buildscript {
     java.util.Properties().also {
         it.load(java.io.FileReader(project.file("../../../gradle.properties")))
@@ -18,41 +14,23 @@ buildscript {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false
 
     extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
-    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
-
-    repositories {
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        jcenter()
-        mavenCentral()
-        project.bootstrapKotlinRepo?.let {
-            maven(url = it)
-        }
-    }
 
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
     }
 }
 
-apply{
-    plugin("kotlin")
-    plugin("kotlin-sam-with-receiver")
-}
 plugins {
     `kotlin-dsl`
-    //kotlin("multiplatform") version "${project.bootstrapKotlinVersion}"
+    id("org.jetbrains.kotlin.jvm")
+    id("org.jetbrains.kotlin.plugin.sam.with.receiver")
+    //kotlin("multiplatform")
 }
 
-val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 repositories {
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-    jcenter()
     mavenCentral()
     gradlePluginPortal()
-    extra["bootstrapKotlinRepo"]?.let {
-        maven(url = it)
-    }
 }
 
 tasks.validatePlugins.configure {
@@ -62,9 +40,10 @@ tasks.validatePlugins.configure {
 
 sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
     kotlin.filter.exclude("**/FileCheckTest.kt")
+    // TODO: Consider moving required stuff from kotlin-native/build-tools/ to buildSrc/ here.
     kotlin.filter.exclude("**/bitcode/**")
+    kotlin.filter.exclude("**/cpp/**")
     kotlin.filter.exclude("**/testing/**")
-    kotlin.filter.exclude("**/CompilationDatabase.kt")
 
     kotlin.srcDir("src/main/kotlin")
     kotlin.srcDir("../../build-tools/src/main/kotlin")
@@ -141,5 +120,8 @@ afterEvaluate {
             languageVersion = "1.4"
             apiVersion = "1.4"
         }
+    }
+    tasks.withType<JavaCompile> {
+        targetCompatibility = "1.8"
     }
 }

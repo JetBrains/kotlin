@@ -1,0 +1,11 @@
+KtLightClassForDecompiledDeclaration
+  name: DefaultImpls
+  qualifier: one.two.MyInterface.DefaultImpls
+  superTypes: [
+    PsiType:Object
+  ]
+  superClass: ClsClassImpl: Object (java.lang.Object)
+  interfaces: []
+  supers: [
+    ClsClassImpl: Object (java.lang.Object)
+  ]

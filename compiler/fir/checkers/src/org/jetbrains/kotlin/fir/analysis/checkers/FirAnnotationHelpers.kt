@@ -10,19 +10,18 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolved
+import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -32,16 +31,19 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.ParameterNames
 import org.jetbrains.kotlin.resolve.UseSiteTargetsList
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 
-fun FirRegularClass.getRetention(): AnnotationRetention {
-    return getRetentionAnnotation()?.getRetention() ?: AnnotationRetention.RUNTIME
+fun FirRegularClass.getRetention(session: FirSession): AnnotationRetention {
+    return getRetentionAnnotation(session)?.getRetention() ?: AnnotationRetention.RUNTIME
 }
 
-fun FirAnnotation.getRetention(): AnnotationRetention {
-    val retentionArgument = findArgumentByName(ParameterNames.retentionValue) as? FirQualifiedAccessExpression
-        ?: return AnnotationRetention.RUNTIME
-    val retentionName = retentionArgument.calleeReference.resolved?.name?.asString()
-        ?: return AnnotationRetention.RUNTIME
-    return AnnotationRetention.values().firstOrNull { it.name == retentionName } ?: AnnotationRetention.RUNTIME
+private fun FirAnnotation.getRetention(): AnnotationRetention? {
+    val propertyAccess = findArgumentByName(ParameterNames.retentionValue) as? FirQualifiedAccessExpression
+    val callableId = propertyAccess?.calleeReference?.toResolvedEnumEntrySymbol()?.callableId ?: return null
+
+    if (callableId.classId != StandardClassIds.AnnotationRetention) {
+        return null
+    }
+
+    return AnnotationRetention.values().firstOrNull { it.name == callableId.callableName.asString() }
 }
 
 private val defaultAnnotationTargets = KotlinTarget.DEFAULT_TARGET_SET
@@ -51,24 +53,24 @@ fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTa
     val annotationClassSymbol = (this.annotationTypeRef.coneType as? ConeClassLikeType)
         ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session) ?: return defaultAnnotationTargets
     annotationClassSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
-    return annotationClassSymbol.getAllowedAnnotationTargets()
+    return annotationClassSymbol.getAllowedAnnotationTargets(session)
 }
 
 internal fun FirAnnotation.getAnnotationClassForOptInMarker(session: FirSession): FirRegularClassSymbol? {
     val lookupTag = annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return null
     val annotationClassSymbol = lookupTag.toSymbol(session) as? FirRegularClassSymbol ?: return null
-    if (annotationClassSymbol.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID) == null) {
+    if (annotationClassSymbol.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) {
         return null
     }
     return annotationClassSymbol
 }
 
-fun FirRegularClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
-    return symbol.getAllowedAnnotationTargets()
+fun FirRegularClass.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
+    return symbol.getAllowedAnnotationTargets(session)
 }
 
-fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(): Set<KotlinTarget> {
-    val targetAnnotation = getTargetAnnotation() ?: return defaultAnnotationTargets
+fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
+    val targetAnnotation = getTargetAnnotation(session) ?: return defaultAnnotationTargets
     val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unfoldArrayOrVararg().orEmpty()
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
@@ -78,28 +80,34 @@ fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(): Set<KotlinTarget> {
     }
 }
 
-fun FirDeclaration.getRetentionAnnotation(): FirAnnotation? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Retention)
+fun FirDeclaration.getRetentionAnnotation(session: FirSession): FirAnnotation? {
+    return getAnnotationByClassId(StandardClassIds.Annotations.Retention, session)
 }
 
-fun FirDeclaration.getTargetAnnotation(): FirAnnotation? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Target)
+fun FirDeclaration.getTargetAnnotation(session: FirSession): FirAnnotation? {
+    return getAnnotationByClassId(StandardClassIds.Annotations.Target, session)
 }
 
-fun FirClassLikeSymbol<*>.getTargetAnnotation(): FirAnnotation? {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Target)
+fun FirClassLikeSymbol<*>.getTargetAnnotation(session: FirSession): FirAnnotation? {
+    return getAnnotationByClassId(StandardClassIds.Annotations.Target, session)
 }
 
-fun FirExpression.extractClassesFromArgument(): List<FirRegularClassSymbol> {
+fun FirExpression.extractClassesFromArgument(session: FirSession): List<FirRegularClassSymbol> {
     return unfoldArrayOrVararg().mapNotNull {
-        it.extractClassFromArgument()
+        it.extractClassFromArgument(session)
     }
 }
 
-fun FirExpression.extractClassFromArgument(): FirRegularClassSymbol? {
+fun FirExpression.extractClassFromArgument(session: FirSession): FirRegularClassSymbol? {
     if (this !is FirGetClassCall) return null
-    val qualifier = argument as? FirResolvedQualifier ?: return null
-    return qualifier.symbol as? FirRegularClassSymbol
+    return when (val argument = argument) {
+        is FirResolvedQualifier ->
+            argument.symbol as? FirRegularClassSymbol
+        is FirClassReferenceExpression ->
+            argument.classTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.toRegularClassSymbol(session)
+        else ->
+            null
+    }
 }
 
 fun checkRepeatedAnnotation(
@@ -117,7 +125,7 @@ fun checkRepeatedAnnotation(
 }
 
 fun FirAnnotation.isRepeatable(session: FirSession): Boolean {
-    val annotationClassId = this.toAnnotationClassId() ?: return false
+    val annotationClassId = this.toAnnotationClassId(session) ?: return false
     if (annotationClassId.isLocal) return false
     val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: return false
 
@@ -125,18 +133,22 @@ fun FirAnnotation.isRepeatable(session: FirSession): Boolean {
 }
 
 fun FirClassLikeSymbol<*>.containsRepeatableAnnotation(session: FirSession): Boolean {
-    if (getAnnotationByClassId(StandardClassIds.Annotations.Repeatable) != null) return true
-    if (getAnnotationByClassId(StandardClassIds.Annotations.Java.Repeatable) != null ||
-        getAnnotationByClassId(StandardClassIds.Annotations.JvmRepeatable) != null
+    if (getAnnotationByClassId(StandardClassIds.Annotations.Repeatable, session) != null) return true
+    if (getAnnotationByClassId(StandardClassIds.Annotations.Java.Repeatable, session) != null ||
+        getAnnotationByClassId(StandardClassIds.Annotations.JvmRepeatable, session) != null
     ) {
         return session.languageVersionSettings.supportsFeature(LanguageFeature.RepeatableAnnotations) ||
-                getAnnotationRetention() == AnnotationRetention.SOURCE && origin is FirDeclarationOrigin.Java
+                getAnnotationRetention(session) == AnnotationRetention.SOURCE && origin is FirDeclarationOrigin.Java
     }
     return false
 }
 
-fun FirClassLikeSymbol<*>.getAnnotationRetention(): AnnotationRetention {
-    return getAnnotationByClassId(StandardClassIds.Annotations.Retention)?.getRetention() ?: AnnotationRetention.RUNTIME
+fun FirClassLikeSymbol<*>.getExplicitAnnotationRetention(session: FirSession): AnnotationRetention? {
+    return getAnnotationByClassId(StandardClassIds.Annotations.Retention, session)?.getRetention()
+}
+
+fun FirClassLikeSymbol<*>.getAnnotationRetention(session: FirSession): AnnotationRetention {
+    return getExplicitAnnotationRetention(session) ?: AnnotationRetention.RUNTIME
 }
 
 fun FirAnnotationContainer.getDefaultUseSiteTarget(

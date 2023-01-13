@@ -21,7 +21,7 @@ class Kotlinp(private val settings: KotlinpSettings) {
             }
             is KotlinClassMetadata.MultiFileClassFacade -> MultiFileClassFacadePrinter().print(classFile)
             is KotlinClassMetadata.MultiFileClassPart -> MultiFileClassPartPrinter(settings).print(classFile)
-            is KotlinClassMetadata.Unknown -> buildString { appendLine("unknown file (k=${classFile.header.kind})") }
+            is KotlinClassMetadata.Unknown -> buildString { appendLine("unknown file (k=${classFile.annotationData.kind})") }
             null -> buildString { appendLine("unsupported file") }
         }
 

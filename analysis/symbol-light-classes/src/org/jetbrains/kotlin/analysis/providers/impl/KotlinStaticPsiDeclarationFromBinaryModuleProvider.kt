@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.asJava.builder.ClsWrapperStubPsiFactory
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -31,7 +32,7 @@ private class KotlinStaticPsiDeclarationFromBinaryModuleProvider(
     private val binaryModules: Collection<KtBinaryModule>,
     override val jarFileSystem: CoreJarFileSystem,
 ) : KotlinPsiDeclarationProvider(), AbstractDeclarationFromBinaryModuleProvider {
-    private val psiManager by lazy { PsiManager.getInstance(project) }
+    private val psiManager by lazyPub { PsiManager.getInstance(project) }
 
     private fun clsClassImplsByFqName(
         fqName: FqName,

@@ -55,6 +55,9 @@ const externalObj = {
     c: class { x = "(new externalObj.c()).x" }
 }
 
+function jsRenamed() {
+    return 'renamed'
+}
 
 // FILE: externals.kt
 external interface Obj {
@@ -112,6 +115,9 @@ external object externalObj {
     }
 }
 
+@JsName("jsRenamed")
+external fun testJsName(): String
+
 fun box(): String {
     val obj = createObject()
     setX(obj, 100)
@@ -164,6 +170,7 @@ fun box(): String {
     if (10 as Any is C1) return "Fail 23"
     if (c1 as Any is C2) return "Fail 24"
 
+    if (testJsName() != "renamed") return "Fail 25"
 
     return "OK"
 }

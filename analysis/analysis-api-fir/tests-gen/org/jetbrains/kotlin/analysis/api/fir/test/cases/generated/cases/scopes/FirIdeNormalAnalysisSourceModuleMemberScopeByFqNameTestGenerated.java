@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,6 +47,12 @@ public class FirIdeNormalAnalysisSourceModuleMemberScopeByFqNameTestGenerated ex
     }
 
     @Test
+    @TestMetadata("dataClass.kt")
+    public void testDataClass() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/dataClass.kt");
+    }
+
+    @Test
     @TestMetadata("emumEntryWithoutMembers.kt")
     public void testEmumEntryWithoutMembers() throws Exception {
         runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/emumEntryWithoutMembers.kt");
@@ -62,6 +68,24 @@ public class FirIdeNormalAnalysisSourceModuleMemberScopeByFqNameTestGenerated ex
     @TestMetadata("Int.kt")
     public void testInt() throws Exception {
         runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/Int.kt");
+    }
+
+    @Test
+    @TestMetadata("javaField.kt")
+    public void testJavaField() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/javaField.kt");
+    }
+
+    @Test
+    @TestMetadata("javaFieldClash.kt")
+    public void testJavaFieldClash() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/javaFieldClash.kt");
+    }
+
+    @Test
+    @TestMetadata("javaMethods.kt")
+    public void testJavaMethods() throws Exception {
+        runTest("analysis/analysis-api/testData/scopes/memberScopeByFqName/javaMethods.kt");
     }
 
     @Test

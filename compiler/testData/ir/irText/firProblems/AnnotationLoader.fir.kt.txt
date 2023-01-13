@@ -59,14 +59,14 @@ class AnnotationLoader {
               }
 
               override fun visitArray(): Visitor? {
-                return <this>.#<$$delegate_0>.visitArray()
+                return <this>.#$$delegate_0.visitArray()
               }
 
               override fun visitAnnotation(): Visitor? {
-                return <this>.#<$$delegate_0>.visitAnnotation()
+                return <this>.#$$delegate_0.visitAnnotation()
               }
 
-              local /* final field */ val <$$delegate_0>: Visitor = visitor
+              private /* final field */ val $$delegate_0: Visitor = visitor
               override fun visit() {
               }
 

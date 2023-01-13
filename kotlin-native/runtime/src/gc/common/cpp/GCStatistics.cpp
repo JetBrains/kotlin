@@ -15,11 +15,38 @@
 #include <mutex>
 
 
+extern "C" {
+void Kotlin_Internal_GC_GCInfoBuilder_setEpoch(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setStartTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setEndTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setPauseStartTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setPauseEndTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime(KRef thiz, KLong value);
+void Kotlin_Internal_GC_GCInfoBuilder_setRootSet(KRef thiz,
+                                                 KLong threadLocalReferences, KLong stackReferences,
+                                                 KLong globalReferences, KLong stableReferences);
+void Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore(KRef thiz, KNativePtr name, KLong objectsCount, KLong totalObjectsSize);
+void Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter(KRef thiz, KNativePtr name, KLong objectsCount, KLong totalObjectsSize);
+}
+
 namespace {
 
 struct MemoryUsageMap {
     std::optional<kotlin::gc::MemoryUsage> heap;
     std::optional<kotlin::gc::MemoryUsage> extra;
+
+    void build(KRef builder, void (*add)(KRef, KNativePtr, KLong, KLong)) {
+        if (heap) {
+            add(builder, const_cast<KNativePtr>(static_cast<const void*>("heap")),
+                static_cast<KLong>(heap->objectsCount),
+                static_cast<KLong>(heap->totalObjectsSize));
+        }
+        if (extra) {
+            add(builder, const_cast<KNativePtr>(static_cast<const void*>("extra")),
+                static_cast<KLong>(extra->objectsCount),
+                static_cast<KLong>(extra->totalObjectsSize));
+        }
+    }
 };
 
 struct RootSetStatistics {
@@ -41,6 +68,22 @@ struct GCInfo {
     std::optional<kotlin::gc::MemoryUsage> markStats;
     MemoryUsageMap memoryUsageBefore;
     MemoryUsageMap memoryUsageAfter;
+
+    void build(KRef builder) {
+        if (!epoch) return;
+        Kotlin_Internal_GC_GCInfoBuilder_setEpoch(builder, static_cast<KLong>(*epoch));
+        if (startTime) Kotlin_Internal_GC_GCInfoBuilder_setStartTime(builder, *startTime);
+        if (endTime) Kotlin_Internal_GC_GCInfoBuilder_setEndTime(builder, *endTime);
+        if (pauseStartTime) Kotlin_Internal_GC_GCInfoBuilder_setPauseStartTime(builder, *pauseStartTime);
+        if (pauseEndTime) Kotlin_Internal_GC_GCInfoBuilder_setPauseEndTime(builder, *pauseEndTime);
+        if (finalizersDoneTime) Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime(builder, *finalizersDoneTime);
+        if (rootSet)
+            Kotlin_Internal_GC_GCInfoBuilder_setRootSet(
+                    builder, rootSet->threadLocalReferences, rootSet->stackReferences, rootSet->globalReferences,
+                    rootSet->stableReferences);
+        memoryUsageBefore.build(builder, Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore);
+        memoryUsageAfter.build(builder, Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter);
+    }
 };
 
 GCInfo last;
@@ -55,6 +98,22 @@ GCInfo* statByEpoch(uint64_t epoch) {
 }
 
 } // namespace
+
+extern "C" void Kotlin_Internal_GC_GCInfoBuilder_Fill(KRef builder, int id) {
+    GCInfo copy;
+    {
+        kotlin::ThreadStateGuard stateGuard(kotlin::ThreadState::kNative);
+        std::lock_guard guard(lock);
+        if (id == 0) {
+            copy = last;
+        } else if (id == 1) {
+            copy = current;
+        } else {
+            return;
+        }
+    }
+    copy.build(builder);
+}
 
 namespace kotlin::gc {
 GCHandle GCHandle::create(uint64_t epoch) {

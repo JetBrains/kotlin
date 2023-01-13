@@ -97,9 +97,7 @@ class UnsafeCall(val actualType: ConeKotlinType) : ResolutionDiagnostic(UNSAFE_C
 
 object LowerPriorityToPreserveCompatibilityDiagnostic : ResolutionDiagnostic(RESOLVED_NEED_PRESERVE_COMPATIBILITY)
 
-// TODO: change this to RESOLVED_LOW_PRIORITY after we are able to process dynamic extensions properly
-// At the moment we stop resolve on synthetic dynamic members, which is not correct
-object LowerPriorityForDynamic : ResolutionDiagnostic(K2_SYNTHETIC_RESOLVED)
+object LowerPriorityForDynamic : ResolutionDiagnostic(RESOLVED_LOW_PRIORITY)
 
 object CandidateChosenUsingOverloadResolutionByLambdaAnnotation : ResolutionDiagnostic(RESOLVED)
 

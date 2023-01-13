@@ -46,6 +46,8 @@ to follow stdlib naming conventions.
 ## Formatting
 
 For automated formatting you can use [config for CLion](codestyle/cpp/CLionFormat.xml) or `clang-format` (see [config](.clang-format) at the repo's root). Note, that CLion uses `clang-format` by default; this can be turned off if you prefer to use rules from `CLionFormat.xml`.
+Since 1.8.20 there's also a `:kotlin-native:clangFormat` task that will effectively run `git-clang-format -f $(git merge-base origin/master HEAD) -- kotlin-native/`.
+The task accepts optional arguments `--parent` to specify base branch other than `origin/master`, and `--interactive` to run the tool with `-p` flag and interactively accept or reject formatted patches.
 
 Formatting rules are designed to closely mirror [Kotlin rules](https://kotlinlang.org/docs/reference/coding-conventions.html).
 

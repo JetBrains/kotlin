@@ -5,14 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.commonizer.LeafCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 
-internal fun Project.getCommonizerTarget(compilation: KotlinCompilation<*>): CommonizerTarget? {
+internal fun getCommonizerTarget(compilation: KotlinCompilation<*>): CommonizerTarget? {
     if (compilation is KotlinNativeCompilation) {
         return LeafCommonizerTarget(compilation.konanTarget)
     }

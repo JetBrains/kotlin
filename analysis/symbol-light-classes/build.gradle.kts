@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":analysis:project-structure"))
     implementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     implementation(intellijCore())
+    implementation(kotlinxCollectionsImmutable())
 
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))

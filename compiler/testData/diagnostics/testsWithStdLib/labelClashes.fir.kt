@@ -1,14 +1,14 @@
 // !RENDER_DIAGNOSTICS_FULL_TEXT
 
 fun Int.with() {
-    with("") {
-        <!ARGUMENT_TYPE_MISMATCH!>this@with.<!UNRESOLVED_REFERENCE!>inc<!>()<!>
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>("") {
+        this@with.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
 fun Int.bar() {
-    with("") bar@{
-        <!ARGUMENT_TYPE_MISMATCH!>this@bar.<!UNRESOLVED_REFERENCE!>inc<!>()<!>
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>("") bar@{
+        this@bar.<!UNRESOLVED_REFERENCE!>inc<!>()
     }
 }
 
@@ -16,12 +16,12 @@ fun foo(f: with.() -> Unit) {}
 
 class with {
     fun foo() {
-        with("") {
-            <!ARGUMENT_TYPE_MISMATCH!>this@with.<!UNRESOLVED_REFERENCE!>foo<!>()<!>
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>("") {
+            this@with.<!UNRESOLVED_REFERENCE!>foo<!>()
         }
 
-        with("") with@{
-            <!ARGUMENT_TYPE_MISMATCH!>this@with.<!UNRESOLVED_REFERENCE!>foo<!>()<!>
+        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>("") with@{
+            this@with.<!UNRESOLVED_REFERENCE!>foo<!>()
         }
 
         with("") other@{

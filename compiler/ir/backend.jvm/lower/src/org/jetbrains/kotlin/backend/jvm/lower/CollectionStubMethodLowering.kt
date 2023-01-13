@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal val collectionStubMethodLowering = makeIrFilePhase(
     ::CollectionStubMethodLowering,
@@ -180,17 +179,15 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         }
     }
 
-    private fun liftStubMethodReturnType(function: IrSimpleFunction) =
-        when (function.name.asString()) {
-            "iterator" ->
-                context.ir.symbols.iterator.typeWithArguments(function.returnType.cast<IrSimpleType>().arguments)
-            "listIterator" ->
-                context.ir.symbols.listIterator.typeWithArguments(function.returnType.cast<IrSimpleType>().arguments)
-            "subList" ->
-                context.ir.symbols.list.typeWithArguments(function.returnType.cast<IrSimpleType>().arguments)
-            else ->
-                function.returnType
+    private fun liftStubMethodReturnType(function: IrSimpleFunction): IrType {
+        val klass = when (function.name.asString()) {
+            "iterator" -> context.ir.symbols.iterator
+            "listIterator" -> context.ir.symbols.listIterator
+            "subList" -> context.ir.symbols.list
+            else -> return function.returnType
         }
+        return klass.typeWithArguments((function.returnType as IrSimpleType).arguments)
+    }
 
     private fun isEffectivelyOverriddenBy(superFun: IrSimpleFunction, overridingFun: IrSimpleFunction): Boolean {
         // Function 'f0' is overridden by function 'f1' if all the following conditions are met,

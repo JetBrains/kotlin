@@ -212,12 +212,12 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
           RETURN type=kotlin.Nothing from='private final fun <get-counter> (): <root>.Counter declared in <root>.CounterIterator'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:counter type:<root>.Counter visibility:private [final]' type=<root>.Counter origin=null
               receiver: GET_VAR '<this>: <root>.CounterIterator declared in <root>.CounterIterator.<get-counter>' type=<root>.CounterIterator origin=null
-    FUN name:hasNext visibility:public modality:FINAL <> ($this:<root>.CounterIterator) returnType:kotlin.Boolean [operator]
+    FUN name:hasNext visibility:public modality:OPEN <> ($this:<root>.CounterIterator) returnType:kotlin.Boolean [operator]
       overridden:
         public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator
       $this: VALUE_PARAMETER name:<this> type:<root>.CounterIterator
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun hasNext (): kotlin.Boolean [operator] declared in <root>.CounterIterator'
+        RETURN type=kotlin.Nothing from='public open fun hasNext (): kotlin.Boolean [operator] declared in <root>.CounterIterator'
           CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
             arg0: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Counter' type=kotlin.Int origin=GET_PROPERTY
               $this: CALL 'private final fun <get-counter> (): <root>.Counter declared in <root>.CounterIterator' type=<root>.Counter origin=GET_PROPERTY
@@ -225,12 +225,12 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
             arg1: CALL 'public final fun <get-max> (): kotlin.Int declared in <root>.CounterConfig' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:<root>.CounterConfig visibility:private [final]' type=<root>.CounterConfig origin=null
                 receiver: GET_VAR '<this>: <root>.CounterIterator declared in <root>.CounterIterator.hasNext' type=<root>.CounterIterator origin=null
-    FUN name:next visibility:public modality:FINAL <> ($this:<root>.CounterIterator) returnType:kotlin.Int [operator]
+    FUN name:next visibility:public modality:OPEN <> ($this:<root>.CounterIterator) returnType:kotlin.Int [operator]
       overridden:
         public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator
       $this: VALUE_PARAMETER name:<this> type:<root>.CounterIterator
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun next (): kotlin.Int [operator] declared in <root>.CounterIterator'
+        RETURN type=kotlin.Nothing from='public open fun next (): kotlin.Int [operator] declared in <root>.CounterIterator'
           BLOCK type=kotlin.Int origin=null
             VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.Counter [val]
               CALL 'private final fun <get-counter> (): <root>.Counter declared in <root>.CounterIterator' type=<root>.Counter origin=GET_PROPERTY
@@ -292,11 +292,11 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
                     $receiver: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Counter' type=<root>.Counter origin=null
                     _context_receiver_0: GET_VAR '$this$with: <root>.CounterConfig declared in <root>.box.<anonymous>' type=<root>.CounterConfig origin=null
                 WHILE label=null origin=FOR_LOOP_INNER_WHILE
-                  condition: CALL 'public final fun hasNext (): kotlin.Boolean [operator] declared in <root>.CounterIterator' type=kotlin.Boolean origin=null
+                  condition: CALL 'public open fun hasNext (): kotlin.Boolean [operator] declared in <root>.CounterIterator' type=kotlin.Boolean origin=null
                     $this: GET_VAR 'val tmp_4: <root>.CounterIterator [val] declared in <root>.box.<anonymous>' type=<root>.CounterIterator origin=null
                   body: BLOCK type=kotlin.Unit origin=FOR_LOOP_INNER_WHILE
                     VAR name:i type:kotlin.Int [val]
-                      CALL 'public final fun next (): kotlin.Int [operator] declared in <root>.CounterIterator' type=kotlin.Int origin=null
+                      CALL 'public open fun next (): kotlin.Int [operator] declared in <root>.CounterIterator' type=kotlin.Int origin=null
                         $this: GET_VAR 'val tmp_4: <root>.CounterIterator [val] declared in <root>.box.<anonymous>' type=<root>.CounterIterator origin=null
                     BLOCK type=kotlin.Unit origin=null
                       SET_VAR 'var result: kotlin.Int [var] declared in <root>.box' type=kotlin.Unit origin=PLUSEQ

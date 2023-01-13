@@ -73,6 +73,10 @@ public class DefaultErrorMessages {
         MAP.put(INVISIBLE_MEMBER, "Cannot access ''{0}'': it is {1} in {2}", NAME, VISIBILITY, NAME_OF_CONTAINING_DECLARATION_OR_FILE);
         MAP.put(DEPRECATED_ACCESS_BY_SHORT_NAME, "Access to this type by short name is deprecated, and soon is going to be removed. Please, add explicit qualifier or import", NAME);
         MAP.put(DEPRECATED_ACCESS_TO_ENUM_COMPANION_PROPERTY, "Ambiguous access to companion''s property ''{0}'' in enum is deprecated. Please, add explicit Companion qualifier to the class name", NAME);
+        MAP.put(DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY, "Ambiguous access to companion''s property 'entries' in enum is deprecated. Please, add explicit Companion qualifier to the class name");
+        MAP.put(DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM, "Ambiguous access to property 'entries' from enum is deprecated. Please, add explicit qualifier to the call");
+        MAP.put(DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE, "Ambiguous access to property 'entries' is deprecated. Please, specify type of the referenced expression explicitly");
+        MAP.put(DEPRECATED_DECLARATION_OF_ENUM_ENTRY, "Conflicting declarations: enum entry 'entries' and the property 'Enum.entries' (KT-48872). Please, rename the enum entry declaration");
         MAP.put(DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY, "Ambiguous access to property ''{0}'' is deprecated because similar enum entry ''{1}'' is available. Please add explicit named import or use fully qualified name", FQ_NAME, FQ_NAME);
 
         MAP.put(PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL, "Protected constructor ''{0}'' from other classes can only be used in super-call", Renderers.SHORT_NAMES_IN_TYPES);
@@ -260,6 +264,10 @@ public class DefaultErrorMessages {
         MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT, "This declaration can only be called on a reference to a lateinit property");
         MAP.put(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION, "This declaration can not be used inside an inline function");
         MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY, "Backing field of ''{0}'' is not accessible at this point", COMPACT);
+        MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL_WARNING, "This declaration can only be called on a property literal (e.g. 'Foo::bar'). This warning will become an error in future releases.");
+        MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT_WARNING, "This declaration can only be called on a reference to a lateinit property. This warning will become an error in future releases.");
+        MAP.put(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION_WARNING, "This declaration can not be used inside an inline function. This warning will become an error in future releases.");
+        MAP.put(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY_WARNING, "Backing field of ''{0}'' is not accessible at this point. This warning will become an error in future releases.", COMPACT);
 
         MAP.put(GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY, "Getter visibility must be the same as property visibility");
         MAP.put(SETTER_VISIBILITY_INCONSISTENT_WITH_PROPERTY_VISIBILITY, "Setter visibility must be the same or less permissive than property visibility");
@@ -459,6 +467,11 @@ public class DefaultErrorMessages {
         MAP.put(RESERVED_SYNTAX_IN_CALLABLE_REFERENCE_LHS, "Left-hand side of callable reference matches expression syntax reserved for future releases");
 
         MAP.put(PARENTHESIZED_COMPANION_LHS_DEPRECATION, "Access to companion object through parenthesized class name is deprecated. Please, add explicit Companion qualifier.");
+
+        MAP.put(
+                INCORRECT_CALLABLE_REFERENCE_RESOLUTION_FOR_COMPANION_LHS,
+                "Callable reference to the companion's member is incorrectly resolved as unbound. Please, add explicit Companion qualifier to the left-hand-side. See https://youtrack.jetbrains.com/issue/KT-54316 for details"
+        );
 
 
         MAP.put(RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS, "The private constructor of a sealed class will become inaccessible here in future. See https://youtrack.jetbrains.com/issue/KT-44866 for details");
@@ -790,15 +803,18 @@ public class DefaultErrorMessages {
         MAP.put(VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION, "Value class cannot implement an interface by delegation if expression is not a parameter");
         MAP.put(VALUE_CLASS_CANNOT_EXTEND_CLASSES, "Value class cannot extend classes");
         MAP.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive");
-        MAP.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", STRING);
+        MAP.put(MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER, "Default parameters are not supported in the primary constructor of a multi-field value class");
         MAP.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, "Secondary constructors with bodies are reserved for for future releases");
+        MAP.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", STRING);
+        MAP.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must be only star projections");
         MAP.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes");
         MAP.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable");
         MAP.put(INLINE_CLASS_DEPRECATED, "'inline' modifier is deprecated. Use 'value' instead");
-        MAP.put(INLINE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Inline classes cannot have context receivers");
-        MAP.put(INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
-                "Overriding ''equals'' from ''Any'' in inline class alongside with lack of ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
-                STRING);
+        MAP.put(VALUE_CLASS_CANNOT_HAVE_CONTEXT_RECEIVERS, "Value classes cannot have context receivers");
+        MAP.put(INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
+                "Overriding ''equals'' from ''Any'' in value class without operator ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
+                RENDER_TYPE);
+        MAP.put(ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET, "Annotations on {0} of multi-field value class type are not supported", STRING);
 
         MAP.put(RESULT_CLASS_IN_RETURN_TYPE, "'kotlin.Result' cannot be used as a return type");
         MAP.put(RESULT_CLASS_WITH_NULLABLE_OPERATOR, "Expression of type ''kotlin.Result'' cannot be used as a left operand of ''{0}''", STRING);
@@ -1101,6 +1117,7 @@ public class DefaultErrorMessages {
 
         //Inline
         MAP.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+        MAP.put(DEPRECATED_IMPLICIT_NON_PUBLIC_API_ACCESS, "Deprecated implicit access of non-public-API from public-API inline function");
         MAP.put(PRIVATE_CLASS_MEMBER_FROM_INLINE, "Non-private inline function cannot access members of private classes: ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
         MAP.put(NOT_YET_SUPPORTED_IN_INLINE, "{0} are not yet supported in inline functions", STRING);
         MAP.put(DECLARATION_CANT_BE_INLINED, "'inline' modifier is not allowed on virtual members. Only private or final members can be inlined");

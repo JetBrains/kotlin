@@ -57,6 +57,9 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // with a fake sources which refers to the target expression
     object GeneratedLambdaLabel : KtFakeSourceElementKind()
 
+    // for error element which is created for dangling modifier lists
+    object DanglingModifierList : KtFakeSourceElementKind()
+
     // for lambdas & functions with expression bodies the return statement is added
     // with a fake sources which refers to the return target
     sealed class ImplicitReturn : KtFakeSourceElementKind() {
@@ -110,6 +113,9 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // with a fake sources for the block which refers to the wrapped expression
     object SingleExpressionBlock : KtFakeSourceElementKind()
 
+    // Contract statements are wrapped in a special block to be reused between a contract FIR and a function body.
+    object ContractBlock : KtFakeSourceElementKind()
+
     // x++ -> x = x.inc()
     // x = x++ -> x = { val <unary> = x; x = <unary>.inc(); <unary> }
     object DesugaredIncrementOrDecrement : KtFakeSourceElementKind()
@@ -162,6 +168,11 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
 
     // list[0] -> list.get(0) where name reference will have a fake source element
     object ArrayAccessNameReference : KtFakeSourceElementKind()
+
+    // a[b]++
+    // b -> val <index0> = b where b will have fake property
+    object ArrayIndexExpressionReference : KtFakeSourceElementKind()
+
 
     // super.foo() --> super<Supertype>.foo()
     // where `Supertype` has a fake source
@@ -222,6 +233,10 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // for implicit conversion from int to long with `.toLong` function
     // e.g. val x: Long = 1 + 1 becomes val x: Long = (1 + 1).toLong()
     object IntToLongConversion : KtFakeSourceElementKind()
+
+    // for extension receiver type the corresponding receiver parameter is generated
+    // with a fake sources which refers to this the type
+    object ReceiverFromType : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {
@@ -275,9 +290,13 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
     override val endOffset: Int
         get() = psi.textRange.endOffset
 
-    override val lighterASTNode by lazy { TreeBackedLighterAST.wrap(psi.node) }
+    override val lighterASTNode: LighterASTNode by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        TreeBackedLighterAST.wrap(psi.node)
+    }
 
-    override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode> by lazy { WrappedTreeStructure(psi.containingFile) }
+    override val treeStructure: FlyweightCapableTreeStructure<LighterASTNode> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        WrappedTreeStructure(psi.containingFile)
+    }
 
     internal class WrappedTreeStructure(file: PsiFile) : FlyweightCapableTreeStructure<LighterASTNode> {
         private val lighterAST = TreeBackedLighterAST(file.node)

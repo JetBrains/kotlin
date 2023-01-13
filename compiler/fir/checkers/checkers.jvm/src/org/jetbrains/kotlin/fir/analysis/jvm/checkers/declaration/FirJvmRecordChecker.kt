@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmNames.JVM_RECORD_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -37,7 +36,7 @@ object FirJvmRecordChecker : FirRegularClassChecker() {
             }
         }
 
-        val annotationSource = declaration.getAnnotationByClassId(JVM_RECORD_ANNOTATION_CLASS_ID)?.source ?: return
+        val annotationSource = declaration.getAnnotationByClassId(JVM_RECORD_ANNOTATION_CLASS_ID, context.session)?.source ?: return
 
         val languageVersionSettings = context.session.languageVersionSettings
         if (!languageVersionSettings.supportsFeature(LanguageFeature.JvmRecordSupport)) {

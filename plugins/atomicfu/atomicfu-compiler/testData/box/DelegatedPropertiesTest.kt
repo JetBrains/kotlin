@@ -7,37 +7,47 @@ var topLevelInt: Int by _topLevelInt
 private var topLevelVolatile by atomic(56)
 
 class DelegatedProperties {
+    // Delegated properties should be declared in the same scope as the original atomic values
     private val _a = atomic(42)
     var a: Int by _a
+    private var privateA: Int by _a
 
     private val _l = atomic(55555555555)
-    var l: Long by _l
+    private var l: Long by _l
 
     private val _b = atomic(false)
-    var b: Boolean by _b
+    private var b: Boolean by _b
 
     private val _ref = atomic(A(B(77)))
-    var ref: A by _ref
+    private var ref: A by _ref
 
-    var vInt by atomic(77)
+    private var vInt by atomic(77)
 
-    var vLong by atomic(777777777)
+    private var vLong by atomic(777777777)
 
-    var vBoolean by atomic(false)
+    private var vBoolean by atomic(false)
 
-    var vRef by atomic(A(B(77)))
+    private var vRef by atomic(A(B(77)))
 
     class A (val b: B)
     class B (val n: Int)
 
    fun testDelegatedAtomicInt() {
         assertEquals(42, a)
+        assertEquals(42, privateA)
         _a.compareAndSet(42, 56)
         assertEquals(56, a)
+        assertEquals(56, privateA)
         a = 77
         _a.compareAndSet(77,  66)
+        privateA = 88
+        _a.compareAndSet(88,  66)
         assertEquals(66, _a.value)
         assertEquals(66, a)
+        assertEquals(66, privateA)
+
+        val aValue = a + privateA
+        assertEquals(132, aValue)
     }
 
     fun testDelegatedAtomicLong() {
@@ -95,23 +105,21 @@ class DelegatedProperties {
     }
 
     inner class D {
-        var b: Int by _a
         var c by atomic("aaa")
     }
 
-    fun testScopedDelegatedProperties() {
+    fun testScopedVolatileProperties() {
         val clazz = D()
-        clazz.b = 42
-        _a.compareAndSet(42, 56)
-        assertEquals(56, clazz.b)
-        clazz.b = 77
-        _a.compareAndSet(77, 66)
-        assertEquals(66, _a.value)
-        assertEquals(66, clazz.b)
-
         assertEquals("aaa", clazz.c)
         clazz.c = "bbb"
         assertEquals("bbb", clazz.c)
+    }
+
+    fun testDelegatedVariablesFlow() {
+        _a.lazySet(55)
+        assertEquals(55, _a.value)
+        assertEquals(55, a)
+        var aValue = a
     }
 
     fun test() {
@@ -123,7 +131,8 @@ class DelegatedProperties {
         testVolatileBoolean()
         testVolatileLong()
         testVolatileRef()
-        testScopedDelegatedProperties()
+        testScopedVolatileProperties()
+        testDelegatedVariablesFlow()
     }
 }
 

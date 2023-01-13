@@ -53,17 +53,17 @@ open class KotlinSourceFileMap<out T>(files: Map<KotlinLibraryFile, Map<KotlinSo
 }
 
 class KotlinSourceFileMutableMap<T>(
-    private val files: MutableMap<KotlinLibraryFile, MutableMap<KotlinSourceFile, T>> = mutableMapOf()
+    private val files: MutableMap<KotlinLibraryFile, MutableMap<KotlinSourceFile, T>> = hashMapOf()
 ) : KotlinSourceFileMap<T>(files) {
 
     operator fun set(libFile: KotlinLibraryFile, sourceFile: KotlinSourceFile, data: T) = getOrPutFiles(libFile).put(sourceFile, data)
     operator fun set(libFile: KotlinLibraryFile, sourceFiles: MutableMap<KotlinSourceFile, T>) = files.put(libFile, sourceFiles)
 
-    fun getOrPutFiles(libFile: KotlinLibraryFile) = files.getOrPut(libFile) { mutableMapOf() }
+    fun getOrPutFiles(libFile: KotlinLibraryFile) = files.getOrPut(libFile) { hashMapOf() }
 
     fun copyFilesFrom(other: KotlinSourceFileMap<T>) {
         for ((libFile, srcFiles) in other) {
-            files.getOrPut(libFile) { mutableMapOf() } += srcFiles
+            files.getOrPut(libFile) { hashMapOf() } += srcFiles
         }
     }
 
@@ -81,11 +81,11 @@ class KotlinSourceFileMutableMap<T>(
 }
 
 fun <T> KotlinSourceFileMap<T>.toMutable(): KotlinSourceFileMutableMap<T> {
-    return KotlinSourceFileMutableMap(entries.associateTo(mutableMapOf()) { it.key to it.value.toMutableMap() })
+    return KotlinSourceFileMutableMap(entries.associateTo(HashMap(entries.size)) { it.key to HashMap(it.value) })
 }
 
 fun KotlinSourceFileMap<Set<IdSignature>>.flatSignatures(): Set<IdSignature> {
-    val allSignatures = mutableSetOf<IdSignature>()
+    val allSignatures = hashSetOf<IdSignature>()
     forEachFile { _, _, signatures -> allSignatures += signatures }
     return allSignatures
 }
@@ -98,6 +98,62 @@ abstract class KotlinSourceFileExports {
 
 abstract class KotlinSourceFileMetadata : KotlinSourceFileExports() {
     abstract val directDependencies: KotlinSourceFileMap<Map<IdSignature, ICHash>>
+
+    fun isEmpty() = inverseDependencies.isEmpty() && directDependencies.isEmpty()
 }
 
-fun KotlinSourceFileMetadata.isEmpty() = inverseDependencies.isEmpty() && directDependencies.isEmpty()
+internal object KotlinSourceFileMetadataNotExist : KotlinSourceFileMetadata() {
+    override val inverseDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())
+    override val directDependencies = KotlinSourceFileMap<Map<IdSignature, ICHash>>(emptyMap())
+}
+
+internal class DirtyFileExports(
+    override val inverseDependencies: KotlinSourceFileMutableMap<Set<IdSignature>> = KotlinSourceFileMutableMap()
+) : KotlinSourceFileExports() {
+    override fun getExportedSignatures(): Set<IdSignature> = allExportedSignatures
+
+    val allExportedSignatures = hashSetOf<IdSignature>()
+}
+
+internal class DirtyFileMetadata(
+    val maybeImportedSignatures: Collection<IdSignature>,
+
+    val oldDirectDependencies: KotlinSourceFileMap<*>,
+
+    override val inverseDependencies: KotlinSourceFileMutableMap<MutableSet<IdSignature>> = KotlinSourceFileMutableMap(),
+    override val directDependencies: KotlinSourceFileMutableMap<MutableMap<IdSignature, ICHash>> = KotlinSourceFileMutableMap(),
+) : KotlinSourceFileMetadata() {
+    fun addInverseDependency(lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature) =
+        when (val signatures = inverseDependencies[lib, src]) {
+            null -> inverseDependencies[lib, src] = hashSetOf(signature)
+            else -> signatures += signature
+        }
+
+    fun addDirectDependency(lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature, hash: ICHash) =
+        when (val signatures = directDependencies[lib, src]) {
+            null -> directDependencies[lib, src] = hashMapOf(signature to hash)
+            else -> signatures[signature] = hash
+        }
+}
+
+internal enum class ImportedSignaturesState { UNKNOWN, MODIFIED, NON_MODIFIED }
+
+internal class UpdatedDependenciesMetadata(oldMetadata: KotlinSourceFileMetadata) : KotlinSourceFileMetadata() {
+    private val oldInverseDependencies = oldMetadata.inverseDependencies
+    private val newExportedSignatures: Set<IdSignature> by lazy { inverseDependencies.flatSignatures() }
+
+    var importedSignaturesState = ImportedSignaturesState.UNKNOWN
+
+    override val inverseDependencies = oldMetadata.inverseDependencies.toMutable()
+    override val directDependencies = oldMetadata.directDependencies.toMutable()
+
+    override fun getExportedSignatures(): Set<IdSignature> = newExportedSignatures
+
+    fun isExportedSignaturesUpdated() = newExportedSignatures != oldInverseDependencies.flatSignatures()
+}
+
+internal fun KotlinSourceFileMutableMap<UpdatedDependenciesMetadata>.addNewMetadata(
+    libFile: KotlinLibraryFile, srcFile: KotlinSourceFile, oldMetadata: KotlinSourceFileMetadata
+) = this[libFile, srcFile] ?: UpdatedDependenciesMetadata(oldMetadata).also {
+    this[libFile, srcFile] = it
+}

@@ -38,11 +38,11 @@ fun case_2(x: Class?) {
  */
 fun case_3(x: Any?) {
     if ((x as Class?)?.prop_8?.prop_8?.prop_8?.prop_8 == null) else {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class?")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class?")!>x<!><!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class?")!>x<!><!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class?")!>x<!><!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class?")!>x<!><!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>.prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class")!>x<!>.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 
@@ -87,7 +87,7 @@ fun case_6(x: Class?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8
         <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8
-        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8<!UNSAFE_CALL!>.<!>prop_8
+        <!DEBUG_INFO_EXPRESSION_TYPE("Class? & Class")!>x<!>.prop_8.prop_8.prop_8.prop_8<!UNSAFE_CALL!>.<!>prop_8
     }
 }
 

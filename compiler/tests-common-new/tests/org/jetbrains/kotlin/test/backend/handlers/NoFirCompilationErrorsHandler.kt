@@ -22,25 +22,29 @@ class NoFirCompilationErrorsHandler(testServices: TestServices) : FirAnalysisHan
         get() = listOf(CodegenTestDirectives)
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        var hasError = false
-        val ignoreErrors = IGNORE_FIR_DIAGNOSTICS in module.directives
-        for ((firFile, diagnostics) in info.firAnalyzerFacade.runCheckers()) {
-            for (diagnostic in diagnostics) {
-                if (diagnostic.severity == Severity.ERROR) {
-                    hasError = true
-                    if (!ignoreErrors) {
-                        val diagnosticText = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
-                        val range = diagnostic.textRanges.first()
-                        val locationText = firFile.source?.psi?.containingFile?.let { psiFile ->
-                            PsiDiagnosticUtils.atLocation(psiFile, range)
-                        } ?: "${firFile.name}:$range"
-                        throw IllegalStateException("${diagnostic.factory.name}: $diagnosticText at $locationText")
+        for (part in info.partsForDependsOnModules) {
+            var hasError = false
+
+            val ignoreErrors = IGNORE_FIR_DIAGNOSTICS in part.module.directives
+            for ((firFile, diagnostics) in part.firAnalyzerFacade.runCheckers()) {
+                for (diagnostic in diagnostics) {
+                    if (diagnostic.severity == Severity.ERROR) {
+                        hasError = true
+                        if (!ignoreErrors) {
+                            val diagnosticText = RootDiagnosticRendererFactory(diagnostic).render(diagnostic)
+                            val range = diagnostic.textRanges.first()
+                            val locationText = firFile.source?.psi?.containingFile?.let { psiFile ->
+                                PsiDiagnosticUtils.atLocation(psiFile, range)
+                            } ?: "${firFile.name}:$range"
+                            throw IllegalStateException("${diagnostic.factory.name}: $diagnosticText at $locationText")
+                        }
                     }
                 }
             }
-        }
-        if (!hasError && ignoreErrors) {
-            assertions.fail { "Test contains $IGNORE_FIR_DIAGNOSTICS directive but no errors was reported. Please remove directive" }
+
+            if (!hasError && ignoreErrors) {
+                assertions.fail { "Test contains $IGNORE_FIR_DIAGNOSTICS directive but no errors was reported. Please remove directive" }
+            }
         }
     }
 

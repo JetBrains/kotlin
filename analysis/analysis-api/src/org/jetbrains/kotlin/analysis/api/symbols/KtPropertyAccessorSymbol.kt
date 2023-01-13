@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.symbols
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.markers.*
@@ -30,15 +31,18 @@ public sealed class KtPropertyAccessorSymbol : KtFunctionLikeSymbol(),
 
     final override val symbolKind: KtSymbolKind get() = withValidityAssertion { KtSymbolKind.ACCESSOR }
 
+    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtPropertyAccessorSymbol>
 }
 
 public abstract class KtPropertyGetterSymbol : KtPropertyAccessorSymbol() {
+    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtPropertyGetterSymbol>
 }
 
 public abstract class KtPropertySetterSymbol : KtPropertyAccessorSymbol() {
     public abstract val parameter: KtValueParameterSymbol
 
+    context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtPropertySetterSymbol>
 }

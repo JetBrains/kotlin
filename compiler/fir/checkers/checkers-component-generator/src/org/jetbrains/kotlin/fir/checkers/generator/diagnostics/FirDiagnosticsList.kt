@@ -76,6 +76,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INT_LITERAL_OUT_OF_RANGE by error<PsiElement>()
         val FLOAT_LITERAL_OUT_OF_RANGE by error<PsiElement>()
         val WRONG_LONG_SUFFIX by error<KtElement>(PositioningStrategy.LONG_LITERAL_SUFFIX)
+        val UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH by error<KtElement>()
         val DIVISION_BY_ZERO by warning<KtExpression>()
         val VAL_OR_VAR_ON_LOOP_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
             parameter<KtKeywordToken>("valOrVar")
@@ -213,7 +214,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NON_PRIVATE_CONSTRUCTOR_IN_ENUM by error<PsiElement>()
         val NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED by error<PsiElement>()
         val CYCLIC_CONSTRUCTOR_DELEGATION_CALL by error<PsiElement>()
-        val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by warning<PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
+        val PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED by error<PsiElement>(PositioningStrategy.SECONDARY_CONSTRUCTOR_DELEGATION_CALL)
 
         // TODO: change it to KtSuperTypeEntry when possible (after re-targeter implementation)
         val SUPERTYPE_NOT_INITIALIZED by error<KtTypeReference>()
@@ -292,6 +293,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val WRONG_EXTENSION_FUNCTION_TYPE by error<KtAnnotationEntry>()
         val WRONG_EXTENSION_FUNCTION_TYPE_WARNING by warning<KtAnnotationEntry>()
         val ANNOTATION_IN_WHERE_CLAUSE_ERROR by error<KtAnnotationEntry>()
+
+        val PLUGIN_ANNOTATION_AMBIGUITY by error<PsiElement>() {
+            parameter<ConeKotlinType>("typeFromCompilerPhase")
+            parameter<ConeKotlinType>("typeFromTypesPhase")
+        }
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
@@ -425,12 +431,17 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION by error<PsiElement>()
         val VALUE_CLASS_CANNOT_EXTEND_CLASSES by error<KtTypeReference>()
         val VALUE_CLASS_CANNOT_BE_RECURSIVE by error<KtTypeReference>()
+        val MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER by error<KtExpression>()
+        val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS by error<PsiElement>()
         val RESERVED_MEMBER_INSIDE_VALUE_CLASS by error<KtFunction>(PositioningStrategy.DECLARATION_NAME) {
             parameter<String>("name")
         }
-        val SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS by error<PsiElement>()
+        val TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS by error<KtTypeReference>()
         val INNER_CLASS_INSIDE_VALUE_CLASS by error<KtDeclaration>(PositioningStrategy.INNER_MODIFIER)
         val VALUE_CLASS_CANNOT_BE_CLONEABLE by error<KtDeclaration>(PositioningStrategy.INLINE_OR_VALUE_MODIFIER)
+        val ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET by error<KtAnnotationEntry> {
+            parameter<String>("name")
+        }
     }
 
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {
@@ -446,6 +457,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
+        }
+
+        val TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR by error<PsiElement>() {
+            parameter<FirTypeParameterSymbol>("typeParameter")
         }
 
         val THROWABLE_TYPE_MISMATCH by error<PsiElement> {
@@ -648,13 +663,20 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("isMismatchDueToNullability")
         }
 
+        val IMPLICIT_NOTHING_RETURN_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
+        val IMPLICIT_NOTHING_PROPERTY_TYPE by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
+
         val CYCLIC_GENERIC_UPPER_BOUND by error<PsiElement>()
 
         val DEPRECATED_TYPE_PARAMETER_SYNTAX by error<KtDeclaration>(PositioningStrategy.TYPE_PARAMETERS_LIST)
 
         val MISPLACED_TYPE_PARAMETER_CONSTRAINTS by warning<KtTypeParameter>()
 
+        val DYNAMIC_SUPERTYPE by error<KtTypeReference>()
+
         val DYNAMIC_UPPER_BOUND by error<KtTypeReference>()
+
+        val DYNAMIC_RECEIVER_NOT_ALLOWED by error<KtElement>()
 
         val INCOMPATIBLE_TYPES by error<KtElement> {
             parameter<ConeKotlinType>("typeA")
@@ -999,6 +1021,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS by error<KtModifierListOwner>(PositioningStrategy.ABSTRACT_MODIFIER)
         val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING by warning<KtProperty>(PositioningStrategy.TYPE_PARAMETERS_LIST)
         val LOCAL_VARIABLE_WITH_TYPE_PARAMETERS by error<KtProperty>(PositioningStrategy.TYPE_PARAMETERS_LIST)
+        val EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS by error<KtExpression>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
+
+        val LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL by error<PsiElement>()
+        val LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT by error<PsiElement>()
+        val LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION by error<PsiElement>()
+        val LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY by error<PsiElement>() {
+            parameter<Symbol>("declaration")
+        }
     }
 
     val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {
@@ -1398,8 +1428,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val REDUNDANT_INLINE_SUSPEND_FUNCTION_TYPE by warning<KtElement>(PositioningStrategy.SUSPEND_MODIFIER)
 
-        val INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS by warning<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
-            parameter<String>("className")
+        val INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS by warning<KtNamedFunction>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<ConeKotlinType>("type")
         }
     }
 

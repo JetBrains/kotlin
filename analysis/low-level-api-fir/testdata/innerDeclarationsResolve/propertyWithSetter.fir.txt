@@ -14,7 +14,7 @@ FILE: propertyWithSetter.kt
             super<R|Foo|>()
         }
 
-        public final override [BODY_RESOLVE] var id: R|kotlin/Int| = Int(1)
+        public open override [BODY_RESOLVE] var id: R|kotlin/Int| = Int(1)
             public [BODY_RESOLVE] get(): R|kotlin/Int|
             public [BODY_RESOLVE] set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit|
 

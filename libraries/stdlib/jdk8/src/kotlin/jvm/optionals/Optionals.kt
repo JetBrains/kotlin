@@ -61,7 +61,6 @@ public fun <T : Any> Optional<out T>.toSet(): Set<T> =
 
 /**
  * Returns a new sequence for this [Optional]'s value if [present][Optional.isPresent], or otherwise an empty sequence.
- * The returned set is serializable (JVM).
  */
 @SinceKotlin("1.8")
 @WasExperimental(ExperimentalStdlibApi::class)

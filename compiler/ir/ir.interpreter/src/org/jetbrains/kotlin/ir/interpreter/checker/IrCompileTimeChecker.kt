@@ -31,8 +31,9 @@ class IrCompileTimeChecker(
     }
 
     private fun <R> IrCall.saveContext(block: () -> R): R {
+        val oldContext = contextExpression
         contextExpression = this
-        return block().apply { contextExpression = null }
+        return block().apply { contextExpression = oldContext }
     }
 
     override fun visitElement(element: IrElement, data: Nothing?) = false
@@ -53,7 +54,7 @@ class IrCompileTimeChecker(
 
     private fun visitConstructor(expression: IrFunctionAccessExpression): Boolean {
         return when {
-            !visitValueParameters(expression, null) || !mode.canEvaluateFunction(expression.symbol.owner, contextExpression) -> false
+            !visitValueArguments(expression, null) || !mode.canEvaluateFunction(expression.symbol.owner, contextExpression) -> false
             else -> expression.symbol.owner.visitBodyIfNeeded()
         }
     }
@@ -69,7 +70,7 @@ class IrCompileTimeChecker(
         return expression.saveContext {
             val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
             val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
-            if (!visitValueParameters(expression, null)) return@saveContext false
+            if (!visitValueArguments(expression, null)) return@saveContext false
             val bodyComputable = owner.visitBodyIfNeeded()
             return@saveContext dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
         }
@@ -79,7 +80,7 @@ class IrCompileTimeChecker(
         return declaration.initializer?.accept(this, data) ?: true
     }
 
-    private fun visitValueParameters(expression: IrFunctionAccessExpression, data: Nothing?): Boolean {
+    private fun visitValueArguments(expression: IrFunctionAccessExpression, data: Nothing?): Boolean {
         return (0 until expression.valueArgumentsCount)
             .map { expression.getValueArgument(it) }
             .none { it?.accept(this, data) == false }
@@ -151,7 +152,11 @@ class IrCompileTimeChecker(
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): Boolean {
         if (!mode.canEvaluateEnumValue(expression, contextExpression)) return false
-        return expression.symbol.owner.initializerExpression?.accept(this, data) == true
+        // we want to avoid recursion in cases like "enum class E(val srt: String) { OK(OK.name) }"
+        if (visitedStack.contains(expression)) return true
+        return expression.asVisited {
+            expression.symbol.owner.initializerExpression?.accept(this, data) == true
+        }
     }
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): Boolean {

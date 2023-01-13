@@ -22,8 +22,8 @@ inline fun <reified T> case_2(x: Any?) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
         }
         is T -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing? & T")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing? & T")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
         }
         else -> return
     }
@@ -36,12 +36,12 @@ inline fun <reified T> case_3(x: Any?) {
     when (x) {
         is T? -> return
         else -> {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
         }
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 4
@@ -70,8 +70,8 @@ inline fun <reified T> case_5(x: Any?) {
 // TESTCASE NUMBER: 6
 inline fun <reified T> case_6(x: Any?) {
     if (x is T?) return
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
 }
 
 // TESTCASE NUMBER: 7
@@ -80,8 +80,8 @@ inline fun <reified T> case_7(x: Any?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     } else if (x is T) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing? & T")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Nothing? & T")!>x<!><!UNSAFE_CALL!>.<!>equals(10)
     } else return
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!><!UNSAFE_CALL!>.<!>equals(10)

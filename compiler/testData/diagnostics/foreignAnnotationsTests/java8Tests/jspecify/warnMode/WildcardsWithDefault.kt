@@ -3,7 +3,7 @@
 // MUTE_FOR_PSI_CLASS_FILES_READING
 
 // FILE: WildcardsWithDefault.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 @NullMarked
 public class WildcardsWithDefault {
@@ -12,7 +12,7 @@ public class WildcardsWithDefault {
 }
 
 // FILE: A.java
-import org.jspecify.nullness.*;
+import org.jspecify.annotations.*;
 
 public class A <T extends Object, E extends @Nullable Object, F extends @NullnessUnspecified Object> {}
 

@@ -1,0 +1,8 @@
+package
+
+public inline fun bar(/*0*/ block1: () -> kotlin.Unit, /*1*/ noinline block2: () -> kotlin.Unit, /*2*/ crossinline block3: () -> kotlin.Unit = ...): kotlin.Unit
+public inline fun foo(/*0*/ block: () -> kotlin.Unit): kotlin.Unit
+public fun test1(): kotlin.Unit
+public fun test2(): kotlin.Unit
+public fun test3(): kotlin.Unit
+

@@ -7,16 +7,20 @@ package org.jetbrains.kotlin.backend.konan.objcexport
 
 import org.jetbrains.kotlin.backend.common.serialization.findSourceFile
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.cKeywords
 import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.SyntheticModulesOrigin
+import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.library.shortName
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
@@ -29,7 +33,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isSubclassOf
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.source.PsiSourceFile
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 internal interface ObjCExportNameTranslator {
     fun getFileClassName(file: KtFile): ObjCExportNamer.ClassOrProtocolName
@@ -51,6 +54,9 @@ interface ObjCExportNamer {
         val topLevelNamePrefix: String
         fun getAdditionalPrefix(module: ModuleDescriptor): String?
         val objcGenerics: Boolean
+
+        val disableSwiftMemberNameMangling: Boolean
+            get() = false
     }
 
     val topLevelNamePrefix: String
@@ -58,6 +64,7 @@ interface ObjCExportNamer {
     fun getFileClassName(file: SourceFile): ClassOrProtocolName
     fun getClassOrProtocolName(descriptor: ClassDescriptor): ClassOrProtocolName
     fun getSelector(method: FunctionDescriptor): String
+    fun getParameterName(parameter: ParameterDescriptor): String
     fun getSwiftName(method: FunctionDescriptor): String
     fun getPropertyName(property: PropertyDescriptor): PropertyName
     fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
@@ -274,7 +281,8 @@ internal class ObjCExportNamerImpl(
             mapper: ObjCExportMapper,
             topLevelNamePrefix: String,
             local: Boolean,
-            objcGenerics: Boolean = false
+            objcGenerics: Boolean = false,
+            disableSwiftMemberNameMangling: Boolean = false,
     ) : this(
             object : ObjCExportNamer.Configuration {
                 override val topLevelNamePrefix: String
@@ -285,6 +293,9 @@ internal class ObjCExportNamerImpl(
 
                 override val objcGenerics: Boolean
                     get() = objcGenerics
+
+                override val disableSwiftMemberNameMangling: Boolean
+                    get() = disableSwiftMemberNameMangling
 
             },
             builtIns,
@@ -328,20 +339,24 @@ internal class ObjCExportNamerImpl(
     }
 
     private val methodSwiftNames = object : Mapping<FunctionDescriptor, String>() {
-        override fun conflict(first: FunctionDescriptor, second: FunctionDescriptor): Boolean =
-                !mapper.canHaveSameSelector(first, second)
+        override fun conflict(first: FunctionDescriptor, second: FunctionDescriptor): Boolean {
+            if (configuration.disableSwiftMemberNameMangling) return false // Ignore all conflicts.
+            return !mapper.canHaveSameSelector(first, second)
+        }
         // Note: this condition is correct but can be too strict.
     }
 
-    private inner class PropertyNameMapping : Mapping<PropertyDescriptor, String>() {
+    private inner class PropertyNameMapping(val forSwift: Boolean) : Mapping<PropertyDescriptor, String>() {
         override fun reserved(name: String) = name in Reserved.propertyNames
 
-        override fun conflict(first: PropertyDescriptor, second: PropertyDescriptor): Boolean =
-                !mapper.canHaveSameName(first, second)
+        override fun conflict(first: PropertyDescriptor, second: PropertyDescriptor): Boolean {
+            if (forSwift && configuration.disableSwiftMemberNameMangling) return false // Ignore all conflicts.
+            return !mapper.canHaveSameName(first, second)
+        }
     }
 
-    private val objCPropertyNames = PropertyNameMapping()
-    private val swiftPropertyNames = PropertyNameMapping()
+    private val objCPropertyNames = PropertyNameMapping(forSwift = false)
+    private val swiftPropertyNames = PropertyNameMapping(forSwift = true)
 
     private open inner class GlobalNameMapping<in T : Any, N> : Mapping<T, N>() {
         final override fun conflict(first: T, second: T): Boolean = true
@@ -476,6 +491,8 @@ internal class ObjCExportNamerImpl(
         }
         append(objCName.asIdentifier(forSwift))
     }
+
+    override fun getParameterName(parameter: ParameterDescriptor): String = parameter.getObjCName().asString(forSwift = false)
 
     override fun getSelector(method: FunctionDescriptor): String = methodSelectors.getOrPut(method) {
         assert(mapper.isBaseMethod(method))
@@ -1040,7 +1057,7 @@ internal val ModuleDescriptor.objCExportAdditionalNamePrefix: String get() {
     return abbreviate(fullPrefix)
 }
 
-internal val Context.objCExportTopLevelNamePrefix: String
+internal val PhaseContext.objCExportTopLevelNamePrefix: String
     get() = abbreviate(config.fullExportedNamePrefix)
 
 fun abbreviate(name: String): String {

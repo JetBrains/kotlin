@@ -12,21 +12,24 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.INPUT_DATA
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.KIND
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.OUTPUT_DATA_FILE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.EXPECTED_TIMEOUT_FAILURE
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.LLDB_TRACE
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives.TEST_RUNNER
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunCheck.OutputDataFile
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.LLDBSessionSpec
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.services.impl.RegisteredDirectivesParser
+import org.junit.jupiter.api.Assertions
 import java.io.File
 
 internal object TestDirectives : SimpleDirectivesContainer() {
     val KIND by enumDirective<TestKind>(
         description = """
-            Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR]
+            Usage: // KIND: [REGULAR, STANDALONE, STANDALONE_NO_TR, STANDALONE_LLDB]
             Declares the kind of the test:
 
             - REGULAR (the default) - include this test into the shared test binary.
@@ -37,6 +40,8 @@ internal object TestDirectives : SimpleDirectivesContainer() {
 
             - STANDALONE_NO_TR - compile the test to a separate binary that is supposed to have main entry point.
               The entry point can be customized Note that @kotlin.Test annotations are ignored.
+
+            - STANDALONE_LLDB - compile the test to a separate binary and debug with LLDB.
         """.trimIndent()
     )
 
@@ -51,7 +56,7 @@ internal object TestDirectives : SimpleDirectivesContainer() {
     val ENTRY_POINT by stringDirective(
         description = """
             Specify custom program entry point. The default entry point is `main` function in the root package.
-            Note that this directive makes sense only in combination with // KIND: STANDALONE_NO_TR
+            Note that this directive makes sense only in combination with // KIND: STANDALONE_NO_TR or // KIND: STANDALONE_LLDB
         """.trimIndent()
     )
 
@@ -122,12 +127,19 @@ internal object TestDirectives : SimpleDirectivesContainer() {
     val FREE_COMPILER_ARGS by stringDirective(
         description = "Specify free compiler arguments for Kotlin/Native compiler"
     )
+
+    val LLDB_TRACE by stringDirective(
+        description = """
+            Specify a filename containing the LLDB commands and the patterns that
+             the output should match""".trimIndent(),
+    )
 }
 
 internal enum class TestKind {
     REGULAR,
     STANDALONE,
-    STANDALONE_NO_TR;
+    STANDALONE_NO_TR,
+    STANDALONE_LLDB;
 }
 
 internal enum class TestRunnerType {
@@ -201,6 +213,16 @@ internal fun parseEntryPoint(registeredDirectives: RegisteredDirectives, locatio
     assertTrue(entryPoint.isNotEmpty()) { "$location: Invalid entry point in $ENTRY_POINT directive: $entryPoint" }
 
     return entryPoint
+}
+
+internal fun parseLLDBSpec(baseDir: File, registeredDirectives: RegisteredDirectives, location: Location): LLDBSessionSpec {
+    val specFile = parseFileBasedDirective(baseDir, LLDB_TRACE, registeredDirectives, location)
+        ?: fail { "$location: An LLDB session specification must be provided" }
+    return try {
+        LLDBSessionSpec.parse(specFile.readText())
+    } catch (e: Exception) {
+        Assertions.fail<Nothing>("$location: Cannot parse LLDB session specification: " + e.message, e)
+    }
 }
 
 internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): TestModule.Exclusive {

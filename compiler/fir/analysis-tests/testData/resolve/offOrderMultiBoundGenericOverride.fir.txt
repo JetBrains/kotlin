@@ -19,7 +19,7 @@ FILE: main.kt
             super<R|KBase|>()
         }
 
-        public final override fun <P : R|KI2|, R|KI1|> foo(): R|kotlin/Unit| {
+        public open override fun <P : R|KI2|, R|KI1|> foo(): R|kotlin/Unit| {
         }
 
     }

@@ -9,6 +9,7 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
@@ -35,11 +36,10 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.description = "Download and install a local node/npm version"
             it.configuration = provider {
                 this.project.configurations.detachedConfiguration(this.project.dependencies.create(it.ivyDependency))
+                    .markResolvable()
                     .also { conf -> conf.isTransitive = false }
             }
         }
-
-        val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
 
         val setupFileHasherTask = registerTask<KotlinNpmCachesSetup>(KotlinNpmCachesSetup.NAME) {
             it.description = "Setup file hasher for caches"
@@ -50,8 +50,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.dependsOn(setupFileHasherTask)
             it.group = TASKS_GROUP_NAME
             it.description = "Find, download and link NPM dependencies and projects"
-
-            it.mustRunAfter(rootClean)
         }
 
         registerTask<Task>(PACKAGE_JSON_UMBRELLA_TASK_NAME)

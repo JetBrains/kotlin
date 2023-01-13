@@ -1,12 +1,8 @@
-open class Base<T> {
-  constructor(x: T)
-
+open class Base<T>(x: T) {
   val x: T
 }
 
-class Derived<T : Any> : Base<T> {
-  constructor(x: T)
-}
+class Derived<T : Any>(x: T) : Base<T>()
 
 fun <T : Any> create(x: T): Derived<T>
 

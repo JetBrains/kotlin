@@ -55,7 +55,6 @@ import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -322,10 +321,12 @@ class ExpressionCodegen(
 
     // * Operator functions require non-null assertions on parameters even if they are private.
     // * Local function for lambda survives at this stage if it was used in 'invokedynamic'-based code.
-    //   Such functions require non-null assertions on parameters.
-    private fun shouldGenerateNonNullAssertionsForPrivateFun(irFunction: IrFunction) =
-        irFunction is IrSimpleFunction && irFunction.isOperator ||
-                irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+    // * Hidden constructors with mangled parameters require non-null assertions (see KT-53492)
+    private fun shouldGenerateNonNullAssertionsForPrivateFun(irFunction: IrFunction): Boolean {
+        if (irFunction is IrSimpleFunction && irFunction.isOperator || irFunction.origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA) return true
+        if (context.hiddenConstructorsWithMangledParams.containsKey(irFunction)) return true
+        return false
+    }
 
     private fun generateNonNullAssertion(param: IrValueParameter) {
         if (param.origin == JvmLoweredDeclarationOrigin.FIELD_FOR_OUTER_THIS ||
@@ -412,7 +413,9 @@ class ExpressionCodegen(
         get() = origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE &&
                 origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR &&
                 origin != IrDeclarationOrigin.UNDERSCORE_PARAMETER &&
-                origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER
+                origin != IrDeclarationOrigin.DESTRUCTURED_OBJECT_PARAMETER &&
+                origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE &&
+                origin != JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER
 
     private fun writeLocalVariablesInTable(info: BlockInfo, endLabel: Label) {
         info.variables.forEach {
@@ -508,7 +511,6 @@ class ExpressionCodegen(
             callGenerator.genValueAndPut(callee.extensionReceiverParameter!!, receiver, type, this, data)
         }
 
-        callGenerator.beforeValueParametersStart(callee.contextReceiverParametersCount)
         callee.valueParameters.subList(callee.contextReceiverParametersCount, callee.valueParameters.size)
             .forEachIndexed { i, valueParameter -> handleValueParameter(i + contextReceivers.size, valueParameter) }
 
@@ -864,7 +866,8 @@ class ExpressionCodegen(
     }
 
     private fun putNeedClassReificationMarker(declaration: IrClass) {
-        val reifiedTypeParameters = closureReifiedMarkers[declaration] ?: return
+        // Fix KT-55398, try to get nested irclass type parameters reified info
+        val reifiedTypeParameters = closureReifiedMarkers.getOrPut(declaration) { declaration.reifiedTypeParameters }
         if (reifiedTypeParameters.wereUsedReifiedParameters()) {
             putNeedClassReificationMarker(mv)
             propagateChildReifiedTypeParametersUsages(reifiedTypeParameters)
@@ -1498,9 +1501,6 @@ class ExpressionCodegen(
 
     val isFinallyMarkerRequired: Boolean
         get() = irFunction.isInline || irFunction.origin == JvmLoweredDeclarationOrigin.INLINE_LAMBDA
-
-    val IrType.isReifiedTypeParameter: Boolean
-        get() = this.classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
 
     companion object {
         internal fun generateClassInstance(v: InstructionAdapter, classType: IrType, typeMapper: IrTypeMapper, wrapPrimitives: Boolean) {

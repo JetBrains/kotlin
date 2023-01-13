@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractAnalysisApiSubstitutorsTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
@@ -29,9 +30,9 @@ abstract class AbstractAnalysisApiSubstitutorsTest : AbstractAnalysisApiSingleFi
 
             prettyPrint {
                 appendLine("PSI type: ${declaration.typeReference?.text}")
-                appendLine("KtType: ${type.render()}")
-                appendLine("substitutor.substitute: ${substituted.render()}")
-                appendLine("substitutor.substituteOrNull: ${substitutedOrNull?.render()}")
+                appendLine("KtType: ${type.render(position = Variance.INVARIANT)}")
+                appendLine("substitutor.substitute: ${substituted.render(position = Variance.INVARIANT)}")
+                appendLine("substitutor.substituteOrNull: ${substitutedOrNull?.render(position = Variance.INVARIANT)}")
             }
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)

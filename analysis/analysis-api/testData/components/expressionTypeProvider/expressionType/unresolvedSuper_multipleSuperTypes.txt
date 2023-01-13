@@ -1,2 +1,2 @@
 expression: super
-type: (A&B)
+type: A & B

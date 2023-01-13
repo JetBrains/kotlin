@@ -1,11 +1,17 @@
 FILE: inPlaceLambda.kt
-    @R|kotlin/contracts/ExperimentalContracts|() public final fun bar(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun bar(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(x, AT_MOST_ONCE)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/x|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_MOST_ONCE|)
+            }
+            )
+        }
+
         when () {
             Boolean(true) ->  {
                 R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
@@ -13,13 +19,19 @@ FILE: inPlaceLambda.kt
         }
 
     }
-    @R|kotlin/contracts/ExperimentalContracts|() public final fun foo(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun foo(x: R|() -> kotlin/Unit|): R|kotlin/Unit|
         [R|Contract description]
          <
             CallsInPlace(x, AT_LEAST_ONCE)
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.callsInPlace|<R|kotlin/Unit|>(R|<local>/x|, Q|kotlin/contracts/InvocationKind|.R|kotlin/contracts/InvocationKind.AT_LEAST_ONCE|)
+            }
+            )
+        }
+
         R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         R|/bar|(<L> = bar@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline, kind=AT_MOST_ONCE>  {
             R|<local>/x|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()

@@ -30,7 +30,7 @@ FILE: smartcastInByClause.kt
                 super<R|kotlin/Any|>()
             }
 
-            local final field <$$delegate_0>: R|Base| = R|/Derived.Derived|(R|<local>/a|.R|/A.index|)
+            private final field $$delegate_0: R|Base| = R|/Derived.Derived|(R|<local>/a|.R|/A.index|)
 
             public final val x: R|kotlin/Int| = R|<local>/a|.R|/A.index|
                 public get(): R|kotlin/Int|

@@ -6,17 +6,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 buildscript {
     ext.rootBuildDirectory = file('../..')
     apply from: "$rootProject.projectDir/../gradle/kotlinGradlePlugin.gradle"
-
-    repositories {
-        jcenter()
-    }
 }
 
 apply plugin: 'kotlin-multiplatform'
-
-repositories {
-    jcenter()
-}
 
 
 def toolsPath = '../../tools'

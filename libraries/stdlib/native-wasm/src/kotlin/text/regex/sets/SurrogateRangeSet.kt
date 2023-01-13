@@ -87,7 +87,7 @@
 
 package kotlin.text.regex
 
-/*
+/**
  * This class is a range that contains only surrogate characters.
  */
 internal class SurrogateRangeSet(surrChars: AbstractCharClass) : RangeSet(surrChars) {
@@ -114,7 +114,6 @@ internal class SurrogateRangeSet(surrChars: AbstractCharClass) : RangeSet(surrCh
             is SurrogateRangeSet -> true
             is CharSet,
             is RangeSet,
-            is SupplementaryCharSet,
             is SupplementaryRangeSet -> false
             else -> true
         }

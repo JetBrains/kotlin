@@ -123,7 +123,7 @@ public class CodegenBinding {
         Type result = asmTypeForAnonymousClassOrNull(bindingContext, expression);
         if (result == null) {
             throw new KotlinExceptionWithAttachments("Couldn't compute ASM type for expression")
-                    .withAttachment("expression.kt", PsiUtilsKt.getElementTextWithContext(expression));
+                    .withPsiAttachment("expression.kt", expression);
         }
 
         return result;
@@ -245,9 +245,9 @@ public class CodegenBinding {
         answer.addAll(files);
 
         for (FqName name : names) {
-            Collection<KtFile> jetFiles = bindingContext.get(PACKAGE_TO_FILES, name);
-            if (jetFiles != null) {
-                answer.addAll(jetFiles);
+            Collection<KtFile> ktFiles = bindingContext.get(PACKAGE_TO_FILES, name);
+            if (ktFiles != null) {
+                answer.addAll(ktFiles);
             }
         }
 

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider
 
-import org.jetbrains.kotlin.analysis.api.components.KtDeclarationRendererOptions
-import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.renderScopeWithParentDeclarations
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
@@ -26,7 +24,7 @@ abstract class AbstractContainingDeclarationProviderByMemberScopeTest : Abstract
         val declaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtClassOrObject>(ktFile)
 
         val memberToContainingClass = analyseForTest(declaration) {
-            val symbol = declaration.getClassOrObjectSymbol()
+            val symbol = declaration.getClassOrObjectSymbol()!!
             renderScopeWithParentDeclarations(symbol.getMemberScope())
         }
 

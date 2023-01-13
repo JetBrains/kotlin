@@ -34,7 +34,7 @@ open class KtLightPsiLiteral(
 
     override fun replace(newElement: PsiElement): PsiElement {
         val value = (newElement as? PsiLiteral)?.value as? String ?: return this
-        kotlinOrigin.replace(KtPsiFactory(this).createExpression("\"${StringUtil.escapeStringCharacters(value)}\""))
+        kotlinOrigin.replace(KtPsiFactory(project).createExpression("\"${StringUtil.escapeStringCharacters(value)}\""))
         return this
     }
 

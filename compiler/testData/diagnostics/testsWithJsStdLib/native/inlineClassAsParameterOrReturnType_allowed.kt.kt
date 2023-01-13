@@ -1,4 +1,6 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses, +JsAllowValueClassesInExternals
+// !DIAGNOSTICS: +INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING
 
 // FILE: uint.kt
 

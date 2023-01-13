@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.ir.backend.js.export
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private const val Nullable = "Nullable"
@@ -26,12 +29,19 @@ private const val declareExorted = "export $declare"
 private const val NonExistent = "__NonExistent"
 private const val syntheticObjectNameSeparator = '$'
 
-fun ExportedModule.toTypeScript(): String {
-    return ExportModelToTsDeclarations().generateTypeScript(name, this)
+@JvmInline
+value class TypeScriptFragment(val raw: String)
+
+fun List<ExportedDeclaration>.toTypeScriptFragment(moduleKind: ModuleKind): TypeScriptFragment {
+    return ExportModelToTsDeclarations().generateTypeScriptFragment(moduleKind, this)
 }
 
-fun List<ExportedDeclaration>.toTypeScript(moduleKind: ModuleKind): String {
-    return ExportModelToTsDeclarations().generateTypeScript(moduleKind, this)
+fun List<TypeScriptFragment>.joinTypeScriptFragments(): TypeScriptFragment {
+    return TypeScriptFragment(joinToString("\n") { it.raw })
+}
+
+fun List<TypeScriptFragment>.toTypeScript(name: String, moduleKind: ModuleKind): String {
+    return ExportModelToTsDeclarations().generateTypeScript(name, moduleKind, this)
 }
 
 // TODO: Support module kinds other than plain
@@ -41,24 +51,24 @@ class ExportModelToTsDeclarations {
     private val ModuleKind.indent: String
         get() = if (this == ModuleKind.PLAIN) "    " else ""
 
-    fun generateTypeScript(name: String, module: ExportedModule): String {
+    fun generateTypeScript(name: String, moduleKind: ModuleKind, declarations: List<TypeScriptFragment>): String {
         val types = """
            type $Nullable<T> = T | null | undefined
-        """.trimIndent().prependIndent(module.moduleKind.indent) + "\n"
+        """.trimIndent().prependIndent(moduleKind.indent) + "\n"
 
-        val declarationsDts = types + module.declarations.toTypeScript(module.moduleKind)
+        val declarationsDts = types + declarations.joinTypeScriptFragments().raw
 
         val namespaceName = sanitizeName(name, withHash = false)
 
-        return when (module.moduleKind) {
+        return when (moduleKind) {
             ModuleKind.PLAIN -> "declare namespace $namespaceName {\n$declarationsDts\n}\n"
             ModuleKind.AMD, ModuleKind.COMMON_JS, ModuleKind.ES -> declarationsDts
             ModuleKind.UMD -> "$declarationsDts\nexport as namespace $namespaceName;"
         }
     }
 
-    fun generateTypeScript(moduleKind: ModuleKind, declarations: List<ExportedDeclaration>): String {
-        return declarations.toTypeScript(moduleKind)
+    fun generateTypeScriptFragment(moduleKind: ModuleKind, declarations: List<ExportedDeclaration>): TypeScriptFragment {
+        return TypeScriptFragment(declarations.toTypeScript(moduleKind))
     }
 
     private fun List<ExportedDeclaration>.toTypeScript(moduleKind: ModuleKind): String {
@@ -300,12 +310,24 @@ class ExportModelToTsDeclarations {
         val bodyString = privateCtorString + membersString + indent
 
         val nestedClasses = nonInnerClasses + innerClasses.map { it.withProtectedConstructors() }
+        val tsIgnoreForPrivateConstructorInheritance = if (hasSuperClassWithPrivateConstructor()) {
+            tsIgnore("extends class with private primary constructor") + "\n$indent"
+        } else ""
+
         val klassExport =
             "$prefix$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$bodyString}"
         val staticsExport =
             if (nestedClasses.isNotEmpty()) "\n" + ExportedNamespace(name, nestedClasses).toTypeScript(indent, prefix) else ""
 
-        return if (name.isValidES5Identifier()) klassExport + staticsExport else ""
+        return if (name.isValidES5Identifier()) tsIgnoreForPrivateConstructorInheritance + klassExport + staticsExport else ""
+    }
+
+    private fun ExportedRegularClass.hasSuperClassWithPrivateConstructor(): Boolean {
+        return superClasses.firstIsInstanceOrNull<ExportedType.ClassType>()
+            ?.ir
+            ?.takeIf { !it.isObject }
+            ?.primaryConstructor
+            ?.let { it.visibility == DescriptorVisibilities.PRIVATE || it.hasAnnotation(JsAnnotations.jsExportIgnoreFqn) } ?: false
     }
 
     private fun List<ExportedType>.toExtendsClause(indent: String): String {
@@ -318,7 +340,7 @@ class ExportModelToTsDeclarations {
             " /* extends $implicitlyExportedClassesString */"
         } else {
             val originallyDefinedSuperClass = implicitlyExportedClassesString.takeIf { it.isNotEmpty() }?.let { "/* $it */ " }.orEmpty()
-            val transitivelyDefinedSuperClass = firstIsInstance<ExportedType.ClassType>().toTypeScript(indent, false)
+            val transitivelyDefinedSuperClass = single { it !is ExportedType.ImplicitlyExportedType }.toTypeScript(indent, false)
             " extends $originallyDefinedSuperClass$transitivelyDefinedSuperClass"
         }
     }
@@ -444,5 +466,9 @@ class ExportModelToTsDeclarations {
         return this is ExportedObject && nestedClasses.all {
             it.couldBeProperty() && it.ir.visibility != DescriptorVisibilities.PROTECTED
         }
+    }
+
+    private fun tsIgnore(reason: String): String {
+        return "/* @ts-ignore: $reason */"
     }
 }

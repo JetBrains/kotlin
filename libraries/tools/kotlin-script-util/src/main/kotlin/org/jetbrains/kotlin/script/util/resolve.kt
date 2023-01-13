@@ -20,7 +20,6 @@ package org.jetbrains.kotlin.script.util
 
 import org.jetbrains.kotlin.script.util.resolvers.DirectResolver
 import org.jetbrains.kotlin.script.util.resolvers.FlatLibDirectoryResolver
-import org.jetbrains.kotlin.script.util.resolvers.MavenResolver
 import org.jetbrains.kotlin.script.util.resolvers.Resolver
 import org.jetbrains.kotlin.scripting.resolve.InvalidScriptResolverAnnotation
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -81,8 +80,3 @@ open class KotlinAnnotatedScriptDependenciesResolver(val baseClassPath: List<Fil
 @Deprecated("Use FileSystemDependenciesResolver from kotlin-scripting-dependencies instead")
 class LocalFilesResolver :
         KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver()))
-
-@Deprecated("Use CompoundDependenciesResolver and MavenDependenciesResolver from kotlin-scripting-dependencies and kotlin-scripting-dependencies-maven")
-class FilesAndMavenResolver :
-        KotlinAnnotatedScriptDependenciesResolver(emptyList(), arrayListOf(DirectResolver(), MavenResolver()))
-

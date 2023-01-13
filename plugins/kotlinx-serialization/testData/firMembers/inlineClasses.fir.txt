@@ -10,7 +10,9 @@ FILE: inlineClasses.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<Foo>|
 
-            private constructor(): R|Foo.Companion|
+            private constructor(): R|Foo.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -24,7 +26,9 @@ FILE: inlineClasses.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|Foo.$serializer|
+            private constructor(): R|Foo.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -40,7 +44,9 @@ FILE: inlineClasses.kt
         public final companion object Companion : R|kotlin/Any| {
             public final fun serializer(): R|kotlinx/serialization/KSerializer<Holder>|
 
-            private constructor(): R|Holder.Companion|
+            private constructor(): R|Holder.Companion| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -54,7 +60,9 @@ FILE: inlineClasses.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|Holder.$serializer|
+            private constructor(): R|Holder.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 

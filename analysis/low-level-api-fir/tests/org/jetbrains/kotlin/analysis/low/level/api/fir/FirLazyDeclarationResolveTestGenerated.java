@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -46,6 +46,12 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
     @TestMetadata("delegates.kt")
     public void testDelegates() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/delegates.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntry.kt")
+    public void testEnumEntry() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/enumEntry.kt");
     }
 
     @Test
@@ -158,6 +164,12 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
         public void testFunctionInValueClass() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/functionInValueClass.kt");
         }
+
+        @Test
+        @TestMetadata("nestedClassWithPropertiesOverrides.kt")
+        public void testNestedClassWithPropertiesOverrides() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/nestedClassWithPropertiesOverrides.kt");
+        }
     }
 
     @Nested
@@ -170,9 +182,9 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
         }
 
         @Test
-        @TestMetadata("anonympuseObjectInInvalidPosition.kt")
-        public void testAnonympuseObjectInInvalidPosition() throws Exception {
-            runTest("analysis/low-level-api-fir/testdata/lazyResolve/errors/anonympuseObjectInInvalidPosition.kt");
+        @TestMetadata("anonymousObjectInInvalidPosition.kt")
+        public void testAnonymousObjectInInvalidPosition() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/errors/anonymousObjectInInvalidPosition.kt");
         }
     }
 
@@ -183,6 +195,18 @@ public class FirLazyDeclarationResolveTestGenerated extends AbstractFirLazyDecla
         @Test
         public void testAllFilesPresentInFunctions() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/functions"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("functionCallWithGenericResult.kt")
+        public void testFunctionCallWithGenericResult() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/functionCallWithGenericResult.kt");
+        }
+
+        @Test
+        @TestMetadata("functionWithGenericExpectedTypeInside.kt")
+        public void testFunctionWithGenericExpectedTypeInside() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/functionWithGenericExpectedTypeInside.kt");
         }
 
         @Test

@@ -5,8 +5,8 @@
 fun case_1() {
     var x: Boolean? = true
     if (<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!> is Boolean && if (true) { x = null; true } else { false }) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
     }
 }
 
@@ -14,8 +14,8 @@ fun case_1() {
 fun case_2() {
     var x: Boolean? = true
     if (<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!> != null && try { x = null; true } catch (e: Exception) { false }) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean? & kotlin.Boolean")!>x<!>.not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
     }
 }
 

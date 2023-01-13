@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.java.scopes
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -89,7 +88,7 @@ class JavaClassUseSiteMemberScope(
                         chooseModalityForAccessor(property, delegateGetter)
                     }
                 )
-                deprecationsProvider = getDeprecationsProviderFromAccessors(delegateGetter, delegateSetter, session.firCachesFactory)
+                deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
             }.symbol
         }
     }

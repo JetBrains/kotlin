@@ -1,0 +1,13 @@
+Module: lib
+@kotlin.Metadata
+public interface I {
+    // source: '1.kt'
+    public abstract @org.jetbrains.annotations.Nullable method foo(@org.jetbrains.annotations.Nullable p0: kotlin.jvm.functions.Function1): kotlin.jvm.functions.Function1
+}
+Module: main
+@kotlin.Metadata
+public final class C {
+    // source: '2.kt'
+    public method <init>(): void
+    public @org.jetbrains.annotations.Nullable method foo(@org.jetbrains.annotations.Nullable p0: kotlin.jvm.functions.Function1): kotlin.jvm.functions.Function1
+}

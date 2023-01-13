@@ -10,18 +10,18 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeContractRenderer
 internal interface FirRendererComponents {
     val visitor: FirRenderer.Visitor
     val printer: FirPrinter
-    val declarationRenderer: FirDeclarationRenderer
+    val declarationRenderer: FirDeclarationRenderer?
     val annotationRenderer: FirAnnotationRenderer?
     val bodyRenderer: FirBodyRenderer?
-    val callArgumentsRenderer: FirCallArgumentsRenderer
-    val classMemberRenderer: FirClassMemberRenderer
+    val callArgumentsRenderer: FirCallArgumentsRenderer?
+    val classMemberRenderer: FirClassMemberRenderer?
     val contractRenderer: ConeContractRenderer?
     val idRenderer: ConeIdRenderer
-    val modifierRenderer: FirModifierRenderer
+    val modifierRenderer: FirModifierRenderer?
     val packageDirectiveRenderer: FirPackageDirectiveRenderer?
     val propertyAccessorRenderer: FirPropertyAccessorRenderer?
     val resolvePhaseRenderer: FirResolvePhaseRenderer?
     val typeRenderer: ConeTypeRenderer
-    val valueParameterRenderer: FirValueParameterRenderer
-    val errorExpressionRenderer: FirErrorExpressionRenderer
+    val valueParameterRenderer: FirValueParameterRenderer?
+    val errorExpressionRenderer: FirErrorExpressionRenderer?
 }

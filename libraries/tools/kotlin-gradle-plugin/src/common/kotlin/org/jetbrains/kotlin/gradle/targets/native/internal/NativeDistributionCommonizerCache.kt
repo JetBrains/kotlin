@@ -11,11 +11,8 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommonizedDirectory
 import java.io.File
-import java.io.FileOutputStream
 import java.io.ObjectInputStream
 import java.io.Serializable
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 class NativeDistributionCommonizerCache(
     private val outputDirectory: File,
@@ -99,56 +96,13 @@ class NativeDistributionCommonizerCache(
      * even between multiple process (Gradle Daemons)
      */
     @Transient
-    private var lock = Lock()
+    private var lock = NativeDistributionCommonizerLock(outputDirectory, ::logInfo)
 
     private fun logInfo(message: String) =
         logger.info("Native Distribution Commonization: $message")
 
-    private inner class Lock {
-        private val reentrantLock = ReentrantLock()
-        private val lockedOutputDirectories = mutableSetOf<File>()
-
-        fun <T> withLock(action: () -> T): T {
-            /* Enter intra-process wide lock */
-            reentrantLock.withLock {
-                if (outputDirectory in lockedOutputDirectories) {
-                    /* Already acquired this directory and re-entered: We can just execute the action */
-                    return action()
-                }
-
-                /* Lock output directory inter-process wide */
-                outputDirectory.mkdirs()
-                val lockfile = outputDirectory.resolve(".lock")
-                logInfo("Acquire lock: ${lockfile.path} ...")
-                FileOutputStream(outputDirectory.resolve(".lock")).use { stream ->
-                    val lock = stream.channel.lock()
-                    assert(lock.isValid)
-                    return try {
-                        logInfo("Lock acquired: ${lockfile.path}")
-                        lockedOutputDirectories.add(outputDirectory)
-                        action()
-                    } finally {
-                        lockedOutputDirectories.remove(outputDirectory)
-                        lock.release()
-                        logInfo("Lock released: ${lockfile.path}")
-                    }
-                }
-            }
-        }
-
-        fun checkLocked(outputDirectory: File) {
-            check(reentrantLock.isHeldByCurrentThread) {
-                "Expected lock to be held by current thread ${Thread.currentThread().name}"
-            }
-
-            check(outputDirectory in lockedOutputDirectories) {
-                "Expected $outputDirectory to be locked. Locked directories: $lockedOutputDirectories"
-            }
-        }
-    }
-
     private fun readObject(input: ObjectInputStream) {
         input.defaultReadObject()
-        lock = Lock()
+        lock = NativeDistributionCommonizerLock(outputDirectory, ::logInfo)
     }
 }

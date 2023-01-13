@@ -10,14 +10,10 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.*
 import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.CInteropSettings
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeArtifactFormat
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
-import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultCInteropSettings
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
@@ -40,25 +36,28 @@ internal fun createCInteropApiElementsKlibArtifact(
 
 internal fun Project.locateOrCreateCInteropDependencyConfiguration(
     compilation: KotlinNativeCompilation,
-    cinterop: CInteropSettings,
-    target: KotlinTarget
 ): Configuration {
+    configurations.findByName(compilation.cInteropDependencyConfigurationName)?.let { return it }
+
     val compileOnlyConfiguration = configurations.getByName(compilation.compileOnlyConfigurationName)
     val implementationConfiguration = configurations.getByName(compilation.implementationConfigurationName)
 
-    return configurations.maybeCreate(cinterop.dependencyConfigurationName).apply {
+    return configurations.create(compilation.cInteropDependencyConfigurationName).apply {
         extendsFrom(compileOnlyConfiguration, implementationConfiguration)
         isVisible = false
         isCanBeResolved = true
         isCanBeConsumed = false
 
-        usesPlatformOf(target)
+        usesPlatformOf(compilation.target)
         attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
         attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
         attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        description = "Dependencies for cinterop '${cinterop.name}' (compilation '${compilation.name}')."
+        description = "CInterop dependencies for compilation '${compilation.name}')."
     }
 }
+
+internal val KotlinNativeCompilation.cInteropDependencyConfigurationName: String
+    get() = compilation.disambiguateName("CInterop")
 
 internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: KotlinTarget): Configuration {
     val configurationName = cInteropApiElementsConfigurationName(target)

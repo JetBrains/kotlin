@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.*
-import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
 import org.jetbrains.kotlin.ir.builders.irInt
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -17,18 +16,15 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /** Builds a [HeaderInfo] for progressions built using the `rangeTo` function. */
-internal class RangeToHandler(private val context: CommonBackendContext) :
-    ProgressionHandler {
-
+internal class RangeToHandler(private val context: CommonBackendContext) : HeaderInfoHandler<IrCall, ProgressionType> {
     private val preferJavaLikeCounterLoop = context.preferJavaLikeCounterLoop
-
     private val progressionElementTypes = context.ir.symbols.progressionElementTypes
 
-    override val matcher = SimpleCalleeMatcher {
-        dispatchReceiver { it != null && it.type in progressionElementTypes }
-        fqName { it.pathSegments().last() == OperatorNameConventions.RANGE_TO }
-        parameterCount { it == 1 }
-        parameter(0) { it.type in progressionElementTypes }
+    override fun matchIterable(expression: IrCall): Boolean {
+        val callee = expression.symbol.owner
+        return callee.valueParameters.singleOrNull()?.type in progressionElementTypes &&
+                callee.dispatchReceiverParameter?.type in progressionElementTypes &&
+                callee.name == OperatorNameConventions.RANGE_TO
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol) =

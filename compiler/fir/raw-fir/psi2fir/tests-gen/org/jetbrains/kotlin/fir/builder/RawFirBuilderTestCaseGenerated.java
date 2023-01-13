@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -76,6 +76,16 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contextReceivers.kt");
         }
 
+        @TestMetadata("danglingAnnotationsClassLevel.kt")
+        public void testDanglingAnnotationsClassLevel() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationsClassLevel.kt");
+        }
+
+        @TestMetadata("danglingAnnotationsFileLevel.kt")
+        public void testDanglingAnnotationsFileLevel() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/danglingAnnotationsFileLevel.kt");
+        }
+
         @TestMetadata("delegates.kt")
         public void testDelegates() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/delegates.kt");
@@ -99,6 +109,11 @@ public class RawFirBuilderTestCaseGenerated extends AbstractRawFirBuilderTestCas
         @TestMetadata("enums2.kt")
         public void testEnums2() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/enums2.kt");
+        }
+
+        @TestMetadata("enums3.kt")
+        public void testEnums3() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/enums3.kt");
         }
 
         @TestMetadata("expectActual.kt")

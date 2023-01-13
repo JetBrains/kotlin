@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -29,6 +30,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -37,23 +40,23 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirErrorFunctionImpl(
     override val source: KtSourceElement?,
-    override val annotations: MutableList<FirAnnotation>,
-    override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
+    override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override val contextReceivers: MutableList<FirContextReceiver>,
+    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val valueParameters: MutableList<FirValueParameter>,
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorFunctionSymbol,
 ) : FirErrorFunction() {
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic, false)
-    override val receiverTypeRef: FirTypeRef? get() = null
+    override val receiverParameter: FirReceiverParameter? get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val body: FirBlock? get() = null
     override val typeParameters: List<FirTypeParameter> get() = emptyList()
@@ -96,7 +99,7 @@ internal class FirErrorFunctionImpl(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
         return this
     }
 
@@ -117,19 +120,22 @@ internal class FirErrorFunctionImpl(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
+
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {}
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
         deprecationsProvider = newDeprecationsProvider
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        contextReceivers.clear()
-        contextReceivers.addAll(newContextReceivers)
+        contextReceivers = newContextReceivers.toMutableOrEmpty()
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {

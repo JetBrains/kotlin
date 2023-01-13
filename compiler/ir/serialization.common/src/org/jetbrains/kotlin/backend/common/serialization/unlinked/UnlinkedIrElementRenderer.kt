@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignature.*
+import org.jetbrains.kotlin.ir.util.getNameWithAssert
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 
 // TODO: Consider getting rid of this class when new self-descriptive signatures are implemented.
 internal object UnlinkedIrElementRenderer {
@@ -196,7 +196,7 @@ private fun IrSymbol.guessName(): String? {
             }
             effectiveSignature.guessNameBySignature(nameSegmentsToPickUp)
         }
-        ?: boundOwnerDeclarationOrNull?.nameForIrSerialization?.asString()
+        ?: boundOwnerDeclarationOrNull?.getNameWithAssert()?.asString()
 }
 
 private val IrSymbol.anySignature: IdSignature?

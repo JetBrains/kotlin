@@ -15,9 +15,9 @@ import org.jetbrains.kotlin.test.services.getOrCreateTempDirectory
 import java.io.File
 
 class IrInterpreterDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
-    private fun getDump(): Pair<File, File>? {
+    private fun getDump(module: TestModule): Pair<File, File>? {
         val dumpDirectory = testServices.getOrCreateTempDirectory(PhasedIrDumpHandler.DUMPED_IR_FOLDER_NAME)
-        val dumpFiles = dumpDirectory.resolve(FirModuleDescriptor.FIR_MODULE_NAME.asString()).listFiles()
+        val dumpFiles = dumpDirectory.resolve(module.name).listFiles()
         val before = dumpFiles?.single { it.name.contains(PhasedIrDumpHandler.BEFORE_PREFIX) } ?: return null
         val after = dumpFiles.single { it.name.contains(PhasedIrDumpHandler.AFTER_PREFIX) } ?: return null
         return Pair(before, after)
@@ -41,7 +41,7 @@ class IrInterpreterDumpHandler(testServices: TestServices) : JvmBinaryArtifactHa
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         if (CodegenTestDirectives.DUMP_IR_FOR_GIVEN_PHASES !in module.directives) return
-        val (before, after) = getDump() ?: testServices.assertions.fail { "Cannot find BEFORE and AFTER lowering files" }
+        val (before, after) = getDump(module) ?: testServices.assertions.fail { "Cannot find BEFORE and AFTER lowering files" }
 
         val beforeText = before.readText()
         val afterText = after.readText()

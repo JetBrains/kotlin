@@ -1,0 +1,5 @@
+KtDeclaration: KtProperty foo
+annotations: [
+  JavaAnno(types = java.lang.annotation.ElementType.FIELD)
+    psi: KtAnnotationEntry
+]

@@ -17,7 +17,7 @@ import java.util.regex.Pattern
 
 object BuiltinsTestUtils {
     fun compileBuiltinsModule(environment: KotlinCoreEnvironment): ModuleDescriptor {
-        val files = KotlinTestUtils.loadToJetFiles(
+        val files = KotlinTestUtils.loadToKtFiles(
             environment, ContainerUtil.concat<File>(
                 allFilesUnder("core/builtins/native"),
                 allFilesUnder("core/builtins/src"),

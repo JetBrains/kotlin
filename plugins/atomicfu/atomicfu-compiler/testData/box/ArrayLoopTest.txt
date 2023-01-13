@@ -20,14 +20,14 @@ public final class ArrayInlineFunctionTest {
     private final @org.jetbrains.annotations.NotNull field refArr: java.util.concurrent.atomic.AtomicReferenceArray
     public method <init>(): void
     private final method action(p0: ArrayInlineFunctionTest$Box): ArrayInlineFunctionTest$Box
-    public final @org.jetbrains.annotations.Nullable method getAndUpdate$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): java.lang.Object
-    public final method loop$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): void
+    private final method getAndUpdate$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): java.lang.Object
+    private final method loop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
     public final method testArrayElementGetAndUpdate(): void
     public final method testArrayElementUpdate(): void
     public final method testArrayElementUpdateAndGet(): void
     public final method testSetArrayElementValueInLoop(): void
-    public final method update$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): void
-    public final @org.jetbrains.annotations.Nullable method updateAndGet$atomicfu$array(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, @org.jetbrains.annotations.NotNull p2: kotlin.jvm.functions.Function1): java.lang.Object
+    private final method update$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
+    private final method updateAndGet$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): java.lang.Object
     private final inner class ArrayInlineFunctionTest$Box
 }
 

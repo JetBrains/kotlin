@@ -36,7 +36,9 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private val builtIns = context.irBuiltIns
 
     private lateinit var builder: DeclarationIrBuilder
-
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+        return super.visitSimpleFunction(declaration)
+    }
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
         super.visitTypeOperator(expression)
         builder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).at(expression)
@@ -237,12 +239,12 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
 
         if (toType == symbols.voidType) {
-            return builder.irCall(symbols.consumeAnyIntoVoid).apply {
+            return builder.irCall(symbols.findVoidConsumer(value.type)).apply {
                 putValueArgument(0, value)
             }
         }
 
-        return builder.irCall(symbols.refCast, type = toType).apply {
+        return builder.irCall(symbols.refCastNull, type = toType).apply {
             putTypeArgument(0, toType)
             putValueArgument(0, value)
         }

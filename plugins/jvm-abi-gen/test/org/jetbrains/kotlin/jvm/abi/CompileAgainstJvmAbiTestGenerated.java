@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -58,6 +58,16 @@ public class CompileAgainstJvmAbiTestGenerated extends AbstractCompileAgainstJvm
     @TestMetadata("inlineCapture")
     public void testInlineCapture() throws Exception {
         runTest("plugins/jvm-abi-gen/testData/compile/inlineCapture/");
+    }
+
+    @TestMetadata("inlineClassWithPrivateConstructor")
+    public void testInlineClassWithPrivateConstructor() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructor/");
+    }
+
+    @TestMetadata("inlineClassWithPrivateConstructorK2")
+    public void testInlineClassWithPrivateConstructorK2() throws Exception {
+        runTest("plugins/jvm-abi-gen/testData/compile/inlineClassWithPrivateConstructorK2/");
     }
 
     @TestMetadata("inlineNoRegeneration")

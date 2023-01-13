@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.createErrorReferenceWithExistingCandidat
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
@@ -270,7 +271,7 @@ class FirSyntheticCallGenerator(
 
         return generateMemberFunction(functionSymbol, callableId.callableName, typeArgument.typeRef).apply {
             typeParameters += typeParameter
-            valueParameters += argumentType.toValueParameter("branches", isVararg = true)
+            valueParameters += argumentType.toValueParameter("branches", functionSymbol, isVararg = true)
         }.build()
     }
 
@@ -298,7 +299,7 @@ class FirSyntheticCallGenerator(
             typeArgument.typeRef
         ).apply {
             typeParameters += typeParameter
-            valueParameters += argumentType.toValueParameter("arg")
+            valueParameters += argumentType.toValueParameter("arg", functionSymbol)
         }.build()
     }
 
@@ -333,8 +334,8 @@ class FirSyntheticCallGenerator(
             typeArgument.typeRef
         ).apply {
             typeParameters += typeParameter
-            valueParameters += leftArgumentType.toValueParameter("x")
-            valueParameters += rightArgumentType.toValueParameter("y")
+            valueParameters += leftArgumentType.toValueParameter("x", functionSymbol)
+            valueParameters += rightArgumentType.toValueParameter("y", functionSymbol)
         }.build()
     }
 
@@ -363,11 +364,12 @@ class FirSyntheticCallGenerator(
     }
 
     private fun FirResolvedTypeRef.toValueParameter(
-        nameAsString: String, isVararg: Boolean = false
+        nameAsString: String, functionSymbol: FirFunctionSymbol<*>, isVararg: Boolean = false
     ): FirValueParameter {
         val name = Name.identifier(nameAsString)
         return buildValueParameter {
             moduleData = session.moduleData
+            containingFunctionSymbol = functionSymbol
             origin = FirDeclarationOrigin.Library
             this.name = name
             returnTypeRef = this@toValueParameter

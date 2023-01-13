@@ -1626,7 +1626,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             BlockStackElement topOfStack = blockStackElements.pop();
             assert topOfStack == tryWithFinallyBlockStackElement : "Top element of stack doesn't equals processing finally block";
 
-            KtTryExpression jetTryExpression = tryWithFinallyBlockStackElement.expression;
+            KtTryExpression ktTryExpression = tryWithFinallyBlockStackElement.expression;
             Label finallyStart = linkedLabel();
             v.mark(finallyStart);
             tryWithFinallyBlockStackElement.addGapLabel(finallyStart);
@@ -1635,7 +1635,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                 generateFinallyMarker(v, finallyDepth, true);
             }
             //noinspection ConstantConditions
-            gen(jetTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
+            gen(ktTryExpression.getFinallyBlock().getFinalExpression(), Type.VOID_TYPE);
 
             if (isFinallyMarkerRequired(context)) {
                 generateFinallyMarker(v, finallyDepth, false);
@@ -4849,9 +4849,9 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     public void newArrayInstruction(@NotNull KotlinType arrayType) {
         if (KotlinBuiltIns.isArray(arrayType)) {
-            KotlinType elementJetType = arrayType.getArguments().get(0).getType();
-            putReifiedOperationMarkerIfTypeIsReifiedParameter(this, elementJetType, ReifiedTypeInliner.OperationKind.NEW_ARRAY);
-            v.newarray(boxType(typeMapper.mapTypeAsDeclaration(elementJetType)));
+            KotlinType elementKotlinType = arrayType.getArguments().get(0).getType();
+            putReifiedOperationMarkerIfTypeIsReifiedParameter(this, elementKotlinType, ReifiedTypeInliner.OperationKind.NEW_ARRAY);
+            v.newarray(boxType(typeMapper.mapTypeAsDeclaration(elementKotlinType)));
         }
         else {
             Type type = typeMapper.mapType(arrayType);
@@ -5375,7 +5375,7 @@ The "returned" value of try expression with no finally is either the last expres
     }
 
     public Call makeFakeCall(ReceiverValue initializerAsReceiver) {
-        KtSimpleNameExpression fake = KtPsiFactoryKt.KtPsiFactory(state.getProject(), false).createSimpleName("fake");
+        KtSimpleNameExpression fake = new KtPsiFactory(state.getProject(), false).createSimpleName("fake");
         return CallMaker.makeCall(fake, initializerAsReceiver);
     }
 

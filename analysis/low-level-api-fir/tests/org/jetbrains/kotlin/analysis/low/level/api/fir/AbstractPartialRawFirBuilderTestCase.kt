@@ -6,12 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import junit.framework.TestCase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
@@ -59,8 +58,8 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
     }
 
     private class DesignationBuilder(private val elementToBuild: KtDeclaration) : FirVisitorVoid() {
-        private val path = mutableListOf<FirDeclaration>()
-        var resultDesignation: FirDeclarationDesignation? = null
+        private val path = mutableListOf<FirRegularClass>()
+        var resultDesignation: FirDesignation? = null
             private set
 
         override fun visitElement(element: FirElement) {
@@ -69,7 +68,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
                 is FirSimpleFunction, is FirProperty -> {
                     if (element.psi == elementToBuild) {
                         val originalDeclaration = element as FirDeclaration
-                        resultDesignation = FirDeclarationDesignation(path, originalDeclaration)
+                        resultDesignation = FirDesignation(path, originalDeclaration)
                     } else {
                         element.acceptChildren(this)
                     }
@@ -111,7 +110,7 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
         }
 
         val session = FirSessionFactoryHelper.createEmptySession()
-        val firBuilder = RawFirBuilder(session, scopeProvider, PsiHandlingMode.IDE)
+        val firBuilder = RawFirBuilder(session, scopeProvider)
         val original = firBuilder.buildFirFile(file)
 
         val designationBuilder = DesignationBuilder(elementToBuild)

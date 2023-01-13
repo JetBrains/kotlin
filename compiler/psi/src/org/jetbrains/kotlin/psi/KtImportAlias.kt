@@ -39,7 +39,7 @@ class KtImportAlias : KtElementImplStub<KotlinImportAliasStub>, PsiNameIdentifie
     override fun getName() = stub?.getName() ?: nameIdentifier?.text
 
     override fun setName(name: String): PsiElement {
-        nameIdentifier?.replace(KtPsiFactory(this).createNameIdentifier(name))
+        nameIdentifier?.replace(KtPsiFactory(project).createNameIdentifier(name))
         return this
     }
 

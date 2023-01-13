@@ -336,9 +336,9 @@ public class KtPsiUtil {
     }
 
     @Nullable
-    public static KtClassOrObject getClassIfParameterIsProperty(@NotNull KtParameter jetParameter) {
-        if (jetParameter.hasValOrVar()) {
-            PsiElement grandParent = jetParameter.getParent().getParent();
+    public static KtClassOrObject getClassIfParameterIsProperty(@NotNull KtParameter ktParameter) {
+        if (ktParameter.hasValOrVar()) {
+            PsiElement grandParent = ktParameter.getParent().getParent();
             if (grandParent instanceof KtPrimaryConstructor) {
                 return ((KtPrimaryConstructor) grandParent).getContainingClassOrObject();
             }
@@ -883,7 +883,7 @@ public class KtPsiUtil {
         KtSimpleNameExpression operationExpression = expression.getOperationReference();
         IElementType elementType = operationExpression.getReferencedNameElementType();
         assert elementType == null || elementType instanceof KtToken :
-                "JetOperationExpression should have operation token of type KtToken: " +
+                "KtOperationExpression should have operation token of type KtToken: " +
                 expression;
         return (KtToken) elementType;
     }

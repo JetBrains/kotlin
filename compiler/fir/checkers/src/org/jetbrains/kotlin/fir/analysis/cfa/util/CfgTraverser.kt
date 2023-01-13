@@ -7,86 +7,64 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 
-// ------------------------------ Graph Traversal ------------------------------
-
 enum class TraverseDirection {
     Forward, Backward
 }
 
-fun <D> ControlFlowGraph.traverse(
+fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNode(
     direction: TraverseDirection,
-    visitor: ControlFlowGraphVisitor<*, D>,
-    data: D
-) {
-    for (node in getNodesInOrder(direction)) {
-        node.accept(visitor, data)
-        (node as? CFGNodeWithSubgraphs<*>)?.subGraphs?.forEach { it.traverse(direction, visitor, data) }
-    }
-}
-
-fun ControlFlowGraph.traverse(
-    direction: TraverseDirection,
-    visitor: ControlFlowGraphVisitorVoid
-) {
-    traverse(direction, visitor, null)
-}
-
-// ---------------------- Path-sensitive data collection -----------------------
-
-fun <I> ControlFlowGraph.collectDataForNode(
-    direction: TraverseDirection,
-    initialInfo: I,
-    visitor: ControlFlowGraphVisitor<I, Collection<Pair<EdgeLabel, I>>>,
+    visitor: PathAwareControlFlowGraphVisitor<I>,
     visitSubGraphs: Boolean = true
-): Map<CFGNode<*>, I> {
-    val nodeMap = LinkedHashMap<CFGNode<*>, I>()
+): Map<CFGNode<*>, PathAwareControlFlowInfo<I>> {
+    val nodeMap = LinkedHashMap<CFGNode<*>, PathAwareControlFlowInfo<I>>()
     val startNode = getEnterNode(direction)
-    nodeMap[startNode] = initialInfo
+    nodeMap[startNode] = visitor.emptyInfo
 
-    val changed = mutableMapOf<CFGNode<*>, Boolean>()
+    var shouldContinue: Boolean
     do {
-        collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed, visitSubGraphs)
-    } while (changed.any { it.value })
+        shouldContinue = collectDataForNodeInternal(direction, visitor, nodeMap, visitSubGraphs)
+    } while (shouldContinue)
 
     return nodeMap
 }
 
-private fun <I> ControlFlowGraph.collectDataForNodeInternal(
+private fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNodeInternal(
     direction: TraverseDirection,
-    initialInfo: I,
-    visitor: ControlFlowGraphVisitor<I, Collection<Pair<EdgeLabel, I>>>,
-    nodeMap: MutableMap<CFGNode<*>, I>,
-    changed: MutableMap<CFGNode<*>, Boolean>,
+    visitor: PathAwareControlFlowGraphVisitor<I>,
+    nodeMap: MutableMap<CFGNode<*>, PathAwareControlFlowInfo<I>>,
     visitSubGraphs: Boolean = true
-) {
+): Boolean {
+    var changed = false
     val nodes = getNodesInOrder(direction)
     for (node in nodes) {
         if (visitSubGraphs && direction == TraverseDirection.Backward && node is CFGNodeWithSubgraphs<*>) {
-            node.subGraphs.forEach { it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed) }
+            node.subGraphs.forEach { changed = changed or it.collectDataForNodeInternal(direction, visitor, nodeMap) }
         }
         val previousNodes = when (direction) {
             TraverseDirection.Forward -> node.previousCfgNodes
             TraverseDirection.Backward -> node.followingCfgNodes
         }
-        // One noticeable different against the path-unaware version is, here, we pair the control-flow info with the label.
+        // TODO: if data for previousNodes hasn't changed, then should be no need to recompute data for this one
+        val union = node is UnionNodeMarker
         val previousData =
             previousNodes.mapNotNull {
                 val k = when (direction) {
-                    TraverseDirection.Forward -> node.incomingEdges[it]?.label ?: NormalPath
-                    TraverseDirection.Backward -> node.outgoingEdges[it]?.label ?: NormalPath
+                    TraverseDirection.Forward -> node.edgeFrom(it)
+                    TraverseDirection.Backward -> node.edgeTo(it)
                 }
                 val v = nodeMap[it] ?: return@mapNotNull null
-                k to v
-            }
+                visitor.visitEdge(it, node, k, v)
+            }.reduceOrNull { a, b -> a.join(b, union) }
         val data = nodeMap[node]
-        val newData = node.accept(visitor, previousData)
+        val newData = node.accept(visitor, previousData ?: visitor.emptyInfo)
         val hasChanged = newData != data
-        changed[node] = hasChanged
+        changed = changed or hasChanged
         if (hasChanged) {
             nodeMap[node] = newData
         }
         if (visitSubGraphs && direction == TraverseDirection.Forward && node is CFGNodeWithSubgraphs<*>) {
-            node.subGraphs.forEach { it.collectDataForNodeInternal(direction, initialInfo, visitor, nodeMap, changed) }
+            node.subGraphs.forEach { changed = changed or it.collectDataForNodeInternal(direction, visitor, nodeMap) }
         }
     }
+    return changed
 }

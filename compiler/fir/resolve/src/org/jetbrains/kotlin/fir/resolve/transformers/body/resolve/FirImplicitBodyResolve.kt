@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.FirRegularTowerDataContexts
@@ -19,14 +21,14 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.fir.resolve.transformers.TransformImplicitType
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -36,7 +38,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 class FirImplicitTypeBodyResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
     override val transformer = FirImplicitTypeBodyResolveTransformerAdapter(session, scopeSession)
 }
 
@@ -100,14 +102,7 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
         outerBodyResolveContext = newContext,
         firTowerDataContextCollector = firTowerDataContextCollector
     )
-
-    val graphBuilder = components.context.dataFlowAnalyzerContext.graphBuilder
-    val members = localClassesNavigationInfo.allMembers
-    graphBuilder.prepareForLocalClassMembers(members)
-
-    return this.transform<F, ResolutionMode>(transformer, resolutionMode).also {
-        graphBuilder.cleanAfterForLocalClassMembers(members)
-    }
+    return this.transform(transformer, resolutionMode)
 }
 
 private fun ReturnTypeCalculator.getTransformerCreator() = when (this) {
@@ -218,10 +213,13 @@ private class ReturnTypeCalculatorWithJump(
     var outerTowerDataContexts: FirRegularTowerDataContexts? = null
 
     override fun tryCalculateReturnTypeOrNull(declaration: FirCallableDeclaration): FirResolvedTypeRef {
+        // Local declarations must be handled by `ReturnTypeCalculatorForFullBodyResolve` to avoid resolution cycles in LL FIR.
+        if (declaration.visibility == Visibilities.Local) {
+            return ReturnTypeCalculatorForFullBodyResolve.tryCalculateReturnType(declaration)
+        }
+
         if (declaration is FirValueParameter && declaration.returnTypeRef is FirImplicitTypeRef) {
-            // TODO?
-            declaration.transformReturnTypeRef(
-                TransformImplicitType,
+            declaration.replaceReturnTypeRef(
                 buildErrorTypeRef {
                     diagnostic = ConeSimpleDiagnostic("Unsupported: implicit VP type")
                 }

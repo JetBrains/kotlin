@@ -35,38 +35,6 @@ class RuntimePublicAPITest {
         snapshotAPIAndCompare("../../reflect/api/build/libs", "kotlin-reflect-api(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
     }
 
-    @Test fun kotlinGradlePluginAnnotations() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-annotations/build/libs", "kotlin-gradle-plugin-annotations(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinGradlePluginApi() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-api/build/libs", "kotlin-gradle-plugin-api(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinGradlePluginIdea() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-idea/build/libs", "kotlin-gradle-plugin-idea(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinGradlePluginIdeaProto() {
-        snapshotAPIAndCompare(
-            "../kotlin-gradle-plugin-idea-proto/build/libs", "kotlin-gradle-plugin-idea-proto-api(?!-[-a-z]+)",
-            nonPublicAnnotations = listOf("org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi")
-        )
-    }
-
-    @Test fun kotlinToolingCore() {
-        snapshotAPIAndCompare("../kotlin-tooling-core/build/libs", "kotlin-tooling-core(?!-[-a-z]+)")
-    }
-
     private fun snapshotAPIAndCompare(
         basePath: String,
         jarPattern: String,
@@ -80,7 +48,6 @@ class RuntimePublicAPITest {
         val publicPackagePrefixes = publicPackages.map { it.replace('.', '/') + '/' }
         val publicPackageFilter = { className: String -> publicPackagePrefixes.none { className.startsWith(it) } }
 
-        println("Reading binary API from $jarFile")
         val api = JarFile(jarFile).loadApiFromJvmClasses(publicPackageFilter)
             .filterOutNonPublic(nonPublicPackages)
             .filterOutAnnotated(nonPublicAnnotations.toSet())

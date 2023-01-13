@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import groovy.json.StringEscapeUtils
 import org.gradle.api.logging.LogLevel.INFO
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
@@ -268,13 +269,7 @@ class CommonizerIT : BaseGradleIT() {
     }
 
     private fun `test single native platform`(project: String) {
-        val posixInImplementationMetadataConfigurationRegex = Regex(""".*implementationMetadataConfiguration:.*([pP])osix""")
         val posixInIntransitiveMetadataConfigurationRegex = Regex(""".*intransitiveMetadataConfiguration:.*([pP])osix""")
-
-        fun CompiledProject.containsPosixInImplementationMetadataConfiguration(): Boolean =
-            output.lineSequence().any { line ->
-                line.matches(posixInImplementationMetadataConfigurationRegex)
-            }
 
         fun CompiledProject.containsPosixInIntransitiveMetadataConfiguration(): Boolean =
             output.lineSequence().any { line ->
@@ -285,11 +280,6 @@ class CommonizerIT : BaseGradleIT() {
             build(":p1:listNativePlatformMainDependencies", "-Pkotlin.mpp.enableIntransitiveMetadataConfiguration=false") {
                 assertSuccessful()
 
-                assertTrue(
-                    containsPosixInImplementationMetadataConfiguration(),
-                    "Expected dependency on posix in implementationMetadataConfiguration"
-                )
-
                 assertFalse(
                     containsPosixInIntransitiveMetadataConfiguration(),
                     "Expected **no** dependency on posix in intransitiveMetadataConfiguration"
@@ -298,11 +288,6 @@ class CommonizerIT : BaseGradleIT() {
 
             build(":p1:listNativePlatformMainDependencies", "-Pkotlin.mpp.enableIntransitiveMetadataConfiguration=true") {
                 assertSuccessful()
-
-                assertFalse(
-                    containsPosixInImplementationMetadataConfiguration(),
-                    "Expected **no** posix dependency in implementationMetadataConfiguration"
-                )
 
                 assertTrue(
                     containsPosixInIntransitiveMetadataConfiguration(),
@@ -430,7 +415,13 @@ class CommonizerIT : BaseGradleIT() {
     @Test
     fun `test KT-49735 two kotlin targets with same konanTarget`() {
         with(Project("commonize-kt-49735-twoKotlinTargets-oneKonanTarget")) {
-            build(":assemble") {
+            build(
+                ":assemble",
+                options = defaultBuildOptions().copy(
+                    // Workaround for KT-55751
+                    warningMode = WarningMode.None,
+                )
+            ) {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
                 assertSuccessful()
             }

@@ -342,7 +342,6 @@ public final class OptionalUser$$serializer : java/lang/Object, kotlinx/serializ
           DUP
           ICONST_0
           GETSTATIC (User$$serializer, INSTANCE, LUser$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ARETURN
         LABEL (L1)
@@ -696,12 +695,10 @@ public final class User$$serializer : java/lang/Object, kotlinx/serialization/in
           DUP
           ICONST_0
           GETSTATIC (kotlinx/serialization/internal/StringSerializer, INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           DUP
           ICONST_1
           GETSTATIC (kotlinx/serialization/internal/StringSerializer, INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ARETURN
         LABEL (L1)

@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 /**
  * Perform as much type erasure as is significant for JVM signature generation.
@@ -160,7 +159,7 @@ fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrT
         .toSet()
 
 val IrType.isReifiedTypeParameter: Boolean
-    get() = classifierOrNull?.safeAs<IrTypeParameterSymbol>()?.owner?.isReified == true
+    get() = (classifierOrNull as? IrTypeParameterSymbol)?.owner?.isReified == true
 
 val IrTypeParameter.representativeUpperBound: IrType
     get() {

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.FinallyBlocksLowering
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.backend.common.lower.ReturnableBlockTransformer
 import org.jetbrains.kotlin.backend.common.lower.coroutines.loweredSuspendFunctionReturnType
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
@@ -85,7 +86,7 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
 
         val unit = context.irBuiltIns.unitType
 
-        val switch = IrWhenImpl(body.startOffset, body.endOffset, unit, JsStatementOrigins.COROUTINE_SWITCH)
+        val switch = IrWhenImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, unit, JsStatementOrigins.COROUTINE_SWITCH)
         val stateVar = JsIrBuilder.buildVar(context.irBuiltIns.intType, stateMachineFunction)
         val switchBlock = IrBlockImpl(switch.startOffset, switch.endOffset, switch.type).apply {
             statements += stateVar

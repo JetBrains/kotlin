@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/listOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -15,7 +16,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
@@ -35,7 +36,7 @@ KtFunctionSymbol:
       isVararg: false
       name: element
       origin: LIBRARY
-      receiverType: null
+      receiverParameter: null
       returnType: T
       symbolKind: LOCAL
       typeParameters: []
@@ -53,6 +54,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: kotlin/collections/listOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -66,7 +68,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
@@ -81,6 +83,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/listOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -94,7 +97,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: listOf
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
@@ -114,7 +117,7 @@ KtFunctionSymbol:
       isVararg: true
       name: elements
       origin: LIBRARY
-      receiverType: null
+      receiverParameter: null
       returnType: T
       symbolKind: LOCAL
       typeParameters: []

@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolvedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
 
@@ -22,7 +22,7 @@ object FirOptInUsageAccessChecker : FirQualifiedAccessChecker() {
         if (sourceKind is KtFakeSourceElementKind.DataClassGeneratedMembers ||
             sourceKind is KtFakeSourceElementKind.PropertyFromParameter
         ) return
-        val resolvedSymbol = expression.calleeReference.resolvedSymbol ?: return
+        val resolvedSymbol = expression.calleeReference.toResolvedBaseSymbol() ?: return
         val dispatchReceiverType =
             expression.dispatchReceiver.takeIf { it !is FirNoReceiverExpression }?.typeRef?.coneType?.fullyExpandedType(context.session)
         with(FirOptInUsageBaseChecker) {

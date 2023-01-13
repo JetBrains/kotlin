@@ -15,7 +15,8 @@ data class ReportingSettings(
     val fileReportSettings: FileReportSettings? = null,
     val httpReportSettings: HttpReportSettings? = null,
     val buildScanReportSettings: BuildScanSettings? = null,
-    val singleOutputFile: File? = null
+    val singleOutputFile: File? = null,
+    val includeCompilerArguments: Boolean = false,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 1
@@ -35,7 +36,8 @@ data class HttpReportSettings(
     val url: String,
     val password: String?,
     val user: String?,
-    val verboseEnvironment: Boolean
+    val verboseEnvironment: Boolean,
+    val includeGitBranchName: Boolean
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 0

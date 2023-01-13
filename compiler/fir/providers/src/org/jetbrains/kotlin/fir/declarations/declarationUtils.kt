@@ -7,9 +7,11 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -83,7 +85,7 @@ fun FirBasedSymbol<*>.isEnumConstructor(session: FirSession): Boolean {
     return getConstructedClass(session)?.classKind == ClassKind.ENUM_CLASS
 }
 
-fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineClass(session: FirSession): Boolean {
+fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineOrValueClass(session: FirSession): Boolean {
     if (this !is FirConstructorSymbol) return false
     return getConstructedClass(session)?.isInlineOrValueClass() == true && this.isPrimary
 }
@@ -99,3 +101,18 @@ fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
 
     return isInline
 }
+
+@PrivateForInline
+inline val FirDeclarationOrigin.isJavaOrEnhancement: Boolean
+    get() = this is FirDeclarationOrigin.Java || this == FirDeclarationOrigin.Enhancement
+
+@OptIn(PrivateForInline::class)
+val FirDeclaration.isJavaOrEnhancement: Boolean
+    get() = origin.isJavaOrEnhancement ||
+            (this as? FirCallableDeclaration)?.importedFromObjectOrStaticData?.original?.isJavaOrEnhancement == true
+
+@OptIn(PrivateForInline::class)
+inline val FirBasedSymbol<*>.isJavaOrEnhancement: Boolean
+    get() = origin.isJavaOrEnhancement ||
+            (fir as? FirCallableDeclaration)?.importedFromObjectOrStaticData?.original?.isJavaOrEnhancement == true
+

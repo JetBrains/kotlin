@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -26,14 +28,14 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var source: KtSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var calleeReference: FirReference,
-    override val contextReceiverArguments: MutableList<FirExpression>,
-    override val typeArguments: MutableList<FirTypeProjection>,
+    override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
+    override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
-    override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
+    override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
 ) : FirPropertyAccessExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -86,16 +88,6 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         return this
     }
 
-    override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
-        dispatchReceiver = dispatchReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirPropertyAccessExpressionImpl {
-        extensionReceiver = extensionReceiver.transform(transformer, data)
-        return this
-    }
-
     @FirImplementationDetail
     override fun replaceSource(newSource: KtSourceElement?) {
         source = newSource
@@ -105,21 +97,35 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         typeRef = newTypeRef
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
+
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         calleeReference = newCalleeReference
     }
 
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments.clear()
-        contextReceiverArguments.addAll(newContextReceiverArguments)
+        contextReceiverArguments = newContextReceiverArguments.toMutableOrEmpty()
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
-        typeArguments.clear()
-        typeArguments.addAll(newTypeArguments)
+        typeArguments = newTypeArguments.toMutableOrEmpty()
     }
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         explicitReceiver = newExplicitReceiver
+    }
+
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+        dispatchReceiver = newDispatchReceiver
+    }
+
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+        extensionReceiver = newExtensionReceiver
+    }
+
+    override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {
+        nonFatalDiagnostics = newNonFatalDiagnostics.toMutableOrEmpty()
     }
 }

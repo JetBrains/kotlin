@@ -1,14 +1,13 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +CustomEqualsInInlineClasses
+// LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class A(val x: Int) {
-    fun equals(other: A) = x % 5 == other.x % 5
+    operator fun equals(other: A) = x % 5 == other.x % 5
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class B(val x: A)
 
 fun box() = if (B(A(0)) == B(A(5))) "OK" else "Fail"

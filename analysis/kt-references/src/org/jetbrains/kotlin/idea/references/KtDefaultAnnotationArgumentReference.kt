@@ -15,10 +15,22 @@ import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
 import org.jetbrains.kotlin.psi.KtValueArgument
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.findPropertyByName
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
+/**
+ * A reference pointing to a single argument in annotation's constructor call.
+ * It is created only when the following conditions hold:
+ *
+ * - Annotation's constructor call has a **single** argument
+ * - This argument is passed as is, without an explicit name
+ *
+ * Examples:
+ * ```
+ * @Foo("bar")        // reference is created
+ * @Foo("bar", "baz") // no reference, there are two arguments
+ * @Foo(name = "bar") // no reference, named argument is used
+ * ```
+ */
 class KtDefaultAnnotationArgumentReference(element: KtValueArgument) : AbstractKtReference<KtValueArgument>(element) {
     override val resolver: ResolveCache.PolyVariantResolver<KtReference>
         get() = Resolver
@@ -41,9 +53,9 @@ class KtDefaultAnnotationArgumentReference(element: KtValueArgument) : AbstractK
         override fun resolve(t: KtReference, incompleteCode: Boolean): Array<ResolveResult> {
             require(t is KtDefaultAnnotationArgumentReference)
             val annotationPsi = t.resolveAnnotationCallee() ?: return emptyArray()
-            val name = PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME
             return when (annotationPsi) {
                 is PsiClass -> {
+                    val name = PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME
                     val signature = MethodSignatureUtil.createMethodSignature(
                         name, PsiType.EMPTY_ARRAY, PsiTypeParameter.EMPTY_ARRAY, PsiSubstitutor.EMPTY
                     )
@@ -51,7 +63,9 @@ class KtDefaultAnnotationArgumentReference(element: KtValueArgument) : AbstractK
                     arrayOf(PsiElementResolveResult(method))
                 }
                 is KtPrimaryConstructor -> {
-                    val property = annotationPsi.containingClassOrObject?.findPropertyByName(name) as? KtParameter ?: return emptyArray()
+                    // parameters in primary constructor on Kotlin annotation can have any names,
+                    // so we just take the first parameter
+                    val property = annotationPsi.valueParameters.firstOrNull() ?: return emptyArray()
                     arrayOf(PsiElementResolveResult(property))
                 }
                 else -> emptyArray()

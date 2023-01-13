@@ -93,6 +93,12 @@ DISubprogramRef DICreateFunction(DIBuilderRef builder, DIScopeOpaqueRef scope,
                                  DISubroutineTypeRef type, int isLocal,
                                  int isDefinition, unsigned scopeLine);
 
+DISubprogramRef DICreateBridgeFunction(DIBuilderRef builder, DIScopeOpaqueRef scope,
+                                       LLVMValueRef function,
+                                       DIFileRef file, unsigned lineNo,
+                                       DISubroutineTypeRef type, int isLocal,
+                                       int isDefinition, unsigned scopeLine);
+
 DISubroutineTypeRef DICreateSubroutineType(DIBuilderRef builder,
                                            DITypeOpaqueRef* types,
                                            unsigned typesCount);

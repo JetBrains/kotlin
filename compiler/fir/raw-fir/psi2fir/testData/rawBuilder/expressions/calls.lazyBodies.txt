@@ -4,7 +4,7 @@ FILE: calls.kt
     public? final? fun testRegular(): Int { LAZY_BLOCK }
     public? final? class My : R|kotlin/Any| {
         public? constructor(x: Int): R|My| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? var x: Int = R|<local>/x|

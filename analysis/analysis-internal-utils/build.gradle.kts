@@ -5,6 +5,7 @@ plugins {
 
 dependencies {
     implementation(project(":compiler:psi"))
+    implementation(kotlinxCollectionsImmutable())
     implementation(intellijCore())
 }
 

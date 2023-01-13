@@ -9,9 +9,11 @@ import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
+import org.gradle.api.tasks.bundling.Zip
 import org.gradle.jvm.tasks.Jar
 import org.gradle.workers.WorkQueue
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.arguments.*
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -204,7 +207,8 @@ internal open class GradleCompilerRunner(
             kotlinScriptExtensions = environment.kotlinScriptExtensions,
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors,
             compilerExecutionSettings = compilerExecutionSettings,
-            errorsFile = errorsFile
+            errorsFile = errorsFile,
+            kotlinPluginVersion = getKotlinPluginVersion(loggerProvider)
         )
         TaskLoggers.put(pathProvider, loggerProvider)
         return runCompilerAsync(
@@ -218,6 +222,7 @@ internal open class GradleCompilerRunner(
         taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue? {
         try {
+            buildMetrics.addTimeMetric(BuildPerformanceMetric.CALL_WORKER)
             val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs)
             kotlinCompilerRunnable.run()
         } catch (e: FailedCompilationException) {
@@ -345,12 +350,13 @@ internal open class GradleCompilerRunner(
                             kotlinTask.abiSnapshotFile.get().asFile
                         )
                         val jarTask = project.tasks.findByName(target.artifactsTaskName) as? AbstractArchiveTask ?: continue
-                        jarToModule[jarTask.archivePathCompatible.canonicalFile] = module
+                        jarToModule[jarTask.archivePathCompatible.normalize().absoluteFile] = module
                         if (target is KotlinWithJavaTarget<*, *>) {
                             val jar = project.tasks.getByName(target.artifactsTaskName) as Jar
-                            jarToClassListFile[jar.archivePathCompatible.canonicalFile] = target.defaultArtifactClassesListFile.get()
+                            jarToClassListFile[jar.archivePathCompatible.normalize().absoluteFile] =
+                                target.defaultArtifactClassesListFile.get()
                             //configure abiSnapshot mapping for jars
-                            jarToAbiSnapshot[jar.archivePathCompatible.canonicalFile] =
+                            jarToAbiSnapshot[jar.archivePathCompatible.normalize().absoluteFile] =
                                 target.buildDir.get().file(kotlinTask.abiSnapshotRelativePath).get().asFile
                         }
 
@@ -392,7 +398,7 @@ internal open class GradleCompilerRunner(
             if (sourceSetName != KotlinCompilation.MAIN_COMPILATION_NAME) return null
             val jarTaskName = project.extensions.findByType<KotlinJsProjectExtension>()?.js()?.artifactsTaskName
 
-            val jarTask = jarTaskName?.let { project.tasks.findByName(jarTaskName) } as? Jar
+            val jarTask = jarTaskName?.let { project.tasks.findByName(jarTaskName) } as? Zip
             return jarTask?.archiveFile?.get()?.asFile
         }
 
@@ -412,9 +418,9 @@ internal open class GradleCompilerRunner(
         internal fun getOrCreateClientFlagFile(log: Logger, projectName: String): File {
             if (clientIsAliveFlagFile == null || !clientIsAliveFlagFile!!.exists()) {
                 clientIsAliveFlagFile = newTmpFile(prefix = "kotlin-compiler-in-${projectName}-", suffix = ".alive")
-                log.kotlinDebug { CREATED_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.canonicalPath }
+                log.kotlinDebug { CREATED_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.normalize().absoluteFile }
             } else {
-                log.kotlinDebug { EXISTING_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.canonicalPath }
+                log.kotlinDebug { EXISTING_CLIENT_FILE_PREFIX + clientIsAliveFlagFile!!.normalize().absoluteFile }
             }
 
             return clientIsAliveFlagFile!!
@@ -435,9 +441,9 @@ internal open class GradleCompilerRunner(
             if (sessionFlagFile == null || !sessionFlagFile!!.exists()) {
                 val sessionFilesDir = sessionsDir.apply { mkdirs() }
                 sessionFlagFile = newTmpFile(prefix = "kotlin-compiler-", suffix = ".salive", directory = sessionFilesDir)
-                log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrCanonical(projectCacheDirProvider) }
+                log.kotlinDebug { CREATED_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrAbsolute(projectCacheDirProvider) }
             } else {
-                log.kotlinDebug { EXISTING_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrCanonical(projectCacheDirProvider) }
+                log.kotlinDebug { EXISTING_SESSION_FILE_PREFIX + sessionFlagFile!!.relativeOrAbsolute(projectCacheDirProvider) }
             }
 
             return sessionFlagFile!!

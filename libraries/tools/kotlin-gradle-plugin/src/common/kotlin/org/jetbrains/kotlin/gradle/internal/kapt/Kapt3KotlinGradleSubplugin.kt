@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectOutputStream
@@ -75,7 +76,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
         fun getKaptConfigurationName(sourceSetName: String): String {
             return if (sourceSetName != SourceSet.MAIN_SOURCE_SET_NAME)
-                "$MAIN_KAPT_CONFIGURATION_NAME${sourceSetName.capitalize()}"
+                "$MAIN_KAPT_CONFIGURATION_NAME${sourceSetName.capitalizeAsciiOnly()}"
             else
                 MAIN_KAPT_CONFIGURATION_NAME
         }
@@ -599,7 +600,7 @@ internal fun registerGeneratedJavaSource(kaptTask: TaskProvider<out KaptTask>, j
 internal fun Configuration.getNamedDependencies(): List<Dependency> = allDependencies.filter { it.group != null }
 
 private val ANNOTATION_PROCESSOR = "annotationProcessor"
-private val ANNOTATION_PROCESSOR_CAP = ANNOTATION_PROCESSOR.capitalize()
+private val ANNOTATION_PROCESSOR_CAP = ANNOTATION_PROCESSOR.capitalizeAsciiOnly()
 
 internal fun checkAndroidAnnotationProcessorDependencyUsage(project: Project) {
     if (project.hasProperty("kapt.dont.warn.annotationProcessor.dependencies")) {

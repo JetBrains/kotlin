@@ -94,7 +94,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
             if (packageDirective != null) {
                 packageDirective.fqName = value
             } else {
-                val newPackageDirective = KtPsiFactory(this).createPackageDirectiveIfNeeded(value) ?: return
+                val newPackageDirective = KtPsiFactory(project).createPackageDirectiveIfNeeded(value) ?: return
                 addAfter(newPackageDirective, null)
             }
         }

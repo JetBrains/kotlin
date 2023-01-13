@@ -33,10 +33,7 @@ val mutedSet by lazy {
         (currentRootDir.goUp("libraries/tools/kotlin-gradle-plugin-integration-tests") ?: currentRootDir).absoluteFile
 
     loadMutedSet(
-        listOf(
-            "tests/mute-common.csv",
-            "tests/mute-platform.csv"
-        ).map { File(projectRootDir, it) }
+        listOf("tests/mute-common.csv").map { File(projectRootDir, it) }
     )
 }
 

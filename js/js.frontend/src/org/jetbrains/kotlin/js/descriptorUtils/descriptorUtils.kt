@@ -19,17 +19,20 @@ import org.jetbrains.kotlin.types.KotlinType
 val KotlinType.nameIfStandardType: Name?
     get() = constructor.declarationDescriptor?.takeIf(KotlinBuiltIns::isBuiltIn)?.name
 
-fun KotlinType.getJetTypeFqName(printTypeArguments: Boolean): String {
+@Deprecated(message = "Use getKotlinTypeFqName(Boolean) instead")
+fun KotlinType.getJetTypeFqName(printTypeArguments: Boolean): String = getKotlinTypeFqName(printTypeArguments)
+
+fun KotlinType.getKotlinTypeFqName(printTypeArguments: Boolean): String {
     val declaration = requireNotNull(constructor.declarationDescriptor) {
         "declarationDescriptor is null for constructor = $constructor with ${constructor.javaClass}"
     }
     if (declaration is TypeParameterDescriptor) {
-        return StringUtil.join(declaration.upperBounds, { type -> type.getJetTypeFqName(printTypeArguments) }, "&")
+        return StringUtil.join(declaration.upperBounds, { type -> type.getKotlinTypeFqName(printTypeArguments) }, "&")
     }
 
     val typeArguments = arguments
     val typeArgumentsAsString = if (printTypeArguments && !typeArguments.isEmpty()) {
-        val joinedTypeArguments = StringUtil.join(typeArguments, { projection -> projection.type.getJetTypeFqName(false) }, ", ")
+        val joinedTypeArguments = StringUtil.join(typeArguments, { projection -> projection.type.getKotlinTypeFqName(false) }, ", ")
 
         "<$joinedTypeArguments>"
     }

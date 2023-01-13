@@ -13,6 +13,7 @@ import org.gradle.process.ExecResult
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
+import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.OutputStream
@@ -24,8 +25,12 @@ open class TCServiceMessagesTestExecutionSpec(
     val clientSettings: TCServiceMessagesClientSettings,
     val dryRunArgs: List<String>? = null,
 ) : TestExecutionSpec {
-    internal open fun createClient(testResultProcessor: TestResultProcessor, log: Logger): TCServiceMessagesClient =
-        TCServiceMessagesClient(testResultProcessor, clientSettings, log)
+    internal open fun createClient(
+        testResultProcessor: TestResultProcessor,
+        log: Logger,
+        testReporter: MppTestReportHelper,
+    ): TCServiceMessagesClient =
+        TCServiceMessagesClient(testResultProcessor, clientSettings, log, testReporter)
 
     internal open fun wrapExecute(body: () -> Unit) = body()
     internal open fun showSuppressedOutput() = Unit
@@ -38,7 +43,8 @@ class TCServiceMessagesTestExecutor(
     val buildOperationExecutor: BuildOperationExecutor,
     val runListeners: MutableList<KotlinTestRunnerListener>,
     val ignoreTcsmOverflow: Boolean,
-    val ignoreRunFailures: Boolean
+    val ignoreRunFailures: Boolean,
+    val testReporter: MppTestReportHelper,
 ) : TestExecuter<TCServiceMessagesTestExecutionSpec> {
     private lateinit var execHandle: ExecHandle
     var outputReaderThread: Thread? = null
@@ -48,7 +54,7 @@ class TCServiceMessagesTestExecutor(
         spec.wrapExecute {
             val rootOperation = buildOperationExecutor.currentOperation.parentId!!
 
-            val client = spec.createClient(testResultProcessor, log)
+            val client = spec.createClient(testResultProcessor, log, testReporter)
 
             if (spec.dryRunArgs != null) {
                 val exec = execHandleFactory.newExec()

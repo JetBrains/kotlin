@@ -1,14 +1,10 @@
-import java.lang.System;
-
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 @kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class NonExistentClassWIthoutCorrectionKt {
 }
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class NonExistentType {

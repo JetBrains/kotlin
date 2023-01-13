@@ -156,7 +156,7 @@ object LightClassUtil {
             checkWithAttachment(parent.parent is KtClassOrObject, {
                 "Bad parent: ${parent.parent?.javaClass}"
             }) {
-                it.withAttachment("parent", parent.text)
+                it.withPsiAttachment("parent", parent)
             }
             return (parent.parent as KtClassOrObject).toLightClass()
         }

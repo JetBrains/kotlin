@@ -68,6 +68,16 @@ object CompilerConeAttributes {
         override fun toString(): String = "@ExtensionFunctionType"
     }
 
+    object RawType : ConeAttribute<RawType>() {
+        override fun union(other: RawType?): RawType? = other
+        override fun intersect(other: RawType?): RawType? = other
+        override fun add(other: RawType?): RawType = this
+        override fun isSubtypeOf(other: RawType?): Boolean = true
+
+        override val key: KClass<out RawType> = RawType::class
+        override fun toString(): String = "Raw type"
+    }
+
     class ContextFunctionTypeParams(val contextReceiverNumber: Int) : ConeAttribute<ContextFunctionTypeParams>() {
         override fun union(other: ContextFunctionTypeParams?): ContextFunctionTypeParams? = other
         override fun intersect(other: ContextFunctionTypeParams?): ContextFunctionTypeParams = this

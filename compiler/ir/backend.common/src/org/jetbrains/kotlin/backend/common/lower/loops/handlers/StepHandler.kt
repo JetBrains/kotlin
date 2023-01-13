@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.loops.*
-import org.jetbrains.kotlin.backend.common.lower.matchers.SimpleCalleeMatcher
-import org.jetbrains.kotlin.backend.common.lower.matchers.singleArgumentExtension
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -18,27 +16,24 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.addArgument
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.types.isLong
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.shallowCopy
 import org.jetbrains.kotlin.name.FqName
 import kotlin.math.absoluteValue
 
 /** Builds a [HeaderInfo] for progressions built using the `step` extension function. */
 internal class StepHandler(
-    private val context: CommonBackendContext,
-    private val visitor: HeaderInfoBuilder
-) : ProgressionHandler {
-
-    private val symbols = context.ir.symbols
-
-    override val matcher = SimpleCalleeMatcher {
-        singleArgumentExtension(
-            FqName("kotlin.ranges.step"),
-            symbols.progressionClasses.map { it.defaultType })
-        parameter(0) { it.type.isInt() || it.type.isLong() }
+    private val context: CommonBackendContext, private val visitor: HeaderInfoBuilder
+) : HeaderInfoHandler<IrCall, ProgressionType> {
+    override fun matchIterable(expression: IrCall): Boolean {
+        val callee = expression.symbol.owner
+        return callee.valueParameters.singleOrNull()?.type?.let { it.isInt() || it.isLong() } == true &&
+                callee.extensionReceiverParameter?.type?.classOrNull in context.ir.symbols.progressionClasses &&
+                callee.kotlinFqName == FqName("kotlin.ranges.step")
     }
 
     override fun build(expression: IrCall, data: ProgressionType, scopeOwner: IrSymbol): HeaderInfo? =

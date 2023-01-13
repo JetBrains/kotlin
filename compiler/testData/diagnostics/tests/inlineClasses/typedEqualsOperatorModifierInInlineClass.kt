@@ -1,7 +1,8 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 // !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
-// LANGUAGE: +CustomEqualsInInlineClasses
+// LANGUAGE: +CustomEqualsInValueClasses
+// SKIP_TXT
 
 
 @JvmInline

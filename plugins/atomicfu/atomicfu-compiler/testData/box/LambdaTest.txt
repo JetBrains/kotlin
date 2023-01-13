@@ -12,7 +12,7 @@ public final class LambdaTest {
     public final static @org.jetbrains.annotations.NotNull method getRs$FU(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     public final @org.jetbrains.annotations.Nullable method getRs(): java.lang.Object
     private final method inlineLambda(p0: int, p1: kotlin.jvm.functions.Function1): void
-    public final method loop$atomicfu(@org.jetbrains.annotations.NotNull p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.Nullable p2: java.lang.Object): void
+    private final method loop$atomicfu(p0: java.util.concurrent.atomic.AtomicIntegerFieldUpdater, p1: kotlin.jvm.functions.Function1, p2: java.lang.Object): void
     public final method loopInLambda1(p0: int): void
     public final method loopInLambda2(p0: int): void
 }

@@ -1,0 +1,5 @@
+object ConsumerANative {
+    init {
+        ProducerANative
+    }
+}

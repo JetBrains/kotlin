@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
+import org.gradle.api.file.RegularFile
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
@@ -44,17 +44,17 @@ internal fun String.fileExtensionCasePermutations(): List<String> {
     return result
 }
 
-internal fun File.relativeOrCanonical(base: File): String =
-    relativeToOrNull(base)?.path ?: canonicalPath
+internal fun File.relativeOrAbsolute(base: File): String =
+    relativeToOrNull(base)?.path ?: normalize().absolutePath
 
 internal fun Iterable<File>.pathsAsStringRelativeTo(base: File): String =
-    map { it.relativeOrCanonical(base) }.sorted().joinToString()
+    map { it.relativeOrAbsolute(base) }.sorted().joinToString()
 
 internal fun File.relativeToRoot(project: Project): String =
-    relativeOrCanonical(project.rootProject.rootDir)
+    relativeOrAbsolute(project.rootProject.rootDir)
 
 internal fun Iterable<File>.toPathsArray(): Array<String> =
-    map { it.canonicalPath }.toTypedArray()
+    map { it.normalize().absolutePath }.toTypedArray()
 
 internal fun newTmpFile(prefix: String, suffix: String? = null, directory: File? = null, deleteOnExit: Boolean = true): File {
     return try {
@@ -82,8 +82,8 @@ internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boo
     }
 }
 
-internal fun File.canonicalPathWithoutExtension(): String =
-    canonicalPath.substringBeforeLast(".")
+internal fun File.absolutePathWithoutExtension(): String =
+    normalize().absolutePath.substringBeforeLast(".")
 
 internal fun File.listFilesOrEmpty() = (if (exists()) listFiles() else null).orEmpty()
 
@@ -115,3 +115,5 @@ fun contentEquals(file1: File, file2: File): Boolean {
         }
     }
 }
+
+internal fun RegularFile.toUri() = asFile.toPath().toUri()

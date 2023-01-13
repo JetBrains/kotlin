@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
@@ -28,6 +29,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -36,24 +39,24 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirSimpleFunctionImpl(
     override val source: KtSourceElement?,
-    override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
+    override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var status: FirDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
-    override var receiverTypeRef: FirTypeRef?,
+    override var receiverParameter: FirReceiverParameter?,
     override var deprecationsProvider: DeprecationsProvider,
     override val containerSource: DeserializedContainerSource?,
     override val dispatchReceiverType: ConeSimpleKotlinType?,
-    override val contextReceivers: MutableList<FirContextReceiver>,
+    override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
     override var contractDescription: FirContractDescription,
     override val name: Name,
     override val symbol: FirNamedFunctionSymbol,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val typeParameters: MutableList<FirTypeParameter>,
 ) : FirSimpleFunction() {
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
@@ -65,7 +68,7 @@ internal class FirSimpleFunctionImpl(
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         status.accept(visitor, data)
         returnTypeRef.accept(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
+        receiverParameter?.accept(visitor, data)
         contextReceivers.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
@@ -78,7 +81,7 @@ internal class FirSimpleFunctionImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
         transformStatus(transformer, data)
         transformReturnTypeRef(transformer, data)
-        transformReceiverTypeRef(transformer, data)
+        transformReceiverParameter(transformer, data)
         contextReceivers.transformInplace(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
@@ -99,8 +102,8 @@ internal class FirSimpleFunctionImpl(
         return this
     }
 
-    override fun <D> transformReceiverTypeRef(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
-        receiverTypeRef = receiverTypeRef?.transform(transformer, data)
+    override fun <D> transformReceiverParameter(transformer: FirTransformer<D>, data: D): FirSimpleFunctionImpl {
+        receiverParameter = receiverParameter?.transform(transformer, data)
         return this
     }
 
@@ -137,8 +140,8 @@ internal class FirSimpleFunctionImpl(
         returnTypeRef = newReturnTypeRef
     }
 
-    override fun replaceReceiverTypeRef(newReceiverTypeRef: FirTypeRef?) {
-        receiverTypeRef = newReceiverTypeRef
+    override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {
+        receiverParameter = newReceiverParameter
     }
 
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
@@ -146,8 +149,7 @@ internal class FirSimpleFunctionImpl(
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        contextReceivers.clear()
-        contextReceivers.addAll(newContextReceivers)
+        contextReceivers = newContextReceivers.toMutableOrEmpty()
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
@@ -165,5 +167,9 @@ internal class FirSimpleFunctionImpl(
 
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
         contractDescription = newContractDescription
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

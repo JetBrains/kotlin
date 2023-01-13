@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.signaturer
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
@@ -22,7 +23,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 // @NoMutableState -- we'll restore this annotation once we get rid of withFileSignature().
-class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignatureComposer {
+class FirBasedSignatureComposer(
+    override val mangler: FirMangler,
+    dependentComposers: List<FirBasedSignatureComposer> = emptyList()
+) : Fir2IrSignatureComposer {
     private var fileSignature: IdSignature.FileSignature? = null
 
     override fun withFileSignature(sig: IdSignature.FileSignature, body: () -> Unit) {
@@ -33,7 +37,11 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
 
     private data class FirDeclarationWithParentId(val declaration: FirDeclaration, val classId: ClassId?)
 
-    private val signatureCache = mutableMapOf<FirDeclarationWithParentId, IdSignature.CommonSignature>()
+    private val signatureCache: MutableMap<FirDeclarationWithParentId, IdSignature.CommonSignature> =
+        dependentComposers.map { it.signatureCache }.fold(mutableMapOf()) { result, map ->
+            result.putAll(map)
+            result
+        }
 
     inner class SignatureBuilder : FirVisitor<Unit, Any?>() {
         var hashId: Long? = null
@@ -50,6 +58,9 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
         override fun visitRegularClass(regularClass: FirRegularClass, data: Any?) {
             setExpected(regularClass.isExpect)
             //platformSpecificClass(descriptor)
+        }
+
+        override fun visitScript(script: FirScript, data: Any?) {
         }
 
         override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
@@ -84,23 +95,27 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
     override fun composeSignature(
         declaration: FirDeclaration,
         containingClass: ConeClassLikeLookupTag?,
-        forceTopLevelPrivate: Boolean
+        forceTopLevelPrivate: Boolean,
     ): IdSignature? {
         if (declaration is FirAnonymousObject || declaration is FirAnonymousFunction) return null
         if (declaration is FirRegularClass && declaration.classId.isLocal) return null
         if (declaration is FirCallableDeclaration) {
             if (declaration.visibility == Visibilities.Local) return null
-            if (declaration.dispatchReceiverClassOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
+            if (declaration is FirField && declaration.source?.kind == KtFakeSourceElementKind.ClassDelegationField) return null
+            if (declaration.dispatchReceiverClassLookupTagOrNull()?.classId?.isLocal == true || containingClass?.classId?.isLocal == true) return null
         }
+
         val declarationWithParentId = FirDeclarationWithParentId(declaration, containingClass?.classId)
         val publicSignature = signatureCache.getOrPut(declarationWithParentId) {
             calculatePublicSignature(declarationWithParentId)
         }
+
         val resultSignature: IdSignature = if (isTopLevelPrivate(declaration) || forceTopLevelPrivate) {
             val fileSig = fileSignature ?: declaration.fakeFileSignature(publicSignature)
             IdSignature.CompositeSignature(fileSig, publicSignature)
         } else
             publicSignature
+
         return resultSignature
     }
 
@@ -134,6 +149,13 @@ class FirBasedSignatureComposer(override val mangler: FirMangler) : Fir2IrSignat
                 IdSignature.CommonSignature(
                     packageName.asString(),
                     classId?.relativeClassName?.child(callableName)?.asString() ?: callableName.asString(),
+                    builder.hashId, builder.mask
+                )
+            }
+            is FirScript -> {
+                IdSignature.CommonSignature(
+                    declaration.name.asString(), // TODO: find package id
+                    declaration.name.asString(),
                     builder.hashId, builder.mask
                 )
             }

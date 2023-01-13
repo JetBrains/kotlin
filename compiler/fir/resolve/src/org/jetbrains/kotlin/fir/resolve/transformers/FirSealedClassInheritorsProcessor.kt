@@ -29,17 +29,26 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.ClassId
 
 class FirSealedClassInheritorsProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirGlobalResolveProcessor(session, scopeSession) {
+) : FirGlobalResolveProcessor(session, scopeSession, FirResolvePhase.SEALED_CLASS_INHERITORS) {
     override fun process(files: Collection<FirFile>) {
         val sealedClassInheritorsMap = mutableMapOf<FirRegularClass, MutableList<ClassId>>()
         val inheritorsCollector = InheritorsCollector(session)
-        files.forEach { it.accept(inheritorsCollector, sealedClassInheritorsMap) }
-        files.forEach { it.transformSingle(InheritorsTransformer(sealedClassInheritorsMap), null) }
+        files.forEach {
+            withFileAnalysisExceptionWrapping(it) {
+                it.accept(inheritorsCollector, sealedClassInheritorsMap)
+            }
+        }
+        files.forEach {
+            withFileAnalysisExceptionWrapping(it) {
+                it.transformSingle(InheritorsTransformer(sealedClassInheritorsMap), null)
+            }
+        }
     }
 
     class InheritorsCollector(val session: FirSession) : FirDefaultVisitor<Unit, MutableMap<FirRegularClass, MutableList<ClassId>>>() {

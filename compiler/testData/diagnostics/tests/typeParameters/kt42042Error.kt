@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !LANGUAGE: +ProperTypeInferenceConstraintsProcessing
 
 sealed class Subtype<A1, B1> {

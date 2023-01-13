@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
@@ -29,6 +30,8 @@ import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
 abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     private lateinit var scriptDefinitions: List<String>
+
+    override val backend = TargetBackend.JVM_OLD
 
     override fun setUp() {
         super.setUp()
@@ -52,6 +55,11 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         if (files.size > 1) {
             throw UnsupportedOperationException("Multiple files are not yet supported in this test")
+        }
+
+        if (InTextDirectivesUtils.isIgnoredTarget(backend, wholeFile)) {
+            println("${wholeFile.name} test is skipped")
+            return
         }
 
         val file = files.single()
@@ -127,6 +135,10 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
             Assert.assertEquals("comparing field $fieldName", expectedValue, resultString)
         }
     }
+}
+
+abstract class AbstractIrCustomScriptCodegenTest : AbstractCustomScriptCodegenTest() {
+    override val backend: TargetBackend = TargetBackend.JVM_IR
 }
 
 object TestScriptWithReceiversConfiguration : ScriptCompilationConfiguration(

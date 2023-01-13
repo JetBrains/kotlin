@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.getClass
-import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.findAnnotation
 
 internal enum class IntrinsicType {
@@ -66,6 +65,7 @@ internal enum class IntrinsicType {
     IMMUTABLE_BLOB,
     INIT_INSTANCE,
     IS_EXPERIMENTAL_MM,
+    THE_UNIT_INSTANCE,
     // Enums
     ENUM_VALUES,
     ENUM_VALUE_OF,
@@ -241,6 +241,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.IDENTITY -> emitIdentity(args)
                 IntrinsicType.INTEROP_MEMORY_COPY -> emitMemoryCopy(callSite, args)
                 IntrinsicType.IS_EXPERIMENTAL_MM -> emitIsExperimentalMM()
+                IntrinsicType.THE_UNIT_INSTANCE -> theUnitInstanceRef.llvm
                 IntrinsicType.GET_CONTINUATION,
                 IntrinsicType.RETURN_IF_SUSPENDED,
                 IntrinsicType.INTEROP_BITS_TO_FLOAT,
@@ -438,21 +439,18 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val functionReturnType = LlvmRetType(llvm.int8PtrType)
         val functionParameterTypes = listOf(LlvmParamType(llvm.int8PtrType), LlvmParamType(llvm.int8PtrType))
 
-        val libobjc = context.standardLlvmSymbolsOrigin
-        val normalMessenger = codegen.llvm.externalFunction(LlvmFunctionProto(
+        val normalMessenger = codegen.llvm.externalNativeRuntimeFunction(
                 "objc_msgSend$messengerNameSuffix",
                 functionReturnType,
                 functionParameterTypes,
-                isVararg = true,
-                origin = libobjc
-        ))
-        val superMessenger = codegen.llvm.externalFunction(LlvmFunctionProto(
+                isVararg = true
+        )
+        val superMessenger = codegen.llvm.externalNativeRuntimeFunction(
                 "objc_msgSendSuper$messengerNameSuffix",
                 functionReturnType,
                 functionParameterTypes,
-                isVararg = true,
-                origin = libobjc
-        ))
+                isVararg = true
+        )
 
         val superClass = args.single()
         val messenger = LLVMBuildSelect(builder,

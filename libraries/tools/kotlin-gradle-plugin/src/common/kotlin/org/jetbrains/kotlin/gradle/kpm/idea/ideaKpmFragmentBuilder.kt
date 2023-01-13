@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.idea.kpm.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 
 internal fun IdeaKpmProjectBuildingContext.IdeaKpmFragment(fragment: GradleKpmFragment): IdeaKpmFragment {

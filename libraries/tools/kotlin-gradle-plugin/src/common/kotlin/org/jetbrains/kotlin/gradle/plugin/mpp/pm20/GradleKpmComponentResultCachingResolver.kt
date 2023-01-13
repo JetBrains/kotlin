@@ -17,7 +17,7 @@ open class GradleKpmComponentResultCachingResolver {
     private val cachedResultsByRequestingModule = mutableMapOf<GradleKpmModule, Map<KpmModuleIdentifier, ResolvedComponentResult>>()
 
     protected open fun configurationToResolve(requestingModule: GradleKpmModule): Configuration =
-        configurationToResolveMetadataDependencies(requestingModule.project, requestingModule)
+        configurationToResolveMetadataDependencies(requestingModule)
 
     protected open fun resolveDependencies(module: GradleKpmModule): Map<KpmModuleIdentifier, ResolvedComponentResult> {
         val allComponents = configurationToResolve(module).incoming.resolutionResult.allComponents

@@ -6,12 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
-import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForSource
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSyntheticJavaPropertySymbol
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
@@ -47,7 +48,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
             symbol.valueParameters.forEachIndexed { index, parameter ->
                 append(parameter.name.identifier)
                 append(": ")
-                append(parameter.returnType.render(KtTypeRendererOptions.SHORT_NAMES))
+                append(parameter.returnType.render(KtTypeRendererForSource.WITH_SHORT_NAMES, position = Variance.INVARIANT))
                 if (index != symbol.valueParameters.lastIndex) {
                     append(", ")
                 }
@@ -55,7 +56,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
             append(")")
         }
         append(": ")
-        append(symbol.returnType.render(KtTypeRendererOptions.SHORT_NAMES))
+        append(symbol.returnType.render(KtTypeRendererForSource.WITH_SHORT_NAMES, position = Variance.INVARIANT))
     }
 
     @Suppress("unused")

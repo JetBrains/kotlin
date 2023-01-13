@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.runners.codegen;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TargetBackend;
-import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -2708,6 +2707,70 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ForInRangeUntil {
+            @Test
+            public void testAllFilesPresentInForInRangeUntil() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+
+            @Test
+            @TestMetadata("forInRangeUntilChar.kt")
+            public void testForInRangeUntilChar() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil/forInRangeUntilChar.kt");
+            }
+
+            @Test
+            @TestMetadata("forInRangeUntilCharMaxValue.kt")
+            public void testForInRangeUntilCharMaxValue() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil/forInRangeUntilCharMaxValue.kt");
+            }
+
+            @Test
+            @TestMetadata("forInRangeUntilCharMinValue.kt")
+            public void testForInRangeUntilCharMinValue() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil/forInRangeUntilCharMinValue.kt");
+            }
+
+            @Test
+            @TestMetadata("forInRangeUntilInt.kt")
+            public void testForInRangeUntilInt() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil/forInRangeUntilInt.kt");
+            }
+
+            @Test
+            @TestMetadata("forInRangeUntilIntMaxValue.kt")
+            public void testForInRangeUntilIntMaxValue() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil/forInRangeUntilIntMaxValue.kt");
+            }
+
+            @Test
+            @TestMetadata("forInRangeUntilIntMinValue.kt")
+            public void testForInRangeUntilIntMinValue() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil/forInRangeUntilIntMinValue.kt");
+            }
+
+            @Test
+            @TestMetadata("forInRangeUntilLong.kt")
+            public void testForInRangeUntilLong() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil/forInRangeUntilLong.kt");
+            }
+
+            @Test
+            @TestMetadata("forInRangeUntilLongMaxValue.kt")
+            public void testForInRangeUntilLongMaxValue() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil/forInRangeUntilLongMaxValue.kt");
+            }
+
+            @Test
+            @TestMetadata("forInRangeUntilLongMinValue.kt")
+            public void testForInRangeUntilLongMinValue() throws Exception {
+                runTest("compiler/testData/codegen/bytecodeText/forLoop/forInRangeUntil/forInRangeUntilLongMinValue.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/bytecodeText/forLoop/forInRangeWithUpperBoundMinus1")
         @TestDataPath("$PROJECT_ROOT")
         public class ForInRangeWithUpperBoundMinus1 {
@@ -4887,6 +4950,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         @TestMetadata("inOptimizableUnsignedRange.kt")
         public void testInOptimizableUnsignedRange() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/ranges/inOptimizableUnsignedRange.kt");
+        }
+
+        @Test
+        @TestMetadata("inRangeUntil.kt")
+        public void testInRangeUntil() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/ranges/inRangeUntil.kt");
         }
 
         @Test

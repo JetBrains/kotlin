@@ -9,11 +9,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.createFirResolveSessionForNoCaching
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer
 import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
@@ -21,17 +23,14 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifactImpl
+import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.DependencyKind
-import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.test.services.isKtFile
 import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
 
 abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
     @OptIn(TestInfrastructureInternals::class)
@@ -45,6 +44,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         configureTest()
         defaultConfiguration(this)
         registerAnalysisApiBaseTestServices(disposable, FirLowLevelCompilerBasedTestConfigurator)
+        useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
         usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
 
         firHandlersStep {
@@ -56,12 +56,24 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
 
     inner class LowLevelFirFrontendFacade(
         testServices: TestServices
-    ) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
-
-        override val directiveContainers: List<DirectivesContainer>
-            get() = listOf(FirDiagnosticsDirectives)
+    ) : FirFrontendFacade(testServices) {
+        override val additionalServices: List<ServiceRegistrationData>
+            get() = emptyList()
 
         override fun analyze(module: TestModule): FirOutputArtifact {
+            val isMppSupported = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+
+            val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else listOf(module)
+
+            val firOutputPartForDependsOnModules = mutableListOf<FirOutputPartForDependsOnModule>()
+            for (testModule in sortedModules) {
+                firOutputPartForDependsOnModules.add(analyzeDependsOnModule(testModule))
+            }
+
+            return FirOutputArtifactImpl(firOutputPartForDependsOnModules)
+        }
+
+        private fun analyzeDependsOnModule(module: TestModule): FirOutputPartForDependsOnModule {
             val moduleInfoProvider = testServices.ktModuleProvider
             val ktModule = moduleInfoProvider.getModule(module.name) as KtSourceModuleByCompilerConfiguration
 
@@ -80,7 +92,12 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
             } else DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS
 
             val analyzerFacade = LowLevelFirAnalyzerFacade(firResolveSession, allFirFiles.toMap(), diagnosticCheckerFilter)
-            return LowLevelFirOutputArtifact(firResolveSession.useSiteFirSession, analyzerFacade)
+            return FirOutputPartForDependsOnModule(
+                module,
+                firResolveSession.useSiteFirSession,
+                analyzerFacade,
+                analyzerFacade.allFirFiles
+            )
         }
     }
 

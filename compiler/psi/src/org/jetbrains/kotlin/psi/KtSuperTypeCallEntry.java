@@ -85,5 +85,4 @@ public class KtSuperTypeCallEntry extends KtSuperTypeListEntry implements KtCall
         KtUserType userType = getTypeAsUserType();
         return userType != null ? userType.getTypeArgumentList() : null;
     }
-
 }

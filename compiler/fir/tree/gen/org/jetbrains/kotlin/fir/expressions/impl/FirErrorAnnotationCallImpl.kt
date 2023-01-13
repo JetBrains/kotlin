@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirErrorAnnotationCall
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -28,7 +31,7 @@ internal class FirErrorAnnotationCallImpl(
     override val source: KtSourceElement?,
     override val useSiteTarget: AnnotationUseSiteTarget?,
     override var annotationTypeRef: FirTypeRef,
-    override val typeArguments: MutableList<FirTypeProjection>,
+    override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirReference,
     override val diagnostic: ConeDiagnostic,
@@ -36,6 +39,7 @@ internal class FirErrorAnnotationCallImpl(
 ) : FirErrorAnnotationCall() {
     override val typeRef: FirTypeRef get() = annotationTypeRef
     override val annotations: List<FirAnnotation> get() = emptyList()
+    override var annotationResolvePhase: FirAnnotationResolvePhase = FirAnnotationResolvePhase.Types
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotationTypeRef.accept(visitor, data)
@@ -73,9 +77,14 @@ internal class FirErrorAnnotationCallImpl(
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
+
+    override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef) {
+        annotationTypeRef = newAnnotationTypeRef
+    }
+
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
-        typeArguments.clear()
-        typeArguments.addAll(newTypeArguments)
+        typeArguments = newTypeArguments.toMutableOrEmpty()
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {
@@ -84,6 +93,10 @@ internal class FirErrorAnnotationCallImpl(
 
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         calleeReference = newCalleeReference
+    }
+
+    override fun replaceAnnotationResolvePhase(newAnnotationResolvePhase: FirAnnotationResolvePhase) {
+        annotationResolvePhase = newAnnotationResolvePhase
     }
 
     override fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping) {

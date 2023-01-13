@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.ElementTypeUtils.isExpression
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -29,7 +28,11 @@ import org.jetbrains.kotlin.fir.contracts.builder.buildRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.DanglingTypeConstraint
+import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
+import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
+import org.jetbrains.kotlin.fir.declarations.utils.danglingTypeConstraints
+import org.jetbrains.kotlin.fir.diagnostics.ConeDanglingModifierOnTopLevel
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
@@ -48,13 +51,19 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
+import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
@@ -95,15 +104,17 @@ class DeclarationsConverter(
             throw Exception()
         }
 
-        val fileAnnotationList = mutableListOf<FirAnnotation>()
+        val fileSymbol = FirFileSymbol()
+        var fileAnnotationContainer: FirFileAnnotationsContainer? = null
         val importList = mutableListOf<FirImport>()
         val firDeclarationList = mutableListOf<FirDeclaration>()
+        val modifierList = mutableListOf<LighterASTNode>()
         context.packageFqName = FqName.ROOT
         var packageDirective: FirPackageDirective? = null
         file.forEachChildren { child ->
             @Suppress("RemoveRedundantQualifierName")
             when (child.tokenType) {
-                FILE_ANNOTATION_LIST -> fileAnnotationList += convertFileAnnotationList(child)
+                FILE_ANNOTATION_LIST -> fileAnnotationContainer = convertFileAnnotationsContainer(child, fileSymbol)
                 PACKAGE_DIRECTIVE -> {
                     packageDirective = convertPackageDirective(child).also { context.packageFqName = it.packageFqName }
                 }
@@ -117,10 +128,16 @@ class DeclarationsConverter(
                 SCRIPT -> {
                     // TODO: scripts aren't supported yet
                 }
+                MODIFIER_LIST -> modifierList += child
             }
         }
 
+        modifierList.forEach {
+            firDeclarationList += buildErrorTopLevelDeclarationForDanglingModifierList(it)
+        }
+
         return buildFile {
+            symbol = fileSymbol
             source = file.toFirSourceElement()
             origin = FirDeclarationOrigin.Source
             moduleData = baseModuleData
@@ -128,7 +145,11 @@ class DeclarationsConverter(
             this.sourceFile = sourceFile
             this.sourceFileLinesMapping = linesMapping
             this.packageDirective = packageDirective ?: buildPackageDirective { packageFqName = context.packageFqName }
-            annotations += fileAnnotationList
+            annotationsContainer = fileAnnotationContainer
+                 ?: buildFileAnnotationsContainer {
+                    moduleData = baseModuleData
+                    containingFileSymbol = fileSymbol
+                }
             imports += importList
             declarations += firDeclarationList
         }
@@ -319,11 +340,19 @@ class DeclarationsConverter(
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFileAnnotationList]
      */
-    private fun convertFileAnnotationList(fileAnnotationList: LighterASTNode): List<FirAnnotation> {
-        return fileAnnotationList.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                ANNOTATION -> container += convertAnnotation(node)
-                ANNOTATION_ENTRY -> container += convertAnnotationEntry(node)
+    private fun convertFileAnnotationsContainer(
+        fileAnnotationList: LighterASTNode,
+        fileSymbol: FirFileSymbol
+    ): FirFileAnnotationsContainer {
+        return buildFileAnnotationsContainer {
+            moduleData = baseModuleData
+            source = fileAnnotationList.toFirSourceElement()
+            containingFileSymbol = fileSymbol
+            annotations += fileAnnotationList.forEachChildrenReturnList { node, container ->
+                when (node.tokenType) {
+                    ANNOTATION -> container += convertAnnotation(node)
+                    ANNOTATION_ENTRY -> container += convertAnnotationEntry(node)
+                }
             }
         }
     }
@@ -563,7 +592,7 @@ class DeclarationsConverter(
                         properties += primaryConstructorWrapper.valueParameters
                             .filter { it.hasValOrVar() }
                             .map {
-                                it.toFirProperty(
+                                it.toFirPropertyFromPrimaryConstructor(
                                     baseModuleData,
                                     callableIdForName(it.firValueParameter.name),
                                     classWrapper.hasExpect(),
@@ -621,7 +650,9 @@ class DeclarationsConverter(
                 }
             }
         }.also {
-            it.initContainingClassForLocalAttr()
+            if (classNode.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
+                it.initContainingClassForLocalAttr()
+            }
             fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
         }
     }
@@ -634,10 +665,9 @@ class DeclarationsConverter(
         return withChildClassName(SpecialNames.ANONYMOUS, isExpect = false) {
             var delegatedFieldsMap: Map<Int, FirFieldSymbol>? = null
             buildAnonymousObjectExpression {
-                val objectDeclaration = objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()
-                val sourceElement = objectDeclaration.toFirSourceElement()
-                source = sourceElement
+                source = objectLiteral.toFirSourceElement()
                 anonymousObject = buildAnonymousObject {
+                    val objectDeclaration = objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()
                     source = objectDeclaration.toFirSourceElement()
                     origin = FirDeclarationOrigin.Source
                     moduleData = baseModuleData
@@ -828,7 +858,8 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumClassBody
      */
     private fun convertClassBody(classBody: LighterASTNode, classWrapper: ClassWrapper): List<FirDeclaration> {
-        return classBody.forEachChildrenReturnList { node, container ->
+        val modifierLists = mutableListOf<LighterASTNode>()
+        var firDeclarations = classBody.forEachChildrenReturnList { node, container ->
             @Suppress("RemoveRedundantQualifierName")
             when (node.tokenType) {
                 ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper)
@@ -839,8 +870,22 @@ class DeclarationsConverter(
                 OBJECT_DECLARATION -> container += convertClass(node)
                 CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) //anonymousInitializer
                 SECONDARY_CONSTRUCTOR -> container += convertSecondaryConstructor(node, classWrapper)
+                MODIFIER_LIST -> modifierLists += node
             }
         }
+        for (node in modifierLists) {
+            firDeclarations += buildErrorTopLevelDeclarationForDanglingModifierList(node)
+        }
+        return firDeclarations
+    }
+
+    private fun buildErrorTopLevelDeclarationForDanglingModifierList(node: LighterASTNode) = buildDanglingModifierList {
+        this.source = node.toFirSourceElement(KtFakeSourceElementKind.DanglingModifierList)
+        moduleData = baseModuleData
+        origin = FirDeclarationOrigin.Source
+        diagnostic = ConeDanglingModifierOnTopLevel
+        symbol = FirDanglingModifierSymbol()
+        annotations += convertModifierList(node).annotations
     }
 
     /**
@@ -861,14 +906,15 @@ class DeclarationsConverter(
         if (primaryConstructor == null &&
             (containingClassIsExpectClass && classKind != ClassKind.ENUM_CLASS && classKind != ClassKind.ENUM_ENTRY)
         ) return null
-        if (classWrapper.isInterface()) return null
+        if (primaryConstructor == null && classWrapper.isInterface()) return null
 
+        val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
         var modifiers = Modifier()
         val valueParameters = mutableListOf<ValueParameter>()
         primaryConstructor?.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
-                VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(it, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
+                VALUE_PARAMETER_LIST -> valueParameters += convertValueParameters(it, constructorSymbol, ValueParameterDeclaration.PRIMARY_CONSTRUCTOR)
             }
         }
 
@@ -917,7 +963,7 @@ class DeclarationsConverter(
                 returnTypeRef = classWrapper.delegatedSelfTypeRef
                 dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
                 this.status = status
-                symbol = FirConstructorSymbol(callableIdForClassConstructor())
+                symbol = constructorSymbol
                 annotations += modifiers.annotations
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
                 this.valueParameters += valueParameters.map { it.firValueParameter }
@@ -947,6 +993,7 @@ class DeclarationsConverter(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             body = firBlock ?: buildEmptyExpressionBlock()
+            dispatchReceiverType = context.dispatchReceiverTypesStack.lastOrNull()
         }
     }
 
@@ -959,10 +1006,11 @@ class DeclarationsConverter(
         var constructorDelegationCall: FirDelegatedConstructorCall? = null
         var block: LighterASTNode? = null
 
+        val constructorSymbol = FirConstructorSymbol(callableIdForClassConstructor())
         secondaryConstructor.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
-                VALUE_PARAMETER_LIST -> firValueParameters += convertValueParameters(it, ValueParameterDeclaration.FUNCTION)
+                VALUE_PARAMETER_LIST -> firValueParameters += convertValueParameters(it, constructorSymbol, ValueParameterDeclaration.FUNCTION)
                 CONSTRUCTOR_DELEGATION_CALL -> constructorDelegationCall = convertConstructorDelegationCall(it, classWrapper)
                 BLOCK -> block = it
             }
@@ -987,14 +1035,14 @@ class DeclarationsConverter(
             returnTypeRef = delegatedSelfTypeRef
             dispatchReceiverType = classWrapper.obtainDispatchReceiverForConstructor()
             this.status = status
-            symbol = FirConstructorSymbol(callableIdForClassConstructor())
+            symbol = constructorSymbol
             delegatedConstructor = constructorDelegationCall
 
             context.firFunctionTargets += target
             annotations += modifiers.annotations
             typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
             valueParameters += firValueParameters.map { it.firValueParameter }
-            val (body, _) = convertFunctionBody(block, null)
+            val (body, _) = convertFunctionBody(block, null, allowLegacyContractDescription = true)
             this.body = body
             context.firFunctionTargets.removeLast()
         }.also {
@@ -1175,6 +1223,7 @@ class DeclarationsConverter(
                     isLateInit = modifiers.hasLateinit()
                 }
 
+                typeParameters += firTypeParameters
                 generateAccessorsByDelegate(
                     delegateBuilder,
                     baseModuleData,
@@ -1185,7 +1234,8 @@ class DeclarationsConverter(
                 )
             } else {
                 this.isLocal = false
-                receiverTypeRef = receiverType
+                receiverParameter = receiverType?.convertToReceiverParameter()
+
                 dispatchReceiverType = currentDispatchReceiverType()
                 withCapturedTypeParameters(true, propertySource, firTypeParameters) {
                     typeParameters += firTypeParameters
@@ -1219,7 +1269,7 @@ class DeclarationsConverter(
                             symbol,
                         ).also {
                             it.status = defaultAccessorStatus()
-                            it.annotations += modifiers.annotations.filterUseSiteTarget(PROPERTY_GETTER)
+                            it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(PROPERTY_GETTER))
                             it.initContainingClassAttr()
                         }
                     // NOTE: We still need the setter even for a val property so we can report errors (e.g., VAL_WITH_SETTER).
@@ -1235,7 +1285,7 @@ class DeclarationsConverter(
                                 parameterAnnotations = modifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER)
                             ).also {
                                 it.status = defaultAccessorStatus()
-                                it.annotations += modifiers.annotations.filterUseSiteTarget(PROPERTY_SETTER)
+                                it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(PROPERTY_SETTER))
                                 it.initContainingClassAttr()
                             }
                         } else null
@@ -1346,15 +1396,19 @@ class DeclarationsConverter(
         var isGetter = true
         var returnType: FirTypeRef? = null
         val propertyTypeRefToUse = propertyTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+        val accessorSymbol = FirPropertyAccessorSymbol()
         var firValueParameters: FirValueParameter = buildDefaultSetterValueParameter {
             moduleData = baseModuleData
+            containingFunctionSymbol = accessorSymbol
             origin = FirDeclarationOrigin.Source
             returnTypeRef = propertyTypeRefToUse
-            symbol = FirValueParameterSymbol(SpecialNames.IMPLICIT_SET_PARAMETER)
+            symbol = FirValueParameterSymbol(StandardNames.DEFAULT_VALUE_PARAMETER)
         }
         var block: LighterASTNode? = null
         var expression: LighterASTNode? = null
         var outerContractDescription: FirContractDescription? = null
+
+
         getterOrSetter.forEachChildren {
             if (it.asText == "set") isGetter = false
             when (it.tokenType) {
@@ -1362,7 +1416,7 @@ class DeclarationsConverter(
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 TYPE_REFERENCE -> returnType = convertType(it)
                 VALUE_PARAMETER_LIST -> firValueParameters = convertSetterParameter(
-                    it, propertyTypeRefToUse, propertyModifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER)
+                    it, accessorSymbol, propertyTypeRefToUse, propertyModifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER)
                 )
                 CONTRACT_EFFECT_LIST -> outerContractDescription = obtainContractDescription(it)
                 BLOCK -> block = it
@@ -1397,8 +1451,7 @@ class DeclarationsConverter(
                     isGetter
                 )
                 .also { accessor ->
-                    accessor.annotations += modifiers.annotations
-                    accessor.annotations += accessorAdditionalAnnotations
+                    accessor.replaceAnnotations(modifiers.annotations + accessorAdditionalAnnotations)
                     accessor.status = status
                     accessor.initContainingClassAttr()
                 }
@@ -1409,7 +1462,7 @@ class DeclarationsConverter(
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = returnType ?: if (isGetter) propertyTypeRefToUse else implicitUnitType
-            symbol = FirPropertyAccessorSymbol()
+            symbol = accessorSymbol
             this.isGetter = isGetter
             this.status = status
             context.firFunctionTargets += target
@@ -1419,9 +1472,8 @@ class DeclarationsConverter(
             if (!isGetter) {
                 valueParameters += firValueParameters
             }
-
-            val hasContractEffectList = outerContractDescription != null
-            val bodyWithContractDescription = convertFunctionBody(block, expression, hasContractEffectList)
+            val allowLegacyContractDescription = outerContractDescription == null
+            val bodyWithContractDescription = convertFunctionBody(block, expression, allowLegacyContractDescription)
             this.body = bodyWithContractDescription.first
             val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
             contractDescription?.let {
@@ -1531,11 +1583,12 @@ class DeclarationsConverter(
     /**
      * this is just a VALUE_PARAMETER_LIST
      *
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyGetterOrSetter
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyComponent
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.toFirValueParameter
      */
     private fun convertSetterParameter(
         setterParameter: LighterASTNode,
+        functionSymbol: FirFunctionSymbol<*>,
         propertyTypeRef: FirTypeRef,
         additionalAnnotations: List<FirAnnotation>
     ): FirValueParameter {
@@ -1544,12 +1597,13 @@ class DeclarationsConverter(
         setterParameter.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
-                VALUE_PARAMETER -> firValueParameter = convertValueParameter(it, ValueParameterDeclaration.SETTER).firValueParameter
+                VALUE_PARAMETER -> firValueParameter = convertValueParameter(it, functionSymbol, ValueParameterDeclaration.SETTER).firValueParameter
             }
         }
 
         return buildValueParameter {
             source = firValueParameter.source
+            containingFunctionSymbol = functionSymbol
             moduleData = baseModuleData
             origin = FirDeclarationOrigin.Source
             returnTypeRef = if (firValueParameter.returnTypeRef == implicitType) propertyTypeRef else firValueParameter.returnTypeRef
@@ -1612,7 +1666,7 @@ class DeclarationsConverter(
             functionSymbol = FirAnonymousFunctionSymbol()
             FirAnonymousFunctionBuilder().apply {
                 source = functionSource
-                receiverTypeRef = receiverType
+                receiverParameter = receiverType?.convertToReceiverParameter()
                 symbol = functionSymbol
                 isLambda = false
                 hasExplicitParameterList = true
@@ -1627,7 +1681,7 @@ class DeclarationsConverter(
             functionSymbol = FirNamedFunctionSymbol(callableIdForName(functionName))
             FirSimpleFunctionBuilder().apply {
                 source = functionSource
-                receiverTypeRef = receiverType
+                receiverParameter = receiverType?.convertToReceiverParameter()
                 name = functionName
                 status = FirDeclarationStatusImpl(
                     if (isLocal) Visibilities.Local else modifiers.getVisibility(),
@@ -1672,12 +1726,13 @@ class DeclarationsConverter(
                 valueParametersList?.let { list ->
                     valueParameters += convertValueParameters(
                         list,
+                        functionSymbol,
                         if (isAnonymousFunction) ValueParameterDeclaration.LAMBDA else ValueParameterDeclaration.FUNCTION
                     ).map { it.firValueParameter }
                 }
 
-                val hasContractEffectList = outerContractDescription != null
-                val bodyWithContractDescription = convertFunctionBody(block, expression, hasContractEffectList)
+                val allowLegacyContractDescription = outerContractDescription == null && !isLocal
+                val bodyWithContractDescription = convertFunctionBody(block, expression, allowLegacyContractDescription)
                 this.body = bodyWithContractDescription.first
                 val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
                 contractDescription?.let {
@@ -1711,16 +1766,13 @@ class DeclarationsConverter(
     private fun convertFunctionBody(
         blockNode: LighterASTNode?,
         expression: LighterASTNode?,
-        hasContractEffectList: Boolean = false
+        allowLegacyContractDescription: Boolean
     ): Pair<FirBlock?, FirContractDescription?> {
         return when {
             blockNode != null -> {
                 val block = convertBlock(blockNode)
-                if (hasContractEffectList) {
-                    block to null
-                } else {
-                    block.extractContractDescriptionIfPossible()
-                }
+                val contractDescription = runIf(allowLegacyContractDescription) { processLegacyContractDescription(block) }
+                block to contractDescription
             }
             expression != null -> FirSingleExpressionBlock(
                 expressionConverter.getAsFirExpression<FirExpression>(expression, "Function has no body (but should)").toReturn()
@@ -1839,19 +1891,19 @@ class DeclarationsConverter(
             explicitDelegation.toFirSourceElement(), ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.Syntax)
         )
 
-        val delegateName = Name.special("<\$\$delegate_${delegateFieldsMap.size}>")
         delegateFieldsMap.put(
             index,
             buildField {
                 source = calculatedFirExpression.source?.fakeElement(KtFakeSourceElementKind.ClassDelegationField)
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Synthetic
-                name = delegateName
+                name = NameUtils.delegateFieldName(delegateFieldsMap.size)
                 returnTypeRef = firTypeRef
-                symbol = FirFieldSymbol(CallableId(name))
+                symbol = FirFieldSymbol(CallableId(context.currentClassId, name))
                 isVar = false
-                status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL)
+                status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
                 initializer = calculatedFirExpression
+                dispatchReceiverType = currentDispatchReceiverType()
             }.symbol
         )
         return firTypeRef
@@ -2000,7 +2052,7 @@ class DeclarationsConverter(
         }
 
         for (modifierList in allTypeModifiers) {
-            (calculatedFirType.annotations as MutableList<FirAnnotation>) += modifierList.annotations
+            calculatedFirType.replaceAnnotations(calculatedFirType.annotations.smartPlus(modifierList.annotations))
         }
         return calculatedFirType
     }
@@ -2010,7 +2062,7 @@ class DeclarationsConverter(
     private fun convertIntersectionType(typeRefSource: KtSourceElement, intersectionType: LighterASTNode, isNullable: Boolean): FirTypeRef {
         val children = arrayListOf<FirTypeRef>()
         intersectionType.forEachChildren {
-            if (it.tokenType != KtTokens.AND) { //skip in forEachChildren?
+            if (it.tokenType != AND) { //skip in forEachChildren?
                 children.add(convertType(it))
             }
         }
@@ -2171,11 +2223,11 @@ class DeclarationsConverter(
     ): FirTypeRef {
         var receiverTypeReference: FirTypeRef? = null
         lateinit var returnTypeReference: FirTypeRef
-        val valueParametersList = mutableListOf<ValueParameter>()
+        val parameters = mutableListOf<FirFunctionTypeParameter>()
         functionType.forEachChildren {
             when (it.tokenType) {
                 FUNCTION_TYPE_RECEIVER -> receiverTypeReference = convertReceiverType(it)
-                VALUE_PARAMETER_LIST -> valueParametersList += convertValueParameters(it, ValueParameterDeclaration.FUNCTIONAL_TYPE)
+                VALUE_PARAMETER_LIST -> parameters += convertFunctionTypeParameters(it)
                 TYPE_REFERENCE -> returnTypeReference = convertType(it)
             }
         }
@@ -2185,7 +2237,7 @@ class DeclarationsConverter(
             isMarkedNullable = isNullable
             receiverTypeRef = receiverTypeReference
             returnTypeRef = returnTypeReference
-            valueParameters += valueParametersList.map { it.firValueParameter }
+            this.parameters += parameters
             this.isSuspend = isSuspend
             this.contextReceiverTypeRefs.addAll(
                 functionType.getChildNodeByType(CONTEXT_RECEIVER_LIST)?.getChildNodesByType(CONTEXT_RECEIVER)?.mapNotNull {
@@ -2195,17 +2247,42 @@ class DeclarationsConverter(
         }
     }
 
+    private fun convertFunctionTypeParameters(
+        parameters: LighterASTNode,
+    ): List<FirFunctionTypeParameter> {
+        return parameters.forEachChildrenReturnList { node, container ->
+            when (node.tokenType) {
+                VALUE_PARAMETER -> {
+                    var name: Name? = null
+                    var typeRef: FirTypeRef? = null
+                    node.forEachChildren {
+                        when (it.tokenType) {
+                            IDENTIFIER -> name = it.asText.nameAsSafeName()
+                            TYPE_REFERENCE -> typeRef = convertType(it)
+                        }
+                    }
+                    container += buildFunctionTypeParameter {
+                        source = node.toFirSourceElement()
+                        this.name = name
+                        this.returnTypeRef = typeRef ?: createNoTypeForParameterTypeRef()
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameterList
      */
     fun convertValueParameters(
         valueParameters: LighterASTNode,
+        functionSymbol: FirFunctionSymbol<*>,
         valueParameterDeclaration: ValueParameterDeclaration,
         additionalAnnotations: List<FirAnnotation> = emptyList()
     ): List<ValueParameter> {
         return valueParameters.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
-                VALUE_PARAMETER -> container += convertValueParameter(node, valueParameterDeclaration, additionalAnnotations)
+                VALUE_PARAMETER -> container += convertValueParameter(node, functionSymbol, valueParameterDeclaration, additionalAnnotations)
             }
         }
     }
@@ -2215,6 +2292,7 @@ class DeclarationsConverter(
      */
     fun convertValueParameter(
         valueParameter: LighterASTNode,
+        functionSymbol: FirFunctionSymbol<*>?,
         valueParameterDeclaration: ValueParameterDeclaration,
         additionalAnnotations: List<FirAnnotation> = emptyList()
     ): ValueParameter {
@@ -2238,32 +2316,25 @@ class DeclarationsConverter(
         }
 
         val name = convertValueParameterName(identifier.nameAsSafeName(), identifier, valueParameterDeclaration)
-        val firValueParameter = buildValueParameter {
-            source = valueParameter.toFirSourceElement()
-            moduleData = baseModuleData
-            origin = FirDeclarationOrigin.Source
+
+        return ValueParameter(
+            isVal = isVal,
+            isVar = isVar,
+            modifiers = modifiers,
             returnTypeRef = firType
                 ?: when {
                     valueParameterDeclaration.shouldExplicitParameterTypeBePresent -> createNoTypeForParameterTypeRef()
                     else -> implicitType
-                }
-            this.name = name
-            symbol = FirValueParameterSymbol(name)
-            defaultValue = firExpression
-            isCrossinline = modifiers.hasCrossinline()
-            isNoinline = modifiers.hasNoinline()
-            isVararg = modifiers.hasVararg()
-            val isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
-            annotations += if (!isFromPrimaryConstructor)
-                modifiers.annotations
-            else
-                modifiers.annotations.filter {
-                    val useSiteTarget = it.useSiteTarget
-                    useSiteTarget == null || useSiteTarget == CONSTRUCTOR_PARAMETER || useSiteTarget == RECEIVER || useSiteTarget == FILE
-                }
-            annotations += additionalAnnotations
-        }
-        return ValueParameter(isVal, isVar, modifiers, firValueParameter, destructuringDeclaration)
+                },
+            source = valueParameter.toFirSourceElement(),
+            moduleData = baseModuleData,
+            isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR,
+            additionalAnnotations = additionalAnnotations,
+            name = name,
+            defaultValue = firExpression,
+            containingFunctionSymbol = functionSymbol,
+            destructuringDeclaration = destructuringDeclaration
+        )
     }
 
     private fun <T> fillDanglingConstraintsTo(

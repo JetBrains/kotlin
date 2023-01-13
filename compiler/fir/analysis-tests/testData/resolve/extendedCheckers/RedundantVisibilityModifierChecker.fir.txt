@@ -81,10 +81,10 @@ FILE: RedundantVisibilityModifierChecker.kt
             super<R|D|>()
         }
 
-        protected final override fun willRemainProtected(): R|kotlin/Unit| {
+        protected open override fun willRemainProtected(): R|kotlin/Unit| {
         }
 
-        public final override fun willBecomePublic(): R|kotlin/Unit| {
+        public open override fun willBecomePublic(): R|kotlin/Unit| {
         }
 
     }

@@ -1,4 +1,4 @@
-// FILE: SamConstructor.kt
+// FILE: Sam.java
 public interface Sam {
     void run(String a);
 }
@@ -11,6 +11,6 @@ fun test() {
 
     Sam {
         val a = <!NO_THIS!>this<!>
-        System.out.<!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(a)
+        System.out.<!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>)
     }
 }

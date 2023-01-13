@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -47,6 +48,9 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
+import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -201,7 +205,7 @@ class IncrementalFirJvmCompilerRunner(
 
             var incrementalExcludesScope: AbstractProjectFileSearchScope? = null
 
-            fun firIncrementalCycle(): ModuleCompilerAnalyzedOutput? {
+            fun firIncrementalCycle(): FirResult? {
                 while (true) {
 
                     val compilerInput = ModuleCompilerInput(
@@ -227,7 +231,7 @@ class IncrementalFirJvmCompilerRunner(
 
                     // TODO: consider what to do if many compilations find a main class
                     if (mainClassFqName == null && configuration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-                        mainClassFqName = findMainClass(analysisResults.fir)
+                        mainClassFqName = findMainClass(analysisResults.platformOutput.fir)
                     }
 
                     // TODO: switch the whole IC to KtSourceFile instead of FIle
@@ -271,18 +275,7 @@ class IncrementalFirJvmCompilerRunner(
             val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
             val irGenerationExtensions =
                 (projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }.orEmpty()
-            val allCommonFirFiles = cycleResult.session.moduleData.dependsOnDependencies
-                .map { it.session }
-                .filter { it.kind == FirSession.Kind.Source }
-                .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
-
-            val (irModuleFragment, components) = Fir2IrConverter.createModuleFragmentWithoutSignatures(
-                cycleResult.session, cycleResult.scopeSession, cycleResult.fir + allCommonFirFiles,
-                cycleResult.session.languageVersionSettings, extensions,
-                FirJvmKotlinMangler(cycleResult.session), JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
-                Fir2IrJvmSpecialAnnotationSymbolProvider(),
-                irGenerationExtensions
-            )
+            val platformIrOutput = cycleResult.convertToIrAndActualize(extensions, irGenerationExtensions, linkViaSignatures = false)
 
             performanceManager?.notifyIRTranslationFinished()
 
@@ -290,10 +283,11 @@ class IncrementalFirJvmCompilerRunner(
                 targetId,
                 configuration,
                 extensions,
-                irModuleFragment,
-                components.symbolTable,
-                components,
-                cycleResult.session
+                platformIrOutput.irModuleFragment,
+                platformIrOutput.components.symbolTable,
+                platformIrOutput.components,
+                cycleResult.platformOutput.session,
+                platformIrOutput.pluginContext
             )
 
             val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)

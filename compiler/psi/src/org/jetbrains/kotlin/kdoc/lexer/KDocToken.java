@@ -21,6 +21,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.lexer.KtToken;
 
 public class KDocToken extends KtToken {
+    @Deprecated
+    public KDocToken(@NotNull @NonNls String debugName) {
+        super(debugName);
+    }
+
     public KDocToken(@NotNull @NonNls String debugName, int tokenId) {
         super(debugName, tokenId);
     }

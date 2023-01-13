@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator
 
 import org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType
-import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
@@ -23,7 +24,7 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiSingleFileTest
             val ktType = buildTypeParameterType(symbol)
             buildString {
                 appendLine("expression: ${expressionAtCaret.text}")
-                appendLine("ktType: ${ktType.render()}")
+                appendLine("ktType: ${ktType.render(position = Variance.INVARIANT)}")
             }
         }
 

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.AbstractValueUsageLowering
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.types.IrType
 
 /**
@@ -26,4 +27,10 @@ class ExplicitlyCastExternalTypesLowering(wasmContext: WasmBackendContext) : Abs
 
         return this
     }
+
+    override fun useAsVarargElement(element: IrExpression, expression: IrVararg): IrExpression =
+        if (isExternalType(element.type))
+            element.useAs(irBuiltIns.anyNType)
+        else
+            super.useAsVarargElement(element, expression)
 }

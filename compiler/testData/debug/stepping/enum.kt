@@ -60,6 +60,7 @@ fun box() {
 // test.kt:3 <init>
 // test.kt:22 box
 // test.kt:9 foo
+// test.kt:7 E$foo$lambda
 // test.kt:15 E2_initEntries
 // test.kt:14 <init>
 // test.kt:14 <init>

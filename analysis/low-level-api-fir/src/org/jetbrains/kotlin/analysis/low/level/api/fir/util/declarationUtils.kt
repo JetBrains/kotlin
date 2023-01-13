@@ -28,7 +28,7 @@ internal fun KtDeclaration.findSourceNonLocalFirDeclaration(
 ): FirDeclaration {
     //TODO test what way faster
     findSourceNonLocalFirDeclarationByProvider(firFileBuilder, provider, containerFirFile)?.let { return it }
-    findSourceOfNonLocalFirDeclarationByTraversingWholeTree(firFileBuilder, containerFirFile)?.let { return it }
+    findSourceByTraversingWholeTree(firFileBuilder, containerFirFile)?.let { return it }
     errorWithFirSpecificEntries("No fir element was found for", psi = this)
 }
 
@@ -56,14 +56,15 @@ internal inline fun <reified F : FirDeclaration> KtDeclaration.findFirDeclaratio
     return fir
 }
 
-private fun KtDeclaration.findSourceOfNonLocalFirDeclarationByTraversingWholeTree(
+internal fun KtElement.findSourceByTraversingWholeTree(
     firFileBuilder: LLFirFileBuilder,
     containerFirFile: FirFile?,
 ): FirDeclaration? {
     val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
-    val originalDeclaration = originalDeclaration
+    val originalDeclaration = (this as? KtDeclaration)?.originalDeclaration
+    val isDeclaration = this is KtDeclaration
     return FirElementFinder.findElementIn(firFile, canGoInside = { it is FirRegularClass }) { firDeclaration ->
-        firDeclaration.psi == this || firDeclaration.psi == originalDeclaration
+        firDeclaration.psi == this || isDeclaration && firDeclaration.psi == originalDeclaration
     }
 }
 
@@ -99,6 +100,10 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             containerClassFir.declarations.firstOrNull { it.psi === this }
         }
         this is KtTypeAlias -> findFir(provider)
+        this is KtDestructuringDeclaration -> {
+            val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
+            firFile.declarations.firstOrNull { it.psi == this }
+        }
         else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
     return candidate?.takeIf { it.realPsi == this }
@@ -113,9 +118,7 @@ var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
     val classId = getClassId() ?: return null
-    return executeWithoutPCE {
-        provider.getFirClassifierByFqName(classId) as? FirRegularClass
-    }
+    return provider.getFirClassifierByFqName(classId) as? FirRegularClass
 }
 
 

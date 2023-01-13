@@ -26,7 +26,7 @@ FILE: buildSetWithVisitor.kt
                     super<R|AnyVisitor|>()
                 }
 
-                public final override fun visit(arg: R|Wrapper|): R|kotlin/Unit| {
+                public open override fun visit(arg: R|Wrapper|): R|kotlin/Unit| {
                     this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableSet.add: R|kotlin/Boolean|>|(R|<local>/arg|.R|/Wrapper.tag|)
                 }
 

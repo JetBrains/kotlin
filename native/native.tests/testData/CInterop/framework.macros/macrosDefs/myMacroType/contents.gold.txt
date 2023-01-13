@@ -1,0 +1,9 @@
+
+package pod1 {
+    const val MY_MACRO_CONST_POD1: Int = 42
+    const val MY_MACRO_CONST_POD1A: Int = 153
+    var myVar: Double
+        @CCall(id = "knifunptr_pod10_myVar_getter") get
+        @CCall(id = "knifunptr_pod11_myVar_setter") set
+}
+

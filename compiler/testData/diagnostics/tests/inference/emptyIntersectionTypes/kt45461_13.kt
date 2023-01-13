@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// RENDER_DIAGNOSTICS_FULL_TEXT
 
 class Foo<T>
 
@@ -13,5 +12,5 @@ class Out<out K>
 
 fun <K : L, L : N, N> main() where N: Out<A> {
     val foo = Foo<K>()
-    Bar<Out<String>>().<!INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION!>takeFoo<!>(foo) // error in 1.3.72, no error in 1.4.31
+    Bar<Out<String>>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
 }

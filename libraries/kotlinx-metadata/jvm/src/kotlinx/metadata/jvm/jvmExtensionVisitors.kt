@@ -2,6 +2,7 @@
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("DEPRECATION")
 
 package kotlinx.metadata.jvm
 
@@ -11,6 +12,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 /**
  * A visitor containing the common code to visit JVM extensions for Kotlin declaration containers, such as classes and package fragments.
  */
+@Deprecated(VISITOR_API_MESSAGE)
 abstract class JvmDeclarationContainerExtensionVisitor @JvmOverloads constructor(
     protected open val delegate: JvmDeclarationContainerExtensionVisitor? = null
 ) : KmDeclarationContainerExtensionVisitor {
@@ -44,6 +46,7 @@ abstract class JvmDeclarationContainerExtensionVisitor @JvmOverloads constructor
 /**
  * A visitor to visit JVM extensions for a class.
  */
+@Deprecated(VISITOR_API_MESSAGE)
 open class JvmClassExtensionVisitor @JvmOverloads constructor(
     delegate: JvmClassExtensionVisitor? = null
 ) : KmClassExtensionVisitor, JvmDeclarationContainerExtensionVisitor(delegate) {
@@ -89,6 +92,7 @@ open class JvmClassExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a package fragment.
  */
+@Deprecated(VISITOR_API_MESSAGE)
 open class JvmPackageExtensionVisitor @JvmOverloads constructor(
     delegate: JvmPackageExtensionVisitor? = null
 ) : KmPackageExtensionVisitor, JvmDeclarationContainerExtensionVisitor(delegate) {
@@ -119,6 +123,7 @@ open class JvmPackageExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a function.
  */
+@Deprecated(VISITOR_API_MESSAGE)
 open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmFunctionExtensionVisitor? = null
 ) : KmFunctionExtensionVisitor {
@@ -165,6 +170,7 @@ open class JvmFunctionExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a property.
  */
+@Deprecated(VISITOR_API_MESSAGE)
 open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmPropertyExtensionVisitor? = null
 ) : KmPropertyExtensionVisitor {
@@ -253,6 +259,7 @@ open class JvmPropertyExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a constructor.
  */
+@Deprecated(VISITOR_API_MESSAGE)
 open class JvmConstructorExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmConstructorExtensionVisitor? = null
 ) : KmConstructorExtensionVisitor {
@@ -284,6 +291,7 @@ open class JvmConstructorExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a type parameter.
  */
+@Deprecated(VISITOR_API_MESSAGE)
 open class JvmTypeParameterExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmTypeParameterExtensionVisitor? = null
 ) : KmTypeParameterExtensionVisitor {
@@ -320,6 +328,7 @@ open class JvmTypeParameterExtensionVisitor @JvmOverloads constructor(
 /**
  * A visitor to visit JVM extensions for a type.
  */
+@Deprecated(VISITOR_API_MESSAGE)
 open class JvmTypeExtensionVisitor @JvmOverloads constructor(
     private val delegate: JvmTypeExtensionVisitor? = null
 ) : KmTypeExtensionVisitor {
@@ -365,6 +374,6 @@ open class JvmTypeExtensionVisitor @JvmOverloads constructor(
          *
          * @see KmTypeVisitor.visitFlexibleTypeUpperBound
          */
-        const val PLATFORM_TYPE_ID = JvmProtoBufUtil.PLATFORM_TYPE_ID
+        const val PLATFORM_TYPE_ID = JvmProtoBufUtil.PLATFORM_TYPE_ID // TODO: move out of deprecated visitor
     }
 }

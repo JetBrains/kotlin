@@ -1,7 +1,0 @@
-/kt45461_10.kt:7:25: warning: parameter 'foo' is never used
-    fun <S : T> takeFoo(foo: Foo<in S>) {}
-                        ^
-/kt45461_10.kt:16:21: warning: type argument for a type parameter S has possible incompatible upper bounds: Out<Int>, K (final class and interface: Int, A)
-    Bar<Out<Int>>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
-                    ^
-

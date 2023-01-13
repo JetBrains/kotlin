@@ -10,6 +10,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.psi.KtParameter
 
 internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLightMethodBase) : PsiVariable, NavigationItem,
     KtLightElement<KtParameter, PsiParameter>, KtLightParameter, KtLightElementBase(containingDeclaration) {
+    protected val ktModule: KtModule get() = method.ktModule
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>
         get() = invalidAccess()
@@ -37,7 +39,7 @@ internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLi
 
     override fun setName(p0: String): PsiElement = TODO() //cannotModify()
 
-    override val method: KtLightMethod = containingDeclaration
+    override val method: SymbolLightMethodBase = containingDeclaration
 
     override fun getDeclarationScope(): KtLightMethod = method
 

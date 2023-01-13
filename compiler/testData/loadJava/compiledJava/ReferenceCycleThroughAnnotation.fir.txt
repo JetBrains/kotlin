@@ -1,7 +1,7 @@
 public open class ReferenceCycleThroughAnnotation : R|kotlin/Any| {
     public constructor(): R|test/ReferenceCycleThroughAnnotation|
 
-    @R|test/ReferenceCycleThroughAnnotation.C|(value = <getClass>(<getClass>(R|ft<test/ReferenceCycleThroughAnnotation.B<ft<test/ReferenceCycleThroughAnnotation.A<*>, test/ReferenceCycleThroughAnnotation.A<*>?>>, test/ReferenceCycleThroughAnnotation.B<*>?>|))) public open inner class A<T : R|kotlin/Any!|> : R|kotlin/Any| {
+    @R|test/ReferenceCycleThroughAnnotation.C|(value = <getClass>(<getClass>(R|ft<Raw type test/ReferenceCycleThroughAnnotation.B<ft<test/ReferenceCycleThroughAnnotation.A<*>, test/ReferenceCycleThroughAnnotation.A<*>?>>, test/ReferenceCycleThroughAnnotation.B<*>?>|))) public open inner class A<T : R|kotlin/Any!|> : R|kotlin/Any| {
         public open fun foo(): R|kotlin/Unit|
 
         public test/ReferenceCycleThroughAnnotation.constructor<T : R|kotlin/Any!|>(): R|test/ReferenceCycleThroughAnnotation.A<T>|

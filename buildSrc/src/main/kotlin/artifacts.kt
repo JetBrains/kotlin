@@ -109,6 +109,32 @@ fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<out Jar> {
     return jarTask
 }
 
+fun Project.runtimeJarWithRelocation(body: ShadowJar.() -> Unit = {}): TaskProvider<out Jar> {
+    noDefaultJar()
+
+    val shadowJarTask = tasks.register<ShadowJar>("shadowJar") {
+        archiveClassifier.set("shadow")
+        configurations = configurations + listOf(project.configurations["embedded"])
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        body()
+    }
+
+    val runtimeJarTask = tasks.register<Jar>("runtimeJar") {
+        dependsOn(shadowJarTask)
+        from {
+            zipTree(shadowJarTask.get().outputs.files.singleFile)
+        }
+        setupPublicJar(project.extensions.getByType<BasePluginExtension>().archivesName.get())
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    }
+
+    project.addArtifact("archives", runtimeJarTask, runtimeJarTask)
+    project.addArtifact("runtimeElements", runtimeJarTask, runtimeJarTask)
+    project.addArtifact("apiElements", runtimeJarTask, runtimeJarTask)
+
+    return runtimeJarTask
+}
+
 fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit = {}): TaskProvider<out Jar> {
 
     noDefaultJar()

@@ -21,178 +21,69 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 fun IrElement.render() =
     accept(RenderIrElementVisitor(), null)
 
-class RenderIrElementVisitor(private val normalizeNames: Boolean = false, private val verboseErrorTypes: Boolean = true) : IrElementVisitor<String, Nothing?> {
-    private val nameMap: MutableMap<IrVariableSymbol, String> = mutableMapOf()
-    private var temporaryIndex: Int = 0
+class RenderIrElementVisitor(normalizeNames: Boolean = false, private val verboseErrorTypes: Boolean = true) :
+    IrElementVisitor<String, Nothing?> {
 
-    private val IrVariable.normalizedName: String
-        get() {
-            if (!normalizeNames || (origin != IrDeclarationOrigin.IR_TEMPORARY_VARIABLE && origin != IrDeclarationOrigin.FOR_LOOP_ITERATOR))
-                return name.asString()
+    private val variableNameData = VariableNameData(normalizeNames)
 
-            return nameMap.getOrPut(symbol) { "tmp_${temporaryIndex++}" }
-        }
-
-    fun renderType(type: IrType) = type.render()
+    fun renderType(type: IrType) = type.renderTypeWithRenderer(this@RenderIrElementVisitor, verboseErrorTypes)
 
     fun renderSymbolReference(symbol: IrSymbol) = symbol.renderReference()
 
     fun renderAsAnnotation(irAnnotation: IrConstructorCall): String =
-        StringBuilder().also { it.renderAsAnnotation(irAnnotation) }.toString()
-
-    private fun StringBuilder.renderAsAnnotation(irAnnotation: IrConstructorCall) {
-        val annotationClassName = try {
-            irAnnotation.symbol.owner.parentAsClass.name.asString()
-        } catch (e: Exception) {
-            "<unbound>"
-        }
-        append(annotationClassName)
-
-        if (irAnnotation.typeArgumentsCount != 0) {
-            (0 until irAnnotation.typeArgumentsCount).joinTo(this, ", ", "<", ">") { i ->
-                irAnnotation.getTypeArgument(i)?.let { renderType(it) } ?: "null"
-            }
-        }
-
-        if (irAnnotation.valueArgumentsCount == 0) return
-
-        val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
-
-        var first = true
-        append("(")
-        for (i in 0 until irAnnotation.valueArgumentsCount) {
-            if (first) {
-                first = false
-            } else {
-                append(", ")
-            }
-            append(valueParameterNames[i])
-            append(" = ")
-            renderAsAnnotationArgument(irAnnotation.getValueArgument(i))
-        }
-        append(")")
-    }
-
-    private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?) {
-        when (irElement) {
-            null -> append("<null>")
-            is IrConstructorCall -> renderAsAnnotation(irElement)
-            is IrConst<*> -> {
-                append('\'')
-                append(irElement.value.toString())
-                append('\'')
-            }
-            is IrVararg -> {
-                appendListWith(irElement.elements, "[", "]", ", ") {
-                    renderAsAnnotationArgument(it)
-                }
-            }
-            else -> append(irElement.accept(this@RenderIrElementVisitor, null))
-        }
-    }
-
-    private inline fun buildTrimEnd(fn: StringBuilder.() -> Unit): String =
-        buildString(fn).trimEnd()
-
-    private inline fun <T> T.runTrimEnd(fn: T.() -> String): String =
-        run(fn).trimEnd()
+        StringBuilder().also { it.renderAsAnnotation(irAnnotation, this, verboseErrorTypes) }.toString()
 
     private fun IrType.render(): String =
-        "${renderTypeAnnotations(annotations)}${renderTypeInner()}"
-
-    private fun IrType.renderTypeInner() =
-        when (this) {
-            is IrDynamicType -> "dynamic"
-
-            is IrErrorType -> "IrErrorType(${if (verboseErrorTypes) originalKotlinType else null})"
-
-            is IrSimpleType -> buildTrimEnd {
-                val isDefinitelyNotNullType = classifier is IrTypeParameterSymbol && nullability == SimpleTypeNullability.DEFINITELY_NOT_NULL
-                if (isDefinitelyNotNullType) append("{")
-                append(classifier.renderClassifierFqn())
-                if (arguments.isNotEmpty()) {
-                    append(
-                        arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
-                            it.renderTypeArgument()
-                        }
-                    )
-                }
-                if (isDefinitelyNotNullType) {
-                    append(" & Any}")
-                } else if (isMarkedNullable()) {
-                    append('?')
-                }
-                abbreviation?.let {
-                    append(it.renderTypeAbbreviation())
-                }
-            }
-
-            else -> "{${javaClass.simpleName} $this}"
-        }
-
-    private fun IrTypeAbbreviation.renderTypeAbbreviation(): String =
-        buildString {
-            append("{ ")
-            append(renderTypeAnnotations(annotations))
-            append(typeAlias.renderTypeAliasFqn())
-            if (arguments.isNotEmpty()) {
-                append(
-                    arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
-                        it.renderTypeArgument()
-                    }
-                )
-            }
-            if (hasQuestionMark) {
-                append('?')
-            }
-            append(" }")
-        }
-
-    private fun IrTypeArgument.renderTypeArgument(): String =
-        when (this) {
-            is IrStarProjection -> "*"
-
-            is IrTypeProjection -> buildTrimEnd {
-                append(variance.label)
-                if (variance != Variance.INVARIANT) append(' ')
-                append(type.render())
-            }
-
-            else -> "IrTypeArgument[$this]"
-        }
-
-
-    private fun renderTypeAnnotations(annotations: List<IrConstructorCall>) =
-        if (annotations.isEmpty())
-            ""
-        else
-            annotations.joinToString(prefix = "", postfix = " ", separator = " ") { "@[${renderAsAnnotation(it)}]" }
+        this.renderTypeWithRenderer(this@RenderIrElementVisitor, verboseErrorTypes)
 
     private fun IrSymbol.renderReference() =
         if (isBound)
-            owner.accept(symbolReferenceRenderer, null)
+            owner.accept(BoundSymbolReferenceRenderer(variableNameData, verboseErrorTypes), null)
         else
             "UNBOUND ${javaClass.simpleName}"
 
-    private val symbolReferenceRenderer = BoundSymbolReferenceRenderer()
+    private class BoundSymbolReferenceRenderer(
+        private val variableNameData: VariableNameData,
+        private val verboseErrorTypes: Boolean,
+    ) : IrElementVisitor<String, Nothing?> {
 
-    private inner class BoundSymbolReferenceRenderer :
-        IrElementVisitor<String, Nothing?> {
+        override fun visitElement(element: IrElement, data: Nothing?) = buildTrimEnd {
+            append('{')
+            append(element.javaClass.simpleName)
+            append('}')
+            if (element is IrDeclaration) {
+                if (element is IrDeclarationWithName) {
+                    append(element.name)
+                    append(' ')
+                }
+                renderDeclaredIn(element)
+            }
+        }
 
-        override fun visitElement(element: IrElement, data: Nothing?) =
-            element.accept(this@RenderIrElementVisitor, null)
+        override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?): String =
+            renderTypeParameter(declaration, null, verboseErrorTypes)
+
+        override fun visitClass(declaration: IrClass, data: Nothing?) =
+            renderClassWithRenderer(declaration, null, verboseErrorTypes)
+
+        override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?) =
+            renderEnumEntry(declaration)
+
+        override fun visitField(declaration: IrField, data: Nothing?) =
+            renderField(declaration, null, verboseErrorTypes)
 
         override fun visitVariable(declaration: IrVariable, data: Nothing?) =
             buildTrimEnd {
                 if (declaration.isVar) append("var ") else append("val ")
 
-                append(declaration.normalizedName)
+                append(declaration.normalizedName(variableNameData))
                 append(": ")
-                append(declaration.type.render())
+                append(declaration.type.renderTypeWithRenderer(null, verboseErrorTypes))
                 append(' ')
 
                 append(declaration.renderVariableFlags())
@@ -204,7 +95,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
             buildTrimEnd {
                 append(declaration.name.asString())
                 append(": ")
-                append(declaration.type.render())
+                append(declaration.type.renderTypeWithRenderer(null, verboseErrorTypes))
                 append(' ')
 
                 append(declaration.renderValueParameterFlags())
@@ -233,23 +124,23 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
 
                 renderTypeParameters(declaration)
 
-                appendListWith(declaration.valueParameters, "(", ")", ", ") { valueParameter ->
+                appendIterableWith(declaration.valueParameters, "(", ")", ", ") { valueParameter ->
                     val varargElementType = valueParameter.varargElementType
                     if (varargElementType != null) {
                         append("vararg ")
                         append(valueParameter.name.asString())
                         append(": ")
-                        append(varargElementType.render())
+                        append(varargElementType.renderTypeWithRenderer(null, verboseErrorTypes))
                     } else {
                         append(valueParameter.name.asString())
                         append(": ")
-                        append(valueParameter.type.render())
+                        append(valueParameter.type.renderTypeWithRenderer(null, verboseErrorTypes))
                     }
                 }
 
                 if (declaration is IrSimpleFunction) {
                     append(": ")
-                    append(declaration.renderReturnType())
+                    append(declaration.renderReturnType(null, verboseErrorTypes))
                 }
                 append(' ')
 
@@ -263,7 +154,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
 
         private fun StringBuilder.renderTypeParameters(declaration: IrTypeParametersContainer) {
             if (declaration.typeParameters.isNotEmpty()) {
-                appendListWith(declaration.typeParameters, "<", ">", ", ") { typeParameter ->
+                appendIterableWith(declaration.typeParameters, "<", ">", ", ") { typeParameter ->
                     append(typeParameter.name.asString())
                 }
                 append(' ')
@@ -282,10 +173,10 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
                 val getter = declaration.getter
                 if (getter != null) {
                     append(": ")
-                    append(getter.renderReturnType())
+                    append(getter.renderReturnType(null, verboseErrorTypes))
                 } else declaration.backingField?.type?.let { type ->
                     append(": ")
-                    append(type.render())
+                    append(type.renderTypeWithRenderer(null, verboseErrorTypes))
                 }
 
                 append(' ')
@@ -297,7 +188,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
                 if (declaration.isVar) append("var ") else append("val ")
                 append(declaration.name.asString())
                 append(": ")
-                append(declaration.type.render())
+                append(declaration.type.renderTypeWithRenderer(null, verboseErrorTypes))
                 append(" by (...)")
             }
 
@@ -316,7 +207,7 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
             when (parent) {
                 is IrPackageFragment -> {
                     val fqn = parent.fqName.asString()
-                    append(if (fqn.isEmpty()) "<root>" else fqn)
+                    append(fqn.ifEmpty { "<root>" })
                 }
                 is IrDeclaration -> {
                     renderParentOfReferencedDeclaration(parent)
@@ -367,42 +258,9 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
                     "name:$name visibility:$visibility modality:$modality " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
-                    "returnType:${renderReturnType()} " +
+                    "returnType:${renderReturnType(this@RenderIrElementVisitor, verboseErrorTypes)} " +
                     renderSimpleFunctionFlags()
         }
-
-    private fun IrFunction.renderReturnType(): String =
-        safeReturnType?.render() ?: "<Uninitialized>"
-
-    private val IrFunction.safeReturnType: IrType?
-        get() = try {
-            returnType
-        } catch (e: ReturnTypeIsNotInitializedException) {
-            null
-        }
-
-    private fun renderFlagsList(vararg flags: String?) =
-        flags.filterNotNull().run {
-            if (isNotEmpty())
-                joinToString(prefix = "[", postfix = "] ", separator = ",")
-            else
-                ""
-        }
-
-    private fun IrSimpleFunction.renderSimpleFunctionFlags(): String =
-        renderFlagsList(
-            "tailrec".takeIf { isTailrec },
-            "inline".takeIf { isInline },
-            "external".takeIf { isExternal },
-            "suspend".takeIf { isSuspend },
-            "expect".takeIf { isExpect },
-            "fake_override".takeIf { isFakeOverride },
-            "operator".takeIf { isOperator },
-            "infix".takeIf { isInfix }
-        )
-
-    private fun IrFunction.renderTypeParameters(): String =
-        typeParameters.joinToString(separator = ", ", prefix = "<", postfix = ">") { it.name.toString() }
 
     private fun IrFunction.renderValueParameterTypes(): String =
         ArrayList<String>().apply {
@@ -417,17 +275,9 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
                     "visibility:$visibility " +
                     renderTypeParameters() + " " +
                     renderValueParameterTypes() + " " +
-                    "returnType:${renderReturnType()} " +
+                    "returnType:${renderReturnType(this@RenderIrElementVisitor, verboseErrorTypes)} " +
                     renderConstructorFlags()
         }
-
-    private fun IrConstructor.renderConstructorFlags() =
-        renderFlagsList(
-            "inline".takeIf { isInline },
-            "external".takeIf { isExternal },
-            "primary".takeIf { isPrimary },
-            "expect".takeIf { isExpect }
-        )
 
     override fun visitProperty(declaration: IrProperty, data: Nothing?): String =
         declaration.runTrimEnd {
@@ -436,78 +286,25 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
                     renderPropertyFlags()
         }
 
-    private fun IrProperty.renderPropertyFlags() =
-        renderFlagsList(
-            "external".takeIf { isExternal },
-            "const".takeIf { isConst },
-            "lateinit".takeIf { isLateinit },
-            "delegated".takeIf { isDelegated },
-            "expect".takeIf { isExpect },
-            "fake_override".takeIf { isFakeOverride },
-            if (isVar) "var" else "val"
-        )
-
     override fun visitField(declaration: IrField, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "FIELD ${renderOriginIfNonTrivial()}name:$name type:${type.render()} visibility:$visibility ${renderFieldFlags()}"
-        }
-
-
-    private fun IrField.renderFieldFlags() =
-        renderFlagsList(
-            "final".takeIf { isFinal },
-            "external".takeIf { isExternal },
-            "static".takeIf { isStatic },
-        )
+        renderField(declaration, this, verboseErrorTypes)
 
     override fun visitClass(declaration: IrClass, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "CLASS ${renderOriginIfNonTrivial()}" +
-                    "$kind name:$name modality:$modality visibility:$visibility " +
-                    renderClassFlags() +
-                    "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}]"
-        }
-
-    private fun IrClass.renderClassFlags() =
-        renderFlagsList(
-            "companion".takeIf { isCompanion },
-            "inner".takeIf { isInner },
-            "data".takeIf { isData },
-            "external".takeIf { isExternal },
-            "value".takeIf { isValue },
-            "expect".takeIf { isExpect },
-            "fun".takeIf { isFun }
-        )
+        renderClassWithRenderer(declaration, this, verboseErrorTypes)
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): String =
         declaration.runTrimEnd {
-            "VAR ${renderOriginIfNonTrivial()}name:$normalizedName type:${type.render()} ${renderVariableFlags()}"
+            "VAR ${renderOriginIfNonTrivial()}name:${normalizedName(variableNameData)} type:${type.render()} ${renderVariableFlags()}"
         }
-
-
-    private fun IrVariable.renderVariableFlags(): String =
-        renderFlagsList(
-            "const".takeIf { isConst },
-            "lateinit".takeIf { isLateinit },
-            if (isVar) "var" else "val"
-        )
 
     override fun visitEnumEntry(declaration: IrEnumEntry, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "ENUM_ENTRY ${renderOriginIfNonTrivial()}name:$name"
-        }
-
+        renderEnumEntry(declaration)
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer, data: Nothing?): String =
         "ANONYMOUS_INITIALIZER isStatic=${declaration.isStatic}"
 
     override fun visitTypeParameter(declaration: IrTypeParameter, data: Nothing?): String =
-        declaration.runTrimEnd {
-            "TYPE_PARAMETER ${renderOriginIfNonTrivial()}" +
-                    "name:$name index:$index variance:$variance " +
-                    "superTypes:[${superTypes.joinToString(separator = "; ") { it.render() }}] " +
-                    "reified:$isReified"
-        }
+        renderTypeParameter(declaration, this, verboseErrorTypes)
 
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?): String =
         declaration.runTrimEnd {
@@ -518,14 +315,6 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
                     (varargElementType?.let { "varargElementType:${it.render()} " } ?: "") +
                     renderValueParameterFlags()
         }
-
-    private fun IrValueParameter.renderValueParameterFlags(): String =
-        renderFlagsList(
-            "vararg".takeIf { varargElementType != null },
-            "crossinline".takeIf { isCrossinline },
-            "noinline".takeIf { isNoinline },
-            "assignable".takeIf { isAssignable }
-        )
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty, data: Nothing?): String =
         declaration.runTrimEnd {
@@ -539,14 +328,6 @@ class RenderIrElementVisitor(private val normalizeNames: Boolean = false, privat
                     "name:$name visibility:$visibility expandedType:${expandedType.render()}" +
                     renderTypeAliasFlags()
         }
-
-    private fun IrTypeAlias.renderTypeAliasFlags(): String =
-        renderFlagsList(
-            "actual".takeIf { isActual }
-        )
-
-    private fun IrLocalDelegatedProperty.renderLocalDelegatedPropertyFlags() =
-        if (isVar) "var" else "val"
 
     override fun visitExpressionBody(body: IrExpressionBody, data: Nothing?): String =
         "EXPRESSION_BODY"
@@ -804,7 +585,7 @@ private fun IrDeclaration.renderDeclarationParentFqn(sb: StringBuilder) {
     }
 }
 
-fun IrType.render() = RenderIrElementVisitor().renderType(this)
+fun IrType.render() = renderTypeWithRenderer(RenderIrElementVisitor(), true)
 
 fun IrSimpleType.render() = (this as IrType).render()
 
@@ -815,19 +596,289 @@ fun IrTypeArgument.render() =
         else -> throw AssertionError("Unexpected IrTypeArgument: $this")
     }
 
-internal inline fun <T> StringBuilder.appendListWith(
-    list: List<T>,
+internal inline fun <T, Buffer : Appendable> Buffer.appendIterableWith(
+    iterable: Iterable<T>,
     prefix: String,
     postfix: String,
     separator: String,
-    renderItem: StringBuilder.(T) -> Unit
+    renderItem: Buffer.(T) -> Unit
 ) {
     append(prefix)
     var isFirst = true
-    for (item in list) {
+    for (item in iterable) {
         if (!isFirst) append(separator)
         renderItem(item)
         isFirst = false
     }
     append(postfix)
 }
+
+private inline fun buildTrimEnd(fn: StringBuilder.() -> Unit): String =
+    buildString(fn).trimEnd()
+
+private inline fun <T> T.runTrimEnd(fn: T.() -> String): String =
+    run(fn).trimEnd()
+
+private fun renderFlagsList(vararg flags: String?) =
+    flags.filterNotNull().run {
+        if (isNotEmpty())
+            joinToString(prefix = "[", postfix = "] ", separator = ",")
+        else
+            ""
+    }
+
+private fun IrClass.renderClassFlags() =
+    renderFlagsList(
+        "companion".takeIf { isCompanion },
+        "inner".takeIf { isInner },
+        "data".takeIf { isData },
+        "external".takeIf { isExternal },
+        "value".takeIf { isValue },
+        "expect".takeIf { isExpect },
+        "fun".takeIf { isFun }
+    )
+
+private fun IrField.renderFieldFlags() =
+    renderFlagsList(
+        "final".takeIf { isFinal },
+        "external".takeIf { isExternal },
+        "static".takeIf { isStatic },
+    )
+
+private fun IrSimpleFunction.renderSimpleFunctionFlags(): String =
+    renderFlagsList(
+        "tailrec".takeIf { isTailrec },
+        "inline".takeIf { isInline },
+        "external".takeIf { isExternal },
+        "suspend".takeIf { isSuspend },
+        "expect".takeIf { isExpect },
+        "fake_override".takeIf { isFakeOverride },
+        "operator".takeIf { isOperator },
+        "infix".takeIf { isInfix }
+    )
+
+private fun IrConstructor.renderConstructorFlags() =
+    renderFlagsList(
+        "inline".takeIf { isInline },
+        "external".takeIf { isExternal },
+        "primary".takeIf { isPrimary },
+        "expect".takeIf { isExpect }
+    )
+
+private fun IrProperty.renderPropertyFlags() =
+    renderFlagsList(
+        "external".takeIf { isExternal },
+        "const".takeIf { isConst },
+        "lateinit".takeIf { isLateinit },
+        "delegated".takeIf { isDelegated },
+        "expect".takeIf { isExpect },
+        "fake_override".takeIf { isFakeOverride },
+        if (isVar) "var" else "val"
+    )
+
+private fun IrVariable.renderVariableFlags(): String =
+    renderFlagsList(
+        "const".takeIf { isConst },
+        "lateinit".takeIf { isLateinit },
+        if (isVar) "var" else "val"
+    )
+
+private fun IrValueParameter.renderValueParameterFlags(): String =
+    renderFlagsList(
+        "vararg".takeIf { varargElementType != null },
+        "crossinline".takeIf { isCrossinline },
+        "noinline".takeIf { isNoinline },
+        "assignable".takeIf { isAssignable }
+    )
+
+private fun IrTypeAlias.renderTypeAliasFlags(): String =
+    renderFlagsList(
+        "actual".takeIf { isActual }
+    )
+
+private fun IrFunction.renderTypeParameters(): String =
+    typeParameters.joinToString(separator = ", ", prefix = "<", postfix = ">") { it.name.toString() }
+
+private val IrFunction.safeReturnType: IrType?
+    get() = try {
+        returnType
+    } catch (e: ReturnTypeIsNotInitializedException) {
+        null
+    }
+
+private fun IrLocalDelegatedProperty.renderLocalDelegatedPropertyFlags() =
+    if (isVar) "var" else "val"
+
+private class VariableNameData(val normalizeNames: Boolean) {
+    val nameMap: MutableMap<IrVariableSymbol, String> = mutableMapOf()
+    var temporaryIndex: Int = 0
+}
+
+private fun IrVariable.normalizedName(data: VariableNameData): String {
+    if (data.normalizeNames && (origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE || origin == IrDeclarationOrigin.FOR_LOOP_ITERATOR)) {
+        return data.nameMap.getOrPut(symbol) { "tmp_${data.temporaryIndex++}" }
+    }
+    return name.asString()
+}
+
+private fun IrFunction.renderReturnType(renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean): String =
+    safeReturnType?.renderTypeWithRenderer(renderer, verboseErrorTypes) ?: "<Uninitialized>"
+
+private fun IrType.renderTypeWithRenderer(renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean): String =
+    "${renderTypeAnnotations(annotations, renderer, verboseErrorTypes)}${renderTypeInner(renderer, verboseErrorTypes)}"
+
+private fun IrType.renderTypeInner(renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean) =
+    when (this) {
+        is IrDynamicType -> "dynamic"
+
+        is IrErrorType -> "IrErrorType(${verboseErrorTypes.ifTrue { originalKotlinType }})"
+
+        is IrSimpleType -> buildTrimEnd {
+            val isDefinitelyNotNullType =
+                classifier is IrTypeParameterSymbol && nullability == SimpleTypeNullability.DEFINITELY_NOT_NULL
+            if (isDefinitelyNotNullType) append("{")
+            append(classifier.renderClassifierFqn())
+            if (arguments.isNotEmpty()) {
+                append(
+                    arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
+                        it.renderTypeArgument(renderer, verboseErrorTypes)
+                    }
+                )
+            }
+            if (isDefinitelyNotNullType) {
+                append(" & Any}")
+            } else if (isMarkedNullable()) {
+                append('?')
+            }
+            abbreviation?.let {
+                append(it.renderTypeAbbreviation(renderer, verboseErrorTypes))
+            }
+        }
+
+        else -> "{${javaClass.simpleName} $this}"
+    }
+
+private fun IrTypeAbbreviation.renderTypeAbbreviation(renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean): String =
+    buildString {
+        append("{ ")
+        append(renderTypeAnnotations(annotations, renderer, verboseErrorTypes))
+        append(typeAlias.renderTypeAliasFqn())
+        if (arguments.isNotEmpty()) {
+            append(
+                arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
+                    it.renderTypeArgument(renderer, verboseErrorTypes)
+                }
+            )
+        }
+        if (hasQuestionMark) {
+            append('?')
+        }
+        append(" }")
+    }
+
+private fun IrTypeArgument.renderTypeArgument(renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean): String =
+    when (this) {
+        is IrStarProjection -> "*"
+
+        is IrTypeProjection -> buildTrimEnd {
+            append(variance.label)
+            if (variance != Variance.INVARIANT) append(' ')
+            append(type.renderTypeWithRenderer(renderer, verboseErrorTypes))
+        }
+
+        else -> "IrTypeArgument[$this]"
+    }
+
+private fun renderTypeAnnotations(annotations: List<IrConstructorCall>, renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean) =
+    if (annotations.isEmpty())
+        ""
+    else
+        buildString {
+            appendIterableWith(annotations, prefix = "", postfix = " ", separator = " ") {
+                append("@[")
+                renderAsAnnotation(it, renderer, verboseErrorTypes)
+                append("]")
+            }
+        }
+
+private fun StringBuilder.renderAsAnnotation(
+    irAnnotation: IrConstructorCall,
+    renderer: RenderIrElementVisitor?,
+    verboseErrorTypes: Boolean,
+) {
+    val annotationClassName = irAnnotation.symbol.takeIf { it.isBound }?.owner?.parentAsClass?.name?.asString() ?: "<unbound>"
+    append(annotationClassName)
+
+    if (irAnnotation.typeArgumentsCount != 0) {
+        (0 until irAnnotation.typeArgumentsCount).joinTo(this, ", ", "<", ">") { i ->
+            irAnnotation.getTypeArgument(i)?.renderTypeWithRenderer(renderer, verboseErrorTypes) ?: "null"
+        }
+    }
+
+    if (irAnnotation.valueArgumentsCount == 0) return
+
+    val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
+
+    appendIterableWith(0 until irAnnotation.valueArgumentsCount, separator = ", ", prefix = "(", postfix = ")") {
+        append(valueParameterNames[it])
+        append(" = ")
+        renderAsAnnotationArgument(irAnnotation.getValueArgument(it), renderer, verboseErrorTypes)
+    }
+}
+
+private fun StringBuilder.renderAsAnnotationArgument(irElement: IrElement?, renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean) {
+    when (irElement) {
+        null -> append("<null>")
+        is IrConstructorCall -> renderAsAnnotation(irElement, renderer, verboseErrorTypes)
+        is IrConst<*> -> {
+            append('\'')
+            append(irElement.value.toString())
+            append('\'')
+        }
+        is IrVararg -> {
+            appendIterableWith(irElement.elements, prefix = "[", postfix = "]", separator = ", ") {
+                renderAsAnnotationArgument(it, renderer, verboseErrorTypes)
+            }
+        }
+        else -> if (renderer != null) {
+            append(irElement.accept(renderer, null))
+        } else {
+            append("...")
+        }
+    }
+}
+
+private fun renderClassWithRenderer(declaration: IrClass, renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean) =
+    declaration.runTrimEnd {
+        "CLASS ${renderOriginIfNonTrivial()}" +
+                "$kind name:$name modality:$modality visibility:$visibility " +
+                renderClassFlags() +
+                "superTypes:[${superTypes.joinToString(separator = "; ") { it.renderTypeWithRenderer(renderer, verboseErrorTypes) }}]"
+    }
+
+private fun renderEnumEntry(declaration: IrEnumEntry) = declaration.runTrimEnd {
+    "ENUM_ENTRY ${renderOriginIfNonTrivial()}name:$name"
+}
+
+private fun renderField(declaration: IrField, renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean) = declaration.runTrimEnd {
+    "FIELD ${renderOriginIfNonTrivial()}name:$name type:${
+        type.renderTypeWithRenderer(
+            renderer,
+            verboseErrorTypes
+        )
+    } visibility:$visibility ${renderFieldFlags()}"
+}
+
+private fun renderTypeParameter(declaration: IrTypeParameter, renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean) =
+    declaration.runTrimEnd {
+        "TYPE_PARAMETER ${renderOriginIfNonTrivial()}" +
+                "name:$name index:$index variance:$variance " +
+                "superTypes:[${
+                    superTypes.joinToString(separator = "; ") {
+                        it.renderTypeWithRenderer(
+                            renderer, verboseErrorTypes
+                        )
+                    }
+                }] " +
+                "reified:$isReified"
+    }

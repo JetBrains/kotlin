@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.sources.android.type
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.tooling.core.withClosure
 
@@ -24,8 +26,13 @@ internal data class KotlinTargetHierarchy(
         }
 
         data class Group(val name: String) : Node() {
-            override fun sharedSourceSetName(compilation: KotlinCompilation<*>): String {
-                return lowerCamelCaseName(name, compilation.name)
+            override fun sharedSourceSetName(compilation: KotlinCompilation<*>): String? {
+                val suffix = when (compilation) {
+                    is KotlinJvmAndroidCompilation -> compilation.androidVariant.type.androidBaseSourceSetName?.name
+                    else -> compilation.name
+                } ?: return null
+
+                return lowerCamelCaseName(name, suffix)
             }
         }
 

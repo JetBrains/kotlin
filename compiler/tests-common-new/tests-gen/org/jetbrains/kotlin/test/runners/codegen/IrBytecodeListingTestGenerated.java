@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -95,6 +95,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     @TestMetadata("delegationToJavaInterfaceWithWildcardType.kt")
     public void testDelegationToJavaInterfaceWithWildcardType() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/delegationToJavaInterfaceWithWildcardType.kt");
+    }
+
+    @Test
+    @TestMetadata("deprecatedConstantPropertyInterfaceCompanion.kt")
+    public void testDeprecatedConstantPropertyInterfaceCompanion() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/deprecatedConstantPropertyInterfaceCompanion.kt");
     }
 
     @Test
@@ -209,6 +215,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
     @TestMetadata("kt47328.kt")
     public void testKt47328() throws Exception {
         runTest("compiler/testData/codegen/bytecodeListing/kt47328.kt");
+    }
+
+    @Test
+    @TestMetadata("kt55769.kt")
+    public void testKt55769() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeListing/kt55769.kt");
     }
 
     @Test
@@ -1138,6 +1150,12 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
         @TestMetadata("delegatedPropertiesInCompanionObject.kt")
         public void testDelegatedPropertiesInCompanionObject() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/delegatedProperty/delegatedPropertiesInCompanionObject.kt");
+        }
+
+        @Test
+        @TestMetadata("localDelegatedProperty.kt")
+        public void testLocalDelegatedProperty() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/delegatedProperty/localDelegatedProperty.kt");
         }
     }
 
@@ -2498,6 +2516,22 @@ public class IrBytecodeListingTestGenerated extends AbstractIrBytecodeListingTes
             public void testPartiallySpecializedClass() throws Exception {
                 runTest("compiler/testData/codegen/bytecodeListing/specialBridges/signatures/partiallySpecializedClass.kt");
             }
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/bytecodeListing/valueClasses")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ValueClasses {
+        @Test
+        public void testAllFilesPresentInValueClasses() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeListing/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("annotations.kt")
+        public void testAnnotations() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/valueClasses/annotations.kt");
         }
     }
 }

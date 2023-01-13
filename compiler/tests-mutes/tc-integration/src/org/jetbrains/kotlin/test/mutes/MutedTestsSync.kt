@@ -92,18 +92,12 @@ class LocallyMutedTests {
     }
 
     private fun getMutedTestsFromDatabase(): Map<String, List<MutedTest>> {
-        val mutedTestsMap = mutableMapOf<String, List<MutedTest>>()
         val databaseDir = "../../../tests"
 
         val commonDatabaseFile = File(databaseDir, "mute-common.csv")
+
+        val mutedTestsMap = mutableMapOf<String, List<MutedTest>>()
         mutedTestsMap[muteCommonTestKey] = flakyTests(commonDatabaseFile)
-
-        val platformDatabaseFile = File(databaseDir, "mute-platform.csv")
-        File(databaseDir).walkTopDown().filter { f -> f.name.startsWith(platformDatabaseFile.name) }.toList().map { f ->
-            val key = if (f.extension != "csv") f.extension else Bunches.baseBunchId
-            mutedTestsMap[key] = flakyTests(f)
-        }
-
         return mutedTestsMap
     }
 }

@@ -44,11 +44,11 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
-import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory;
+import org.jetbrains.kotlin.resolve.calls.util.CallResolverUtilKt;
 import org.jetbrains.kotlin.resolve.calls.util.UnderscoreUtilKt;
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension;
 import org.jetbrains.kotlin.resolve.lazy.ForceResolveUtil;
@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*;
 import static org.jetbrains.kotlin.diagnostics.Errors.*;
@@ -975,18 +976,18 @@ public class DescriptorResolver {
         }
 
         List<KtContextReceiver> contextReceivers = variableDeclaration.getContextReceivers();
-        List<ReceiverParameterDescriptor> contextReceiverDescriptors = contextReceivers.stream()
-                .map(contextReceiver -> {
-                    KtTypeReference typeReference = contextReceiver.typeReference();
-                    if (typeReference == null) {
-                        return null;
-                    }
-                    KotlinType type = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, typeReference, trace, true);
-                    AnnotationSplitter splitter = new AnnotationSplitter(storageManager, type.getAnnotations(), EnumSet.of(RECEIVER));
-                    return DescriptorFactory.createContextReceiverParameterForCallable(
-                            propertyDescriptor, type, contextReceiver.labelNameAsName(), splitter.getAnnotationsForTarget(RECEIVER)
-                    );
-                }).collect(Collectors.toList());
+        List<ReceiverParameterDescriptor> contextReceiverDescriptors = IntStream.range(0, contextReceivers.size()).mapToObj(index -> {
+            KtContextReceiver contextReceiver = contextReceivers.get(index);
+            KtTypeReference typeReference = contextReceiver.typeReference();
+            if (typeReference == null) {
+                return null;
+            }
+            KotlinType type = typeResolver.resolveType(scopeForDeclarationResolutionWithTypeParameters, typeReference, trace, true);
+            AnnotationSplitter splitter = new AnnotationSplitter(storageManager, type.getAnnotations(), EnumSet.of(RECEIVER));
+            return DescriptorFactory.createContextReceiverParameterForCallable(
+                    propertyDescriptor, type, contextReceiver.labelNameAsName(), splitter.getAnnotationsForTarget(RECEIVER), index
+            );
+        }).collect(Collectors.toList());
 
         if (languageVersionSettings.supportsFeature(LanguageFeature.ContextReceivers)) {
             Multimap<String, ReceiverParameterDescriptor> nameToReceiverMap = HashMultimap.create();

@@ -14,7 +14,7 @@ fun x(f : Foo) {
 
     f.<!FUNCTION_EXPECTED!>a<!>()
     <!UNRESOLVED_REFERENCE!>c<!>()
-    <!INVISIBLE_REFERENCE!>R<!>()
+    <!UNRESOLVED_REFERENCE!>R<!>()
 }
 
 object R {}

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
-import org.gradle.api.Project
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
@@ -75,24 +74,22 @@ internal fun CInteropCommonizerDependent.Factory.from(
 
 internal fun CInteropCommonizerDependent.Factory.from(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent? {
     return from(
-        compilation.project.getCommonizerTarget(compilation) as? SharedCommonizerTarget ?: return null,
+        getCommonizerTarget(compilation) as? SharedCommonizerTarget ?: return null,
         compilation.getImplicitlyDependingNativeCompilations()
     )
 }
 
-internal fun CInteropCommonizerDependent.Factory.from(project: Project, sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
+internal fun CInteropCommonizerDependent.Factory.from(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
-        target = project.getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
+        target = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
         compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>().toSet()
     )
 }
 
-internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(
-    project: Project, sourceSet: KotlinSourceSet
-): CInteropCommonizerDependent? {
+internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
-        target = project.getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
+        target = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
         compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>()
             .flatMap { compilation -> compilation.associateWithClosure }

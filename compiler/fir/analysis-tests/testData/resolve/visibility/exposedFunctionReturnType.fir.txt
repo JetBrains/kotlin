@@ -30,7 +30,7 @@ FILE: exposedFunctionReturnType.kt
                 super<R|Some|>()
             }
 
-            public final override fun foo(): R|Some| {
+            public open override fun foo(): R|Some| {
                 ^foo R|/Some.FIRST|
             }
 

@@ -49,15 +49,13 @@ internal class SourceSetVisibilityProvider(
      */
     fun getVisibleSourceSets(
         visibleFrom: KotlinSourceSet,
-        dependencyScopes: Iterable<KotlinDependencyScope>,
-        resolvedRootMppDependency: ResolvedComponentResult?,
-        resolvedMetadataDependency: ResolvedComponentResult,
+        resolvedRootMppDependency: ResolvedComponentResult,
         dependencyProjectStructureMetadata: KotlinProjectStructureMetadata,
-        resolvedToOtherProject: Project?
+        resolvedToOtherProject: Boolean
     ): SourceSetVisibilityResult {
         val compilations = visibleFrom.internal.compilations
 
-        val component = resolvedRootMppDependency ?: resolvedMetadataDependency
+        val component = resolvedRootMppDependency
         val mppModuleIdentifier = component.toSingleKpmModuleIdentifier()
 
         val firstConfigurationByVariant = mutableMapOf<String, Configuration>()
@@ -65,11 +63,7 @@ internal class SourceSetVisibilityProvider(
         val visiblePlatformVariantNames: Set<String?> =
             compilations
                 .filter { it.target.platformType != KotlinPlatformType.common }
-                .flatMapTo(mutableSetOf()) { compilation ->
-                    // To find out which variant the MPP dependency got resolved for each compilation, take the resolvable configurations
-                    // that we have in the compilations:
-                    dependencyScopes.mapNotNull { scope -> project.resolvableConfigurationFromCompilationByScope(compilation, scope) }
-                }
+                .map { compilation -> project.configurations.getByName(compilation.compileDependencyConfigurationName) }
                 .mapTo(mutableSetOf()) { configuration ->
                     val resolvedVariant = resolvedVariantsProvider.getResolvedVariantName(mppModuleIdentifier, configuration)
                         ?.let { kotlinVariantNameFromPublishedVariantName(it) }
@@ -88,7 +82,7 @@ internal class SourceSetVisibilityProvider(
             .values.let { if (it.isEmpty()) emptySet() else it.reduce { acc, item -> acc intersect item } }
 
         val hostSpecificArtifactBySourceSet: Map<String, File> =
-            if (resolvedToOtherProject != null) {
+            if (resolvedToOtherProject) {
                 /**
                  * When a dependency resolves to a project, we don't need any artifacts from it, we can
                  * instead use the compilation outputs directly:
@@ -128,18 +122,3 @@ internal class SourceSetVisibilityProvider(
 
 internal fun kotlinVariantNameFromPublishedVariantName(resolvedToVariantName: String): String =
     originalVariantNameFromPublished(resolvedToVariantName) ?: resolvedToVariantName
-
-private fun Project.resolvableConfigurationFromCompilationByScope(
-    compilation: KotlinCompilation<*>,
-    scope: KotlinDependencyScope
-): Configuration? {
-    val configurationName = when (scope) {
-        KotlinDependencyScope.API_SCOPE, KotlinDependencyScope.IMPLEMENTATION_SCOPE, KotlinDependencyScope.COMPILE_ONLY_SCOPE -> compilation.compileDependencyConfigurationName
-
-        KotlinDependencyScope.RUNTIME_ONLY_SCOPE ->
-            (compilation as? KotlinCompilationToRunnableFiles<*>)?.runtimeDependencyConfigurationName
-                ?: return null
-    }
-
-    return project.configurations.getByName(configurationName)
-}

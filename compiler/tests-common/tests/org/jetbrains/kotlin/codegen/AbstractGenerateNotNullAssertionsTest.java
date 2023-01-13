@@ -67,8 +67,8 @@ abstract public class AbstractGenerateNotNullAssertionsTest extends CodegenTestC
     }
 
     private void assertNoIntrinsicsMethodIsCalledInMyClasses(boolean noClassFileIsAnError) {
-        for (KtFile jetFile : myFiles.getPsiFiles()) {
-            String fileClassName = JvmFileClassUtil.getFileClassInfoNoResolve(jetFile).getFileClassFqName().asString();
+        for (KtFile ktFile : myFiles.getPsiFiles()) {
+            String fileClassName = JvmFileClassUtil.getFileClassInfoNoResolve(ktFile).getFileClassFqName().asString();
             assertNoIntrinsicsMethodIsCalled(fileClassName, noClassFileIsAnError);
         }
     }

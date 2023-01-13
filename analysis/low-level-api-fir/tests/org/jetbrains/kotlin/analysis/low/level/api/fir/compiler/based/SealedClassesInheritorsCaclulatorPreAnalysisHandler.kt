@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirSealedClassInheritorsPro
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -35,6 +37,10 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
     // In the actual IDE, SealedClassInheritorsProviderIdeImpl works by finding inheritors from the index instead of do a
     // preprocessing of all files. Therefore, the IDE does not rely on such a pre-analysis pass of all files in the module.
     override fun prepareSealedClassInheritors(moduleStructure: TestModuleStructure) {
+        if (Directives.DISABLE_SEALED_INHERITOR_CALCULATOR in moduleStructure.allDirectives) {
+            return
+        }
+
         val ktFilesByModule = moduleStructure.modules.associateWith { testModule ->
             testServices.ktModuleProvider.getModuleFiles(testModule).filterIsInstance<KtFile>()
         }
@@ -63,5 +69,12 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
         val sealedClassInheritorsMap = mutableMapOf<FirRegularClass, MutableList<ClassId>>()
         firFiles.forEach { it.accept(inheritorsCollector, sealedClassInheritorsMap) }
         return sealedClassInheritorsMap.mapKeys { (firClass, _) -> firClass.symbol.classId }
+    }
+
+    object Directives : SimpleDirectivesContainer() {
+        val DISABLE_SEALED_INHERITOR_CALCULATOR by directive(
+            description = "Disable mock sealed class inheritor calculation",
+            applicability = DirectiveApplicability.Global
+        )
     }
 }

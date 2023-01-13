@@ -113,7 +113,7 @@ internal val bridgePhase = makeIrFilePhase(
     ::BridgeLowering,
     name = "Bridge",
     description = "Generate bridges",
-    prerequisite = setOf(jvmInlineClassPhase, jvmMultiFieldValueClassPhase, inheritedDefaultMethodsOnClassesPhase)
+    prerequisite = setOf(jvmValueClassPhase, inheritedDefaultMethodsOnClassesPhase)
 )
 
 internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
@@ -434,11 +434,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         }.apply {
             copyAttributes(target)
             copyParametersWithErasure(this@addBridge, bridge.overridden)
-            with(context.multiFieldValueClassReplacements) {
-                bindingNewFunctionToParameterTemplateStructure[bridge.overridden]?.also {
-                    bindingNewFunctionToParameterTemplateStructure[this@apply] = it
-                }
-            }
+            context.remapMultiFieldValueClassStructure(bridge.overridden, this, parametersMappingOrNull = null)
 
             // If target is a throwing stub, bridge also should just throw UnsupportedOperationException.
             // Otherwise, it might throw ClassCastException when downcasting bridge argument to expected type.
@@ -494,11 +490,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
             context.functionsWithSpecialBridges.add(target)
 
             copyParametersWithErasure(this@addSpecialBridge, specialBridge.overridden, specialBridge.substitutedParameterTypes)
-            with(context.multiFieldValueClassReplacements) {
-                bindingNewFunctionToParameterTemplateStructure[specialBridge.overridden]?.also {
-                    bindingNewFunctionToParameterTemplateStructure[this@apply] = it
-                }
-            }
+            context.remapMultiFieldValueClassStructure(specialBridge.overridden, this, parametersMappingOrNull = null)
 
             body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
                 specialBridge.methodInfo?.let { info ->
@@ -599,6 +591,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         } else {
             from.valueParameters.map { it.copyWithTypeErasure(this, visibleTypeParameters) }
         }
+        contextReceiverParametersCount = from.contextReceiverParametersCount
     }
 
     private fun IrValueParameter.copyWithTypeErasure(
@@ -640,11 +633,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
         }.unwrapBlock(), bridge.returnType.upperBound)
 
     private fun getStructure(function: IrSimpleFunction): List<MemoizedMultiFieldValueClassReplacements.RemappedParameter>? {
-        val mfvcOrOriginal = context.inlineClassReplacements.originalFunctionForMethodReplacement[function]
-            ?: context.inlineClassReplacements.originalFunctionForStaticReplacement[function]
-            ?: function
-        val structure = context.multiFieldValueClassReplacements
-            .bindingNewFunctionToParameterTemplateStructure[mfvcOrOriginal] ?: return null
+        val structure = context.multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure[function] ?: return null
         require(structure.sumOf { it.valueParameters.size } == function.explicitParametersCount) {
             "Bad parameters structure: $structure"
         }
@@ -697,7 +686,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                             irCastIfNeeded(irGet(bridgeParameter), targetParameterType),
                             getOptimizedPublicAccess(target, targetRemappedParameter.rootMfvcNode.mfvc)
                         ) { error("Not applicable") }
-                        val newArguments = instance.makeFlattenedGetterExpressions(this)
+                        val newArguments = instance.makeFlattenedGetterExpressions(this, registerPossibleExtraBoxCreation = {})
                         for (newArgument in newArguments) {
                             irCall.putArgument(targetExplicitParameters[targetIndex++], newArgument)
                         }
@@ -712,7 +701,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : FileLoweringPass
                                 irGet(bridgeExplicitParameters[bridgeIndex++])
                             }
                             val boxCall = bridgeRemappedParameter.rootMfvcNode.makeBoxedExpression(
-                                this, bridgeRemappedParameter.typeArguments, valueArguments
+                                this, bridgeRemappedParameter.typeArguments, valueArguments, registerPossibleExtraBoxCreation = {}
                             )
                             irCall.putArgument(targetParameter, irCastIfNeeded(boxCall, targetParameter.type.upperBound))
                         }

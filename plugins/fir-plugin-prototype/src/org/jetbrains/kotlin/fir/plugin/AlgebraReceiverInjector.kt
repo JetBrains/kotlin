@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.plugin
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.extensions.FirExpressionResolutionExtension
-import org.jetbrains.kotlin.fir.plugin.generators.toSimpleConeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.coneType
@@ -29,7 +28,7 @@ class AlgebraReceiverInjector(session: FirSession) : FirExpressionResolutionExte
         if (functionCall.calleeReference.name != INJECT_ALGEBRA_NAME) return emptyList()
         val typeProjection = functionCall.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance ?: return emptyList()
         val argumentType = typeProjection.typeRef.coneType
-        val algebraType = ALGEBRA_CLASS_ID.toSimpleConeType(arrayOf(argumentType))
+        val algebraType = ALGEBRA_CLASS_ID.createConeType(session, arrayOf(argumentType))
         return listOf(algebraType)
     }
 }

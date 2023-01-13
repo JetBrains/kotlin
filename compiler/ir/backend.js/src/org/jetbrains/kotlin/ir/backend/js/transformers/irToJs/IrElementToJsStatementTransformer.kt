@@ -148,7 +148,8 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
             }
         }
 
-        return jsVar(varName, value, context).withSource(declaration, context)
+        val jsInitializer = value?.accept(IrElementToJsExpressionTransformer(), context)
+        return JsVars(JsVars.JsVar(varName, jsInitializer).withSource(declaration, context, useNameOf = declaration))
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsStatement {
@@ -214,4 +215,3 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return label?.let { JsLabel(it, loopStatement) } ?: loopStatement
     }
 }
-

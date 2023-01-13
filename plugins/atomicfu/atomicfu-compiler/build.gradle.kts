@@ -110,10 +110,13 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     workingDir = rootDir
     dependsOn(atomicfuJsIrRuntimeForTests)
+    val localAtomicfuJsIrRuntimeForTests: FileCollection = atomicfuJsIrRuntimeForTests
+    val localAtomicfuJsClasspath: FileCollection = atomicfuJsClasspath
+    val localAtomicfuJvmClasspath: FileCollection = atomicfuJvmClasspath
     doFirst {
-        systemProperty("atomicfuJsIrRuntimeForTests.classpath", atomicfuJsIrRuntimeForTests.asPath)
-        systemProperty("atomicfuJs.classpath", atomicfuJsClasspath.asPath)
-        systemProperty("atomicfuJvm.classpath", atomicfuJvmClasspath.asPath)
+        systemProperty("atomicfuJsIrRuntimeForTests.classpath", localAtomicfuJsIrRuntimeForTests.asPath)
+        systemProperty("atomicfuJs.classpath", localAtomicfuJsClasspath.asPath)
+        systemProperty("atomicfuJvm.classpath", localAtomicfuJvmClasspath.asPath)
     }
     setUpJsIrBoxTests()
 }
@@ -123,8 +126,9 @@ d8Plugin.version = v8Version
 
 fun Test.setupV8() {
     dependsOn(d8Plugin.setupTaskProvider)
+    val v8ExecutablePath = d8Plugin.requireConfigured().executablePath.absolutePath
     doFirst {
-        systemProperty("javascript.engine.path.V8", d8Plugin.requireConfigured().executablePath.absolutePath)
+        systemProperty("javascript.engine.path.V8", v8ExecutablePath)
     }
 }
 

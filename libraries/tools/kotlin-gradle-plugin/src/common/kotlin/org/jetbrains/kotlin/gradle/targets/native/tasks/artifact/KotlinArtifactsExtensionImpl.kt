@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactConfig
 import org.jetbrains.kotlin.gradle.dsl.KotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import javax.inject.Inject
 
@@ -33,13 +34,11 @@ abstract class KotlinArtifactsExtensionImpl @Inject constructor(project: Project
     val androidX86 = KonanTarget.ANDROID_X86
     val androidArm32 = KonanTarget.ANDROID_ARM32
     val androidArm64 = KonanTarget.ANDROID_ARM64
-    val iosArm32 = KonanTarget.IOS_ARM32
     val iosArm64 = KonanTarget.IOS_ARM64
     val iosX64 = KonanTarget.IOS_X64
     val iosSimulatorArm64 = KonanTarget.IOS_SIMULATOR_ARM64
     val watchosArm32 = KonanTarget.WATCHOS_ARM32
     val watchosArm64 = KonanTarget.WATCHOS_ARM64
-    val watchosX86 = KonanTarget.WATCHOS_X86
     val watchosX64 = KonanTarget.WATCHOS_X64
     val watchosSimulatorArm64 = KonanTarget.WATCHOS_SIMULATOR_ARM64
     val watchosDeviceArm64 = KonanTarget.WATCHOS_DEVICE_ARM64
@@ -47,14 +46,31 @@ abstract class KotlinArtifactsExtensionImpl @Inject constructor(project: Project
     val tvosX64 = KonanTarget.TVOS_X64
     val tvosSimulatorArm64 = KonanTarget.TVOS_SIMULATOR_ARM64
     val linuxX64 = KonanTarget.LINUX_X64
-    val mingwX86 = KonanTarget.MINGW_X86
     val mingwX64 = KonanTarget.MINGW_X64
     val macosX64 = KonanTarget.MACOS_X64
     val macosArm64 = KonanTarget.MACOS_ARM64
     val linuxArm64 = KonanTarget.LINUX_ARM64
+
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    val iosArm32 = KonanTarget.IOS_ARM32
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    val watchosX86 = KonanTarget.WATCHOS_X86
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
+    val mingwX86 = KonanTarget.MINGW_X86
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
     val linuxArm32Hfp = KonanTarget.LINUX_ARM32_HFP
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
     val linuxMips32 = KonanTarget.LINUX_MIPS32
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
     val linuxMipsel32 = KonanTarget.LINUX_MIPSEL32
+
+    @Deprecated(DEPRECATED_TARGET_MESSAGE)
     val wasm32 = KonanTarget.WASM32
 
 }

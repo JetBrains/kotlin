@@ -74,7 +74,6 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           DUP
           ICONST_1
           GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           INVOKESPECIAL (kotlinx/serialization/SealedClassSerializer, <init>, (Ljava/lang/String;Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;)V)
           AASTORE
@@ -133,7 +132,6 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           DUP
           ICONST_1
           GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           INVOKESPECIAL (kotlinx/serialization/SealedClassSerializer, <init>, (Ljava/lang/String;Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;)V)
           ALOAD (5)
@@ -187,7 +185,6 @@ public final class Container$$serializer : java/lang/Object, kotlinx/serializati
           DUP
           ICONST_1
           GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           INVOKESPECIAL (kotlinx/serialization/SealedClassSerializer, <init>, (Ljava/lang/String;Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;)V)
           ALOAD (5)
@@ -365,7 +362,6 @@ public final class Container : java/lang/Object {
           DUP
           ICONST_1
           GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           INVOKESPECIAL (kotlinx/serialization/SealedClassSerializer, <init>, (Ljava/lang/String;Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;)V)
           ALOAD (0)
@@ -428,7 +424,6 @@ final class Result$Companion$serializer$1 : kotlin/jvm/internal/Lambda, kotlin/j
           DUP
           ICONST_1
           GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           INVOKESPECIAL (kotlinx/serialization/SealedClassSerializer, <init>, (Ljava/lang/String;Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;)V)
           ARETURN
@@ -615,7 +610,6 @@ public final class Result$OK$$serializer : java/lang/Object, kotlinx/serializati
           DUP
           ICONST_0
           GETSTATIC (kotlinx/serialization/internal/StringSerializer, INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           ARETURN
         LABEL (L1)
@@ -931,7 +925,6 @@ public final class X$Companion : java/lang/Object {
           DUP
           ICONST_1
           GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
-          CHECKCAST (kotlinx/serialization/KSerializer)
           AASTORE
           INVOKESPECIAL (kotlinx/serialization/SealedClassSerializer, <init>, (Ljava/lang/String;Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;)V)
           ARETURN

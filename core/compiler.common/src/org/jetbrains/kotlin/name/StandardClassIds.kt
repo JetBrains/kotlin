@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -49,6 +49,7 @@ object StandardClassIds {
     val UInt = Int.unsignedId()
     val ULong = Long.unsignedId()
 
+    val CharSequence = "CharSequence".baseId()
     val String = "String".baseId()
     val Throwable = "Throwable".baseId()
 
@@ -115,6 +116,7 @@ object StandardClassIds {
     val Set = "Set".collectionsId()
     val Map = "Map".collectionsId()
     val MutableIterator = "MutableIterator".collectionsId()
+    val CharIterator = "CharIterator".collectionsId()
 
     val MutableIterable = "MutableIterable".collectionsId()
     val MutableCollection = "MutableCollection".collectionsId()
@@ -142,10 +144,12 @@ object StandardClassIds {
         val PublishedApi = "PublishedApi".baseId()
         val SinceKotlin = "SinceKotlin".baseId()
         val ExtensionFunctionType = "ExtensionFunctionType".baseId()
+        val ContextFunctionTypeParams = "ContextFunctionTypeParams".baseId()
         val Deprecated = "Deprecated".baseId()
         val DeprecatedSinceKotlin = "DeprecatedSinceKotlin".baseId()
 
         val HidesMembers = "HidesMembers".internalId()
+        val DynamicExtension = "DynamicExtension".internalId()
 
         val Retention = "Retention".annotationId()
         val Target = "Target".annotationId()
@@ -158,14 +162,21 @@ object StandardClassIds {
         val JvmDefault = "JvmDefault".jvmId()
         val JvmRepeatable = "JvmRepeatable".jvmId()
         val JvmRecord = "JvmRecord".jvmId()
+        val Throws = "Throws".jvmId()
 
         val RawTypeAnnotation = "RawType".internalIrId()
         val FlexibleNullability = "FlexibleNullability".internalIrId()
         val EnhancedNullability = "EnhancedNullability".jvmInternalId()
 
+        val InlineOnly = "InlineOnly".internalId()
+
+        val OnlyInputTypes = "OnlyInputTypes".internalId()
+
         val RestrictsSuspension = "RestrictsSuspension".coroutinesId()
 
         val WasExperimental = "WasExperimental".baseId()
+
+        val AccessibleLateinitPropertyLiteral = "AccessibleLateinitPropertyLiteral".internalId()
 
         object Java {
             val Deprecated = "Deprecated".javaLangId()
@@ -173,6 +184,8 @@ object StandardClassIds {
             val Retention = "Retention".javaAnnotationId()
             val Documented = "Documented".javaAnnotationId()
             val Target = "Target".javaAnnotationId()
+            val ElementType = "ElementType".javaAnnotationId()
+            val RetentionPolicy = "RetentionPolicy".javaAnnotationId()
         }
 
         object ParameterNames {
@@ -206,6 +219,22 @@ object StandardClassIds {
 
     object Java {
         val Record = "Record".javaLangId()
+    }
+
+    object Collections {
+        val baseCollectionToMutableEquivalent: Map<ClassId, ClassId> = mapOf(
+            StandardClassIds.Iterable to StandardClassIds.MutableIterable,
+            StandardClassIds.Iterator to StandardClassIds.MutableIterator,
+            StandardClassIds.ListIterator to StandardClassIds.MutableListIterator,
+            StandardClassIds.List to StandardClassIds.MutableList,
+            StandardClassIds.Collection to StandardClassIds.MutableCollection,
+            StandardClassIds.Set to StandardClassIds.MutableSet,
+            StandardClassIds.Map to StandardClassIds.MutableMap,
+            StandardClassIds.MapEntry to StandardClassIds.MutableMapEntry
+        )
+
+        val mutableCollectionToBaseCollection: Map<ClassId, ClassId> =
+            baseCollectionToMutableEquivalent.entries.associateBy({ it.value }) { it.key }
     }
 }
 

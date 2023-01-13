@@ -7,7 +7,6 @@ plugins {
 dependencies {
     testApi(kotlinStdlib("jdk8"))
     testApi(project(":kotlin-scripting-compiler"))
-    testApi(project(":kotlin-scripting-compiler-js"))
     testApi(project(":core:descriptors"))
     testApi(project(":core:descriptors.jvm"))
     testApi(project(":core:deserialization"))
@@ -43,7 +42,6 @@ dependencies {
     testApi(project(":kotlin-preloader"))
     testApi(project(":compiler:cli-common"))
     testApi(project(":daemon-common"))
-    testApi(project(":daemon-common-new"))
     testApi(project(":js:js.serializer"))
     testApi(project(":js:js.frontend"))
     testApi(project(":js:js.translator"))
@@ -56,6 +54,7 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(commonDependency("junit:junit"))
     testApi(commonDependency("com.android.tools:r8"))
+    testApi(project(":analysis:analysis-internal-utils"))
     testCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testCompileOnly(toolsJar())
     testCompileOnly(intellijCore())

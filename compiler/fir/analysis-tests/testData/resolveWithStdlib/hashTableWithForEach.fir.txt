@@ -31,13 +31,13 @@ FILE: hashTableWithForEach.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final override val key: R|K| = R|<local>/key|
+            public open override val key: R|K| = R|<local>/key|
                 public get(): R|K|
 
-            public final override val value: R|V| = R|<local>/value|
+            public open override val value: R|V| = R|<local>/value|
                 public get(): R|V|
 
-            public final override fun setValue(newValue: R|V|): R|V| {
+            public open override fun setValue(newValue: R|V|): R|V| {
                 ^setValue throw R|java/lang/UnsupportedOperationException.UnsupportedOperationException|()
             }
 

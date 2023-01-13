@@ -19,7 +19,7 @@ public class Wrapper<W> {
 // FILE: test.kt
 
 fun foo(container: Container<*>, wrapper: Wrapper<String>) {
-    container.w = <!TYPE_MISMATCH!>wrapper<!>
+    <!TYPE_MISMATCH_WARNING!>container.w = wrapper<!>
     <!SYNTHETIC_SETTER_PROJECTED_OUT!>container.wrapper<!> = wrapper
     container.setWrapper(<!TYPE_MISMATCH!>wrapper<!>)
 }

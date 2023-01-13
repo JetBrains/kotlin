@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
-import org.jetbrains.kotlin.platform.js.JsPlatform
+import org.jetbrains.kotlin.platform.JsPlatform
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,

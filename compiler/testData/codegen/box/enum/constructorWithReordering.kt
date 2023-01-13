@@ -1,4 +1,6 @@
 // IGNORE_BACKEND: JS
+// KT-55828
+// IGNORE_BACKEND_K2: NATIVE
 fun f(): String = "O"
 fun g(): String = "K"
 

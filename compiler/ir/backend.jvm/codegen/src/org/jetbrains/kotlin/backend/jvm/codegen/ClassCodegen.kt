@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
@@ -54,12 +53,11 @@ import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
@@ -83,10 +81,7 @@ class ClassCodegen private constructor(
 
     private val state get() = context.state
 
-    // TODO: the order of entries in this set depends on the order in which methods are generated; this means it is unstable
-    //       under incremental compilation, as calls to `inline fun`s declared in this class cause them to be generated out of order.
-    private val innerClasses = linkedSetOf<IrClass>()
-
+    private val innerClasses = mutableSetOf<IrClass>()
     val typeMapper =
         if (context.state.oldInnerClassesLogic)
             context.defaultTypeMapper
@@ -211,7 +206,7 @@ class ClassCodegen private constructor(
             }
         }
 
-        addReifiedParametersFromSignature()
+        reifiedTypeParametersUsages.mergeAll(irClass.reifiedTypeParameters)
 
         generateInnerAndOuterClasses()
 
@@ -233,25 +228,6 @@ class ClassCodegen private constructor(
         val classVisitor = visitor.visitor
         for (sealedSubclassSymbol in sealedSubclasses) {
             classVisitor.visitPermittedSubclass(typeMapper.mapClass(sealedSubclassSymbol.owner).internalName)
-        }
-    }
-
-    private fun addReifiedParametersFromSignature() {
-        for (type in irClass.superTypes) {
-            processTypeParameters(type)
-        }
-    }
-
-    private fun processTypeParameters(type: IrType) {
-        for (supertypeArgument in (type as? IrSimpleType)?.arguments ?: emptyList()) {
-            if (supertypeArgument is IrTypeProjection) {
-                val typeArgument = supertypeArgument.type
-                if (typeArgument.isReifiedTypeParameter) {
-                    reifiedTypeParametersUsages.addUsedReifiedParameter(typeArgument.classifierOrFail.cast<IrTypeParameterSymbol>().owner.name.asString())
-                } else {
-                    processTypeParameters(typeArgument)
-                }
-            }
         }
     }
 
@@ -498,7 +474,7 @@ class ClassCodegen private constructor(
             }
         }
 
-        for (klass in innerClasses) {
+        for (klass in innerClasses.sortedBy { it.fqNameWhenAvailable?.asString() }) {
             val innerJavaClassId = klass.mapToJava()
             val innerClass = innerJavaClassId?.internalName ?: typeMapper.classInternalName(klass)
             val outerClass =
@@ -546,7 +522,15 @@ class ClassCodegen private constructor(
 
     private val IrDeclaration.descriptorOrigin: JvmDeclarationOrigin
         get() {
-            val psiElement = PsiSourceManager.findPsiElement(this)
+            val psiElement = PsiSourceManager.findPsiElement(this).let { element ->
+                // Offsets for accessors and field of delegated property in IR point to the 'by' keyword, so the closest PSI element is the
+                // KtPropertyDelegate (`by ...` expression). However, old JVM backend passed the PSI element of the property instead.
+                // This is important for example in case of KAPT stub generation in the "correct error types" mode, which tries to find the
+                // PSI element for each declaration with unresolved types and tries to heuristically "resolve" those unresolved types to
+                // generate them into the Java stub. In case of delegated property accessors, it should look for the property declaration,
+                // since the type can only be provided there, and not in the `by ...` expression.
+                if (element is KtPropertyDelegate) element.parent else element
+            }
             return when {
                 origin == IrDeclarationOrigin.FILE_CLASS ->
                     JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, toIrBasedDescriptor())
@@ -580,7 +564,7 @@ class ClassCodegen private constructor(
             // The one exception to this rule are anonymous objects defined as members of a class. These are nested inside of the
             // class initializer, but can be referred to from anywhere within the scope of the class. That's why we have to ensure
             // that all references to classes inside of <clinit> have a non-null `parentFunction`.
-            parentFunction: IrFunction? = irClass.parent.safeAs<IrFunction>()?.takeIf {
+            parentFunction: IrFunction? = (irClass.parent as? IrFunction)?.takeIf {
                 it.origin == JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER
             },
         ): ClassCodegen =

@@ -8,17 +8,18 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 import org.jetbrains.kotlin.contracts.description.isInPlace
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.utils.referredPropertySymbol
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 
+// TODO: this should be a FIR tree visitor, not a control flow graph visitor.
 class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlowGraphVisitorVoid() {
     companion object {
         fun collect(graph: ControlFlowGraph): Pair<Set<FirPropertySymbol>, Set<FirVariableAssignment>> {
             val collector = LocalPropertyAndCapturedWriteCollector()
-            graph.traverse(TraverseDirection.Forward, collector)
+            graph.traverse(collector)
             return collector.symbols.keys to collector.capturedWrites
         }
     }
@@ -33,19 +34,21 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
 
     override fun visitNode(node: CFGNode<*>) {}
 
+    override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
+
     override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
         symbols[node.fir.symbol] = lambdaOrLocalFunctionStack.lastOrNull() == null
     }
 
-    override fun visitPostponedLambdaEnterNode(node: PostponedLambdaEnterNode) {
-        lambdaOrLocalFunctionStack.add(node.fir)
+    override fun visitSplitPostponedLambdasNode(node: SplitPostponedLambdasNode) {
+        lambdaOrLocalFunctionStack.addAll(node.lambdas)
     }
 
-    override fun visitPostponedLambdaExitNode(node: PostponedLambdaExitNode) {
-        lambdaOrLocalFunctionStack.remove(node.fir.anonymousFunction)
+    override fun visitAnonymousFunctionExpressionNode(node: AnonymousFunctionExpressionNode) {
+        lambdaOrLocalFunctionStack.add(node.fir.anonymousFunction)
     }
 
-    override fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode, data: Nothing?) {
+    override fun visitLocalFunctionDeclarationNode(node: LocalFunctionDeclarationNode) {
         lambdaOrLocalFunctionStack.add(node.fir)
     }
 
@@ -54,11 +57,7 @@ class LocalPropertyAndCapturedWriteCollector private constructor() : ControlFlow
     }
 
     override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-        val symbol = node.fir.referredPropertySymbol ?: return
-        if (symbol is FirSyntheticPropertySymbol) {
-            symbols[symbol] = true
-            return
-        }
+        val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
 
         // Check if this variable assignment is inside a lambda or a local function.
         if (lambdaOrLocalFunctionStack.isEmpty()) return

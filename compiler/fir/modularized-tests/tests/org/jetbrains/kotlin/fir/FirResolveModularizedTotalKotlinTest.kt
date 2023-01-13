@@ -12,15 +12,17 @@ import com.intellij.psi.search.ProjectScope
 import com.sun.jna.Library
 import com.sun.jna.Native
 import com.sun.management.HotSpotDiagnosticMXBean
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.collectSources
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollector
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
-import org.jetbrains.kotlin.fir.builder.PsiHandlingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
@@ -52,7 +54,7 @@ internal val PASSES = System.getProperty("fir.bench.passes")?.toInt() ?: 3
 internal val SEPARATE_PASS_DUMP = System.getProperty("fir.bench.dump.separate_pass", "false").toBooleanLenient()!!
 private val APPEND_ERROR_REPORTS = System.getProperty("fir.bench.report.errors.append", "false").toBooleanLenient()!!
 private val RUN_CHECKERS = System.getProperty("fir.bench.run.checkers", "false").toBooleanLenient()!!
-private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "false").toBooleanLenient()!!
+private val USE_LIGHT_TREE = System.getProperty("fir.bench.use.light.tree", "true").toBooleanLenient()!!
 private val DUMP_MEMORY = System.getProperty("fir.bench.dump.memory", "false").toBooleanLenient()!!
 
 private val REPORT_PASS_EVENTS = System.getProperty("fir.bench.report.pass.events", "false").toBooleanLenient()!!
@@ -123,20 +125,33 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     @OptIn(ObsoleteTestInfrastructure::class)
     private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
-        val project = environment.project
-        val ktFiles = environment.getSourceFiles()
 
-        val scope = GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
-            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+        val projectEnvironment = environment.toAbstractProjectEnvironment() as VfsBasedProjectEnvironment
+        val project = environment.project
+
+        val (sourceFiles: Collection<KtSourceFile>, scope) =
+            if (USE_LIGHT_TREE) {
+                val (platformSources, _) = collectSources(environment.configuration, projectEnvironment, environment.messageCollector)
+                platformSources to projectEnvironment.getSearchScopeBySourceFiles(platformSources)
+            } else {
+                val ktFiles = environment.getSourceFiles()
+                ktFiles.map { KtPsiSourceFile(it) } to
+                        GlobalSearchScope.filesScope(project, ktFiles.map { it.virtualFile })
+                            .uniteWith(TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(project))
+                            .toAbstractProjectFileSearchScope()
+            }
         val librariesScope = ProjectScope.getLibrariesScope(project)
-        val session = FirTestSessionFactoryHelper.createSessionForTests(
-            environment.toAbstractProjectEnvironment(),
-            scope.toAbstractProjectFileSearchScope(),
-            librariesScope.toAbstractProjectFileSearchScope(),
-            moduleData.qualifiedName,
-            moduleData.friendDirs.map { it.toPath() },
-            environment.configuration.languageVersionSettings
-        )
+
+        val session =
+            FirTestSessionFactoryHelper.createSessionForTests(
+                projectEnvironment,
+                scope,
+                librariesScope.toAbstractProjectFileSearchScope(),
+                moduleData.qualifiedName,
+                moduleData.friendDirs.map { it.toPath() },
+                environment.configuration.languageVersionSettings
+            )
+
         val scopeSession = ScopeSession()
         val processors = createAllCompilerResolveProcessors(session, scopeSession).let {
             if (RUN_CHECKERS) {
@@ -150,20 +165,10 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
         val firFiles = if (USE_LIGHT_TREE) {
             val lightTree2Fir = LightTree2Fir(session, firProvider.kotlinScopeProvider, diagnosticsReporter = null)
-
-            val allSourceFiles = moduleData.sources.flatMap {
-                if (it.isDirectory) {
-                    it.walkTopDown().toList()
-                } else {
-                    listOf(it)
-                }
-            }.filter {
-                it.extension == "kt"
-            }
-            bench.buildFiles(lightTree2Fir, allSourceFiles)
+            bench.buildFiles(lightTree2Fir, sourceFiles)
         } else {
-            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider, PsiHandlingMode.COMPILER)
-            bench.buildFiles(builder, ktFiles)
+            val builder = RawFirBuilder(session, firProvider.kotlinScopeProvider)
+            bench.buildFiles(builder, sourceFiles.map { it as KtPsiSourceFile })
         }
 
 
@@ -325,7 +330,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 class FirCheckersResolveProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+) : FirTransformerBasedResolveProcessor(session, scopeSession, phase = null) {
     val diagnosticCollector: AbstractDiagnosticCollector = FirDiagnosticsCollector.create(session, scopeSession)
 
     override val transformer: FirTransformer<Nothing?> = FirCheckersRunnerTransformer(diagnosticCollector)
@@ -336,9 +341,10 @@ class FirCheckersRunnerTransformer(private val diagnosticCollector: AbstractDiag
         return element
     }
 
-    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
-        val reporter = DiagnosticReporterFactory.createPendingReporter()
-        diagnosticCollector.collectDiagnostics(file, reporter)
-        return file
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile = file.also {
+        withFileAnalysisExceptionWrapping(file) {
+            val reporter = DiagnosticReporterFactory.createPendingReporter()
+            diagnosticCollector.collectDiagnostics(file, reporter)
+        }
     }
 }

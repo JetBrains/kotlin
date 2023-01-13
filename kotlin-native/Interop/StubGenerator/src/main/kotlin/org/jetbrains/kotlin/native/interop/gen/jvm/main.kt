@@ -17,34 +17,33 @@
 package org.jetbrains.kotlin.native.interop.gen.jvm
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
-import org.jetbrains.kotlin.konan.TempFiles
-import org.jetbrains.kotlin.konan.exec.Command
-import org.jetbrains.kotlin.konan.util.DefFile
-import org.jetbrains.kotlin.native.interop.gen.*
-import org.jetbrains.kotlin.native.interop.gen.wasm.processIdlLib
-import org.jetbrains.kotlin.native.interop.indexer.*
-import org.jetbrains.kotlin.native.interop.tool.*
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
 import kotlinx.cli.required
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
+import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
+import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinLibraryResolverImpl
+import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.packageFqName
-import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
-import org.jetbrains.kotlin.library.resolver.impl.KotlinLibraryResolverImpl
-import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
+import org.jetbrains.kotlin.native.interop.gen.*
+import org.jetbrains.kotlin.native.interop.gen.wasm.processIdlLib
+import org.jetbrains.kotlin.native.interop.indexer.*
+import org.jetbrains.kotlin.native.interop.tool.*
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import org.jetbrains.kotlin.util.suffixIfNot
 import java.io.File
-import java.lang.IllegalArgumentException
 import java.nio.file.*
 import java.util.*
 import kotlin.io.path.absolutePathString
@@ -68,21 +67,42 @@ fun main(args: Array<String>) {
     processCLibSafe(flavorName, arguments, InternalInteropOptions(arguments.generated, arguments.natives), runFromDaemon = false)
 }
 
-fun interop(
-        flavor: String, args: Array<String>,
-        additionalArgs: InternalInteropOptions,
-        runFromDaemon: Boolean
-): Array<String>? = when (flavor) {
-    "jvm", "native" -> {
-        val cinteropArguments = CInteropArguments()
-        cinteropArguments.argParser.parse(args)
-        val platform = KotlinPlatform.values().single { it.name.equals(flavor, ignoreCase = true) }
-        processCLibSafe(platform, cinteropArguments, additionalArgs, runFromDaemon)
+class Interop {
+    /**
+     * invoked via reflection from new test system: CompilationToolCallKt.invokeCInterop(),
+     * `interop()` has issues to be invoked directly due to NoSuchMethodError, caused by presence of InternalInteropOptions argtype:
+     * java.lang.IllegalArgumentException: argument type mismatch.
+     * Also this method simplifies testing of [CInteropPrettyException] by wrapping the result in Any that acts like a "Result" class.
+     * Using "Result" directly might be complicated due to signature mangle and different class loaders.
+     */
+    fun interopViaReflection(
+            flavor: String, args: Array<String>,
+            runFromDaemon: Boolean,
+            generated: String, natives: String, manifest: String? = null, cstubsName: String? = null
+    ): Any? {
+        val internalInteropOptions = InternalInteropOptions(generated, natives, manifest, cstubsName)
+        return try {
+            interop(flavor, args, internalInteropOptions, runFromDaemon)
+        } catch (prettyException: CInteropPrettyException) {
+            prettyException
+        }
     }
-    "wasm" -> processIdlLib(args, additionalArgs)
-    else -> error("Unexpected flavor")
-}
 
+    fun interop(
+            flavor: String, args: Array<String>,
+            additionalArgs: InternalInteropOptions,
+            runFromDaemon: Boolean
+    ): Array<String>? = when (flavor) {
+        "jvm", "native" -> {
+            val cinteropArguments = CInteropArguments()
+            cinteropArguments.argParser.parse(args)
+            val platform = KotlinPlatform.values().single { it.name.equals(flavor, ignoreCase = true) }
+            processCLibSafe(platform, cinteropArguments, additionalArgs, runFromDaemon)
+        }
+        "wasm" -> processIdlLib(args, additionalArgs)
+        else -> error("Unexpected flavor")
+    }
+}
 // Options, whose values are space-separated and can be escaped.
 val escapedOptions = setOf("-compilerOpts", "-linkerOpts", "-compiler-options", "-linker-options")
 
@@ -223,8 +243,12 @@ private fun processCLibSafe(flavor: KotlinPlatform, cinteropArguments: CInteropA
             }
         }
 
-private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArguments,
-                        additionalArgs: InternalInteropOptions, runFromDaemon: Boolean): Array<String>? {
+private fun processCLib(
+        flavor: KotlinPlatform,
+        cinteropArguments: CInteropArguments,
+        additionalArgs: InternalInteropOptions,
+        runFromDaemon: Boolean,
+): Array<String>? = withExceptionPrettifier(cinteropArguments.disableExceptionPrettifier) {
     val ktGenRoot = additionalArgs.generated
     val nativeLibsDir = additionalArgs.natives
     val defFile = cinteropArguments.def?.let { File(it) }
@@ -390,7 +414,7 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             // Note that the output bitcode contains the source file path, which can lead to non-deterministc builds (see KT-54284).
             // The source file is passed in via stdin to ensure the output library is deterministic.
             val compilerCmd = arrayOf(compiler, *compilerArgs,
-                    "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath)
+                    "-emit-llvm", "-x", library.language.clangLanguageName, "-c", "-", "-o", outLib.absolutePath, "-Xclang", "-detailed-preprocessing-record")
             runCmd(compilerCmd, verbose, redirectInputFile = File(outCFile.absolutePath))
             outLib.absolutePath
         }
@@ -421,6 +445,7 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
                     nativeBitcodeFiles = compiledFiles + nativeOutputPath,
                     target = tool.target,
                     moduleName = moduleName,
+                    libraryVersion = cinteropArguments.libraryVersion,
                     outputPath = outputPath,
                     manifest = def.manifestAddendProperties,
                     dependencies = stdlibDependency + imports.requiredLibraries.toList(),
@@ -496,21 +521,30 @@ internal fun buildNativeLibrary(
         addAll(tool.getDefaultCompilerOptsForLanguage(language))
         addAll(additionalCompilerOpts)
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
+        add("-Wno-builtin-macro-redefined") // to suppress warning from predefinedMacrosRedefinitions(see below)
+    }
+
+    // Expanding macros such as __FILE__ or __TIME__ exposes arbitrary generated filenames and timestamps from the compiler pipeline
+    // which are not useful for interop though makes the klib generation non-deterministic. See KT-54284
+    // This macro redefinition just maps to their name in the properties available from Kotlin.
+    val predefinedMacrosRedefinitions = predefinedMacros.map {
+        "#define $it \"$it\""
     }
 
     val compilation = CompilationImpl(
-            includes = headerFiles,
-            additionalPreambleLines = def.defHeaderLines,
+            includes = headerFiles.map { IncludeInfo(it, null) },
+            additionalPreambleLines = def.defHeaderLines + predefinedMacrosRedefinitions,
             compilerArgs = defaultCompilerArgs(language) + compilerOpts + tool.platformCompilerOpts,
             language = language
     )
 
     val headerFilter: NativeLibraryHeaderFilter
-    val includes: List<String>
+    val includes: List<IncludeInfo>
 
     val modules = def.config.modules
 
     if (modules.isEmpty()) {
+        require(headerFiles.isEmpty() || !compilation.compilerArgs.contains("-fmodules")) { "cinterop doesn't support having headers in -fmodules mode" }
         val excludeDependentModules = def.config.excludeDependentModules
 
         val headerFilterGlobs = def.config.headerFilter
@@ -518,7 +552,7 @@ internal fun buildNativeLibrary(
         val headerInclusionPolicy = HeaderInclusionPolicyImpl(headerFilterGlobs, excludeFilterGlobs)
 
         headerFilter = NativeLibraryHeaderFilter.NameBased(headerInclusionPolicy, excludeDependentModules)
-        includes = headerFiles
+        includes = headerFiles.map { IncludeInfo(it, null) }
     } else {
         require(language == Language.OBJECTIVE_C) { "cinterop supports 'modules' only when 'language = Objective-C'" }
         require(headerFiles.isEmpty()) { "cinterop doesn't support having headers and modules specified at the same time" }
@@ -526,7 +560,7 @@ internal fun buildNativeLibrary(
 
         val modulesInfo = getModulesInfo(compilation, modules)
 
-        headerFilter = NativeLibraryHeaderFilter.Predefined(modulesInfo.ownHeaders)
+        headerFilter = NativeLibraryHeaderFilter.Predefined(modulesInfo.ownHeaders, modulesInfo.modules)
         includes = modulesInfo.topLevelHeaders
     }
 

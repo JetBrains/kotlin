@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE
 
@@ -17,5 +18,5 @@ class A : (Int)->Unit {
     }
 
     val prop: (x: Int = <!UNSUPPORTED!>0<!>)->Unit
-        get(): (x: Int = <!UNSUPPORTED!>0<!>)->Unit = {}
+    get(): (x: Int = <!UNSUPPORTED!>0<!>)->Unit = {}
 }

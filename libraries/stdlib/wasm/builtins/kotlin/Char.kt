@@ -102,8 +102,11 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
     public inline fun toDouble(): Double =
         this.toInt().toDouble()
 
-    override fun toString(): String =
-        String(WasmCharArray(1).also { it.set(0, this) })
+    override fun toString(): String {
+        val array = WasmCharArray(1)
+        array.set(0, this)
+        return array.createString()
+    }
 
     override fun hashCode(): Int =
         this.toInt().hashCode()

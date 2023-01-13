@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.jetbrains.kotlin.incremental.utils.TestCompilationResult
@@ -43,6 +44,8 @@ abstract class AbstractIncrementalJsCompilerRunnerTest : AbstractIncrementalComp
             sourceMap = true
             metaInfo = true
             useDeprecatedLegacyCompiler = true
+            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
+            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
         }
 
     protected open val scopeExpansionMode = CompileScopeExpansionMode.NEVER

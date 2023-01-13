@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver
 import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
+import org.jetbrains.kotlin.js.sourceMap.addSourceMappingURL
 import org.jetbrains.kotlin.js.util.TextOutput
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.name.FqName
@@ -116,7 +117,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
         override fun getOutputFiles(outputFile: File, outputPrefixFile: File?, outputPostfixFile: File?): OutputFileCollection {
             val output = TextOutputImpl()
 
-            val sourceMapBuilder = SourceMap3Builder(outputFile, output, config.sourceMapPrefix)
+            val sourceMapBuilder = SourceMap3Builder(outputFile, output::getColumn, config.sourceMapPrefix)
             val sourceMapBuilderConsumer =
                 if (config.configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
                     val sourceMapContentEmbedding = config.sourceMapContentEmbedding
@@ -134,7 +135,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
 
             getCode(output, sourceMapBuilderConsumer)
             if (sourceMapBuilderConsumer != null) {
-                sourceMapBuilder.addLink()
+                output.addSourceMappingURL(outputFile)
             }
             val code = output.toString()
 
@@ -150,7 +151,7 @@ abstract class TranslationResult protected constructor(val diagnostics: Diagnost
                 sourceMapBuilder.skipLinesAtBeginning(StringUtil.getLineBreakCount(prefix))
                 val sourceMapFile = SimpleOutputFile(sourceFiles, sourceMapBuilder.outFile.name, sourceMapBuilder.build())
                 outputFiles.add(sourceMapFile)
-                sourceMapBuilder.addLink()
+                output.addSourceMappingURL(outputFile)
             }
 
             return SimpleOutputFileCollection(outputFiles)

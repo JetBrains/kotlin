@@ -1,37 +1,37 @@
-package org.jetbrains.kotlin.serialization.konan.impl
+/*
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
-import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataModuleDescriptorFactory
+package org.jetbrains.kotlin.library.metadata.impl
+
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
-import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.SyntheticModulesOrigin
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
+import org.jetbrains.kotlin.library.metadata.*
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
-import org.jetbrains.kotlin.serialization.konan.KlibResolvedModuleDescriptorsFactory
-import org.jetbrains.kotlin.serialization.konan.KotlinResolvedModuleDescriptors
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
+import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.Printer
 
 // TODO: eliminate Native specifics.
 class KlibResolvedModuleDescriptorsFactoryImpl(
     override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
-): KlibResolvedModuleDescriptorsFactory {
+) : KlibResolvedModuleDescriptorsFactory {
 
     override fun createResolved(
         resolvedLibraries: KotlinLibraryResolveResult,
@@ -39,6 +39,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         builtIns: KotlinBuiltIns?,
         languageVersionSettings: LanguageVersionSettings,
         friendModuleFiles: Set<File>,
+        refinesModuleFiles: Set<File>,
         includedLibraryFiles: Set<File>,
         additionalDependencyModules: Iterable<ModuleDescriptorImpl>,
         isForMetadataCompilation: Boolean,
@@ -50,6 +51,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         var builtIns = builtIns
 
         val friendModuleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
+        val refinesModuleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
         val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
 
         // Build module descriptors.
@@ -63,6 +65,8 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
                 builtIns = moduleDescriptor.builtIns
                 moduleDescriptors.add(moduleDescriptor)
 
+                if (refinesModuleFiles.contains(library.libraryFile))
+                    refinesModuleDescriptors.add(moduleDescriptor)
                 if (friendModuleFiles.contains(library.libraryFile))
                     friendModuleDescriptors.add(moduleDescriptor)
                 if (includedLibraryFiles.contains(library.libraryFile))
@@ -88,8 +92,11 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         // Set inter-dependencies between module descriptors, add forwarding declarations module.
         for (module in moduleDescriptors) {
             val friends = additionalDependencyModules.toMutableSet()
-            if (module in includedLibraryDescriptors)
+            if (module in includedLibraryDescriptors) {
                 friends.addAll(friendModuleDescriptors)
+                friends.addAll(refinesModuleDescriptors)
+            }
+
             module.setDependencies(
                 // Yes, just to all of them.
                 moduleDescriptors + additionalDependencyModules + forwardDeclarationsModule,
@@ -97,7 +104,12 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
             )
         }
 
-        return KotlinResolvedModuleDescriptors(moduleDescriptors, forwardDeclarationsModule, friendModuleDescriptors)
+        return KotlinResolvedModuleDescriptors(
+            resolvedDescriptors = moduleDescriptors,
+            forwardDeclarationsModule = forwardDeclarationsModule,
+            friendModules = friendModuleDescriptors,
+            refinesModules = refinesModuleDescriptors
+        )
     }
 
     fun createForwardDeclarationsModule(
@@ -133,21 +145,21 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
     }
 
     private fun createDescriptorOptionalBuiltsIns(
-            name: Name,
-            storageManager: StorageManager,
-            builtIns: KotlinBuiltIns?,
-            moduleOrigin: KlibModuleOrigin
+        name: Name,
+        storageManager: StorageManager,
+        builtIns: KotlinBuiltIns?,
+        moduleOrigin: KlibModuleOrigin
     ) = if (builtIns != null)
         moduleDescriptorFactory.descriptorFactory.createDescriptor(name, storageManager, builtIns, moduleOrigin)
     else
         moduleDescriptorFactory.descriptorFactory.createDescriptorAndNewBuiltIns(name, storageManager, moduleOrigin)
 
     private fun createDescriptorOptionalBuiltsIns(
-            library: KotlinLibrary,
-            languageVersionSettings: LanguageVersionSettings,
-            storageManager: StorageManager,
-            builtIns: KotlinBuiltIns?,
-            packageAccessHandler: PackageAccessHandler?
+        library: KotlinLibrary,
+        languageVersionSettings: LanguageVersionSettings,
+        storageManager: StorageManager,
+        builtIns: KotlinBuiltIns?,
+        packageAccessHandler: PackageAccessHandler?
     ) = if (builtIns != null)
         moduleDescriptorFactory.createDescriptor(library, languageVersionSettings, storageManager, builtIns, packageAccessHandler)
     else

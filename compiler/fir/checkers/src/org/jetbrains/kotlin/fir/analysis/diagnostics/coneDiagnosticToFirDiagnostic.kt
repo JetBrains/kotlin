@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
-import org.jetbrains.kotlin.types.isPossiblyEmpty
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -46,12 +45,12 @@ private fun ConeDiagnostic.toKtDiagnostic(
 ): KtDiagnostic? = when (this) {
     is ConeUnresolvedReferenceError -> FirErrors.UNRESOLVED_REFERENCE.createOn(
         source,
-        (this.name ?: SpecialNames.NO_NAME_PROVIDED).asString()
+        this.name.asString()
     )
 
     is ConeUnresolvedSymbolError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.classId.asString())
     is ConeUnresolvedNameError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.name.asString())
-    is ConeUnresolvedQualifierError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.qualifier)
+    is ConeUnresolvedTypeQualifierError -> FirErrors.UNRESOLVED_REFERENCE.createOn(source, this.qualifier)
     is ConeFunctionCallExpectedError -> FirErrors.FUNCTION_CALL_EXPECTED.createOn(source, this.name.asString(), this.hasValueParameters)
     is ConeFunctionExpectedError -> FirErrors.FUNCTION_EXPECTED.createOn(source, this.expression, this.type)
     is ConeResolutionToClassifierError -> FirErrors.RESOLUTION_TO_CLASSIFIER.createOn(source, this.candidateSymbol)
@@ -113,6 +112,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
         else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
     }
 
+    is ConeDestructuringDeclarationsOnTopLevel -> FirSyntaxErrors.SYNTAX.createOn(source)
     is ConeCannotInferParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
     is ConeStubDiagnostic -> null
@@ -133,6 +133,9 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguousSuper -> FirErrors.AMBIGUOUS_SUPER.createOn(source, this.candidateTypes)
     is ConeUnresolvedParentInImport -> null // reported in FirUnresolvedImportChecker
     is ConeAmbiguousAlteredAssign -> FirErrors.AMBIGUOUS_ALTERED_ASSIGN.createOn(source, this.altererNames)
+    is ConeAmbiguouslyResolvedAnnotationFromPlugin -> {
+        FirErrors.PLUGIN_ANNOTATION_AMBIGUITY.createOn(source, typeFromCompilerPhase, typeFromTypesPhase)
+    }
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
 }
 
@@ -441,6 +444,13 @@ private fun ConstraintSystemError.toDiagnostic(
             )
         }
 
+        is OnlyInputTypesDiagnostic -> {
+            FirErrors.TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR.createOn(
+                source,
+                (typeVariable as ConeTypeParameterBasedTypeVariable).typeParameterSymbol
+            )
+        }
+
         else -> null
     }
 }
@@ -456,9 +466,9 @@ private fun reportInferredIntoEmptyIntersectionError(
         (typeVariable.typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.name?.asString()
             ?: typeVariable.toString()
     val causingTypesText = if (incompatibleTypes == causingTypes) "" else ": ${causingTypes.joinToString()}"
-    val factory = if (kind.isPossiblyEmpty())
-        FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION else
-        FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
+    val factory =
+        if (kind.isDefinitelyEmpty) FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
+        else FirErrors.INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION
 
     return factory.createOn(source, typeVariableText, incompatibleTypes, kind.description, causingTypesText)
 }
@@ -467,7 +477,6 @@ private val NewConstraintError.lowerConeType: ConeKotlinType get() = lowerType a
 private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType as ConeKotlinType
 
 private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnosticFactory0 {
-    @Suppress("UNCHECKED_CAST")
     return when (kind) {
         DiagnosticKind.Syntax -> FirSyntaxErrors.SYNTAX
         DiagnosticKind.ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
@@ -498,6 +507,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnost
         DiagnosticKind.IntLiteralOutOfRange -> FirErrors.INT_LITERAL_OUT_OF_RANGE
         DiagnosticKind.FloatLiteralOutOfRange -> FirErrors.FLOAT_LITERAL_OUT_OF_RANGE
         DiagnosticKind.WrongLongSuffix -> FirErrors.WRONG_LONG_SUFFIX
+        DiagnosticKind.UnsignedNumbersAreNotPresent -> FirErrors.UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH
         DiagnosticKind.IncorrectCharacterLiteral -> FirErrors.INCORRECT_CHARACTER_LITERAL
         DiagnosticKind.EmptyCharacterLiteral -> FirErrors.EMPTY_CHARACTER_LITERAL
         DiagnosticKind.TooManyCharactersInCharacterLiteral -> FirErrors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL

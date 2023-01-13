@@ -55,7 +55,16 @@ internal fun Project.setupCInteropPropagatedDependencies() {
     }
 }
 
-private fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: DefaultKotlinSourceSet): FileCollection {
+internal fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: DefaultKotlinSourceSet): FileCollection =
+    getPlatformCinteropDependenciesOrEmpty(sourceSet) { relevantCompilation ->
+        /* Source Set is directly included in compilation -> No need to add dependency again (when looking for propagated dependencies) */
+        sourceSet !in relevantCompilation.kotlinSourceSets
+    }
+
+internal fun Project.getPlatformCinteropDependenciesOrEmpty(
+    sourceSet: DefaultKotlinSourceSet,
+    compilationFilter: (KotlinNativeCompilation) -> Boolean = { true },
+): FileCollection {
     return filesProvider files@{
         /*
         compatibility metadata variant will still register
@@ -69,8 +78,7 @@ private fun Project.getPropagatedCInteropDependenciesOrEmpty(sourceSet: DefaultK
 
         (compilation.associateWith + compilation)
             .filterIsInstance<KotlinNativeCompilation>()
-            /* Source Set is directly included in compilation -> No need to add dependency again (will be handled already) */
-            .filter { relevantCompilation -> sourceSet !in relevantCompilation.kotlinSourceSets }
+            .filter(compilationFilter)
             .map { relevantCompilation -> getAllCInteropOutputFiles(relevantCompilation) }
     }
 }

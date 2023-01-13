@@ -9,25 +9,25 @@ FILE fqName:<root> fileName:/AbstractMutableMap.kt
           <K>: K of <root>.MyMap
           <V>: V of <root>.MyMap
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyMap modality:FINAL visibility:public superTypes:[kotlin.collections.AbstractMutableMap<K of <root>.MyMap, V of <root>.MyMap>]'
-    FUN name:put visibility:public modality:FINAL <> ($this:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>, key:K of <root>.MyMap, value:V of <root>.MyMap) returnType:V of <root>.MyMap?
+    FUN name:put visibility:public modality:OPEN <> ($this:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>, key:K of <root>.MyMap, value:V of <root>.MyMap) returnType:V of <root>.MyMap?
       overridden:
         public abstract fun put (key: K of kotlin.collections.AbstractMutableMap, value: V of kotlin.collections.AbstractMutableMap): V of kotlin.collections.AbstractMutableMap? declared in kotlin.collections.AbstractMutableMap
       $this: VALUE_PARAMETER name:<this> type:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>
       VALUE_PARAMETER name:key index:0 type:K of <root>.MyMap
       VALUE_PARAMETER name:value index:1 type:V of <root>.MyMap
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun put (key: K of <root>.MyMap, value: V of <root>.MyMap): V of <root>.MyMap? declared in <root>.MyMap'
+        RETURN type=kotlin.Nothing from='public open fun put (key: K of <root>.MyMap, value: V of <root>.MyMap): V of <root>.MyMap? declared in <root>.MyMap'
           CONST Null type=kotlin.Nothing? value=null
-    PROPERTY name:entries visibility:public modality:FINAL [val]
+    PROPERTY name:entries visibility:public modality:OPEN [val]
       overridden:
         public abstract entries: @[FlexibleNullability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of kotlin.collections.AbstractMutableMap?, @[FlexibleNullability] V of kotlin.collections.AbstractMutableMap?>?>? [fake_override,val]
-      FUN name:<get-entries> visibility:public modality:FINAL <> ($this:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>) returnType:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>>
-        correspondingProperty: PROPERTY name:entries visibility:public modality:FINAL [val]
+      FUN name:<get-entries> visibility:public modality:OPEN <> ($this:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>) returnType:kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>>
+        correspondingProperty: PROPERTY name:entries visibility:public modality:OPEN [val]
         overridden:
           public abstract fun <get-entries> (): @[FlexibleNullability] kotlin.collections.MutableSet<@[FlexibleNullability] kotlin.collections.MutableMap.MutableEntry<@[FlexibleNullability] K of kotlin.collections.AbstractMutableMap?, @[FlexibleNullability] V of kotlin.collections.AbstractMutableMap?>?>? [fake_override] declared in kotlin.collections.AbstractMutableMap
         $this: VALUE_PARAMETER name:<this> type:<root>.MyMap<K of <root>.MyMap, V of <root>.MyMap>
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-entries> (): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>> declared in <root>.MyMap'
+          RETURN type=kotlin.Nothing from='public open fun <get-entries> (): kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>> declared in <root>.MyMap'
             CALL 'public final fun mutableSetOf <T> (): kotlin.collections.MutableSet<T of kotlin.collections.SetsKt.mutableSetOf> [inline] declared in kotlin.collections.SetsKt' type=kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>> origin=null
               <T>: kotlin.collections.MutableMap.MutableEntry<K of <root>.MyMap, V of <root>.MyMap>
     FUN FAKE_OVERRIDE name:clear visibility:public modality:OPEN <> ($this:java.util.AbstractMap<K of java.util.AbstractMap, V of java.util.AbstractMap>) returnType:kotlin.Unit [fake_override]

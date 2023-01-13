@@ -8,10 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
-import org.jetbrains.kotlin.backend.jvm.ir.fileParent
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineOnly
-import org.jetbrains.kotlin.backend.jvm.ir.isJvmInterface
-import org.jetbrains.kotlin.backend.jvm.ir.isPrivateInlineSuspend
+import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.mapClass
 import org.jetbrains.kotlin.backend.jvm.mapping.mapSupertype
@@ -21,6 +18,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.FrameMapBase
 import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.SourceInfo
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -29,18 +27,15 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.getClass
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
@@ -106,7 +101,7 @@ private fun IrDeclaration.getVisibilityAccessFlagForAnonymous(): Int =
 
 fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
     val isLambda = superTypes.any {
-        it.safeAs<IrSimpleType>()?.classifier === context.ir.symbols.lambdaClass
+        it.classOrNull === context.ir.symbols.lambdaClass
     }
     val visibility = when {
         isLambda -> getVisibilityAccessFlagForAnonymous()
@@ -245,7 +240,7 @@ internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type): JvmCl
 
     val superInterfaces = LinkedHashSet<String>()
     for (superType in irClass.superTypes) {
-        val superClass = superType.safeAs<IrSimpleType>()?.classifier?.safeAs<IrClassSymbol>()?.owner ?: continue
+        val superClass = superType.classOrNull?.owner ?: continue
         if (superClass.isJvmInterface) {
             sw.writeInterface()
             superInterfaces.add(mapSupertype(superType, sw).internalName)
@@ -322,3 +317,27 @@ private fun IrFunction.isAccessorForDeprecatedJvmStaticProperty(context: JvmBack
     val property = callee.correspondingPropertySymbol?.owner ?: return false
     return property.isDeprecatedCallable(context)
 }
+
+val IrClass.reifiedTypeParameters: ReifiedTypeParametersUsages
+    get() {
+        val tempReifiedTypeParametersUsages = ReifiedTypeParametersUsages()
+        fun processTypeParameters(type: IrType) {
+            for (supertypeArgument in (type as? IrSimpleType)?.arguments ?: emptyList()) {
+                if (supertypeArgument is IrTypeProjection) {
+                    val typeArgument = supertypeArgument.type
+                    if (typeArgument.isReifiedTypeParameter) {
+                        val typeParameter = typeArgument.classifierOrFail as IrTypeParameterSymbol
+                        tempReifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.owner.name.asString())
+                    } else {
+                        processTypeParameters(typeArgument)
+                    }
+                }
+            }
+        }
+
+        for (type in superTypes) {
+            processTypeParameters(type)
+        }
+
+        return tempReifiedTypeParametersUsages
+    }

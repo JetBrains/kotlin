@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -48,16 +49,10 @@ class JsKlibBackendFacade(
         val outputFile = JsEnvironmentConfigurator.getJsKlibArtifactPath(testServices, module.name)
 
         if (firstTimeCompilation) {
-            val project = testServices.compilerConfigurationProvider.getProject(module)
-            val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
-            val hasErrors = TopDownAnalyzerFacadeForJSIR.checkForErrors(inputArtifact.sourceFiles, inputArtifact.bindingContext, errorPolicy)
-
             serializeModuleIntoKlib(
                 configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-                project,
                 configuration,
                 configuration.irMessageLogger,
-                inputArtifact.bindingContext,
                 inputArtifact.sourceFiles,
                 klibPath = outputFile,
                 JsEnvironmentConfigurator.getAllRecursiveLibrariesFor(module, testServices).keys.toList(),
@@ -66,9 +61,10 @@ class JsKlibBackendFacade(
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
                 perFile = false,
-                containsErrorCode = hasErrors,
+                containsErrorCode = inputArtifact.hasErrors,
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
-                jsOutputName = null
+                jsOutputName = null,
+                inputArtifact.serializeSingleFile
             )
         }
 

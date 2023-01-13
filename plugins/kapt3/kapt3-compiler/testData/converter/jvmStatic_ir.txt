@@ -1,12 +1,10 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface FooComponent {
     @org.jetbrains.annotations.NotNull()
     public static final FooComponent.Companion Companion = null;
 
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmStatic()
+    @org.jetbrains.annotations.NotNull()
     public static java.lang.String create(@org.jetbrains.annotations.NotNull()
     java.lang.String context) {
         return null;
@@ -19,8 +17,8 @@ public abstract interface FooComponent {
             super();
         }
 
-        @org.jetbrains.annotations.NotNull()
         @kotlin.jvm.JvmStatic()
+        @org.jetbrains.annotations.NotNull()
         public final java.lang.String create(@org.jetbrains.annotations.NotNull()
         java.lang.String context) {
             return null;
@@ -30,8 +28,6 @@ public abstract interface FooComponent {
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class JvmStaticTest {

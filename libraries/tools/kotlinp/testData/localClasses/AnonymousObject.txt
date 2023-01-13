@@ -4,6 +4,8 @@ package {
 
   // signature: test()Ljava/lang/Runnable;
   public final fun test(): java/lang/Runnable
+
+  // module name: test-module
 }
 // AnonymousObjectKt$test$1.class
 // ------------------------------------------

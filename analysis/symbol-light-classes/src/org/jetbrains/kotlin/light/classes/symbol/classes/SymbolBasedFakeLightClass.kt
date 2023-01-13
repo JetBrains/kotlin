@@ -9,17 +9,15 @@ import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.LightClassInheritanceHelper
+import org.jetbrains.kotlin.asJava.classes.lazyPub
+import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 
-//TODO Make fake class symbol based
-
-class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) :
-    KtFakeLightClass(kotlinOrigin) {
-
+class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) : KtFakeLightClass(kotlinOrigin) {
     override fun copy(): KtFakeLightClass = SymbolBasedFakeLightClass(kotlinOrigin)
 
-    private val _containingClass: KtFakeLightClass? by lazy {
+    private val _containingClass: KtFakeLightClass? by lazyPub {
         kotlinOrigin.containingClassOrObject?.let { SymbolBasedFakeLightClass(it) }
     }
 
@@ -30,7 +28,7 @@ class SymbolBasedFakeLightClass(kotlinOrigin: KtClassOrObject) :
         LightClassInheritanceHelper.getService(project).isInheritor(this, baseClass, checkDeep).ifSure { return it }
 
         val baseClassOrigin = (baseClass as? KtLightClass)?.kotlinOrigin ?: return false
-        return analyzeForLightClasses(baseClassOrigin) {
+        return analyzeForLightClasses(kotlinOrigin) {
             kotlinOrigin.checkIsInheritor(baseClassOrigin, checkDeep)
         }
     }

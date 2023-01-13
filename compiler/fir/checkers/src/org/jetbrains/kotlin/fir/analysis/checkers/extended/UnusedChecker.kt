@@ -6,43 +6,41 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import kotlinx.collections.immutable.PersistentMap
+import kotlinx.collections.immutable.mutate
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.cfa.util.*
-import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
+import org.jetbrains.kotlin.fir.analysis.cfa.util.*
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isIterator
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.resolved
+import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
-import org.jetbrains.kotlin.fir.resolved
-import org.jetbrains.kotlin.fir.resolvedSymbol
-import org.jetbrains.kotlin.fir.types.isFunctionalType
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isFunctionalType
 
-object UnusedChecker : FirControlFlowChecker() {
-    override fun analyze(graph: ControlFlowGraph, reporter: DiagnosticReporter, context: CheckerContext) {
-        if (graph.declaration?.getContainingClassSymbol(context.session)?.takeIf { !it.isLocal } != null) return
-        val (properties, _) = LocalPropertyAndCapturedWriteCollector.collect(graph)
-        if (properties.isEmpty()) return
-
-        val data = ValueWritesWithoutReading(context.session, properties).getData(graph)
-        graph.traverse(TraverseDirection.Backward, CfaVisitor(data, reporter, context))
+object UnusedChecker : AbstractFirPropertyInitializationChecker() {
+    override fun analyze(
+        graph: ControlFlowGraph,
+        reporter: DiagnosticReporter,
+        data: PropertyInitializationInfoData,
+        properties: Set<FirPropertySymbol>,
+        capturedWrites: Set<FirVariableAssignment>,
+        context: CheckerContext
+    ) {
+        val ownData = ValueWritesWithoutReading(context.session, properties).getData(graph)
+        graph.traverse(CfaVisitor(ownData, reporter, context))
     }
 
     class CfaVisitor(
@@ -52,8 +50,10 @@ object UnusedChecker : FirControlFlowChecker() {
     ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
+        override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
+
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-            val variableSymbol = node.fir.calleeReference.resolvedSymbol ?: return
+            val variableSymbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
             val dataPerNode = data[node] ?: return
             for (dataPerLabel in dataPerNode.values) {
                 val data = dataPerLabel[variableSymbol] ?: continue
@@ -72,6 +72,7 @@ object UnusedChecker : FirControlFlowChecker() {
             if (node.fir.source == null) return
             if (variableSymbol.isLoopIterator) return
             val dataPerNode = data[node] ?: return
+            // TODO: merge values for labels, otherwise diagnostics are inconsistent
             for (dataPerLabel in dataPerNode.values) {
                 val data = dataPerLabel[variableSymbol] ?: continue
 
@@ -81,9 +82,13 @@ object UnusedChecker : FirControlFlowChecker() {
                 val variableSource = variable.source.takeIf { it?.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION }
                 when {
                     data == VariableStatus.UNUSED -> {
-                        if ((node.fir.initializer as? FirFunctionCall)?.isIterator != true) {
-                            reporter.reportOn(variableSource, FirErrors.UNUSED_VARIABLE, context)
-                            break
+                        when {
+                            (node.fir.initializer as? FirFunctionCall)?.isIterator == true -> {}
+                            node.fir.isCatchParameter == true -> {}
+                            else -> {
+                                reporter.reportOn(variableSource, FirErrors.UNUSED_VARIABLE, context)
+                                break
+                            }
                         }
                     }
                     data.isRedundantInit -> {
@@ -116,6 +121,7 @@ object UnusedChecker : FirControlFlowChecker() {
             else variableUseState
 
             return base.also {
+                // TODO: is this modifying constant enum values???
                 it.isRead = this.isRead || variableUseState?.isRead == true
                 it.isRedundantInit = this.isRedundantInit && variableUseState?.isRedundantInit == true
             }
@@ -132,9 +138,6 @@ object UnusedChecker : FirControlFlowChecker() {
         override val constructor: (PersistentMap<FirPropertySymbol, VariableStatus>) -> VariableStatusInfo =
             ::VariableStatusInfo
 
-        override val empty: () -> VariableStatusInfo =
-            ::EMPTY
-
         override fun merge(other: VariableStatusInfo): VariableStatusInfo {
             var result = this
             for (symbol in keys.union(other.keys)) {
@@ -146,44 +149,43 @@ object UnusedChecker : FirControlFlowChecker() {
             return result
         }
 
-    }
-
-    class PathAwareVariableStatusInfo(
-        map: PersistentMap<EdgeLabel, VariableStatusInfo> = persistentMapOf()
-    ) : PathAwareControlFlowInfo<PathAwareVariableStatusInfo, VariableStatusInfo>(map) {
-        companion object {
-            val EMPTY = PathAwareVariableStatusInfo(persistentMapOf(NormalPath to VariableStatusInfo.EMPTY))
-        }
-
-        override val constructor: (PersistentMap<EdgeLabel, VariableStatusInfo>) -> PathAwareVariableStatusInfo =
-            ::PathAwareVariableStatusInfo
-
-        override val empty: () -> PathAwareVariableStatusInfo =
-            ::EMPTY
+        override fun plus(other: VariableStatusInfo): VariableStatusInfo =
+            merge(other) // TODO: not sure
     }
 
     private class ValueWritesWithoutReading(
         private val session: FirSession,
         private val localProperties: Set<FirPropertySymbol>
-    ) : ControlFlowGraphVisitor<PathAwareVariableStatusInfo, Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>>() {
-        fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwareVariableStatusInfo> {
-            return graph.collectDataForNode(TraverseDirection.Backward, PathAwareVariableStatusInfo.EMPTY, this)
+    ) : PathAwareControlFlowGraphVisitor<VariableStatusInfo>() {
+        companion object {
+            private val EMPTY_INFO: PathAwareVariableStatusInfo = persistentMapOf(NormalPath to VariableStatusInfo.EMPTY)
         }
+
+        override val emptyInfo: PathAwareVariableStatusInfo
+            get() = EMPTY_INFO
+
+        fun getData(graph: ControlFlowGraph): Map<CFGNode<*>, PathAwareVariableStatusInfo> {
+            return graph.collectDataForNode(TraverseDirection.Backward, this)
+        }
+
+        private fun PathAwareVariableStatusInfo.withAnnotationsFrom(node: CFGNode<*>): PathAwareVariableStatusInfo =
+            (node.fir as? FirAnnotationContainer)?.annotations?.fold(this, ::visitAnnotation) ?: this
 
         override fun visitNode(
             node: CFGNode<*>,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
-        ): PathAwareVariableStatusInfo {
-            if (data.isEmpty()) return PathAwareVariableStatusInfo.EMPTY
-            val result = data.map { (label, info) -> info.applyLabel(node, label) }
-                .reduce(PathAwareVariableStatusInfo::merge)
-            return (node.fir as? FirAnnotationContainer)?.annotations?.fold(result, ::visitAnnotation)
-                ?: result
-        }
+            data: PathAwareVariableStatusInfo
+        ): PathAwareVariableStatusInfo =
+            super.visitNode(node, data).withAnnotationsFrom(node)
+
+        override fun <T> visitUnionNode(
+            node: T,
+            data: PathAwareVariableStatusInfo
+        ): PathAwareVariableStatusInfo where T : CFGNode<*>, T : UnionNodeMarker =
+            super.visitUnionNode(node, data).withAnnotationsFrom(node)
 
         override fun visitVariableDeclarationNode(
             node: VariableDeclarationNode,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+            data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
             if (node.fir.source?.kind is KtFakeSourceElementKind) return dataForNode
@@ -215,10 +217,10 @@ object UnusedChecker : FirControlFlowChecker() {
 
         override fun visitVariableAssignmentNode(
             node: VariableAssignmentNode,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+            data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
-            val symbol = node.fir.lValue.resolvedSymbol as? FirPropertySymbol ?: return dataForNode
+            val symbol = node.fir.lValue.toResolvedPropertySymbol() ?: return dataForNode
             return update(dataForNode, symbol) update@{ prev ->
                 val toPut = when {
                     symbol !in localProperties -> {
@@ -244,7 +246,7 @@ object UnusedChecker : FirControlFlowChecker() {
 
         override fun visitQualifiedAccessNode(
             node: QualifiedAccessNode,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+            data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
             return visitQualifiedAccesses(dataForNode, node.fir)
@@ -267,8 +269,7 @@ object UnusedChecker : FirControlFlowChecker() {
             vararg qualifiedAccesses: FirQualifiedAccess,
         ): PathAwareVariableStatusInfo {
             fun retrieveSymbol(qualifiedAccess: FirQualifiedAccess): FirPropertySymbol? {
-                val symbol = qualifiedAccess.calleeReference.resolvedSymbol as? FirPropertySymbol ?: return null
-                return if (symbol !in localProperties) null else symbol
+                return qualifiedAccess.calleeReference.toResolvedPropertySymbol()?.takeIf { it in localProperties }
             }
 
             val symbols = qualifiedAccesses.mapNotNull { retrieveSymbol(it) }.toTypedArray()
@@ -281,9 +282,9 @@ object UnusedChecker : FirControlFlowChecker() {
 
         override fun visitFunctionCallNode(
             node: FunctionCallNode,
-            data: Collection<Pair<EdgeLabel, PathAwareVariableStatusInfo>>
+            data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
-            val dataForNode = visitNode(node, data)
+            val dataForNode = visitUnionNode(node, data)
             val reference = node.fir.calleeReference.resolved ?: return dataForNode
             val functionSymbol = reference.resolvedSymbol as? FirFunctionSymbol<*> ?: return dataForNode
             val symbol = if (functionSymbol.callableId.callableName.identifier == "invoke") {
@@ -300,21 +301,13 @@ object UnusedChecker : FirControlFlowChecker() {
             pathAwareInfo: PathAwareVariableStatusInfo,
             vararg symbols: FirPropertySymbol,
             updater: (VariableStatus?) -> VariableStatus?,
-        ): PathAwareVariableStatusInfo {
-            var resultMap = persistentMapOf<EdgeLabel, VariableStatusInfo>()
-            var changed = false
+        ): PathAwareVariableStatusInfo = pathAwareInfo.mutate {
             for ((label, dataPerLabel) in pathAwareInfo) {
                 for (symbol in symbols) {
-                    val v = updater.invoke(dataPerLabel[symbol])
-                    if (v != null) {
-                        resultMap = resultMap.put(label, dataPerLabel.put(symbol, v))
-                        changed = true
-                    } else {
-                        resultMap = resultMap.put(label, dataPerLabel)
-                    }
+                    val v = updater.invoke(dataPerLabel[symbol]) ?: continue
+                    it[label] = dataPerLabel.put(symbol, v)
                 }
             }
-            return if (changed) PathAwareVariableStatusInfo(resultMap) else pathAwareInfo
         }
     }
 
@@ -324,3 +317,5 @@ object UnusedChecker : FirControlFlowChecker() {
             return fir.initializer?.source?.kind == KtFakeSourceElementKind.DesugaredForLoop
         }
 }
+
+private typealias PathAwareVariableStatusInfo = PathAwareControlFlowInfo<UnusedChecker.VariableStatusInfo>

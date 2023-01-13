@@ -63,7 +63,7 @@ fun case_2(value_1: Int?) {
 // TESTCASE NUMBER: 3
 fun case_3(value_1: Int?) {
     if (contracts.case_3(value_1)!!) {
-        value_1<!UNSAFE_CALL!>.<!>inv()
+        value_1.inv()
     }
 }
 

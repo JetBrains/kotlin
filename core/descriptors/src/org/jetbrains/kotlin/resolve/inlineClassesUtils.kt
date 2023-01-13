@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isNullableType
 
 val JVM_INLINE_ANNOTATION_FQ_NAME = FqName("kotlin.jvm.JvmInline")
 val JVM_INLINE_ANNOTATION_CLASS_ID = ClassId.topLevel(JVM_INLINE_ANNOTATION_FQ_NAME)
@@ -41,6 +42,9 @@ fun KotlinType.unsubstitutedUnderlyingTypes(): List<KotlinType> {
 
 
 fun KotlinType.isInlineClassType(): Boolean = constructor.declarationDescriptor?.isInlineClass() ?: false
+
+fun KotlinType.needsMfvcFlattening(): Boolean =
+    constructor.declarationDescriptor?.run { isMultiFieldValueClass() && !isNullableType() } == true
 
 fun KotlinType.substitutedUnderlyingType(): KotlinType? =
     unsubstitutedUnderlyingType()?.let { TypeSubstitutor.create(this).substitute(it, Variance.INVARIANT) }

@@ -1,0 +1,6 @@
+framework module forwardEnum1 {
+  umbrella header "forwardEnum1.h"
+
+  export *
+  module * { export * }
+}

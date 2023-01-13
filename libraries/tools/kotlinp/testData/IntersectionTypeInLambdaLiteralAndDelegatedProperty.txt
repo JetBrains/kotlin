@@ -48,6 +48,8 @@ package {
   // local final /* delegated */ var d: kotlin/Any
   //   local final get
   //   local final set
+
+  // module name: test-module
 }
 // IntersectionTypeInLambdaLiteralAndDelegatedPropertyKt$test$1.class
 // ------------------------------------------

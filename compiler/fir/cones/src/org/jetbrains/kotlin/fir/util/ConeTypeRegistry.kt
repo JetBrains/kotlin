@@ -7,13 +7,12 @@ package org.jetbrains.kotlin.fir.util
 
 import org.jetbrains.kotlin.util.TypeRegistry
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.reflect.KClass
 
 abstract class ConeTypeRegistry<K : Any, V : Any> : TypeRegistry<K, V>() {
-    override fun <T : K> ConcurrentHashMap<KClass<out K>, Int>.customComputeIfAbsent(
-        kClass: KClass<T>,
-        compute: (KClass<out K>) -> Int
+    override fun ConcurrentHashMap<String, Int>.customComputeIfAbsent(
+        key: String,
+        compute: (String) -> Int
     ): Int {
-        return this.computeIfAbsent(kClass, compute)
+        return this.computeIfAbsent(key, compute)
     }
 }

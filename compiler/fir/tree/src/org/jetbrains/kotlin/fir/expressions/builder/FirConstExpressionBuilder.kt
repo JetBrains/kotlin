@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions.builder
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
@@ -19,7 +20,7 @@ fun <T> buildConstExpression(
     annotations: MutableList<FirAnnotation> = mutableListOf(),
     setType: Boolean = false
 ): FirConstExpression<T> {
-    return FirConstExpressionImpl(source, annotations, kind, value).also {
+    return FirConstExpressionImpl(source, annotations.toMutableOrEmpty(), kind, value).also {
         if (setType) {
             when (value) {
                 null -> it.typeRef = FirImplicitNullableAnyTypeRef(null)

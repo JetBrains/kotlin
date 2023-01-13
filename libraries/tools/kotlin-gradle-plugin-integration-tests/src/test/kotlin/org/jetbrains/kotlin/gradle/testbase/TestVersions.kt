@@ -18,14 +18,18 @@ interface TestVersions {
         const val G_7_2 = "7.2"
         const val G_7_3 = "7.3.3"
         const val G_7_4 = "7.4.2"
-        const val G_7_5 = "7.5"
+        const val G_7_5 = "7.5.1"
+        const val G_7_6 = "7.6"
+        // https://gradle.org/nightly/
+        // Retention policy is 3 months
+        const val G_8_0 = "8.0-rc-1"
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
-        const val MAX_SUPPORTED = G_7_3
+        const val MAX_SUPPORTED = G_7_5
     }
 
     object Kotlin {
-        const val STABLE_RELEASE = "1.5.32"
+        const val STABLE_RELEASE = "1.6.21"
 
         // Copied from KOTLIN_VERSION.kt file
         val CURRENT
@@ -37,11 +41,13 @@ interface TestVersions {
         const val AGP_42 = "4.2.2"
         const val AGP_70 = "7.0.4"
         const val AGP_71 = "7.1.3"
-        const val AGP_72 = "7.2.1"
-        const val AGP_73 = "7.3.0"
+        const val AGP_72 = "7.2.2"
+        const val AGP_73 = "7.3.1"
+        const val AGP_74 = "7.4.0"
+        const val AGP_80 = "8.0.0-alpha11"
 
         const val MIN_SUPPORTED = AGP_41 // KotlinAndroidPlugin.MINIMAL_SUPPORTED_AGP_VERSION
-        const val MAX_SUPPORTED = AGP_72 // Update once Gradle MAX_SUPPORTED version will be bumped to 7.2+
+        const val MAX_SUPPORTED = AGP_74 // Update once Gradle MAX_SUPPORTED version will be bumped
     }
 
     enum class AgpCompatibilityMatrix(
@@ -56,6 +62,8 @@ interface TestVersions {
         AGP_71(AGP.AGP_71, GradleVersion.version(Gradle.G_7_2), GradleVersion.version(Gradle.G_7_4), JavaVersion.VERSION_11),
         AGP_72(AGP.AGP_72, GradleVersion.version(Gradle.G_7_3), GradleVersion.version(Gradle.G_7_4), JavaVersion.VERSION_11),
         AGP_73(AGP.AGP_73, GradleVersion.version(Gradle.G_7_4), GradleVersion.version(Gradle.G_7_5), JavaVersion.VERSION_11),
+        AGP_74(AGP.AGP_74, GradleVersion.version(Gradle.G_7_5), GradleVersion.version(Gradle.G_7_6), JavaVersion.VERSION_11),
+        AGP_80(AGP.AGP_80, GradleVersion.version(Gradle.G_8_0), GradleVersion.version(Gradle.G_8_0), JavaVersion.VERSION_17),
         ;
     }
 }

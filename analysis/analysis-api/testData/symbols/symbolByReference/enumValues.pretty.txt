@@ -1,0 +1,1 @@
+fun values(): kotlin.Array<MyKotlinEnum>

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
 import java.io.File
 
-private const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
+const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
 
 fun TestModule.getNameFor(filePath: String, testServices: TestServices): String {
     return JsEnvironmentConfigurator.getJsArtifactSimpleName(testServices, name) + "-js-" + filePath

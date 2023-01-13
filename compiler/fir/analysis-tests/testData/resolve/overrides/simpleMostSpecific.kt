@@ -35,7 +35,7 @@ fun main(d1: D1, d2: D2, d3: D3) {
     d2.bar(1, "").checkType { _<String>() }
 
     d3.x.checkType { _<String>() }
-    d3.x = ""
+    d3.<!VAL_REASSIGNMENT!>x<!> = ""
     d3.foo().checkType { _<String?>() }
     d3.bar(1, "").checkType { _<String?>() }
 }

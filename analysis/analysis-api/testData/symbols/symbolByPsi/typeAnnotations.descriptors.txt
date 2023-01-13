@@ -129,6 +129,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /X.f
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -142,7 +143,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: f
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: [
     Anno3()
       psi: KtAnnotationEntry
@@ -163,7 +164,7 @@ KtFunctionSymbol:
       isVararg: false
       name: arg
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: [
         Anno2()
           psi: KtAnnotationEntry
@@ -194,7 +195,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: [
       Anno4()
         psi: KtAnnotationEntry
@@ -221,7 +222,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: [
     Anno4()
       psi: KtAnnotationEntry

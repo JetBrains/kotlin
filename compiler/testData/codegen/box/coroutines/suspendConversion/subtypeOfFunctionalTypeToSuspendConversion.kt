@@ -4,8 +4,6 @@
 // IGNORE_BACKEND: JVM, JS, JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 // IGNORE_LIGHT_ANALYSIS
-// IGNORE_BACKEND: WASM
-// WASM_MUTE_REASON: IGNORED_IN_JS
 
 import helpers.*
 import kotlin.coroutines.*

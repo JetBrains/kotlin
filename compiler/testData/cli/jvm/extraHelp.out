@@ -157,6 +157,7 @@ where advanced options include:
   -Xuse-type-table           Use type table in metadata serialization
   -Xvalidate-bytecode        Validate generated JVM bytecode before and after optimizations
   -Xvalidate-ir              Validate IR before and after lowering
+  -Xvalue-classes            Enable experimental value classes
   -Xallow-any-scripts-in-source-roots
                              Allow to compile any scripts along with regular Kotlin sources
   -Xallow-kotlin-package     Allow compiling code in package 'kotlin' and allow not requiring kotlin.stdlib in module-info
@@ -195,7 +196,6 @@ where advanced options include:
   -Xlist-phases              List backend phases
   -Xmetadata-version         Change metadata version of the generated binary files
   -Xmulti-platform           Enable experimental language support for multi-platform projects
-  -Xexclude-from-dumping     Names of elements that should not be dumped
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining

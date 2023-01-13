@@ -15,23 +15,23 @@ class Test<in I, out O> {
         this.i = getT()
         with(Test<I, O>()) {
             i = getT() // resolved to this@Test.i
-            this.<!INVISIBLE_REFERENCE!>i<!> = getT()
-            this@with.<!INVISIBLE_REFERENCE!>i<!> = getT()
+            <!INVISIBLE_SETTER!>this.<!INVISIBLE_REFERENCE!>i<!><!> = getT()
+            <!INVISIBLE_SETTER!>this@with.<!INVISIBLE_REFERENCE!>i<!><!> = getT()
             this@Test.i  = getT()
         }
     }
 
     fun <I, O> test(t: Test<I, O>) {
-        t.<!INVISIBLE_REFERENCE!>i<!> = getT()
+        <!INVISIBLE_SETTER!>t.<!INVISIBLE_REFERENCE!>i<!><!> = getT()
     }
 
     companion object {
         fun <I, O> test(t: Test<I, O>) {
-            t.<!INVISIBLE_REFERENCE!>i<!> = getT()
+            <!INVISIBLE_SETTER!>t.<!INVISIBLE_REFERENCE!>i<!><!> = getT()
         }
     }
 }
 
 fun <I, O> test(t: Test<I, O>) {
-    t.<!INVISIBLE_REFERENCE!>i<!> = getT()
+    <!INVISIBLE_SETTER!>t.<!INVISIBLE_REFERENCE!>i<!><!> = getT()
 }

@@ -1255,7 +1255,7 @@ fun case_70(x: Any?) {
     if (x is ClassLevel1? && x is ClassLevel2? && x is ClassLevel3?) {
         if (x is ClassLevel4?) {
 
-        } else if (x is ClassLevel5? && x != nullableNothingProperty || x != implicitNullableNothingProperty) {
+        } else if (x is ClassLevel5? && <!SENSELESS_COMPARISON!>x != nullableNothingProperty<!> || <!SENSELESS_COMPARISON!>x != implicitNullableNothingProperty<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel3")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel3")!>x<!>.equals(null)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel3")!>x<!>.propT
@@ -1267,7 +1267,7 @@ fun case_70(x: Any?) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel3")!>x<!>.funNullableT()
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel3")!>x<!>.funNullableAny()
         }
-    } else if (x is ClassLevel4? && x !== nullableNothingProperty && x is ClassLevel5?) {
+    } else if (x is ClassLevel4? && <!SENSELESS_COMPARISON!>x !== nullableNothingProperty<!> && x is ClassLevel5?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel5")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel5")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & ClassLevel5")!>x<!>.propT

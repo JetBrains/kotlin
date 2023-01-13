@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.ir.isPure
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
@@ -424,13 +425,17 @@ class BlockDecomposerTransformer(
                         isElseBranch(orig) -> (res as? IrBlock)?.statements ?: listOf(res)
                         else -> listOf(
                             JsIrBuilder.buildIfElse(
-                                orig.startOffset,
-                                orig.endOffset,
-                                unitType,
-                                condValue,
-                                res,
-                                elseBlock,
-                                expression.origin
+                                startOffset = UNDEFINED_OFFSET,
+                                endOffset = UNDEFINED_OFFSET,
+                                type = unitType,
+                                cond = condValue,
+                                thenBranch = res,
+                                elseBranch = elseBlock,
+                                origin = expression.origin,
+                                thenBranchStartOffset = orig.startOffset,
+                                thenBranchEndOffset = orig.endOffset,
+                                elseBranchStartOffset = UNDEFINED_OFFSET,
+                                elseBranchEndOffset = UNDEFINED_OFFSET,
                             )
                         )
                     }

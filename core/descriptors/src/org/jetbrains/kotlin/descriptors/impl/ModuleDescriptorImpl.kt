@@ -153,6 +153,11 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T> getCapability(capability: ModuleCapability<T>) = capabilities[capability] as? T
+
+    override fun toString(): String {
+        val toString = super.toString()
+        return if (isValid) toString else "$toString !isValid"
+    }
 }
 
 interface ModuleDependencies {

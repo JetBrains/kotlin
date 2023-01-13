@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.isWindows
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -17,14 +16,12 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformerTmp
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irMessageLogger
-import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.js.test.utils.extractTestPackage
@@ -77,7 +74,6 @@ class JsIrBackendFacade(
         val splitPerModule = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
         val splitPerFile = JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE in module.directives
         val perModule = JsEnvironmentConfigurationDirectives.PER_MODULE in module.directives
-        val runNewIr2Js = JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS in module.directives
         val keep = module.directives[JsEnvironmentConfigurationDirectives.KEEP].toSet()
 
         val granularity = when {
@@ -108,9 +104,8 @@ class JsIrBackendFacade(
                         caches = testServices.jsIrIncrementalDataProvider.getCaches(),
                         relativeRequirePath = false
                     )
-                    jsExecutableProducer.buildExecutable(it.perModule, true)
-                },
-                tsDefinitions = null
+                    jsExecutableProducer.buildExecutable(it.perModule, true).compilationOut
+                }
             )
             return BinaryArtifacts.Js.JsIrArtifact(
                 outputFile, compiledModule, testServices.jsIrIncrementalDataProvider.getCacheForModule(module)
@@ -147,11 +142,9 @@ class JsIrBackendFacade(
             keep = keep,
             dceRuntimeDiagnostic = null,
             es6mode = false,
-            baseClassIntoMetadata = false,
             safeExternalBoolean = JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN in module.directives,
             safeExternalBooleanDiagnostic = module.directives[JsEnvironmentConfigurationDirectives.SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC].singleOrNull(),
             granularity = granularity,
-            icCompatibleIr2Js = runNewIr2Js,
         )
 
         return loweredIr2JsArtifact(module, loweredIr, granularity)
@@ -166,43 +159,30 @@ class JsIrBackendFacade(
             .run { if (shouldBeGenerated()) arguments() else null }
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in module.directives
         val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in module.directives
-        val runNewIr2Js = JsEnvironmentConfigurationDirectives.RUN_NEW_IR_2_JS in module.directives
         val perModuleOnly = JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in module.directives
         val isEsModules = JsEnvironmentConfigurationDirectives.ES_MODULES in module.directives ||
                 module.directives[JsEnvironmentConfigurationDirectives.MODULE_KIND].contains(ModuleKind.ES)
 
-        val outputFile = File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL) + module.kind.extension)
+        val outputFile =
+            File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL) + module.kind.extension)
 
-        if (runNewIr2Js) {
-            val transformer = IrModuleToJsTransformerTmp(
-                loweredIr.context,
-                mainArguments,
-                moduleToName = JsIrModuleToPath(
-                    testServices,
-                    isEsModules && granularity != JsGenerationGranularity.WHOLE_PROGRAM
-                )
+        val transformer = IrModuleToJsTransformer(
+            loweredIr.context,
+            mainArguments,
+            moduleToName = JsIrModuleToPath(
+                testServices,
+                isEsModules && granularity != JsGenerationGranularity.WHOLE_PROGRAM
             )
-                // If runIrDce then include DCE results
-                // If perModuleOnly then skip whole program
-                // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
-                val translationModes = TranslationMode.values()
-                    .filter { (it.dce || !onlyIrDce) && (!it.dce || runIrDce) && (!perModuleOnly || it.perModule) }
-                    .filter { it.dce == it.minimizedMemberNames }
-                    .toSet()
-                val compilationOut = transformer.generateModule(loweredIr.allModules, translationModes, false)
-                return BinaryArtifacts.Js.JsIrArtifact(outputFile, compilationOut).dump(module)
-            } else {
-                val transformer = IrModuleToJsTransformer(
-                    loweredIr.context,
-                    mainArguments,
-                    fullJs = true,
-                    dceJs = runIrDce,
-                    multiModule = granularity == JsGenerationGranularity.PER_MODULE,
-                    relativeRequirePath = false
-                )
-
-            return BinaryArtifacts.Js.JsIrArtifact(outputFile, transformer.generateModule(loweredIr.allModules)).dump(module)
-        }
+        )
+        // If runIrDce then include DCE results
+        // If perModuleOnly then skip whole program
+        // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
+        val translationModes = TranslationMode.values()
+            .filter { (it.dce || !onlyIrDce) && (!it.dce || runIrDce) && (!perModuleOnly || it.perModule) }
+            .filter { it.dce == it.minimizedMemberNames }
+            .toSet()
+        val compilationOut = transformer.generateModule(loweredIr.allModules, translationModes, false)
+        return BinaryArtifacts.Js.JsIrArtifact(outputFile, compilationOut).dump(module)
     }
 
     private fun IrModuleFragment.resolveTestPathes() {
@@ -215,7 +195,7 @@ class JsIrBackendFacade(
         val filesToLoad = module.files.takeIf { !firstTimeCompilation }?.map { "/${it.relativePath}" }?.toSet()
 
         val messageLogger = configuration.irMessageLogger
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForJsIC(WholeWorldStageController()),)
+        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForJsIC(WholeWorldStageController()))
 
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
         val mainModuleLib = testServices.jsLibraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
@@ -264,9 +244,13 @@ class JsIrBackendFacade(
         }
 
         if (generateDts) {
+            val tsFiles = compilerResult.outputs.entries.associate { it.value.getFullTsDefinition(moduleId, moduleKind) to it.key }
+            val tsDefinitions = tsFiles.entries.singleOrNull()?.key
+                ?: error("[${tsFiles.values.joinToString { it.name }}] make different TypeScript")
+
             outputFile
                 .withReplacedExtensionOrNull("_v5${moduleKind.extension}", ".d.ts")!!
-                .write(compilerResult.tsDefinitions ?: error("No ts definitions"))
+                .write(tsDefinitions)
         }
 
         return this

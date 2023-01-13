@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -23,7 +25,7 @@ class FirSingleExpressionBlock(
 ) : FirBlock() {
     override val source: KtSourceElement?
         get() = statement.source?.fakeElement(KtFakeSourceElementKind.SingleExpressionBlock)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override var annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
     override val statements: List<FirStatement> get() = listOf(statement)
     override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
@@ -52,6 +54,10 @@ class FirSingleExpressionBlock(
         transformAnnotations(transformer, data)
         typeRef = typeRef.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirBlock {

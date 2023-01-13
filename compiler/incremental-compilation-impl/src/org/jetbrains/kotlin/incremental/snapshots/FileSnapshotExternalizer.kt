@@ -23,7 +23,7 @@ import java.io.File
 
 object FileSnapshotExternalizer : DataExternalizer<FileSnapshot> {
     override fun save(out: DataOutput, value: FileSnapshot) {
-        out.writeUTF(value.file.canonicalPath)
+        out.writeUTF(value.file.normalize().absolutePath)
         out.writeLong(value.length)
         out.writeInt(value.hash.size)
         out.write(value.hash)

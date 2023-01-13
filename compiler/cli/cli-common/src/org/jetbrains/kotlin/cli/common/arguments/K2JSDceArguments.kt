@@ -15,7 +15,8 @@ class K2JSDceArguments : CommonToolArguments() {
 
     @GradleOption(
         value = DefaultValue.STRING_NULL_DEFAULT,
-        gradleInputType = GradleInputTypes.INTERNAL // handled by 'destinationDirectory'
+        gradleInputType = GradleInputTypes.INTERNAL, // handled by 'destinationDirectory'
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @GradleDeprecatedOption(
         message = "Use task 'destinationDirectory' to configure output directory",
@@ -44,7 +45,8 @@ class K2JSDceArguments : CommonToolArguments() {
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
             value = "-dev-mode",

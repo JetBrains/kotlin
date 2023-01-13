@@ -10,6 +10,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.compiled.ClassFileDecompilers
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder.isKotlinInternalCompiledFile
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder.isMultifileClassPartFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 
@@ -24,10 +25,11 @@ class KotlinClassFileDecompiler : ClassFileDecompilers.Full() {
         return KotlinDecompiledFileViewProvider(manager, file, physical) factory@{ provider ->
             val virtualFile = provider.virtualFile
 
-            if (isKotlinInternalCompiledFile(virtualFile))
+            if (isKotlinInternalCompiledFile(virtualFile) && !isMultifileClassPartFile(virtualFile)) {
                 null
-            else
+            } else {
                 KtClsFile(provider)
+            }
         }
     }
 }

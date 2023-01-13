@@ -150,10 +150,6 @@ class IrInlineCodegen(
         }
     }
 
-    override fun beforeValueParametersStart(contextReceiversCount: Int) {
-        invocationParamBuilder.markValueParametersStart(contextReceiversCount)
-    }
-
     override fun genInlineCall(
         callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,

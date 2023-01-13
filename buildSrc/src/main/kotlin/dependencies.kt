@@ -26,20 +26,6 @@ val Project.intellijRepo
             else -> "https://www.jetbrains.com/intellij-repository/releases"
         }
 
-val Project.internalBootstrapRepo: String?
-    get() =
-        when {
-            bootstrapKotlinRepo?.startsWith("https://buildserver.labs.intellij.net") == true
-                    || bootstrapKotlinRepo?.startsWith("https://teamcity.jetbrains.com") == true ->
-                bootstrapKotlinRepo!!.replace("artifacts/content/maven", "artifacts/content/internal/repo")
-
-            project.kotlinBuildProperties.isJpsBuildEnabled ->
-                "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_KotlinPublic_Aggregate)," +
-                        "number:$bootstrapKotlinVersion,branch:default:any/artifacts/content/internal/repo/"
-
-            else -> null
-        }
-
 fun Project.commonDependency(coordinates: String): String {
     val parts = coordinates.split(':')
     return when (parts.size) {

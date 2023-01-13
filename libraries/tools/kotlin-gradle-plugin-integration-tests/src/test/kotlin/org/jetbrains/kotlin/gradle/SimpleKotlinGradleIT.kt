@@ -6,6 +6,10 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import kotlin.io.path.appendText
+import kotlin.io.path.createDirectories
+import kotlin.io.path.createFile
+import java.util.zip.ZipFile
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
@@ -199,7 +203,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("Should be compatible with project isolation")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_1, maxVersion = TestVersions.Gradle.G_7_1)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_1)
     fun testProjectIsolation(gradleVersion: GradleVersion) {
         project(
             projectName = "instantExecution",
@@ -212,16 +216,18 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
 
     @DisplayName("Proper Gradle plugin variant is used")
     @GradleTestVersions(
-        additionalVersions = [TestVersions.Gradle.G_7_0, TestVersions.Gradle.G_7_1, TestVersions.Gradle.G_7_4],
-        maxVersion = TestVersions.Gradle.G_7_5
+        additionalVersions = [TestVersions.Gradle.G_7_0, TestVersions.Gradle.G_7_1, TestVersions.Gradle.G_7_3, TestVersions.Gradle.G_7_4, TestVersions.Gradle.G_7_5],
+        maxVersion = TestVersions.Gradle.G_7_6
     )
     @GradleTest
     internal fun pluginVariantIsUsed(gradleVersion: GradleVersion) {
         project("kotlinProject", gradleVersion) {
             build("tasks") {
                 val expectedVariant = when (gradleVersion) {
+                    GradleVersion.version(TestVersions.Gradle.G_7_6) -> "gradle76"
                     GradleVersion.version(TestVersions.Gradle.G_7_5) -> "gradle75"
-                    in GradleVersion.version(TestVersions.Gradle.G_7_1)..GradleVersion.version(TestVersions.Gradle.G_7_4) -> "gradle71"
+                    GradleVersion.version(TestVersions.Gradle.G_7_4) -> "gradle74"
+                    in GradleVersion.version(TestVersions.Gradle.G_7_1)..GradleVersion.version(TestVersions.Gradle.G_7_3) -> "gradle71"
                     GradleVersion.version(TestVersions.Gradle.G_7_0) -> "gradle70"
                     else -> "main"
                 }
@@ -254,6 +260,64 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
     internal fun kotlinDslSourceSets(gradleVersion: GradleVersion) {
         project("sourceSetsKotlinDsl", gradleVersion) {
             build("assemble")
+        }
+    }
+
+    @DisplayName("KT-53402: ignore non project source changes")
+    @GradleTest
+    fun ignoreNonProjectSourceChanges(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            val resources = projectPath.resolve("src/main/resources").createDirectories()
+            val resourceKts = resources.resolve("resource.kts").createFile()
+            resourceKts.appendText("lkdfjgkjs invalid something")
+            build("assemble")
+            resourceKts.appendText("kajhgfkh invalid something")
+            build("assemble")
+        }
+    }
+
+    @DisplayName("Changing compile task destination directory does not break test compilation")
+    @GradleTest
+    internal fun customDestinationDir(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            //language=Groovy
+            buildGradle.appendText(
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class).configureEach {
+                |    if (it.name == "compileKotlin") {
+                |        it.destinationDirectory.set(project.layout.buildDirectory.dir("banana"))
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            build("build") {
+                assertFileInProjectExists("build/banana/demo/KotlinGreetingJoiner.class")
+                assertFileInProjectExists("build/libs/simpleProject.jar")
+                ZipFile(projectPath.resolve("build/libs/simpleProject.jar").toFile()).use { jar ->
+                    assert(jar.entries().asSequence().count { it.name == "demo/KotlinGreetingJoiner.class" } == 1) {
+                        "The jar should contain one entry `demo/KotlinGreetingJoiner.class` with no duplicates\n" +
+                                jar.entries().asSequence().map { it.name }.joinToString()
+                    }
+                }
+            }
+        }
+    }
+
+    @DisplayName("Default jar content should not contain duplicates")
+    @GradleTest
+    internal fun defaultJarContent(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build("build") {
+                assertFileInProjectExists("build/libs/simpleProject.jar")
+                ZipFile(projectPath.resolve("build/libs/simpleProject.jar").toFile()).use { jar ->
+                    assert(jar.entries().asSequence().count { it.name == "demo/KotlinGreetingJoiner.class" } == 1) {
+                        "The jar should contain one entry `demo/KotlinGreetingJoiner.class` with no duplicates\n" +
+                                jar.entries().asSequence().map { it.name }.joinToString()
+                    }
+                }
+            }
         }
     }
 }

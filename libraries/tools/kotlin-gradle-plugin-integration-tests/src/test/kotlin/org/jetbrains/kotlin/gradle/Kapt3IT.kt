@@ -33,11 +33,11 @@ import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.appendText
 import kotlin.io.path.deleteExisting
 import kotlin.io.path.outputStream
 import kotlin.test.assertEquals
 
-@OtherGradlePluginTests
 abstract class Kapt3BaseIT : KGPBaseTest() {
     companion object {
         private const val KAPT_SUCCESSFUL_MESSAGE = "Annotation processing complete, errors: 0"
@@ -116,6 +116,7 @@ class Kapt3ClassLoadersCacheIT : Kapt3IT() {
 }
 
 @DisplayName("Kapt base checks")
+@OtherGradlePluginTests
 open class Kapt3IT : Kapt3BaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
@@ -139,6 +140,17 @@ open class Kapt3IT : Kapt3BaseIT() {
             gradleVersion,
             buildJdk = jdk.location
         ) {
+            //language=Groovy
+            buildGradle.appendText(
+                """
+                |
+                |java {
+                |    sourceCompatibility = JavaVersion.VERSION_1_8
+                |    targetCompatibility = JavaVersion.VERSION_1_8
+                |}
+                """.trimMargin()
+            )
+
             build("assemble") {
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin")
                 // Check added because of https://youtrack.jetbrains.com/issue/KT-33056.
@@ -574,12 +586,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             buildAndFail("build") {
                 val actual = getErrorMessages()
-                // try as 0 starting lines first, then as 1 starting line
-                try {
-                    assertEquals(expected = genJavaErrorString(8, 20), actual = actual)
-                } catch (e: AssertionError) {
-                    assertEquals(expected = genJavaErrorString(9, 21), actual = actual)
-                }
+                assertEquals(expected = genJavaErrorString(7, 19), actual = actual)
             }
 
             buildGradle.modify {
@@ -588,12 +595,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             buildAndFail("build") {
                 val actual = getErrorMessages()
-                // try as 0 starting lines first, then as 1 starting line
-                try {
-                    assertEquals(expected = genKotlinErrorString(3, 6), actual = actual)
-                } catch (e: AssertionError) {
-                    assertEquals(expected = genKotlinErrorString(4, 7), actual = actual)
-                }
+                assertEquals(expected = genKotlinErrorString(4, 7), actual = actual)
             }
         }
     }
@@ -624,8 +626,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             build("build") {
                 assertTasksExecuted(
-                    ":example:kaptKotlin",
-                    ":example:kaptGenerateStubsKotlin"
+                    ":example:kaptKotlin"
                 )
 
                 assertOutputContains("Additional warning message from AP")
@@ -726,9 +727,9 @@ open class Kapt3IT : Kapt3BaseIT() {
             libClassKt.modify { it.checkedReplace(original, replacement1) }
 
             build("assemble") {
+                assertTasksUpToDate(":app:kaptGenerateStubsKotlin")
                 assertTasksExecuted(
                     ":lib:compileKotlin",
-                    ":app:kaptGenerateStubsKotlin",
                     ":app:kaptKotlin"
                 )
             }
@@ -750,8 +751,8 @@ open class Kapt3IT : Kapt3BaseIT() {
 
             libClassKt.modify { it.checkedReplace(replacement1, replacement2) }
             build("assemble") {
-                assertTasksExecuted(":lib:compileKotlin", ":app:kaptGenerateStubsKotlin")
-                assertTasksUpToDate(":app:kaptKotlin")
+                assertTasksExecuted(":lib:compileKotlin")
+                assertTasksUpToDate(":app:kaptKotlin", ":app:kaptGenerateStubsKotlin")
             }
         }
     }
@@ -929,16 +930,11 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @DisplayName("Works with JPMS on JDK 9+")
-    @JdkVersions(versions = [JavaVersion.VERSION_11])
-    @GradleWithJdkTest
-    fun testJpmsModule(
-        gradleVersion: GradleVersion,
-        jdk: JdkVersions.ProvidedJdk
-    ) {
+    @GradleTest
+    fun testJpmsModule(gradleVersion: GradleVersion, ) {
         project(
             "jpms-module".withPrefix,
             gradleVersion,
-            buildJdk = jdk.location
         ) {
             build("assemble") {
                 assertTasksExecuted(":kaptKotlin", ":kaptGenerateStubsKotlin", ":compileKotlin", ":compileJava")

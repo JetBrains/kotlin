@@ -6,7 +6,7 @@ KtEnumEntrySymbol:
   isExtension: false
   name: SYNCHRONIZED
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/LazyThreadSafetyMode
   symbolKind: CLASS_MEMBER
   typeParameters: []

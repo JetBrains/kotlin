@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtObjectLiteralExpression
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.intermediate.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 
 class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
     constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
@@ -143,10 +145,12 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
                     metadata = DescriptorMetadataSource.Property(propertyDescriptor)
                 }
             }.also { irDelegate ->
-                irDelegate.initializer = generateInitializerBodyForPropertyDelegate(
-                    propertyDescriptor, kPropertyType, ktDelegate,
-                    irDelegate.symbol
-                )
+                if (context.configuration.generateBodies) {
+                    irDelegate.initializer = generateInitializerBodyForPropertyDelegate(
+                        propertyDescriptor, kPropertyType, ktDelegate,
+                        irDelegate.symbol
+                    )
+                }
             }
         }
     }
@@ -315,10 +319,32 @@ class DelegatedPropertyGenerator(declarationGenerator: DeclarationGenerator) : D
         ktDelegate: KtPropertyDelegate
     ): KotlinType {
         val provideDelegateResolvedCall = get(BindingContext.PROVIDE_DELEGATE_RESOLVED_CALL, delegatedPropertyDescriptor)
-        return if (provideDelegateResolvedCall != null)
+        val delegateType = if (provideDelegateResolvedCall != null) {
             provideDelegateResolvedCall.resultingDescriptor.returnType!!
-        else
+        } else {
             getTypeInferredByFrontendOrFail(ktDelegate.expression!!)
+        }
+        // For KAPT stub generation, we approximate the type of the delegate.
+        // Since we are not generating bodies, we could end up with unbound
+        // symbols in cases such as:
+        //
+        // val x by object: Serializable {}
+        //
+        // val x by lazy { object: Serializable {} }
+        //
+        // For the first case, we approximate to the super type for delegation
+        // to anonymous objects.
+        //
+        // For the second case, we erase type parameters from types that are
+        // not anonymous objects. This avoids using anonymous object types,
+        // and the types will be raw in the output anyway.
+        return if (context.configuration.generateBodies) {
+            delegateType
+        } else if (ktDelegate.expression is KtObjectLiteralExpression) {
+            delegateType.constructor.supertypes.first()
+        } else {
+            delegateType.replaceArgumentsWithStarProjections()
+        }
     }
 
     private fun generateInitializerForLocalDelegatedPropertyDelegate(

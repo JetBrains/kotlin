@@ -27,27 +27,32 @@ fun box() {
 //     variables local to the function, and hence need no name mangling to
 //     properly figure in the debugger.
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:13 box:
 // test.kt:5 foo:
-
 // EXPECTATIONS JVM
 // test.kt:6 foo: x:int=1:int
 // test.kt:9 foo: x:int=1:int, $fun$bar$1:TestKt$foo$1=TestKt$foo$1
-
 // EXPECTATIONS JVM_IR
 // test.kt:9 foo: x:int=1:int
-
 // EXPECTATIONS JVM
 // test.kt:7 invoke:
 // test.kt:8 invoke: y:int=1:int
 // EXPECTATIONS JVM_IR
 // test.kt:7 foo$bar: x:int=1:int
 // test.kt:8 foo$bar: x:int=1:int, y:int=1:int
-
 // EXPECTATIONS JVM
 // test.kt:10 foo: x:int=1:int, $fun$bar$1:TestKt$foo$1=TestKt$foo$1
 // test.kt:14 box:
 // EXPECTATIONS JVM_IR
 // test.kt:10 foo: x:int=1:int
+// test.kt:14 box:
+
+// EXPECTATIONS JS_IR
+// test.kt:13 box:
+// test.kt:5 foo:
+// test.kt:9 foo: x=1:number
+// test.kt:7 foo$bar: x=1:number
+// test.kt:8 foo$bar: x=1:number, y=1:number
+// test.kt:10 foo: x=1:number
 // test.kt:14 box:

@@ -5,23 +5,22 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.JvmFieldApplicabilityProblem.*
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirPropertyChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.needsMultiFieldValueClassFlattening
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.*
@@ -39,8 +38,8 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotation = declaration.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID) ?: return
         val session = context.session
+        val annotation = declaration.getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) ?: return
         val containingClassSymbol = declaration.containingClassLookupTag()?.toFirRegularClassSymbol(session)
 
         val problem = when {
@@ -56,7 +55,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
                 if (!session.languageVersionSettings.supportsFeature(LanguageFeature.JvmFieldInInterface)) {
                     INSIDE_COMPANION_OF_INTERFACE
                 } else {
-                    if (!isInterfaceCompanionWithPublicJvmFieldProperties(containingClassSymbol)) {
+                    if (!isInterfaceCompanionWithPublicJvmFieldProperties(containingClassSymbol, session)) {
                         NOT_PUBLIC_VAL_WITH_JVMFIELD
                     } else {
                         return
@@ -65,7 +64,8 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
             }
             containingClassSymbol == null && isInsideJvmMultifileClassFile(context) ->
                 TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE
-            declaration.returnTypeRef.isInlineClassThatRequiresMangling(session) -> RETURN_TYPE_IS_INLINE_CLASS
+            declaration.returnTypeRef.isInlineClassThatRequiresMangling(session) -> RETURN_TYPE_IS_VALUE_CLASS
+            declaration.returnTypeRef.needsMultiFieldValueClassFlattening(session) -> RETURN_TYPE_IS_VALUE_CLASS
             else -> return
         }
 
@@ -108,7 +108,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
         return outerClassKind == ClassKind.INTERFACE || outerClassKind == ClassKind.ANNOTATION_CLASS
     }
 
-    private fun isInterfaceCompanionWithPublicJvmFieldProperties(containingClass: FirRegularClassSymbol): Boolean {
+    private fun isInterfaceCompanionWithPublicJvmFieldProperties(containingClass: FirRegularClassSymbol, session: FirSession): Boolean {
         for (symbol in containingClass.declarationSymbols) {
             if (symbol !is FirPropertySymbol) continue
 
@@ -116,7 +116,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
                 return false
             }
 
-            if (!symbol.hasJvmFieldAnnotation()) {
+            if (!symbol.hasJvmFieldAnnotation(session)) {
                 return false
             }
         }
@@ -124,12 +124,12 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker() {
         return true
     }
 
-    private fun FirPropertySymbol.hasJvmFieldAnnotation(): Boolean {
-        return getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID) != null
+    private fun FirPropertySymbol.hasJvmFieldAnnotation(session: FirSession): Boolean {
+        return getAnnotationByClassId(JVM_FIELD_ANNOTATION_CLASS_ID, session) != null
     }
 
     private fun isInsideJvmMultifileClassFile(context: CheckerContext): Boolean {
-        return context.findClosest<FirFile>()?.annotations?.any {
+        return context.containingFile?.annotations?.any {
             it.annotationTypeRef.coneType.classId == JVM_MULTIFILE_CLASS_ID
         } == true
     }

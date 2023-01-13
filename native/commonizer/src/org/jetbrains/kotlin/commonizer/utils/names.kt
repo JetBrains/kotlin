@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.commonizer.cir.CirEntityId
 import org.jetbrains.kotlin.commonizer.cir.CirName
 import org.jetbrains.kotlin.commonizer.cir.CirPackageName
+import org.jetbrains.kotlin.library.metadata.impl.ForwardDeclarationsFqNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.serialization.konan.impl.ForwardDeclarationsFqNames
 
 internal val DEPRECATED_ANNOTATION_FQN: FqName = FqName(Deprecated::class.java.name)
 internal const val DEPRECATED_ANNOTATION_FULL_NAME: ClassName = "kotlin/Deprecated"

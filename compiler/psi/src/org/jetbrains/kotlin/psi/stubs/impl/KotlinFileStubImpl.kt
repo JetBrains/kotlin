@@ -40,8 +40,8 @@ class KotlinFileStubImpl(
     val facadePartSimpleNames: List<String>?,
 ) : PsiFileStubImpl<KtFile>(ktFile), KotlinFileStub, PsiClassHolderFileStub<KtFile> {
 
-    constructor(jetFile: KtFile?, packageName: String, isScript: Boolean) : this(
-        jetFile,
+    constructor(ktFile: KtFile?, packageName: String, isScript: Boolean) : this(
+        ktFile,
         packageName,
         isScript,
         facadeFqNameString = null,

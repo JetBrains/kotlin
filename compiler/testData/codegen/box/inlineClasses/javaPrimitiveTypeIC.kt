@@ -1,20 +1,19 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses
 
 import kotlin.test.*
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class I(val x: Int)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class JLI(val x: java.lang.Integer)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class U(val x: Unit?)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class N(val x: Nothing?)
 
 val icUnit = U(Unit)

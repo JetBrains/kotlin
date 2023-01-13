@@ -7,13 +7,11 @@ public final class NonExistentClass {
 
 package test;
 
-import java.lang.System;
-
 /**
  * KDoc comment.
  */
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 @kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class Simple {
 
     public Simple() {
@@ -33,18 +31,14 @@ public final class Simple {
 
 package test;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface MyAnnotation {
 }
 
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public enum EnumClass {
@@ -58,8 +52,6 @@ public enum EnumClass {
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public enum EnumClass2 {

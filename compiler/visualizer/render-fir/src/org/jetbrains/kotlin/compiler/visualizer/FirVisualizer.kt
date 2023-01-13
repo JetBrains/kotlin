@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.*
@@ -270,7 +271,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 when (psi) {
                     is KtLambdaArgument -> {
                         val firLambda = (psi.firstOfType<FirLambdaArgumentExpression>()?.expression as? FirAnonymousFunctionExpression)?.anonymousFunction
-                        firLambda?.receiverTypeRef?.let {
+                        firLambda?.receiverParameter?.typeRef?.let {
                             lastCallWithLambda = psi.getLambdaExpression()?.firstOfType<FirLabel>()?.name
                             implicitReceivers += it.coneType
                             psi.accept(this)
@@ -305,9 +306,9 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             }
         }
 
-        override fun visitWhenEntry(jetWhenEntry: KtWhenEntry) {
-            jetWhenEntry.firstOfTypeWithRender<FirWhenBranch>(jetWhenEntry.expression) { this.result.typeRef }
-            super.visitWhenEntry(jetWhenEntry)
+        override fun visitWhenEntry(ktWhenEntry: KtWhenEntry) {
+            ktWhenEntry.firstOfTypeWithRender<FirWhenBranch>(ktWhenEntry.expression) { this.result.typeRef }
+            super.visitWhenEntry(ktWhenEntry)
         }
 
         override fun visitClassLiteralExpression(expression: KtClassLiteralExpression) {
@@ -537,7 +538,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             data.append(if (fir.isVar) "var" else "val").append(" ")
             renderListInTriangles(fir.typeParameters, data, withSpace = true)
 
-            val receiver = fir.receiverTypeRef?.render()
+            val receiver = fir.receiverParameter?.typeRef?.render()
             when {
                 receiver != null -> data.append(receiver).append(".").append(symbol.callableId.callableName)
                 fir.dispatchReceiverType != null -> {
@@ -560,14 +561,14 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
             val id = getSymbolId(symbol)
             val callableName = symbol.callableId.callableName
-            val receiverType = fir.receiverTypeRef
+            val receiverParameterType = fir.receiverParameter?.typeRef
 
             if (call == null) {
                 // call is null for callable reference
-                if (receiverType == null) {
+                if (receiverParameterType == null) {
                     symbol.callableId.className?.let { data.append("($it).$callableName") } ?: data.append(callableName)
                 } else {
-                    data.append("${receiverType.render()}.$callableName")
+                    data.append("${receiverParameterType.render()}.$callableName")
                 }
                 return
             }
@@ -576,7 +577,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             when {
                 call.extensionReceiver !is FirNoReceiverExpression -> {
                     // render type from symbol because this way it will be consistent with psi render
-                    fir.receiverTypeRef?.accept(this, data)
+                    fir.receiverParameter?.accept(this, data)
                     data.append(".").append(callableName)
                 }
                 call.dispatchReceiver.typeRef.annotations.any { it.isExtensionFunctionAnnotationCall } -> {
@@ -675,10 +676,14 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
 
         override fun visitNamedReference(namedReference: FirNamedReference, data: StringBuilder) {
             if (namedReference is FirErrorNamedReference) {
-                data.append("[ERROR : ${namedReference.diagnostic.reason}]")
+                data.append(namedReference.diagnostic.dump())
                 return
             }
             visitElement(namedReference, data)
+        }
+
+        private fun ConeDiagnostic.dump(): String {
+            return "[ERROR : ${reason}]"
         }
 
         override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: StringBuilder) {
@@ -696,6 +701,11 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 symbol is FirFieldSymbol -> renderField(symbol.fir, data)
                 else -> (symbol.fir as? FirVariable)?.let { renderVariable(it, data) }
             }
+        }
+
+        override fun visitResolvedErrorReference(resolvedErrorReference: FirResolvedErrorReference, data: StringBuilder) {
+            visitResolvedNamedReference(resolvedErrorReference, data)
+            data.append(resolvedErrorReference.diagnostic.dump())
         }
 
         override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: StringBuilder) {
@@ -772,8 +782,11 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                         is FirConstructorSymbol -> visitConstructor(callee.resolvedSymbol.fir as FirConstructor, data)
                         else -> renderFunctionSymbol(callee.resolvedSymbol as FirNamedFunctionSymbol, data, functionCall)
                     }
+                    if (callee is FirResolvedErrorReference) {
+                        data.append(callee.diagnostic.dump())
+                    }
                 }
-                is FirErrorNamedReference -> data.append("[ERROR : ${callee.diagnostic.reason}]")
+                is FirErrorNamedReference -> data.append(callee.diagnostic.dump())
             }
         }
 
@@ -856,7 +869,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             return when (val fir = this.fir) {
                 is FirConstructor -> fir.returnTypeRef.coneType.isLocal()
                 is FirCallableDeclaration -> {
-                    fir.dispatchReceiverClassOrNull()?.toFirRegularClassSymbol(session)?.isLocal ?: false
+                    fir.dispatchReceiverClassLookupTagOrNull()?.toFirRegularClassSymbol(session)?.isLocal ?: false
                 }
                 else -> false
             }

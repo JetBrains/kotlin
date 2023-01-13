@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.cli.js
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.common.CompilationException
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.backend.wasm.compileWasm
+import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
+import org.jetbrains.kotlin.backend.wasm.compileWasm
+import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.wasmPhases
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
@@ -21,41 +25,81 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_EXCEPTION
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.RUNTIME_DIAGNOSTIC_LOG
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
-import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
+import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
+import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
+import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
+import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
+import org.jetbrains.kotlin.fir.pipeline.runCheckers
+import org.jetbrains.kotlin.fir.pipeline.runResolution
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
+import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
+import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.ic.*
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
+import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
+import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
+import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
+import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
+import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.join
 import java.io.File
 import java.io.IOException
+import java.nio.file.Paths
 
 private val K2JSCompilerArguments.granularity: JsGenerationGranularity
     get() = when {
@@ -73,8 +117,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         return K2JSCompilerArguments()
     }
 
-    private data class TransformResult(val out: CompilationOutputs, val dts: String)
-
     private class Ir2JsTransformer(
         val arguments: K2JSCompilerArguments,
         val module: ModulesStructure,
@@ -83,15 +125,10 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val mainCallArguments: List<String>?
     ) {
         private fun lowerIr(): LoweredIr {
-            val irFactory = when {
-                arguments.irNewIr2Js -> IrFactoryImplForJsIC(WholeWorldStageController())
-                else -> IrFactoryImpl
-            }
-
             return compile(
                 module,
                 phaseConfig,
-                irFactory,
+                IrFactoryImplForJsIC(WholeWorldStageController()),
                 keep = arguments.irKeep?.split(",")
                     ?.filterNot { it.isEmpty() }
                     ?.toSet()
@@ -100,45 +137,25 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     arguments.irDceRuntimeDiagnostic,
                     messageCollector
                 ),
-                baseClassIntoMetadata = arguments.irBaseClassInMetadata,
                 safeExternalBoolean = arguments.irSafeExternalBoolean,
                 safeExternalBooleanDiagnostic = RuntimeDiagnostic.resolve(
                     arguments.irSafeExternalBooleanDiagnostic,
                     messageCollector
                 ),
-                granularity = arguments.granularity,
-                icCompatibleIr2Js = arguments.irNewIr2Js,
+                granularity = arguments.granularity
             )
         }
 
-        private fun makeJsCodeGeneratorAndDts(): Pair<JsCodeGenerator, String> {
+        private fun makeJsCodeGenerator(): JsCodeGenerator {
             val ir = lowerIr()
-            val transformer = IrModuleToJsTransformerTmp(ir.context, mainCallArguments, ir.moduleFragmentToUniqueName)
+            val transformer = IrModuleToJsTransformer(ir.context, mainCallArguments, ir.moduleFragmentToUniqueName)
 
             val mode = TranslationMode.fromFlags(arguments.irDce, arguments.irPerModule, arguments.irMinimizedMemberNames)
-            return transformer.makeJsCodeGeneratorAndDts(ir.allModules, mode)
+            return transformer.makeJsCodeGenerator(ir.allModules, mode)
         }
 
-        fun compileAndTransformIrNew(): TransformResult {
-            val (generator, dts) = makeJsCodeGeneratorAndDts()
-            val out = generator.generateJsCode(relativeRequirePath = true, outJsProgram = false)
-            return TransformResult(out, dts)
-        }
-
-        fun compileAndTransformIrOld(): TransformResult {
-            val ir = lowerIr()
-            val transformer = IrModuleToJsTransformer(
-                ir.context,
-                mainCallArguments,
-                fullJs = !arguments.irDce,
-                dceJs = arguments.irDce,
-                multiModule = arguments.irPerModule,
-                relativeRequirePath = true,
-                moduleToName = ir.moduleFragmentToUniqueName
-            )
-
-            val result = transformer.generateModule(ir.allModules)
-            return TransformResult(result.outputs.values.single(), result.tsDefinitions ?: error("No ts definitions"))
+        fun compileAndTransformIrNew(): CompilationOutputs {
+            return makeJsCodeGenerator().generateJsCode(relativeRequirePath = true, outJsProgram = false)
         }
     }
 
@@ -150,37 +167,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         paths: KotlinPaths?
     ): ExitCode {
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            messageCollector.report(ERROR, "K2 does not support JS target right now")
-            return COMPILATION_ERROR
-        }
 
         val pluginLoadResult = loadPlugins(paths, arguments, configuration)
         if (pluginLoadResult != OK) return pluginLoadResult
 
-        //TODO: add to configuration everything that may come in handy at script compiler and use it there
         if (arguments.script) {
-
-            if (!arguments.enableJsScripting) {
-                @Suppress("SpellCheckingInspection")
-                messageCollector.report(ERROR, "Script for K/JS should be enabled explicitly, see -Xenable-js-scripting")
-                return COMPILATION_ERROR
-            }
-
-            configuration.put(CommonConfigurationKeys.MODULE_NAME, "repl.kts")
-
-            val environment = KotlinCoreEnvironment.getOrCreateApplicationEnvironmentForProduction(rootDisposable, configuration)
-            val projectEnv = KotlinCoreEnvironment.ProjectEnvironment(rootDisposable, environment, configuration)
-            projectEnv.registerExtensionsFromPlugins(configuration)
-
-            val scriptingEvaluators = ScriptEvaluationExtension.getInstances(projectEnv.project)
-            val scriptingEvaluator = scriptingEvaluators.find { it.isAccepted(arguments) }
-            if (scriptingEvaluator == null) {
-                messageCollector.report(ERROR, "Unable to evaluate script, no scripting plugin loaded")
-                return COMPILATION_ERROR
-            }
-
-            return scriptingEvaluator.eval(arguments, configuration, projectEnv)
+            messageCollector.report(ERROR, "K/JS does not support Kotlin script (*.kts) files")
+            return COMPILATION_ERROR
         }
 
         if (arguments.freeArgs.isEmpty() && !(incrementalCompilationIsEnabledForJs(arguments))) {
@@ -205,6 +198,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
+        configuration.put(JSConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
 
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()
@@ -219,6 +213,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.put(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, arguments.normalizeAbsolutePath)
         configuration.put(CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS, arguments.enableSignatureClashChecks)
 
+        // ----
+
         val environmentForJS =
             KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JS_CONFIG_FILES)
         val projectJs = environmentForJS.project
@@ -229,6 +225,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configurationJs.put(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME, arguments.renderInternalDiagnosticNames)
         configurationJs.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, arguments.irPropertyLazyInitialization)
         configurationJs.put(JSConfigurationKeys.GENERATE_POLYFILLS, arguments.generatePolyfills)
+        configurationJs.put(JSConfigurationKeys.GENERATE_DTS, arguments.generateDts)
         configurationJs.put(JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS, arguments.irGenerateInlineAnonymousFunctions)
 
         if (!checkKotlinPackageUsage(environmentForJS.configuration, sourcesFiles)) return COMPILATION_ERROR
@@ -273,125 +270,66 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        val cacheDirectories = configureLibraries(arguments.cacheDirectories)
-
-        // TODO: Use JS IR IC infrastructure for WASM?
-        val icCaches = if (!arguments.wasm && cacheDirectories.isNotEmpty()) {
-            messageCollector.report(INFO, "")
-            messageCollector.report(INFO, "Building cache:")
-            messageCollector.report(INFO, "to: $outputDir")
-            messageCollector.report(INFO, arguments.cacheDirectories ?: "")
-            messageCollector.report(INFO, libraries.toString())
-
-            val start = System.currentTimeMillis()
-
-            val cacheUpdater = CacheUpdater(
-                mainModule = arguments.includes!!,
-                allModules = libraries,
-                icCachePaths = cacheDirectories,
-                compilerConfiguration = configurationJs,
-                irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
-                mainArguments = mainCallArguments,
-                compilerInterfaceFactory = { mainModule, cfg -> JsIrCompilerWithIC(mainModule, cfg, arguments.granularity) }
-            )
-
-            var tp = System.currentTimeMillis()
-            val icTimeMessages = mutableListOf("cache updater initialization: ${tp - start}ms")
-
-            val artifacts = cacheUpdater.actualizeCaches {
-                val now = System.currentTimeMillis()
-                icTimeMessages += "$it: ${now - tp}ms"
-                tp = now
-            }
-
-            messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
-            for (icTimeMessage in icTimeMessages) {
-                messageCollector.report(INFO, "  $icTimeMessage")
-            }
-
-            var libIndex = 0
-            for ((libFile, srcFiles) in cacheUpdater.getDirtyFileStats()) {
-                val (msg, showFiles) = when {
-                    srcFiles.values.all { it.contains(DirtyFileState.ADDED_FILE) } -> "fully rebuilt due to clean build" to false
-                    srcFiles.values.all { it.contains(DirtyFileState.MODIFIED_CONFIG) } -> "fully rebuilt due to config modification" to false
-                    else -> "partially rebuilt" to true
-                }
-                messageCollector.report(INFO, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
-                if (showFiles) {
-                    var fileIndex = 0
-                    for ((srcFile, stat) in srcFiles) {
-                        val statStr = stat.joinToString { it.str }
-                        // Use index, because MessageCollector ignores already reported messages
-                        messageCollector.report(INFO, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
-                    }
-                }
-            }
-
-            artifacts
-        } else emptyList()
+        val icCaches = prepareIcCaches(
+            arguments = arguments,
+            messageCollector = messageCollector,
+            outputDir = outputDir,
+            libraries = libraries,
+            friendLibraries = friendLibraries,
+            configurationJs = configurationJs,
+            mainCallArguments = mainCallArguments
+        )
 
         // Run analysis if main module is sources
-        lateinit var sourceModule: ModulesStructure
+        var sourceModule: ModulesStructure? = null
         val includes = arguments.includes
         if (includes == null) {
-            do {
-                sourceModule = prepareAnalyzedSourceModule(
-                    projectJs,
-                    environmentForJS.getSourceFiles(),
-                    configurationJs,
-                    libraries,
-                    friendLibraries,
-                    AnalyzerWithCompilerReport(configurationJs)
+            val outputKlibPath =
+                if (arguments.irProduceKlibFile) outputDir.resolve("$outputName.klib").normalize().absolutePath
+                else outputDirPath
+            if (arguments.useK2) {
+                messageCollector.report(
+                    STRONG_WARNING,
+                    "ATTENTION!\n This build uses experimental K2 compiler: \n  -Xuse-k2"
                 )
-                val result = sourceModule.jsFrontEndResult.jsAnalysisResult
-                if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
-                    environmentForJS.addKotlinSourceRoots(result.additionalKotlinRoots)
-                }
-            } while (result is JsAnalysisResult.RetryWithAdditionalRoots)
-            if (!sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
-                return OK
-        }
+                sourceModule = processSourceModuleWithK2(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
+            } else {
+                sourceModule = processSourceModule(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
 
-        if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
+                if (!sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
+                    return OK
+            }
 
-            generateKLib(
-                sourceModule,
-                irFactory = IrFactoryImpl,
-                outputKlibPath = if (arguments.irProduceKlibFile)
-                    outputDir.resolve("$outputName.klib").normalize().absolutePath
-                else
-                    outputDirPath,
-                nopack = arguments.irProduceKlibDir,
-                jsOutputName = arguments.irPerModuleOutputName,
-            )
         }
 
         if (arguments.irProduceJs) {
+            val moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND] ?: error("cannot get 'module kind' from configuration")
+
             messageCollector.report(INFO, "Produce executable: $outputDirPath")
-            messageCollector.report(INFO, arguments.cacheDirectories ?: "")
+            messageCollector.report(INFO, "Cache directory: ${arguments.cacheDirectory}")
 
             if (icCaches.isNotEmpty()) {
                 val beforeIc2Js = System.currentTimeMillis()
 
                 val jsExecutableProducer = JsExecutableProducer(
                     mainModuleName = moduleName,
-                    moduleKind = configurationJs[JSConfigurationKeys.MODULE_KIND]!!,
+                    moduleKind = moduleKind,
                     sourceMapsInfo = SourceMapsInfo.from(configurationJs),
                     caches = icCaches,
                     relativeRequirePath = true
                 )
 
-                val outputs = jsExecutableProducer.buildExecutable(
-                    multiModule = arguments.irPerModule,
-                    outJsProgram = false,
-                    rebuildCallback = { rebuiltModule ->
-                        messageCollector.report(INFO, "IC module builder rebuilt module [${File(rebuiltModule).name}]")
-                    }
-                )
-
-                outputs.write(outputDir, outputName)
+                val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.irPerModule, outJsProgram = false)
+                outputs.write(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
 
                 messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
+                for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
+                    messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+                }
+
+                for (module in rebuiltModules) {
+                    messageCollector.report(INFO, "IC module builder rebuilt JS for module [${File(module).name}]")
+                }
 
                 return OK
             }
@@ -414,7 +352,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     friendLibraries
                 )
             } else {
-                sourceModule
+                sourceModule!!
             }
 
             if (arguments.wasm) {
@@ -428,18 +366,23 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 if (arguments.irDce) {
                     eliminateDeadDeclarations(allModules, backendContext)
                 }
+
+                val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
+
                 val res = compileWasm(
                     allModules = allModules,
                     backendContext = backendContext,
+                    baseFileName = outputName,
                     emitNameSection = arguments.wasmDebug,
                     allowIncompleteImplementations = arguments.irDce,
-                    generateWat = true,
+                    generateWat = configuration.get(JSConfigurationKeys.WASM_GENERATE_WAT, false),
+                    generateSourceMaps = generateSourceMaps
                 )
 
                 writeCompilationResult(
                     result = res,
                     dir = outputDir,
-                    fileNameBase = outputName
+                    fileNameBase = outputName,
                 )
 
                 return OK
@@ -448,21 +391,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val start = System.currentTimeMillis()
 
             try {
-
-                val (outputs, tsDefinitions) = if (arguments.irNewIr2Js) {
-                    Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments).compileAndTransformIrNew()
-                } else {
-                    Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments).compileAndTransformIrOld()
-                }
+                val ir2JsTransformer = Ir2JsTransformer(arguments, module, phaseConfig, messageCollector, mainCallArguments)
+                val outputs = ir2JsTransformer.compileAndTransformIrNew()
 
                 messageCollector.report(INFO, "Executable production duration: ${System.currentTimeMillis() - start}ms")
 
-                outputs.write(outputDir, outputName)
-
-                if (arguments.generateDts) {
-                    val dtsFile = outputDir.resolve("$outputName.d.ts")
-                    dtsFile.writeText(tsDefinitions)
-                }
+                outputs.write(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
             } catch (e: CompilationException) {
                 messageCollector.report(
                     ERROR,
@@ -481,7 +415,301 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         return OK
     }
 
-    private fun CompilationOutputs.write(outputDir: File, outputName: String) {
+    private fun processSourceModule(
+        environmentForJS: KotlinCoreEnvironment,
+        libraries: List<String>,
+        friendLibraries: List<String>,
+        arguments: K2JSCompilerArguments,
+        outputKlibPath: String
+    ): ModulesStructure {
+        lateinit var sourceModule: ModulesStructure
+        do {
+            sourceModule = prepareAnalyzedSourceModule(
+                environmentForJS.project,
+                environmentForJS.getSourceFiles(),
+                environmentForJS.configuration,
+                libraries,
+                friendLibraries,
+                AnalyzerWithCompilerReport(environmentForJS.configuration)
+            )
+            val result = sourceModule.jsFrontEndResult.jsAnalysisResult
+            if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
+                environmentForJS.addKotlinSourceRoots(result.additionalKotlinRoots)
+            }
+        } while (result is JsAnalysisResult.RetryWithAdditionalRoots)
+
+        if (sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode && (arguments.irProduceKlibDir || arguments.irProduceKlibFile)) {
+            val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
+            val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
+            val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+
+            val (moduleFragment, _) = generateIrForKlibSerialization(
+                environmentForJS.project,
+                moduleSourceFiles,
+                environmentForJS.configuration,
+                sourceModule.jsFrontEndResult.jsAnalysisResult,
+                sortDependencies(sourceModule.descriptors),
+                icData,
+                expectDescriptorToSymbol,
+                IrFactoryImpl,
+                verifySignatures = true
+            ) {
+                sourceModule.getModuleDescriptor(it)
+            }
+
+            val metadataSerializer =
+                KlibMetadataIncrementalSerializer(environmentForJS.configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
+
+            generateKLib(
+                sourceModule,
+                outputKlibPath,
+                nopack = arguments.irProduceKlibDir,
+                jsOutputName = arguments.irPerModuleOutputName,
+                icData = icData,
+                expectDescriptorToSymbol = expectDescriptorToSymbol,
+                moduleFragment = moduleFragment
+            ) { file ->
+                metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+            }
+        }
+        return sourceModule
+    }
+
+    private fun processSourceModuleWithK2(
+        environmentForJS: KotlinCoreEnvironment,
+        libraries: List<String>,
+        friendLibraries: List<String>,
+        arguments: K2JSCompilerArguments,
+        outputKlibPath: String
+    ): ModulesStructure? {
+        val configuration = environmentForJS.configuration
+        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
+        val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+
+        // FIR
+
+        val sessionProvider = FirProjectSessionProvider()
+        val extensionRegistrars = FirExtensionRegistrar.getInstances(environmentForJS.project)
+        val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
+            if (arguments.extendedCompilerChecks) {
+                registerExtendedCommonCheckers()
+            }
+        }
+
+        val mainModuleName = Name.special("<${configuration.get(CommonConfigurationKeys.MODULE_NAME)!!}>")
+
+        val ktFiles = environmentForJS.getSourceFiles()
+        val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
+            AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
+        }
+
+        val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
+
+        val binaryModuleData = BinaryModuleData.initialize(mainModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices)
+        val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
+            dependencies(libraries.map { Paths.get(it).toAbsolutePath() })
+            friendDependencies(friendLibraries.map { Paths.get(it).toAbsolutePath() })
+            // TODO: !!! dependencies module data?
+        }
+
+        val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
+        val logger = configuration.resolverLogger
+        val resolvedLibraries = jsResolveLibraries(libraries + friendLibraries, repositories, logger).getFullResolvedList()
+
+        FirJsSessionFactory.createJsLibrarySession(
+            mainModuleName,
+            resolvedLibraries,
+            sessionProvider,
+            dependencyList.moduleDataProvider,
+            configuration.languageVersionSettings,
+            registerExtraComponents = {},
+        )
+
+        val mainModuleData = FirModuleDataImpl(
+            mainModuleName,
+            dependencyList.regularDependencies,
+            dependencyList.dependsOnDependencies,
+            dependencyList.friendsDependencies,
+            JsPlatforms.defaultJsPlatform,
+            JsPlatformAnalyzerServices
+        )
+
+        val session = FirJsSessionFactory.createJsModuleBasedSession(
+            mainModuleData,
+            sessionProvider,
+            extensionRegistrars,
+            configuration.languageVersionSettings,
+            null,
+            registerExtraComponents = {},
+            init = sessionConfigurator,
+        )
+
+        val rawFirFiles = session.buildFirFromKtFiles(ktFiles)
+        val (scopeSession, firFiles) = session.runResolution(rawFirFiles)
+        session.runCheckers(scopeSession, firFiles, diagnosticsReporter)
+
+        if (syntaxErrors || diagnosticsReporter.hasErrors) {
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
+            return null
+        }
+
+        // FIR2IR
+
+        val fir2IrExtensions = Fir2IrExtensions.Default
+        val signaturer = IdSignatureDescriptor(JsManglerDesc)
+        val commonFirFiles = session.moduleData.dependsOnDependencies
+            .map { it.session }
+            .filter { it.kind == FirSession.Kind.Source }
+            .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
+
+        var builtInsModule: KotlinBuiltIns? = null
+        val dependencies = mutableListOf<ModuleDescriptorImpl>()
+
+        val librariesDescriptors = resolvedLibraries.map { resolvedLibrary ->
+            val storageManager = LockBasedStorageManager("ModulesStructure")
+
+            val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+                resolvedLibrary.library,
+                configuration.languageVersionSettings,
+                storageManager,
+                builtInsModule,
+                packageAccessHandler = null,
+                lookupTracker = LookupTracker.DO_NOTHING
+            )
+            dependencies += moduleDescriptor
+            moduleDescriptor.setDependencies(ArrayList(dependencies))
+
+            val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
+            if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
+
+            moduleDescriptor
+        }
+
+        val fir2irResult = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
+            session, scopeSession, firFiles + commonFirFiles,
+            configuration.languageVersionSettings, signaturer,
+            fir2IrExtensions,
+            FirJvmKotlinMangler(), // TODO: replace with potentially simpler JS version
+            JsManglerIr, IrFactoryImpl,
+            Fir2IrVisibilityConverter.Default,
+            Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
+            IrGenerationExtension.getInstances(environmentForJS.project),
+            generateSignatures = false,
+            kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
+            dependentComponents = emptyList(),
+            currentSymbolTable = null
+        ).also {
+            (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
+        }
+
+        // Serialize klib
+
+        if (/*sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode && */(arguments.irProduceKlibDir || arguments.irProduceKlibFile)) {
+            val sourceFiles = firFiles.mapNotNull { it.sourceFile }
+            val firFilesBySourceFile = firFiles.associateBy { it.sourceFile }
+
+            val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
+            // TODO: expect -> actual mapping
+            val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+
+            val metadataVersion =
+                configuration.get(CommonConfigurationKeys.METADATA_VERSION)
+                    ?: GenerationState.LANGUAGE_TO_METADATA_VERSION.getValue(configuration.languageVersionSettings.languageVersion)
+
+            serializeModuleIntoKlib(
+                configuration[CommonConfigurationKeys.MODULE_NAME]!!,
+                configuration,
+                configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
+                sourceFiles,
+                klibPath = outputKlibPath,
+                resolvedLibraries.map { it.library },
+                fir2irResult.irModuleFragment,
+                expectDescriptorToSymbol,
+                cleanFiles = icData,
+                nopack = true,
+                perFile = false,
+                containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
+                abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
+                jsOutputName = null
+            ) { file ->
+                val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
+                serializeSingleFirFile(firFile, session, scopeSession, metadataVersion)
+            }
+        }
+
+        return ModulesStructure(
+            environmentForJS.project, mainModule, configuration, libraries, friendLibraries
+        )
+    }
+
+    private fun prepareIcCaches(
+        arguments: K2JSCompilerArguments,
+        messageCollector: MessageCollector,
+        outputDir: File,
+        libraries: List<String>,
+        friendLibraries: List<String>,
+        configurationJs: CompilerConfiguration,
+        mainCallArguments: List<String>?
+    ): List<ModuleArtifact> {
+        val cacheDirectory = arguments.cacheDirectory
+
+        // TODO: Use JS IR IC infrastructure for WASM?
+        val icCaches = if (!arguments.wasm && cacheDirectory != null) {
+            messageCollector.report(INFO, "")
+            messageCollector.report(INFO, "Building cache:")
+            messageCollector.report(INFO, "to: $outputDir")
+            messageCollector.report(INFO, "cache directory: $cacheDirectory")
+            messageCollector.report(INFO, libraries.toString())
+
+            val start = System.currentTimeMillis()
+
+            val cacheUpdater = CacheUpdater(
+                mainModule = arguments.includes!!,
+                allModules = libraries,
+                mainModuleFriends = friendLibraries,
+                cacheDir = cacheDirectory,
+                compilerConfiguration = configurationJs,
+                irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
+                mainArguments = mainCallArguments,
+                compilerInterfaceFactory = { mainModule, cfg -> JsIrCompilerWithIC(mainModule, cfg, arguments.granularity) }
+            )
+
+            val artifacts = cacheUpdater.actualizeCaches()
+            messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
+            for ((event, duration) in cacheUpdater.getStopwatchLastLaps()) {
+                messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
+            }
+
+            var libIndex = 0
+            for ((libFile, srcFiles) in cacheUpdater.getDirtyFileLastStats()) {
+                val singleState = srcFiles.values.firstOrNull()?.singleOrNull()?.let { singleState ->
+                    singleState.takeIf { srcFiles.values.all { it.singleOrNull() == singleState } }
+                }
+
+                val (msg, showFiles) = when {
+                    singleState == DirtyFileState.NON_MODIFIED_IR -> continue
+                    singleState == DirtyFileState.REMOVED_FILE -> "removed" to emptyMap()
+                    singleState == DirtyFileState.ADDED_FILE -> "built clean" to emptyMap()
+                    srcFiles.values.any { it.singleOrNull() == DirtyFileState.NON_MODIFIED_IR } -> "partially rebuilt" to srcFiles
+                    else -> "fully rebuilt" to srcFiles
+                }
+                messageCollector.report(INFO, "${++libIndex}) module [${File(libFile.path).name}] was $msg")
+                var fileIndex = 0
+                for ((srcFile, stat) in showFiles) {
+                    val filteredStats = stat.filter { it != DirtyFileState.NON_MODIFIED_IR }
+                    val statStr = filteredStats.takeIf { it.isNotEmpty() }?.joinToString { it.str } ?: continue
+                    // Use index, because MessageCollector ignores already reported messages
+                    messageCollector.report(INFO, "  $libIndex.${++fileIndex}) file [${File(srcFile.path).name}]: ($statStr)")
+                }
+            }
+
+            artifacts
+        } else emptyList()
+        return icCaches
+    }
+
+    private fun CompilationOutputs.write(outputDir: File, outputName: String, genDTS: Boolean, moduleName: String, moduleKind: ModuleKind) {
         val outputFile = outputDir.resolve("$outputName.js")
         outputFile.parentFile.mkdirs()
         outputFile.write(this)
@@ -490,6 +718,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 it.parentFile.mkdirs()
                 it.write(content)
             }
+        }
+
+        if (genDTS) {
+            val dtsFile = outputDir.resolve("$outputName.d.ts")
+            dtsFile.writeText(getFullTsDefinition(moduleName, moduleKind))
         }
     }
 

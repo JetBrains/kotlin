@@ -3,6 +3,7 @@ import kotlin.contracts.*
 
 fun <T> n(): T? = null
 
+@OptIn(ExperimentalContracts::class)
 fun <T> run2(x: () -> T, y: () -> T) {
     contract {
         callsInPlace(x, InvocationKind.EXACTLY_ONCE)
@@ -38,8 +39,8 @@ fun test2(x: Any?) {
     var p: Any? = x
     p.<!UNRESOLVED_REFERENCE!>length<!> // Bad
     run2({ p = null; n() }, { p as String; 123 })
-    p<!UNSAFE_CALL!>.<!>length // Bad: p can be null
-    p?.length // OK: p is String | Nothing? = String?
+    p.<!UNRESOLVED_REFERENCE!>length<!> // Bad: p is Nothing? | (String & Nothing?) = Nothing?
+    p?.<!UNRESOLVED_REFERENCE!>length<!> // Technically OK because p is null, but what is "length"?
 }
 
 fun test3(x: Any?) {
@@ -62,4 +63,28 @@ fun test4(x: Any?) {
     )
     x.x // OK: x is I1 & I2
     x.y // OK: x is I1 & I2
+}
+
+fun test5(x: Any?, q: String?) {
+    var p: Any? = x
+    p.<!UNRESOLVED_REFERENCE!>length<!> // Bad
+    run2({ p as Int; 123 }, { p = q; n() })
+    p<!UNSAFE_CALL!>.<!>length // Bad: p is String? | (String? & Int) = String?
+    p?.length // OK: p is String?
+}
+
+fun test6() {
+    val x: String
+    // not necessarily initialized in second lambda (may call in any order)
+    run2({ x = ""; x.length }, { <!UNINITIALIZED_VARIABLE!>x<!>.length })
+    x.length // initialized here
+}
+
+fun test7() {
+    val x: Any? = ""
+    val y: Any?
+    run2({ y = x }, { })
+    if (y is String) {
+        x.length // ok - aliased
+    }
 }

@@ -495,7 +495,7 @@ class DeclarationsChecker(
         for (parameter in declaration.valueParameters) {
             trace.get(PRIMARY_CONSTRUCTOR_PARAMETER, parameter)?.let {
                 modifiersChecker.checkModifiersForDeclaration(parameter, it)
-                LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, parameter, it)
+                LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, parameter, it, languageVersionSettings)
             }
         }
 
@@ -515,12 +515,12 @@ class DeclarationsChecker(
     }
 
     private fun checkTypeParameters(typeParameterListOwner: KtTypeParameterListOwner) {
-        for (jetTypeParameter in typeParameterListOwner.typeParameters) {
+        for (ktTypeParameter in typeParameterListOwner.typeParameters) {
             if (!languageVersionSettings.supportsFeature(LanguageFeature.ClassTypeParameterAnnotations)) {
-                AnnotationResolverImpl.reportUnsupportedAnnotationForTypeParameter(jetTypeParameter, trace, languageVersionSettings)
+                AnnotationResolverImpl.reportUnsupportedAnnotationForTypeParameter(ktTypeParameter, trace, languageVersionSettings)
             }
 
-            trace.get(TYPE_PARAMETER, jetTypeParameter)?.let { DescriptorResolver.checkConflictingUpperBounds(trace, it, jetTypeParameter) }
+            trace.get(TYPE_PARAMETER, ktTypeParameter)?.let { DescriptorResolver.checkConflictingUpperBounds(trace, it, ktTypeParameter) }
         }
     }
 
@@ -610,7 +610,7 @@ class DeclarationsChecker(
         if (containingDeclaration is ClassDescriptor) {
             checkMemberProperty(property, propertyDescriptor, containingDeclaration)
         }
-        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, property, propertyDescriptor)
+        LateinitModifierApplicabilityChecker.checkLateinitModifierApplicability(trace, property, propertyDescriptor, languageVersionSettings)
         checkPropertyInitializer(property, propertyDescriptor)
         checkAccessors(property, propertyDescriptor)
         checkTypeParameterConstraints(property)

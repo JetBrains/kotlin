@@ -12,6 +12,7 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
@@ -21,10 +22,10 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.compileDependenciesTransformationOrFail
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
 import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
@@ -35,13 +36,19 @@ import java.io.Serializable
 import java.util.concurrent.Callable
 import javax.inject.Inject
 
+internal val KotlinSourceSet.cinteropMetadataDependencyTransformationTaskName: String
+    get() = lowerCamelCaseName("transform", name, "CInteropDependenciesMetadata")
+
+internal val KotlinSourceSet.cinteropMetadataDependencyTransformationForIdeTaskName: String
+    get() = lowerCamelCaseName("transform", name, "CInteropDependenciesMetadataForIde")
+
 internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTask(
     sourceSet: DefaultKotlinSourceSet,
 ): TaskProvider<CInteropMetadataDependencyTransformationTask>? {
     if (!kotlinPropertiesProvider.enableCInteropCommonization) return null
 
     return locateOrRegisterTask(
-        lowerCamelCaseName("transform", sourceSet.name, "CInteropDependenciesMetadata"),
+        sourceSet.cinteropMetadataDependencyTransformationTaskName,
         args = listOf(
             sourceSet,
             /* outputDirectory = */
@@ -61,7 +68,7 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
     if (!kotlinPropertiesProvider.enableCInteropCommonization) return null
 
     return locateOrRegisterTask(
-        lowerCamelCaseName("transform", sourceSet.name, "CInteropDependenciesMetadataForIde"),
+        sourceSet.cinteropMetadataDependencyTransformationForIdeTaskName,
         invokeWhenRegistered = {
             @OptIn(Idea222Api::class)
             ideaImportDependsOn(this)
@@ -84,7 +91,7 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
 }
 
 /**
- * The transformation tasks will internally access the lazy [GranularMetadataTransformation.metadataDependencyResolutions] property
+ * The transformation tasks will internally access the lazy [GranularMetadataTransformation.metadataDependencyResolutionsOrEmpty] property
  * which internally will potentially resolve dependencies. Having multiple tasks accessing this synchronized lazy property
  * during execution and/or configuration phase will result in an internal deadlock in Gradle
  * `DefaultResourceLockCoordinationService.withStateLock`
@@ -101,7 +108,7 @@ private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
 }
 
 private fun CInteropMetadataDependencyTransformationTask.onlyIfSourceSetIsSharedNative() {
-    onlyIf { project.getCommonizerTarget(sourceSet) is SharedCommonizerTarget }
+    onlyIf { getCommonizerTarget(sourceSet) is SharedCommonizerTarget }
 }
 
 internal open class CInteropMetadataDependencyTransformationTask @Inject constructor(
@@ -180,14 +187,16 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
     @Suppress("unused")
     @get:Classpath
-    protected val inputArtifactFiles: FileCollection = project.filesProvider {
-        sourceSet.dependencyTransformations.values.map { it.configurationToResolve.withoutProjectDependencies() }
-    }
+    protected val inputArtifactFiles: FileCollection get() = sourceSet
+        .compileDependenciesTransformationOrFail
+        .configurationToResolve
+        .withoutProjectDependencies()
 
     @get:Internal
     protected val chooseVisibleSourceSets
-        get() = sourceSet.dependencyTransformations.values
-            .flatMap { it.metadataDependencyResolutions }
+        get() = sourceSet
+            .compileDependenciesTransformationOrFail
+            .metadataDependencyResolutions
             .filterIsInstance<ChooseVisibleSourceSets>()
 
     @Suppress("unused")
@@ -203,7 +212,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @TaskAction
     protected fun transformDependencies() {
         cleaning.cleanOutputDirectory(outputDirectory)
-        if (project.getCommonizerTarget(sourceSet) !is SharedCommonizerTarget) return
+        if (getCommonizerTarget(sourceSet) !is SharedCommonizerTarget) return
         chooseVisibleSourceSets.forEach(::materializeMetadata)
     }
 

@@ -80,7 +80,7 @@ FILE: parameterOfNonLocalSetter.kt
 STATUS:
 FILE: parameterOfNonLocalSetter.kt
     public final [SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
+        public [TYPES] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
@@ -92,8 +92,8 @@ FILE: parameterOfNonLocalSetter.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: parameterOfNonLocalSetter.kt
-    public final [SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
@@ -105,8 +105,8 @@ FILE: parameterOfNonLocalSetter.kt
 
 CONTRACTS:
 FILE: parameterOfNonLocalSetter.kt
-    public final [SUPER_TYPES] class X : R|kotlin/Any| {
-        public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
@@ -128,6 +128,21 @@ FILE: parameterOfNonLocalSetter.kt
         public final [IMPLICIT_TYPES_BODY_RESOLVE] var x: R|kotlin/Int| = IntegerLiteral(2)
             public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=X] get(): R|kotlin/Int|
             public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=X] set([IMPLICIT_TYPES_BODY_RESOLVE] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                ^ Unit#
+            }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: parameterOfNonLocalSetter.kt
+    public final [STATUS] class X : R|kotlin/Any| {
+        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ANNOTATIONS_ARGUMENTS_MAPPING] var x: R|kotlin/Int| = IntegerLiteral(2)
+            public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=X] set([ANNOTATIONS_ARGUMENTS_MAPPING] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 

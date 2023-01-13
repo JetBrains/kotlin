@@ -67,7 +67,7 @@ internal fun Project.getNativeDistributionDependencies(target: CommonizerTarget)
 
 internal val KotlinMultiplatformExtension.nativeRootSourceSets: Collection<KotlinSourceSet>
     get() {
-        val nativeSourceSets = sourceSets.filter { sourceSet -> project.getCommonizerTarget(sourceSet) != null }
+        val nativeSourceSets = sourceSets.filter { sourceSet -> getCommonizerTarget(sourceSet) != null }
         return nativeSourceSets.filter { sourceSet ->
             val allVisibleSourceSets = sourceSet.dependsOn + getVisibleSourceSetsFromAssociateCompilations(sourceSet)
             allVisibleSourceSets.none { dependency ->

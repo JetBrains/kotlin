@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -29,9 +30,8 @@ internal fun checkConstantArguments(
     expression: FirExpression,
     session: FirSession,
 ): ConstantArgumentKind? {
-    val expressionSymbol = expression.toResolvedCallableSymbol()
-    val classKindOfParent = (expressionSymbol?.getReferencedClassSymbol(session) as? FirRegularClassSymbol)
-        ?.classKind
+    val expressionSymbol = expression.toReference()?.toResolvedCallableSymbol(discardErrorReference = true)
+    val classKindOfParent = (expressionSymbol?.getReferencedClassSymbol(session) as? FirRegularClassSymbol)?.classKind
 
     when {
         expression is FirNamedArgumentExpression -> {
@@ -125,7 +125,9 @@ internal fun checkConstantArguments(
             val symbol = calleeReference.resolvedSymbol as? FirNamedFunctionSymbol ?: return ConstantArgumentKind.NOT_CONST
 
             @OptIn(SymbolInternals::class)
-            if (symbol.fir.getAnnotationByClassId(INTRINSIC_CONST_EVALUATION_ANNOTATION) == null) return ConstantArgumentKind.NOT_CONST
+            if (symbol.fir.getAnnotationByClassId(INTRINSIC_CONST_EVALUATION_ANNOTATION, session) == null) {
+                return ConstantArgumentKind.NOT_CONST
+            }
 
             for (exp in expression.arguments.plus(expression.dispatchReceiver).plus(expression.extensionReceiver)) {
                 if (exp is FirNoReceiverExpression) continue
@@ -151,7 +153,7 @@ internal fun checkConstantArguments(
             @OptIn(SymbolInternals::class)
             val property = propertySymbol.fir
             when {
-                property.unwrapFakeOverrides().getAnnotationByClassId(INTRINSIC_CONST_EVALUATION_ANNOTATION) != null -> {
+                property.unwrapFakeOverrides().getAnnotationByClassId(INTRINSIC_CONST_EVALUATION_ANNOTATION, session) != null -> {
                     return checkConstantArguments(expression.dispatchReceiver, session)
                 }
                 propertySymbol.isLocal || propertySymbol.callableId.className?.isRoot == false -> return ConstantArgumentKind.NOT_CONST

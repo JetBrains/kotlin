@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnTypesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCallTest
@@ -15,9 +16,9 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.contain
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByMemberScopeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.containingDeclarationProvider.AbstractContainingDeclarationProviderByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider.AbstractCollectDiagnosticsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractIsUsedAsExpressionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractReturnTargetSymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractWhenMissingCasesTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractIsUsedAsExpressionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractHLExpressionTypeTest
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.substut
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractIsSubclassOfTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationOverridesProvider.AbstractOverriddenDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.symbolDeclarationRenderer.AbstractRendererTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractBuildClassTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator.AbstractTypeParameterTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractFunctionClassKindTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractIsDenotableTest
@@ -45,6 +47,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSy
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode
@@ -140,6 +143,12 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
         }
     }
 
+    group("types", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test(AbstractTypeByDeclarationReturnTypeTest::class) {
+            model("byDeclarationReturnType")
+        }
+    }
+
     group("annotations") {
         test(AbstractAnalysisApiAnnotationsOnTypesTest::class) {
             model("annotationsOnTypes")
@@ -155,6 +164,11 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
         ) {
             model("annotationsOnFiles")
         }
+
+        test(AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest::class) {
+            model("metaAnnotations")
+        }
+
     }
 
     group("substitutors", filter = frontendIs(FrontendKind.Fir)) {
@@ -292,6 +306,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
     component("typeCreator") {
         test(AbstractTypeParameterTypeTest::class) {
             model("typeParameter")
+        }
+
+        test(AbstractBuildClassTypeTest::class, filter = analysisSessionModeIs(AnalysisSessionMode.Normal)/*no non-file context element*/) {
+            model("classType")
         }
     }
 

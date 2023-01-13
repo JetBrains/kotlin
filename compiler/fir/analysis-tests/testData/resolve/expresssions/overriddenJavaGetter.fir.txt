@@ -4,7 +4,7 @@ FILE: Derived.kt
             super<R|Base|>()
         }
 
-        public final override fun getSomething(): R|kotlin/String| {
+        public open override fun getSomething(): R|kotlin/String| {
             ^getSomething String(42)
         }
 

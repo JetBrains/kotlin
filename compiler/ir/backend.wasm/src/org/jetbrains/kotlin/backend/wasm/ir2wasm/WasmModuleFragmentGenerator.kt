@@ -27,7 +27,7 @@ class WasmModuleFragmentGenerator(
 
     private val declarationGenerator =
         DeclarationGenerator(
-            WasmModuleCodegenContextImpl(
+            WasmModuleCodegenContext(
                 backendContext,
                 wasmModuleFragment,
             ),

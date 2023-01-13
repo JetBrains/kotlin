@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
-import org.jetbrains.kotlin.backend.konan.driver.CompilerDriver
 import org.jetbrains.kotlin.backend.konan.driver.DynamicCompilerDriver
-import org.jetbrains.kotlin.backend.konan.driver.StaticCompilerDriver
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.konan.file.File
@@ -18,7 +16,12 @@ import org.jetbrains.kotlin.konan.library.impl.createKonanLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 
-class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, val configuration: CompilerConfiguration) {
+class KonanDriver(
+        val project: Project,
+        val environment: KotlinCoreEnvironment,
+        val configuration: CompilerConfiguration,
+        val spawnCompilation: (List<String>, CompilerConfiguration.() -> Unit) -> Unit
+) {
     fun run() {
         val fileNames = configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { libPath ->
             if (configuration.get(KonanConfigKeys.MAKE_PER_FILE_CACHE) != true)
@@ -35,10 +38,22 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
             configuration.put(KonanConfigKeys.MAKE_PER_FILE_CACHE, true)
             configuration.put(KonanConfigKeys.FILES_TO_CACHE, fileNames)
         }
+        var konanConfig = KonanConfig(project, configuration)
 
-        val konanConfig = KonanConfig(project, configuration)
+        if (configuration.get(KonanConfigKeys.LIST_TARGETS) == true) {
+            konanConfig.targetManager.list()
+        }
+        if (konanConfig.infoArgsOnly) return
+
         ensureModuleName(konanConfig)
-        pickCompilerDriver(konanConfig).run(konanConfig, environment)
+
+        val cacheBuilder = CacheBuilder(konanConfig, spawnCompilation)
+        if (cacheBuilder.needToBuild()) {
+            cacheBuilder.build()
+            konanConfig = KonanConfig(project, configuration) // TODO: Just set freshly built caches.
+        }
+
+        DynamicCompilerDriver().run(konanConfig, environment)
     }
 
     private fun ensureModuleName(config: KonanConfig) {
@@ -50,22 +65,6 @@ class KonanDriver(val project: Project, val environment: KotlinCoreEnvironment, 
                 config.configuration.put(KonanConfigKeys.MODULE_NAME, kexeModuleName)
                 assert(libraries.none { it.uniqueName == kexeModuleName })
             }
-        }
-    }
-
-    private fun pickCompilerDriver(config: KonanConfig): CompilerDriver {
-        config.configuration[KonanConfigKeys.FORCE_COMPILER_DRIVER]?.let {
-            return when (it) {
-                "dynamic" -> DynamicCompilerDriver()
-                "static" -> StaticCompilerDriver()
-                else -> error("Unknown compiler driver. Possible values: dynamic, static")
-            }
-        }
-        // Dynamic driver is WIP, so it might not support all possible configurations.
-        return if (DynamicCompilerDriver.supportsConfig()) {
-            DynamicCompilerDriver()
-        } else {
-            StaticCompilerDriver()
         }
     }
 }

@@ -13,7 +13,12 @@ import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledL
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
+import org.jetbrains.kotlin.asJava.toLightClass
+import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.light.classes.symbol.base.service.NullabilityAnnotationSourceProvider
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -25,6 +30,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
@@ -59,7 +65,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         val project = ktFile.project
 
         ignoreExceptionIfIgnoreFirPresent(module) {
-            val actual = getRenderResult(ktFile, testDataPath, module, project).cleanup()
+            val actual = getRenderResult(ktFile, ktFiles, testDataPath, module, project).cleanup()
             compareResults(testServices, actual)
             removeIgnoreFir(module)
             removeDuplicatedFirJava(testServices)
@@ -76,6 +82,7 @@ abstract class AbstractSymbolLightClassesTestBase(
 
     protected abstract fun getRenderResult(
         ktFile: KtFile,
+        ktFiles: List<KtFile>,
         testDataFile: Path,
         module: TestModule,
         project: Project
@@ -96,11 +103,8 @@ abstract class AbstractSymbolLightClassesTestBase(
         testServices: TestServices,
         actual: String,
     ) {
-        if (currentResultPath().exists()) {
-            testServices.assertions.assertEqualsToFile(currentResultPath(), actual)
-        } else {
-            testServices.assertions.assertEqualsToFile(javaPath(), actual)
-        }
+        val path: Path = currentResultPath().takeIf { it.exists() } ?: javaPath()
+        testServices.assertions.assertEqualsToFile(path, actual)
     }
 
     private fun removeIgnoreFir(module: TestModule) {
@@ -110,9 +114,24 @@ abstract class AbstractSymbolLightClassesTestBase(
     }
 
     protected fun findLightClass(fqname: String, project: Project): PsiClass? {
-        return JavaElementFinder
-            .getInstance(project)
-            .findClass(fqname, GlobalSearchScope.allScope(project))
+        val searchScope = GlobalSearchScope.allScope(project)
+        JavaElementFinder.getInstance(project).findClass(fqname, searchScope)?.let { return it }
+
+        val fqName = FqName(fqname)
+        val parentFqName = fqName.parent().takeUnless(FqName::isRoot) ?: return null
+        val enumClass = JavaElementFinder.getInstance(project).findClass(parentFqName.asString(), searchScope) ?: return null
+        val kotlinEnumClass = enumClass.unwrapped?.safeAs<KtClass>()?.takeIf(KtClass::isEnum) ?: return null
+
+        val enumEntryName = fqName.shortName().asString()
+        enumClass.findInnerClassByName(enumEntryName, false)?.let { return it }
+
+        return kotlinEnumClass.declarations.firstNotNullOfOrNull {
+            if (it is KtEnumEntry && it.name == enumEntryName) {
+                it
+            } else {
+                null
+            }
+        }?.toLightClass()
     }
 
     private fun removeDuplicatedFirJava(testServices: TestServices) {

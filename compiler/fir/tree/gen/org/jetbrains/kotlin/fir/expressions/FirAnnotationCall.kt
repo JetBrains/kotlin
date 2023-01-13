@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,14 +28,19 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirReference
     abstract override val argumentMapping: FirAnnotationArgumentMapping
+    abstract val annotationResolvePhase: FirAnnotationResolvePhase
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnnotationCall(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformAnnotationCall(this, data) as E
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
+
+    abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
@@ -44,6 +49,8 @@ abstract class FirAnnotationCall : FirAnnotation(), FirCall, FirResolvable {
     abstract override fun replaceCalleeReference(newCalleeReference: FirReference)
 
     abstract override fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping)
+
+    abstract fun replaceAnnotationResolvePhase(newAnnotationResolvePhase: FirAnnotationResolvePhase)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirAnnotationCall
 

@@ -18,7 +18,7 @@ suspend fun box() {
     hasLocal()
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:10 box:
 // test.kt:12 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
 // test.kt:8 h: $completion:kotlin.coroutines.Continuation=TestKt$box$1
@@ -31,3 +31,12 @@ suspend fun box() {
 // test.kt:4 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal:int=0:int
 // test.kt:5 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null, $i$f$hasLocal:int=0:int, x$iv:int=41:int
 // test.kt:19 box: $continuation:kotlin.coroutines.Continuation=TestKt$box$1, $result:java.lang.Object=null
+
+// EXPECTATIONS JS_IR
+// test.kt:12 doResume:
+// test.kt:8 h: $completion=$boxCOROUTINE$0
+// test.kt:4 doResume:
+// test.kt:5 doResume: x=41:number
+// test.kt:4 doResume: x=41:number
+// test.kt:5 doResume: x=41:number, x=41:number
+// test.kt:19 doResume: x=41:number, x=41:number

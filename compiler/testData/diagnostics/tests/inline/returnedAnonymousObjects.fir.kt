@@ -36,11 +36,11 @@ fun test2(b: Boolean) {
 }
 
 fun test3(b: Boolean) {
-    var x = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>")!>foo3 { 1 }<!>
+    var x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo3 { 1 }<!>
     if (b) {
-        x = <!DEBUG_INFO_EXPRESSION_TYPE("<anonymous>")!>foo3 { 2 }<!>
+        x = <!DEBUG_INFO_EXPRESSION_TYPE("I1")!>foo3 { 2 }<!>
     }
-    x.bar()
+    x.<!UNRESOLVED_REFERENCE!>bar<!>()
 }
 
 fun test4(b: Boolean) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
 import org.jetbrains.kotlin.fir.declarations.FirTypeParametersOwner
@@ -28,9 +30,11 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.FirFunctionTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -42,6 +46,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -90,7 +95,9 @@ import org.jetbrains.kotlin.fir.expressions.FirClassReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirErrorExpression
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
+import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedErrorAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirIntegerLiteralOperatorCall
@@ -119,11 +126,13 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
@@ -173,6 +182,10 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): R  = visitElement(contextReceiver, data)
 
+    open fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: D): R  = visitElement(elementWithResolvePhase, data)
+
+    open fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): R  = visitElement(fileAnnotationsContainer, data)
+
     open fun visitDeclaration(declaration: FirDeclaration, data: D): R  = visitElement(declaration, data)
 
     open fun visitTypeParameterRefsOwner(typeParameterRefsOwner: FirTypeParameterRefsOwner, data: D): R  = visitElement(typeParameterRefsOwner, data)
@@ -193,11 +206,15 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitValueParameter(valueParameter: FirValueParameter, data: D): R  = visitElement(valueParameter, data)
 
+    open fun visitReceiverParameter(receiverParameter: FirReceiverParameter, data: D): R  = visitElement(receiverParameter, data)
+
     open fun visitProperty(property: FirProperty, data: D): R  = visitElement(property, data)
 
     open fun visitField(field: FirField, data: D): R  = visitElement(field, data)
 
     open fun visitEnumEntry(enumEntry: FirEnumEntry, data: D): R  = visitElement(enumEntry, data)
+
+    open fun visitFunctionTypeParameter(functionTypeParameter: FirFunctionTypeParameter, data: D): R  = visitElement(functionTypeParameter, data)
 
     open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: D): R  = visitElement(classLikeDeclaration, data)
 
@@ -220,6 +237,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitConstructor(constructor: FirConstructor, data: D): R  = visitElement(constructor, data)
 
     open fun visitFile(file: FirFile, data: D): R  = visitElement(file, data)
+
+    open fun visitScript(script: FirScript, data: D): R  = visitElement(script, data)
 
     open fun visitPackageDirective(packageDirective: FirPackageDirective, data: D): R  = visitElement(packageDirective, data)
 
@@ -317,7 +336,11 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitErrorProperty(errorProperty: FirErrorProperty, data: D): R  = visitElement(errorProperty, data)
 
+    open fun visitDanglingModifierList(danglingModifierList: FirDanglingModifierList, data: D): R  = visitElement(danglingModifierList, data)
+
     open fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: D): R  = visitElement(qualifiedAccessExpression, data)
+
+    open fun visitQualifiedErrorAccessExpression(qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression, data: D): R  = visitElement(qualifiedErrorAccessExpression, data)
 
     open fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: D): R  = visitElement(propertyAccessExpression, data)
 
@@ -375,6 +398,8 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitNamedReference(namedReference: FirNamedReference, data: D): R  = visitElement(namedReference, data)
 
+    open fun visitNamedReferenceWithCandidateBase(namedReferenceWithCandidateBase: FirNamedReferenceWithCandidateBase, data: D): R  = visitElement(namedReferenceWithCandidateBase, data)
+
     open fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): R  = visitElement(errorNamedReference, data)
 
     open fun visitSuperReference(superReference: FirSuperReference, data: D): R  = visitElement(superReference, data)
@@ -384,6 +409,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference, data: D): R  = visitElement(controlFlowGraphReference, data)
 
     open fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: D): R  = visitElement(resolvedNamedReference, data)
+
+    open fun visitResolvedErrorReference(resolvedErrorReference: FirResolvedErrorReference, data: D): R  = visitElement(resolvedErrorReference, data)
 
     open fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: D): R  = visitElement(delegateFieldReference, data)
 

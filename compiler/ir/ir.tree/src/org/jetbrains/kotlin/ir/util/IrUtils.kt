@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
-import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
 import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.StringWriter
 
 /**
@@ -213,6 +211,9 @@ val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
 val IrClass.constructors: Sequence<IrConstructor>
     get() = declarations.asSequence().filterIsInstance<IrConstructor>()
 
+val IrClass.defaultConstructor: IrConstructor?
+    get() = constructors.firstOrNull { ctor -> ctor.valueParameters.all { it.defaultValue != null } }
+
 val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
     get() = owner.constructors.map { it.symbol }
 
@@ -340,10 +341,8 @@ fun IrFunction.isFakeOverriddenFromAny(): Boolean {
 
 fun IrCall.isSuperToAny() = superQualifierSymbol?.let { this.symbol.owner.isFakeOverriddenFromAny() } ?: false
 
-
 fun IrDeclaration.hasInterfaceParent() =
-    parent.safeAs<IrClass>()?.isInterface == true
-
+    (parent as? IrClass)?.isInterface == true
 
 fun IrPossiblyExternalDeclaration.isEffectivelyExternal(): Boolean =
     this.isExternal
@@ -495,6 +494,10 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyValueArgumentsFrom(
         else -> {
             dispatchReceiver = src.dispatchReceiver
         }
+    }
+
+    while (srcValueArgumentIndex < src.symbol.owner.contextReceiverParametersCount) {
+        putValueArgument(destValueArgumentIndex++, src.getValueArgument(srcValueArgumentIndex++))
     }
 
     when {
@@ -1189,29 +1192,55 @@ fun IrFactory.createStaticFunctionWithReceivers(
 
         annotations = oldFunction.annotations
 
-        var offset = 0
-        val dispatchReceiver = oldFunction.dispatchReceiverParameter?.copyTo(
-            this,
-            name = Name.identifier("\$this"),
-            index = offset++,
-            type = remap(dispatchReceiverType!!),
-            origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
-        )
-        val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
-            this,
-            name = Name.identifier("\$receiver"),
-            index = offset++,
-            origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
-            remapTypeMap = typeParameterMap
-        )
-        valueParameters = listOfNotNull(dispatchReceiver, extensionReceiver) +
-                oldFunction.valueParameters.map {
-                    it.copyTo(
-                        this,
-                        index = it.index + offset,
-                        remapTypeMap = typeParameterMap
-                    )
-                }
+        valueParameters = buildList {
+            var offset = 0
+
+            addIfNotNull(
+                oldFunction.dispatchReceiverParameter?.copyTo(
+                    this@apply,
+                    name = Name.identifier("\$this"),
+                    index = offset++,
+                    type = remap(dispatchReceiverType!!),
+                    origin = IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
+                )
+            )
+
+            addAll(
+                oldFunction.valueParameters
+                    .asSequence()
+                    .take(oldFunction.contextReceiverParametersCount)
+                    .map {
+                        it.copyTo(
+                            this@apply,
+                            index = offset++,
+                            remapTypeMap = typeParameterMap
+                        )
+                    }
+            )
+
+            addIfNotNull(
+                oldFunction.extensionReceiverParameter?.copyTo(
+                    this@apply,
+                    name = Name.identifier("\$receiver"),
+                    index = offset++,
+                    origin = IrDeclarationOrigin.MOVED_EXTENSION_RECEIVER,
+                    remapTypeMap = typeParameterMap
+                )
+            )
+
+            addAll(
+                oldFunction.valueParameters
+                    .asSequence()
+                    .drop(oldFunction.contextReceiverParametersCount)
+                    .map {
+                        it.copyTo(
+                            this@apply,
+                            index = offset++,
+                            remapTypeMap = typeParameterMap
+                        )
+                    }
+            )
+        }
 
         if (copyMetadata) metadata = oldFunction.metadata
 
@@ -1308,10 +1337,25 @@ fun IrBuiltIns.getKFunctionType(returnType: IrType, parameterTypes: List<IrType>
 fun IdSignature?.isComposite(): Boolean =
     this is IdSignature.CompositeSignature
 
-val IrFunction.isTypedEquals: Boolean
+fun IrFunction.isToString(): Boolean =
+    name == OperatorNameConventions.TO_STRING && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
+
+fun IrFunction.isHashCode() =
+    name == OperatorNameConventions.HASH_CODE && extensionReceiverParameter == null && contextReceiverParametersCount == 0 && valueParameters.isEmpty()
+
+fun IrFunction.isEquals() =
+    name == OperatorNameConventions.EQUALS &&
+            extensionReceiverParameter == null && contextReceiverParametersCount == 0 &&
+            valueParameters.singleOrNull()?.type?.isNullableAny() == true
+
+val IrFunction.isValueClassTypedEquals: Boolean
     get() {
         val parentClass = parent as? IrClass ?: return false
-        return name == OperatorNameConventions.EQUALS && returnType.isBoolean() && valueParameters.size == 1
-                && (valueParameters[0].type.classFqName?.run { parentClass.hasEqualFqName(this) } ?: false)
-                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null && parentClass.isValue
+        val enclosingClassStartProjection = parentClass.symbol.starProjectedType
+        return name == OperatorNameConventions.EQUALS
+                && (returnType.isBoolean() || returnType.isNothing())
+                && valueParameters.size == 1
+                && (valueParameters[0].type == enclosingClassStartProjection)
+                && contextReceiverParametersCount == 0 && extensionReceiverParameter == null
+                && (parentClass.isValue)
     }

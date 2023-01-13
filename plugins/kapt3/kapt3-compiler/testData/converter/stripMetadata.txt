@@ -1,5 +1,3 @@
-import java.lang.System;
-
 public abstract class BaseClass {
 
     public BaseClass(@org.jetbrains.annotations.NotNull()
@@ -14,15 +12,11 @@ public abstract class BaseClass {
 ////////////////////
 
 
-import java.lang.System;
-
 public abstract interface Context {
 }
 
 ////////////////////
 
-
-import java.lang.System;
 
 public final class Inheritor extends BaseClass {
 
@@ -31,8 +25,8 @@ public final class Inheritor extends BaseClass {
         super(null, 0, false);
     }
 
-    @org.jetbrains.annotations.NotNull()
     @java.lang.Override()
+    @org.jetbrains.annotations.NotNull()
     public Result doJob() {
         return null;
     }
@@ -40,8 +34,6 @@ public final class Inheritor extends BaseClass {
 
 ////////////////////
 
-
-import java.lang.System;
 
 public enum Result {
     /*public static final*/ SUCCESS /* = new Result() */,

@@ -16,7 +16,7 @@ suspend fun box() {
 
 // The lambda object constructor has a local variables table on the IR backend.
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:4 <init>:
 // test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
@@ -31,3 +31,15 @@ suspend fun box() {
 // test.kt:11 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, l:long=42:long
 // test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 // test.kt:15 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
+
+// EXPECTATIONS JS_IR
+// test.kt:14 box: $completion=EmptyContinuation
+// test.kt:4 <init>:
+// test.kt:14 box: $completion=EmptyContinuation
+// test.kt:14 box: $completion=EmptyContinuation
+// test.kt:8 doResume:
+// test.kt:6 foo: <this>=A, $completion=$foo1COROUTINE$0
+// test.kt:9 doResume:
+// test.kt:6 foo: <this>=A, $completion=$foo1COROUTINE$0
+// test.kt:10 doResume:
+// test.kt:11 doResume: dead=kotlin.Long

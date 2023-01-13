@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.util
 
-import com.intellij.openapi.application.ApplicationManager
-
 fun getExceptionMessage(
     subsystemName: String,
     message: String,
     cause: Throwable?,
     location: String?
-): String = ApplicationManager.getApplication().runReadAction<String> {
+): String =
     buildString {
         append(subsystemName).append(" Internal error: ").appendLine(message)
 
@@ -27,4 +25,3 @@ fun getExceptionMessage(
             append(cause.stackTrace?.firstOrNull()?.toString() ?: "unknown")
         }
     }
-}

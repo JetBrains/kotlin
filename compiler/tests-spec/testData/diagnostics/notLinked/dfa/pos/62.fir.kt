@@ -154,7 +154,7 @@ fun case_10(x: Any): String {
 fun case_11(x: Any?): String? {
     if (x is Nothing?) {
         return when(x) {
-            <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
+            <!SENSELESS_COMPARISON!>null<!> -> null
         }
     }
     return ""
@@ -168,7 +168,7 @@ fun case_11(x: Any?): String? {
 fun case_12(x: Any?): String? {
     if (x == null) {
         return when(x) {
-            <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
+            <!SENSELESS_COMPARISON!>null<!> -> null
         }
     }
     return ""
@@ -182,7 +182,7 @@ fun case_12(x: Any?): String? {
 fun case_13(x: Any?): String? {
     if (x === null) {
         return when(x) {
-            <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
+            <!SENSELESS_COMPARISON!>null<!> -> null
         }
     }
     return ""
@@ -196,7 +196,7 @@ fun case_13(x: Any?): String? {
 fun case_14(x: Any?): String? {
     x as Nothing?
     return when(x) {
-        <!SENSELESS_NULL_IN_WHEN!>null<!> -> null
+        <!SENSELESS_COMPARISON!>null<!> -> null
     }
 }
 

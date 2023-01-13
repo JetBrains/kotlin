@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
@@ -25,17 +26,19 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.expressions.impl.FirStubStatement
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildDelegateFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
-import org.jetbrains.kotlin.fir.symbols.constructStarProjectedType
+import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -390,6 +393,7 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
         }
         argumentList = buildBinaryArgumentList(thisRef(forDispatchReceiver = true), propertyRef())
         origin = FirFunctionCallOrigin.Operator
+        source = fakeSource
     }
     delegate = delegateBuilder.build()
     if (getter == null || getter is FirDefaultPropertyAccessor) {
@@ -444,8 +448,10 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
             status = FirDeclarationStatusImpl(setterStatus?.visibility ?: Visibilities.Unknown, Modality.FINAL).apply {
                 isInline = setterStatus?.isInline ?: isInline
             }
+            symbol = FirPropertyAccessorSymbol()
             val parameter = buildValueParameter {
                 source = fakeSource
+                containingFunctionSymbol = this@buildPropertyAccessor.symbol
                 this.moduleData = moduleData
                 origin = FirDeclarationOrigin.Source
                 returnTypeRef = buildImplicitTypeRef()
@@ -459,7 +465,6 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
                 }
             }
             valueParameters += parameter
-            symbol = FirPropertyAccessorSymbol()
             body = FirSingleExpressionBlock(
                 buildFunctionCall {
                     source = fakeSource
@@ -492,14 +497,16 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
     }
 }
 
-fun FirBlock?.extractContractDescriptionIfPossible(): Pair<FirBlock?, FirContractDescription?> {
-    if (this == null) return null to null
-    if (!isContractPresentFirCheck()) return this to null
-    val contractCall = replaceFirstStatement(FirStubStatement) as FirFunctionCall
-    return this to buildLegacyRawContractDescription {
-        source = contractCall.source
-        this.contractCall = contractCall
+fun processLegacyContractDescription(block: FirBlock): FirContractDescription? {
+    if (block.isContractPresentFirCheck()) {
+        val contractCall = block.replaceFirstStatement<FirFunctionCall> { FirContractCallBlock(it) }
+        return buildLegacyRawContractDescription {
+            source = contractCall.source
+            this.contractCall = contractCall
+        }
     }
+
+    return null
 }
 
 fun FirBlock.isContractPresentFirCheck(): Boolean {
@@ -561,15 +568,30 @@ fun FirExpression.pullUpSafeCallIfNecessary(): FirExpression {
 fun List<FirAnnotationCall>.filterUseSiteTarget(target: AnnotationUseSiteTarget): List<FirAnnotationCall> =
     mapNotNull {
         if (it.useSiteTarget != target) null
-        else buildAnnotationCall {
+        else buildAnnotationCallCopy(it) {
             source = it.source?.fakeElement(KtFakeSourceElementKind.FromUseSiteTarget)
-            useSiteTarget = it.useSiteTarget
-            annotationTypeRef = it.annotationTypeRef
-            argumentList = it.argumentList
-            calleeReference = it.calleeReference
-            argumentMapping = it.argumentMapping
         }
     }
+
+// TODO: avoid mutability KT-55002
+fun FirTypeRef.convertToReceiverParameter(): FirReceiverParameter {
+    val typeRef = this
+    return buildReceiverParameter {
+        source = typeRef.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
+        @Suppress("UNCHECKED_CAST")
+        annotations += (typeRef.annotations as List<FirAnnotationCall>).filterUseSiteTarget(AnnotationUseSiteTarget.RECEIVER)
+        val filteredTypeRefAnnotations = typeRef.annotations.filterNot { it.useSiteTarget == AnnotationUseSiteTarget.RECEIVER }
+        if (filteredTypeRefAnnotations.size != typeRef.annotations.size) {
+            typeRef.replaceAnnotations(filteredTypeRefAnnotations)
+        }
+        this.typeRef = typeRef
+    }
+}
+
+fun FirImplicitTypeRef.asReceiverParameter(): FirReceiverParameter = buildReceiverParameter {
+    source = this@asReceiverParameter.source?.fakeElement(KtFakeSourceElementKind.ReceiverFromType)
+    typeRef = this@asReceiverParameter
+}
 
 fun <T> FirCallableDeclaration.initContainingClassAttr(context: Context<T>) {
     containingClassForStaticMemberAttr = currentDispatchReceiverType(context)?.lookupTag ?: return

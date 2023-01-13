@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.copyTypeParametersFrom
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isTopLevel
@@ -31,7 +32,7 @@ class JsDefaultArgumentFunctionFactory(override val context: JsIrBackendContext)
 
     private fun IrFunction.introduceContextParam() = addValueParameter {
         name = Name.identifier("\$super")
-        type = parentAsClass.defaultType
+        type = parentAsClass.defaultType.makeNullable()
         origin = JsLoweredDeclarationOrigin.JS_SUPER_CONTEXT_PARAMETER
     }
 

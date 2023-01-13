@@ -76,16 +76,9 @@ class FirTypeIntersectionScopeContext(
 
     fun processClassifiersByNameWithSubstitution(
         name: Name,
-        absentClassifierNames: MutableSet<Name>,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
-        if (name in absentClassifierNames) return
-        val classifiers = collectClassifiers(name)
-        if (classifiers.isEmpty()) {
-            absentClassifierNames += name
-            return
-        }
-        for ((symbol, substitution) in classifiers) {
+        for ((symbol, substitution) in collectClassifiers(name)) {
             processor(symbol, substitution)
         }
     }
@@ -356,12 +349,13 @@ class FirTypeIntersectionScopeContext(
         val key = mostSpecific.first() as FirNamedFunctionSymbol
         val keyFir = key.fir
         val callableId = CallableId(
-            dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassOrNull()?.classId!!,
+            dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!,
             keyFir.name
         )
         val newSymbol = FirIntersectionOverrideFunctionSymbol(callableId, overrides)
         FirFakeOverrideGenerator.createCopyForFirFunction(
-            newSymbol, keyFir, session, FirDeclarationOrigin.IntersectionOverride, keyFir.isExpect,
+            newSymbol, keyFir, derivedClassLookupTag = null, session,
+            FirDeclarationOrigin.IntersectionOverride, keyFir.isExpect,
             newModality = newModality,
             newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,
@@ -381,12 +375,13 @@ class FirTypeIntersectionScopeContext(
         val key = mostSpecific.first() as FirPropertySymbol
         val keyFir = key.fir
         val callableId = CallableId(
-            dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassOrNull()?.classId!!,
+            dispatchReceiverType.classId ?: keyFir.dispatchReceiverClassLookupTagOrNull()?.classId!!,
             keyFir.name
         )
         val newSymbol = FirIntersectionOverridePropertySymbol(callableId, overrides)
         FirFakeOverrideGenerator.createCopyForFirProperty(
-            newSymbol, keyFir, session, FirDeclarationOrigin.IntersectionOverride,
+            newSymbol, keyFir, derivedClassLookupTag = null, session,
+            FirDeclarationOrigin.IntersectionOverride,
             newModality = newModality,
             newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,

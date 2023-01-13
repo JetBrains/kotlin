@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -17,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 internal inline fun checkTypeRefIsResolved(
     typeRef: FirTypeRef,
     typeRefName: String,
-    owner: FirDeclaration,
+    owner: FirElementWithResolvePhase,
     acceptImplicitTypeRef: Boolean = false,
     extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
 ) {
@@ -29,7 +33,7 @@ internal inline fun checkTypeRefIsResolved(
                 if (acceptImplicitTypeRef) {
                     append(" or ${FirImplicitTypeRef::class.simpleName}")
                 }
-                append(" for $typeRefName of ${owner::class.simpleName}(${owner.origin}) but ${typeRef::class.simpleName} found")
+                append(" for $typeRefName of ${owner::class.simpleName}(${(owner as? FirDeclaration)?.origin}) but ${typeRef::class.simpleName} found")
             }
         }
     ) {
@@ -44,7 +48,7 @@ internal fun checkReturnTypeRefIsResolved(declaration: FirCallableDeclaration, a
 }
 
 internal fun checkReceiverTypeRefIsResolved(declaration: FirCallableDeclaration, acceptImplicitTypeRef: Boolean = false) {
-    val receiverTypeRef = declaration.receiverTypeRef ?: return
+    val receiverTypeRef = declaration.receiverParameter?.typeRef ?: return
     checkTypeRefIsResolved(receiverTypeRef, typeRefName = "receiver type", declaration, acceptImplicitTypeRef)
 }
 
@@ -63,8 +67,29 @@ internal fun checkDeclarationStatusIsResolved(declaration: FirMemberDeclaration)
     val status = declaration.status
     checkWithAttachmentBuilder(
         condition = status is FirResolvedDeclarationStatus,
-        message = { "Expected ${FirResolvedDeclarationStatus::class.simpleName} but ${declaration::class.simpleName} found for ${declaration::class.simpleName}" }
+        message = { "Expected ${FirResolvedDeclarationStatus::class.simpleName} but ${status::class.simpleName} found for ${declaration::class.simpleName}" }
     ) {
         withFirEntry("declaration", declaration)
+    }
+}
+
+internal inline fun checkAnnotationArgumentsMappingIsResolved(
+    annotation: FirAnnotationCall,
+    owner: FirAnnotationContainer,
+    extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
+) {
+    checkWithAttachmentBuilder(
+        condition = annotation.argumentList is FirResolvedArgumentList,
+        message = {
+            buildString {
+                append("Expected ${FirResolvedArgumentList::class.simpleName}")
+                append(" for ${annotation::class.simpleName} of ${owner::class.simpleName}(${(owner as? FirDeclaration)?.origin})")
+                append(" but ${annotation.argumentList::class.simpleName} found")
+            }
+        }
+    ) {
+        withFirEntry("annotation", annotation)
+        withFirEntry("firDeclaration", owner)
+        extraAttachment()
     }
 }

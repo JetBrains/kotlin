@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 abstract class A : Function1<Any, Unit>
 
 abstract class B : (Int)->Unit

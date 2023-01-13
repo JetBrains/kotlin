@@ -3,11 +3,15 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProjectImpl
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtensionBuilder
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Default
+import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.DependencyResolutionLevel.Overwrite
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.FragmentConstraint
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmExtrasSerializationExtension
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmExtrasSerializationExtensionBuilder
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.native
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
@@ -129,10 +133,10 @@ interface IdeaKpmProjectModelBuilder {
 
     @ExternalVariantApi
     fun registerExtrasSerializationExtension(
-        extension: IdeaKpmExtrasSerializationExtension
+        extension: IdeaKotlinExtrasSerializationExtension
     )
 
-    fun buildSerializationContext(): IdeaKpmSerializationContext
+    fun buildSerializationContext(): IdeaKotlinSerializationContext
 
     fun buildIdeaKpmProject(): IdeaKpmProject
 
@@ -167,7 +171,7 @@ operator fun FragmentConstraint.not() = FragmentConstraint { fragment ->
 
 @ExternalVariantApi
 fun IdeaKpmProjectModelBuilder.registerExtrasSerializationExtension(
-    builder: IdeaKpmExtrasSerializationExtensionBuilder.() -> Unit
+    builder: IdeaKotlinExtrasSerializationExtensionBuilder.() -> Unit
 ) {
-    registerExtrasSerializationExtension(IdeaKpmExtrasSerializationExtension(builder))
+    registerExtrasSerializationExtension(IdeaKotlinExtrasSerializationExtension(builder))
 }

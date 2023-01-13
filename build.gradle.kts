@@ -3,17 +3,6 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 
 buildscript {
-    val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
-
-    kotlinBootstrapFrom(BootstrapOption.SpaceBootstrap(kotlinBuildProperties.kotlinBootstrapVersion!!, cacheRedirectorEnabled))
-
-    repositories {
-        bootstrapKotlinRepo?.let(::maven)
-
-        mavenCentral()
-        gradlePluginPortal()
-    }
-
     // a workaround for kotlin compiler classpath in kotlin project: sometimes gradle substitutes
     // kotlin-stdlib external dependency with local project :kotlin-stdlib in kotlinCompilerClasspath configuration.
     // see also configureCompilerClasspath@
@@ -23,8 +12,6 @@ buildscript {
         bootstrapCompilerClasspath(kotlin("compiler-embeddable", bootstrapKotlinVersion))
 
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
-        classpath(kotlin("gradle-plugin", bootstrapKotlinVersion))
-        classpath(kotlin("serialization", bootstrapKotlinVersion))
     }
 
     val versionPropertiesFile = project.rootProject.projectDir.resolve("gradle/versions.properties")
@@ -48,14 +35,18 @@ plugins {
     id("jps-compatible")
     id("org.jetbrains.gradle.plugin.idea-ext")
     id("org.gradle.crypto.checksum") version "1.2.0"
+    id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.12.0" apply false
     signing
+    id("org.jetbrains.kotlin.jvm") apply false
+    id("org.jetbrains.kotlin.plugin.serialization") apply false
 }
 
 pill {
     excludedDirs(
         "out",
         "buildSrc/build",
-        "buildSrc/prepare-deps/intellij-sdk/build"
+        "buildSrc/prepare-deps/intellij-sdk/build",
+        "intellij"
     )
 }
 
@@ -121,7 +112,7 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.8.20-dev-980"
+    extra["versions.kotlin-native"] = "1.8.20-dev-5321"
 }
 
 val irCompilerModules = arrayOf(
@@ -151,6 +142,7 @@ val commonCompilerModules = arrayOf(
     ":core:deserialization.common.jvm",
     ":core:compiler.common",
     ":core:compiler.common.jvm",
+    ":core:compiler.common.js",
     ":core:util.runtime",
     ":compiler:frontend.common.jvm",
     ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
@@ -168,6 +160,7 @@ val firCompilerCoreModules = arrayOf(
     ":compiler:fir:resolve",
     ":compiler:fir:fir-serialization",
     ":compiler:fir:fir-deserialization",
+    ":compiler:fir:plugin-utils",
     ":compiler:fir:tree",
     ":compiler:fir:java",
     ":compiler:fir:raw-fir:raw-fir.common",
@@ -244,9 +237,9 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":compiler:cli-common",
     ":kotlin-compiler-runner-unshaded",
     ":daemon-common",
-    ":daemon-common-new",
     ":core:compiler.common",
     ":core:compiler.common.jvm",
+    ":core:compiler.common.js",
     ":core:descriptors",
     ":core:descriptors.jvm",
     ":compiler:backend.common.jvm",
@@ -366,9 +359,11 @@ val projectsWithEnabledContextReceivers by extra {
         ":core:descriptors.jvm",
         ":compiler:frontend.common",
         ":compiler:fir:resolve",
+        ":compiler:fir:plugin-utils",
         ":compiler:fir:fir2ir",
         ":kotlin-lombok-compiler-plugin.k1",
         ":kotlinx-serialization-compiler-plugin.k2",
+        ":plugins:parcelize:parcelize-compiler:parcelize.k2",
         ":plugins:fir-plugin-prototype"
     )
 }
@@ -380,31 +375,14 @@ val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
         ":analysis:decompiled:light-classes-for-decompiled",
         ":analysis:symbol-light-classes",
         ":compiler",
-        ":compiler:backend",
         ":compiler:backend.js",
-        ":compiler:backend.jvm",
-        ":compiler:backend.jvm.codegen",
-        ":compiler:backend.jvm.entrypoint",
-        ":compiler:backend.jvm.lower",
-        ":compiler:ir.backend.common",
-        ":compiler:ir.psi2ir",
-        ":compiler:ir.serialization.jvm",
-        ":compiler:ir.tree",
         ":compiler:light-classes",
-        ":core:reflection.jvm",
-        ":jps:jps-common",
         ":jps:jps-common",
         ":js:js.tests",
         ":kotlin-build-common",
         ":kotlin-gradle-plugin",
-        ":kotlin-reflect-api",
         ":kotlin-scripting-jvm-host-test",
         ":native:kotlin-klib-commonizer",
-        ":plugins:android-extensions-compiler",
-        ":plugins:jvm-abi-gen",
-        ":plugins:parcelize:parcelize-compiler:parcelize.k1",
-        ":plugins:parcelize:parcelize-compiler:parcelize.backend",
-        ":kotlinx-serialization-compiler-plugin.backend",
     )
 }
 
@@ -415,6 +393,7 @@ val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin-kpm-android",
+    ":kotlin-gradle-plugin-tcs-android",
     ":kotlin-allopen",
     ":kotlin-annotation-processing-gradle",
     ":kotlin-noarg",
@@ -498,18 +477,6 @@ allprojects {
         }
 
         mirrorRepo?.let(::maven)
-
-        internalBootstrapRepo?.let(::maven)?.apply {
-            content {
-                includeGroup("org.jetbrains.kotlin")
-            }
-        }
-
-        bootstrapKotlinRepo?.let(::maven)?.apply {
-            content {
-                includeGroup("org.jetbrains.kotlin")
-            }
-        }
 
         maven(intellijRepo)
         maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
@@ -626,7 +593,6 @@ tasks {
             ":compiler:tests-spec:test",
             ":compiler:tests-against-klib:test"
         )
-        dependsOn(":plugins:jvm-abi-gen:test")
     }
 
     register("testsForBootstrapBuildTest") {
@@ -642,8 +608,17 @@ tasks {
     }
 
     register("jsCompilerTest") {
-        dependsOn(":js:js.tests:test")
+        dependsOn(":js:js.tests:jsTest")
         dependsOn(":js:js.tests:runMocha")
+    }
+
+    register("jsFirCompilerTest") {
+        dependsOn(":js:js.tests:jsFirTest")
+    }
+
+    register("jsIrCompilerTest") {
+        dependsOn(":js:js.tests:jsIrTest")
+        dependsOn(":js:js.tests:jsStdlibApiTest")
     }
 
     register("wasmCompilerTest") {
@@ -664,8 +639,6 @@ tasks {
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
         dependsOn(":compiler:fir:fir2ir:test")
-        dependsOn(":plugins:fir-plugin-prototype:test")
-        dependsOn(":plugins:fir-plugin-prototype:fir-plugin-ic-test:test")
     }
 
     register("firAllTest") {
@@ -676,8 +649,6 @@ tasks {
             ":compiler:fir:analysis-tests:test",
             ":compiler:fir:analysis-tests:legacy-fir-tests:test",
             ":compiler:fir:fir2ir:test",
-            ":plugins:fir-plugin-prototype:test",
-            ":plugins:fir-plugin-prototype:fir-plugin-ic-test:test"
         )
     }
 
@@ -701,14 +672,18 @@ tasks {
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
         dependsOn(":kotlin-main-kts-test:test")
-        dependsOn(":kotlin-main-kts-test:testWithIr")
         dependsOn(":kotlin-scripting-ide-services-test:test")
         dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
     }
 
+    register("scriptingK2Test") {
+        dependsOn(":kotlin-scripting-compiler:testWithK2")
+        dependsOn(":kotlin-scripting-jvm-host-test:testWithK2")
+        dependsOn(":kotlin-main-kts-test:testWithK2")
+    }
+
     register("scriptingTest") {
         dependsOn("scriptingJvmTest")
-        dependsOn(":kotlin-scripting-js-test:test")
     }
 
     register("compilerTest") {
@@ -722,25 +697,37 @@ tasks {
         dependsOn("gradlePluginTest")
         dependsOn("toolsTest")
         dependsOn("examplesTest")
-
         dependsOn("nativeCompilerTest")
+        dependsOn("incrementalCompilationTest")
+        dependsOn("scriptingTest")
+        dependsOn("jvmCompilerIntegrationTest")
+        dependsOn("compilerPluginTest")
 
         dependsOn(":kotlin-daemon-tests:test")
-        dependsOn("scriptingTest")
         dependsOn(":kotlin-build-common:test")
-        dependsOn(":compiler:incremental-compilation-impl:test")
-        dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
         dependsOn(":core:descriptors.runtime:test")
-
-        dependsOn("jvmCompilerIntegrationTest")
-
-        dependsOn(":plugins:parcelize:parcelize-compiler:test")
-        dependsOn(":kotlinx-serialization-compiler-plugin:test")
-
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
-
         dependsOn(":generators:test")
+    }
+
+    register("incrementalCompilationTest") {
+        dependsOn(":compiler:incremental-compilation-impl:test")
+        dependsOn(":compiler:incremental-compilation-impl:testJvmICWithJdk11")
+    }
+
+    register("compilerPluginTest") {
+        dependsOn(":kotlin-allopen-compiler-plugin:test")
+        dependsOn(":kotlin-assignment-compiler-plugin:test")
+        dependsOn(":kotlinx-atomicfu-compiler-plugin:test")
+        dependsOn(":plugins:fir-plugin-prototype:test")
+        dependsOn(":plugins:fir-plugin-prototype:fir-plugin-ic-test:test")
+        dependsOn(":kotlin-imports-dumper-compiler-plugin:test")
+        dependsOn(":plugins:jvm-abi-gen:test")
+        dependsOn(":kotlinx-serialization-compiler-plugin:test")
+        dependsOn(":kotlin-lombok-compiler-plugin:test")
+        dependsOn(":kotlin-noarg-compiler-plugin:test")
+        dependsOn(":kotlin-sam-with-receiver-compiler-plugin:test")
     }
 
     register("toolsTest") {
@@ -789,6 +776,14 @@ tasks {
         dependsOn(":kotlin-annotation-processing:testJdk11")
         dependsOn(":kotlin-annotation-processing-base:test")
         dependsOn(":kotlin-annotation-processing-cli:test")
+    }
+
+    register("parcelizeTests") {
+        dependsOn(":plugins:parcelize:parcelize-compiler:test")
+    }
+
+    register("codebaseTests") {
+        dependsOn(":repo:codebase-tests:test")
     }
 
     register("test") {

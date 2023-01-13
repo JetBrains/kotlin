@@ -124,14 +124,6 @@ class IrModuleDeserializerWithBuiltIns(
         symbol.signature to symbol
     }.toMap()
 
-    private fun checkIsFunctionInterface(idSig: IdSignature): Boolean {
-        val publicSig = idSig.asPublic()
-        return publicSig != null &&
-                publicSig.packageFqName in functionalPackages &&
-                publicSig.declarationFqName.isNotEmpty() &&
-                functionPattern.matcher(publicSig.firstNameSegment).find()
-    }
-
     override operator fun contains(idSig: IdSignature): Boolean {
         val topLevel = idSig.topLevelSignature()
         if (topLevel in irBuiltInsMap) return true

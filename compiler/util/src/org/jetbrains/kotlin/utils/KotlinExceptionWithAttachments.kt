@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.utils
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Attachment
 import com.intellij.openapi.diagnostic.ExceptionWithAttachments
 import java.nio.charset.StandardCharsets
+import com.intellij.psi.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -36,6 +38,12 @@ open class KotlinExceptionWithAttachments : RuntimeException, ExceptionWithAttac
 
     fun withAttachment(name: String, content: Any?): KotlinExceptionWithAttachments {
         attachments.add(Attachment(name, content?.toString() ?: "<null>"))
+        return this
+    }
+
+    fun withPsiAttachment(name: String, element: PsiElement?): KotlinExceptionWithAttachments {
+        kotlin.runCatching { ApplicationManager.getApplication().runReadAction<String> { element?.let(::getElementTextWithContext) } }
+            .getOrNull()?.let { withAttachment(name, it) }
         return this
     }
 }

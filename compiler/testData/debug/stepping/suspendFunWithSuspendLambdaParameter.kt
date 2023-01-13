@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+
 // WITH_STDLIB
 // FILE: test.kt
 suspend fun foo(block: suspend Long.() -> String): String {
@@ -23,3 +23,10 @@ suspend fun box() {
 // test.kt:12 box
 
 // EXPECTATIONS JS_IR
+// test.kt:9 doResume
+// test.kt:9 box$slambda
+// test.kt:9 doResume
+// test.kt:5 foo
+// test.kt:5 foo
+// test.kt:10 doResume
+// test.kt:12 doResume

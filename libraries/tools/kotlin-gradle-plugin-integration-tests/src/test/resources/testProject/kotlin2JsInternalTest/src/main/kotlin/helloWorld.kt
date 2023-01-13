@@ -17,7 +17,7 @@
 internal val CONST = "CONST"
 
 open class PublicClass {
-    internal fun foo(): String = "foo"
+    fun foo(): String = "foo"
     internal val bar: String = "bar"
     open internal fun baz(): String = "PublicClass.baz()"
 }

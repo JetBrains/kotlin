@@ -23,14 +23,17 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
 class AnalysisApiFirSourceTestConfigurator(override val analyseInDependentSession: Boolean) : AnalysisApiTestConfigurator() {
     override val frontendKind: FrontendKind get() = FrontendKind.Fir
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         builder.apply {
+            useDirectives(SealedClassesInheritorsCaclulatorPreAnalysisHandler.Directives)
             usePreAnalysisHandlers(::SealedClassesInheritorsCaclulatorPreAnalysisHandler)
             configureOptionalTestCompilerPlugin()
+            useConfigurators(::JvmEnvironmentConfigurator)
         }
     }
 

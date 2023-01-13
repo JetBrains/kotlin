@@ -93,7 +93,7 @@ public class ExpressionTypingUtils {
             @NotNull String argumentName,
             @NotNull KotlinType argumentType
     ) {
-        KtExpression fakeExpression = KtPsiFactoryKt.KtPsiFactory(project, false).createExpression(argumentName);
+        KtExpression fakeExpression = new KtPsiFactory(project, false).createExpression(argumentName);
         trace.recordType(fakeExpression, argumentType);
         trace.record(PROCESSED, fakeExpression);
         return fakeExpression;

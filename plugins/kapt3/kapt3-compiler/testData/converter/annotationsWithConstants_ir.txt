@@ -1,9 +1,7 @@
 package app;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Anno {
 
     public abstract boolean a1();
@@ -57,10 +55,8 @@ public class B {
 
 package app;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Bind {
 
     public abstract int id();
@@ -70,12 +66,10 @@ public abstract @interface Bind {
 
 package app;
 
-import java.lang.System;
-
-@kotlin.Metadata()
-@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.FIELD})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {java.lang.annotation.ElementType.FIELD})
+@kotlin.Metadata()
 public abstract @interface BindField {
 
     public abstract int id();
@@ -84,8 +78,6 @@ public abstract @interface BindField {
 ////////////////////
 
 package app;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class JJ {
@@ -113,10 +105,8 @@ public final class JJ {
 
 package app;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface MultiValue {
 
     public abstract int[] ids();
@@ -126,10 +116,8 @@ public abstract @interface MultiValue {
 
 package app;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface MultiValueByte {
 
     public abstract byte[] ids();
@@ -139,10 +127,8 @@ public abstract @interface MultiValueByte {
 
 package app;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface MultiValueString {
 
     public abstract java.lang.String[] ids();
@@ -151,8 +137,6 @@ public abstract @interface MultiValueString {
 ////////////////////
 
 package app;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class MyActivity {
@@ -221,8 +205,8 @@ public final class MyActivity {
     public final void foo4() {
     }
 
-    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
     @Bind(id = app.R2.layout.mainActivity)
+    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
     public final void foo5() {
     }
 
@@ -297,8 +281,8 @@ public final class MyActivity {
     public static void getD$annotations() {
     }
 
-    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
     @Bind(id = app.R2.layout.mainActivity)
+    @Anno(a1 = app.B.a1, a2 = app.B.a2, a3 = app.B.a3, a4 = app.B.a4, a5 = app.B.a5, a6 = app.B.a6, a7 = app.B.a7, a8 = app.B.a8, a9 = "A")
     @java.lang.Deprecated()
     public static void getE$annotations() {
     }

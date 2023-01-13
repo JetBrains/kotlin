@@ -42,12 +42,12 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
             return generateNullableAccessor<TypeAttribute<*>, T>(T::class) as ReadOnlyProperty<TypeAttributes, T?>
         }
 
-        override fun <T : TypeAttribute<*>> ConcurrentHashMap<KClass<out TypeAttribute<*>>, Int>.customComputeIfAbsent(
-            kClass: KClass<T>,
-            compute: (KClass<out TypeAttribute<*>>) -> Int
+        override fun ConcurrentHashMap<String, Int>.customComputeIfAbsent(
+            key: String,
+            compute: (String) -> Int
         ): Int {
-            return this[kClass] ?: synchronized(this) {
-                this[kClass] ?: compute(kClass).also { this.putIfAbsent(kClass, it) }
+            return this[key] ?: synchronized(this) {
+                this[key] ?: compute(key).also { this.putIfAbsent(key, it) }
             }
         }
 

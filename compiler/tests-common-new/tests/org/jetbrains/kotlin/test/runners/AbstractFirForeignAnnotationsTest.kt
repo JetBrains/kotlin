@@ -35,7 +35,7 @@ abstract class AbstractFirForeignAnnotationsTestBase(kind: ForeignAnnotationsTes
                 ::FirDumpHandler,
                 ::FirCfgDumpHandler,
                 ::FirCfgConsistencyHandler,
-                ::FirNoImplicitTypesHandler,
+                ::FirResolvedTypesVerifier,
             )
         }
 

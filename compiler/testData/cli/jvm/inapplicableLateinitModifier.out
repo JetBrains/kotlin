@@ -7,6 +7,9 @@ lateinit var kest by Delegate
 compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:9:5: error: 'lateinit' modifier is allowed only on mutable properties
     lateinit val fest = "10"
     ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:9:5: error: 'lateinit' modifier is not allowed on properties with initializer
+    lateinit val fest = "10"
+    ^
 compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:11:5: error: 'lateinit' modifier is not allowed on properties of a type with nullable upper bound
     lateinit var xest: String?
     ^
@@ -14,6 +17,9 @@ compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:12:5: error: 'lateinit
     lateinit var nest: Int
     ^
 compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:13:5: error: 'lateinit' modifier is allowed only on mutable properties
+    lateinit val dest: String
+    ^
+compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:13:5: error: 'lateinit' modifier is not allowed on properties with a custom getter or setter
     lateinit val dest: String
     ^
 compiler/testData/cli/jvm/inapplicableLateinitModifier.kt:18:5: error: 'lateinit' modifier is not allowed on properties of a type with nullable upper bound

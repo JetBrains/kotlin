@@ -634,12 +634,12 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             inlineClassDeclarationLoweringPhase then
             inlineClassUsageLoweringPhase then
 
+            expressionBodyTransformer then
             eraseVirtualDispatchReceiverParametersTypes then
             bridgesConstructionPhase then
             objectDeclarationLoweringPhase then
             fieldInitializersLoweringPhase then
             genericReturnTypeLowering then
-            expressionBodyTransformer then
             unitToVoidLowering then
 
             // Replace builtins before autoboxing

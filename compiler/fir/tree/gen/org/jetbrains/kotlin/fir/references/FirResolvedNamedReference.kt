@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -19,12 +19,11 @@ import org.jetbrains.kotlin.fir.visitors.*
 abstract class FirResolvedNamedReference : FirNamedReference() {
     abstract override val source: KtSourceElement?
     abstract override val name: Name
-    abstract override val candidateSymbol: FirBasedSymbol<*>?
     abstract val resolvedSymbol: FirBasedSymbol<*>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedNamedReference(this, data)
 
     @Suppress("UNCHECKED_CAST")
-    override fun <E: FirElement, D> transform(transformer: FirTransformer<D>, data: D): E = 
+    override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformResolvedNamedReference(this, data) as E
 }

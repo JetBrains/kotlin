@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+
 // FILE: test.kt
 
 inline fun ifoo(ok: String = "OK"): String {
@@ -26,3 +26,6 @@ fun box(): String {
 // test.kt:14 box
 
 // EXPECTATIONS JS_IR
+// test.kt:5 box
+// test.kt:14 box
+// test.kt:8 ifoo2

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
@@ -29,7 +30,7 @@ object FirNativeThreadLocalChecker : FirBasicDeclarationChecker() {
 
         if (declaration.source?.kind is KtFakeSourceElementKind) return
 
-        if (context.containingDeclarations.lastOrNull() !is FirFile && !isObject) {
+        if (!context.isTopLevel && !isObject) {
             reporter.reportIfHasAnnotation(declaration, threadLocalClassId, FirNativeErrors.INAPPLICABLE_THREAD_LOCAL_TOP_LEVEL, context)
         }
     }

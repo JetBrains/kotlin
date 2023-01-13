@@ -39,7 +39,7 @@ abstract class FirAbstractStarImportingScope(
             return
         }
         var foundAny = false
-        processImportsByName(name, starImports) { symbol ->
+        processClassifiersFromImportsByName(name, starImports) { symbol ->
             foundAny = true
             processor(symbol, ConeSubstitutor.Empty)
         }

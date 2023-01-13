@@ -66,7 +66,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected inline val typeResolverTransformer: FirSpecificTypeResolverTransformer get() = components.typeResolverTransformer
     protected inline val callResolver: FirCallResolver get() = components.callResolver
     protected inline val callCompleter: FirCallCompleter get() = components.callCompleter
-    protected inline val dataFlowAnalyzer: FirDataFlowAnalyzer<*> get() = components.dataFlowAnalyzer
+    protected inline val dataFlowAnalyzer: FirDataFlowAnalyzer get() = components.dataFlowAnalyzer
     protected inline val scopeSession: ScopeSession get() = components.scopeSession
     protected inline val file: FirFile get() = components.file
 
@@ -76,7 +76,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     open class BodyResolveTransformerComponents(
         override val session: FirSession,
         override val scopeSession: ScopeSession,
-        val transformer: FirBodyResolveTransformer,
+        val transformer: FirAbstractBodyResolveTransformerDispatcher,
         val context: BodyResolveContext
     ) : BodyResolveComponents() {
         override val fileImportsScope: List<FirScope> get() = context.fileImportsScope
@@ -103,12 +103,12 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
             session
         )
         override val callCompleter: FirCallCompleter = FirCallCompleter(transformer, this)
-        override val dataFlowAnalyzer: FirDataFlowAnalyzer<*> =
+        override val dataFlowAnalyzer: FirDataFlowAnalyzer =
             FirDataFlowAnalyzer.createFirDataFlowAnalyzer(this, context.dataFlowAnalyzerContext)
         override val syntheticCallGenerator: FirSyntheticCallGenerator = FirSyntheticCallGenerator(this)
         override val doubleColonExpressionResolver: FirDoubleColonExpressionResolver = FirDoubleColonExpressionResolver(session)
         override val outerClassManager: FirOuterClassManager = FirOuterClassManager(session, context.outerLocalClassForNested)
-        override val samResolver: FirSamResolver = FirSamResolverImpl(session, scopeSession, outerClassManager)
+        override val samResolver: FirSamResolver = FirSamResolver(session, scopeSession, outerClassManager)
         override val integerLiteralAndOperatorApproximationTransformer: IntegerLiteralAndOperatorApproximationTransformer =
             IntegerLiteralAndOperatorApproximationTransformer(session, scopeSession)
     }

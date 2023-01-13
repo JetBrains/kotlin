@@ -1,0 +1,15 @@
+package
+
+public fun main(/*0*/ x: test.Test): kotlin.Unit
+
+package test {
+
+    public open class Test {
+        public constructor Test()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open fun foo(/*0*/ x: kotlin.Int!): kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+

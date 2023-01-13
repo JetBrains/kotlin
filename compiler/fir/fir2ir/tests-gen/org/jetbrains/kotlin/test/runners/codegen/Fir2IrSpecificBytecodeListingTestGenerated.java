@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,6 +23,22 @@ public class Fir2IrSpecificBytecodeListingTestGenerated extends AbstractFirBytec
     @Test
     public void testAllFilesPresentInBytecodeListing() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/bytecodeListing"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/fir2ir/testData/codegen/bytecodeListing/nullabilityAnnotations")
+    @TestDataPath("$PROJECT_ROOT")
+    public class NullabilityAnnotations {
+        @Test
+        public void testAllFilesPresentInNullabilityAnnotations() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/bytecodeListing/nullabilityAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("suspendFunction.kt")
+        public void testSuspendFunction() throws Exception {
+            runTest("compiler/fir/fir2ir/testData/codegen/bytecodeListing/nullabilityAnnotations/suspendFunction.kt");
+        }
     }
 
     @Nested

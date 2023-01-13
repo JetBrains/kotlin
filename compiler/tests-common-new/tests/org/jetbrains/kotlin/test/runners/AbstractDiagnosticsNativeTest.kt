@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -20,11 +21,11 @@ import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandl
 import org.jetbrains.kotlin.test.frontend.classic.handlers.OldNewInferenceMetaInfoProcessor
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
+import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
-import org.jetbrains.kotlin.test.frontend.fir.handlers.*
 
 abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendOutput<R>> : AbstractKotlinCompilerTest() {
     abstract val targetFrontend: FrontendKind<R>
@@ -59,6 +60,12 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
         forTestsMatching("testData/diagnostics/nativeTests/*") {
             defaultDirectives {
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
+                +ConfigurationDirectives.WITH_STDLIB
+            }
+        }
+        forTestsMatching("testData/diagnostics/nativeTests/testsWithStdLib/*") {
+            defaultDirectives {
+                +ConfigurationDirectives.WITH_STDLIB
             }
         }
     }
@@ -95,7 +102,7 @@ abstract class AbstractFirNativeDiagnosticsTest : AbstractDiagnosticsNativeTestB
                 ::FirDumpHandler,
                 ::FirCfgDumpHandler,
                 ::FirCfgConsistencyHandler,
-                ::FirNoImplicitTypesHandler,
+                ::FirResolvedTypesVerifier,
                 ::FirScopeDumpHandler,
             )
         }
@@ -103,6 +110,7 @@ abstract class AbstractFirNativeDiagnosticsTest : AbstractDiagnosticsNativeTestB
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
+        builder.enableLazyResolvePhaseChecking()
 
         builder.forTestsMatching("compiler/testData/diagnostics/*") {
             configurationForClassicAndFirTestsAlongside()

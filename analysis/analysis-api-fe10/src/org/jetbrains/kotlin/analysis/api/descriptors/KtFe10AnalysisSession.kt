@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KtAnalysisScopeProviderImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KtRendererProviderImpl
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
@@ -41,7 +42,7 @@ class KtFe10AnalysisSession(
     override val symbolDeclarationOverridesProviderImpl: KtSymbolDeclarationOverridesProvider =
         KtFe10SymbolDeclarationOverridesProvider(this)
     override val referenceShortenerImpl: KtReferenceShortener = KtFe10ReferenceShortener(this)
-    override val symbolDeclarationRendererProviderImpl: KtSymbolDeclarationRendererProvider = KtFe10SymbolDeclarationRendererProvider(this)
+    override val symbolDeclarationRendererProviderImpl: KtSymbolDeclarationRendererProvider = KtRendererProviderImpl(this, token)
     override val expressionTypeProviderImpl: KtExpressionTypeProvider = KtFe10ExpressionTypeProvider(this)
     override val psiTypeProviderImpl: KtPsiTypeProvider = KtFe10PsiTypeProvider(this)
     override val typeProviderImpl: KtTypeProvider = KtFe10TypeProvider(this)

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 
 /**
@@ -16,6 +17,18 @@ fun BuildResult.assertOutputContains(
     assert(output.contains(expectedSubString)) {
         printBuildOutput()
         "Build output does not contain \"$expectedSubString\""
+    }
+}
+
+/**
+ * Asserts Gradle output contains any of [expectedSubString] strings.
+ */
+fun BuildResult.assertOutputContainsAny(
+    vararg expectedSubStrings: String
+) {
+    assert(expectedSubStrings.any { output.contains(it) }) {
+        printBuildOutput()
+        "Build output does not contain any of \"$expectedSubStrings\""
     }
 }
 

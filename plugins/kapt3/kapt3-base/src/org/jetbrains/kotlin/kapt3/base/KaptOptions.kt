@@ -157,7 +157,7 @@ fun KaptOptions.collectJavaSourceFiles(sourcesToReprocess: SourcesToReprocess = 
             .sortedBy { Files.isSymbolicLink(it.toPath()) } // Get non-symbolic paths first
             .flatMap { root -> root.walk().filter { it.isFile && it.extension == "java" }.toList() }
             .sortedBy { Files.isSymbolicLink(it.toPath()) } // This time is for .java files
-            .distinctBy { it.canonicalPath }
+            .distinctBy { it.normalize().absolutePath }
     }
 
     return when (sourcesToReprocess) {

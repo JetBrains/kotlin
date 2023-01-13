@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.extensions.predicate.annotatedOrUnder
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.transform
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -37,7 +36,7 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
         private val PrivateName = Name.identifier("Private")
         private val ProtectedName = Name.identifier("Protected")
 
-        private val PREDICATE: DeclarationPredicate = annotatedOrUnder(AllPublicClassId.asSingleFqName())
+        private val PREDICATE = DeclarationPredicate.create { annotatedOrUnder(AllPublicClassId.asSingleFqName()) }
     }
 
     override fun transformStatus(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {

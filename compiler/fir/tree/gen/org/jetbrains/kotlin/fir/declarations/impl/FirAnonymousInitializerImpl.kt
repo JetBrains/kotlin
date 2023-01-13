@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
+import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -26,13 +29,14 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirAnonymousInitializerImpl(
     override val source: KtSourceElement?,
-    override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
+    override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override var body: FirBlock?,
     override val symbol: FirAnonymousInitializerSymbol,
+    override val dispatchReceiverType: ConeSimpleKotlinType?,
 ) : FirAnonymousInitializer() {
     override val annotations: List<FirAnnotation> get() = emptyList()
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
@@ -60,7 +64,13 @@ internal class FirAnonymousInitializerImpl(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
+
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {
         controlFlowGraphReference = newControlFlowGraphReference
+    }
+
+    override fun replaceBody(newBody: FirBlock?) {
+        body = newBody
     }
 }

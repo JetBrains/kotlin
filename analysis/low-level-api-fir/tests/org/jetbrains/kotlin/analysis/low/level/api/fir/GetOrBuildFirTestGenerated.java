@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -61,6 +61,24 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("annotationApplicationWithArguments.kt")
         public void testAnnotationApplicationWithArguments() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/annotationApplicationWithArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationApplicationWithArgumentsOnCallSite.kt")
+        public void testAnnotationApplicationWithArgumentsOnCallSite() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/annotationApplicationWithArgumentsOnCallSite.kt");
+        }
+
+        @Test
+        @TestMetadata("danglingAnnotation.kt")
+        public void testDanglingAnnotation() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/danglingAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("danglingAnnotationInClass.kt")
+        public void testDanglingAnnotationInClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/danglingAnnotationInClass.kt");
         }
 
         @Test
@@ -204,6 +222,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         public void testQualifiedWholeCall() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedWholeCall.kt");
         }
+
+        @Test
+        @TestMetadata("setOperator.kt")
+        public void testSetOperator() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/setOperator.kt");
+        }
     }
 
     @Nested
@@ -213,6 +237,30 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @Test
         public void testAllFilesPresentInDeclarations() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("destructuring.kt")
+        public void testDestructuring() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/destructuring.kt");
+        }
+
+        @Test
+        @TestMetadata("destructuringEntry.kt")
+        public void testDestructuringEntry() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/destructuringEntry.kt");
+        }
+
+        @Test
+        @TestMetadata("objectLiteral.kt")
+        public void testObjectLiteral() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/objectLiteral.kt");
+        }
+
+        @Test
+        @TestMetadata("objectLiteralExpression.kt")
+        public void testObjectLiteralExpression() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/objectLiteralExpression.kt");
         }
 
         @Test
@@ -241,6 +289,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("arrayAccessExpression.kt")
         public void testArrayAccessExpression() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/arrayAccessExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("arrayIndexExpressionWithInc.kt")
+        public void testArrayIndexExpressionWithInc() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/arrayIndexExpressionWithInc.kt");
         }
 
         @Test
@@ -301,6 +355,12 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("ifExpression.kt")
         public void testIfExpression() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/ifExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("incExpression.kt")
+        public void testIncExpression() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/expressions/incExpression.kt");
         }
 
         @Test
@@ -507,6 +567,28 @@ public class GetOrBuildFirTestGenerated extends AbstractGetOrBuildFirTest {
         @TestMetadata("wholePackageName.kt")
         public void testWholePackageName() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/inPackage/wholePackageName.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvalidCode {
+        @Test
+        public void testAllFilesPresentInInvalidCode() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("javaClassLiteral.kt")
+        public void testJavaClassLiteral() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/javaClassLiteral.kt");
+        }
+
+        @Test
+        @TestMetadata("secondaryConstructor.kt")
+        public void testSecondaryConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/secondaryConstructor.kt");
         }
     }
 

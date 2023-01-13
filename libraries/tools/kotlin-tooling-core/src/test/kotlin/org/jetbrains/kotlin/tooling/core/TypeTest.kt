@@ -96,7 +96,7 @@ class TypeTest {
         )
     }
 
-    @Suppress("RemoveExplicitTypeArguments", "TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING")
+    @Suppress("RemoveExplicitTypeArguments", "TYPE_INFERENCE_ONLY_INPUT_TYPES_WARNING", "TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR")
     @Test
     fun `test - equals`() {
         assertEquals(extrasTypeOf<List<Int>>(), extrasTypeOf<List<Int>>())

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.overriddenTreeAsSequence
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.typeUtil.contains
-import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 class JvmIdSignatureDescriptor(mangler: KotlinMangler.DescriptorMangler) : IdSignatureDescriptor(mangler) {
 
@@ -86,7 +85,7 @@ class JvmIdSignatureDescriptor(mangler: KotlinMangler.DescriptorMangler) : IdSig
             }.toList()
             if (capturingOverrides.isNotEmpty()) {
                 overridden = capturingOverrides.sortedBy {
-                    it.containingDeclaration.cast<ClassDescriptor>().fqNameUnsafe.asString()
+                    (it.containingDeclaration as ClassDescriptor).fqNameUnsafe.asString()
                 }
             }
         }

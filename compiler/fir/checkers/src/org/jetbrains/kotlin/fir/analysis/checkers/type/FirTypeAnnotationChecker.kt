@@ -23,6 +23,8 @@ object FirTypeAnnotationChecker : FirTypeRefChecker() {
         if (typeRef !is FirResolvedTypeRef) return
 
         for (annotation in typeRef.annotations) {
+            if (annotation.source == null) continue
+
             val annotationTargets = annotation.getAllowedAnnotationTargets(context.session)
             if (KotlinTarget.TYPE !in annotationTargets) {
                 val useSiteTarget = annotation.useSiteTarget

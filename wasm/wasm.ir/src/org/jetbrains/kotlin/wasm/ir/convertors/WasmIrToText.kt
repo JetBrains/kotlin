@@ -60,6 +60,34 @@ class WasmIrToText : SExpressionBuilder() {
 
     private fun appendInstr(wasmInstr: WasmInstr) {
         val op = wasmInstr.operator
+
+        if (op.opcode == WASM_OP_PSEUDO_OPCODE) {
+            fun commentText() =
+                (wasmInstr.immediates.single() as WasmImmediate.ConstString).value
+
+            when (op) {
+                WasmOp.PSEUDO_COMMENT_PREVIOUS_INSTR -> {
+                    val text = commentText()
+                    require(text.lineSequence().count() < 2) { "Comments for single instruction should be in one line" }
+                    stringBuilder.append("  ;; ")
+                    stringBuilder.append(text)
+                }
+                WasmOp.PSEUDO_COMMENT_GROUP_START -> {
+                    newLine()
+                    commentText().lines().forEach { line ->
+                        newLine()
+                        stringBuilder.append(";; ")
+                        stringBuilder.append(line)
+                    }
+                }
+                WasmOp.PSEUDO_COMMENT_GROUP_END -> {
+                    newLine()
+                }
+                else -> error("Unknown pseudo op $op")
+            }
+            return
+        }
+
         if (op == WasmOp.END || op == WasmOp.ELSE || op == WasmOp.CATCH)
             indent--
 
@@ -96,7 +124,7 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmImmediate.LocalIdx -> appendLocalReference(x.value.owner)
             is WasmImmediate.GlobalIdx -> appendModuleFieldReference(x.value.owner)
             is WasmImmediate.TypeIdx -> sameLineList("type") { appendModuleFieldReference(x.value.owner) }
-            is WasmImmediate.MemoryIdx -> appendModuleFieldIdIfNotNull(x.value.owner)
+            is WasmImmediate.MemoryIdx -> appendIdxIfNotZero(x.value)
             is WasmImmediate.DataIdx -> appendElement(x.value.toString())
             is WasmImmediate.TableIdx -> appendElement(x.value.toString())
             is WasmImmediate.LabelIdx -> appendElement(x.value.toString())
@@ -113,6 +141,8 @@ class WasmIrToText : SExpressionBuilder() {
             is WasmImmediate.HeapType -> {
                 appendHeapType(x.value)
             }
+
+            is WasmImmediate.ConstString -> error("Pseudo immediate")
         }
     }
 
@@ -198,13 +228,14 @@ class WasmIrToText : SExpressionBuilder() {
         with(module) {
             newLineList("module") {
                 functionTypes.forEach { appendFunctionTypeDeclaration(it) }
-                gcTypes.forEach {
+                recGroupTypes.forEach {
                     when (it) {
                         is WasmStructDeclaration ->
                             appendStructTypeDeclaration(it)
                         is WasmArrayDeclaration ->
                             appendArrayTypeDeclaration(it)
-                        else -> error("Unexpected GC type: $it")
+                        is WasmFunctionType ->
+                            appendFunctionTypeDeclaration(it)
                     }
                 }
                 importsInOrder.forEach {
@@ -289,7 +320,7 @@ class WasmIrToText : SExpressionBuilder() {
         }
     }
 
-    private fun WasmImportPair.appendImportPair() {
+    private fun WasmImportDescriptor.appendImportPair() {
         sameLineList("import") {
             toWatString(moduleName)
             toWatString(declarationName)
@@ -492,9 +523,7 @@ class WasmIrToText : SExpressionBuilder() {
         appendElement("$${local.id}_${sanitizeWatIdentifier(local.name)}")
     }
 
-    fun appendModuleFieldIdIfNotNull(field: WasmNamedModuleField) {
-        val id = field.id
-            ?: error("${field::class} ${field.name} ID is unlinked")
+    fun appendIdxIfNotZero(id: Int) {
         if (id != 0) appendElement(id.toString())
     }
 

@@ -223,13 +223,31 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
 
                 LookupSymbol(name = "inlineProperty_ChangedType", scope = "com.example"),
                 LookupSymbol(name = "inlineProperty_ChangedType_BackingField", scope = "com.example"),
-                LookupSymbol(name = "getInlineProperty_ChangedType", scope = "com.example"),
-                LookupSymbol(name = "setInlineProperty_ChangedType", scope = "com.example"),
 
-                LookupSymbol(name = "getInlineProperty_ChangedGetterImpl", scope = "com.example"),
-                LookupSymbol(name = "setInlineProperty_ChangedSetterImpl", scope = "com.example"),
+                LookupSymbol(name = "inlineProperty_ChangedGetterImpl", scope = "com.example"),
+                LookupSymbol(name = "inlineProperty_ChangedSetterImpl", scope = "com.example"),
 
                 LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass")
+            ),
+            fqNames = setOf(
+                "com.example",
+                "com.example.SomeClass"
+            )
+        ).assertEquals(changes)
+    }
+
+    @Test
+    fun testFunctionsAndPropertyAccessorsWithJvmNames() {
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testFunctionsAndPropertyAccessorsWithJvmNames/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "changedFunction", scope = "com.example.SomeClass"),
+                LookupSymbol(name = "changedPropertyAccessor", scope = "com.example.SomeClass"),
+
+                LookupSymbol(name = "changedInlineFunction", scope = "com.example"),
+                LookupSymbol(name = "changedInlinePropertyAccessor", scope = "com.example"),
+
+                LookupSymbol(name = SAM_LOOKUP_NAME.asString(), scope = "com.example.SomeClass"),
             ),
             fqNames = setOf(
                 "com.example",

@@ -1,0 +1,14 @@
+package test
+
+@test.Ann public val @receiver:test.Ann kotlin.Int.bar: kotlin.Int
+@test.Ann public fun @receiver:test.Ann kotlin.Int.foo(/*0*/ @test.Ann arg: kotlin.Int): kotlin.Int
+
+public final class A {
+    public constructor A()
+    @test.Ann public final val @receiver:test.Ann kotlin.Int.bar: kotlin.Int
+    @test.Ann public final fun @receiver:test.Ann kotlin.Int.foo(/*0*/ @test.Ann arg: kotlin.Int): kotlin.Int
+}
+
+public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann()
+}

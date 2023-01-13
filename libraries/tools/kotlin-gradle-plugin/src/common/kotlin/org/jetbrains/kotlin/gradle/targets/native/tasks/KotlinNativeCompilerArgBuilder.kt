@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.project.model.LanguageSettings
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 internal class CompilerPluginData(
@@ -23,9 +24,11 @@ internal class CompilerPluginData(
 
 internal class SharedCompilationData(
     val manifestFile: File,
-    val isAllowCommonizer: Boolean
+    val isAllowCommonizer: Boolean,
+    val refinesPaths: FileCollection
 )
 
+@Suppress("UNUSED_PARAMETER")
 internal fun buildKotlinNativeKlibCompilerArgs(
     outFile: File,
     optimized: Boolean,
@@ -41,6 +44,7 @@ internal fun buildKotlinNativeKlibCompilerArgs(
     moduleName: String,
     shortModuleName: String,
     friendModule: FileCollection,
+    libraryVersion: String,
     sharedCompilationData: SharedCompilationData?,
     source: FileTree,
     commonSourcesTree: FileTree
@@ -61,6 +65,16 @@ internal fun buildKotlinNativeKlibCompilerArgs(
     val friends = friendModule.files
     if (friends.isNotEmpty()) {
         addArg("-friend-modules", friends.joinToString(File.pathSeparator) { it.absolutePath })
+    }
+
+    // TODO: uncomment after advancing bootstrap.
+    //add("-library-version=libraryVersion")
+
+    if (sharedCompilationData != null) {
+        val refinesPaths = sharedCompilationData.refinesPaths.files
+        if (refinesPaths.isNotEmpty()) {
+            add("-Xrefines-paths=${refinesPaths.joinToString(separator = ",") { it.absolutePath }}")
+        }
     }
 
     addAll(buildKotlinNativeCompileCommonArgs(enableEndorsedLibs, languageSettings, compilerOptions, compilerPlugins))
@@ -130,7 +144,7 @@ private fun buildKotlinNativeMainArgs(
     addKey("-g", debuggable)
     addKey("-ea", debuggable)
     addArg("-target", target.name)
-    addArg("-p", outputKind.name.toLowerCase())
+    addArg("-p", outputKind.name.toLowerCaseAsciiOnly())
     addArg("-o", outFile.absolutePath)
     libraries.forEach { addArg("-l", it.absolutePath) }
 }

@@ -15,7 +15,6 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testApi(project(":kotlin-daemon-client"))
-    testApi(project(":kotlin-daemon-client-new"))
     testCompileOnly(project(":kotlin-daemon"))
     testApi(projectTests(":compiler:tests-common"))
     testApi(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }

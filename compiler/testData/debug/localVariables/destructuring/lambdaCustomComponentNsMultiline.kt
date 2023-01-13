@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_FIR: JVM_IR
+// IGNORE_BACKEND_K2: JVM_IR
 
 // FILE: test.kt
 class MyPair(val x: String, val y: String) {
@@ -25,8 +25,6 @@ fun box() {
         x + y
     }
 }
-
-// EXPECTATIONS
 
 // EXPECTATIONS JVM
 // test.kt:17 box:
@@ -57,4 +55,18 @@ fun box() {
 // test.kt:25 invoke: x:java.lang.String="O":java.lang.String, y:java.lang.String="K":java.lang.String
 // test.kt:14 foo: a:MyPair=MyPair, block:kotlin.jvm.functions.Function1=TestKt$box$1
 // test.kt:17 box:
+// test.kt:27 box:
+
+// EXPECTATIONS JS_IR
+// test.kt:17 box:
+// test.kt:4 <init>: x="X":kotlin.String, y="Y":kotlin.String
+// test.kt:4 <init>: x="X":kotlin.String, y="Y":kotlin.String
+// test.kt:4 <init>: x="X":kotlin.String, y="Y":kotlin.String
+// test.kt:17 box:
+// test.kt:14 foo: a=MyPair, block=Function1
+// test.kt:20 box$lambda:
+// test.kt:6 component1:
+// test.kt:22 box$lambda: x="O":kotlin.String
+// test.kt:10 component2:
+// test.kt:25 box$lambda: x="O":kotlin.String, y="K":kotlin.String
 // test.kt:27 box:

@@ -16,17 +16,20 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
+import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import org.jetbrains.kotlin.fir.containingClassForLocalAttr
+import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
-import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectData
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.impl.originalForWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.resolve.getContainingDeclaration
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 
 internal interface KtFirSymbol<out S : FirBasedSymbol<*>> : KtSymbol, KtLifetimeOwner {
     val firSymbol: S
@@ -73,8 +76,8 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
         }
     }
 
-    FirDeclarationOrigin.ImportedFromObject -> {
-        val importedFromObjectData = (this as FirCallableDeclaration).importedFromObjectData
+    FirDeclarationOrigin.ImportedFromObjectOrStatic -> {
+        val importedFromObjectData = (this as FirCallableDeclaration).importedFromObjectOrStaticData
             ?: buildErrorWithAttachment("Declaration has ImportedFromObject origin, but no importedFromObjectData present") {
                 withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
             }
@@ -98,16 +101,20 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
     FirDeclarationOrigin.DynamicScope -> buildErrorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
         withFirEntry("firToGetOrigin", this@ktSymbolOrigin)
     }
+    FirDeclarationOrigin.ScriptCustomization -> KtSymbolOrigin.PLUGIN
 }
 
-internal fun KtClassLikeSymbol.getSymbolKind(firResolveSession: LLFirResolveSession): KtSymbolKind {
+internal fun KtClassLikeSymbol.getSymbolKind(): KtSymbolKind {
     val firSymbol = firSymbol as FirClassLikeSymbol<*>
-    return when {
+    if (firSymbol.isLocal) {
         // TODO: hack should be dropped after KT-54390
-        firSymbol.isLocal && (firSymbol.fir.getContainingDeclaration(firResolveSession.useSiteFirSession) as? FirClass)?.let { clazz ->
-            clazz.declarations.none { it === firSymbol.fir }
-        } == true -> KtSymbolKind.LOCAL
-
+        when {
+            firSymbol is FirRegularClassSymbol && firSymbol.fir.containingClassForLocalAttr == null -> {
+                return KtSymbolKind.LOCAL
+            }
+        }
+    }
+    return when {
         firSymbol.classId.isNestedClass -> KtSymbolKind.CLASS_MEMBER
         firSymbol.isLocal -> KtSymbolKind.LOCAL
         else -> KtSymbolKind.TOP_LEVEL

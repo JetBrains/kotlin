@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -105,8 +104,8 @@ private class FE10LikeConeSubstitutor(
         return withAttributes(ConeAttributes.create(listOf(OriginalProjectionTypeAttribute(projection))))
     }
 
-    override fun substituteArgument(projection: ConeTypeProjection, lookupTag: ConeClassLikeLookupTag, index: Int): ConeTypeProjection? {
-        val substitutedProjection = super.substituteArgument(projection, lookupTag, index) ?: return null
+    override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
+        val substitutedProjection = super.substituteArgument(projection, index) ?: return null
         if (substitutedProjection.isStarProjection) return null
 
         val type = substitutedProjection.type!!

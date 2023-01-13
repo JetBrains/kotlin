@@ -1,3 +1,4 @@
+// FIR_DUMP
 // WITH_REFLECT
 
 import kotlin.properties.ReadWriteProperty

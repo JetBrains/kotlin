@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.OtherOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -109,8 +108,8 @@ class SuspendFunctionGenerationStrategy(
         return bfs(this)
     }
 
-    private fun containingClassInternalNameOrNull() =
-        originalSuspendDescriptor.containingDeclaration.safeAs<ClassDescriptor>()?.let(state.typeMapper::mapClass)?.internalName
+    private fun containingClassInternalNameOrNull(): String? =
+        (originalSuspendDescriptor.containingDeclaration as? ClassDescriptor)?.let(state.typeMapper::mapClass)?.internalName
 
     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
         this.codegen = codegen

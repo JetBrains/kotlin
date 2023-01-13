@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // EXPECTED_REACHABLE_NODES: 1281
 import Test.test
 

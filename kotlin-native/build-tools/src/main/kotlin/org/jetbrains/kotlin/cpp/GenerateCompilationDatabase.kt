@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cpp
 
+import com.google.gson.JsonSyntaxException
 import com.google.gson.annotations.Expose
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
@@ -126,7 +127,11 @@ abstract class GenerateCompilationDatabase : DefaultTask() {
         val serialized = mutableListOf<SerializedEntry>()
         mergeFiles.files.forEach { file ->
             FileReader(file).use {
-                serialized.addAll(gson.fromJson(it, Array<SerializedEntry>::class.java))
+                try {
+                    serialized.addAll(gson.fromJson(it, Array<SerializedEntry>::class.java))
+                } catch (e: JsonSyntaxException) {
+                    throw IllegalStateException("Failed to parse $file as compilation database", e)
+                }
             }
         }
         entries.get().forEach {

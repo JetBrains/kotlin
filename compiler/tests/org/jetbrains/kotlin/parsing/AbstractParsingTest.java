@@ -121,7 +121,7 @@ public abstract class AbstractParsingTest extends KtParsingTestCase {
     }
 
     private PsiFile createFile(@NotNull String filePath, @NotNull IElementType fileType, @NotNull String fileContent) {
-        KtPsiFactory psiFactory = KtPsiFactoryKt.KtPsiFactory(myProject);
+        KtPsiFactory psiFactory = new KtPsiFactory(myProject);
 
         if (fileType == KtNodeTypes.EXPRESSION_CODE_FRAGMENT) {
             return psiFactory.createExpressionCodeFragment(fileContent, null);

@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.js.testOld.engines.ExternalTool
-import org.jetbrains.kotlin.js.testOld.engines.SpiderMonkeyEngine
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -39,14 +38,18 @@ import java.io.File
 abstract class BasicWasmBoxTest(
     private val pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
     private val startUnitTests: Boolean = false
 ) : KotlinTestWithEnvironment() {
+
+    private val pathToRootOutputDir: String = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
+
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
 
-    private val spiderMonkey by lazy { SpiderMonkeyEngine() }
-
     private val COMMON_FILES_NAME = "_common"
+
+    private val extraLanguageFeatures = mapOf(
+        LanguageFeature.JsAllowImplementingFunctionInterface to LanguageFeature.State.ENABLED,
+    )
 
     fun doTest(filePath: String) = doTestWithTransformer(filePath) { it }
     fun doTestWithTransformer(filePath: String, transformer: java.util.function.Function<String, String>) {
@@ -64,6 +67,9 @@ abstract class BasicWasmBoxTest(
             val kotlinFiles = mutableListOf<String>()
             val jsFilesBefore = mutableListOf<String>()
             val jsFilesAfter = mutableListOf<String>()
+            val mjsFiles = mutableListOf<String>()
+
+            var entryMjs: String? = "test.mjs"
 
             inputFiles.forEach {
                 val name = it.fileName
@@ -76,6 +82,14 @@ abstract class BasicWasmBoxTest(
 
                     name.endsWith(".js") ->
                         jsFilesBefore += name
+
+                    name.endsWith(".mjs") -> {
+                        mjsFiles += name
+                        val fileName = File(name).name
+                        if (fileName == "entry.mjs") {
+                            entryMjs = fileName
+                        }
+                    }
                 }
             }
 
@@ -129,10 +143,12 @@ abstract class BasicWasmBoxTest(
             )
 
             val generateWat = debugMode >= DebugMode.DEBUG
+            val baseFileName = "index"
 
             val compilerResult = compileWasm(
                 allModules = allModules,
                 backendContext = backendContext,
+                baseFileName = baseFileName,
                 emitNameSection = true,
                 allowIncompleteImplementations = false,
                 generateWat = generateWat,
@@ -143,19 +159,20 @@ abstract class BasicWasmBoxTest(
             val compilerResultWithDCE = compileWasm(
                 allModules = allModules,
                 backendContext = backendContext,
+                baseFileName = baseFileName,
                 emitNameSection = true,
                 allowIncompleteImplementations = true,
                 generateWat = generateWat,
             )
 
-            val startUnitTests = if (startUnitTests) "exports.startUnitTests?.();\n" else ""
-
             val testJsQuiet = """
-                import exports from './index.mjs';
-        
-                let actualResult
+                let actualResult;
                 try {
-                    ${startUnitTests}actualResult = exports.box();
+                    // Use "dynamic import" to catch exception happened during JS & Wasm modules initialization
+                    let jsModule = await import('./index.mjs');
+                    let wasmExports = jsModule.default;
+                    ${if (startUnitTests) "wasmExports.startUnitTests();" else ""}
+                    actualResult = wasmExports.box();
                 } catch(e) {
                     console.log('Failed with exception!')
                     console.log('Message: ' + e.message)
@@ -163,6 +180,7 @@ abstract class BasicWasmBoxTest(
                     console.log('Stack:')
                     console.log(e.stack)
                 }
+
                 if (actualResult !== "OK")
                     throw `Wrong box result '${'$'}{actualResult}'; Expected "OK"`;
             """.trimIndent()
@@ -173,60 +191,68 @@ abstract class BasicWasmBoxTest(
 
             val testJs = if (debugMode >= DebugMode.DEBUG) testJsVerbose else testJsQuiet
 
-            fun compileAndRunD8Test(name: String, res: WasmCompilerResult) {
+            fun writeToFilesAndRunD8Test(name: String, res: WasmCompilerResult) {
                 val dir = File(outputDirBase, name)
+                dir.mkdirs()
+
                 if (debugMode >= DebugMode.DEBUG) {
                     val path = dir.absolutePath
-                    println(" ------ $name WAT  file://$path/index.wat")
-                    println(" ------ $name WASM file://$path/index.wasm")
+                    println(" ------ $name Wat  file://$path/index.wat")
+                    println(" ------ $name Wasm file://$path/index.wasm")
+                    println(" ------ $name JS   file://$path/index.uninstantiated.mjs")
                     println(" ------ $name JS   file://$path/index.mjs")
                     println(" ------ $name Test file://$path/test.mjs")
-                }
+                    val projectName = "kotlin"
+                    println(" ------ $name HTML http://0.0.0.0:63342/$projectName/${dir.path}/index.html")
+                    for (mjsPath: String in mjsFiles) {
+                        println(" ------ $name External ESM file://$path/${File(mjsPath).name}")
+                    }
 
-                writeCompilationResult(res, dir)
-                File(dir, "test.mjs").writeText(testJs)
-                ExternalTool(System.getProperty("javascript.engine.path.V8"))
-                    .run(
-                        "--experimental-wasm-gc",
-                        "--experimental-wasm-eh",
-                        *jsFilesBefore.map { File(it).absolutePath }.toTypedArray(),
-                        "--module",
-                        "./test.mjs",
-                        *jsFilesAfter.map { File(it).absolutePath }.toTypedArray(),
-                        workingDirectory = dir
-                    )
-            }
-
-            compileAndRunD8Test("d8", compilerResult)
-            compileAndRunD8Test("d8-dce", compilerResultWithDCE)
-
-            if (debugMode >= DebugMode.SUPER_DEBUG) {
-                fun writeBrowserTest(name: String, res: WasmCompilerResult) {
-                    val dir = File(outputDirBase, name)
-                    writeCompilationResult(res, dir)
-                    File(dir, "test.mjs").writeText(testJsVerbose)
                     File(dir, "index.html").writeText(
                         """
                             <!DOCTYPE html>
                             <html lang="en">
                             <body>
-                            <script src="test.mjs" type="module"></script>
+                                <span id="test">UNKNOWN</span>
+                                <script type="module">
+                                    let test = document.getElementById("test")
+                                    try {
+                                        await import("./test.mjs");
+                                        test.style.backgroundColor = "#0f0";
+                                        test.textContent = "OK"
+                                    } catch(e) {
+                                        test.style.backgroundColor = "#f00";
+                                        test.textContent = "NOT OK"
+                                        throw e;
+                                    }
+                                </script>
                             </body>
                             </html>
                         """.trimIndent()
                     )
-                    val path = dir.absolutePath
-                    println(" ------ $name WAT  file://$path/index.wat")
-                    println(" ------ $name WASM file://$path/index.wasm")
-                    println(" ------ $name JS   file://$path/index.mjs")
-                    println(" ------ $name TEST file://$path/test.mjs")
-                    println(" ------ $name HTML file://$path/index.html")
                 }
 
-                writeBrowserTest("browser", compilerResult)
-                writeBrowserTest("browser-dce", compilerResultWithDCE)
+                writeCompilationResult(res, dir, baseFileName)
+                File(dir, "test.mjs").writeText(testJs)
+
+                for (mjsPath: String in mjsFiles) {
+                    val mjsFile = File(mjsPath)
+                    File(dir, mjsFile.name).writeText(mjsFile.readText())
+                }
+
+                ExternalTool(System.getProperty("javascript.engine.path.V8"))
+                    .run(
+                        "--experimental-wasm-gc",
+                        *jsFilesBefore.map { File(it).absolutePath }.toTypedArray(),
+                        "--module",
+                        "./${entryMjs}",
+                        *jsFilesAfter.map { File(it).absolutePath }.toTypedArray(),
+                        workingDirectory = dir
+                    )
             }
 
+            writeToFilesAndRunD8Test("d8", compilerResult)
+            writeToFilesAndRunD8Test("d8-dce", compilerResultWithDCE)
         }
     }
 
@@ -245,7 +271,7 @@ abstract class BasicWasmBoxTest(
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, true)
         configuration.languageVersionSettings = languageVersionSettings
-            ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE)
+            ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, specificFeatures = extraLanguageFeatures)
         return JsConfig(project, configuration, CompilerEnvironment, null, null)
     }
 
@@ -260,7 +286,7 @@ abstract class BasicWasmBoxTest(
                 }
             }
 
-            val languageVersionSettings = parseLanguageVersionSettings(directives)
+            val languageVersionSettings = parseLanguageVersionSettings(directives, extraLanguageFeatures)
 
             val temporaryFile = File(tmpDir, "WASM_TEST/$fileName")
             KtTestUtil.mkdirs(temporaryFile.parentFile)

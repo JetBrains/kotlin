@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
-import org.jetbrains.kotlin.backend.common.lower.MethodsFromAnyGeneratorForLowerings.Companion.collectOverridenSymbols
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
@@ -28,13 +27,6 @@ internal class JsUsefulDeclarationProcessor(
     private val hashCodeMethod = getMethodOfAny("hashCode")
 
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
-        override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration) {
-            if (expression.symbol != context.intrinsics.implementSymbol) {
-                // Just ignore implement to not include large chunk of code inside small applications if it's not needed
-                super.visitFunctionAccess(expression, data)
-            }
-        }
-
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
             super.visitCall(expression, data)
             when (expression.symbol) {

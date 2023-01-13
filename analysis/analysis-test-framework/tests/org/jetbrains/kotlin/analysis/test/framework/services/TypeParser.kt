@@ -21,7 +21,7 @@ object TypeParser {
         contextElement: KtElement,
         scopeForTypeParameters: KtElement,
     ): KtType {
-        val type = KtPsiFactory(contextElement).createType(stringType)
+        val type = KtPsiFactory(contextElement.project).createType(stringType)
         return convertType(type.typeElement ?: incorrectType(type), scopeForTypeParameters)
     }
 

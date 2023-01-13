@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     `java-test-fixtures`
     `maven-publish`
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 kotlin.sourceSets.configureEach {
@@ -15,7 +16,7 @@ kotlin.sourceSets.configureEach {
 dependencies {
     api(project(":kotlin-tooling-core"))
     api(project(":kotlin-gradle-plugin-annotations"))
-    implementation(kotlinStdlib())
+    compileOnly(kotlinStdlib())
     testImplementation(gradleApi())
     testImplementation(gradleKotlinDsl())
     testImplementation(project(":kotlin-gradle-plugin"))
@@ -60,6 +61,16 @@ publish(moduleMetadata = true) {
 
 javadocJar()
 sourcesJar()
+
+apiValidation {
+    nonPublicMarkers += "org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi"
+}
+
+tasks {
+    apiBuild {
+        inputJar.value(jar.flatMap { it.archiveFile })
+    }
+}
 
 //region Setup: Backwards compatibility tests
 

@@ -5,19 +5,19 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.ErrorReportingContext
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.util.render
 
-internal fun CommonBackendContext.reportCompilationError(message: String, irFile: IrFile, irElement: IrElement): Nothing {
+internal fun ErrorReportingContext.reportCompilationError(message: String, irFile: IrFile, irElement: IrElement): Nothing {
     report(irElement, irFile, message, true)
     throw KonanCompilationException()
 }
 
-internal fun CommonBackendContext.reportCompilationError(message: String): Nothing {
+internal fun ErrorReportingContext.reportCompilationError(message: String): Nothing {
     report(null, null, message, true)
     throw KonanCompilationException()
 }
@@ -27,7 +27,7 @@ internal fun CompilerConfiguration.reportCompilationError(message: String): Noth
     throw KonanCompilationException()
 }
 
-internal fun CommonBackendContext.reportCompilationWarning(message: String) {
+internal fun ErrorReportingContext.reportCompilationWarning(message: String) {
     report(null, null, message, false)
 }
 

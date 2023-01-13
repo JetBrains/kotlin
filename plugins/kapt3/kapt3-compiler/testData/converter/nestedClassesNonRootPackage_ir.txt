@@ -1,7 +1,5 @@
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class A$B {
     @kotlin.jvm.JvmField()
@@ -29,6 +27,22 @@ public final class A$B {
     public static final class C {
 
         public C() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class D$$$E {
+
+        public D$$$E() {
+            super();
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class D$$E {
+
+        public D$$E() {
             super();
         }
     }
@@ -64,29 +78,11 @@ public final class A$B {
             }
         }
     }
-
-    @kotlin.Metadata()
-    public static final class D$$E {
-
-        public D$$E() {
-            super();
-        }
-    }
-
-    @kotlin.Metadata()
-    public static final class D$$$E {
-
-        public D$$$E() {
-            super();
-        }
-    }
 }
 
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class Experiment {
@@ -95,13 +91,8 @@ public final class Experiment {
         super();
     }
 
-    @kotlin.Metadata()
-    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
-    public static abstract @interface Type {
-    }
-
-    @kotlin.Metadata()
     @test.Experiment.Type()
+    @kotlin.Metadata()
     public static final class Group {
         @org.jetbrains.annotations.NotNull()
         private final java.lang.String s = null;
@@ -138,19 +129,22 @@ public final class Experiment {
             return 0;
         }
 
-        @org.jetbrains.annotations.NotNull()
         @java.lang.Override()
+        @org.jetbrains.annotations.NotNull()
         public java.lang.String toString() {
             return null;
         }
+    }
+
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+    @kotlin.Metadata()
+    public static abstract @interface Type {
     }
 }
 
 ////////////////////
 
 package test;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class Foo {
@@ -182,23 +176,21 @@ public final class Foo {
 
 package test;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface IFoo {
 
     @kotlin.Metadata()
     public static abstract interface IBar {
 
-        @kotlin.Metadata()
         @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+        @kotlin.Metadata()
         public static abstract @interface Anno {
 
             public abstract java.lang.Class<?>[] value();
         }
 
-        @kotlin.Metadata()
         @test.IFoo.IBar.Anno(value = {test.IFoo.IBar.IZoo.class})
+        @kotlin.Metadata()
         public static abstract interface IZoo {
         }
     }
@@ -286,10 +278,8 @@ class JavaClass {
 
 package test;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @test.IFoo.IBar.Anno(value = {test.IFoo.IBar.IZoo.class, test.Foo.Bar.class})
+@kotlin.Metadata()
 public final class Test1 extends test.Foo.Bar implements test.IFoo.IBar, test.IFoo.IBar.IZoo {
     @org.jetbrains.annotations.NotNull()
     private final test.Foo.Bar.Zoo zoo = null;

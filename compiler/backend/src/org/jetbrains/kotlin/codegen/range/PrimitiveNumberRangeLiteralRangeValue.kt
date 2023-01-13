@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
-import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
 import org.jetbrains.kotlin.codegen.generateCallSingleArgument
 import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
@@ -25,11 +24,10 @@ import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGene
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.util.getReceiverExpression
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.IntegerValueConstant
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Type
 
 class PrimitiveNumberRangeLiteralRangeValue(
@@ -109,8 +107,8 @@ private fun ExpressionCodegen.isArraySizeMinusOne(expression: KtExpression): Boo
             isConstantOne(expression.right!!)
 
 private fun ExpressionCodegen.isConstantOne(expression: KtExpression): Boolean {
-    val constantValue = getCompileTimeConstant(expression).safeAs<IntegerValueConstant<*>>() ?: return false
-    return constantValue.value == 1
+    val constantValue = getCompileTimeConstant(expression)
+    return constantValue is IntegerValueConstant<*> && constantValue.value == 1
 }
 
 private fun ExpressionCodegen.isArraySizeAccess(expression: KtExpression): Boolean {

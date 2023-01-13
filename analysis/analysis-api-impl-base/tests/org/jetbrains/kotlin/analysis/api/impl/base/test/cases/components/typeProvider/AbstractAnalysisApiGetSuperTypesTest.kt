@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider
 
 import org.jetbrains.kotlin.analysis.api.analyze
-import org.jetbrains.kotlin.analysis.api.components.KtTypeRendererOptions
-import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KtTypeRendererForDebug
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractAnalysisApiGetSuperTypesTest : AbstractAnalysisApiSingleFileTest(){
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
@@ -32,7 +33,7 @@ abstract class AbstractAnalysisApiGetSuperTypesTest : AbstractAnalysisApiSingleF
                     fun List<KtType>.print(name: String) {
                         appendLine(name)
                         for (type in this) {
-                            appendLine(type.render(KtTypeRendererOptions.DEFAULT))
+                            appendLine(type.render(KtTypeRendererForDebug.WITH_QUALIFIED_NAMES, position = Variance.INVARIANT))
                         }
                         appendLine()
                     }

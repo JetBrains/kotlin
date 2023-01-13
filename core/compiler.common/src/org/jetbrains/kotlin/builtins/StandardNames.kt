@@ -34,6 +34,8 @@ object StandardNames {
 
     @JvmField val CHAR_CODE = Name.identifier("code")
 
+    @JvmField val NEXT_CHAR = Name.identifier("nextChar")
+
     @JvmField val CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME = Name.identifier("count")
 
     @JvmField val DYNAMIC_FQ_NAME = FqName("<dynamic>")
@@ -74,7 +76,10 @@ object StandardNames {
     @JvmField
     val TEXT_PACKAGE_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("text"))
 
+    @JvmField
     val KOTLIN_INTERNAL_FQ_NAME = BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier("internal"))
+
+    val NON_EXISTENT_CLASS = FqName("error.NonExistentClass")
 
     @JvmField
     val BUILT_INS_PACKAGE_FQ_NAMES = setOf(
@@ -137,6 +142,7 @@ object StandardNames {
         @JvmField val mustBeDocumented: FqName = annotationName("MustBeDocumented")
         @JvmField val unsafeVariance: FqName = fqName("UnsafeVariance")
         @JvmField val publishedApi: FqName = fqName("PublishedApi")
+        @JvmField val accessibleLateinitPropertyLiteral: FqName = internalName("AccessibleLateinitPropertyLiteral")
 
         @JvmField val iterator: FqName = collectionsFqName("Iterator")
         @JvmField val iterable: FqName = collectionsFqName("Iterable")
@@ -227,6 +233,10 @@ object StandardNames {
 
         private fun annotationName(simpleName: String): FqName {
             return ANNOTATION_PACKAGE_FQ_NAME.child(Name.identifier(simpleName))
+        }
+
+        private fun internalName(simpleName: String): FqName {
+            return KOTLIN_INTERNAL_FQ_NAME.child(Name.identifier(simpleName))
         }
     }
 

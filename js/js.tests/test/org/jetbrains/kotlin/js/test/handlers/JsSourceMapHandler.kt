@@ -59,7 +59,7 @@ class JsSourceMapHandler(testServices: TestServices) : JsBinaryArtifactHandler(t
 
         val output = TextOutputImpl()
         val pathResolver = SourceFilePathResolver(mutableListOf(File(".")), null)
-        val sourceMapBuilder = SourceMap3Builder(outputFile, output, "")
+        val sourceMapBuilder = SourceMap3Builder(outputFile, output::getColumn, "")
         generatedProgram.accept(
             JsToStringGenerationVisitor(
                 output, SourceMapBuilderConsumer(File("."), sourceMapBuilder, pathResolver, false, false)

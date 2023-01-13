@@ -723,51 +723,6 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         }
     }
 
-    fun testDaemonCallbackConnectionProblems() {
-        withFlagFile(getTestName(true), ".alive") { flagFile ->
-            val daemonOptions = makeTestDaemonOptions(getTestName(true))
-
-            withLogFile("kotlin-daemon-test") { logFile ->
-                val daemonJVMOptions = makeTestDaemonJvmOptions(logFile)
-
-                val daemon = KotlinCompilerClient.connectToCompileService(compilerId, flagFile, daemonJVMOptions, daemonOptions, DaemonReportingTargets(out = System.err), autostart = true)
-                assertNotNull("failed to connect daemon", daemon)
-                daemon?.registerClient(flagFile.absolutePath)
-
-                val file = File(testTempDir, "largeKotlinFile.kt")
-                file.writeText(generateLargeKotlinFile(10))
-                val jar = File(testTempDir, "largeKotlinFile.jar").absolutePath
-
-                var callbackServices: CompilerCallbackServicesFacadeServer? = null
-                callbackServices = CompilerCallbackServicesFacadeServer(compilationCanceledStatus = object : CompilationCanceledStatus {
-                    override fun checkCanceled() {
-                        thread {
-                            Thread.sleep(10)
-                            UnicastRemoteObject.unexportObject(callbackServices, true)
-                        }
-                    }
-                }, port = SOCKET_ANY_FREE_PORT)
-                val strm = ByteArrayOutputStream()
-                @Suppress("DEPRECATION")
-                val code = daemon!!.remoteCompile(CompileService.NO_SESSION,
-                                                  CompileService.TargetPlatform.JVM,
-                                                  arrayOf("-include-runtime", file.absolutePath, "-d", jar),
-                                                  callbackServices,
-                                                  RemoteOutputStreamServer(strm, SOCKET_ANY_FREE_PORT),
-                                                  CompileService.OutputFormat.XML,
-                                                  RemoteOutputStreamServer(strm, SOCKET_ANY_FREE_PORT),
-                                                  null).get()
-
-                TestCase.assertEquals(0, code)
-
-                val compilerOutput = strm.toString()
-                assertTrue("Expecting cancellation message in:\n$compilerOutput", compilerOutput.contains("Compilation was canceled"))
-                logFile.assertLogContainsSequence("error communicating with host, assuming compilation canceled")
-
-            }
-        }
-    }
-
     fun testDaemonReplScriptingNotInClasspathError() {
         withDaemon(compilerId) { daemon ->
             var repl: KotlinRemoteReplCompilerClient? = null

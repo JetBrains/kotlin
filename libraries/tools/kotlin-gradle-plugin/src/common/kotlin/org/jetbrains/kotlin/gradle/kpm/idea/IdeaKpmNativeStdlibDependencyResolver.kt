@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.gradle.kpm.idea
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.stdlib
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmBinaryCoordinatesImpl
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmResolvedBinaryDependencyImpl
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 

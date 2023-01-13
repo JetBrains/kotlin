@@ -48,7 +48,7 @@ fun PsiReferenceList.addSuperTypeEntry(
     // Only classes may be mentioned in 'extends' list, thus create super call instead simple type reference
     val entryToAdd =
         if ((reference.parent as? PsiReferenceList)?.role == PsiReferenceList.Role.IMPLEMENTS_LIST && role == PsiReferenceList.Role.EXTENDS_LIST) {
-            KtPsiFactory(this).createSuperTypeCallEntry("${entry.text}()")
+            KtPsiFactory(project).createSuperTypeCallEntry("${entry.text}()")
         } else entry
     // TODO: implement KtSuperListEntry qualification/shortening when inserting reference from another context
     if (entry.parent != superTypeList) {

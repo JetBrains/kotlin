@@ -39,7 +39,7 @@ digraph whenSubjectExpression_kt {
                     16 [label="Enter block"];
                     17 [label="Access variable R|<local>/x|"];
                     18 [label="Smart cast: R|<local>/x|"];
-                    19 [label="Function call: R|<local>/x|.R|kotlin/Double.toInt|()"];
+                    19 [label="Function call: R|<local>/x|.R|kotlin/Double.toInt|()" style="filled" fillcolor=yellow];
                     20 [label="Exit block"];
                 }
                 21 [label="Exit when branch result"];
@@ -72,12 +72,12 @@ digraph whenSubjectExpression_kt {
     4 -> {5};
     5 -> {6};
     6 -> {7};
-    7 -> {27 8};
+    7 -> {8 27};
     8 -> {9};
     9 -> {10};
     10 -> {11};
     11 -> {12};
-    12 -> {22 13};
+    12 -> {13 22};
     13 -> {14};
     14 -> {15};
     15 -> {16};
@@ -137,7 +137,7 @@ digraph whenSubjectExpression_kt {
                     52 [label="Enter block"];
                     53 [label="Access variable R|<local>/y|"];
                     54 [label="Smart cast: R|<local>/y|"];
-                    55 [label="Function call: R|<local>/y|.R|kotlin/Double.toInt|()"];
+                    55 [label="Function call: R|<local>/y|.R|kotlin/Double.toInt|()" style="filled" fillcolor=yellow];
                     56 [label="Exit block"];
                 }
                 57 [label="Exit when branch result"];
@@ -171,12 +171,12 @@ digraph whenSubjectExpression_kt {
     40 -> {41};
     41 -> {42};
     42 -> {43};
-    43 -> {63 44};
+    43 -> {44 63};
     44 -> {45};
     45 -> {46};
     46 -> {47};
     47 -> {48};
-    48 -> {58 49};
+    48 -> {49 58};
     49 -> {50};
     50 -> {51};
     51 -> {52};

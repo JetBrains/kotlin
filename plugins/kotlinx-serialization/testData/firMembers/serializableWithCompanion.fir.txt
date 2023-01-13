@@ -53,7 +53,9 @@ FILE: serializableWithCompanion.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|com/example/WithCompanion.$serializer|
+            private constructor(): R|com/example/WithCompanion.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 
@@ -93,7 +95,9 @@ FILE: serializableWithCompanion.kt
 
             public final fun childSerializers(): R|kotlin/Array<kotlinx/serialization/KSerializer<*>>|
 
-            private constructor(): R|com/example/WithNamedCompanion.$serializer|
+            private constructor(): R|com/example/WithNamedCompanion.$serializer| {
+                super<R|kotlin/Any|>()
+            }
 
         }
 

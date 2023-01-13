@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmLanguageSettings
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmLanguageSettingsImpl
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.project.model.LanguageSettings
 

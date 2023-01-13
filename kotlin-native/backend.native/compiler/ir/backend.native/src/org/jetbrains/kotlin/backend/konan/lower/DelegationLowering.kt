@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.descriptors.*
@@ -24,7 +25,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 
-internal class PropertyDelegationLowering(val context: Context) : FileLoweringPass {
+internal class PropertyDelegationLowering(val generationState: NativeGenerationState) : FileLoweringPass {
+    private val context = generationState.context
     private var tempIndex = 0
 
     private fun getKPropertyImpl(receiverTypes: List<IrType>,
@@ -234,7 +236,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
                             irFile,
                             irFile,
                             this,
-                            this@PropertyDelegationLowering.context,
+                            generationState,
                             irBuilder,
                     )
                     val (newClass, newExpression) = builder.build()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,6 +47,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
     }
 
     @Test
+    @TestMetadata("arrayWithInc.kt")
+    public void testArrayWithInc() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/arrayWithInc.kt");
+    }
+
+    @Test
     @TestMetadata("binaryExpressionWithString.kt")
     public void testBinaryExpressionWithString() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/binaryExpressionWithString.kt");
@@ -74,6 +80,12 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
     @TestMetadata("integerLiteral_plusOne_justOne.kt")
     public void testIntegerLiteral_plusOne_justOne() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/integerLiteral_plusOne_justOne.kt");
+    }
+
+    @Test
+    @TestMetadata("interpolationWithInc.kt")
+    public void testInterpolationWithInc() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/interpolationWithInc.kt");
     }
 
     @Test

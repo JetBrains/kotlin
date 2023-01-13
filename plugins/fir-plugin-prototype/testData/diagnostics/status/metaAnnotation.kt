@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: first.kt
 
 @Open
@@ -9,7 +10,7 @@ class A {
 
 @Open
 class B : A() {
-    override fun foo() {
+    <!OVERRIDING_FINAL_MEMBER!>override<!> fun foo() {
 
     }
 }

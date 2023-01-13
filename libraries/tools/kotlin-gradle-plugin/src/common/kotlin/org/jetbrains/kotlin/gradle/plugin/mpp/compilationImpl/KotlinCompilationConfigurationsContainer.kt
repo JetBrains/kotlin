@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.HasKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
 
-internal interface KotlinCompilationConfigurationsContainer {
+interface KotlinCompilationConfigurationsContainer {
     val deprecatedCompileConfiguration: Configuration?
     val deprecatedRuntimeConfiguration: Configuration?
     val apiConfiguration: Configuration

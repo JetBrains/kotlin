@@ -40,21 +40,24 @@ abstract class CommonToolArguments : Freezable(), Serializable {
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INTERNAL
+        gradleInputType = GradleInputTypes.INTERNAL,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-verbose", description = "Enable verbose logging output")
     var verbose: Boolean by FreezableVar(false)
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INTERNAL
+        gradleInputType = GradleInputTypes.INTERNAL,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-nowarn", description = "Generate no warnings")
     var suppressWarnings: Boolean by FreezableVar(false)
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-Werror", description = "Report an error if there are any warnings")
     var allWarningsAsErrors: Boolean by FreezableVar(false)

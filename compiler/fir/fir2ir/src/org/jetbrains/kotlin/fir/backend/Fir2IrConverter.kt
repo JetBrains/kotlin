@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -16,7 +18,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.backend.generators.DataClassMembersGenerator
 import org.jetbrains.kotlin.fir.declarations.*
@@ -27,12 +29,10 @@ import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
-import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.packageFqName
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.ir.PsiIrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
@@ -61,6 +61,7 @@ class Fir2IrConverter(
         fir2irVisitor: Fir2IrVisitor,
         fir2IrExtensions: Fir2IrExtensions,
     ) {
+        session.lazyDeclarationResolver.disableLazyResolveContractChecks()
         for (firFile in allFirFiles) {
             registerFileAndClasses(firFile, irModuleFragment)
         }
@@ -93,8 +94,12 @@ class Fir2IrConverter(
         //   If we encounter local class / anonymous object here, then we perform all (1)-(5) stages immediately
         delegatedMemberGenerator.generateBodies()
         for (firFile in allFirFiles) {
-            firFile.accept(fir2irVisitor, null)
+            withFileAnalysisExceptionWrapping(firFile) {
+                firFile.accept(fir2irVisitor, null)
+            }
         }
+
+        evaluateConstants(irModuleFragment)
 
         if (irGenerationExtensions.isNotEmpty()) {
             val pluginContext = Fir2IrPluginContext(components, irModuleFragment.descriptor)
@@ -104,8 +109,6 @@ class Fir2IrConverter(
         }
 
         irModuleFragment.acceptVoid(ExternalPackageParentPatcher(components, fir2IrExtensions))
-
-        evaluateConstants(irModuleFragment)
     }
 
     fun bindFakeOverridesOrPostpone(declarations: List<IrDeclaration>) {
@@ -232,6 +235,7 @@ class Fir2IrConverter(
         if (irConstructor != null) {
             irClass.declarations += irConstructor
         }
+        // At least on enum entry creation we may need a default constructor, so ctors should be converted first
         for (declaration in syntheticPropertiesLast(allDeclarations)) {
             val irDeclaration = processMemberDeclaration(declaration, regularClass, irClass) ?: continue
             irClass.declarations += irDeclaration
@@ -292,7 +296,7 @@ class Fir2IrConverter(
     // Sort declarations so that all non-synthetic declarations are before synthetic ones.
     // This is needed because converting synthetic fields for implementation delegation needs to know
     // existing declarations in the class to avoid adding redundant delegated members.
-    private fun syntheticPropertiesLast(declarations: List<FirDeclaration>): Iterable<FirDeclaration> {
+    private fun syntheticPropertiesLast(declarations: Iterable<FirDeclaration>): Iterable<FirDeclaration> {
         return declarations.sortedBy { it !is FirField && it.isSynthetic }
     }
 
@@ -352,6 +356,18 @@ class Fir2IrConverter(
         return when (declaration) {
             is FirRegularClass -> {
                 processClassMembers(declaration)
+            }
+            is FirScript -> {
+                assert(parent is IrFile)
+                declarationStorage.getOrCreateIrScript(declaration).also { irScript ->
+                    declarationStorage.enterScope(irScript)
+                    for (scriptStatement in declaration.statements) {
+                        if (scriptStatement is FirDeclaration) {
+                            processMemberDeclaration(scriptStatement, null, irScript)
+                        }
+                    }
+                    declarationStorage.leaveScope(irScript)
+                }
             }
             is FirSimpleFunction -> {
                 declarationStorage.getOrCreateIrFunction(
@@ -423,23 +439,29 @@ class Fir2IrConverter(
             visibilityConverter: Fir2IrVisibilityConverter,
             specialSymbolProvider: Fir2IrSpecialSymbolProvider,
             irGenerationExtensions: Collection<IrGenerationExtension>,
-            generateSignatures: Boolean
+            generateSignatures: Boolean,
+            kotlinBuiltIns: KotlinBuiltIns,
+            dependentComponents: List<Fir2IrComponents>,
+            currentSymbolTable: SymbolTable?
         ): Fir2IrResult {
             if (!generateSignatures) {
                 return createModuleFragmentWithoutSignatures(
                     session, scopeSession, firFiles, languageVersionSettings,
                     fir2IrExtensions, mangler, irMangler, irFactory,
-                    visibilityConverter, specialSymbolProvider, irGenerationExtensions
+                    visibilityConverter, specialSymbolProvider, irGenerationExtensions,
+                    kotlinBuiltIns, dependentComponents, currentSymbolTable
                 )
             }
-            val signatureComposer = FirBasedSignatureComposer(mangler)
-            val wrappedSignaturer = WrappedDescriptorSignatureComposer(signaturer, signatureComposer)
-            val symbolTable = SymbolTable(wrappedSignaturer, irFactory)
+            val signatureComposer = FirBasedSignatureComposer(
+                mangler,
+                dependentComposers = dependentComponents.map { it.signatureComposer as FirBasedSignatureComposer }
+            )
+            val symbolTable = createSymbolTable(signaturer, signatureComposer, irFactory, currentSymbolTable)
             return createModuleFragmentWithSymbolTable(
                 session, scopeSession, firFiles, languageVersionSettings,
                 fir2IrExtensions, irMangler, irFactory, visibilityConverter,
                 specialSymbolProvider, irGenerationExtensions, signatureComposer,
-                symbolTable, generateSignatures = true
+                symbolTable, generateSignatures = true, kotlinBuiltIns = kotlinBuiltIns, dependentComponents = dependentComponents
             )
         }
 
@@ -454,18 +476,32 @@ class Fir2IrConverter(
             irFactory: IrFactory,
             visibilityConverter: Fir2IrVisibilityConverter,
             specialSymbolProvider: Fir2IrSpecialSymbolProvider,
-            irGenerationExtensions: Collection<IrGenerationExtension>
+            irGenerationExtensions: Collection<IrGenerationExtension>,
+            kotlinBuiltIns: KotlinBuiltIns,
+            dependentComponents: List<Fir2IrComponents>,
+            currentSymbolTable: SymbolTable?
         ): Fir2IrResult {
-            val signatureComposer = FirBasedSignatureComposer(mangler)
+            val signatureComposer = FirBasedSignatureComposer(mangler, dependentComposers = dependentComponents.map { it.signatureComposer as FirBasedSignatureComposer })
             val signaturer = DescriptorSignatureComposerStub()
-            val symbolTable = SymbolTable(signaturer, irFactory)
+            val symbolTable = createSymbolTable(signaturer, signatureComposer, irFactory, currentSymbolTable)
             return createModuleFragmentWithSymbolTable(
                 session, scopeSession, firFiles, languageVersionSettings,
                 fir2IrExtensions, irMangler, irFactory, visibilityConverter,
                 specialSymbolProvider, irGenerationExtensions, signatureComposer,
-                symbolTable, generateSignatures = false
+                symbolTable, generateSignatures = false, kotlinBuiltIns = kotlinBuiltIns, dependentComponents = dependentComponents
             )
         }
+
+        private fun createSymbolTable(
+            signaturer: IdSignatureComposer,
+            signatureComposer: FirBasedSignatureComposer,
+            irFactory: IrFactory,
+            currentSymbolTable: SymbolTable?
+        ): SymbolTable =
+            currentSymbolTable ?: SymbolTable(
+                signaturer = WrappedDescriptorSignatureComposer(signaturer, signatureComposer),
+                irFactory = irFactory
+            )
 
         private fun createModuleFragmentWithSymbolTable(
             session: FirSession,
@@ -480,9 +516,11 @@ class Fir2IrConverter(
             irGenerationExtensions: Collection<IrGenerationExtension>,
             signatureComposer: FirBasedSignatureComposer,
             symbolTable: SymbolTable,
-            generateSignatures: Boolean
+            generateSignatures: Boolean,
+            kotlinBuiltIns: KotlinBuiltIns,
+            dependentComponents: List<Fir2IrComponents>
         ): Fir2IrResult {
-            val moduleDescriptor = FirModuleDescriptor(session)
+            val moduleDescriptor = FirModuleDescriptor(session, kotlinBuiltIns)
             val components = Fir2IrComponentsStorage(
                 session, scopeSession, symbolTable, irFactory, signatureComposer, fir2IrExtensions, generateSignatures
             )
@@ -490,19 +528,18 @@ class Fir2IrConverter(
 
             components.converter = converter
 
-            val classifierStorage = Fir2IrClassifierStorage(components)
+            val classifierStorage = Fir2IrClassifierStorage(components, dependentComponents.map { it.classifierStorage })
             components.classifierStorage = classifierStorage
             components.delegatedMemberGenerator = DelegatedMemberGenerator(components)
-            val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor)
+            val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor, dependentComponents.map { it.declarationStorage })
             components.declarationStorage = declarationStorage
             components.visibilityConverter = visibilityConverter
             val typeConverter = Fir2IrTypeConverter(components)
             components.typeConverter = typeConverter
-            val irBuiltIns =
-                IrBuiltInsOverFir(
-                    components, languageVersionSettings, moduleDescriptor, irMangler,
-                    languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources)
-                )
+            val irBuiltIns = dependentComponents.lastOrNull()?.irBuiltIns ?: IrBuiltInsOverFir(
+                components, languageVersionSettings, moduleDescriptor, irMangler,
+                languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources) || kotlinBuiltIns !== DefaultBuiltIns.Instance
+            )
             components.irBuiltIns = irBuiltIns
             val conversionScope = Fir2IrConversionScope()
             val fir2irVisitor = Fir2IrVisitor(components, conversionScope)
@@ -530,7 +567,7 @@ class Fir2IrConverter(
                 allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, fir2IrExtensions
             )
 
-            return Fir2IrResult(irModuleFragment, components)
+            return Fir2IrResult(irModuleFragment, components, moduleDescriptor)
         }
     }
 }

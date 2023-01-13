@@ -23,6 +23,10 @@ dependencies {
 
 compileKotlin.kotlinOptions.allWarningsAsErrors = true
 
+kotlin {
+    jvmToolchain(11)
+}
+
 compileJava {
     doFirst {
         options.compilerArgs += [

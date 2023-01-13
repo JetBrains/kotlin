@@ -17,6 +17,27 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("jps/jps-plugin/jps-tests/test", "jps/jps-plugin/testData") {
+            fun incrementalJvmTestData(targetBackend: TargetBackend, excludePattern: String? = null): TestGroup.TestClass.() -> Unit = {
+                model(
+                    "incremental/pureKotlin",
+                    extension = null,
+                    recursive = false,
+                    targetBackend = targetBackend,
+                    excludedPattern = excludePattern
+                )
+                model(
+                    "incremental/classHierarchyAffected",
+                    extension = null,
+                    recursive = false,
+                    targetBackend = targetBackend,
+                    excludedPattern = excludePattern
+                )
+                model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+                model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+                model("incremental/incrementalJvmCompilerOnly", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
+            }
+
+            // IR
             testClass<AbstractIncrementalJvmJpsTest> {
                 model("incremental/multiModule/common", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
                 model("incremental/multiModule/jvm", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR)
@@ -31,6 +52,26 @@ fun main(args: Array<String>) {
                     "incremental/classHierarchyAffected", extension = null, excludeParentDirs = true, targetBackend = TargetBackend.JVM_IR
                 )
             }
+
+            // K2
+            testClass<AbstractIncrementalK2JvmJpsTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    excludePattern = "(^.*Expect.*)|(^classMovedIntoOtherClass)|(^companionConstantChanged)"
+                )
+            )
+            testClass<AbstractIncrementalK2LightTreeJvmJpsTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    excludePattern = "(^.*Expect.*)|(^classMovedIntoOtherClass)|(^companionConstantChanged)"
+                )
+            )
+            testClass<AbstractIncrementalK2FirICLightTreeJvmJpsTest>(
+                init = incrementalJvmTestData(
+                    TargetBackend.JVM_IR,
+                    excludePattern = "(^.*Expect.*)|(^classMovedIntoOtherClass)|(^companionConstantChanged)"
+                )
+            )
 
             testClass<AbstractMultiplatformJpsTestWithGeneratedContent> {
                 model(

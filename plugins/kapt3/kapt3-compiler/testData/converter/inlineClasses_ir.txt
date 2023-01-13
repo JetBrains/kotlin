@@ -1,7 +1,5 @@
-import java.lang.System;
-
-@kotlin.Metadata()
 @kotlin.jvm.JvmInline()
+@kotlin.Metadata()
 public final class Cl {
 
     public Cl() {

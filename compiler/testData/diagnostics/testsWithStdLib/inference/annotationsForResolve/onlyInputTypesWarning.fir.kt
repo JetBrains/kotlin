@@ -9,5 +9,5 @@ class First : Common
 class Second : Common
 
 fun test(first: First, second: Second) {
-    select(first, second)
+    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>select<!>(first, second)
 }

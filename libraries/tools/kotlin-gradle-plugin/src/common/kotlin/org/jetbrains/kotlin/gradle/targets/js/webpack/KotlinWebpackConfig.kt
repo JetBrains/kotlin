@@ -10,10 +10,9 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 import com.google.gson.GsonBuilder
 import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.Optional
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.*
+import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
@@ -22,12 +21,15 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
 
 @Suppress("MemberVisibilityCanBePrivate")
 data class KotlinWebpackConfig(
+    @Internal
+    val npmProjectDir: Provider<File>? = null,
     @Input
     var mode: Mode = Mode.DEVELOPMENT,
     @Internal
@@ -40,12 +42,12 @@ data class KotlinWebpackConfig(
     @Input
     @Optional
     var outputFileName: String? = entry?.name,
-    @Internal
+    @get:PathSensitive(PathSensitivity.NAME_ONLY)
+    @get:Optional
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:InputDirectory
     var configDirectory: File? = null,
-    @Internal
-    var bundleAnalyzerReportDir: File? = null,
-    @Internal
-    var reportEvaluatedConfigFile: File? = null,
     @Input
     @Optional
     var devServer: DevServer? = null,
@@ -64,38 +66,29 @@ data class KotlinWebpackConfig(
     var export: Boolean = true,
     @Input
     var progressReporter: Boolean = false,
-    @Input
+    @Internal
     @Optional
-    var progressReporterPathFilter: String? = null,
+    var progressReporterPathFilter: File? = null,
     @Input
     var resolveFromModulesFirst: Boolean = false,
     @Input
     val webpackMajorVersion: WebpackMajorVersion = WebpackMajorVersion.V5
 ) : WebpackRulesDsl {
+
     @get:Input
     @get:Optional
     val entryInput: String?
-        get() = entry?.absoluteFile?.normalize()?.absolutePath
+        get() = npmProjectDir?.get()?.let { npmProjectDir -> entry?.relativeOrAbsolute(npmProjectDir) }
 
     @get:Input
     @get:Optional
     val outputPathInput: String?
-        get() = outputPath?.absoluteFile?.normalize()?.absolutePath
+        get() = npmProjectDir?.get()?.let { npmProjectDir -> outputPath?.relativeOrAbsolute(npmProjectDir) }
 
     @get:Input
     @get:Optional
-    val configDirectoryInput: String?
-        get() = configDirectory?.absoluteFile?.normalize()?.absolutePath
-
-    @get:Input
-    @get:Optional
-    val bundleAnalyzerReportDirInput: String?
-        get() = bundleAnalyzerReportDir?.absoluteFile?.normalize()?.absolutePath
-
-    @get:Input
-    @get:Optional
-    val reportEvaluatedConfigFileInput: String?
-        get() = reportEvaluatedConfigFile?.absoluteFile?.normalize()?.absolutePath
+    val progressReporterPathFilterInput: String?
+        get() = npmProjectDir?.get()?.let { npmProjectDir -> progressReporterPathFilter?.relativeOrAbsolute(npmProjectDir) }
 
     fun getRequiredDependencies(versions: NpmVersions) =
         mutableSetOf<RequiredKotlinJsDependency>().also {
@@ -113,10 +106,6 @@ data class KotlinWebpackConfig(
                 )
             )
             it.add(versions.formatUtil)
-
-            if (bundleAnalyzerReportDir != null) {
-                it.add(versions.webpackBundleAnalyzer)
-            }
 
             if (sourceMaps) {
                 it.add(
@@ -147,15 +136,6 @@ data class KotlinWebpackConfig(
         DEVELOPMENT("development"),
         PRODUCTION("production")
     }
-
-    @Suppress("unused")
-    data class BundleAnalyzerPlugin(
-        val analyzerMode: String,
-        val reportFilename: String,
-        val openAnalyzer: Boolean,
-        val generateStatsFile: Boolean,
-        val statsFilename: String
-    ) : Serializable
 
     @Suppress("unused")
     data class DevServer(
@@ -207,7 +187,6 @@ data class KotlinWebpackConfig(
             appendResolveModules()
             appendSourceMaps()
             appendDevServer()
-            appendReport()
             appendProgressReporter()
             rules.forEach { rule ->
                 if (rule.active) {
@@ -216,7 +195,6 @@ data class KotlinWebpackConfig(
             }
             appendErrorPlugin()
             appendFromConfigDir()
-            appendEvaluatedFileReport()
             appendExperiments()
 
             if (export) {
@@ -226,57 +204,11 @@ data class KotlinWebpackConfig(
         }
     }
 
-    private fun Appendable.appendEvaluatedFileReport() {
-        if (reportEvaluatedConfigFile == null) return
-
-        val filePath = reportEvaluatedConfigFile!!.canonicalPath.jsQuoted()
-
-        //language=JavaScript 1.8
-        appendLine(
-            """
-                // save evaluated config file
-                ;(function(config) {
-                    const util = require('util');
-                    const fs = require('fs');
-                    const evaluatedConfig = util.inspect(config, {showHidden: false, depth: null, compact: false});
-                    fs.writeFile($filePath, evaluatedConfig, function (err) {});
-                })(config);
-                
-            """.trimIndent()
-        )
-    }
-
     private fun Appendable.appendFromConfigDir() {
         if (configDirectory == null || !configDirectory!!.isDirectory) return
 
         appendLine()
         appendConfigsFromDir(configDirectory!!)
-        appendLine()
-    }
-
-    private fun Appendable.appendReport() {
-        if (bundleAnalyzerReportDir == null) return
-
-        entry ?: error("Entry should be defined for report")
-
-        val reportBasePath = "${bundleAnalyzerReportDir!!.canonicalPath}/${entry!!.name}"
-        val config = BundleAnalyzerPlugin(
-            "static",
-            "$reportBasePath.report.html",
-            false,
-            true,
-            "$reportBasePath.stats.json"
-        )
-
-        //language=JavaScript 1.8
-        appendLine(
-            """
-                // save webpack-bundle-analyzer report 
-                var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin; 
-                config.plugins.push(new BundleAnalyzerPlugin(${json(config)}));
-                
-           """.trimIndent()
-        )
         appendLine()
     }
 
@@ -342,11 +274,11 @@ data class KotlinWebpackConfig(
             """
                 // entry
                 config.entry = {
-                    main: [${entry!!.canonicalPath.jsQuoted()}]
+                    main: [require('path').resolve(__dirname, ${entryInput!!.jsQuoted()})]
                 };
                 
                 config.output = {
-                    path: ${outputPath!!.canonicalPath.jsQuoted()},
+                    path: require('path').resolve(__dirname, ${outputPathInput!!.jsQuoted()}),
                     filename: (chunkData) => {
                         return chunkData.chunk.name === 'main'
                             ? ${outputFileName!!.jsQuoted()}
@@ -406,8 +338,8 @@ data class KotlinWebpackConfig(
                         const p = percentage * 100;
                         let msg = `${"$"}{Math.trunc(p / 10)}${"$"}{Math.trunc(p % 10)}% ${"$"}{message} ${"$"}{args.join(' ')}`;
                         ${
-                if (progressReporterPathFilter == null) "" else """
-                            msg = msg.replace(${progressReporterPathFilter!!.jsQuoted()}, '');
+                if (progressReporterPathFilterInput == null) "" else """
+                            msg = msg.replace(require('path').resolve(__dirname, ${progressReporterPathFilterInput!!.jsQuoted()}), '');
                         """.trimIndent()
             };
                         console.log(msg);

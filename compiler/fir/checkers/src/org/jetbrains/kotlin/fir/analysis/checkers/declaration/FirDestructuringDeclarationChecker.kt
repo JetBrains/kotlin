@@ -5,29 +5,28 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
-import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeConstraintSystemHasContradiction
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
-import org.jetbrains.kotlin.fir.resolvedSymbol
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.isError
+import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
+import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -73,18 +72,19 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                 else -> null
             } ?: return
 
-        when (val reference = componentCall.calleeReference) {
-            is FirErrorNamedReference ->
-                checkComponentCall(
-                    originalDestructuringDeclarationOrInitializerSource,
-                    originalDestructuringDeclarationType,
-                    reference,
-                    declaration,
-                    componentCall,
-                    originalDestructuringDeclaration,
-                    reporter,
-                    context
-                )
+        val reference = componentCall.calleeReference
+        val diagnostic = if (reference.isError()) reference.diagnostic else null
+        if (diagnostic != null) {
+            checkComponentCall(
+                originalDestructuringDeclarationOrInitializerSource,
+                originalDestructuringDeclarationType,
+                diagnostic,
+                declaration,
+                componentCall,
+                originalDestructuringDeclaration,
+                reporter,
+                context
+            )
         }
     }
 
@@ -108,19 +108,28 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
     private fun checkComponentCall(
         source: KtSourceElement,
         destructuringDeclarationType: ConeKotlinType,
-        reference: FirErrorNamedReference,
+        diagnostic: ConeDiagnostic,
         property: FirProperty,
         componentCall: FirComponentCall,
         destructuringDeclaration: FirVariable,
         reporter: DiagnosticReporter,
         context: CheckerContext
     ) {
-        when (val diagnostic = reference.diagnostic) {
+        when (diagnostic) {
             is ConeUnresolvedNameError -> {
                 reporter.reportOn(
                     source,
                     FirErrors.COMPONENT_FUNCTION_MISSING,
                     diagnostic.name,
+                    destructuringDeclarationType,
+                    context
+                )
+            }
+            is ConeInapplicableWrongReceiver -> {
+                reporter.reportOn(
+                    source,
+                    FirErrors.COMPONENT_FUNCTION_MISSING,
+                    diagnostic.candidates.first().callInfo.name,
                     destructuringDeclarationType,
                     context
                 )
@@ -185,7 +194,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
 
     private val FirQualifiedAccessExpression.resolvedVariable: FirVariable?
         get() {
-            val symbol = calleeReference.resolvedSymbol as? FirVariableSymbol<*> ?: return null
+            val symbol = calleeReference.toResolvedVariableSymbol() ?: return null
             symbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             @OptIn(SymbolInternals::class)
             return symbol.fir

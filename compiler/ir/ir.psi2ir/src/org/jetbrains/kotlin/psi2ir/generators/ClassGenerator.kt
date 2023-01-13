@@ -28,15 +28,11 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.expressions.mapValueParameters
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
-import org.jetbrains.kotlin.ir.util.createIrClassFromDescriptor
-import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
-import org.jetbrains.kotlin.ir.util.properties
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry
@@ -366,10 +362,9 @@ class ClassGenerator(
                     IrGetValueImpl(startOffset, endOffset, extensionReceiver.type, extensionReceiver.symbol)
                 }
 
-            mapValueParameters { overriddenValueParameter ->
-                val delegatedValueParameter = delegatedDescriptor.valueParameters[overriddenValueParameter.index]
-                val irDelegatedValueParameter = irDelegatedFunction.getIrValueParameter(delegatedValueParameter)
-                IrGetValueImpl(startOffset, endOffset, irDelegatedValueParameter.type, irDelegatedValueParameter.symbol)
+            (delegatedDescriptor.contextReceiverParameters + delegatedDescriptor.valueParameters).forEachIndexed { index, param ->
+                val delegatedParameter = irDelegatedFunction.getIrValueParameter(param, index)
+                putValueArgument(index, IrGetValueImpl(startOffset, endOffset, delegatedParameter.type, delegatedParameter.symbol))
             }
         }
 

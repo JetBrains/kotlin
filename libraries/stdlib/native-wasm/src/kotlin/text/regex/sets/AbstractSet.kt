@@ -109,6 +109,15 @@ internal abstract class AbstractSet(val type: Int = 0) {
           ?: -1
 
     /**
+     * Returns `true` if this node consumes a constant number of characters and doesn't need backtracking to find a different match.
+     * Otherwise, returns `false`.
+     *
+     * This information is used to avoid recursion when matching a quantifier node with this inner node.
+     */
+    open val consumesFixedLength: Boolean
+        get() = false
+
+    /**
      * Returns true, if this node has consumed any characters during
      * positive match attempt, for example node representing character always
      * consumes one character if it matches. If particular node matches

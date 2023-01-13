@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmModuleCoordinates
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmModuleCoordinatesImpl
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 

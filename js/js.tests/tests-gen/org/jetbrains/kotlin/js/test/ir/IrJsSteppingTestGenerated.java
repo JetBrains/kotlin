@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -248,12 +248,6 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
     }
 
     @Test
-    @TestMetadata("jsCode.kt")
-    public void testJsCode() throws Exception {
-        runTest("compiler/testData/debug/stepping/jsCode.kt");
-    }
-
-    @Test
     @TestMetadata("kt15259.kt")
     public void testKt15259() throws Exception {
         runTest("compiler/testData/debug/stepping/kt15259.kt");
@@ -491,6 +485,18 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
     @TestMetadata("tryCatch.kt")
     public void testTryCatch() throws Exception {
         runTest("compiler/testData/debug/stepping/tryCatch.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatchExpression.kt")
+    public void testTryCatchExpression() throws Exception {
+        runTest("compiler/testData/debug/stepping/tryCatchExpression.kt");
+    }
+
+    @Test
+    @TestMetadata("tryCatchFinally.kt")
+    public void testTryCatchFinally() throws Exception {
+        runTest("compiler/testData/debug/stepping/tryCatchFinally.kt");
     }
 
     @Test

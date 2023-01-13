@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -27,13 +29,13 @@ import org.jetbrains.kotlin.fir.visitors.*
 internal class FirResolvedQualifierImpl(
     override val source: KtSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var packageFqName: FqName,
     override var relativeClassFqName: FqName?,
     override val symbol: FirClassLikeSymbol<*>?,
     override var isNullableLHSForCallableReference: Boolean,
-    override val nonFatalDiagnostics: MutableList<ConeDiagnostic>,
-    override val typeArguments: MutableList<FirTypeProjection>,
+    override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
+    override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
 ) : FirResolvedQualifier() {
     override val classId: ClassId? get() = relativeClassFqName?.let {
     ClassId(packageFqName, it, false)
@@ -67,6 +69,10 @@ internal class FirResolvedQualifierImpl(
         typeRef = newTypeRef
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
+
     override fun replaceIsNullableLHSForCallableReference(newIsNullableLHSForCallableReference: Boolean) {
         isNullableLHSForCallableReference = newIsNullableLHSForCallableReference
     }
@@ -76,7 +82,6 @@ internal class FirResolvedQualifierImpl(
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
-        typeArguments.clear()
-        typeArguments.addAll(newTypeArguments)
+        typeArguments = newTypeArguments.toMutableOrEmpty()
     }
 }

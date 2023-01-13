@@ -12,6 +12,10 @@ pill {
 
 testsJar()
 
+kotlin.sourceSets.all {
+    languageSettings.optIn("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+}
+
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {
@@ -50,6 +54,11 @@ dependencies {
             requireCapability("org.jetbrains.kotlin:atomicfu-common")
         }
     }
+
+    testImplementation(project(":kotlin-gradle-plugin-idea"))
+    testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
+    testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
+
     testImplementation(project(":kotlin-gradle-plugin-model"))
     testImplementation(project(":kotlin-gradle-build-metrics"))
     testImplementation(project(":kotlin-project-model"))
@@ -126,7 +135,7 @@ fun Test.includeTestsWithPattern(include: Boolean, patterns: (MutableSet<String>
 }
 
 fun Test.advanceGradleVersion() {
-    val gradleVersionForTests = "7.3.3"
+    val gradleVersionForTests = "7.5.1"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
 }
 

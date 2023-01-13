@@ -138,6 +138,7 @@ internal val localDeclarationsPhase = makeIrFilePhase(
                 private fun scopedVisibility(inInlineFunctionScope: Boolean): DescriptorVisibility =
                     if (inInlineFunctionScope) DescriptorVisibilities.PUBLIC else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
             },
+            compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
             forceFieldsForInlineCaptures = true,
             postLocalDeclarationLoweringCallback = context.localDeclarationsLoweringData?.let {
                 { data ->
@@ -309,8 +310,7 @@ private val jvmFilePhases = listOf(
     forLoopsPhase,
     collectionStubMethodLowering,
     singleAbstractMethodPhase,
-    jvmMultiFieldValueClassPhase,
-    jvmInlineClassPhase,
+    jvmValueClassPhase,
     tailrecPhase,
     // makePatchParentsPhase(),
 
@@ -356,8 +356,8 @@ private val jvmFilePhases = listOf(
     enumClassPhase,
     enumExternalEntriesPhase,
     objectClassPhase,
-    readResolveForDataObjectsPhase,
     staticInitializersPhase,
+    uniqueLoopLabelsPhase,
     initializersPhase,
     initializersCleanupPhase,
     functionNVarargBridgePhase,
@@ -408,8 +408,6 @@ private fun buildJvmLoweringPhases(
                 buildLoweringsPhase(phases) then
                 generateMultifileFacadesPhase then
                 resolveInlineCallsPhase then
-                // should be last transformation
-                prepareForBytecodeInlining then
                 validateIrAfterLowering
     )
 }

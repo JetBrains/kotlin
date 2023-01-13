@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.commonizer.utils
 
 import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataMonolithicSerializer
-import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.commonizer.*
 import org.jetbrains.kotlin.commonizer.ModulesProvider.ModuleInfo
 import org.jetbrains.kotlin.commonizer.ResultsConsumer.ModuleResult
@@ -20,9 +19,9 @@ import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
+import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import java.io.File
 
 internal fun mockTAType(
     typeAliasId: String,

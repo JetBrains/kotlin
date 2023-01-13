@@ -209,8 +209,6 @@ internal class KtFirExpressionInfoProvider(
             is KtFunctionLiteral ->
                 parent.bodyBlockExpression == child && !returnsUnit(parent)
 
-            // Named functions do not use their bodies if the function itself returns unit
-            // UNLESS it's an expression body/lambda of type Unit.
             /** See [doesNamedFunctionUseBody] */
             is KtNamedFunction ->
                 doesNamedFunctionUseBody(parent, child)
@@ -402,23 +400,26 @@ private fun doesPropertyAccessorUseBody(propertyAccessor: KtPropertyAccessor, bo
 }
 
 /**
- *  Named functions do not consider their bodies used if the function itself
- *  returns Unit UNLESS the function body is an expression body and the body is
- *  of type Unit.
+ * Returns whether the function uses its body as an expression (i.e., the function uses the result value of the expression) or not.
+ *
+ * Named functions do not consider their bodies used if
+ *  - the function body is a block e.g., `fun foo(): Int { return bar }` or
+ *  - the function itself returns Unit
  */
-private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiElement): Boolean =
-    when {
-        !returnsUnit(namedFunction) ->
-            true
-        namedFunction.bodyBlockExpression == body ->
-            false
-        namedFunction.bodyExpression == body ->
-            analyze(namedFunction) {
-                (body as KtExpression).getKtType()?.isUnit == true
-            }
-        else ->
-            false
-    }
+private fun doesNamedFunctionUseBody(namedFunction: KtNamedFunction, body: PsiElement): Boolean = when {
+    // The body is a block expression e.g., fun foo(): Int { return bar }
+    namedFunction.bodyBlockExpression == body ->
+        false
+    // Note that `namedFunction.hasBlockBody() == false` means the function definition uses `=` e.g., fun foo() = bar
+    !returnsUnit(namedFunction) ->
+        true
+    namedFunction.bodyExpression == body ->
+        analyze(namedFunction) {
+            (body as KtExpression).getKtType()?.isUnit == true
+        }
+    else ->
+        false
+}
 
 
 private fun KtAnalysisSession.isSimpleVariableAccessCall(reference: KtReferenceExpression): Boolean =

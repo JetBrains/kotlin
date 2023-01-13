@@ -130,9 +130,9 @@ open class LazyDeclarationResolver constructor(
                 val grandFather = parameter.parent.parent
                 when (grandFather) {
                     is KtPrimaryConstructor -> {
-                        val jetClass = grandFather.getContainingClassOrObject()
+                        val ktClassOrObject = grandFather.getContainingClassOrObject()
                         // This is a primary constructor parameter
-                        val classDescriptor = getClassDescriptorIfAny(jetClass, lookupLocationFor(jetClass, false))
+                        val classDescriptor = getClassDescriptorIfAny(ktClassOrObject, lookupLocationFor(ktClassOrObject, false))
                         return when {
                             classDescriptor == null -> null
                             parameter.hasValOrVar() -> {

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
 import org.jetbrains.kotlin.gradle.util.AGPVersion
@@ -40,7 +41,9 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "ARCHS" to "arm64",
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use"
-                )
+                ),
+                // Workaround for KT-55751
+                warningMode = WarningMode.None,
             )
             build("assembleDebugAppleFrameworkForXcodeIosArm64", options = options) {
                 assertSuccessful()
@@ -68,7 +71,9 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "ARCHS" to "arm64 x86_64",
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use"
-                )
+                ),
+                // Workaround for KT-55751
+                warningMode = WarningMode.None,
             )
             build("assembleReleaseAppleFrameworkForXcode", options = options) {
                 assertSuccessful()
@@ -92,7 +97,9 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "EXPANDED_CODE_SIGN_IDENTITY" to "-",
                     "TARGET_BUILD_DIR" to workingDir.absolutePath,
                     "FRAMEWORKS_FOLDER_PATH" to "${projectName}/build/xcode-derived"
-                )
+                ),
+                // Workaround for KT-55751
+                warningMode = WarningMode.None,
             )
             build(":shared:embedAndSignAppleFrameworkForXcode", options = options) {
                 assertSuccessful()
@@ -192,7 +199,9 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "ARCHS" to "arm64",
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use"
-                )
+                ),
+                // Workaround for KT-55751
+                warningMode = WarningMode.None,
             )
             setupWorkingDir()
             projectDir.resolve("shared/build.gradle.kts").modify {

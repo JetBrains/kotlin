@@ -17,10 +17,7 @@ import kotlin.test.assertNotNull
 
 // TODO: This suite is failing with deprecation error on Gradle <7.0 versions
 // Should be fixed via planned fixes in Kotlin/JS plugin: https://youtrack.jetbrains.com/issue/KFC-252
-@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
-@DisplayName("Kotlin/JS IR library")
-@JsGradlePluginTests
-class KotlinJsIrLibraryGradlePluginIT : KGPBaseTest() {
+abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
 
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         jsOptions = BuildOptions.JsOptions(
@@ -74,4 +71,22 @@ class KotlinJsIrLibraryGradlePluginIT : KGPBaseTest() {
             }
         }
     }
+}
+
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+@DisplayName("Kotlin/JS K1 IR library")
+@JsGradlePluginTests
+class KotlinK1JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(
+        useFir = false
+    )
+}
+
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+@DisplayName("Kotlin/JS K2 IR library")
+@JsGradlePluginTests
+class KotlinK2JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() {
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(
+        useFir = true
+    )
 }

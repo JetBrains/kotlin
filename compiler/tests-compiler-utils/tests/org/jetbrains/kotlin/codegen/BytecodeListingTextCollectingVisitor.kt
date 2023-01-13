@@ -22,14 +22,15 @@ class BytecodeListingTextCollectingVisitor(
             factory: ClassFileFactory,
             filter: Filter = Filter.EMPTY,
             withSignatures: Boolean = false,
-            withAnnotations: Boolean = true
+            withAnnotations: Boolean = true,
+            sortDeclarations: Boolean = true
         ) = factory.getClassFiles()
             .sortedBy { it.relativePath }
             .mapNotNull {
                 val cr = ClassReader(it.asByteArray())
                 val node = ClassNode(Opcodes.API_VERSION)
                 cr.accept(node, ClassReader.SKIP_CODE)
-                val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures, withAnnotations = withAnnotations)
+                val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures, withAnnotations = withAnnotations, sortDeclarations = sortDeclarations)
                 node.accept(visitor)
 
                 if (!filter.shouldWriteClass(node)) null else visitor.text

@@ -2,6 +2,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /foo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: true
@@ -15,12 +16,19 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: [
-    ReceiverAnnotation()
-      psi: KtAnnotationEntry
-    ReceiverTypeAnnotation()
-      psi: KtAnnotationEntry
-  ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Int
+  receiverParameter: KtReceiverParameterSymbol:
+    annotationsList: [
+      ReceiverAnnotation()
+        psi: KtAnnotationEntry
+    ]
+    origin: SOURCE
+    owningCallableSymbol: KtFunctionSymbol(/foo)
+    type: [
+      ReceiverTypeAnnotation()
+        psi: KtAnnotationEntry
+    ] @R|ReceiverTypeAnnotation|()  kotlin/Int
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

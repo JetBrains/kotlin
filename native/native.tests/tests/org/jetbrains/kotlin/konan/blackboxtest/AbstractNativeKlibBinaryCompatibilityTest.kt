@@ -251,7 +251,7 @@ abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleT
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
         extras = DEFAULT_EXTRAS
     ).apply {
-        initialize(null)
+        initialize(null, null)
     }
 
     private val buildDir: File

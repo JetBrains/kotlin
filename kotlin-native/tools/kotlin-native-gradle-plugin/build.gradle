@@ -23,10 +23,7 @@ buildscript {
     apply from: "$rootBuildDirectory/gradle/kotlinGradlePlugin.gradle"
 
     repositories {
-        maven {
-            url = 'https://cache-redirector.jetbrains.com/jcenter'
-        }
-        jcenter()
+        mavenCentral()
         maven {
             url "https://cache-redirector.jetbrains.com/plugins.gradle.org/m2/"
         }

@@ -38,7 +38,7 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:37 box:
 // test.kt:13 compute:
 // test.kt:14 compute:
@@ -58,3 +58,23 @@ fun box() {
 // test.kt:37 box:
 // test.kt:38 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
 // test.kt:39 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
+
+// EXPECTATIONS JS_IR
+// test.kt:37 box:
+// test.kt:15 compute:
+// test.kt:16 compute: y=42:number
+// test.kt:16 compute: y=42:number
+// test.kt:16 compute: y=42:number
+// test.kt:16 compute: y=42:number, i=0:number
+// test.kt:17 compute: y=42:number, i=0:number
+// test.kt:20 compute: y=42:number, i=0:number
+// test.kt:21 compute: y=42:number, i=0:number, s="NOPE":kotlin.String
+// test.kt:23 compute: y=42:number, i=0:number, s="NOPE":kotlin.String
+// test.kt:27 compute: y=42:number, i=0:number, s="NOPE":kotlin.String
+// test.kt:28 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="NOPE":kotlin.String
+// test.kt:28 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="NOPE":kotlin.String
+// test.kt:28 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="NOPE":kotlin.String
+// test.kt:28 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="NOPE":kotlin.String, j=0:number
+// test.kt:29 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="NOPE":kotlin.String, j=0:number
+// test.kt:28 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="OK":kotlin.String, j=0:number
+// test.kt:31 compute: y=42:number, i=0:number, s="NOPE":kotlin.String, s2="OK":kotlin.String, j=0:number

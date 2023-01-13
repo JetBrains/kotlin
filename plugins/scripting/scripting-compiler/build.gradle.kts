@@ -10,6 +10,8 @@ dependencies {
     compileOnly(project(":compiler:frontend.java"))
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:plugin-api"))
+    compileOnly(project(":compiler:fir:entrypoint"))
+    compileOnly(project(":compiler:fir:raw-fir:raw-fir.common"))
     compileOnly(project(":compiler:cli"))
     compileOnly(project(":core:descriptors.runtime"))
     compileOnly(project(":compiler:ir.tree"))
@@ -69,5 +71,13 @@ projectTest(taskName = "testWithIr", parallel = true) {
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-ir")
+}
+
+projectTest(taskName = "testWithK2", parallel = true) {
+    dependsOn(":dist")
+    workingDir = rootDir
+    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+    systemProperty("kotlin.script.test.base.compiler.arguments", "-Xuse-k2")
+    systemProperty("kotlin.script.base.compiler.arguments", "-Xuse-k2")
 }
 

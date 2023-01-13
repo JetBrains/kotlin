@@ -14,8 +14,8 @@ package te.st.a;
 import te.st.a.$Test.Inner;
 import te.st.a.Test$.Inner$;
 
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 @kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class TestKt {
 
     public TestKt() {

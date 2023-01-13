@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.descriptors.konan.CompiledKlibModuleOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 
 internal val LLVMValueRef.type: LLVMTypeRef
     get() = LLVMTypeOf(this)!!
@@ -171,18 +170,61 @@ internal fun ContextUtils.addGlobal(name: String, type: LLVMTypeRef, isExported:
     return LLVMAddGlobal(llvm.module, type, name)!!
 }
 
-internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, origin: CompiledKlibModuleOrigin): LLVMValueRef {
-    llvm.imports.add(origin)
-
+private fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef): LLVMValueRef {
     val found = LLVMGetNamedGlobal(llvm.module, name)
-    return if (found != null) {
-        assert (getGlobalType(found) == type)
-        assert (LLVMGetInitializer(found) == null) { "$name is already declared in the current module" }
-        found
-    } else {
+    return if (found == null)
         addGlobal(name, type, isExported = false)
+    else {
+        require(getGlobalType(found) == type)
+        require(LLVMGetInitializer(found) == null) { "$name is already declared in the current module" }
+        found
     }
 }
+
+internal fun ContextUtils.importGlobal(name: String, type: LLVMTypeRef, declaration: IrDeclaration) =
+        importGlobal(name, type).also { llvm.dependenciesTracker.add(declaration) }
+
+internal fun ContextUtils.importObjCGlobal(name: String, type: LLVMTypeRef) = importGlobal(name, type)
+
+internal fun ContextUtils.importNativeRuntimeGlobal(name: String, type: LLVMTypeRef) =
+        importGlobal(name, type).also { llvm.dependenciesTracker.addNativeRuntime() }
+
+private fun CodeGenerator.replaceExternalWeakOrCommonGlobal(name: String, value: ConstValue) {
+    if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
+        // When some dynamic caches are used, we consider that stdlib is in the dynamic cache as well.
+        // Runtime is linked into stdlib module only, so import runtime global from it.
+        val global = importGlobal(name, value.llvmType)
+        val initializer = generateFunctionNoRuntime(this, functionType(llvm.voidType, false), "") {
+            store(value.llvm, global)
+            ret(null)
+        }
+        LLVMSetLinkage(initializer, LLVMLinkage.LLVMPrivateLinkage)
+
+        llvm.otherStaticInitializers += initializer
+    } else {
+        val global = staticData.placeGlobal(name, value, isExported = true)
+
+        if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherObjectFiles()) {
+            // Note: actually this is required only if global's weak/common definition is in another object file,
+            // but it is simpler to do this for all globals, considering that all usages can't be removed by DCE anyway.
+            llvm.usedGlobals += global.llvmGlobal
+            LLVMSetVisibility(global.llvmGlobal, LLVMVisibility.LLVMHiddenVisibility)
+
+            // See also [emitKt42254Hint].
+        }
+    }
+}
+
+internal fun CodeGenerator.replaceExternalWeakOrCommonGlobal(
+        name: String,
+        value: ConstValue,
+        declaration: IrDeclaration
+) = replaceExternalWeakOrCommonGlobal(name, value).also { generationState.dependenciesTracker.add(declaration) }
+
+internal fun CodeGenerator.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
+        name: String,
+        value: ConstValue
+) = replaceExternalWeakOrCommonGlobal(name, value).also { generationState.dependenciesTracker.addNativeRuntime() }
 
 internal abstract class AddressAccess {
     abstract fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef

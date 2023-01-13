@@ -1,3 +1,7 @@
-fun foo(ttlMillis: Long = 5 * 60 * 1000) {}
-
-const val cacheSize: Long = 4096 * 4
+fun test(): Int {
+    var res = 0
+    for (x in 100 ..< 1) {
+        res += x
+    }
+    return res
+}

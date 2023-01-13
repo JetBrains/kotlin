@@ -20,15 +20,13 @@ import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_CLASS_ID
 
 object FirJvmInlineApplicabilityChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotation = declaration.getAnnotationByClassId(JVM_INLINE_ANNOTATION_CLASS_ID)
+        val annotation = declaration.getAnnotationByClassId(JVM_INLINE_ANNOTATION_CLASS_ID, context.session)
         if (annotation != null && !declaration.isInline) {
             reporter.reportOn(annotation.source, FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS, context)
         } else if (annotation == null && declaration.isInline && !declaration.isExpect) {
-            reporter.reportOn(
-                declaration.getModifier(KtTokens.VALUE_KEYWORD)?.source,
-                FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION,
-                context
-            )
+            // only report if value keyword exists, this ignores the deprecated inline class syntax
+            val keyword = declaration.getModifier(KtTokens.VALUE_KEYWORD)?.source ?: return
+            reporter.reportOn(keyword, FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION, context)
         }
     }
 }

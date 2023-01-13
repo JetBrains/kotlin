@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolBasedFakeLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForFacade
-import org.jetbrains.kotlin.light.classes.symbol.classes.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.classes.createSymbolLightClassNoCache
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -101,7 +100,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     }
 
     override fun createInstanceOfLightClass(classOrObject: KtClassOrObject): KtLightClass? {
-        return createSymbolLightClassNoCache(classOrObject)
+        return createSymbolLightClassNoCache(classOrObject, classOrObject.getKtModule(project))
     }
 
     override fun createInstanceOfDecompiledLightFacade(facadeFqName: FqName, files: List<KtFile>): KtLightClassForFacade? {
@@ -123,9 +122,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     override fun createInstanceOfLightFacade(
         facadeFqName: FqName,
         files: List<KtFile>,
-    ): KtLightClassForFacade = analyzeForLightClasses(files.first()) {
-        SymbolLightClassForFacade(facadeFqName, files)
-    }
+    ): KtLightClassForFacade = SymbolLightClassForFacade(facadeFqName, files, files.first().getKtModule(project))
 
     override val KtModule.contentSearchScope: GlobalSearchScope get() = this.contentScope
 

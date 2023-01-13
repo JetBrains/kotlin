@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecuti
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.*
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.slf4j.Logger
 import java.io.File
 
@@ -82,7 +84,7 @@ class KotlinKarma(
         devtool = null,
         export = false,
         progressReporter = true,
-        progressReporterPathFilter = nodeRootPackageDir.absolutePath,
+        progressReporterPathFilter = nodeRootPackageDir,
         webpackMajorVersion = webpackMajorVersion,
         rules = project.objects.webpackRulesContainer(),
     )
@@ -105,7 +107,7 @@ class KotlinKarma(
         val propValue = project.kotlinPropertiesProvider.jsKarmaBrowsers(compilation.target)
         val propBrowsers = propValue?.split(",")
         propBrowsers?.map(String::trim)?.forEach {
-            when (it.toLowerCase()) {
+            when (it.toLowerCaseAsciiOnly()) {
                 "chrome" -> useChrome()
                 "chrome-canary" -> useChromeCanary()
                 "chrome-canary-headless" -> useChromeCanaryHeadless()
@@ -442,7 +444,7 @@ class KotlinKarma(
 
         val karmaConfigAbsolutePath = karmaConfJs.absolutePath
         val args = if (debug) {
-            listOf(
+            nodeJsArgs + listOf(
                 npmProject.require("kotlin-test-js-runner/karma-debug-runner.js"),
                 karmaConfigAbsolutePath
             )
@@ -467,11 +469,12 @@ class KotlinKarma(
                 }
             }
 
-            override fun createClient(testResultProcessor: TestResultProcessor, log: Logger) =
+            override fun createClient(testResultProcessor: TestResultProcessor, log: Logger, testReporter: MppTestReportHelper) =
                 object : JSServiceMessagesClient(
                     testResultProcessor,
                     clientSettings,
-                    log
+                    log,
+                    testReporter,
                 ) {
                     val baseTestNameSuffix get() = settings.testNameSuffix
                     override var testNameSuffix: String? = baseTestNameSuffix
@@ -501,7 +504,7 @@ class KotlinKarma(
 
                         val actualText = if (launcherMessage != null) {
                             val (logLevel, message) = launcherMessage.destructured
-                            actualType = LogType.byValueOrNull(logLevel.toLowerCase())
+                            actualType = LogType.byValueOrNull(logLevel.toLowerCaseAsciiOnly())
                             if (actualType?.isErrorLike() == true) {
                                 processFailedBrowsers(text)
                             }

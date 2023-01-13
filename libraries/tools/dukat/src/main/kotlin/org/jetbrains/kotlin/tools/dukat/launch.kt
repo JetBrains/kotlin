@@ -37,12 +37,21 @@ private fun getHeader(): String {
     return copyrightNotice + LINE_SEPARATOR + note + LINE_SEPARATOR
 }
 
-fun main() {
-
+internal fun launch(outputDirectory: String, dynamicAsType: Boolean, useStaticGetters: Boolean) {
     val input = "../../stdlib/js/idl/org.w3c.dom.idl"
-    val outputDirectory = "../../stdlib/js/src/org.w3c/"
 
-    org.jetbrains.dukat.cli.main("-d", outputDirectory, input)
+    val args = mutableListOf<String>()
+    args.add("-d")
+    args.add(outputDirectory)
+    args.add(input)
+    if (dynamicAsType) {
+        args.add("--dynamic-as-type")
+    }
+    if (useStaticGetters) {
+        args.add("--use-static-getters")
+    }
+
+    org.jetbrains.dukat.cli.main(*args.toTypedArray())
 
     for (file in File(outputDirectory).listFiles { name ->
         name.extension == "kt"

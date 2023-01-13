@@ -1,3 +1,5 @@
+// SKIP_TXT
+
 fun test() {
     var a: Any? = null
     var b = a
@@ -62,4 +64,21 @@ fun test2() {
     a = 3
     b.length // OK
     b.<!UNRESOLVED_REFERENCE!>unaryPlus<!>() // error
+}
+
+fun test3() {
+    var a: Any? = null
+    val b = a
+    val c = a
+    if (a is String) {
+        a.length // ok
+        b.length // ok
+        c.length // ok
+    }
+    a = null // b and c are still aliases to the same old value
+    if (b is String) {
+        a.<!UNRESOLVED_REFERENCE!>length<!> // error
+        b.length // ok
+        c.length // ok
+    }
 }

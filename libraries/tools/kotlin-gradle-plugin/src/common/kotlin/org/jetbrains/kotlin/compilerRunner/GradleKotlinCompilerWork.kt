@@ -68,6 +68,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val allWarningsAsErrors: Boolean,
     val compilerExecutionSettings: CompilerExecutionSettings,
     val errorsFile: File?,
+    val kotlinPluginVersion: String,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 1
@@ -104,6 +105,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private var icLogLines: List<String> = emptyList()
     private val compilerExecutionSettings = config.compilerExecutionSettings
     private val errorsFile = config.errorsFile
+    private val kotlinPluginVersion = config.kotlinPluginVersion
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
@@ -122,9 +124,11 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         get() = incrementalCompilationEnvironment != null
 
     override fun run() {
+        metrics.addTimeMetric(BuildPerformanceMetric.START_WORKER_EXECUTION)
+        metrics.startMeasure(BuildTime.RUN_COMPILATION_IN_WORKER)
         try {
             val gradlePrintingMessageCollector = GradlePrintingMessageCollector(log, allWarningsAsErrors)
-            val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector)
+            val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = kotlinPluginVersion)
             val (exitCode, executionStrategy) = compileWithDaemonOrFallbackImpl(gradleMessageCollector)
             if (incrementalCompilationEnvironment?.disableMultiModuleIC == true) {
                 incrementalCompilationEnvironment.multiModuleICSettings.buildHistoryFile.delete()
@@ -135,10 +139,11 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         } finally {
             val taskInfo = TaskExecutionInfo(
                 changedFiles = incrementalCompilationEnvironment?.changedFiles,
-                compilerArguments = compilerArgs,
+                compilerArguments = if (reportingSettings.includeCompilerArguments) compilerArgs else emptyArray(),
                 withAbiSnapshot = incrementalCompilationEnvironment?.withAbiSnapshot,
                 withArtifactTransform = incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
             )
+            metrics.endMeasure(BuildTime.RUN_COMPILATION_IN_WORKER)
             val result = TaskExecutionResult(buildMetrics = metrics.getMetrics(), icLogLines = icLogLines, taskInfo = taskInfo)
             TaskExecutionResults[taskPath] = result
         }
@@ -147,7 +152,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private fun compileWithDaemonOrFallbackImpl(messageCollector: MessageCollector): Pair<ExitCode, KotlinCompilerExecutionStrategy> {
         with(log) {
             kotlinDebug { "Kotlin compiler class: ${compilerClassName}" }
-            kotlinDebug { "Kotlin compiler classpath: ${compilerFullClasspath.joinToString { it.canonicalPath }}" }
+            kotlinDebug { "Kotlin compiler classpath: ${compilerFullClasspath.joinToString { it.normalize().absolutePath }}" }
             kotlinDebug { "$taskPath Kotlin compiler args: ${compilerArgs.joinToString(" ")}" }
         }
 
@@ -295,6 +300,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         log.info("Options for KOTLIN DAEMON: $compilationOptions")
         val servicesFacade = GradleIncrementalCompilerServicesFacadeImpl(log, bufferingMessageCollector)
         val compilationResults = GradleCompilationResults(log, projectRootFile)
+        metrics.addTimeMetric(BuildPerformanceMetric.CALL_KOTLIN_DAEMON)
         return metrics.measure(BuildTime.RUN_COMPILATION) {
             daemon.compile(sessionId, compilerArgs, compilationOptions, servicesFacade, compilationResults)
         }.also {

@@ -18,10 +18,12 @@ import org.jetbrains.kotlin.test.services.assertions
 
 internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAnalysisHandler(testServices) {
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        val diagnostics = info.firAnalyzerFacade.runCheckers().values.flatten()
+        for (part in info.partsForDependsOnModules) {
+            val diagnostics = part.firAnalyzerFacade.runCheckers().values.flatten()
 
-        for (diagnostic in diagnostics) {
-            checkDiagnosticIsSuitableForFirIde(diagnostic as KtPsiDiagnostic)
+            for (diagnostic in diagnostics) {
+                checkDiagnosticIsSuitableForFirIde(diagnostic as KtPsiDiagnostic)
+            }
         }
     }
 

@@ -358,18 +358,18 @@ public final class ClassInitializerTranslator extends AbstractTranslator {
     private List<JsParameter> translatePrimaryConstructorParameters() {
         List<KtParameter> parameterList = getPrimaryConstructorParameters(classDeclaration);
         List<JsParameter> result = new ArrayList<>();
-        for (KtParameter jetParameter : parameterList) {
-            result.add(translateParameter(jetParameter));
+        for (KtParameter ktParameter : parameterList) {
+            result.add(translateParameter(ktParameter));
         }
         return result;
     }
 
     @NotNull
-    private JsParameter translateParameter(@NotNull KtParameter jetParameter) {
-        DeclarationDescriptor parameterDescriptor = getDescriptorForElement(bindingContext(), jetParameter);
+    private JsParameter translateParameter(@NotNull KtParameter ktParameter) {
+        DeclarationDescriptor parameterDescriptor = getDescriptorForElement(bindingContext(), ktParameter);
         JsName parameterName = context().getNameForDescriptor(parameterDescriptor);
         JsParameter jsParameter = new JsParameter(parameterName);
-        mayBeAddInitializerStatementForProperty(jsParameter, jetParameter);
+        mayBeAddInitializerStatementForProperty(jsParameter, ktParameter);
         return jsParameter;
     }
 

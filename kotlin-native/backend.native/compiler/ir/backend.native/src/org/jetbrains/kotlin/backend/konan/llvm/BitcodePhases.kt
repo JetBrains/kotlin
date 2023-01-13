@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.coverage.runCoveragePass
 import org.jetbrains.kotlin.backend.konan.lower.InlineClassPropertyAccessorsLowering
 import org.jetbrains.kotlin.backend.konan.lower.RedundantCoercionsCleaner
 import org.jetbrains.kotlin.backend.konan.lower.ReturnsInsertionLowering
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -24,14 +25,14 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal val createLLVMDeclarationsPhase = makeKonanModuleOpPhase(
         name = "CreateLLVMDeclarations",
         description = "Map IR declarations to LLVM",
-        op = { context, _ -> context.generationState.llvmDeclarations = createLlvmDeclarations(context) }
+        op = { context, _ -> context.generationState.llvmDeclarations = createLlvmDeclarations(context.generationState, context.ir.irModule) }
 )
 
 internal val RTTIPhase = makeKonanModuleOpPhase(
         name = "RTTI",
         description = "RTTI generation",
         op = { context, irModule ->
-            val visitor = RTTIGeneratorVisitor(context)
+            val visitor = RTTIGeneratorVisitor(context.generationState)
             irModule.acceptVoid(visitor)
             visitor.dispose()
         }
@@ -101,11 +102,11 @@ internal val dcePhase = makeKonanModuleOpPhase(
 
             val referencedFunctions = mutableSetOf<IrFunction>()
             callGraph.rootExternalFunctions.forEach {
-                if (!it.isTopLevelFieldInitializer)
+                if (!it.isStaticFieldInitializer)
                     referencedFunctions.add(it.irFunction ?: error("No IR for: $it"))
             }
             for (node in callGraph.directEdges.values) {
-                if (!node.symbol.isTopLevelFieldInitializer)
+                if (!node.symbol.isStaticFieldInitializer)
                     referencedFunctions.add(node.symbol.irFunction ?: error("No IR for: ${node.symbol}"))
                 node.callSites.forEach {
                     assert (!it.isVirtual) { "There should be no virtual calls in the call graph, but was: ${it.actualCallee}" }
@@ -170,9 +171,9 @@ internal val dcePhase = makeKonanModuleOpPhase(
         }
 )
 
-internal val removeRedundantCallsToFileInitializersPhase = makeKonanModuleOpPhase(
-        name = "RemoveRedundantCallsToFileInitializersPhase",
-        description = "Redundant file initializers calls removal",
+internal val removeRedundantCallsToStaticInitializersPhase = makeKonanModuleOpPhase(
+        name = "RemoveRedundantCallsToStaticInitializersPhase",
+        description = "Redundant static initializers calls removal",
         prerequisite = setOf(devirtualizationAnalysisPhase),
         op = { context, _ ->
             val moduleDFG = context.moduleDFG!!
@@ -189,7 +190,7 @@ internal val removeRedundantCallsToFileInitializersPhase = makeKonanModuleOpPhas
                     .mapNotNull { it.irFunction }
                     .toSet()
 
-            FileInitializersOptimization.removeRedundantCalls(context, callGraph, rootSet)
+            StaticInitializersOptimization.removeRedundantCalls(context, callGraph, rootSet)
         }
 )
 
@@ -245,7 +246,14 @@ internal val codegenPhase = makeKonanModuleOpPhase(
         name = "Codegen",
         description = "Code generation",
         op = { context, irModule ->
-            irModule.acceptVoid(CodeGeneratorVisitor(context, context.lifetimes))
+            context.generationState.objCExport = ObjCExport(
+                    context.generationState,
+                    context.moduleDescriptor,
+                    context.objCExportedInterface,
+                    context.objCExportCodeSpec
+            )
+
+            irModule.acceptVoid(CodeGeneratorVisitor(context.generationState, context.lifetimes))
 
             if (context.generationState.hasDebugInfo())
                 DIFinalize(context.generationState.debugInfo.builder)
@@ -255,25 +263,25 @@ internal val codegenPhase = makeKonanModuleOpPhase(
 internal val cStubsPhase = makeKonanModuleOpPhase(
         name = "CStubs",
         description = "C stubs compilation",
-        op = { context, _ -> produceCStubs(context) }
+        op = { context, _ -> produceCStubs(context.generationState) }
 )
 
 internal val linkBitcodeDependenciesPhase = makeKonanModuleOpPhase(
         name = "LinkBitcodeDependencies",
         description = "Link bitcode dependencies",
-        op = { context, _ -> linkBitcodeDependencies(context) }
+        op = { context, _ -> linkBitcodeDependencies(context.generationState) }
 )
 
 internal val checkExternalCallsPhase = makeKonanModuleOpPhase(
         name = "CheckExternalCalls",
         description = "Check external calls",
-        op = { context, _ -> checkLlvmModuleExternalCalls(context) }
+        op = { context, _ -> checkLlvmModuleExternalCalls(context.generationState) }
 )
 
 internal val rewriteExternalCallsCheckerGlobals = makeKonanModuleOpPhase(
         name = "RewriteExternalCallsCheckerGlobals",
         description = "Rewrite globals for external calls checker after optimizer run",
-        op = { context, _ -> addFunctionsListSymbolForChecker(context) }
+        op = { context, _ -> addFunctionsListSymbolForChecker(context.generationState) }
 )
 
 
@@ -282,8 +290,9 @@ internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
         name = "BitcodeOptimization",
         description = "Optimize bitcode",
         op = { context, _ ->
-            val config = createLTOFinalPipelineConfig(context)
-            LlvmOptimizationPipeline(config, context.generationState.llvm.module, context).use {
+            val generationState = context.generationState
+            val config = createLTOFinalPipelineConfig(context.generationState)
+            LlvmOptimizationPipeline(config, context.generationState.llvm.module, generationState).use {
                 it.run()
             }
         }
@@ -292,30 +301,20 @@ internal val bitcodeOptimizationPhase = makeKonanModuleOpPhase(
 internal val coveragePhase = makeKonanModuleOpPhase(
         name = "Coverage",
         description = "Produce coverage information",
-        op = { context, _ -> runCoveragePass(context) }
+        op = { context, _ -> runCoveragePass(context.generationState) }
 )
 
 internal val optimizeTLSDataLoadsPhase = makeKonanModuleOpPhase(
         name = "OptimizeTLSDataLoads",
         description = "Optimize multiple loads of thread data",
-        op = { context, _ -> removeMultipleThreadDataLoads(context) }
-)
-
-internal val produceOutputPhase = namedUnitPhase(
-        name = "ProduceOutput",
-        description = "Produce output",
-        lower = object : CompilerPhase<Context, Unit, Unit> {
-            override fun invoke(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Unit>, context: Context, input: Unit) {
-                produceOutput(context)
-            }
-        }
+        op = { context, _ -> removeMultipleThreadDataLoads(context.generationState) }
 )
 
 internal val removeRedundantSafepointsPhase = makeKonanModuleOpPhase(
         name = "RemoveRedundantSafepoints",
         description = "Remove function prologue safepoints inlined to another function",
         op = { context, _ ->
-            RemoveRedundantSafepointsPass(context).runOnModule(
+            RemoveRedundantSafepointsPass().runOnModule(
                     module = context.generationState.llvm.module,
                     isSafepointInliningAllowed = context.shouldInlineSafepoints()
             )

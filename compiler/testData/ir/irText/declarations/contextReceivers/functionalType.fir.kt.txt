@@ -69,7 +69,7 @@ fun test() {
   }
 
   with<C, Unit>(receiver = C(), block = local fun C.<anonymous>() {
-    return with<R, Unit>(receiver = R(), block = local fun R.<anonymous>() {
+    with<R, Unit>(receiver = R(), block = local fun R.<anonymous>() {
       $this$with.f1(_context_receiver_0 = $this$with, g = lf1)
       $this$with.f1(_context_receiver_0 = $this$with, g = local fun R.<anonymous>(_context_receiver_0: C, <unused var>: Param) {
         $this$f1.<get-r>() /*~> Unit */

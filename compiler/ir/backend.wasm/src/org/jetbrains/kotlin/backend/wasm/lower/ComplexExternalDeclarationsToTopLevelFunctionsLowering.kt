@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.backend.wasm.lower
 
-import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.backend.wasm.utils.getJsFunAnnotation
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmImportDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
@@ -175,10 +175,15 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
     }
 
     fun processExternalSimpleFunction(function: IrSimpleFunction) {
+        // Skip JS interop adapters form WasmImport.
+        // It needs to keep original signature to interop with other Wasm modules.
+        if (function.getWasmImportDescriptor() != null)
+            return
+
         val jsFun = function.getJsFunAnnotation()
         // Wrap external functions without @JsFun to lambdas `foo` -> `(a, b) => foo(a, b)`.
         // This way we wouldn't fail if we don't call them.
-        if (jsFun != null && function.valueParameters.all { it.defaultValue == null })
+        if (jsFun != null && function.valueParameters.all { it.defaultValue == null && it.varargElementType == null })
             return
         processFunctionOrConstructor(
             function = function,
@@ -236,9 +241,23 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             }
             append(jsFunctionReference)
             append("(")
-            appendParameterList(numValueParameters - numDefaultParameters, isEnd = numDefaultParameters == 0)
+
+            val numNonDefaultParamters = numValueParameters - numDefaultParameters
+            repeat(numNonDefaultParamters) {
+                if (function.valueParameters[it].isVararg) {
+                    append("...")
+                }
+                append("p$it")
+                if (numDefaultParameters != 0 || it + 1 < numNonDefaultParamters)
+                    append(", ")
+            }
             repeat(numDefaultParameters) {
-                append("isDefault$it ? undefined : p${numValueParameters - numDefaultParameters + it}, ")
+                if (function.valueParameters[numNonDefaultParamters + it].isVararg) {
+                    append("...")
+                } else {
+                    append("isDefault$it ? undefined : ")
+                }
+                append("p${numNonDefaultParamters + it}, ")
             }
             append(")")
         }
@@ -271,7 +290,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         if (dispatchReceiver != null) {
             res.addValueParameter("_this", dispatchReceiver.type)
         }
-        function.valueParameters.forEach { res.addValueParameter(it.name, it.type) }
+        function.valueParameters.forEach { res.addValueParameter(it.name, it.type).apply { varargElementType = it.varargElementType } }
         // Using Int type with 0 and 1 values to prevent overhead of converting Boolean to true and false
         repeat(numDefaultParameters) { res.addValueParameter("isDefault$it", context.irBuiltIns.intType) }
         externalFunToTopLevelMapping[function] = res
@@ -327,61 +346,87 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
 /**
  * Redirect usages of complex declarations to top-level functions
  */
-class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) : BodyLoweringPass {
-    override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid()
-                return transformCall(expression)
-            }
+class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) : FileLoweringPass {
+    private val nestedExternalToNewTopLevelFunctions = context.mapping.wasmNestedExternalToNewTopLevelFunction
+    private val objectToGetInstanceFunctions = context.mapping.wasmExternalObjectToGetInstanceFunction
 
-            override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-                expression.transformChildrenVoid()
-                return transformCall(expression)
-            }
+    override fun lower(irFile: IrFile) {
+        irFile.acceptVoid(declarationTransformer)
+    }
 
-            override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
-                val externalGetInstance = context.mapping.wasmExternalObjectToGetInstanceFunction[expression.symbol.owner]
-                return if (externalGetInstance != null) {
-                    IrCallImpl(
-                        expression.startOffset,
-                        expression.endOffset,
-                        expression.type,
-                        externalGetInstance.symbol,
-                        valueArgumentsCount = 0,
-                        typeArgumentsCount = 0
-                    )
+    private val declarationTransformer = object : IrElementVisitorVoid {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitFile(declaration: IrFile) {
+            process(declaration)
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            if (!declaration.isExternal) {
+                process(declaration)
+            }
+        }
+
+        private fun process(container: IrDeclarationContainer) {
+            container.declarations.transformFlat { member ->
+                if (nestedExternalToNewTopLevelFunctions.keys.contains(member)) {
+                    emptyList()
                 } else {
-                    expression
+                    member.acceptVoid(this)
+                    null
                 }
             }
+        }
 
-            fun transformCall(call: IrFunctionAccessExpression): IrExpression {
-                val oldFun = call.symbol.owner.realOverrideTarget
-                val newFun: IrSimpleFunction? =
-                    context.mapping.wasmNestedExternalToNewTopLevelFunction[oldFun]
+        override fun visitBody(body: IrBody) {
+            body.transformChildrenVoid(usagesTransformer)
+        }
+    }
 
-                return if (newFun != null) {
-                    val newCall = irCall(call, newFun, receiversAsArguments = true)
+    private val usagesTransformer = object : IrElementTransformerVoid() {
+        override fun visitCall(expression: IrCall): IrExpression {
+            expression.transformChildrenVoid()
+            return transformCall(expression)
+        }
 
-                    // Add default arguments flags if needed
-                    val numDefaultParameters = numDefaultParametersForExternalFunction(oldFun)
-                    val firstDefaultFlagArgumentIdx = newFun.valueParameters.size - numDefaultParameters
-                    val firstOldDefaultArgumentIdx = call.valueArgumentsCount - numDefaultParameters
-                    repeat(numDefaultParameters) {
-                        val value = if (call.getValueArgument(firstOldDefaultArgumentIdx + it) == null) 1 else 0
-                        newCall.putValueArgument(
-                            firstDefaultFlagArgumentIdx + it,
-                            IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, value)
-                        )
-                    }
+        override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
+            expression.transformChildrenVoid()
+            return transformCall(expression)
+        }
 
-                    newCall
-                } else {
-                    call
-                }
+        override fun visitGetObjectValue(expression: IrGetObjectValue): IrExpression {
+            val externalGetInstance = objectToGetInstanceFunctions[expression.symbol.owner] ?: return expression
+            return IrCallImpl(
+                startOffset = expression.startOffset,
+                endOffset = expression.endOffset,
+                type = expression.type,
+                symbol = externalGetInstance.symbol,
+                valueArgumentsCount = 0,
+                typeArgumentsCount = 0
+            )
+        }
+
+        fun transformCall(call: IrFunctionAccessExpression): IrExpression {
+            val oldFun = call.symbol.owner.realOverrideTarget
+            val newFun: IrSimpleFunction = nestedExternalToNewTopLevelFunctions[oldFun] ?: return call
+
+            val newCall = irCall(call, newFun, receiversAsArguments = true)
+
+            // Add default arguments flags if needed
+            val numDefaultParameters = numDefaultParametersForExternalFunction(oldFun)
+            val firstDefaultFlagArgumentIdx = newFun.valueParameters.size - numDefaultParameters
+            val firstOldDefaultArgumentIdx = call.valueArgumentsCount - numDefaultParameters
+            repeat(numDefaultParameters) {
+                val value = if (call.getValueArgument(firstOldDefaultArgumentIdx + it) == null) 1 else 0
+                newCall.putValueArgument(
+                    firstDefaultFlagArgumentIdx + it,
+                    IrConstImpl.int(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.intType, value)
+                )
             }
-        })
+            return newCall
+        }
     }
 }
 

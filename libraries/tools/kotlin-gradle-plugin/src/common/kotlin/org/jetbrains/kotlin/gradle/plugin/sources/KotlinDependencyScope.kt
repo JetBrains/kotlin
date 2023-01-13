@@ -52,13 +52,3 @@ internal fun Project.compilationDependencyConfigurationByScope(
             RUNTIME_ONLY_SCOPE -> compilation.runtimeOnlyConfigurationName
         }
     )
-
-internal fun Project.sourceSetMetadataConfigurationByScope(sourceSet: KotlinSourceSet, scope: KotlinDependencyScope): Configuration =
-    project.configurations.getByName(
-        when (scope) {
-            API_SCOPE -> sourceSet.apiMetadataConfigurationName
-            IMPLEMENTATION_SCOPE -> sourceSet.implementationMetadataConfigurationName
-            COMPILE_ONLY_SCOPE -> sourceSet.compileOnlyMetadataConfigurationName
-            RUNTIME_ONLY_SCOPE -> sourceSet.runtimeOnlyMetadataConfigurationName
-        }
-    )

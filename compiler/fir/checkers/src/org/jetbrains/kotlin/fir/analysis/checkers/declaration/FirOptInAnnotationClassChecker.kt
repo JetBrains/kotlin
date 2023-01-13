@@ -20,15 +20,16 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 object FirOptInAnnotationClassChecker : FirRegularClassChecker() {
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return
-        if (declaration.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID) == null) return
-        if (declaration.getRetention() == AnnotationRetention.SOURCE) {
-            val target = declaration.getRetentionAnnotation()
+        val session = context.session
+        if (declaration.getAnnotationByClassId(OptInNames.REQUIRES_OPT_IN_CLASS_ID, session) == null) return
+        if (declaration.getRetention(session) == AnnotationRetention.SOURCE) {
+            val target = declaration.getRetentionAnnotation(session)
             reporter.reportOn(target?.source, FirErrors.OPT_IN_MARKER_WITH_WRONG_RETENTION, context)
 
         }
-        val wrongTargets = declaration.getAllowedAnnotationTargets().intersect(OptInDescription.WRONG_TARGETS_FOR_MARKER)
+        val wrongTargets = declaration.getAllowedAnnotationTargets(session).intersect(OptInDescription.WRONG_TARGETS_FOR_MARKER)
         if (wrongTargets.isNotEmpty()) {
-            val target = declaration.getTargetAnnotation()
+            val target = declaration.getTargetAnnotation(session)
             reporter.reportOn(
                 target?.source,
                 FirErrors.OPT_IN_MARKER_WITH_WRONG_TARGET,

@@ -52,12 +52,7 @@ import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceMapNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-
-enum class IcCompatibleIr2Js(val isCompatible: Boolean, val incrementalCacheEnabled: Boolean) {
-    DISABLED(false, false),
-    COMPATIBLE(true, false),
-    IC_MODE(true, true)
-}
+import java.util.WeakHashMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsIrBackendContext(
@@ -68,20 +63,20 @@ class JsIrBackendContext(
     val additionalExportedDeclarationNames: Set<FqName>,
     keep: Set<String>,
     override val configuration: CompilerConfiguration, // TODO: remove configuration from backend context
-    override val scriptMode: Boolean = false,
     override val es6mode: Boolean = false,
     val dceRuntimeDiagnostic: RuntimeDiagnostic? = null,
-    val baseClassIntoMetadata: Boolean = false,
     val safeExternalBoolean: Boolean = false,
     val safeExternalBooleanDiagnostic: RuntimeDiagnostic? = null,
     override val mapping: JsMapping = JsMapping(),
     val granularity: JsGenerationGranularity = JsGenerationGranularity.WHOLE_PROGRAM,
-    val icCompatibleIr2Js: IcCompatibleIr2Js = IcCompatibleIr2Js.DISABLED,
+    val incrementalCacheEnabled: Boolean = false
 ) : JsCommonBackendContext {
-    val polyfills = JsPolyfills()
-    val fieldToInitializer: MutableMap<IrField, IrExpression> = mutableMapOf()
+    override val scriptMode: Boolean get() = false
 
-    val localClassNames: MutableMap<IrClass, String> = mutableMapOf()
+    val polyfills = JsPolyfills()
+    val fieldToInitializer = WeakHashMap<IrField, IrExpression>()
+
+    val localClassNames = WeakHashMap<IrClass, String>()
 
     val minimizedNameGenerator: MinimizedNameGenerator =
         MinimizedNameGenerator()
@@ -89,7 +84,7 @@ class JsIrBackendContext(
     val keeper: Keeper =
         Keeper(keep)
 
-    val fieldDataCache = mutableMapOf<IrClass, Map<IrField, String>>()
+    val fieldDataCache = WeakHashMap<IrClass, Map<IrField, String>>()
 
     override val builtIns = module.builtIns
 
@@ -393,7 +388,7 @@ class JsIrBackendContext(
         print(message)
     }
 
-    private val outlinedJsCodeFunctions = mutableMapOf<IrFunctionSymbol, JsFunction>()
+    private val outlinedJsCodeFunctions = WeakHashMap<IrFunctionSymbol, JsFunction>()
 
     fun addOutlinedJsCode(symbol: IrSimpleFunctionSymbol, outlinedJsCode: JsFunction) {
         outlinedJsCodeFunctions[symbol] = outlinedJsCode

@@ -57,9 +57,9 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
 
         fun isPropertySerializable(propertySymbol: FirPropertySymbol): Boolean {
             return when {
-                isInternalSerializable -> !propertySymbol.hasSerialTransient
+                isInternalSerializable -> !propertySymbol.hasSerialTransient(session)
                 propertySymbol.visibility == Visibilities.Private -> false
-                else -> (propertySymbol.isVar && propertySymbol.hasSerialTransient) || propertySymbol in primaryConstructorProperties
+                else -> (propertySymbol.isVar && propertySymbol.hasSerialTransient(session)) || propertySymbol in primaryConstructorProperties
             }
         }
 
@@ -89,7 +89,7 @@ class FirSerializablePropertiesProvider(session: FirSession) : FirExtensionSessi
             .let { restoreCorrectOrderFromClassProtoExtension(classSymbol, it) }
 
         val isExternallySerializable = classSymbol.isEnumClass ||
-                primaryConstructorProperties.size == classSymbol.primaryConstructorSymbol()?.valueParameterSymbols?.size
+                primaryConstructorProperties.size == (classSymbol.primaryConstructorSymbol()?.valueParameterSymbols?.size ?: 0)
 
         val (serializableConstructorProperties, serializableStandaloneProperties) = serializableProperties.partition { it.propertySymbol in primaryConstructorProperties }
         return FirSerializableProperties(

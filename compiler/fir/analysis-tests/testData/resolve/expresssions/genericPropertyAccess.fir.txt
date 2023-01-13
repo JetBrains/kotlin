@@ -15,7 +15,7 @@ FILE: genericPropertyAccess.kt
             super<R|Base<T>|>(R|<local>/x|)
         }
 
-        public final override fun foo(): R|T| {
+        public open override fun foo(): R|T| {
             ^foo this@R|/Derived|.R|SubstitutionOverride</Derived.x: R|T|>|
         }
 

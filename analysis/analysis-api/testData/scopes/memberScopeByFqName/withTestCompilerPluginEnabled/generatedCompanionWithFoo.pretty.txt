@@ -6,4 +6,4 @@ open fun hashCode(): kotlin.Int
 
 open fun toString(): kotlin.String
 
-constructor()
+private constructor()

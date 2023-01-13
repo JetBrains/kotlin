@@ -1,4 +1,3 @@
-// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // WITH_STDLIB
 // ISSUE: KT-38895
 

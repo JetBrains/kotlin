@@ -88,11 +88,6 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>kotlin-scripting-js</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
       <artifactId>kotlin-scripting-jvm</artifactId>
       <version>${project.version}</version>
     </dependency>

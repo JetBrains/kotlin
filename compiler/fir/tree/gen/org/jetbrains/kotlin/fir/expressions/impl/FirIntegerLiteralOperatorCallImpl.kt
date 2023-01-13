@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
@@ -28,15 +30,15 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
 internal class FirIntegerLiteralOperatorCallImpl(
     override var source: KtSourceElement?,
     override var typeRef: FirTypeRef,
-    override val annotations: MutableList<FirAnnotation>,
-    override val contextReceiverArguments: MutableList<FirExpression>,
-    override val typeArguments: MutableList<FirTypeProjection>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
+    override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
+    override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
-    override var dispatchReceiver: FirExpression,
-    override var extensionReceiver: FirExpression,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
     override val origin: FirFunctionCallOrigin,
+    override var dispatchReceiver: FirExpression,
+    override var extensionReceiver: FirExpression,
 ) : FirIntegerLiteralOperatorCall() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         typeRef.accept(visitor, data)
@@ -86,6 +88,11 @@ internal class FirIntegerLiteralOperatorCallImpl(
         return this
     }
 
+    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCallImpl {
+        calleeReference = calleeReference.transform(transformer, data)
+        return this
+    }
+
     override fun <D> transformDispatchReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCallImpl {
         dispatchReceiver = dispatchReceiver.transform(transformer, data)
         return this
@@ -93,11 +100,6 @@ internal class FirIntegerLiteralOperatorCallImpl(
 
     override fun <D> transformExtensionReceiver(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCallImpl {
         extensionReceiver = extensionReceiver.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirIntegerLiteralOperatorCallImpl {
-        calleeReference = calleeReference.transform(transformer, data)
         return this
     }
 
@@ -110,14 +112,16 @@ internal class FirIntegerLiteralOperatorCallImpl(
         typeRef = newTypeRef
     }
 
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
+    }
+
     override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>) {
-        contextReceiverArguments.clear()
-        contextReceiverArguments.addAll(newContextReceiverArguments)
+        contextReceiverArguments = newContextReceiverArguments.toMutableOrEmpty()
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {
-        typeArguments.clear()
-        typeArguments.addAll(newTypeArguments)
+        typeArguments = newTypeArguments.toMutableOrEmpty()
     }
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
@@ -135,5 +139,13 @@ internal class FirIntegerLiteralOperatorCallImpl(
     override fun replaceCalleeReference(newCalleeReference: FirReference) {
         require(newCalleeReference is FirNamedReference)
         replaceCalleeReference(newCalleeReference)
+    }
+
+    override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression) {
+        dispatchReceiver = newDispatchReceiver
+    }
+
+    override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
+        extensionReceiver = newExtensionReceiver
     }
 }

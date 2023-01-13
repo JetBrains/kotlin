@@ -14,7 +14,7 @@ class A() {
 
 //more tests
 val g : () -> Unit = { 42 }
-val gFunction : () -> Unit = fun(): Int = 1
+val gFunction : () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun(): Int = 1<!>
 
 val h : () -> Unit = { doSmth() }
 

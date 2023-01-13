@@ -51,13 +51,24 @@ internal class KtFirTypeProvider(
 ) : KtTypeProvider(), KtFirAnalysisSessionComponent {
     override val builtinTypes: KtBuiltinTypes = KtFirBuiltInTypes(rootModuleSession.builtinTypes, firSymbolBuilder, token)
 
-    override fun approximateToSuperPublicDenotableType(type: KtType): KtType? {
+    override fun approximateToSuperPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
         require(type is KtFirType)
         val coneType = type.coneType
         val approximatedConeType = PublicTypeApproximator.approximateTypeToPublicDenotable(
             coneType,
             rootModuleSession,
-            approximateLocalTypes = true,
+            approximateLocalTypes = approximateLocalTypes,
+        )
+
+        return approximatedConeType?.asKtType()
+    }
+
+    override fun approximateToSubPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
+        require(type is KtFirType)
+        val coneType = type.coneType
+        val approximatedConeType = rootModuleSession.typeApproximator.approximateToSubType(
+            coneType,
+            PublicTypeApproximator.PublicApproximatorConfiguration(localTypes = approximateLocalTypes),
         )
 
         return approximatedConeType?.asKtType()

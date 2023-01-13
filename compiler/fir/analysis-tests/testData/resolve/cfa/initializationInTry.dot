@@ -54,10 +54,10 @@ digraph initializationInTry_kt {
                     subgraph cluster_8 {
                         color=blue
                         16 [label="Enter block"];
-                        17 [label="Function call: R|/getNullableString|()"];
-                        18 [label="Check not null: R|/getNullableString|()!!"];
+                        17 [label="Function call: R|/getNullableString|()" style="filled" fillcolor=yellow];
+                        18 [label="Check not null: R|/getNullableString|()!!" style="filled" fillcolor=yellow];
                         19 [label="Variable declaration: lval y: R|kotlin/String|"];
-                        20 [label="Function call: R|/getNullableString|()"];
+                        20 [label="Function call: R|/getNullableString|()" style="filled" fillcolor=yellow];
                         21 [label="Assignment: R|<local>/x|"];
                         22 [label="Exit block"];
                     }
@@ -77,7 +77,7 @@ digraph initializationInTry_kt {
                 29 [label="Try expression exit"];
             }
             30 [label="Access variable R|<local>/x|"];
-            31 [label="Function call: R|/takeNullableString|(...)"];
+            31 [label="Function call: R|/takeNullableString|(...)" style="filled" fillcolor=yellow];
             32 [label="Exit block"];
         }
         33 [label="Exit function test_1" style="filled" fillcolor=red];
@@ -86,7 +86,7 @@ digraph initializationInTry_kt {
     12 -> {13};
     13 -> {14};
     14 -> {15};
-    14 -> {24}    [label=onUncaughtException];
+    14 -> {24} [label="onUncaughtException"];
     15 -> {16};
     16 -> {17};
     17 -> {18};
@@ -101,7 +101,6 @@ digraph initializationInTry_kt {
     26 -> {27};
     27 -> {28};
     28 -> {29};
-    28 -> {33}    [label=onUncaughtException];
     29 -> {30};
     30 -> {31};
     31 -> {32};
@@ -123,9 +122,9 @@ digraph initializationInTry_kt {
                     subgraph cluster_15 {
                         color=blue
                         39 [label="Enter block"];
-                        40 [label="Function call: R|/getNullableString|()"];
+                        40 [label="Function call: R|/getNullableString|()" style="filled" fillcolor=yellow];
                         41 [label="Variable declaration: lval y: R|kotlin/String?|"];
-                        42 [label="Function call: R|/getNullableString|()"];
+                        42 [label="Function call: R|/getNullableString|()" style="filled" fillcolor=yellow];
                         43 [label="Assignment: R|<local>/x|"];
                         44 [label="Exit block"];
                     }
@@ -145,7 +144,7 @@ digraph initializationInTry_kt {
                 51 [label="Try expression exit"];
             }
             52 [label="Access variable R|<local>/x|"];
-            53 [label="Function call: R|/takeNullableString|(...)"];
+            53 [label="Function call: R|/takeNullableString|(...)" style="filled" fillcolor=yellow];
             54 [label="Exit block"];
         }
         55 [label="Exit function test_2" style="filled" fillcolor=red];
@@ -154,7 +153,7 @@ digraph initializationInTry_kt {
     35 -> {36};
     36 -> {37};
     37 -> {38};
-    37 -> {46}    [label=onUncaughtException];
+    37 -> {46} [label="onUncaughtException"];
     38 -> {39};
     39 -> {40};
     40 -> {41};
@@ -168,7 +167,6 @@ digraph initializationInTry_kt {
     48 -> {49};
     49 -> {50};
     50 -> {51};
-    50 -> {55}    [label=onUncaughtException];
     51 -> {52};
     52 -> {53};
     53 -> {54};

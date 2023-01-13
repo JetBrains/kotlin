@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -188,11 +188,11 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker() {
 
     // we don't require `actual` modifier on
     //  - annotation constructors, because annotation classes can only have one constructor
-    //  - inline class primary constructors, because inline class must have primary constructor
+    //  - value class primary constructors, because value class must have primary constructor
     //  - value parameter inside primary constructor of inline class, because inline class must have one value parameter
     private fun requireActualModifier(declaration: FirBasedSymbol<*>, session: FirSession): Boolean {
         return !declaration.isAnnotationConstructor(session) &&
-                !declaration.isPrimaryConstructorOfInlineClass(session) &&
+                !declaration.isPrimaryConstructorOfInlineOrValueClass(session) &&
                 !isUnderlyingPropertyOfInlineClass(declaration)
     }
 

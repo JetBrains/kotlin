@@ -673,10 +673,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
         pushSourceInfo(x.getSource());
         leftParen();
         boolean notFirst = false;
+        sourceLocationConsumer.pushSourceInfo(null);
         for (JsParameter param : x.getParameters()) {
             notFirst = sepCommaOptSpace(notFirst);
             accept(param);
         }
+        sourceLocationConsumer.popSourceInfo();
         rightParen();
         space();
 
@@ -845,8 +847,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     public void visitNameRef(@NotNull JsNameRef nameRef, boolean withQualifier) {
-        pushSourceInfo(nameRef.getSource());
+
         printCommentsBeforeNode(nameRef);
+        p.maybeIndent();
 
         JsExpression qualifier = nameRef.getQualifier();
         if (qualifier != null && withQualifier) {
@@ -869,11 +872,11 @@ public class JsToStringGenerationVisitor extends JsVisitor {
             p.print('.');
         }
 
-        p.maybeIndent();
+        pushSourceInfo(nameRef.getSource());
         p.print(nameRef.getIdent());
+        popSourceInfo();
 
         printCommentsAfterNode(nameRef);
-        popSourceInfo();
     }
 
     @Override
@@ -1004,7 +1007,9 @@ public class JsToStringGenerationVisitor extends JsVisitor {
 
     @Override
     public void visitParameter(@NotNull JsParameter x) {
+        pushSourceInfo(x.getSource());
         nameOf(x);
+        popSourceInfo();
     }
 
     @Override

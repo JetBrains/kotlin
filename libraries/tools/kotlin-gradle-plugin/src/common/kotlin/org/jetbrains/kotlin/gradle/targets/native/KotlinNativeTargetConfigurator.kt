@@ -46,6 +46,8 @@ import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotlinTargetConfigurator<T>(
@@ -143,15 +145,19 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         }
 
         fun configureFatFramework() {
-            val fatFrameworkConfigurationName = lowerCamelCaseName(binary.name, binary.target.konanTarget.family.name.toLowerCase(), "fat")
-            val fatFrameworkTaskName = "link${fatFrameworkConfigurationName.capitalize()}"
+            val fatFrameworkConfigurationName = lowerCamelCaseName(
+                binary.name,
+                binary.target.konanTarget.family.name.toLowerCaseAsciiOnly(),
+                "fat"
+            )
+            val fatFrameworkTaskName = "link${fatFrameworkConfigurationName.capitalizeAsciiOnly()}"
 
             val fatFrameworkTask = if (fatFrameworkTaskName in tasks.names) {
                 tasks.named(fatFrameworkTaskName, FatFrameworkTask::class.java)
             } else {
                 tasks.register(fatFrameworkTaskName, FatFrameworkTask::class.java) {
                     it.baseName = binary.baseName
-                    it.destinationDir = it.destinationDir.resolve(binary.buildType.name.toLowerCase())
+                    it.destinationDir = it.destinationDir.resolve(binary.buildType.name.toLowerCaseAsciiOnly())
                 }
             }
 
@@ -321,7 +327,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         target.compilations.all { compilation ->
             createCInteropTasks(compilation, compilation.cinterops)
             compilation.cinterops.all { cinterop ->
-                cinterop.dependencyFiles += locateOrCreateCInteropDependencyConfiguration(compilation, cinterop, target)
+                cinterop.dependencyFiles += locateOrCreateCInteropDependencyConfiguration(compilation)
             }
         }
     }
@@ -567,7 +573,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             val realProducingTask: TaskProvider<*>
             // TODO: Someone remove this HACK PLEASE!
             val realArtifactFile = if (copy) {
-                realProducingTask = project.project.registerTask<Copy>("copy${producingTask.name.capitalize()}") {
+                realProducingTask = project.project.registerTask<Copy>("copy${producingTask.name.capitalizeAsciiOnly()}") {
                     val targetSubDirectory = compilationInfo.targetDisambiguationClassifier?.let { "$it/" }.orEmpty()
                     it.destinationDir = project.project.buildDir.resolve("libs/$targetSubDirectory${compilationInfo.compilationName}")
                     it.from(artifactFile)

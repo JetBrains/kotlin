@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.executeWithoutPCE
 
 internal class LLFirPhaseRunner {
     /**
@@ -17,8 +16,6 @@ internal class LLFirPhaseRunner {
         runPhaseWithCustomResolveWithoutLock(resolve)
 
     private inline fun runPhaseWithCustomResolveWithoutLock(crossinline resolve: () -> Unit) {
-        executeWithoutPCE {
-            resolve()
-        }
+        resolve()
     }
 }

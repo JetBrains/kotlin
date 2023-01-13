@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
 
-internal class LLFirDeclarationTransformer(private val designation: FirDeclarationDesignation) {
+internal class LLFirDeclarationTransformer(private val designation: FirDesignation) {
     private val designationWithoutTargetIterator = designation.toSequence(includeTarget = false).iterator()
     private var isInsideTargetDeclaration: Boolean = false
     private var designationPassed: Boolean = false
@@ -42,7 +43,7 @@ internal class LLFirDeclarationTransformer(private val designation: FirDeclarati
     private inline fun processDeclarationContent(
         declaration: FirDeclaration,
         default: () -> FirDeclaration,
-        applyToDesignated: (FirDeclaration) -> Unit,
+        applyToDesignated: (FirElementWithResolvePhase) -> Unit,
     ): FirDeclaration {
         //It means that we are inside the target declaration
         if (isInsideTargetDeclaration) {
@@ -60,7 +61,7 @@ internal class LLFirDeclarationTransformer(private val designation: FirDeclarati
             try {
                 isInsideTargetDeclaration = true
                 designationPassed = true
-                applyToDesignated(designation.declaration)
+                applyToDesignated(designation.target)
             } finally {
                 isInsideTargetDeclaration = false
             }
@@ -70,6 +71,6 @@ internal class LLFirDeclarationTransformer(private val designation: FirDeclarati
     }
 
     fun ensureDesignationPassed() {
-        check(designationPassed) { "Designation not passed for declaration ${designation.declaration::class.simpleName}" }
+        check(designationPassed) { "Designation not passed for declaration ${designation.target::class.simpleName}" }
     }
 }

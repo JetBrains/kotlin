@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.ir.declarations.DescriptorMetadataSource
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.indexOrMinusOne
 import org.jetbrains.kotlin.ir.util.isCrossinline
@@ -37,7 +39,6 @@ import org.jetbrains.kotlin.psi2ir.intermediate.createTemporaryVariableInBlock
 import org.jetbrains.kotlin.psi2ir.intermediate.setExplicitReceiverValue
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.util.isSingleUnderscore
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
@@ -45,7 +46,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
     fun generateScriptDeclaration(ktScript: KtScript): IrDeclaration? {
         val descriptor = getOrFail(BindingContext.DECLARATION_TO_DESCRIPTOR, ktScript) as ScriptDescriptor
 
-        return context.symbolTable.declareScript(descriptor).buildWithScope { irScript ->
+        return context.symbolTable.declareScript(ktScript.startOffsetSkippingComments, ktScript.endOffset, descriptor).buildWithScope { irScript ->
 
             irScript.metadata = DescriptorMetadataSource.Script(descriptor)
 
@@ -86,7 +87,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                 it.owner != irScript && it.descriptor !in importedScripts
             }
             irScript.earlierScripts?.forEach {
-                context.symbolTable.introduceValueParameter(it.owner.thisReceiver)
+                context.symbolTable.introduceValueParameter(it.owner.thisReceiver!!)
             }
 
             fun createValueParameter(valueParameterDescriptor: ValueParameterDescriptor): IrValueParameter {
@@ -104,7 +105,17 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                 irScript.earlierScriptsParameter = descriptor.earlierScriptsConstructorParameter?.let(::createValueParameter)
             }
 
-            irScript.explicitCallParameters = descriptor.explicitConstructorParameters.map(::createValueParameter)
+            val explicitCallParams = descriptor.explicitConstructorParameters.map(::createValueParameter)
+
+            irScript.explicitCallParameters = descriptor.explicitConstructorParameters.map {
+                IrVariableImpl(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    IrDeclarationOrigin.SCRIPT_CALL_PARAMETER, IrVariableSymbolImpl(),
+                    it.name,
+                    it.type.toIrType(),
+                    isVar = false, isConst = false, isLateinit = false
+                ).also { it.parent = irScript }
+            }
 
             irScript.implicitReceiversParameters = descriptor.implicitReceivers.map {
                 makeParameter(it.thisAsReceiverParameter, IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER, parametersIndex++)
@@ -142,7 +153,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
 
             irScript.constructor = with(IrFunctionBuilder().apply {
                 isPrimary = true
-                returnType = irScript.thisReceiver.type as IrSimpleType
+                returnType = irScript.thisReceiver!!.type as IrSimpleType
             }) {
                 irScript.factory.createConstructor(
                     startOffset, endOffset, origin,
@@ -155,7 +166,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
             }.also { irConstructor ->
                 irConstructor.valueParameters = buildList {
                     addIfNotNull(irScript.earlierScriptsParameter)
-                    addAll(irScript.explicitCallParameters)
+                    addAll(explicitCallParams)
                     addAll(irScript.implicitReceiversParameters)
                     addAll(irScript.providedPropertiesParameters)
                 }
@@ -240,7 +251,7 @@ class ScriptGenerator(declarationGenerator: DeclarationGenerator) : DeclarationG
                             ).apply {
                                 value = irComponentCall
                                 receiver = IrGetValueImpl(
-                                    ktEntry.startOffsetSkippingComments, ktEntry.endOffset, irScript.thisReceiver.symbol
+                                    ktEntry.startOffsetSkippingComments, ktEntry.endOffset, irScript.thisReceiver!!.symbol
                                 )
                             }
                             irBlock.statements.add(irComponentInitializer)

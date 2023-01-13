@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,9 +35,9 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 @FirBuilderDsl
 interface FirFunctionBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
     abstract override var source: KtSourceElement?
+    abstract override var resolvePhase: FirResolvePhase
     abstract override val annotations: MutableList<FirAnnotation>
     abstract override var moduleData: FirModuleData
-    abstract override var resolvePhase: FirResolvePhase
     abstract override var origin: FirDeclarationOrigin
     abstract override var attributes: FirDeclarationAttributes
     abstract var status: FirDeclarationStatus

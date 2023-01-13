@@ -52,4 +52,9 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         get() = setOf(
             FirUpperBoundsChecker,
         )
+
+    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
+        get() = setOf(
+            FirJvmTopLevelFunctionsChecker,
+        )
 }

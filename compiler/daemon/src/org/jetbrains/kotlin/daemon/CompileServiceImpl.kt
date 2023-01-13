@@ -32,17 +32,16 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.repl.ReplCheckResult
 import org.jetbrains.kotlin.cli.common.repl.ReplCodeLine
 import org.jetbrains.kotlin.cli.common.repl.ReplCompileResult
-import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.modules.CoreJrtFileSystem
 import org.jetbrains.kotlin.cli.metadata.K2MetadataCompiler
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.daemon.report.CompileServicesFacadeMessageCollector
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
-import org.jetbrains.kotlin.daemon.report.DaemonMessageReporterPrintStreamAdapter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
@@ -57,9 +56,7 @@ import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm
 import org.jetbrains.kotlin.incremental.parsing.classesFqNames
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
-import java.io.BufferedOutputStream
 import java.io.File
-import java.io.PrintStream
 import java.rmi.NoSuchObjectException
 import java.rmi.registry.Registry
 import java.rmi.server.UnicastRemoteObject
@@ -736,58 +733,6 @@ class CompileServiceImpl(
         CompileService.CallResult.Good(res)
     }
 
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
-    override fun remoteCompile(
-        sessionId: Int,
-        targetPlatform: CompileService.TargetPlatform,
-        args: Array<out String>,
-        servicesFacade: CompilerCallbackServicesFacade,
-        compilerOutputStream: RemoteOutputStream,
-        outputFormat: CompileService.OutputFormat,
-        serviceOutputStream: RemoteOutputStream,
-        operationsTracer: RemoteOperationsTracer?
-    ): CompileService.CallResult<Int> =
-        doCompile(sessionId, args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, eventManager, profiler ->
-            when (outputFormat) {
-                CompileService.OutputFormat.PLAIN -> compiler[targetPlatform].exec(printStream, *args)
-                CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(
-                    printStream,
-                    createCompileServices(
-                        servicesFacade,
-                        eventManager,
-                        profiler
-                    ),
-                    *args
-                )
-            }
-        }
-
-    @Suppress("OverridingDeprecatedMember", "DEPRECATION", "OVERRIDE_DEPRECATION")
-    override fun remoteIncrementalCompile(
-        sessionId: Int,
-        targetPlatform: CompileService.TargetPlatform,
-        args: Array<out String>,
-        servicesFacade: CompilerCallbackServicesFacade,
-        compilerOutputStream: RemoteOutputStream,
-        compilerOutputFormat: CompileService.OutputFormat,
-        serviceOutputStream: RemoteOutputStream,
-        operationsTracer: RemoteOperationsTracer?
-    ): CompileService.CallResult<Int> =
-        doCompile(sessionId, args, compilerOutputStream, serviceOutputStream, operationsTracer) { printStream, eventManager, profiler ->
-            when (compilerOutputFormat) {
-                CompileService.OutputFormat.PLAIN -> throw NotImplementedError("Only XML output is supported in remote incremental compilation")
-                CompileService.OutputFormat.XML -> compiler[targetPlatform].execAndOutputXml(
-                    printStream,
-                    createCompileServices(
-                        servicesFacade,
-                        eventManager,
-                        profiler
-                    ),
-                    *args
-                )
-            }
-        }
-
     override fun classesFqNamesByFiles(
         sessionId: Int, sourceFiles: Set<File>
     ): CompileService.CallResult<Set<String>> =
@@ -819,53 +764,8 @@ class CompileServiceImpl(
     }
 
 
-    @Deprecated("The usages should be replaced with other `leaseReplSession` method", ReplaceWith("leaseReplSession"))
-    override fun leaseReplSession(
-        aliveFlagPath: String?,
-        targetPlatform: CompileService.TargetPlatform,
-        @Suppress("DEPRECATION") servicesFacade: CompilerCallbackServicesFacade,
-        templateClasspath: List<File>,
-        templateClassName: String,
-        scriptArgs: Array<out Any?>?,
-        scriptArgsTypes: Array<out Class<out Any>>?,
-        compilerMessagesOutputStream: RemoteOutputStream,
-        evalOutputStream: RemoteOutputStream?,
-        evalErrorStream: RemoteOutputStream?,
-        evalInputStream: RemoteInputStream?,
-        operationsTracer: RemoteOperationsTracer?
-    ): CompileService.CallResult<Int> = ifAlive(minAliveness = Aliveness.Alive) {
-        if (targetPlatform != CompileService.TargetPlatform.JVM)
-            CompileService.CallResult.Error("Sorry, only JVM target platform is supported now")
-        else {
-            val disposable = Disposer.newDisposable()
-            val compilerMessagesStream = PrintStream(
-                BufferedOutputStream(
-                    RemoteOutputStreamClient(compilerMessagesOutputStream, DummyProfiler()),
-                    REMOTE_STREAM_BUFFER_SIZE
-                )
-            )
-            val messageCollector = KeepFirstErrorMessageCollector(compilerMessagesStream)
-            val repl = KotlinJvmReplService(
-                disposable, port, compilerId, templateClasspath, templateClassName,
-                messageCollector, operationsTracer
-            )
-            val sessionId = state.sessions.leaseSession(ClientOrSessionProxy(aliveFlagPath, repl, disposable))
-
-            CompileService.CallResult.Good(sessionId)
-        }
-    }
-
     // TODO: add more checks (e.g. is it a repl session)
     override fun releaseReplSession(sessionId: Int): CompileService.CallResult<Nothing> = releaseCompileSession(sessionId)
-
-    @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
-    override fun remoteReplLineCheck(sessionId: Int, codeLine: ReplCodeLine): CompileService.CallResult<ReplCheckResult> =
-        ifAlive(minAliveness = Aliveness.Alive) {
-            withValidRepl(sessionId) {
-                @Suppress("DEPRECATION")
-                CompileService.CallResult.Good(check(codeLine))
-            }
-        }
 
     private fun createCompileServices(
         @Suppress("DEPRECATION") facade: CompilerCallbackServicesFacade,
@@ -903,29 +803,6 @@ class CompileServiceImpl(
 
         return builder.build()
     }
-
-    @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
-    override fun remoteReplLineCompile(
-        sessionId: Int,
-        codeLine: ReplCodeLine,
-        history: List<ReplCodeLine>?
-    ): CompileService.CallResult<ReplCompileResult> =
-        ifAlive(minAliveness = Aliveness.Alive) {
-            withValidRepl(sessionId) {
-                @Suppress("DEPRECATION")
-                CompileService.CallResult.Good(compile(codeLine, history))
-            }
-        }
-
-    @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
-    override fun remoteReplLineEval(
-        sessionId: Int,
-        codeLine: ReplCodeLine,
-        history: List<ReplCodeLine>?
-    ): CompileService.CallResult<ReplEvalResult> =
-        ifAlive(minAliveness = Aliveness.Alive) {
-            CompileService.CallResult.Error("Eval on daemon is not supported")
-        }
 
     override fun leaseReplSession(
         aliveFlagPath: String?,
@@ -1063,7 +940,7 @@ class CompileServiceImpl(
                             }
                             daemon.scheduleShutdown(true)
                         } catch (e: Throwable) {
-                            log.info("Cannot connect to a daemon, assuming dying ('${runFile.canonicalPath}'): ${e.message}")
+                            log.info("Cannot connect to a daemon, assuming dying ('${runFile.normalize().absolutePath}'): ${e.message}")
                         }
                     }
                 }
@@ -1171,50 +1048,6 @@ class CompileServiceImpl(
         return true
     }
 
-    // todo: remove after remoteIncrementalCompile is removed
-    private fun doCompile(
-        sessionId: Int,
-        args: Array<out String>,
-        compilerMessagesStreamProxy: RemoteOutputStream,
-        serviceOutputStreamProxy: RemoteOutputStream,
-        operationsTracer: RemoteOperationsTracer?,
-        body: (PrintStream, EventManager, Profiler) -> ExitCode
-    ): CompileService.CallResult<Int> =
-        ifAlive {
-            withValidClientOrSessionProxy(sessionId) {
-                operationsTracer?.before("compile")
-                val rpcProfiler = if (daemonOptions.reportPerf) WallAndThreadTotalProfiler() else DummyProfiler()
-                val eventManger = EventManagerImpl()
-                val compilerMessagesStream = PrintStream(
-                    BufferedOutputStream(
-                        RemoteOutputStreamClient(compilerMessagesStreamProxy, rpcProfiler),
-                        REMOTE_STREAM_BUFFER_SIZE
-                    )
-                )
-                val serviceOutputStream = PrintStream(
-                    BufferedOutputStream(
-                        RemoteOutputStreamClient(serviceOutputStreamProxy, rpcProfiler),
-                        REMOTE_STREAM_BUFFER_SIZE
-                    )
-                )
-                try {
-                    val compileServiceReporter = DaemonMessageReporterPrintStreamAdapter(serviceOutputStream)
-                    if (args.none())
-                        throw IllegalArgumentException("Error: empty arguments list.")
-                    log.info("Starting compilation with args: " + args.joinToString(" "))
-                    val exitCode = checkedCompile(compileServiceReporter, rpcProfiler) {
-                        body(compilerMessagesStream, eventManger, rpcProfiler).code
-                    }
-                    CompileService.CallResult.Good(exitCode)
-                } finally {
-                    serviceOutputStream.flush()
-                    compilerMessagesStream.flush()
-                    eventManger.fireCompilationFinished()
-                    operationsTracer?.after("compile")
-                }
-            }
-        }
-
     init {
         // assuming logicaly synchronized
         try {
@@ -1235,7 +1068,11 @@ class CompileServiceImpl(
 
     override fun clearJarCache() {
         ZipHandler.clearFileAccessorCache()
-        (KotlinCoreEnvironment.applicationEnvironment?.jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
+        KotlinCoreEnvironment.applicationEnvironment?.apply {
+            (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
+            (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()
+            idleCleanup()
+        }
     }
 
     private inline fun <R> ifAlive(

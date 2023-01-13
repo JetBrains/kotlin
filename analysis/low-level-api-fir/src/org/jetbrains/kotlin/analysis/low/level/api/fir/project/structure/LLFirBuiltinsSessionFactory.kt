@@ -19,17 +19,19 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
-import org.jetbrains.kotlin.fir.resolve.transformers.FirCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.registerCommonComponents
+import org.jetbrains.kotlin.fir.session.registerCommonJavaComponents
 import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
+import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
@@ -50,8 +52,9 @@ class LLFirBuiltinsSessionFactory(
                 bindSession(this@session)
             }
             registerIdeComponents(project)
-            register(FirLazyDeclarationResolver::class, FirCompilerLazyDeclarationResolver)
+            register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(LanguageVersionSettingsImpl.DEFAULT/*TODO*/)
+            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerModuleData(moduleData)
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)

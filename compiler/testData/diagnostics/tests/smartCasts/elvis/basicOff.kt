@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !LANGUAGE: -BooleanElvisBoundSmartCasts
 
 interface Order {

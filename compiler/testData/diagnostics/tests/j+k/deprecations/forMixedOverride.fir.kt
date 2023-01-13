@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // FILE: J.java
 public class J {
     @Deprecated
@@ -16,7 +17,7 @@ interface WithDeprecation {
 }
 
 class A : J(), WithDeprecation {
-    override fun <!OVERRIDE_DEPRECATION("")!>foo<!>() {}
+    override fun <!OVERRIDE_DEPRECATION!>foo<!>() {}
 }
 
 fun main() {

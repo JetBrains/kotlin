@@ -9,7 +9,7 @@ FILE: EnumWithToString.kt
                 super<R|Some|>()
             }
 
-            public final override fun toString(): R|kotlin/String| {
+            public open override fun toString(): R|kotlin/String| {
                 ^toString String(Entry)
             }
 

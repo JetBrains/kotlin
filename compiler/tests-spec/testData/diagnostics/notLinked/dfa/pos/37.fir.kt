@@ -199,7 +199,7 @@ fun case_17(x: Boolean?, y: Boolean?) {
                     else -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
                 }
                 <!SENSELESS_COMPARISON!>false<!> -> x!!
-                <!SENSELESS_NULL_IN_WHEN!>null<!> -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
+                <!SENSELESS_COMPARISON!>null<!> -> if (true) if (true) if (true) if (true) if (true) x!! else x!! else x!! else x!! else x!! else x!!
             } else x!! else x!! else x!! else x!! else x!!
         }
         break@loop

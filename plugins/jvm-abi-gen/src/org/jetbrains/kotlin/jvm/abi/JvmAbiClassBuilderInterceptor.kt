@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilder
 import org.jetbrains.kotlin.codegen.DelegatingClassBuilderFactory
-import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
+import org.jetbrains.kotlin.codegen.`when`.WhenByEnumsMapping
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -148,7 +147,7 @@ class JvmAbiClassBuilderInterceptor : ClassBuilderInterceptorExtension {
             }
 
             // Copy inline functions verbatim
-            if (origin.descriptor?.safeAs<FunctionDescriptor>()?.isInline == true && !isPrivateClass) {
+            if ((origin.descriptor as? FunctionDescriptor)?.isInline == true && !isPrivateClass) {
                 methodInfos[Method(name, desc)] = AbiMethodInfo.KEEP
             } else {
                 methodInfos[Method(name, desc)] = AbiMethodInfo.STRIP

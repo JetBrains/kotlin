@@ -59,8 +59,8 @@ public inline fun String.reader(): StringReader = StringReader(this)
  * Returns a sequence of corresponding file lines.
  *
  * *Note*: the caller must close the underlying `BufferedReader`
- * when the iteration is finished; as the user may not complete the iteration loop (e.g. using a method like find() or any() on the iterator
- * may terminate the iteration early.
+ * when the iteration is finished, as the user may not complete the iteration loop (e.g. using a method like find() or any() on the iterator
+ * may terminate the iteration early).
  *
  * We suggest you try the method [useLines] instead which closes the stream when the processing is complete.
  *

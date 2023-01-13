@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.analyzer.hasJdkCapability
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -25,8 +26,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -40,6 +39,8 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.linkage.IrProvider
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -90,6 +91,7 @@ open class JvmIrCodegenFactory(
         val irProviders: List<IrProvider>,
         val extensions: JvmGeneratorExtensions,
         val backendExtension: JvmBackendExtension,
+        val pluginContext: IrPluginContext,
         val notifyCodegenStart: () -> Unit
     ) : CodegenFactory.BackendInput
 
@@ -163,20 +165,19 @@ open class JvmIrCodegenFactory(
 
         SourceDeclarationsPreprocessor(psi2irContext).run(input.files)
 
-        if (pluginExtensions.isNotEmpty()) {
-            // The plugin context contains unbound symbols right after construction and has to be
-            // instantiated before we resolve unbound symbols and invoke any postprocessing steps.
-            val pluginContext = IrPluginContextImpl(
-                psi2irContext.moduleDescriptor,
-                psi2irContext.bindingContext,
-                psi2irContext.languageVersionSettings,
-                symbolTable,
-                psi2irContext.typeTranslator,
-                psi2irContext.irBuiltIns,
-                irLinker,
-                messageLogger
-            )
-
+        // The plugin context contains unbound symbols right after construction and has to be
+        // instantiated before we resolve unbound symbols and invoke any postprocessing steps.
+        val pluginContext = IrPluginContextImpl(
+            psi2irContext.moduleDescriptor,
+            psi2irContext.bindingContext,
+            psi2irContext.languageVersionSettings,
+            symbolTable,
+            psi2irContext.typeTranslator,
+            psi2irContext.irBuiltIns,
+            irLinker,
+            messageLogger
+        )
+        if (pluginExtensions.isNotEmpty() && psi2irContext.configuration.generateBodies) {
             for (extension in pluginExtensions) {
                 psi2ir.addPostprocessingStep { module ->
                     val old = stubGenerator.unboundSymbolGeneration
@@ -243,6 +244,7 @@ open class JvmIrCodegenFactory(
             irProviders,
             jvmGeneratorExtensions,
             JvmBackendExtension.Default,
+            pluginContext,
         ) {}
     }
 
@@ -272,7 +274,7 @@ open class JvmIrCodegenFactory(
     }
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
-        val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart) =
+        val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, _, notifyCodegenStart) =
             input as JvmIrBackendInput
         val irSerializer = if (
             state.configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
@@ -306,11 +308,14 @@ open class JvmIrCodegenFactory(
     override fun invokeCodegen(input: CodegenFactory.CodegenInput) {
         val (state, context, module, notifyCodegenStart) = input as JvmIrCodegenInput
 
-        if ((state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true) return
+        fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
+
+        if (hasErrors()) return
 
         notifyCodegenStart()
         jvmCodegenPhases.invokeToplevel(PhaseConfig(jvmCodegenPhases), context, module)
 
+        if (hasErrors()) return
         // TODO: split classes into groups connected by inline calls; call this after every group
         //       and clear `JvmBackendContext.classCodegens`
         state.afterIndependentPart()
@@ -323,11 +328,21 @@ open class JvmIrCodegenFactory(
         irProviders: List<IrProvider>,
         extensions: JvmGeneratorExtensions,
         backendExtension: JvmBackendExtension,
+        irPluginContext: IrPluginContext,
         notifyCodegenStart: () -> Unit = {}
     ) {
         generateModule(
             state,
-            JvmIrBackendInput(irModuleFragment, symbolTable, phaseConfig, irProviders, extensions, backendExtension, notifyCodegenStart)
+            JvmIrBackendInput(
+                irModuleFragment,
+                symbolTable,
+                phaseConfig,
+                irProviders,
+                extensions,
+                backendExtension,
+                irPluginContext,
+                notifyCodegenStart
+            )
         )
     }
 }

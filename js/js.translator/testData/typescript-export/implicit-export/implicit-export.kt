@@ -93,3 +93,6 @@ typealias NotExportedTypeAlias = NonExportedGenericInterface<NonExportedType>
 fun functionWithTypeAliasInside(x: NotExportedTypeAlias): NotExportedTypeAlias {
     return x
 }
+
+@JsExport
+class TheNewException: Throwable()

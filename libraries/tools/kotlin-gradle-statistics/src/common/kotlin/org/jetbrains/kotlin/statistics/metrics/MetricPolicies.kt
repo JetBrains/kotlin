@@ -85,18 +85,45 @@ enum class BooleanAnonymizationPolicy : ValueAnonymizer<Boolean> {
     }
 }
 
-enum class StringAnonymizationPolicy : ValueAnonymizer<String> {
-    SAFE {
+abstract class StringAnonymizationPolicy : ValueAnonymizer<String> {
+
+    abstract fun validationRegexp(): String
+
+    class AllowedListAnonymizer(val allowedValues: Collection<String>) : StringAnonymizationPolicy() {
+        companion object {
+            const val UNEXPECTED_VALUE = "UNEXPECTED-VALUE"
+        }
+
+        override fun validationRegexp(): String {
+            return "^((${UNEXPECTED_VALUE}|${allowedValues.joinToString("|")})${ConcatMetricContainer.SEPARATOR}?)+$"
+        }
+
+        override fun anonymize(t: String): String {
+            return if (t.matches(Regex(validationRegexp()))) {
+                t
+            } else {
+                t.split(ConcatMetricContainer.SEPARATOR).joinToString(ConcatMetricContainer.SEPARATOR) {
+                    if (allowedValues.contains(it))
+                        it
+                    else
+                        UNEXPECTED_VALUE
+                }
+            }
+        }
+    }
+
+    class RegexControlled(private val regex: String, private val anonymizeInIde: Boolean) : StringAnonymizationPolicy() {
+        override fun validationRegexp() = regex
+
         override fun anonymize(t: String) = t
-    },
-    ANONYMIZE_IN_IDE {
-        override fun anonymize(t: String) = t
-        override fun anonymizeOnIdeSize() = true
-    },
-    SHA_256 {
-        override fun anonymize(t: String) = sha256(t)
-    },
-    COMPONENT_VERSION {
+
+        override fun anonymizeOnIdeSize() = anonymizeInIde
+
+    }
+
+    class ComponentVersionAnonymizer() : StringAnonymizationPolicy() {
+        override fun validationRegexp() = "(\\d+).(\\d+).(\\d+)-?(dev|snapshot|m\\d?|rc\\d?|beta\\d?)?"
+
         override fun anonymize(t: String) = anonymizeComponentVersion(t)
     }
 }

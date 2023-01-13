@@ -34,8 +34,8 @@ class JavaUpToDateIT : KGPBaseTest() {
             }
 
             build("build") {
-                assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
-                assertTasksUpToDate(":compileJava", ":compileTestJava")
+                assertTasksExecuted(":compileKotlin")
+                assertTasksUpToDate(":compileJava", ":compileTestJava", ":compileTestKotlin")
             }
         }
     }
@@ -56,8 +56,8 @@ class JavaUpToDateIT : KGPBaseTest() {
             kotlinSourcesDir().resolve("foo/MainKotlinClass.kt").modify { "\n$it" }
 
             build("build") {
-                assertTasksExecuted(":compileKotlin", ":compileTestKotlin")
-                assertTasksUpToDate(":compileJava", ":compileTestJava")
+                assertTasksExecuted(":compileKotlin")
+                assertTasksUpToDate(":compileJava", ":compileTestJava", ":compileTestKotlin")
             }
         }
     }

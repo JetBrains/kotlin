@@ -19,12 +19,12 @@ object FirVolatileAnnotationChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.source?.kind != KtRealSourceElementKind) return
 
-        val fieldAnnotation = declaration.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID)
+        val fieldAnnotation = declaration.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID, context.session)
         if (fieldAnnotation != null && !declaration.isVar) {
             reporter.reportOn(fieldAnnotation.source, FirJvmErrors.VOLATILE_ON_VALUE, context)
         }
 
-        val delegateAnnotation = declaration.delegateFieldSymbol?.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID)
+        val delegateAnnotation = declaration.delegateFieldSymbol?.getAnnotationByClassId(VOLATILE_ANNOTATION_CLASS_ID, context.session)
         if (delegateAnnotation != null) {
             reporter.reportOn(delegateAnnotation.source, FirJvmErrors.VOLATILE_ON_DELEGATE, context)
         }

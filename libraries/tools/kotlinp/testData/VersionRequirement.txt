@@ -35,6 +35,8 @@ package {
 
   // requires API version 1.1.0 (level=HIDDEN, errorCode=314)
   public typealias Typealias = kotlin/String /* = kotlin/String */
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

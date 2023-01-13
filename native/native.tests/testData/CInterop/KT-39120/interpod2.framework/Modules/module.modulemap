@@ -1,0 +1,6 @@
+framework module interpod2 {
+  umbrella header "interpod2.h"
+
+  export *
+  module * { export * }
+}

@@ -33,7 +33,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @GradleOption(
         value = DefaultValue.LANGUAGE_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
         value = "-language-version",
@@ -47,7 +48,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @GradleOption(
         value = DefaultValue.API_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
         value = "-api-version",
@@ -249,12 +251,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var phasesToDump: Array<String>? by FreezableVar(null)
 
     @Argument(
-        value = "-Xexclude-from-dumping",
-        description = "Names of elements that should not be dumped"
-    )
-    var namesExcludedFromDumping: Array<String>? by FreezableVar(null)
-
-    @Argument(
         value = "-Xdump-directory",
         description = "Dump backend state into directory"
     )
@@ -304,7 +300,8 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
     @GradleOption(
         DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(
         value = "-Xuse-k2",
@@ -329,7 +326,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         value = "-Xuse-fir-lt",
         description = "Compile using LightTree parser with Front-end IR. Warning: this feature is far from being production-ready"
     )
-    var useFirLT: Boolean by FreezableVar(false)
+    var useFirLT: Boolean by FreezableVar(true)
 
     @Argument(
         value = "-Xdisable-ultra-light-classes",
@@ -530,7 +527,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
                 }
             }
 
-            if (allowAnyScriptsInSourceRoots) {
+            if (useK2) {
+                // TODO: remove when K2 compilation will mean LV 2.0
+                put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.ENABLED)
+            } else if (allowAnyScriptsInSourceRoots) {
                 put(LanguageFeature.SkipStandaloneScriptsInSourceRoots, LanguageFeature.State.DISABLED)
             }
 
@@ -595,6 +595,13 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     }
 
     fun toLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
+        return toLanguageVersionSettings(collector, emptyMap())
+    }
+
+    fun toLanguageVersionSettings(
+        collector: MessageCollector,
+        additionalAnalysisFlags: Map<AnalysisFlag<*>, Any>
+    ): LanguageVersionSettings {
         // If only "-api-version" is specified, language version is assumed to be the latest stable
         val languageVersion = parseVersion(collector, languageVersion, "language")
             ?: defaultLanguageVersion(collector)
@@ -608,7 +615,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         val languageVersionSettings = LanguageVersionSettingsImpl(
             languageVersion,
             apiVersion,
-            configureAnalysisFlags(collector, languageVersion),
+            configureAnalysisFlags(collector, languageVersion) + additionalAnalysisFlags,
             configureLanguageFeatures(collector)
         )
 

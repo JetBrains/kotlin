@@ -13,6 +13,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /test
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -26,7 +27,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: test
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -51,7 +52,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -74,7 +75,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: testVal
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL

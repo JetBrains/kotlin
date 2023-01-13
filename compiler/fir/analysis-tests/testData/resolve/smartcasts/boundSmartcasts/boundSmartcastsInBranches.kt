@@ -161,3 +161,17 @@ fun test_8() {
         z.length // OK
     }
 }
+
+fun test_9() {
+    var a: String? = null
+    val b: String?
+    if (a != null) {
+        b = a
+    } else {
+        b = a
+    }
+    b<!UNSAFE_CALL!>.<!>length // bad
+    if (a != null) {
+        b.length // ok
+    }
+}

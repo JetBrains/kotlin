@@ -6,32 +6,32 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.gradle.api.logging.Logger
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmExtrasSerializationExtension
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmExtrasSerializer
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationContext
-import org.jetbrains.kotlin.gradle.kpm.idea.serialize.IdeaKpmSerializationLogger
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
+import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationLogger
 import org.jetbrains.kotlin.tooling.core.Extras
 
-internal fun IdeaKpmSerializationContext(
-    logger: Logger, extrasSerializationExtensions: List<IdeaKpmExtrasSerializationExtension>
-): IdeaKpmSerializationContext {
-    return IdeaKpmSerializationContextImpl(
+internal fun IdeaSerializationContext(
+    logger: Logger, extrasSerializationExtensions: List<IdeaKotlinExtrasSerializationExtension>
+): IdeaKotlinSerializationContext {
+    return IdeaKotlinSerializationContextImpl(
         extrasSerializationExtension = IdeaKpmCompositeExtrasSerializationExtension(logger, extrasSerializationExtensions),
         logger = IdeaKpmSerializationLoggerImpl(logger)
     )
 }
 
-private class IdeaKpmSerializationContextImpl(
-    override val extrasSerializationExtension: IdeaKpmExtrasSerializationExtension,
-    override val logger: IdeaKpmSerializationLogger
-) : IdeaKpmSerializationContext
+private class IdeaKotlinSerializationContextImpl(
+    override val extrasSerializationExtension: IdeaKotlinExtrasSerializationExtension,
+    override val logger: IdeaKotlinSerializationLogger
+) : IdeaKotlinSerializationContext
 
 /* Simple composite implementation, reporting conflicting extensions */
 private class IdeaKpmCompositeExtrasSerializationExtension(
     private val logger: Logger,
-    private val extensions: List<IdeaKpmExtrasSerializationExtension>
-) : IdeaKpmExtrasSerializationExtension {
-    override fun <T : Any> serializer(key: Extras.Key<T>): IdeaKpmExtrasSerializer<T>? {
+    private val extensions: List<IdeaKotlinExtrasSerializationExtension>
+) : IdeaKotlinExtrasSerializationExtension {
+    override fun <T : Any> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>? {
         val serializers = extensions.mapNotNull { it.serializer(key) }
 
         if (serializers.size == 1) {
@@ -50,12 +50,12 @@ private class IdeaKpmCompositeExtrasSerializationExtension(
 /* Simple Gradle logger based implementation */
 private class IdeaKpmSerializationLoggerImpl(
     private val logger: Logger,
-) : IdeaKpmSerializationLogger {
-    override fun report(severity: IdeaKpmSerializationLogger.Severity, message: String, cause: Throwable?) {
+) : IdeaKotlinSerializationLogger {
+    override fun report(severity: IdeaKotlinSerializationLogger.Severity, message: String, cause: Throwable?) {
         val text = "[KPM] Serialization: $message"
         when (severity) {
-            IdeaKpmSerializationLogger.Severity.WARNING -> logger.warn(text, cause)
-            IdeaKpmSerializationLogger.Severity.ERROR -> logger.error(text, cause)
+            IdeaKotlinSerializationLogger.Severity.WARNING -> logger.warn(text, cause)
+            IdeaKotlinSerializationLogger.Severity.ERROR -> logger.error(text, cause)
         }
     }
 }

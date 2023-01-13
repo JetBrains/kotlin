@@ -7,32 +7,25 @@ package org.jetbrains.kotlin.backend.common.lower.loops.handlers
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoBuilder
-import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoFromCallHandler
-import org.jetbrains.kotlin.backend.common.lower.matchers.Quantifier
-import org.jetbrains.kotlin.backend.common.lower.matchers.createIrCallMatcher
+import org.jetbrains.kotlin.backend.common.lower.loops.HeaderInfoHandler
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.name.FqName
 
 /** Builds a [HeaderInfo] for calls to reverse an iterable. */
 internal class ReversedHandler(context: CommonBackendContext, private val visitor: HeaderInfoBuilder) :
-    HeaderInfoFromCallHandler<Nothing?> {
-
+    HeaderInfoHandler<IrCall, Nothing?> {
     private val progressionClassesTypes = context.ir.symbols.progressionClasses.map { it.defaultType }.toSet()
 
-    // Use Quantifier.ANY so we can handle all reversed iterables in the same manner.
-    override val matcher =
-        createIrCallMatcher(Quantifier.ANY) {
-            // Matcher for reversed progression.
-            callee {
-                fqName { it == FqName("kotlin.ranges.reversed") }
-                extensionReceiver { it != null && it.type in progressionClassesTypes }
-                parameterCount { it == 0 }
-            }
-
-            // TODO: Handle reversed String, Progression.withIndex(), etc.
-        }
+    override fun matchIterable(expression: IrCall): Boolean {
+        // TODO: Handle reversed String, Progression.withIndex(), etc.
+        val callee = expression.symbol.owner
+        return callee.valueParameters.isEmpty() &&
+                callee.extensionReceiverParameter?.type in progressionClassesTypes &&
+                callee.kotlinFqName == FqName("kotlin.ranges.reversed")
+    }
 
     // Reverse the HeaderInfo from the underlying progression or array (if any).
     override fun build(expression: IrCall, data: Nothing?, scopeOwner: IrSymbol) =

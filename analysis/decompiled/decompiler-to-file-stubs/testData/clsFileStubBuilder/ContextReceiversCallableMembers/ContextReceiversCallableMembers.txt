@@ -3,17 +3,17 @@ PsiJetFileStubImpl[package=]
   IMPORT_LIST
   CLASS[classId=/ContextReceiversCallableMembers, fqName=ContextReceiversCallableMembers, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ContextReceiversCallableMembers, superNames=[]]
     MODIFIER_LIST[open private]
-    PRIMARY_CONSTRUCTOR
+    PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=ContextReceiversCallableMembers]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       PROPERTY[fqName=ContextReceiversCallableMembers.property, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=property]
         CONTEXT_RECEIVER_LIST
-          CONTEXT_RECEIVER
+          CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=A]
-          CONTEXT_RECEIVER
+          CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
@@ -30,11 +30,11 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=ContextReceiversCallableMembers.propertyWithSetter, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
         CONTEXT_RECEIVER_LIST
-          CONTEXT_RECEIVER
+          CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=A]
-          CONTEXT_RECEIVER
+          CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
@@ -51,11 +51,11 @@ PsiJetFileStubImpl[package=]
             REFERENCE_EXPRESSION[referencedName=Int]
       FUN[fqName=ContextReceiversCallableMembers.function, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=function]
         CONTEXT_RECEIVER_LIST
-          CONTEXT_RECEIVER
+          CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=A]
-          CONTEXT_RECEIVER
+          CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]

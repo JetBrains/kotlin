@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class AndroidIrExtension : IrGenerationExtension {
@@ -54,7 +53,8 @@ abstract class AndroidIrExtension : IrGenerationExtension {
     override fun resolveSymbol(symbol: IrSymbol, context: TranslationPluginContext): IrDeclaration? =
         if (symbol !is IrSimpleFunctionSymbol ||
             (symbol.descriptor !is AndroidSyntheticFunction
-                    && symbol.descriptor.safeAs<PropertyGetterDescriptor>()?.correspondingProperty !is AndroidSyntheticProperty)) {
+                    && (symbol.descriptor as? PropertyGetterDescriptor)?.correspondingProperty !is AndroidSyntheticProperty)
+        ) {
             super.resolveSymbol(symbol, context)
         } else {
             // Replace android synthetic functions with stubs, since they are essentially intrinsics and will be replaced in the plugin

@@ -219,12 +219,12 @@ class O<T>(i: T) {
 // test.kt:49 L_init_$Init$
 // test.kt:13 box
 // test.kt:57 M_init_$Init$
-// test.kt:61 M_init_$Init$_0
+// test.kt:61 M_init_$Init$
 // test.kt:56 M
 // test.kt:58 M_init_$Init$
 // test.kt:14 box
 // test.kt:65 N_init_$Init$
-// test.kt:69 N_init_$Init$_0
+// test.kt:69 N_init_$Init$
 // test.kt:64 N
 // test.kt:66 N_init_$Init$
 // test.kt:15 box

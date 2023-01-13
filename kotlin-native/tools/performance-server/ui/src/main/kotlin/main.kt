@@ -53,6 +53,7 @@ fun getChartData(labels: List<String>, valuesList: Collection<List<*>>,
 fun getChartOptions(samples: Array<String>, yTitle: String, classNames: Array<String>? = null): dynamic {
     val chartOptions: dynamic = object {}
     chartOptions["fullWidth"] = true
+    chartOptions["low"] = 0
     val paddingObject: dynamic = object {}
     paddingObject["right"] = 40
     chartOptions["chartPadding"] = paddingObject

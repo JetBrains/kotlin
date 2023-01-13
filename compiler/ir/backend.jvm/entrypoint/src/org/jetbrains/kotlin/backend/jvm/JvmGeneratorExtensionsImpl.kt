@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 open class JvmGeneratorExtensionsImpl(
     private val configuration: CompilerConfiguration,
@@ -70,7 +69,7 @@ open class JvmGeneratorExtensionsImpl(
     }
 
     override fun getContainerSource(descriptor: DeclarationDescriptor): DeserializedContainerSource? {
-        return descriptor.safeAs<DescriptorWithContainerSource>()?.containerSource
+        return (descriptor as? DescriptorWithContainerSource)?.containerSource
     }
 
     override fun computeFieldVisibility(descriptor: PropertyDescriptor): DescriptorVisibility? =

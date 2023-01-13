@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// LANGUAGE: -ApproximateIntegerLiteralTypesInReceiverPosition
 // ISSUE: KT-47447
 // FULL_JDK
 

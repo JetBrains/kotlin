@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,6 +36,10 @@ object Aggregates : TemplateGroupBase() {
         doc {
             """
             Returns `true` if all ${f.element.pluralize()} match the given [predicate].
+            
+            Note that if the ${f.collection} contains no ${f.element.pluralize()}, the function returns `true` 
+            because there are no ${f.element.pluralize()} in it that _do not_ match the predicate.
+            See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article. 
             """
         }
         sample("samples.collections.Collections.Aggregates.all")

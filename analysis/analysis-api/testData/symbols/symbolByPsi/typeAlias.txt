@@ -4,9 +4,7 @@ KtTypeParameterSymbol:
   name: T
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -42,9 +40,7 @@ KtTypeParameterSymbol:
   name: Z
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

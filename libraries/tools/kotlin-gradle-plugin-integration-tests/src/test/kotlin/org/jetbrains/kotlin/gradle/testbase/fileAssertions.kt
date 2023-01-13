@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import com.google.gson.JsonObject
+import com.google.gson.JsonParser
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.isDirectory
 import kotlin.io.path.readText
+import kotlin.test.assertEquals
 import kotlin.test.asserter
 
 /**
@@ -209,4 +212,34 @@ fun assertContainsFiles(expected: Iterable<Path>, actual: Iterable<Path>, messag
                 "Expected set: ${expectedSet.sorted().joinToString(", ")}\n" +
                 "Actual set: ${actualSet.sorted().joinToString(", ")}\n"
     }, actualSet.containsAll(expectedSet))
+}
+
+class GradleVariantAssertions(
+    val variantJson: JsonObject
+) {
+    fun assertAttributesEquals(expected: Map<String, String>) {
+        val attributesJson = variantJson.getAsJsonObject("attributes")
+        val actual = attributesJson.keySet().associateWith { attributesJson.get(it).asString }
+
+        assertEquals(expected.toSortedStringWithLines(), actual.toSortedStringWithLines())
+    }
+
+    fun assertAttributesEquals(vararg expected: Pair<String, String>) = assertAttributesEquals(expected.toMap())
+}
+
+private fun Map<String, Any?>.toSortedStringWithLines() = entries
+    .sortedBy { it.key }
+    .joinToString("\n") { (key, value) -> "'$key' => '$value'" }
+
+fun assertGradleVariant(gradleModuleFile: Path, variantName: String, code: GradleVariantAssertions.() -> Unit) {
+    val moduleJson = JsonParser.parseString(gradleModuleFile.readText()).asJsonObject
+    val variants = moduleJson.getAsJsonArray("variants")
+    val variantJson = variants.find { it.asJsonObject.get("name").asString == variantName }
+
+    if (variantJson == null) {
+        val existingVariants = variants.map { it.asJsonObject.get("name").asString }
+        throw AssertionError("Variant with name '$variantName' doesn't exist; Existing variants: $existingVariants")
+    }
+
+    GradleVariantAssertions(variantJson.asJsonObject).apply(code)
 }

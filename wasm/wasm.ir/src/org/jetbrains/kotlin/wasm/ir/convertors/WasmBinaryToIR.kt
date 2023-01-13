@@ -32,7 +32,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     var startFunction: WasmFunction? = null
     val elements: MutableList<WasmElement> = mutableListOf()
     val data: MutableList<WasmData> = mutableListOf()
-    var dataCount: Boolean = false
+    var dataCount: Boolean = true
     val tags: MutableList<WasmTag> = mutableListOf()
 
     private fun <T> byIdx(l1: List<T>, l2: List<T>, index: Int): T {
@@ -91,7 +91,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                     // Import section
                     2 -> {
                         forEachVectorElement {
-                            val importPair = WasmImportPair(readString(), readString())
+                            val importPair = WasmImportDescriptor(readString(), readString())
                             when (val kind = b.readByte().toInt()) {
                                 0 -> {
                                     val type = functionTypes[b.readVarUInt32AsInt()]
@@ -329,8 +329,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
 
         return WasmModule(
             functionTypes = functionTypes,
-            gcTypes = gcTypes,
-            gcTypesInRecursiveGroup = false,
+            recGroupTypes = gcTypes,
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
             importedMemories = importedMemories,
@@ -360,7 +359,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
         )
     }
 
-    private fun readTag(importPair: WasmImportPair? = null): WasmTag {
+    private fun readTag(importPair: WasmImportDescriptor? = null): WasmTag {
         val attribute = b.readByte()
         check(attribute.toInt() == 0) { "as per spec" }
         val type = functionTypes[b.readVarUInt32AsInt()]
@@ -426,7 +425,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                 WasmImmediateKind.LOCAL_IDX -> WasmImmediate.LocalIdx(locals[b.readVarUInt32AsInt()])
                 WasmImmediateKind.GLOBAL_IDX -> WasmImmediate.GlobalIdx(globalByIdx(b.readVarUInt32AsInt()))
                 WasmImmediateKind.TYPE_IDX -> WasmImmediate.TypeIdx(functionTypes[b.readVarUInt32AsInt()])
-                WasmImmediateKind.MEMORY_IDX -> WasmImmediate.MemoryIdx(memoryByIdx(b.readVarUInt32AsInt()))
+                WasmImmediateKind.MEMORY_IDX -> WasmImmediate.MemoryIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.DATA_IDX -> WasmImmediate.DataIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.TABLE_IDX -> WasmImmediate.TableIdx(b.readVarUInt32AsInt())
                 WasmImmediateKind.LABEL_IDX -> WasmImmediate.LabelIdx(b.readVarUInt32AsInt())
@@ -442,8 +441,8 @@ class WasmBinaryToIR(val b: MyByteReader) {
             }
         }
 
-
-        return WasmInstr(op, immediates)
+        // We don't need location in Binary -> WasmIR, yet.
+        return WasmInstrWithoutLocation(op, immediates)
     }
 
     private fun readTypeDeclaration(): WasmTypeDeclaration {

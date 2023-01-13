@@ -7,7 +7,7 @@ package test {
     public open class Test {
         public constructor Test()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-        public open fun foo(/*0*/ @org.jspecify.nullness.Nullable x: @org.jspecify.nullness.Nullable kotlin.Int!): kotlin.Unit
+        public open fun foo(/*0*/ @org.jspecify.annotations.Nullable x: @org.jspecify.annotations.Nullable kotlin.Int!): kotlin.Unit
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }

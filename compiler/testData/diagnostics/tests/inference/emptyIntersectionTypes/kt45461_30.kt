@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 class Foo<T>
 
 class Bar<T> {
@@ -11,5 +12,5 @@ interface B<K> : A<Int>
 
 fun <K : Out<A<String>>> main() {
     val foo = Foo<K>()
-    Bar<Out<B<String>>>().<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>takeFoo<!>(foo) // error in 1.3.72, no error in 1.4.31
+    Bar<Out<B<String>>>().takeFoo(foo) // error in 1.3.72, no error in 1.4.31
 }

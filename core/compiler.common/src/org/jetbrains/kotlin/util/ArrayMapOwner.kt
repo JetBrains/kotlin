@@ -61,9 +61,8 @@ class NullableArrayMapAccessor<K : Any, V : Any, T : V>(
 }
 
 abstract class TypeRegistry<K : Any, V : Any> {
-    private val idPerType = ConcurrentHashMap<KClass<out K>, Int>()
+    private val idPerType = ConcurrentHashMap<String, Int>()
     private val idCounter = AtomicInteger(0)
-
 
     fun <T : V, KK : K> generateAccessor(kClass: KClass<KK>, default: T? = null): ArrayMapAccessor<K, V, T> {
         return ArrayMapAccessor(kClass, getId(kClass), default)
@@ -78,15 +77,22 @@ abstract class TypeRegistry<K : Any, V : Any> {
     }
 
     fun <T : K> getId(kClass: KClass<T>): Int {
-        return idPerType.customComputeIfAbsent(kClass) { idCounter.getAndIncrement() }
+        return idPerType.customComputeIfAbsent(kClass.qualifiedName!!) { idCounter.getAndIncrement() }
     }
 
-    abstract fun <T : K> ConcurrentHashMap<KClass<out K>, Int>.customComputeIfAbsent(
-        kClass: KClass<T>,
-        compute: (KClass<out K>) -> Int
+    /*
+     * This function is needed for compatibility with JDK 6
+     * ArrayMap and other infrastructure is used in KotlinType, declared in :core:descriptors module, which is
+     *   compiled against JDK 6 (because it's used in kotlin-reflect, which is still compatible with Java 6)
+     * So the problem is that JDK 6 does not have thread-safe computeIfAbsent for ConcurrentHashMap,
+     *   and we need this method to add ability to provide thread-safe implementation by hand
+     */
+    abstract fun ConcurrentHashMap<String, Int>.customComputeIfAbsent(
+        key: String,
+        compute: (String) -> Int
     ): Int
 
-    fun allValuesThreadUnsafeForRendering(): Map<KClass<out K>, Int> {
+    fun allValuesThreadUnsafeForRendering(): Map<String, Int> {
         return idPerType
     }
 

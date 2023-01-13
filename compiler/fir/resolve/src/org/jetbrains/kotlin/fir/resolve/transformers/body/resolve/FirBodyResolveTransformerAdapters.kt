@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveP
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 @OptIn(AdapterForResolveProcessor::class)
-class FirBodyResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+class FirBodyResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
+    session, scopeSession, FirResolvePhase.BODY_RESOLVE
+) {
     override val transformer = FirBodyResolveTransformerAdapter(session, scopeSession)
 }
 

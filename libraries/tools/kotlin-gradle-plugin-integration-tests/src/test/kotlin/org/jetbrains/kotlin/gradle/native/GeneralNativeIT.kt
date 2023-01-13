@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
+import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.util.GradleVersion
 import org.jdom.input.SAXBuilder
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
 import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
@@ -311,6 +311,17 @@ class GeneralNativeIT : BaseGradleIT() {
     fun testCanProduceNativeFrameworks() = with(
         transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")
     ) {
+        fun assemble(check: CompiledProject.() -> Unit) {
+            build(
+                "assemble",
+                options = defaultBuildOptions().copy(
+                    // Workaround for KT-55751
+                    warningMode = WarningMode.None,
+                ),
+                check = check
+            )
+        }
+
         Assume.assumeTrue(HostManager.hostIsMac)
 
         data class BinaryMeta(val name: String, val isStatic: Boolean = false)
@@ -368,7 +379,7 @@ class GeneralNativeIT : BaseGradleIT() {
 
         // Check building
         // Check dependency exporting and bitcode embedding in frameworks.
-        build("assemble") {
+        assemble {
             assertSuccessful()
             headerPaths.forEach { assertFileExists(it) }
             frameworkPaths.forEach { assertFileExists(it) }
@@ -409,13 +420,13 @@ class GeneralNativeIT : BaseGradleIT() {
             }
         }
 
-        build("assemble") {
+        assemble {
             assertSuccessful()
             assertTasksUpToDate(frameworkTasks)
         }
 
         assertTrue(projectDir.resolve(headerPaths[0]).delete())
-        build("assemble") {
+        assemble {
             assertSuccessful()
             assertTasksUpToDate(frameworkTasks.drop(1))
             assertTasksExecuted(frameworkTasks[0])
@@ -1097,10 +1108,21 @@ class GeneralNativeIT : BaseGradleIT() {
         }
 
         fun CompiledProject.assertVariantInDependencyInsight(variantName: String) {
+            val testGradleVersion = chooseWrapperVersionOrFinishTest()
+            val isAtLeastGradle75 = GradleVersion.version(testGradleVersion) >= GradleVersion.version("7.5")
             try {
-                assertContains("variant \"$variantName\" [")
+                if (isAtLeastGradle75) {
+                    assertContains("Variant $variantName")
+                } else {
+                    assertContains("variant \"$variantName\" [")
+                }
             } catch (originalError: AssertionError) {
-                val matchedVariants = Regex("variant \"(.*?)\" \\[").findAll(output).toList()
+                val regexPattern = if (isAtLeastGradle75) {
+                    "Variant (.*?):"
+                } else {
+                    "variant \"(.*?)\" \\["
+                }
+                val matchedVariants = Regex(regexPattern).findAll(output).toList()
                 throw AssertionError(
                     "Expected variant $variantName. " +
                             if (matchedVariants.isNotEmpty())
@@ -1111,7 +1133,7 @@ class GeneralNativeIT : BaseGradleIT() {
             }
         }
 
-        build(":dependencyInsight", "--configuration", "hostTestTestNumberCInterop", "--dependency", "org.example:publishedLibrary") {
+        build(":dependencyInsight", "--configuration", "hostTestCInterop", "--dependency", "org.example:publishedLibrary") {
             assertSuccessful()
             assertVariantInDependencyInsight("hostApiElements-published")
         }
@@ -1125,7 +1147,7 @@ class GeneralNativeIT : BaseGradleIT() {
         """.trimIndent()
         )
 
-        build(":dependencyInsight", "--configuration", "hostTestTestNumberCInterop", "--dependency", ":projectLibrary") {
+        build(":dependencyInsight", "--configuration", "hostTestCInterop", "--dependency", ":projectLibrary") {
             assertSuccessful()
             assertVariantInDependencyInsight("hostCInteropApiElements")
         }

@@ -14,7 +14,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -38,7 +38,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: x
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
@@ -56,6 +56,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Enum.clone
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -69,7 +70,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: clone
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Any
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -83,6 +84,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: test/E.compareTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -96,7 +98,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: compareTo
   origin: SUBSTITUTION_OVERRIDE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -114,7 +116,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: SUBSTITUTION_OVERRIDE
-      receiverType: null
+      receiverParameter: null
       returnType: test/E
       symbolKind: LOCAL
       typeParameters: []
@@ -130,6 +132,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Enum.equals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -143,7 +146,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: equals
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -161,7 +164,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: LIBRARY
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
@@ -177,6 +180,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Enum.hashCode
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -190,7 +194,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: hashCode
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -204,6 +208,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/Enum.toString
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -217,7 +222,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toString
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -246,7 +251,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: LIBRARY
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/String
     symbolKind: ACCESSOR
     typeParameters: []
@@ -270,7 +275,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: name
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
@@ -300,7 +305,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: LIBRARY
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -324,7 +329,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: ordinal
   origin: LIBRARY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -337,30 +342,3 @@ KtKotlinPropertySymbol:
   javaGetterName: getOrdinal
   javaSetterName: null
   setterDeprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: test/E.getDeclaringClass
-  contextReceivers: []
-  hasStableParameterNames: false
-  isBuiltinFunctionInvoke: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: FINAL
-  name: getDeclaringClass
-  origin: SUBSTITUTION_OVERRIDE
-  receiverType: null
-  returnType: ft<java/lang/Class<test/E!>, java/lang/Class<test/E!>?>
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): test/E
-  getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null

@@ -317,7 +317,8 @@ public inline operator fun <K, V> Map.Entry<K, V>.component2(): V = value
 public inline fun <K, V> Map.Entry<K, V>.toPair(): Pair<K, V> = Pair(key, value)
 
 /**
- * Returns the value for the given key, or the result of the [defaultValue] function if there was no entry for the given key.
+ * Returns the value for the given [key] if the value is present and not `null`.
+ * Otherwise, returns the result of the [defaultValue] function.
  *
  * @sample samples.collections.Maps.Usage.getOrElse
  */
@@ -348,8 +349,9 @@ internal inline fun <K, V> Map<K, V>.getOrElseNullable(key: K, defaultValue: () 
 public fun <K, V> Map<K, V>.getValue(key: K): V = getOrImplicitDefault(key)
 
 /**
- * Returns the value for the given key. If the key is not found in the map, calls the [defaultValue] function,
- * puts its result into the map under the given key and returns it.
+ * Returns the value for the given [key] if the value is present and not `null`.
+ * Otherwise, calls the [defaultValue] function,
+ * puts its result into the map under the given key and returns the call result.
  *
  * Note that the operation is not guaranteed to be atomic if the map is being modified concurrently.
  *

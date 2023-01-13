@@ -16,7 +16,6 @@ class Merger(
     private val moduleKind: ModuleKind,
     private val fragments: List<JsIrProgramFragment>,
     private val crossModuleReferences: CrossModuleReferences,
-    private val generateScriptModule: Boolean,
     private val generateRegionComments: Boolean,
     private val generateCallToMain: Boolean,
 ) {
@@ -174,10 +173,20 @@ class Merger(
     }
 
     private fun transitiveJsExport(): List<JsStatement> {
-        val internalModuleName = ReservedJsNames.makeInternalModuleName()
-        val exporterName = ReservedJsNames.makeJsExporterName()
-        return crossModuleReferences.transitiveJsExportFrom.map {
-            JsInvocation(JsNameRef(exporterName, it.makeRef()), internalModuleName.makeRef()).makeStmt()
+        return if (isEsModules) {
+            crossModuleReferences.transitiveJsExportFrom.map {
+                JsExport(JsExport.Subject.All, it.externalName)
+            }
+        } else {
+            val internalModuleName = ReservedJsNames.makeInternalModuleName()
+            val exporterName = ReservedJsNames.makeJsExporterName()
+
+            crossModuleReferences.transitiveJsExportFrom.map {
+                JsInvocation(
+                    JsNameRef(exporterName, it.internalName.makeRef()),
+                    internalModuleName.makeRef()
+                ).makeStmt()
+            }
         }
     }
 
@@ -239,47 +248,35 @@ class Merger(
 
         val program = JsProgram()
 
-        if (generateScriptModule) {
-            with(program.globalBlock) {
-                polyfillDeclarationBlock.statements
-                    .takeIf { it.isNotEmpty() }
-                    ?.let { statements.addWithComment("block: polyfills", it) }
-
+        val internalModuleName = ReservedJsNames.makeInternalModuleName()
+        val rootFunction = JsFunction(program.rootScope, JsBlock(), "root function").apply {
+            parameters += JsParameter(internalModuleName)
+            parameters += (importedJsModules).map { JsParameter(it.internalName) }
+            with(body) {
+                if (!isEsModules) {
+                    statements += JsStringLiteral("use strict").makeStmt()
+                }
                 statements.addWithComment("block: imports", importStatements)
                 statements += moduleBody
                 statements.addWithComment("block: exports", exportStatements)
-            }
-        } else {
-            val internalModuleName = ReservedJsNames.makeInternalModuleName()
-            val rootFunction = JsFunction(program.rootScope, JsBlock(), "root function").apply {
-                parameters += JsParameter(internalModuleName)
-                parameters += (importedJsModules).map { JsParameter(it.internalName) }
-                with(body) {
-                    if (!isEsModules) {
-                        statements += JsStringLiteral("use strict").makeStmt()
-                    }
-                    statements.addWithComment("block: imports", importStatements)
-                    statements += moduleBody
-                    statements.addWithComment("block: exports", exportStatements)
-                    if (generateCallToMain) {
-                        callToMain?.let { this.statements += it }
-                    }
-                    this.statements += JsReturn(internalModuleName.makeRef())
+                if (generateCallToMain) {
+                    callToMain?.let { this.statements += it }
                 }
+                this.statements += JsReturn(internalModuleName.makeRef())
             }
-
-            polyfillDeclarationBlock.statements
-                .takeIf { it.isNotEmpty() }
-                ?.let { program.globalBlock.statements.addWithComment("block: polyfills", it) }
-
-            program.globalBlock.statements += ModuleWrapperTranslation.wrap(
-                moduleName,
-                rootFunction,
-                importedJsModules,
-                program,
-                kind = moduleKind
-            )
         }
+
+        polyfillDeclarationBlock.statements
+            .takeIf { it.isNotEmpty() }
+            ?.let { program.globalBlock.statements.addWithComment("block: polyfills", it) }
+
+        program.globalBlock.statements += ModuleWrapperTranslation.wrap(
+            moduleName,
+            rootFunction,
+            importedJsModules,
+            program,
+            kind = moduleKind
+        )
 
         return program
     }

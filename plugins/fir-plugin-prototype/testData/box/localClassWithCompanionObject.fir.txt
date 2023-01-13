@@ -1,0 +1,35 @@
+FILE: localClassWithCompanionObject.kt
+    public final fun box(): R|kotlin/String| {
+        @R|org/jetbrains/kotlin/fir/plugin/CompanionWithFoo|() local final class SomeClass : R|kotlin/Any| {
+            public constructor(): R|SomeClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final companion object Companion : R|kotlin/Any| {
+                public final fun foo(): R|kotlin/Int|
+
+                private constructor(): R|SomeClass.Companion| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+        local final fun takeInt(x: R|kotlin/Int|): R|kotlin/Unit| {
+            when () {
+                !=(R|<local>/x|, Int(10)) ->  {
+                    throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+                }
+            }
+
+        }
+
+        local final fun test(): R|kotlin/Unit| {
+            R|<local>/takeInt|(Q|SomeClass|.R|/SomeClass.Companion.foo|())
+            R|<local>/takeInt|(Q|SomeClass.Companion|.R|/SomeClass.Companion.foo|())
+        }
+
+        R|<local>/test|()
+        ^box String(OK)
+    }

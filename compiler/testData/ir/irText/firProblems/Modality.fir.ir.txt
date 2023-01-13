@@ -105,7 +105,7 @@ FILE fqName:<root> fileName:/Modality.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.ResolutionPart'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Owner modality:FINAL visibility:public superTypes:[<root>.ResolutionPart]'
-    FUN name:process visibility:public modality:FINAL <> ($this:<root>.Owner, $receiver:<root>.KotlinResolutionCandidate) returnType:kotlin.String
+    FUN name:process visibility:public modality:OPEN <> ($this:<root>.Owner, $receiver:<root>.KotlinResolutionCandidate) returnType:kotlin.String
       overridden:
         public abstract fun process (): kotlin.String declared in <root>.ResolutionPart
       $this: VALUE_PARAMETER name:<this> type:<root>.Owner
@@ -130,9 +130,9 @@ FILE fqName:<root> fileName:/Modality.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CONST Boolean type=kotlin.Boolean value=false
-            then: RETURN type=kotlin.Nothing from='public final fun process (): kotlin.String declared in <root>.Owner'
+            then: RETURN type=kotlin.Nothing from='public open fun process (): kotlin.String declared in <root>.Owner'
               CONST String type=kotlin.String value="OK"
-        RETURN type=kotlin.Nothing from='public final fun process (): kotlin.String declared in <root>.Owner'
+        RETURN type=kotlin.Nothing from='public open fun process (): kotlin.String declared in <root>.Owner'
           CONST String type=kotlin.String value="FAIL"
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
       overridden:

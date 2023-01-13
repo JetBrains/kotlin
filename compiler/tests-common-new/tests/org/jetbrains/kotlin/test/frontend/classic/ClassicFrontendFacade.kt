@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -43,7 +45,7 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.FakeTopDownAnalyzerFacadeForNative
 import org.jetbrains.kotlin.platform.isCommon
-import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
@@ -92,6 +94,7 @@ class ClassicFrontendFacade(
         val ktFiles = ktFilesMap.values.toList()
 
         setupJavacIfNeeded(module, ktFiles, configuration)
+        @Suppress("UNCHECKED_CAST")
         val analysisResult = performResolve(
             module,
             project,
@@ -99,9 +102,9 @@ class ClassicFrontendFacade(
             packagePartProviderFactory,
             ktFiles,
             compilerEnvironment = multiplatformAnalysisConfiguration.getCompilerEnvironment(module),
-            dependencyDescriptors = multiplatformAnalysisConfiguration.getDependencyDescriptors(module),
-            friendsDescriptors = multiplatformAnalysisConfiguration.getFriendDescriptors(module),
-            dependsOnDescriptors = multiplatformAnalysisConfiguration.getDependsOnDescriptors(module)
+            dependencyDescriptors = multiplatformAnalysisConfiguration.getDependencyDescriptors(module) as List<ModuleDescriptorImpl>,
+            friendsDescriptors = multiplatformAnalysisConfiguration.getFriendDescriptors(module) as List<ModuleDescriptorImpl>,
+            dependsOnDescriptors = multiplatformAnalysisConfiguration.getDependsOnDescriptors(module) as List<ModuleDescriptorImpl>
         )
         moduleDescriptorProvider.replaceModuleDescriptorForModule(module, analysisResult.moduleDescriptor)
         return ClassicFrontendOutputArtifact(
@@ -250,7 +253,7 @@ class ClassicFrontendFacade(
         )
     }
 
-    private fun loadKlib(names: List<String>, configuration: CompilerConfiguration): List<ModuleDescriptorImpl> {
+    private fun loadKlib(names: List<String>, configuration: CompilerConfiguration): List<ModuleDescriptor> {
         val resolvedLibraries = jsResolveLibraries(
             names,
             configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
@@ -260,8 +263,8 @@ class ClassicFrontendFacade(
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
 
-        return resolvedLibraries.zip(names).map { (resolvedLibrary, klibPath) ->
-            testServices.jsLibraryProvider.getOrCreateStdlibByPath(klibPath) {
+        return resolvedLibraries.map { resolvedLibrary ->
+            testServices.jsLibraryProvider.getOrCreateStdlibByPath(resolvedLibrary.library.libraryName) {
                 val storageManager = LockBasedStorageManager("ModulesStructure")
                 val isBuiltIns = resolvedLibrary.library.unresolvedDependencies.isEmpty()
 
@@ -289,8 +292,8 @@ class ClassicFrontendFacade(
         configuration: CompilerConfiguration,
         compilerEnvironment: TargetEnvironment,
         files: List<KtFile>,
-        dependencyDescriptors: List<ModuleDescriptorImpl>,
-        friendsDescriptors: List<ModuleDescriptorImpl>,
+        dependencyDescriptors: List<ModuleDescriptor>,
+        friendsDescriptors: List<ModuleDescriptor>,
     ): AnalysisResult {
         val runtimeKlibsNames = JsEnvironmentConfigurator.getRuntimePathsForModule(module, testServices)
         val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)

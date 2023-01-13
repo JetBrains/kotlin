@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -242,6 +242,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/conflictingJvmDeclarations.args");
         }
 
+        @TestMetadata("conflictingJvmDeclarationsK2.args")
+        public void testConflictingJvmDeclarationsK2() throws Exception {
+            runTest("compiler/testData/cli/jvm/conflictingJvmDeclarationsK2.args");
+        }
+
         @TestMetadata("conflictingOverloads.args")
         public void testConflictingOverloads() throws Exception {
             runTest("compiler/testData/cli/jvm/conflictingOverloads.args");
@@ -445,6 +450,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("firMultiplatformCompilationWithError.args")
         public void testFirMultiplatformCompilationWithError() throws Exception {
             runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithError.args");
+        }
+
+        @TestMetadata("firMultiplatformCompilationWithLightTreeWithoutErrors.args")
+        public void testFirMultiplatformCompilationWithLightTreeWithoutErrors() throws Exception {
+            runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithLightTreeWithoutErrors.args");
         }
 
         @TestMetadata("firMultiplatformCompilationWithoutErrors.args")
@@ -1198,6 +1208,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("jsHelp.args")
         public void testJsHelp() throws Exception {
             runTest("compiler/testData/cli/js/jsHelp.args");
+        }
+
+        @TestMetadata("jsOldBackend_strict.args")
+        public void testJsOldBackend_strict() throws Exception {
+            runTest("compiler/testData/cli/js/jsOldBackend_strict.args");
         }
 
         @TestMetadata("kotlinHomeWithoutStdlib.args")

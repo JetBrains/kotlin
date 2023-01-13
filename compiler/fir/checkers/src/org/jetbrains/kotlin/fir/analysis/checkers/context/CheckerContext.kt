@@ -34,6 +34,7 @@ abstract class CheckerContext : MutableDiagnosticContext() {
     abstract val qualifiedAccessOrAnnotationCalls: List<FirStatement>
     abstract val getClassCalls: List<FirGetClassCall>
     abstract val annotationContainers: List<FirAnnotationContainer>
+    abstract val isContractBody: Boolean
 
     // Suppress
     abstract val suppressedDiagnostics: Set<String>
@@ -71,6 +72,10 @@ abstract class CheckerContext : MutableDiagnosticContext() {
 
     abstract fun dropAnnotationContainer()
 
+    abstract fun enterContractBody(): CheckerContext
+
+    abstract fun exitContractBody(): CheckerContext
+
     override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
         val factory = diagnostic.factory
         val name = factory.name
@@ -86,8 +91,11 @@ abstract class CheckerContext : MutableDiagnosticContext() {
     override val languageVersionSettings: LanguageVersionSettings
         get() = session.languageVersionSettings
 
+    val containingFile: FirFile?
+        get() = if (containingDeclarations.isEmpty()) null else containingDeclarations.first() as FirFile
+
     override val containingFilePath: String?
-        get() = containingDeclarations.firstOrNull()?.let { (it as? FirFile)?.sourceFile?.path }
+        get() = containingFile?.sourceFile?.path
 }
 
 /**

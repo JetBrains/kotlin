@@ -2,13 +2,13 @@ package
 
 public fun test(/*0*/ foo: Foo, /*1*/ bar: Bar<kotlin.String?>): kotlin.Unit
 
-@org.jspecify.nullness.NullMarked public interface Bar</*0*/ E> {
+@org.jspecify.annotations.NullMarked public interface Bar</*0*/ E> {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@org.jspecify.nullness.NullMarked public interface Foo {
+@org.jspecify.annotations.NullMarked public interface Foo {
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public abstract fun test(/*0*/ list: Bar<*>): kotlin.Unit

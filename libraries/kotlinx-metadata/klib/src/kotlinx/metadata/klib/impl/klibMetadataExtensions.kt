@@ -6,8 +6,8 @@
 package kotlinx.metadata.klib.impl
 
 import kotlinx.metadata.*
-import kotlinx.metadata.impl.*
-import kotlinx.metadata.impl.extensions.*
+import kotlinx.metadata.internal.*
+import kotlinx.metadata.internal.extensions.*
 import kotlinx.metadata.klib.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.StringTableImpl
 
+@Suppress("DEPRECATION", "DEPRECATION_ERROR")
 internal class KlibMetadataExtensions : MetadataExtensions {
 
     private fun ReadContext.getSourceFile(index: Int) =

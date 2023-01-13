@@ -1,0 +1,9 @@
+public abstract interface annotation class org/jetbrains/kotlin/gradle/ExperimentalKotlinGradlePluginApi : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/gradle/ExternalKotlinTargetApi : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class org/jetbrains/kotlin/gradle/InternalKotlinGradlePluginApi : java/lang/annotation/Annotation {
+}
+

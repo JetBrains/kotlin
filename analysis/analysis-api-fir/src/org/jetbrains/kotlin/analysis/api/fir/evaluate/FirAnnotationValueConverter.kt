@@ -11,14 +11,22 @@ import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedTypeQualifierError
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parents
@@ -41,37 +49,26 @@ internal object FirAnnotationValueConverter {
         return KtConstantAnnotationValue(constantValue)
     }
 
-    private fun Collection<FirExpression>.convertConstantExpression(
+    private fun Collection<FirExpression>.convertVarargsExpression(
         session: FirSession,
-    ): Collection<KtAnnotationValue> =
-        mapNotNull { it.convertConstantExpression(session) }
+    ): Pair<Collection<KtAnnotationValue>, KtElement?> {
+        var representativePsi: KtElement? = null
+        val flattenedVarargs = buildList {
+            for (expr in this@convertVarargsExpression) {
+                val converted = expr.convertConstantExpression(session) ?: continue
 
-    // Refer to KtLightAnnotationParameterList#checkIfToArrayConversionExpected
-    private fun ValueArgument?.arrayConversionExpected(): Boolean {
-        return when {
-            this == null -> false
-            this is KtValueArgument && isSpread -> {
-                // Anno(*[1,2,3])
-                false
-            }
-
-            else -> {
-                // Anno(a = [1,2,3]) v.s. Anno(1) or Anno(1,2,3)
-                !isNamed()
+                if (expr is FirSpreadArgumentExpression || expr is FirNamedArgumentExpression) {
+                    addAll((converted as KtArrayAnnotationValue).values)
+                } else {
+                    add(converted)
+                }
+                representativePsi = representativePsi ?: converted.sourcePsi
             }
         }
+
+        return flattenedVarargs to representativePsi
     }
 
-    private fun Collection<KtAnnotationValue>.toArrayConstantValueIfNecessary(sourcePsi: KtElement?): KtAnnotationValue? {
-        val valueArgument = if (sourcePsi is ValueArgument) sourcePsi else
-            (sourcePsi?.parents?.firstOrNull { it is ValueArgument } as? ValueArgument)
-        val wrap = valueArgument?.arrayConversionExpected() ?: false
-        return if (wrap) {
-            KtArrayAnnotationValue(this, sourcePsi)
-        } else {
-            singleOrNull()
-        }
-    }
 
     fun toConstantValue(
         firExpression: FirExpression,
@@ -94,12 +91,15 @@ internal object FirAnnotationValueConverter {
             }
 
             is FirVarargArgumentsExpression -> {
-                arguments.convertConstantExpression(session).toArrayConstantValueIfNecessary(sourcePsi)
+                // Vararg arguments may have multiple independent expressions associated.
+                // Choose one to be the representative PSI value for the entire assembled argument.
+                val (annotationValues, representativePsi) = arguments.convertVarargsExpression(session)
+                KtArrayAnnotationValue(annotationValues, representativePsi ?: sourcePsi)
             }
 
             is FirArrayOfCall -> {
                 // Desugared collection literals.
-                KtArrayAnnotationValue(argumentList.arguments.convertConstantExpression(session), sourcePsi)
+                KtArrayAnnotationValue(argumentList.arguments.convertVarargsExpression(session).first, sourcePsi)
             }
 
             is FirFunctionCall -> {
@@ -109,7 +109,7 @@ internal object FirAnnotationValueConverter {
                         val classSymbol = resolvedSymbol.getContainingClassSymbol(session) ?: return null
                         if ((classSymbol.fir as? FirClass)?.classKind == ClassKind.ANNOTATION_CLASS) {
                             val resultMap = mutableMapOf<Name, FirExpression>()
-                            argumentMapping?.entries?.forEach { (arg, param) ->
+                            resolvedArgumentMapping?.entries?.forEach { (arg, param) ->
                                 resultMap[param.name] = arg
                             }
                             KtAnnotationApplicationValue(
@@ -130,6 +130,10 @@ internal object FirAnnotationValueConverter {
                         else null
                     }
 
+                    is FirEnumEntrySymbol -> {
+                        KtEnumEntryAnnotationValue(resolvedSymbol.callableId, sourcePsi)
+                    }
+
                     else -> null
                 }
             }
@@ -146,9 +150,32 @@ internal object FirAnnotationValueConverter {
             }
 
             is FirGetClassCall -> {
-                val symbol = (argument as? FirResolvedQualifier)?.symbol
+                var symbol = (argument as? FirResolvedQualifier)?.symbol
+                if (symbol is FirTypeAliasSymbol) {
+                    symbol = symbol.fullyExpandedClass(session) ?: symbol
+                }
                 when {
-                    symbol == null -> KtKClassAnnotationValue.KtErrorClassAnnotationValue(sourcePsi)
+                    symbol == null -> {
+                        val qualifierParts = mutableListOf<String?>()
+
+                        fun process(expression: FirExpression) {
+                            val errorType = expression.typeRef.coneType as? ConeErrorType
+                            val unresolvedName = when (val diagnostic = errorType?.diagnostic) {
+                                is ConeUnresolvedTypeQualifierError -> diagnostic.qualifier
+                                is ConeUnresolvedNameError -> diagnostic.qualifier
+                                else -> null
+                            }
+                            qualifierParts += unresolvedName
+                            if (errorType != null && expression is FirPropertyAccessExpression) {
+                                expression.explicitReceiver?.let { process(it) }
+                            }
+                        }
+
+                        process(argument)
+
+                        val unresolvedName = qualifierParts.asReversed().filterNotNull().takeIf { it.isNotEmpty() }?.joinToString(".")
+                        KtKClassAnnotationValue.KtErrorClassAnnotationValue(sourcePsi, unresolvedName)
+                    }
                     symbol.isLocal -> KtKClassAnnotationValue.KtLocalKClassAnnotationValue(
                         symbol.fir.psi as KtClassOrObject,
                         sourcePsi

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.KotlinType
 
 /**
- * This class solves the problem of interdependency between analyzing Kotlin code and generating JetLightClasses
+ * This class solves the problem of interdependency between analyzing Kotlin code and generating KotlinLightClasses
 
  * Consider the following example:
 

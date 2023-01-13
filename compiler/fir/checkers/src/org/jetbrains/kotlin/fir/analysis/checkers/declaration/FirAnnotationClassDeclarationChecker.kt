@@ -44,10 +44,11 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker() {
             checkAnnotationClassMember(member, context, reporter)
         }
 
-        if (declaration.getRetention() != AnnotationRetention.SOURCE &&
-            KotlinTarget.EXPRESSION in declaration.getAllowedAnnotationTargets()
+        val session = context.session
+        if (declaration.getRetention(session) != AnnotationRetention.SOURCE &&
+            KotlinTarget.EXPRESSION in declaration.getAllowedAnnotationTargets(session)
         ) {
-            val target = declaration.getRetentionAnnotation() ?: declaration.getTargetAnnotation() ?: declaration
+            val target = declaration.getRetentionAnnotation(session) ?: declaration.getTargetAnnotation(session) ?: declaration
             reporter.reportOn(target.source, FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION, context)
         }
 

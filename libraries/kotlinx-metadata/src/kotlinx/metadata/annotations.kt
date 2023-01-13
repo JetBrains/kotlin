@@ -43,17 +43,12 @@ sealed class KmAnnotationArgument {
     data class DoubleValue(override val value: Double) : LiteralValue<Double>()
     data class BooleanValue(override val value: Boolean) : LiteralValue<Boolean>()
 
-    // TODO: remove @ExperimentalUnsignedTypes once bootstrap stdlib has stable unsigned types.
-    @ExperimentalUnsignedTypes
     data class UByteValue(override val value: UByte) : LiteralValue<UByte>()
 
-    @ExperimentalUnsignedTypes
     data class UShortValue(override val value: UShort) : LiteralValue<UShort>()
 
-    @ExperimentalUnsignedTypes
     data class UIntValue(override val value: UInt) : LiteralValue<UInt>()
 
-    @ExperimentalUnsignedTypes
     data class ULongValue(override val value: ULong) : LiteralValue<ULong>()
 
     data class StringValue(override val value: String) : LiteralValue<String>()

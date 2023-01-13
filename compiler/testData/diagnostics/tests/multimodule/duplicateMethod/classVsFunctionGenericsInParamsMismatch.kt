@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // MODULE: m1
 // FILE: a.kt
 package p

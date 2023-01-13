@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.test.framework.TestWithDisposable
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkersSourceFilePreprocessor
-import org.jetbrains.kotlin.analysis.test.framework.services.SubstitutionParser
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompilerExecutor
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind
@@ -57,11 +56,13 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
         configurator.configureTest(builder, disposable)
     }
 
-    protected abstract fun doTestByFileStructure(moduleStructure: TestModuleStructure, testServices: TestServices)
+    protected abstract fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices)
 
-    protected fun AssertionsService.assertEqualsToTestDataFileSibling(actual: String, extension: String = ".txt") {
-        val testPrefix = configurator.testPrefix
-
+    protected fun AssertionsService.assertEqualsToTestDataFileSibling(
+        actual: String,
+        extension: String = ".txt",
+        testPrefix: String? = configurator.testPrefix,
+    ) {
         val expectedFile = getTestDataFileSiblingPath(extension, testPrefix = testPrefix)
         assertEqualsToFile(expectedFile, actual)
 
@@ -141,7 +142,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
             return
         }
 
-        doTestByFileStructure(moduleStructure, testServices)
+        doTestByModuleStructure(moduleStructure, testServices)
     }
 
     private fun createTestConfiguration(): TestConfiguration {

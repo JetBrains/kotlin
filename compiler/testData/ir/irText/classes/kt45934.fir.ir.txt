@@ -14,9 +14,9 @@ FILE fqName:<root> fileName:/kt45934.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo <C> (): @[FlexibleNullability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>? declared in <root>.C'
           CALL 'public open fun foo (): @[FlexibleNullability] kotlin.collections.MutableList<@[FlexibleNullability] kotlin.String?>? declared in <root>.J' type=@[FlexibleNullability] kotlin.collections.MutableList<@[FlexibleNullability] C of <root>.C.foo?>? origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]' type=<root>.J origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final]' type=<root>.J origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.foo' type=<root>.C origin=null
-    FIELD DELEGATE name:<$$delegate_0> type:<root>.J visibility:local [final]
+    FIELD DELEGATE name:$$delegate_0 type:<root>.J visibility:private [final]
       EXPRESSION_BODY
         GET_VAR 'client: <root>.J declared in <root>.C.<init>' type=<root>.J origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]

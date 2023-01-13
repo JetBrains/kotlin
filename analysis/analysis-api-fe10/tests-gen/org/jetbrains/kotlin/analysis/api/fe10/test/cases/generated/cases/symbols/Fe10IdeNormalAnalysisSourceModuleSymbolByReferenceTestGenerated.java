@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -53,9 +53,33 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     }
 
     @Test
+    @TestMetadata("constructorValueParameter.kt")
+    public void testConstructorValueParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorValueParameter.kt");
+    }
+
+    @Test
     @TestMetadata("constructorViaTypeAlias.kt")
     public void testConstructorViaTypeAlias() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/constructorViaTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntries.kt")
+    public void testEnumEntries() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumEntries.kt");
+    }
+
+    @Test
+    @TestMetadata("enumValueOf.kt")
+    public void testEnumValueOf() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumValueOf.kt");
+    }
+
+    @Test
+    @TestMetadata("enumValues.kt")
+    public void testEnumValues() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/enumValues.kt");
     }
 
     @Test
@@ -89,6 +113,54 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     }
 
     @Test
+    @TestMetadata("javaClassWithEmptyAnnotationName.kt")
+    public void testJavaClassWithEmptyAnnotationName() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaClassWithEmptyAnnotationName.kt");
+    }
+
+    @Test
+    @TestMetadata("javaField.kt")
+    public void testJavaField() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaField.kt");
+    }
+
+    @Test
+    @TestMetadata("javaMethod.kt")
+    public void testJavaMethod() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("javaStaticField.kt")
+    public void testJavaStaticField() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaStaticField.kt");
+    }
+
+    @Test
+    @TestMetadata("javaStaticMethod.kt")
+    public void testJavaStaticMethod() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaStaticMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("javaSyntheticAccessor.kt")
+    public void testJavaSyntheticAccessor() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaSyntheticAccessor.kt");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructorValueParameter.kt")
+    public void testPrimaryConstructorValueParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/primaryConstructorValueParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructorValueParameterAsProperty.kt")
+    public void testPrimaryConstructorValueParameterAsProperty() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/primaryConstructorValueParameterAsProperty.kt");
+    }
+
+    @Test
     @TestMetadata("propertyReceiverParameter.kt")
     public void testPropertyReceiverParameter() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/propertyReceiverParameter.kt");
@@ -98,6 +170,18 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated ext
     @TestMetadata("samConstructor.kt")
     public void testSamConstructor() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/samConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("setterValueParameter.kt")
+    public void testSetterValueParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/setterValueParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("valueParameter.kt")
+    public void testValueParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/valueParameter.kt");
     }
 
     @Nested

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,6 +41,18 @@ public class FirPluginBlackBoxCodegenTestGenerated extends AbstractFirPluginBlac
     @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
     public void testGeneratedClassWithMembersAndNestedClasses() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/generatedClassWithMembersAndNestedClasses.kt");
+    }
+
+    @Test
+    @TestMetadata("localClassWithCompanionObject.kt")
+    public void testLocalClassWithCompanionObject() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/localClassWithCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("metaAnnotationFromLibrary.kt")
+    public void testMetaAnnotationFromLibrary() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/metaAnnotationFromLibrary.kt");
     }
 
     @Test

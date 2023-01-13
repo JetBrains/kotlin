@@ -24,6 +24,8 @@ class MultifileFacadeFileEntry(
     override val maxOffset: Int
         get() = UNDEFINED_OFFSET
 
+    override val supportsDebugInfo get() = false
+
     override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
         error("Multifile facade doesn't support debug info: $className")
 

@@ -10,6 +10,8 @@ pill {
 }
 
 dependencies {
+    commonApi(platform(project(":kotlin-gradle-plugins-bom")))
+
     commonCompileOnly(project(":kotlin-gradle-plugin"))
     commonCompileOnly(project(":kotlin-compiler-embeddable"))
 

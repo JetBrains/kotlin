@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
-import org.jetbrains.kotlin.test.frontend.fir.handlers.FirNoImplicitTypesHandler
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.*
 
@@ -56,7 +56,7 @@ open class AbstractFirBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<F
                     ::FirDumpHandler,
                     ::FirScopeDumpHandler,
                     ::FirCfgDumpHandler,
-                    ::FirNoImplicitTypesHandler,
+                    ::FirResolvedTypesVerifier,
                 )
             }
 

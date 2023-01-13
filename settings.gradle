@@ -1,13 +1,8 @@
 pluginManagement {
     apply from: 'repo/scripts/cache-redirector.settings.gradle.kts'
+    apply from: 'repo/scripts/kotlin-bootstrap.settings.gradle.kts'
 
     repositories {
-        def pluginRepo = System.getProperty("bootstrap.kotlin.repo")
-        if (pluginRepo != null) {
-            maven {
-                url pluginRepo
-            }
-        }
         maven { url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
         mavenCentral()
         gradlePluginPortal()
@@ -88,10 +83,8 @@ include ":benchmarks",
         ":kotlin-util-klib",
         ":kotlin-util-klib-metadata",
         ":daemon-common",
-        ":daemon-common-new",
         ":kotlin-daemon",
         ":kotlin-daemon-client",
-        ":kotlin-daemon-client-new",
         ":kotlin-daemon-tests",
         ":kotlin-preloader",
         ":kotlin-runner",
@@ -159,6 +152,7 @@ include ":benchmarks",
         ":native:kotlin-klib-commonizer-embeddable",
         ":core:compiler.common",
         ":core:compiler.common.jvm",
+        ":core:compiler.common.js",
         ":compiler:backend.common.jvm",
         ":core:descriptors",
         ":core:descriptors.jvm",
@@ -249,9 +243,11 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-gradle-build-metrics",
         ":kotlin-gradle-plugin",
         ":kotlin-gradle-plugin-kpm-android",
+        ":kotlin-gradle-plugin-tcs-android",
         ":kotlin-gradle-plugin-model",
         ":kotlin-gradle-plugin-test-utils-embeddable",
         ":kotlin-gradle-plugin-integration-tests",
+        ":kotlin-gradle-plugins-bom",
         ":gradle:android-test-fixes",
         ":gradle:regression-benchmark-templates",
         ":gradle:regression-benchmarks",
@@ -275,15 +271,12 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":examples:kotlin-jsr223-daemon-local-eval-example",
         ":kotlin-annotations-jvm",
         ":kotlin-scripting-common",
-        ':kotlin-scripting-js',
-        ':kotlin-scripting-js-test',
         ":kotlin-scripting-jvm",
         ":kotlin-scripting-jvm-host-unshaded",
         ":kotlin-scripting-jvm-host-test",
         ":kotlin-scripting-jvm-host",
         ":kotlin-scripting-intellij",
         ":kotlin-scripting-compiler",
-        ":kotlin-scripting-compiler-js",
         ":kotlin-scripting-compiler-embeddable",
         ":kotlin-scripting-compiler-impl",
         ":kotlin-scripting-compiler-impl-embeddable",
@@ -307,8 +300,8 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":plugins:jvm-abi-gen",
         ":plugins:jvm-abi-gen-embeddable",
         ":test-instrumenter",
-        ":wasm:wasm.ir"
-
+        ":wasm:wasm.ir",
+        ":repo:codebase-tests"
 
 include ":kotlinx-atomicfu-compiler-plugin",
         ":kotlinx-atomicfu-runtime",
@@ -326,6 +319,7 @@ include ":compiler:fir",
         ":compiler:fir:providers",
         ":compiler:fir:semantics",
         ":compiler:fir:resolve",
+        ":compiler:fir:plugin-utils",
         ":compiler:fir:fir-serialization",
         ":compiler:fir:fir-deserialization",
         ":compiler:fir:java",
@@ -675,9 +669,7 @@ project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File
 project(':daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
-project(':daemon-common-new').projectDir = "$rootDir/compiler/daemon/daemon-common-new" as File
 project(':kotlin-daemon-client').projectDir = "$rootDir/compiler/daemon/daemon-client" as File
-project(':kotlin-daemon-client-new').projectDir = "$rootDir/compiler/daemon/daemon-client-new" as File
 project(':kotlin-daemon-tests').projectDir = "$rootDir/compiler/daemon/daemon-tests" as File
 project(':kotlin-compiler-runner-unshaded').projectDir = "$rootDir/compiler/compiler-runner-unshaded" as File
 project(':kotlin-compiler-runner').projectDir = "$rootDir/compiler/compiler-runner" as File
@@ -757,9 +749,11 @@ project(':kotlin-gradle-statistics').projectDir = "$rootDir/libraries/tools/kotl
 project(':kotlin-gradle-build-metrics').projectDir = "$rootDir/libraries/tools/kotlin-gradle-build-metrics" as File
 project(':kotlin-gradle-plugin').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin" as File
 project(':kotlin-gradle-plugin-kpm-android').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-kpm-android" as File
+project(':kotlin-gradle-plugin-tcs-android').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-tcs-android" as File
 project(':kotlin-gradle-plugin-model').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-model" as File
 project(':kotlin-gradle-plugin-test-utils-embeddable').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-test-utils-embeddable" as File
 project(':kotlin-gradle-plugin-integration-tests').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-integration-tests" as File
+project(':kotlin-gradle-plugins-bom').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugins-bom" as File
 project(':gradle:android-test-fixes').projectDir = "$rootDir/libraries/tools/gradle/android-test-fixes" as File
 project(":gradle:regression-benchmark-templates").projectDir = "$rootDir/libraries/tools/gradle/regression-benchmark-templates" as File
 project(":gradle:regression-benchmarks").projectDir = "$rootDir/libraries/tools/gradle/regression-benchmarks" as File
@@ -784,8 +778,6 @@ project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/librarie
 project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
-project(':kotlin-scripting-js').projectDir = "$rootDir/libraries/scripting/js" as File
-project(':kotlin-scripting-js-test').projectDir = "$rootDir/libraries/scripting/js-test" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
 project(':kotlin-scripting-jvm-host-unshaded').projectDir = "$rootDir/libraries/scripting/jvm-host" as File
 project(':kotlin-scripting-jvm-host-test').projectDir = "$rootDir/libraries/scripting/jvm-host-test" as File
@@ -798,7 +790,6 @@ project(':kotlin-scripting-jsr223-test').projectDir = "$rootDir/libraries/script
 project(':kotlin-scripting-jsr223').projectDir = "$rootDir/libraries/scripting/jsr223-embeddable" as File
 project(':kotlin-scripting-intellij').projectDir = "$rootDir/libraries/scripting/intellij" as File
 project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-compiler" as File
-project(':kotlin-scripting-compiler-js').projectDir = "$rootDir/plugins/scripting/scripting-compiler-js" as File
 project(':kotlin-scripting-compiler-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-compiler-embeddable" as File
 project(':kotlin-scripting-compiler-impl').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl" as File
 project(':kotlin-scripting-compiler-impl-embeddable').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl-embeddable" as File

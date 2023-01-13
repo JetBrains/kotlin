@@ -11,7 +11,7 @@ fun testX() {
     val interface_as_fun = X.<!RESOLUTION_TO_CLASSIFIER!>A<!>()
     val interface_as_val = X.<!NO_COMPANION_OBJECT!>A<!>
 
-    val object_as_fun = X.<!INVISIBLE_REFERENCE!>B<!>()
+    val object_as_fun = X.<!UNRESOLVED_REFERENCE!>B<!>()
     val class_as_val = X.<!NO_COMPANION_OBJECT!>C<!>
 }
 
@@ -26,7 +26,7 @@ fun testY() {
     val interface_as_fun = Y.<!RESOLUTION_TO_CLASSIFIER!>A<!>()
     val interface_as_val = Y.<!NO_COMPANION_OBJECT!>A<!>
 
-    val object_as_fun = Y.<!INVISIBLE_REFERENCE!>B<!>()
+    val object_as_fun = Y.<!UNRESOLVED_REFERENCE!>B<!>()
     val class_as_val = Y.<!NO_COMPANION_OBJECT!>C<!>
 }
 

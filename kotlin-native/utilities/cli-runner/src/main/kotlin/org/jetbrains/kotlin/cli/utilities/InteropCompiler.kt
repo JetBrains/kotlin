@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.util.KonanHomeProvider
 import org.jetbrains.kotlin.native.interop.gen.jvm.InternalInteropOptions
-import org.jetbrains.kotlin.native.interop.gen.jvm.interop
+import org.jetbrains.kotlin.native.interop.gen.jvm.Interop
 import org.jetbrains.kotlin.native.interop.tool.*
 
 // TODO: this function should eventually be eliminated from 'utilities'. 
@@ -42,7 +42,7 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
         else (arguments as JSInteropArguments).target.toString()
     val target = PlatformManager(KonanHomeProvider.determineKonanHome()).targetManager(targetRequest).target
 
-    val cinteropArgsToCompiler = interop(flavor, args,
+    val cinteropArgsToCompiler = Interop().interop(flavor, args,
             InternalInteropOptions(generatedDir.absolutePath,
                     nativesDir.absolutePath,manifest.path,
                     cstubsName.takeIf { flavor == "native" }
@@ -74,6 +74,7 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
         (if (nopack) arrayOf("-$NOPACK") else emptyArray()) +
         moduleName?.let { arrayOf("-module-name", it) }.orEmpty() +
         shortModuleName?.let { arrayOf("${K2NativeCompilerArguments.SHORT_MODULE_NAME_ARG}=$it") }.orEmpty() +
+        "-library-version=${arguments.libraryVersion}" +
         arguments.kotlincOption
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
@@ -28,9 +30,9 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 internal class FirTypeParameterImpl(
     override val source: KtSourceElement?,
-    override val moduleData: FirModuleData,
     @Volatile
     override var resolvePhase: FirResolvePhase,
+    override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
     override val name: Name,
@@ -39,7 +41,7 @@ internal class FirTypeParameterImpl(
     override val variance: Variance,
     override val isReified: Boolean,
     override val bounds: MutableList<FirTypeRef>,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
 ) : FirTypeParameter() {
     init {
         symbol.bind(this)
@@ -68,5 +70,9 @@ internal class FirTypeParameterImpl(
     override fun replaceBounds(newBounds: List<FirTypeRef>) {
         bounds.clear()
         bounds.addAll(newBounds)
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 }

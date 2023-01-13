@@ -6,9 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
-import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependentModuleProvidersBySessions
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
@@ -18,12 +19,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInva
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.utils.caches.SoftCachedMap
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.FirEmptyPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
+import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -33,10 +36,13 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import java.util.concurrent.ConcurrentHashMap
 
 internal class LLFirNonUnderContentRootSessionFactory(private val project: Project) {
-    private val cache = ConcurrentHashMap<KtNotUnderContentRootModule, LLFirResolvableModuleSession>()
+    private val cache = SoftCachedMap.create<KtNotUnderContentRootModule, LLFirResolvableModuleSession>(
+        project,
+        kind = SoftCachedMap.Kind.STRONG_KEYS_SOFT_VALUES,
+        trackers = listOf(PsiModificationTracker.MODIFICATION_COUNT),
+    )
 
     fun getNonUnderContentRootSession(
         module: KtNotUnderContentRootModule,
@@ -53,7 +59,7 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
         val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
         val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
         val globalResolveComponents = LLFirGlobalResolveComponents(project)
-        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider)
+        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, sessionInvalidator)
         val contentScope = module.contentScope
         val session = LLFirNonUnderContentRootSession(module, project, components, builtinsSession.builtinTypes)
         components.session = session
@@ -78,7 +84,7 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
             )
 
             register(FirProvider::class, provider)
-            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver(sessionInvalidator))
+            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
             val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
                 add(builtinsSession)
@@ -95,10 +101,11 @@ internal class LLFirNonUnderContentRootSessionFactory(private val project: Proje
                 )
             )
 
-            register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider())
+            register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirDependenciesSymbolProvider::class, dependencyProvider)
             register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+            register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.Empty)
         }
     }
 

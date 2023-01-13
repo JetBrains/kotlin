@@ -113,6 +113,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                         !element.type.contains("Reference")
                         && !element.type.contains("ResolvedQualifier")
                         && !element.type.endsWith("Ref")
+                        && !element.type.endsWith("AnnotationsContainer")
             }?.let { symbolFields ->
                 println("init {")
                 for (symbolField in symbolFields) {
@@ -342,7 +343,7 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                     when {
                         field.withGetter -> {}
 
-                        field.origin is FieldList -> {
+                        field.origin is FieldList && !field.isMutableOrEmpty -> {
                             println("${field.name}.clear()")
                             println("${field.name}.addAll($newValue)")
                         }
@@ -351,7 +352,11 @@ fun SmartPrinter.printImplementation(implementation: Implementation) {
                             if (field.useNullableForReplace) {
                                 println("require($newValue != null)")
                             }
-                            println("${field.name} = $newValue")
+                            print("${field.name} = $newValue")
+                            if (field.origin is FieldList && field.isMutableOrEmpty) {
+                                print(".toMutableOrEmpty()")
+                            }
+                            println()
                         }
                     }
                 }

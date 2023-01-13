@@ -6,98 +6,49 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isFunctionalOrSuspendFunctionalType
 
-object InvocationKindTransformer : FirTransformer<Any?>() {
-    private object ArgumentsTransformer : FirTransformer<Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>>() {
-        override fun <E : FirElement> transformElement(element: E, data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>): E {
-            return element
-        }
+tailrec fun FirExpression.unwrapAnonymousFunctionExpression(): FirAnonymousFunction? = when (this) {
+    is FirAnonymousFunctionExpression -> anonymousFunction
+    is FirWrappedArgumentExpression -> expression.unwrapAnonymousFunctionExpression()
+    else -> null
+}
 
-        override fun transformAnonymousFunctionExpression(
-            anonymousFunctionExpression: FirAnonymousFunctionExpression,
-            data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
-        ): FirStatement {
-            val kind = data.second ?: data.first[anonymousFunctionExpression]
-            return anonymousFunctionExpression.transformAnonymousFunction(this, emptyMap<FirExpression, EventOccurrencesRange>() to kind)
-        }
+fun FirFunctionCall.replaceLambdaArgumentInvocationKinds(session: FirSession) {
+    val calleeReference = calleeReference as? FirNamedReferenceWithCandidate ?: return
+    val argumentMapping = calleeReference.candidate.argumentMapping ?: return
+    val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return
+    val isInline = function.isInline
 
-        override fun transformAnonymousFunction(
-            anonymousFunction: FirAnonymousFunction,
-            data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
-        ): FirStatement {
-            val kind = data.second
-            if (kind != null) {
-                anonymousFunction.replaceInvocationKind(kind)
-            }
-            return anonymousFunction
-        }
-
-        override fun transformLambdaArgumentExpression(
-            lambdaArgumentExpression: FirLambdaArgumentExpression,
-            data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
-        ): FirStatement {
-            return data.first[lambdaArgumentExpression]?.let {
-                (lambdaArgumentExpression.transformChildren(this, data.first to it) as FirStatement)
-            } ?: lambdaArgumentExpression
-        }
-
-        override fun transformNamedArgumentExpression(
-            namedArgumentExpression: FirNamedArgumentExpression,
-            data: Pair<Map<FirExpression, EventOccurrencesRange>, EventOccurrencesRange?>
-        ): FirStatement {
-            return data.first[namedArgumentExpression]?.let {
-                (namedArgumentExpression.transformChildren(this, data.first to it) as FirStatement)
-            } ?: namedArgumentExpression
-        }
+    val byParameter = mutableMapOf<FirValueParameter, EventOccurrencesRange>()
+    function.contractDescription.effects?.forEach { fir ->
+        val effect = fir.effect as? ConeCallsEffectDeclaration ?: return@forEach
+        // TODO: Support callsInPlace contracts on receivers
+        val valueParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex) ?: return@forEach
+        byParameter[valueParameter] = effect.kind
     }
+    if (byParameter.isEmpty() && !isInline) return
 
-    override fun <E : FirElement> transformElement(element: E, data: Any?): E {
-        return element
-    }
-
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: Any?): FirStatement {
-        val calleeReference = functionCall.calleeReference as? FirNamedReferenceWithCandidate ?: return functionCall
-        val argumentMapping = calleeReference.candidate.argumentMapping ?: return functionCall
-        val function = calleeReference.candidateSymbol.fir as? FirSimpleFunction ?: return functionCall
-
-        val callsEffects = function.contractDescription.effects
-            ?.map { it.effect }
-            ?.filterIsInstance<ConeCallsEffectDeclaration>() ?: emptyList()
-
-        val isInline = function.isInline
-        if (callsEffects.isEmpty() && !isInline) {
-            return functionCall
-        }
-
-        val reversedArgumentMapping = argumentMapping.entries.map { (argument, parameter) ->
-            parameter to argument
-        }.toMap()
-
-        val invocationKindMapping = mutableMapOf<FirExpression, EventOccurrencesRange>()
-        for (effect in callsEffects) {
-            // TODO: Support callsInPlace contracts on receivers
-            val valueParameter = function.valueParameters.getOrNull(effect.valueParameterReference.parameterIndex) ?: continue
-            val argument = reversedArgumentMapping[valueParameter] ?: continue
-            invocationKindMapping[argument] = effect.kind
-        }
-        if (isInline) {
-            for (argument in functionCall.arguments) {
-                invocationKindMapping.putIfAbsent(argument, EventOccurrencesRange.UNKNOWN)
-            }
-        }
-        if (invocationKindMapping.isEmpty()) {
-            return functionCall
-        }
-        functionCall.argumentList.transformArguments(ArgumentsTransformer, invocationKindMapping to null)
-        return functionCall
+    for ((argument, parameter) in argumentMapping) {
+        val lambda = argument.unwrapAnonymousFunctionExpression() ?: continue
+        val kind = byParameter[parameter] ?: EventOccurrencesRange.UNKNOWN.takeIf {
+            // Inline functional parameters have to be called in-place; that's the only permitted operation on them.
+            isInline && !parameter.isNoinline && !parameter.isCrossinline &&
+                    parameter.returnTypeRef.coneType.isFunctionalOrSuspendFunctionalType(session)
+        } ?: continue
+        lambda.replaceInvocationKind(kind)
     }
 }

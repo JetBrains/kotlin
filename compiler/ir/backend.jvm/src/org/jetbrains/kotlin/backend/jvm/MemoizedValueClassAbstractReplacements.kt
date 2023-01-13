@@ -16,15 +16,23 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isInt
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import java.util.concurrent.ConcurrentHashMap
 
-abstract class MemoizedValueClassAbstractReplacements(protected val irFactory: IrFactory, protected val context: JvmBackendContext) {
+abstract class MemoizedValueClassAbstractReplacements(
+    protected val irFactory: IrFactory,
+    protected val context: JvmBackendContext,
+    protected val storageManager: LockBasedStorageManager
+) {
     private val propertyMap = ConcurrentHashMap<IrPropertySymbol, IrProperty>()
 
     /**
      * Get a replacement for a function or a constructor.
      */
-    abstract val getReplacementFunction: (IrFunction) -> IrSimpleFunction?
+    fun getReplacementFunction(function: IrFunction) =
+        if (quickCheckIfFunctionIsNotApplicable(function)) null else getReplacementFunctionImpl(function)
+
+    protected abstract val getReplacementFunctionImpl: (IrFunction) -> IrSimpleFunction?
 
     protected fun IrFunction.isRemoveAtSpecialBuiltinStub() =
         origin == IrDeclarationOrigin.IR_BUILTINS_STUB &&
@@ -87,7 +95,7 @@ abstract class MemoizedValueClassAbstractReplacements(protected val irFactory: I
                         annotations = propertySymbol.owner.annotations
                         // In case this property is declared in an object in another file which is not yet lowered, its backing field will
                         // be made static later. We have to handle it here though, because this new property will be saved to the cache
-                        // and reused when lowering the same call in all subsequent files, which would be incorrect if it was unlowered.
+                        // and reused when lowering the same call in all subsequent files, which would be incorrect if it was not lowered.
                         backingField = context.cachedDeclarations.getStaticBackingField(propertySymbol.owner)
                             ?: propertySymbol.owner.backingField
                     }
@@ -106,12 +114,23 @@ abstract class MemoizedValueClassAbstractReplacements(protected val irFactory: I
         body()
     }
 
-    abstract val replaceOverriddenSymbols: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol>
+    private val replaceOverriddenSymbolsImpl: (IrSimpleFunction) -> List<IrSimpleFunctionSymbol> =
+        storageManager.createMemoizedFunction { irSimpleFunction ->
+            irSimpleFunction.overriddenSymbols.map {
+                computeOverrideReplacement(it.owner).symbol
+            }
+        }
 
-    abstract val getReplacementForRegularClassConstructor: (IrConstructor) -> IrConstructor?
+    fun replaceOverriddenSymbols(function: IrSimpleFunction): List<IrSimpleFunctionSymbol> =
+        if (function.overriddenSymbols.isEmpty()) listOf()
+        else replaceOverriddenSymbolsImpl(function)
 
-    protected fun computeOverrideReplacement(function: IrSimpleFunction): IrSimpleFunction =
+    abstract fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor?
+
+    private fun computeOverrideReplacement(function: IrSimpleFunction): IrSimpleFunction =
         getReplacementFunction(function) ?: function.also {
             function.overriddenSymbols = replaceOverriddenSymbols(function)
         }
+
+    abstract fun quickCheckIfFunctionIsNotApplicable(function: IrFunction): Boolean
 }

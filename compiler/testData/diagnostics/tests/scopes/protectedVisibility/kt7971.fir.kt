@@ -1,3 +1,4 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // !CHECK_TYPE
 // !LANGUAGE: -ProhibitProtectedCallFromInline
 // FILE: module1/AbstractModule.java

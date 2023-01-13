@@ -5,10 +5,14 @@ interface MyRwProperty<in T, V> {
 }
 
 val x: Int
+  get()
 
 val delegate: MyRwProperty<Any?, Int>
 
 val value: Int
+  get()
 
 var variable: Int
+  get()
+  set(variable: Int)
 

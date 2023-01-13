@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval j: R|JavaClass| = R|/JavaClass.JavaClass|()
+    }

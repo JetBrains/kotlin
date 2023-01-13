@@ -15,5 +15,5 @@ FILE: lazyValWithElvisToNothingInside.kt
     }
     )
         public get(): R|kotlin/collections/Map<kotlin/String, kotlin/String>| {
-            ^ D|/x|.<CS errors: kotlin/getValue>#<R|kotlin/collections/Map<kotlin/String, kotlin/String>|>(Null(null), ::R|/x|)
+            ^ D|/x|.R|kotlin/getValue|<R|kotlin/collections/Map<kotlin/String, kotlin/String>|>(Null(null), ::R|/x|)
         }

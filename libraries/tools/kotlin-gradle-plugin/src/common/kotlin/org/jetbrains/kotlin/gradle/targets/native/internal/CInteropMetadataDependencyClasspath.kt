@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider.MetadataConsumer.Cli
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider.MetadataConsumer.Ide
+import org.jetbrains.kotlin.gradle.plugin.mpp.metadataDependencyResolutionsOrEmpty
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import java.io.File
@@ -50,7 +51,8 @@ private fun Project.createCInteropMetadataDependencyClasspathFromProjectDependen
     forIde: Boolean
 ): FileCollection {
     return filesProvider {
-        sourceSet.dependencyTransformations.values.flatMap { it.metadataDependencyResolutions }
+        sourceSet.compileDependenciesTransformation
+            .metadataDependencyResolutionsOrEmpty
             .filterIsInstance<ChooseVisibleSourceSets>()
             .flatMap { chooseVisibleSourceSets ->
                 /* We only want to access resolutions that provide metadata from dependency projects */

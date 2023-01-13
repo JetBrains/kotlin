@@ -5,8 +5,6 @@
 
 package kotlin.time
 
-import org.w3c.performance.GlobalPerformance
-import org.w3c.performance.Performance
 import kotlin.math.truncate
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
@@ -83,7 +81,7 @@ internal class HrTimeSource(private val process: Process) : DefaultTimeSource {
 
 @SinceKotlin("1.3")
 @ExperimentalTime
-internal class PerformanceTimeSource(val performance: Performance) :
+internal class PerformanceTimeSource(private val performance: Performance) :
     DefaultTimeSource { // AbstractDoubleTimeSource(unit = DurationUnit.MILLISECONDS) {
     private fun read(): Double = performance.now()
 
@@ -120,6 +118,14 @@ internal object DateNowTimeSource : DefaultTimeSource {
         ValueTimeMark(sumCheckNaN(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS)))
 
     override fun toString(): String = "TimeSource(Date.now())"
+}
+
+internal external interface GlobalPerformance {
+    val performance: Performance
+}
+
+internal external interface Performance {
+    fun now(): Double
 }
 
 private fun sumCheckNaN(value: Double): Double = value.also { if (it.isNaN()) throw IllegalArgumentException("Summing infinities of different signs") }

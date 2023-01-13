@@ -160,6 +160,10 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
             Renderers.RENDER_TYPE,
             Renderers.RENDER_TYPE
         )
+        MAP.put(
+            SerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE,
+            "@MetaSerializable annotation should be used only on top-level annotation classes. Usage on nested annotation classes is deprecated and will yield errors in the future."
+        )
 
         MAP.put(
             SerializationErrors.EXTERNAL_CLASS_NOT_SERIALIZABLE,

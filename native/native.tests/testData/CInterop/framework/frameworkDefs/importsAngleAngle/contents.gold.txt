@@ -1,0 +1,13 @@
+
+package pod1 {
+    var podImportsAngleAngle: Int
+        @CCall(id = "knifunptr_pod10_podImportsAngleAngle_getter") get
+        @CCall(id = "knifunptr_pod11_podImportsAngleAngle_setter") set
+    var podImportsAngleAngleA: Int
+        @CCall(id = "knifunptr_pod12_podImportsAngleAngleA_getter") get
+        @CCall(id = "knifunptr_pod13_podImportsAngleAngleA_setter") set
+    var podImportsAngleAngle_umbrella: Int
+        @CCall(id = "knifunptr_pod14_podImportsAngleAngle_umbrella_getter") get
+        @CCall(id = "knifunptr_pod15_podImportsAngleAngle_umbrella_setter") set
+}
+

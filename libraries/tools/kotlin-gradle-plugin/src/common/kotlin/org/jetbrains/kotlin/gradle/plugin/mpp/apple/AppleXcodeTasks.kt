@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
 private object XcodeEnvironment {
@@ -35,7 +36,7 @@ private object XcodeEnvironment {
         get() {
             val configuration = System.getenv("CONFIGURATION") ?: return null
 
-            fun String.toNativeBuildType() = when (this.toLowerCase()) {
+            fun String.toNativeBuildType() = when (this.toLowerCaseAsciiOnly()) {
                 "debug" -> NativeBuildType.DEBUG
                 "release" -> NativeBuildType.RELEASE
                 else -> null

@@ -228,10 +228,9 @@ public class Parser {
 
             if (!ts.matchToken(TokenStream.GWT)) {
                 do {
-                    CodePosition namePosition = ts.tokenPosition;
                     mustMatchToken(ts, TokenStream.NAME, "msg.no.parm");
                     String s = ts.getString();
-                    args.addChildToBack(nf.createName(s, namePosition));
+                    args.addChildToBack(nf.createName(s, ts.tokenPosition));
                 }
                 while (ts.matchToken(TokenStream.COMMA));
 

@@ -20,6 +20,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ENABLED_KAPT(OR, SAFE),
     ENABLED_DAGGER(OR, SAFE),
     ENABLED_DATABINDING(OR, SAFE),
+    ENABLED_KOVER(OR, SAFE),
 
     ENABLED_COMPILER_PLUGIN_ALL_OPEN(OR, SAFE),
     ENABLED_COMPILER_PLUGIN_NO_ARG(OR, SAFE),
@@ -32,6 +33,7 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
 
     // Enabled features
     BUILD_SRC_EXISTS(OR, SAFE),
+    BUILD_PREPARE_KOTLIN_BUILD_SCRIPT_MODEL(OR, SAFE),
     GRADLE_BUILD_CACHE_USED(OVERRIDE, SAFE),
     GRADLE_WORKER_API_USED(OVERRIDE, SAFE),
 
@@ -52,5 +54,6 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     COMPILATION_STARTED(OVERRIDE, SAFE),
     TESTS_EXECUTED(OVERRIDE, SAFE),
     MAVEN_PUBLISH_EXECUTED(OVERRIDE, SAFE),
-    BUILD_FAILED(OVERRIDE, SAFE)
+    BUILD_FAILED(OVERRIDE, SAFE),
+    KOTLIN_COMPILATION_FAILED(OR, SAFE)
 }

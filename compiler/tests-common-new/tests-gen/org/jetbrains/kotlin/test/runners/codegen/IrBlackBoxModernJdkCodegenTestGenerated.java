@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -278,6 +278,46 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
                     runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/reflective/reflective_9.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava")
+            @TestDataPath("$PROJECT_ROOT")
+            public class WithJava {
+                @Test
+                public void testAllFilesPresentInWithJava() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("withJava_10.kt")
+                public void testWithJava_10() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava/withJava_10.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_11.kt")
+                public void testWithJava_11() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava/withJava_11.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_6.kt")
+                public void testWithJava_6() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava/withJava_6.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_8.kt")
+                public void testWithJava_8() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava/withJava_8.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_9.kt")
+                public void testWithJava_9() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava11/releaseFlag/withJava/withJava_9.kt");
+                }
+            }
         }
     }
 
@@ -322,6 +362,12 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
             @TestMetadata("jvmRecordBinary.kt")
             public void testJvmRecordBinary() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/jvmRecordBinary.kt");
+            }
+
+            @Test
+            @TestMetadata("kt54573.kt")
+            public void testKt54573() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/kt54573.kt");
             }
 
             @Test
@@ -589,6 +635,76 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
                 @TestMetadata("threadState_9.kt")
                 public void testThreadState_9() throws Exception {
                     runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/innerClass/threadState_9.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava")
+            @TestDataPath("$PROJECT_ROOT")
+            public class WithJava {
+                @Test
+                public void testAllFilesPresentInWithJava() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("withJava_10.kt")
+                public void testWithJava_10() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava/withJava_10.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_11.kt")
+                public void testWithJava_11() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava/withJava_11.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_12.kt")
+                public void testWithJava_12() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava/withJava_12.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_13.kt")
+                public void testWithJava_13() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava/withJava_13.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_14.kt")
+                public void testWithJava_14() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava/withJava_14.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_15.kt")
+                public void testWithJava_15() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava/withJava_15.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_16.kt")
+                public void testWithJava_16() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava/withJava_16.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_17.kt")
+                public void testWithJava_17() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava/withJava_17.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_8.kt")
+                public void testWithJava_8() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava/withJava_8.kt");
+                }
+
+                @Test
+                @TestMetadata("withJava_9.kt")
+                public void testWithJava_9() throws Exception {
+                    runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/releaseFlag/withJava/withJava_9.kt");
                 }
             }
         }

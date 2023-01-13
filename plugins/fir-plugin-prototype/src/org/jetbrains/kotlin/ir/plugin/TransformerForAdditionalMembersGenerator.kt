@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
 
-class TransformerForAdditionalMembersGenerator(context: IrPluginContext) : AbstractTransformerForGenerator(context) {
+class TransformerForAdditionalMembersGenerator(context: IrPluginContext) : AbstractTransformerForGenerator(context, visitBodies = false) {
     override fun interestedIn(key: GeneratedDeclarationKey): Boolean {
         return key == AdditionalMembersGenerator.Key
     }
@@ -22,6 +22,6 @@ class TransformerForAdditionalMembersGenerator(context: IrPluginContext) : Abstr
     }
 
     override fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey): IrBody? {
-        return generateBodyForDefaultConstructor(constructor)
+        return constructor.body
     }
 }

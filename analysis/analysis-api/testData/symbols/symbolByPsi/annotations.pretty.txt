@@ -1,6 +1,4 @@
-annotation class Anno {
-  constructor(param1: kotlin.String, param2: kotlin.Int)
-
+annotation class Anno(param1: kotlin.String, param2: kotlin.Int) {
   val param1: kotlin.String
 
   val param2: kotlin.Int

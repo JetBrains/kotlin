@@ -15,12 +15,19 @@ KtPropertyGetterSymbol:
   isOverride: false
   modality: FINAL
   origin: SOURCE
-  receiverType: [
-    ReceiverAnnotation()
-      psi: KtAnnotationEntry
-    ReceiverTypeAnnotation()
-      psi: KtAnnotationEntry
-  ] @RECEIVER:R|ReceiverAnnotation|()  @R|ReceiverTypeAnnotation|()  kotlin/Long
+  receiverParameter: KtReceiverParameterSymbol:
+    annotationsList: [
+      ReceiverAnnotation()
+        psi: KtAnnotationEntry
+    ]
+    origin: SOURCE
+    owningCallableSymbol: KtKotlinPropertySymbol(/x)
+    type: [
+      ReceiverTypeAnnotation()
+        psi: KtAnnotationEntry
+    ] @R|ReceiverTypeAnnotation|()  kotlin/Long
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   returnType: kotlin/Int
   symbolKind: ACCESSOR
   typeParameters: []

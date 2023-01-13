@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.build.report.ICReporter
-import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirElement
@@ -17,6 +16,8 @@ import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.backend.jvm.makeLocalFirMetadataSerializerForMetadataSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
+import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.scopes.jvm.computeJvmDescriptor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -26,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import java.io.File
 
 internal fun collectNewDirtySources(
-    analysisResults: ModuleCompilerAnalyzedOutput,
+    analysisResults: FirResult,
     targetId: TargetId,
     configuration: CompilerConfiguration,
     caches: IncrementalJvmCachesManager,
@@ -35,95 +36,100 @@ internal fun collectNewDirtySources(
 ): LinkedHashSet<File> {
     val changesCollector = ChangesCollector()
     val globalSerializationBindings = JvmSerializationBindings()
-    analysisResults.fir.forEach {
-        it.accept(object : FirVisitor<Unit, MutableList<MetadataSerializer>>() {
 
-            inline fun withMetadataSerializer(
-                metadata: FirMetadataSource,
-                data: MutableList<MetadataSerializer>,
-                body: (MetadataSerializer) -> Unit
-            ) {
-                val serializer = makeLocalFirMetadataSerializerForMetadataSource(
-                    metadata,
-                    analysisResults.session,
-                    analysisResults.scopeSession,
-                    globalSerializationBindings,
-                    data.lastOrNull(),
-                    targetId,
-                    configuration
-                )
-                data.push(serializer)
-                body(serializer)
-                data.pop()
-            }
-
-            override fun visitElement(element: FirElement, data: MutableList<MetadataSerializer>) {
-                element.acceptChildren(this, data)
-            }
-
-            override fun visitRegularClass(regularClass: FirRegularClass, data: MutableList<MetadataSerializer>) {
-                visitClass(regularClass, data)
-            }
-
-            override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: MutableList<MetadataSerializer>) {
-                visitClass(anonymousObject, data)
-            }
-
-            override fun visitFile(file: FirFile, data: MutableList<MetadataSerializer>) {
-                val metadata = FirMetadataSource.File(file)
-                withMetadataSerializer(metadata, data) {
-                    file.acceptChildren(this, data)
-                    // TODO: compare package fragments?
-                }
-            }
-
-            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableList<MetadataSerializer>) {
-                data.firstOrNull()?.let { serializer ->
-                    super.visitFunction(simpleFunction, data)
-                    serializer.bindMethodMetadata(
-                        FirMetadataSource.Function(simpleFunction),
-                        Method(simpleFunction.name.asString(), simpleFunction.computeJvmDescriptor())
+    fun visitFirFiles(analyzedOutput: ModuleCompilerAnalyzedOutput) {
+        analyzedOutput.fir.forEach {
+            it.accept(object : FirVisitor<Unit, MutableList<MetadataSerializer>>() {
+                inline fun withMetadataSerializer(
+                    metadata: FirMetadataSource,
+                    data: MutableList<MetadataSerializer>,
+                    body: (MetadataSerializer) -> Unit
+                ) {
+                    val serializer = makeLocalFirMetadataSerializerForMetadataSource(
+                        metadata,
+                        analyzedOutput.session,
+                        analyzedOutput.scopeSession,
+                        globalSerializationBindings,
+                        data.lastOrNull(),
+                        targetId,
+                        configuration
                     )
+                    data.push(serializer)
+                    body(serializer)
+                    data.pop()
                 }
-            }
 
-            override fun visitConstructor(constructor: FirConstructor, data: MutableList<MetadataSerializer>) {
-                super.visitConstructor(constructor, data)
-                data.first().bindMethodMetadata(
-                    FirMetadataSource.Function(constructor),
-                    Method(SpecialNames.INIT.asString(), constructor.computeJvmDescriptor(""))
-                )
-            }
+                override fun visitElement(element: FirElement, data: MutableList<MetadataSerializer>) {
+                    element.acceptChildren(this, data)
+                }
 
-            override fun visitProperty(property: FirProperty, data: MutableList<MetadataSerializer>) {
-                property.acceptChildren(this, data)
-//                    data.firstOrNull()?.let {
-//                        property.acceptChildren(this, data)
-//                        it.bindPropertyMetadata(
-//                            FirMetadataSource.Property(property),
-//                            Method(property.name.asString(), ""),//property.computeJvmDescriptor())
-//                            IrDeclarationOrigin.DEFINED
-//                        )
-//                    }
-            }
+                override fun visitRegularClass(regularClass: FirRegularClass, data: MutableList<MetadataSerializer>) {
+                    visitClass(regularClass, data)
+                }
 
-            override fun visitClass(klass: FirClass, data: MutableList<MetadataSerializer>) {
-                val metadata = FirMetadataSource.Class(klass)
-                withMetadataSerializer(metadata, data) { serializer ->
-                    klass.acceptChildren(this, data)
-                    serializer.serialize(metadata)?.let { (classProto, nameTable) ->
-                        caches.platformCache.saveFrontendClassToCache(
-                            klass.classId,
-                            classProto as ProtoBuf.Class,
-                            nameTable,
-                            null, // TODO: !!
-                            changesCollector
+                override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: MutableList<MetadataSerializer>) {
+                    visitClass(anonymousObject, data)
+                }
+
+                override fun visitFile(file: FirFile, data: MutableList<MetadataSerializer>) {
+                    val metadata = FirMetadataSource.File(listOf(file))
+                    withMetadataSerializer(metadata, data) {
+                        file.acceptChildren(this, data)
+                        // TODO: compare package fragments?
+                    }
+                }
+
+                override fun visitSimpleFunction(simpleFunction: FirSimpleFunction, data: MutableList<MetadataSerializer>) {
+                    data.firstOrNull()?.let { serializer ->
+                        super.visitFunction(simpleFunction, data)
+                        serializer.bindMethodMetadata(
+                            FirMetadataSource.Function(simpleFunction),
+                            Method(simpleFunction.name.asString(), simpleFunction.computeJvmDescriptor())
                         )
                     }
                 }
-            }
-        }, mutableListOf())
+
+                override fun visitConstructor(constructor: FirConstructor, data: MutableList<MetadataSerializer>) {
+                    super.visitConstructor(constructor, data)
+                    data.first().bindMethodMetadata(
+                        FirMetadataSource.Function(constructor),
+                        Method(SpecialNames.INIT.asString(), constructor.computeJvmDescriptor(""))
+                    )
+                }
+
+                override fun visitProperty(property: FirProperty, data: MutableList<MetadataSerializer>) {
+                    property.acceptChildren(this, data)
+                    //                    data.firstOrNull()?.let {
+                    //                        property.acceptChildren(this, data)
+                    //                        it.bindPropertyMetadata(
+                    //                            FirMetadataSource.Property(property),
+                    //                            Method(property.name.asString(), ""),//property.computeJvmDescriptor())
+                    //                            IrDeclarationOrigin.DEFINED
+                    //                        )
+                    //                    }
+                }
+
+                override fun visitClass(klass: FirClass, data: MutableList<MetadataSerializer>) {
+                    val metadata = FirMetadataSource.Class(klass)
+                    withMetadataSerializer(metadata, data) { serializer ->
+                        klass.acceptChildren(this, data)
+                        serializer.serialize(metadata)?.let { (classProto, nameTable) ->
+                            caches.platformCache.saveFrontendClassToCache(
+                                klass.classId,
+                                classProto as ProtoBuf.Class,
+                                nameTable,
+                                null, // TODO: !!
+                                changesCollector
+                            )
+                        }
+                    }
+                }
+            }, mutableListOf())
+        }
     }
+
+    analysisResults.commonOutput?.let { visitFirFiles(it) }
+    visitFirFiles(analysisResults.platformOutput)
 
     val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
 

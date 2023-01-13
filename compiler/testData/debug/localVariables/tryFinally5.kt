@@ -29,7 +29,7 @@ fun box() {
     val localX = x
 }
 
-// EXPECTATIONS
+// EXPECTATIONS JVM JVM_IR
 // test.kt:28 box:
 // test.kt:13 compute:
 // test.kt:14 compute:
@@ -41,3 +41,16 @@ fun box() {
 // test.kt:28 box:
 // test.kt:29 box: result:java.lang.String="b":java.lang.String
 // test.kt:30 box: result:java.lang.String="b":java.lang.String, localX:java.lang.String="OK":java.lang.String
+
+// EXPECTATIONS JS_IR
+// test.kt:28 box:
+// test.kt:14 compute:
+// test.kt:14 compute:
+// test.kt:14 compute:
+// test.kt:14 compute:
+// test.kt:16 compute: a="a":kotlin.String
+// test.kt:16 compute: a="a":kotlin.String
+// test.kt:16 compute: a="a":kotlin.String
+// test.kt:16 compute: a="a":kotlin.String
+// test.kt:17 compute: a="a":kotlin.String, b="b":kotlin.String
+// test.kt:22 compute: a="a":kotlin.String, b="b":kotlin.String

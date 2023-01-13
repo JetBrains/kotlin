@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
 abstract class KotlinJsTarget
@@ -71,19 +72,24 @@ constructor(
             super.kotlinComponents
         else {
             val mainCompilation = compilations.getByName(MAIN_COMPILATION_NAME)
-            val usageContexts = createUsageContexts(mainCompilation) +
-                    irTarget!!.createUsageContexts(irTarget!!.compilations.getByName(MAIN_COMPILATION_NAME))
+            val usageContexts = createUsageContexts(mainCompilation).toMutableSet()
+
+            usageContexts += irTarget!!.createUsageContexts(irTarget!!.compilations.getByName(MAIN_COMPILATION_NAME))
 
             val componentName =
                 if (project.kotlinExtension is KotlinMultiplatformExtension)
                     irTarget?.let { targetName.removeJsCompilerSuffix(LEGACY) } ?: targetName
                 else PRIMARY_SINGLE_COMPONENT_NAME
 
-            val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
-
-            result.sourcesArtifacts = setOf(
-                sourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))
+            configureSourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCaseAsciiOnly()))
+            usageContexts += DefaultKotlinUsageContext(
+                compilation = mainCompilation,
+                mavenScope = KotlinUsageContext.MavenScope.RUNTIME,
+                dependencyConfigurationName = sourcesElementsConfigurationName,
+                includeIntoProjectStructureMetadata = false,
             )
+
+            val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
             setOf(result)
         }
@@ -97,7 +103,7 @@ constructor(
         return usageContexts +
                 DefaultKotlinUsageContext(
                     compilation = compilations.getByName(MAIN_COMPILATION_NAME),
-                    usage = project.usageByName("java-api-jars"),
+                    mavenScope = KotlinUsageContext.MavenScope.COMPILE,
                     dependencyConfigurationName = commonFakeApiElementsConfigurationName,
                     overrideConfigurationArtifacts = project.setProperty { emptyList() }
                 )

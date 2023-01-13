@@ -1,10 +1,8 @@
 package test;
 
-import java.lang.System;
-
-@kotlin.Metadata()
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @Anno(value = "anno-class")
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 public abstract @interface Anno {
 
     public abstract java.lang.String value();
@@ -14,10 +12,8 @@ public abstract @interface Anno {
 
 package test;
 
-import java.lang.System;
-
-@kotlin.jvm.JvmName(name = "AnnotationsTest")
 @kotlin.Metadata()
+@kotlin.jvm.JvmName(name = "AnnotationsTest")
 public final class AnnotationsTest {
 
     public AnnotationsTest() {
@@ -25,8 +21,8 @@ public final class AnnotationsTest {
     }
 
     @Anno(value = "top-level-fun")
-    public static final void topLevelFun(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "top-level-fun-receiver")
+    public static final void topLevelFun(@Anno(value = "top-level-fun-receiver")
+    @org.jetbrains.annotations.NotNull()
     java.lang.String $this$topLevelFun) {
     }
 
@@ -46,10 +42,8 @@ public final class AnnotationsTest {
 
 package test;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @Anno(value = "enum")
+@kotlin.Metadata()
 public enum Enum {
     @Anno(value = "white")
     /*public static final*/ WHITE /* = new Enum() */,
@@ -71,35 +65,33 @@ public enum Enum {
 
 package test;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @Anno(value = "clazz")
+@kotlin.Metadata()
 public abstract class Test {
     @org.jetbrains.annotations.NotNull()
     private java.lang.String v;
 
     @Anno(value = "test-constructor")
-    protected Test(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "v-param")
+    protected Test(@Anno(value = "v-param")
+    @org.jetbrains.annotations.NotNull()
     java.lang.String v) {
         super();
     }
 
-    @org.jetbrains.annotations.NotNull()
     @Anno(value = "v-get")
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String getV() {
         return null;
     }
 
     @Anno(value = "v-set")
-    public final void setV(@org.jetbrains.annotations.NotNull()
-    @Anno(value = "v-setparam")
+    public final void setV(@Anno(value = "v-setparam")
+    @org.jetbrains.annotations.NotNull()
     java.lang.String p0) {
     }
 
-    @org.jetbrains.annotations.NotNull()
     @Anno(value = "abstract-method")
+    @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String abstractMethod();
 
     @org.jetbrains.annotations.NotNull()

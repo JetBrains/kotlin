@@ -25,19 +25,14 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
     fun dependsOn(other: KotlinSourceSet)
     val dependsOn: Set<KotlinSourceSet>
 
+    @Deprecated(message = "KT-55312")
     val apiMetadataConfigurationName: String
+    @Deprecated(message = "KT-55312")
     val implementationMetadataConfigurationName: String
+    @Deprecated(message = "KT-55312")
     val compileOnlyMetadataConfigurationName: String
+    @Deprecated(message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation")
     val runtimeOnlyMetadataConfigurationName: String
-
-    override val relatedConfigurationNames: List<String>
-        get() = super.relatedConfigurationNames +
-                listOf(
-                    apiMetadataConfigurationName,
-                    implementationMetadataConfigurationName,
-                    compileOnlyMetadataConfigurationName,
-                    runtimeOnlyMetadataConfigurationName
-                )
 
     companion object {
         const val COMMON_MAIN_SOURCE_SET_NAME = "commonMain"

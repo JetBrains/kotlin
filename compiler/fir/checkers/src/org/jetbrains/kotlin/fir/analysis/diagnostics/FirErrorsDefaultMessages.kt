@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ARGUME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_CLASS_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_CLASS_MEMBER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_ON_SUPERCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_PARAMETER_DEFAULT_VALUE_MUST_BE_CONSTANT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_USED_AS_ANNOTATION_ARGUMENT
@@ -134,7 +135,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_GENERIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANCE_HIERARCHY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DANGEROUS_CHARACTERS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_NOT_PROPERTY_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_OVERRIDE_CONFLICT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_VARARG_PARAMETER
@@ -168,6 +168,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_E
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIVISION_BY_ZERO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_SCOPE_VIOLATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DUPLICATE_LABEL_IN_WHEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DYNAMIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ELSE_MISPLACED_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EMPTY_CHARACTER_LITERAL
@@ -193,6 +195,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_EXTENSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_FIELD_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_DELEGATION_CALL_REQUIRED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_FUNCTION_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PROPERTY_TYPE
@@ -237,6 +240,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_F
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_PROPERTY_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_FILE_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_INFIX_MODIFIER
@@ -257,6 +262,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_CHARACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_LEFT_COMPONENT_OF_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_UNSUCCESSFUL_FORK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION
@@ -285,6 +291,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_ON_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_FIELD_IN_VAL_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_NULLABLE_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LEAKED_IN_PLACE_LAMBDA
@@ -306,6 +316,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_PARAMETERS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED
@@ -395,6 +406,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_CANNOT_BE_IMPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PACKAGE_OR_CLASSIFIER_REDECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PLUGIN_ANNOTATION_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PRIVATE_CLASS_MEMBER_FROM_INLINE
@@ -498,7 +510,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_SHOULD_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_ANONYMOUS_OBJECT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETERS_IN_ENUM
@@ -532,6 +546,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_INFIX_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSAFE_OPERATOR_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.UNSUPPORTED_FEATURE
@@ -633,6 +648,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(WRONG_LONG_SUFFIX, "Use 'L' instead of 'l'")
         map.put(EMPTY_CHARACTER_LITERAL, "Empty character literal")
         map.put(FLOAT_LITERAL_OUT_OF_RANGE, "The value is out of range")
+        map.put(
+            UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH,
+            "Type of the constant expression cannot be resolved. Please make sure you have the required dependencies for unsigned types in the classpath"
+        )
         map.put(INCORRECT_CHARACTER_LITERAL, "Incorrect character literal")
         map.put(TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL, "Too many characters in a character literal")
         map.put(ILLEGAL_ESCAPE, "Illegal escape")
@@ -893,6 +912,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             ANNOTATION_IN_WHERE_CLAUSE_ERROR,
             "Type parameter annotations are not allowed inside where clauses. You should probably move annotations to the type parameter declaration",
         )
+        map.put(
+            PLUGIN_ANNOTATION_AMBIGUITY,
+            "Resolution of annotation type is ambigous between {1} and plugin annotation {0}. Please specify fully qualified name of annotation",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
 
         // Exposed visibility group // #
         map.put(
@@ -1005,6 +1030,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", TO_STRING, TO_STRING, NOT_RENDERED)
+        map.put(
+            TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR,
+            "Type inference failed. The value of the type parameter {0} should be mentioned in input types (argument types, receiver type or expected type). Try to specify it explicitly.",
+            SYMBOL
+        )
         map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", TO_STRING, NOT_RENDERED)
         map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", TO_STRING, NOT_RENDERED)
         map.put(
@@ -1209,6 +1239,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NOT_RENDERED
         )
 
+        map.put(IMPLICIT_NOTHING_RETURN_TYPE, "'Nothing' return type needs to be specified explicitly")
+        map.put(IMPLICIT_NOTHING_PROPERTY_TYPE, "'Nothing' property type needs to be specified explicitly");
+
         map.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds")
 
         map.put(DEPRECATED_TYPE_PARAMETER_SYNTAX, "Type parameters must be placed before the name of the function")
@@ -1218,7 +1251,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "If a type parameter has multiple constraints, they all need to be placed in the 'where' clause"
         )
 
+        map.put(DYNAMIC_SUPERTYPE, "A supertype cannot be dynamic")
+
         map.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound")
+
+        map.put(DYNAMIC_RECEIVER_NOT_ALLOWED, "Dynamic receiver is prohibited")
 
         // Reflection
         map.put(
@@ -1254,18 +1291,29 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VALUE_CLASS_CANNOT_EXTEND_CLASSES, "Value class cannot extend classes")
         map.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive")
         map.put(
+            MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER,
+            "Default parameters are not supported in the primary constructor of a multi-field value class"
+        )
+        map.put(
             INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE,
             "Invalid default value for inline parameter: ''{0}''. Only lambdas, anonymous functions, and callable references are supported",
             FIR,
             DECLARATION_NAME
         )
-        map.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
         map.put(
             SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS,
             "Secondary constructors with bodies are reserved for for future releases"
         )
+        map.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
+        map.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must be only star projections")
         map.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes")
         map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable")
+        map.put(
+            ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET,
+            "Annotations on ''{0}'' of multi-field value class type are not supported",
+            STRING
+        )
+
 
         // Inline
         map.put(
@@ -1333,19 +1381,19 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RETURN_TYPE_MISMATCH_ON_OVERRIDE,
             "Return type of ''{0}'' is not a subtype of the return type of the overridden member ''{1}''",
             DECLARATION_NAME,
-            DECLARATION_NAME
+            SYMBOL
         )
         map.put(
             PROPERTY_TYPE_MISMATCH_ON_OVERRIDE,
             "Type of ''{0}'' is not a subtype of the overridden property ''{1}''",
             DECLARATION_NAME,
-            DECLARATION_NAME
+            SYMBOL
         )
         map.put(
             VAR_TYPE_MISMATCH_ON_OVERRIDE,
             "Type of ''{0}'' doesn''t match the type of the overridden var-property ''{1}''",
             DECLARATION_NAME,
-            DECLARATION_NAME
+            SYMBOL
         )
 
         map.put(
@@ -1606,6 +1654,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, "This property cannot be declared abstract")
         map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING, "Type parameters for local variables are deprecated")
         map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, "Local variables are not allowed to have type parameters")
+        map.put(EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "A property access cannot have explicit type arguments")
+
+        map.put(LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL, "This declaration can only be called on a property literal (e.g. 'Foo::bar')")
+        map.put(LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT, "This declaration can only be called on a reference to a lateinit property")
+        map.put(LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION, "This declaration can not be used inside an inline function")
+        map.put(LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY, "Backing field of ''{0}'' is not accessible at this point", SYMBOL)
 
         map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level, in named objects, or in companion objects")
         map.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter")
@@ -2005,9 +2059,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(
-            INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS,
-            "Overriding ''equals'' from ''Any'' in inline class alongside with lack of ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
-            STRING
+            INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS,
+            "Overriding ''equals'' from ''Any'' in value class without operator ''equals(other: {0}): Boolean'' leads to boxing on every equality comparison",
+            RENDER_TYPE
         )
 
         //imports

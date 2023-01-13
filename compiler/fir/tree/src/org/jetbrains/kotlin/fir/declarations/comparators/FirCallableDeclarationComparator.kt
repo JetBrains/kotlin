@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,14 +18,16 @@ object FirCallableDeclarationComparator : Comparator<FirCallableDeclaration> {
         }
 
         // Compare the receiver type if any.
-        if (a.receiverTypeRef != null || b.receiverTypeRef != null) {
-            val aHasReceiverType = if (a.receiverTypeRef != null) 1 else 0
-            val bHasReceiverType = if (b.receiverTypeRef != null) 1 else 0
+        val aReceiver = a.receiverParameter
+        val bReceiver = b.receiverParameter
+        if (aReceiver != null || bReceiver != null) {
+            val aHasReceiverType = if (aReceiver != null) 1 else 0
+            val bHasReceiverType = if (bReceiver != null) 1 else 0
             val receiverTypePresenceDiff = aHasReceiverType - bHasReceiverType
             if (receiverTypePresenceDiff != 0) {
                 return receiverTypePresenceDiff
             }
-            assert(a.receiverTypeRef != null && b.receiverTypeRef != null)
+            assert(aReceiver != null && bReceiver != null)
         }
 
         // Compare the return type.

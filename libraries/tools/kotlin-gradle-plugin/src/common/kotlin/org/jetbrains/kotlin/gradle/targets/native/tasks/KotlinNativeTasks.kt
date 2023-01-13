@@ -179,7 +179,10 @@ abstract class AbstractKotlinNativeCompile<
     )
 
     @get:Classpath
-    protected val friendModule: FileCollection = project.files({ compilation.friendPaths })
+    internal val friendModule: FileCollection = project.files({ compilation.friendPaths })
+
+    @get:Classpath
+    internal val refinesModule: FileCollection = project.files({ compilation.refinesPaths })
 
     @get:Input
     val target: String by project.provider { konanTarget.name }
@@ -227,6 +230,9 @@ abstract class AbstractKotlinNativeCompile<
     @get:Input
     val kotlinNativeVersion: String
         get() = project.konanVersion.toString()
+
+    @get:Input
+    val artifactVersion = project.version.toString()
 
     @get:Input
     internal val useEmbeddableCompilerJar: Boolean
@@ -366,15 +372,15 @@ internal constructor(
 
     // region Language settings imported from a SourceSet.
     @Deprecated(
-        message = "Replaced with compilerOptions.languageVersion",
-        replaceWith = ReplaceWith("compilerOptions.languageVersion")
+        message = "Replaced with kotlinOptions.languageVersion",
+        replaceWith = ReplaceWith("kotlinOptions.languageVersion")
     )
     val languageVersion: String?
         @Optional @Input get() = languageSettings.languageVersion
 
     @Deprecated(
-        message = "Replaced with compilerOptions.apiVersion",
-        replaceWith = ReplaceWith("compilerOptions.apiVersion")
+        message = "Replaced with kotlinOptions.apiVersion",
+        replaceWith = ReplaceWith("kotlinOptions.apiVersion")
     )
     val apiVersion: String?
         @Optional @Input get() = languageSettings.apiVersion
@@ -389,28 +395,18 @@ internal constructor(
     // region Kotlin options.
     override val compilerOptions: KotlinCommonCompilerOptions = compilation.compilerOptions.options
 
-    @Deprecated(
-        message = "Replaced with compilerOptions",
-        replaceWith = ReplaceWith("compilerOptions")
-    )
-    @Suppress("DEPRECATION")
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
         override val options: KotlinCommonCompilerOptions
             get() = compilerOptions
     }
 
-    @Suppress("DEPRECATION")
-    @Deprecated(
-        message = "Replaced with compilerOptions()",
-        replaceWith = ReplaceWith("compilerOptions(fn)")
-    )
     override fun kotlinOptions(fn: KotlinCommonOptions.() -> Unit) {
         kotlinOptions.fn()
     }
 
     @Deprecated(
-        message = "Replaced with compilerOptions()",
-        replaceWith = ReplaceWith("compilerOptions(fn)")
+        message = "Replaced with kotlinOptions()",
+        replaceWith = ReplaceWith("kotlinOptions(fn)")
     )
     override fun kotlinOptions(fn: Closure<*>) {
         @Suppress("DEPRECATION")
@@ -420,7 +416,7 @@ internal constructor(
 
     @Deprecated(
         message = "Replaced with compilerOptions.freeCompilerArgs",
-        replaceWith = ReplaceWith("compilerOptions.freeCompilerArgs")
+        replaceWith = ReplaceWith("compilerOptions.freeCompilerArgs.get()")
     )
     @get:Input
     override val additionalCompilerOptions: Provider<Collection<String>>
@@ -468,7 +464,7 @@ internal constructor(
         properties[KLIB_PROPERTY_NATIVE_TARGETS] = konanTargetsForManifest
         properties.saveToFile(org.jetbrains.kotlin.konan.file.File(manifestFile.toPath()))
 
-        return SharedCompilationData(manifestFile, isAllowCommonizer)
+        return SharedCompilationData(manifestFile, isAllowCommonizer, refinesModule)
     }
 
     @TaskAction
@@ -494,6 +490,7 @@ internal constructor(
             moduleName,
             shortModuleName,
             friendModule,
+            artifactVersion,
             createSharedCompilationDataOrNull(),
             sources.asFileTree,
             commonSourcesTree
@@ -996,6 +993,10 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
 
     @Suppress("unused")
     @get:Input
+    val libraryVersion = project.version.toString()
+
+    @Suppress("unused")
+    @get:Input
     val interopName: String = params.settings.name
 
     @get:Input
@@ -1095,6 +1096,9 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
             if (konanVersion.isAtLeast(1, 4, 0)) {
                 addArg("-Xmodule-name", moduleName)
             }
+
+            // TODO: uncomment after advancing bootstrap.
+            //addArg("-libraryVersion", libraryVersion)
 
             addAll(extraOpts)
         }

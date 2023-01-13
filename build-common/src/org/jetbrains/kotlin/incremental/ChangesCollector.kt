@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.incremental
 
+import org.jetbrains.kotlin.incremental.DifferenceCalculatorForClass.Companion.getNonPrivateMembers
+import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.FqName
@@ -166,7 +168,7 @@ class ChangesCollector {
         }
 
     private fun PackagePartProtoData.collectAllFromPackage(isRemoved: Boolean) {
-        val memberNames = getNonPrivateMemberNames(includeInlineAccessors = true)
+        val memberNames = getNonPrivateMembers()
         if (isRemoved) {
             collectRemovedMembers(packageFqName, memberNames)
         } else {
@@ -178,14 +180,14 @@ class ChangesCollector {
         val classFqName = nameResolver.getClassId(proto.fqName).asSingleFqName()
 
         if (proto.isCompanionObject) {
-            val memberNames = getNonPrivateMemberNames(includeInlineAccessors = true)
+            val memberNames = getNonPrivateMembers()
 
             val collectMember = if (isRemoved) this@ChangesCollector::collectRemovedMember else this@ChangesCollector::collectChangedMember
             collectMember(classFqName.parent(), classFqName.shortName().asString())
             memberNames.forEach { collectMember(classFqName, it) }
         } else {
             if (!isRemoved && collectAllMembersForNewClass) {
-                val memberNames = getNonPrivateMemberNames(includeInlineAccessors = true)
+                val memberNames = getNonPrivateMembers()
                 memberNames.forEach { this@ChangesCollector.collectChangedMember(classFqName, it) }
             }
 

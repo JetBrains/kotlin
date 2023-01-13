@@ -6,7 +6,7 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationSourceSetInclusion
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSourceSetInclusion
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinNativeCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinNativeCompilerOptionsFactory
@@ -26,8 +26,8 @@ open class KotlinNativeCompilationFactory internal constructor(
             compilationDependencyConfigurationsFactory = NativeKotlinCompilationDependencyConfigurationsFactory,
             compilerOptionsFactory = KotlinNativeCompilerOptionsFactory,
             compilationAssociator = KotlinNativeCompilationAssociator,
-            compilationSourceSetInclusion = DefaultKotlinCompilationSourceSetInclusion(
-                DefaultKotlinCompilationSourceSetInclusion.NativeAddSourcesToCompileTask
+            compilationSourceSetInclusion = KotlinCompilationSourceSetInclusion(
+                KotlinCompilationSourceSetInclusion.NativeAddSourcesToCompileTask
             ),
         )
 

@@ -19,7 +19,7 @@ interface MutableMultimap<K, V, C : Collection<V>> : Multimap<K, V, C> {
     }
 
     fun remove(key: K, value: V)
-    fun removeKey(key: K)
+    fun removeKey(key: K): C
 
     fun clear()
 }
@@ -64,8 +64,9 @@ abstract class BaseMultimap<K, V, C : Collection<V>, MC : MutableCollection<V>> 
         }
     }
 
-    override fun removeKey(key: K) {
-        map.remove(key)
+    override fun removeKey(key: K): C {
+        @Suppress("UNCHECKED_CAST")
+        return map.remove(key) as C? ?: createEmptyContainer()
     }
 
     override fun clear() {

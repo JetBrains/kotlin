@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode
+import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode.*
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isMultiFieldValueClassType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -56,7 +58,7 @@ fun MfvcNode.createInstanceFromValueDeclarations(
         scope.savableStandaloneVariable(
             type = it.type,
             name = listOf(name, it.fullFieldName).joinToString("-"),
-            origin = IrDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE,
+            origin = JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE,
             saveVariable = saveVariable
         )
     }
@@ -83,12 +85,10 @@ sealed interface NameableMfvcNode : MfvcNode {
     val namedNodeImpl: NameableMfvcNodeImpl
 }
 
-val NameableMfvcNode.nameParts: List<IndexedNamePart>
+val NameableMfvcNode.nameParts: List<Name>
     get() = namedNodeImpl.nameParts
 val NameableMfvcNode.name: Name
-    get() = nameParts.last().name
-val NameableMfvcNode.index: Int
-    get() = nameParts.last().index
+    get() = nameParts.last()
 val NameableMfvcNode.unboxMethod: IrSimpleFunction
     get() = namedNodeImpl.unboxMethod
 val NameableMfvcNode.fullMethodName: Name
@@ -99,31 +99,36 @@ val NameableMfvcNode.hasPureUnboxMethod: Boolean
     get() = namedNodeImpl.hasPureUnboxMethod
 
 
-data class IndexedNamePart(val index: Int, val name: Name)
-
 class NameableMfvcNodeImpl(
-    rootPropertyName: String?,
-    val nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    val nameParts: List<Name>,
     val unboxMethod: IrSimpleFunction,
     val hasPureUnboxMethod: Boolean,
 ) {
-    val fullMethodName = makeFullMethodName(rootPropertyName, nameParts)
-    val fullFieldName = makeFullFieldName(rootPropertyName, nameParts)
+    val fullMethodName = makeFullMethodName(methodFullNameMode, nameParts)
+    val fullFieldName = makeFullFieldName(nameParts)
 
     companion object {
-        @JvmStatic
-        fun makeFullMethodName(rootPropertyName: String?, nameParts: List<IndexedNamePart>): Name = if (rootPropertyName == null) {
-            val restJoined = nameParts.joinToString("-") { it.index.toString() }
-            Name.identifier("${KotlinTypeMapper.UNBOX_JVM_METHOD_NAME}-$restJoined")
-        } else {
-            val wholeName = (listOf(JvmAbi.getterName(rootPropertyName)) + nameParts.map { it.index.toString() }).joinToString("-")
-            Name.identifier(wholeName)
-        }
+        enum class MethodFullNameMode { UnboxFunction, Getter }
 
         @JvmStatic
-        fun makeFullFieldName(rootPropertyName: String?, nameParts: List<IndexedNamePart>): Name {
-            val joined = (listOf(rootPropertyName ?: "field") + nameParts.map { it.index.toString() }).joinToString("-")
-            return Name.identifier(joined)
+        fun makeFullMethodName(methodFullNameMode: MethodFullNameMode, nameParts: List<Name>): Name = nameParts
+            .map { it.asStringStripSpecialMarkers() }
+            .let {
+                when (methodFullNameMode) {
+                    UnboxFunction -> listOf(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME) + it
+                    Getter -> listOf(JvmAbi.getterName(it.first())) + it.subList(1, nameParts.size)
+                }
+            }
+            .joinToString("-")
+            .let(Name::identifier)
+
+        @JvmStatic
+        fun makeFullFieldName(nameParts: List<Name>): Name {
+            require(nameParts.isNotEmpty()) { "Name must contain at least one part" }
+            val isSpecial = nameParts.any { it.isSpecial }
+            val joined = nameParts.joinToString("-") { it.asStringStripSpecialMarkers() }
+            return if (isSpecial) Name.special("<$joined>") else Name.identifier(joined)
         }
     }
 }
@@ -142,7 +147,10 @@ sealed interface MfvcNodeWithSubnodes : MfvcNode {
 }
 
 fun MfvcNodeWithSubnodes.makeBoxedExpression(
-    scope: IrBuilderWithScope, typeArguments: TypeArguments, valueArguments: List<IrExpression>
+    scope: IrBuilderWithScope,
+    typeArguments: TypeArguments,
+    valueArguments: List<IrExpression>,
+    registerPossibleExtraBoxCreation: () -> Unit,
 ): IrExpression = scope.irCall(boxMethod).apply {
     val resultType = type.substitute(typeArguments) as IrSimpleType
     require(resultType.erasedUpperBound == type.erasedUpperBound) { "Substitution of $type led to $resultType" }
@@ -152,6 +160,7 @@ fun MfvcNodeWithSubnodes.makeBoxedExpression(
     for ((index, valueArgument) in valueArguments.withIndex()) {
         putValueArgument(index, valueArgument)
     }
+    registerPossibleExtraBoxCreation()
 }
 
 operator fun MfvcNodeWithSubnodes.get(names: List<Name>): MfvcNode? {
@@ -168,7 +177,6 @@ class MfvcNodeWithSubnodesImpl(val subnodes: List<NameableMfvcNode>, unboxMethod
     init {
         require(subnodes.isNotEmpty())
         require(subnodes.map { it.nameParts.dropLast(1) }.allEqual())
-        require(subnodes.map { it.index } == subnodes.indices.toList())
     }
 
     private val mapping = subnodes.associateBy { it.name }.also { mapping ->
@@ -273,13 +281,13 @@ private fun validateGettingAccessorParameters(function: IrSimpleFunction) {
 
 class LeafMfvcNode(
     override val type: IrType,
-    rootPropertyName: String?,
-    nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    nameParts: List<Name>,
     val field: IrField?,
     unboxMethod: IrSimpleFunction,
     hasPureUnboxMethod: Boolean,
 ) : NameableMfvcNode {
-    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(rootPropertyName, nameParts, unboxMethod, hasPureUnboxMethod)
+    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(methodFullNameMode, nameParts, unboxMethod, hasPureUnboxMethod)
 
     override val leavesCount: Int
         get() = 1
@@ -314,14 +322,14 @@ val MfvcNode.fields
 
 class IntermediateMfvcNode(
     override val type: IrSimpleType,
-    rootPropertyName: String?,
-    nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    nameParts: List<Name>,
     subnodes: List<NameableMfvcNode>,
     unboxMethod: IrSimpleFunction,
     hasPureUnboxMethod: Boolean,
     val rootNode: RootMfvcNode, // root node corresponding type of the node
 ) : NameableMfvcNode, MfvcNodeWithSubnodes {
-    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(rootPropertyName, nameParts, unboxMethod, hasPureUnboxMethod)
+    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(methodFullNameMode, nameParts, unboxMethod, hasPureUnboxMethod)
     override val subnodesImpl: MfvcNodeWithSubnodesImpl = MfvcNodeWithSubnodesImpl(subnodes, unboxMethod)
     override val leavesCount
         get() = leaves.size
@@ -381,6 +389,7 @@ class RootMfvcNode internal constructor(
     val primaryConstructorImpl: IrSimpleFunction,
     override val boxMethod: IrSimpleFunction,
     val specializedEqualsMethod: IrSimpleFunction,
+    val createdNewSpecializedEqualsMethod: Boolean,
 ) : MfvcNodeWithSubnodes {
     override val subnodesImpl: MfvcNodeWithSubnodesImpl = MfvcNodeWithSubnodesImpl(subnodes, null)
     override val type: IrSimpleType = mfvc.defaultType
@@ -420,8 +429,8 @@ class RootMfvcNode internal constructor(
             boxMethod.typeParameters.size,
             primaryConstructorImpl.typeParameters.size,
         )
-        require(specializedEqualsMethod.typeParameters.size == 2 * mfvc.typeParameters.size) {
-            "Specialized equals method must contain twice more type parameters than corresponding MFVC ${mfvc.typeParameters.map { it.defaultType.render() }} but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
+        require(specializedEqualsMethod.typeParameters.isEmpty()) {
+            "Specialized equals method must not contain type parameters but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
         }
         requireSameSizes(oldPrimaryConstructor.valueParameters.size, subnodes.size)
         requireSameSizes(
@@ -430,8 +439,8 @@ class RootMfvcNode internal constructor(
             primaryConstructorImpl.valueParameters.size,
             boxMethod.valueParameters.size,
         )
-        require(specializedEqualsMethod.valueParameters.size == 2 * leavesCount) {
-            "Specialized equals method must contain twice more value parameters than corresponding primary constructor of the MFVC ${mfvc.typeParameters.map { it.defaultType.render() }} but has ${specializedEqualsMethod.typeParameters.map { it.defaultType.render() }}"
+        require(specializedEqualsMethod.valueParameters.size == 1) {
+            "Specialized equals method must contain single value parameter but has\n${specializedEqualsMethod.valueParameters.joinToString("\n") { it.dump() }}"
         }
         for (function in listOf(oldPrimaryConstructor, newPrimaryConstructor, primaryConstructorImpl, boxMethod, specializedEqualsMethod)) {
             require(function.extensionReceiverParameter == null) { "Extension receiver is not expected for ${function.render()}" }

@@ -6,14 +6,17 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_KARMA_BROWSERS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
@@ -22,9 +25,10 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_SUBSTITUTION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
@@ -36,6 +40,8 @@ import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 import java.util.*
@@ -96,6 +102,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val buildReportHttpVerboseEnvironment: Boolean
         get() = property("kotlin.build.report.http.verbose_environment")?.toBoolean() ?: false
 
+    val buildReportHttpIncludeGitBranchName: Boolean
+        get() = property("kotlin.build.report.http.include_git_branch.name")?.toBoolean() ?: false
+
+    val buildReportIncludeCompilerArguments: Boolean
+        get() = booleanProperty("kotlin.build.report.include_compiler_arguments") ?: true
+
     val buildReportBuildScanCustomValuesLimit: Int
         get() = property("kotlin.build.report.build_scan.custom_values_limit")?.toInt() ?: 1000
 
@@ -147,12 +159,23 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val useClasspathSnapshot: Boolean
         get() {
+            val reporter = KotlinBuildStatsService.getInstance()
             // The feature should be controlled by a Gradle property.
             // Currently, we also allow it to be controlled by a system property to make it easier to test the feature during development.
             // TODO: Remove the system property later.
-            val gradleProperty = booleanProperty(CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property) ?: false
-            val systemProperty = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.value.toBooleanLenient() ?: false
-            return gradleProperty || systemProperty
+
+            val gradleProperty = booleanProperty(CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.property)
+            if (gradleProperty != null) {
+                reporter?.report(StringMetrics.USE_CLASSPATH_SNAPSHOT, gradleProperty.toString())
+                return gradleProperty
+            }
+            val systemProperty = CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM.value?.toBooleanLenient()
+            if (systemProperty != null) {
+                reporter?.report(StringMetrics.USE_CLASSPATH_SNAPSHOT, systemProperty.toString())
+                return systemProperty
+            }
+            reporter?.report(StringMetrics.USE_CLASSPATH_SNAPSHOT, "default-true")
+            return true
         }
 
     val useKotlinAbiSnapshot: Boolean
@@ -223,6 +246,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val ignoreMppAndroidSourceSetLayoutVersion: Boolean
         get() = booleanProperty(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN) ?: false
 
+    val ignoreMppAndroidSourceSetLayoutV2AndroidStyleDirs: Boolean
+        get() = booleanProperty(KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN) ?: false
+
     val ignoreDisabledCInteropCommonization: Boolean
         get() = booleanProperty("$KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION.nowarn") ?: false
 
@@ -235,8 +261,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * By default individual test tasks will not fail build if this task will be executed,
      * also individual html and xml reports will replaced by one consolidated html report.
      */
-    val individualTaskReports: Boolean?
-        get() = booleanProperty("kotlin.tests.individualTaskReports")
+    val individualTaskReports: Boolean
+        get() = booleanProperty("kotlin.tests.individualTaskReports") ?: false
 
     /**
      * Allow a user to choose distribution type. The following distribution types are available:
@@ -253,6 +279,14 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     val nativeBaseDownloadUrl: String
         get() = this.property("kotlin.native.distribution.baseDownloadUrl") ?: NativeCompilerDownloader.BASE_DOWNLOAD_URL
+
+    /**
+     * Allows downloading Kotlin/Native distribution with maven.
+     *
+     * Makes downloader search for bundles in maven repositories specified in the project.
+     */
+    val nativeDownloadFromMaven: Boolean
+        get() = this.booleanProperty("kotlin.native.distribution.downloadFromMaven") ?: false
 
     /**
      * A property that was used to choose a restricted distribution in 1.3.
@@ -351,6 +385,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val enableIntransitiveMetadataConfiguration: Boolean
         get() = booleanProperty("kotlin.mpp.enableIntransitiveMetadataConfiguration") ?: false
 
+    val enableSlowIdeSourcesJarResolver: Boolean
+        get() = booleanProperty(KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER) ?: true
+
     /**
      * Dependencies caching strategy for all targets that support caches.
      */
@@ -362,6 +399,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
      */
     fun nativeCacheKindForTarget(target: KonanTarget): NativeCacheKind? =
         this.property("kotlin.native.cacheKind.${target.presetName}")?.let { NativeCacheKind.byCompilerArgument(it) }
+
+    /**
+     * Dependencies caching orchestration machinery.
+     */
+    val nativeCacheOrchestration: NativeCacheOrchestration?
+        get() = this.property(PropertyNames.KOTLIN_NATIVE_CACHE_ORCHESTRATION)?.let { NativeCacheOrchestration.byCompilerArgument(it) }
 
     /**
      * Ignore overflow in [org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler]
@@ -403,24 +446,32 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val stdlibDefaultDependency: Boolean
         get() = booleanProperty(KOTLIN_STDLIB_DEFAULT_DEPENDENCY) ?: true
 
-    val stdlibJdkVariantsSubstitution: Boolean
-        get() = booleanProperty(KOTLIN_STDLIB_JDK_VARIANTS_SUBSTITUTION) ?: true
+    val stdlibJdkVariantsVersionAlignment: Boolean
+        get() = booleanProperty(KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT) ?: true
 
     val kotlinTestInferJvmVariant: Boolean
         get() = booleanProperty("kotlin.test.infer.jvm.variant") ?: true
+
+    val kotlinOptionsSuppressFreeArgsModificationWarning: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING) ?: false
 
     enum class JvmTargetValidationMode {
         IGNORE, WARNING, ERROR
     }
 
     val jvmTargetValidationMode: JvmTargetValidationMode
-        get() = enumProperty("kotlin.jvm.target.validation.mode", JvmTargetValidationMode.WARNING)
+        get() = enumProperty(
+            "kotlin.jvm.target.validation.mode",
+            if (GradleVersion.current().baseVersion >= GradleVersion.version("8.0")) JvmTargetValidationMode.ERROR else JvmTargetValidationMode.WARNING
+        )
 
     val kotlinDaemonJvmArgs: String?
         get() = this.property("kotlin.daemon.jvmargs")
 
     val kotlinCompilerExecutionStrategy: KotlinCompilerExecutionStrategy
-        get() = KotlinCompilerExecutionStrategy.fromProperty(this.property("kotlin.compiler.execution.strategy")?.toLowerCase())
+        get() = KotlinCompilerExecutionStrategy.fromProperty(
+            this.property("kotlin.compiler.execution.strategy")?.toLowerCaseAsciiOnly()
+        )
 
     val kotlinDaemonUseFallbackStrategy: Boolean
         get() = booleanProperty("kotlin.daemon.useFallbackStrategy") ?: true
@@ -446,7 +497,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
     private inline fun <reified T : Enum<T>> enumProperty(
         propName: String,
         defaultValue: T
-    ): T = this.property(propName)?.let { enumValueOf<T>(it.toUpperCase()) } ?: defaultValue
+    ): T = this.property(propName)?.let { enumValueOf<T>(it.toUpperCaseAsciiOnly()) } ?: defaultValue
 
     /**
      * Looks up the property in the following sources with decreasing priority:
@@ -478,7 +529,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     object PropertyNames {
         const val KOTLIN_STDLIB_DEFAULT_DEPENDENCY = "kotlin.stdlib.default.dependency"
-        const val KOTLIN_STDLIB_JDK_VARIANTS_SUBSTITUTION = "kotlin.stdlib.jdk.variants.substitution"
+        const val KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT = "kotlin.stdlib.jdk.variants.version.alignment"
         const val KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA = "kotlin.mpp.enableGranularSourceSetsMetadata"
         const val KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION = "kotlin.mpp.enableCInteropCommonization"
         const val KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT = "kotlin.internal.mpp.hierarchicalStructureByDefault"
@@ -486,13 +537,17 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN = "kotlin.mpp.androidGradlePluginCompatibility.nowarn"
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION = "kotlin.mpp.androidSourceSetLayoutVersion"
         const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN = "${KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION}1.nowarn"
+        const val KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN = "kotlin.mpp.androidSourceSetLayoutV2AndroidStyleDirs.nowarn"
+        const val KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER = "kotlin.mpp.import.enableSlowSourcesJarResolver"
         const val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = "kotlin.native.enableDependencyPropagation"
+        const val KOTLIN_NATIVE_CACHE_ORCHESTRATION = "kotlin.native.cacheOrchestration"
         const val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = "kotlin.mpp.enableOptimisticNumberCommonization"
         const val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = "kotlin.mpp.enablePlatformIntegerCommonization"
         const val KOTLIN_ABI_SNAPSHOT = "kotlin.incremental.classpath.snapshot.enabled"
         const val KOTLIN_JS_KARMA_BROWSERS = "kotlin.js.browser.karma.browsers"
         const val KOTLIN_BUILD_REPORT_SINGLE_FILE = "kotlin.build.report.single_file"
         const val KOTLIN_BUILD_REPORT_HTTP_URL = "kotlin.build.report.http.url"
+        const val KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING = "kotlin.options.suppressFreeCompilerArgsModificationWarning"
     }
 
     companion object {

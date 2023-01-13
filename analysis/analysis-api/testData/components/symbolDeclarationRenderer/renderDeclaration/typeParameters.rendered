@@ -10,7 +10,7 @@ typealias AnyList = List<*>
 
 abstract class AbstractList<out T : Any> : List<T>
 
-class SomeList : AbstractList<Int> {
+class SomeList : AbstractList<Int>() {
   override infix fun concat(other: List<Int>): List<Int>
 
   override operator fun get(index: Int): Int

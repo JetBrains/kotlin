@@ -1,6 +1,6 @@
 Usage: kotlinc-js <options> <source files>
 where advanced options include:
-  -Xcache-directories=<path> A path to cache directories
+  -Xcache-directory=<path>   A path to cache directory
   -Xenable-js-scripting      Enable experimental support of .kts files using K/JS (with -Xir only)
   -Xerror-tolerance-policy   Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)
   -Xenable-extension-functions-in-externals
@@ -50,6 +50,7 @@ where advanced options include:
   -Xwasm-enable-array-range-checks
                              Turn on range checks for the array access functions
   -Xwasm-enable-asserts      Turn on asserts
+  -Xwasm-generate-wat        Generate wat file
   -Xwasm-kclass-fqn          Enable support for FQ names in KClass
   -Xallow-any-scripts-in-source-roots
                              Allow to compile any scripts along with regular Kotlin sources
@@ -89,7 +90,6 @@ where advanced options include:
   -Xlist-phases              List backend phases
   -Xmetadata-version         Change metadata version of the generated binary files
   -Xmulti-platform           Enable experimental language support for multi-platform projects
-  -Xexclude-from-dumping     Names of elements that should not be dumped
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects
   -Xno-inline                Disable method inlining

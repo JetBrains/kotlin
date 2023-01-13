@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirIdenticalChecker
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
+import org.jetbrains.kotlin.test.runners.enableLazyResolvePhaseChecking
 import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 
 abstract class AbstractFirParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
         baseFirDiagnosticTestConfiguration()
+        enableLazyResolvePhaseChecking()
 
         defaultDirectives {
             +FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
@@ -28,6 +30,7 @@ abstract class AbstractFirParcelizeDiagnosticTest : AbstractKotlinCompilerTest()
             ::FirIdenticalChecker,
             ::FirFailingTestSuppressor,
         )
+
         useMetaTestConfigurators(::FirOldFrontendMetaConfigurator)
     }
 }

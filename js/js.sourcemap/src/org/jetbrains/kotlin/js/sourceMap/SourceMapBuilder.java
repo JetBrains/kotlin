@@ -10,8 +10,6 @@ import java.io.File;
 public interface SourceMapBuilder extends SourceMapMappingConsumer {
     void skipLinesAtBeginning(int count);
 
-    void addLink();
-
     File getOutFile();
 
     String build();

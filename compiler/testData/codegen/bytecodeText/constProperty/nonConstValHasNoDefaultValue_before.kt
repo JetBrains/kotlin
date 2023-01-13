@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM_IR
 // ^ Disables a language feature introduced in 1.4. This test checks old backend's behavior and is needed as long as we support language version 1.3.
-// IGNORE_BACKEND_FIR: JVM_IR
 // FIR status: don't support legacy feature
 // !LANGUAGE: -NoConstantValueAttributeForNonConstVals
 

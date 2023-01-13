@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class State {
     private final int someInt = 0;
@@ -35,16 +33,14 @@ public final class State {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class State2 {
     @kotlin.jvm.JvmField()
     public final int someInt = 0;
     @kotlin.jvm.JvmField()
     public final long someLong = 0L;
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmField()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String someString = null;
 
     @kotlin.jvm.JvmOverloads()

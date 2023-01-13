@@ -28,7 +28,7 @@ fun equalsFalse(x: Any?) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
-        x.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 }
 
@@ -52,7 +52,7 @@ fun notEqualsTrue(x: Any?) {
 
 fun notEqualsFalse(x: Any?) {
     if (safeIsString(x) != false) {
-        x.length
+        x.<!UNRESOLVED_REFERENCE!>length<!>
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>

@@ -33,16 +33,46 @@ open class FirDependenciesSymbolProviderImpl(session: FirSession) : FirDependenc
     protected open val dependencyProviders by lazy {
         val moduleData =
             session.nullableModuleData ?: error("FirDependenciesSymbolProvider should not be created if there are no dependencies")
-        val result = (moduleData.dependencies + moduleData.friendDependencies + moduleData.dependsOnDependencies)
+        val visited = mutableSetOf<FirSymbolProvider>()
+        (moduleData.dependencies + moduleData.friendDependencies + moduleData.dependsOnDependencies)
             .mapNotNull { session.sessionProvider?.getSession(it) }
-            .sortedBy { it.kind }
             .map { it.symbolProvider }
-        result.flatMap {
-            when (it) {
-                is FirCompositeSymbolProvider -> it.providers
-                else -> listOf(it)
+            .flatMap { it.flatten(visited, collectSourceProviders = it.session.kind == FirSession.Kind.Source) }
+            .sortedBy { it.session.kind }
+    }
+
+    /* It eliminates dependency and composite providers since the current dependency provider is composite in fact.
+    *  To prevent duplications and resolving errors, library or source providers from other modules should be filtered out during flattening.
+    *  It depends on the session's kind of the top-level provider */
+    private fun FirSymbolProvider.flatten(
+        visited: MutableSet<FirSymbolProvider>,
+        collectSourceProviders: Boolean
+    ): List<FirSymbolProvider> {
+        val result = mutableListOf<FirSymbolProvider>()
+
+        fun FirSymbolProvider.collectProviders() {
+            if (!visited.add(this)) return
+            when {
+                this is FirDependenciesSymbolProviderImpl -> {
+                    for (provider in dependencyProviders) {
+                        provider.collectProviders()
+                    }
+                }
+                this is FirCompositeSymbolProvider -> {
+                    for (provider in providers) {
+                        provider.collectProviders()
+                    }
+                }
+                collectSourceProviders && session.kind == FirSession.Kind.Source ||
+                        !collectSourceProviders && session.kind == FirSession.Kind.Library -> {
+                    result.add(this)
+                }
             }
         }
+
+        collectProviders()
+
+        return result
     }
 
     @OptIn(FirSymbolProviderInternals::class)

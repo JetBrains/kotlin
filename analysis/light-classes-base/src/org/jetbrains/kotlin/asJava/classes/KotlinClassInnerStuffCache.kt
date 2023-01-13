@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -31,6 +32,7 @@ class KotlinClassInnerStuffCache(
     private val myClass: KtExtensibleLightClass,
     private val dependencies: List<Any>,
     private val lazyCreator: LazyCreator,
+    private val generateEnumMethods: Boolean = true,
 ) {
     abstract class LazyCreator {
         abstract fun <T : Any> get(initializer: () -> T, dependencies: List<Any>): Lazy<T>
@@ -55,13 +57,14 @@ class KotlinClassInnerStuffCache(
     private val methodsCache = cache {
         val own = myClass.ownMethods
         var ext = collectAugments(myClass, PsiMethod::class.java)
-        if (myClass.isEnum) {
+        if (generateEnumMethods && myClass.isEnum) {
             ext = ArrayList<PsiMethod>(ext.size + 2).also {
                 it += ext
                 it.addIfNotNull(getValuesMethod())
                 it.addIfNotNull(getValueOfMethod())
             }
         }
+
         ArrayUtil.mergeCollections(own, ext, PsiMethod.ARRAY_FACTORY)
     }
 
@@ -76,14 +79,6 @@ class KotlinClassInnerStuffCache(
 
     val innerClasses: Array<out PsiClass>
         get() = copy(innerClassesCache.value)
-
-    private val recordComponentsCache = cache {
-        val header = myClass.recordHeader
-        header?.recordComponents ?: PsiRecordComponent.EMPTY_ARRAY
-    }
-
-    val recordComponents: Array<PsiRecordComponent>
-        get() = copy(recordComponentsCache.value)
 
     private val fieldByNameCache = cache {
         val fields = this.fields.takeIf { it.isNotEmpty() } ?: return@cache emptyMap()
@@ -172,16 +167,33 @@ private class KotlinEnumSyntheticMethod(
     private val kind: Kind
 ) : LightElement(enumClass.manager, enumClass.language), KtLightMethod, SyntheticElement {
     enum class Kind(val methodName: String) {
-        VALUE_OF("valueOf"), VALUES("values")
+        VALUE_OF("valueOf"), VALUES("values"), ENTRIES("getEntries"),
     }
 
     private val returnType = run {
-        val enumType = JavaPsiFacade.getElementFactory(project).createType(enumClass)
+        val elementFactory = JavaPsiFacade.getElementFactory(project)
+        val enumTypeWithoutAnnotation = elementFactory.createType(enumClass)
+        val enumType = enumTypeWithoutAnnotation
             .annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
 
         when (kind) {
             Kind.VALUE_OF -> enumType
             Kind.VALUES -> enumType.createArrayType().annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
+            Kind.ENTRIES -> {
+                val enumEntriesClass = JavaPsiFacade.getInstance(project).findClass(
+                    /* qualifiedName = */ StandardClassIds.EnumEntries.asFqNameString(),
+                    /* scope = */ resolveScope
+                )
+                val type = if (enumEntriesClass != null) {
+                    elementFactory.createType(enumEntriesClass, enumTypeWithoutAnnotation)
+                } else {
+                    elementFactory.createTypeFromText(
+                        /* text = */ "${StandardClassIds.EnumEntries.asFqNameString()}<${enumClass.qualifiedName}>",
+                        /* context = */ enumClass,
+                    )
+                }
+                type.annotate { arrayOf(makeNotNullAnnotation(enumClass)) }
+            }
         }
     }
 
@@ -197,7 +209,7 @@ private class KotlinEnumSyntheticMethod(
                 override fun getText(): String = name
                 override fun getTextRange(): TextRange = TextRange.EMPTY_RANGE
             }
-            nameParameter.setModifierList(NotNullModifierList(manager))
+
             addParameter(nameParameter)
         }
     }
@@ -226,13 +238,13 @@ private class KotlinEnumSyntheticMethod(
     override fun getReturnTypeElement(): PsiTypeElement? = null
     override fun getParameterList(): PsiParameterList = parameterList
 
-    override fun getThrowsList(): PsiReferenceList {
-        return LightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST).apply {
+    override fun getThrowsList(): PsiReferenceList =
+        LightReferenceListBuilder(manager, language, PsiReferenceList.Role.THROWS_LIST).apply {
             if (kind == Kind.VALUE_OF) {
-                addReference("java.lang.IllegalArgumentException")
+                addReference(java.lang.IllegalArgumentException::class.qualifiedName)
+                addReference(java.lang.NullPointerException::class.qualifiedName)
             }
         }
-    }
 
     override fun getParent(): PsiElement = enumClass
     override fun getContainingClass(): KtExtensibleLightClass = enumClass
@@ -284,11 +296,9 @@ private class KotlinEnumSyntheticMethod(
 private val PsiClass.isAnonymous: Boolean
     get() = name == null || this is PsiAnonymousClass
 
-private class NotNullModifierList(manager: PsiManager) : LightModifierList(manager) {
-    private val annotation = PsiElementFactory.getInstance(project).createAnnotationFromText("@" + NotNull::class.java.name, context)
-    override fun getAnnotations() = arrayOf(annotation)
-}
-
 private fun <T> copy(value: Array<T>): Array<T> {
     return if (value.isEmpty()) value else value.clone()
 }
+
+fun getEnumEntriesPsiMethod(enumClass: KtExtensibleLightClass): PsiMethod =
+    KotlinEnumSyntheticMethod(enumClass, KotlinEnumSyntheticMethod.Kind.ENTRIES)

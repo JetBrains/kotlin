@@ -1,6 +1,9 @@
 package
 
+public fun test(): kotlin.Unit
+
 package bar {
+    public fun test(): kotlin.Unit
 
     public final class Impl : foo.Derived {
         public constructor Impl()
@@ -22,6 +25,7 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public open fun baz(): kotlin.Unit
         protected/*protected static*/ open fun foo(): kotlin.Unit
     }
 
@@ -33,6 +37,7 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public open override /*1*/ /*fake_override*/ fun baz(): kotlin.Unit
         protected/*protected static*/ open override /*1*/ /*fake_override*/ fun foo(): kotlin.Unit
     }
 }

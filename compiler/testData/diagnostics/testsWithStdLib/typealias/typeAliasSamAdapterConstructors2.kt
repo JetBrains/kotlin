@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: JHost.java
 public class JHost {
     public static interface Runnable {

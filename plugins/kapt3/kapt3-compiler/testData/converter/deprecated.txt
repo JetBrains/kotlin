@@ -1,9 +1,7 @@
 package deprecated;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
 @java.lang.Deprecated()
 public abstract @interface Anno {
 }
@@ -12,10 +10,8 @@ public abstract @interface Anno {
 
 package deprecated;
 
-import java.lang.System;
-
-@kotlin.Metadata()
 @Anno()
+@kotlin.Metadata()
 @java.lang.Deprecated()
 public final class Foo {
     @java.lang.Deprecated()

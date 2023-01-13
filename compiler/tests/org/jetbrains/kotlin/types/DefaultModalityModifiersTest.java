@@ -92,8 +92,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
 
         @NotNull
         private LexicalScope createScope(@NotNull MemberScope libraryScope) {
-            KtFile file =
-                    KtPsiFactoryKt.KtPsiFactory(getProject()).createFile("abstract class C { abstract fun foo(); abstract val a: Int }");
+            KtFile file = new KtPsiFactory(getProject()).createFile("abstract class C { abstract fun foo(); abstract val a: Int }");
             KtDeclaration aClass = file.getDeclarations().get(0);
             assert aClass instanceof KtClass;
             AnalysisResult bindingContext = JvmResolveUtil.analyzeAndCheckForErrors(file, getEnvironment());
@@ -129,7 +128,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
         }
 
         private void testClassModality(String classDeclaration, ClassKind kind, Modality expectedModality) {
-            KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(classDeclaration);
+            KtClass aClass = new KtPsiFactory(getProject()).createClass(classDeclaration);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
             assertEquals(expectedModality, classDescriptor.getModality());
@@ -137,7 +136,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
 
 
         private void testFunctionModality(String classWithFunction, ClassKind kind, Modality expectedFunctionModality) {
-            KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(classWithFunction);
+            KtClass aClass = new KtPsiFactory(getProject()).createClass(classWithFunction);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
             List<KtDeclaration> declarations = aClass.getDeclarations();
@@ -150,7 +149,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
         }
 
         private void testPropertyModality(String classWithProperty, ClassKind kind, Modality expectedPropertyModality) {
-            KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(classWithProperty);
+            KtClass aClass = new KtPsiFactory(getProject()).createClass(classWithProperty);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
             List<KtDeclaration> declarations = aClass.getDeclarations();
@@ -166,7 +165,7 @@ public class DefaultModalityModifiersTest extends KotlinTestWithEnvironment {
 
 
         private void testPropertyAccessorModality(String classWithPropertyWithAccessor, ClassKind kind, Modality expectedPropertyAccessorModality, boolean isGetter) {
-            KtClass aClass = KtPsiFactoryKt.KtPsiFactory(getProject()).createClass(classWithPropertyWithAccessor);
+            KtClass aClass = new KtPsiFactory(getProject()).createClass(classWithPropertyWithAccessor);
             ClassDescriptorWithResolutionScopes classDescriptor = createClassDescriptor(kind, aClass);
 
             List<KtDeclaration> declarations = aClass.getDeclarations();

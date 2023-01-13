@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -29,9 +30,21 @@ internal class KtFirAnnotationListForDeclaration private constructor(
                 }
         }
 
+    override fun hasAnnotation(
+        classId: ClassId,
+        useSiteTarget: AnnotationUseSiteTarget?,
+        acceptAnnotationsWithoutUseSite: Boolean,
+    ): Boolean = withValidityAssertion {
+        firSymbol.resolvedAnnotationsWithClassIds.any {
+            (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) &&
+                    it.fullyExpandedClassId(useSiteSession) == classId
+        }
+    }
 
     override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
-        firSymbol.resolvedAnnotationClassIds.contains(classId)
+        firSymbol.resolvedAnnotationsWithClassIds.any {
+            it.fullyExpandedClassId(useSiteSession) == classId
+        }
     }
 
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
@@ -51,7 +64,7 @@ internal class KtFirAnnotationListForDeclaration private constructor(
             useSiteSession: FirSession,
             token: KtLifetimeToken,
         ): KtAnnotationsList {
-            return if (firSymbol.annotations.isEmpty()) {
+            return if (firSymbol.resolvedAnnotationsWithArguments.isEmpty()) {
                 KtEmptyAnnotationsList(token)
             } else {
                 KtFirAnnotationListForDeclaration(firSymbol, useSiteSession, token)

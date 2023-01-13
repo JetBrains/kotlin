@@ -35,6 +35,7 @@ public:
         void SafePointFunctionPrologue() noexcept;
         void SafePointLoopBody() noexcept;
 
+        void Schedule() noexcept;
         void ScheduleAndWaitFullGC() noexcept;
         void ScheduleAndWaitFullGCWithFinalizers() noexcept;
 
@@ -42,7 +43,7 @@ public:
         void ClearForTests() noexcept;
 
         ObjHeader* CreateObject(const TypeInfo* typeInfo) noexcept;
-        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements);
+        ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t elements) noexcept;
 
         void OnStoppedForGC() noexcept;
         void OnSuspendForGC() noexcept;

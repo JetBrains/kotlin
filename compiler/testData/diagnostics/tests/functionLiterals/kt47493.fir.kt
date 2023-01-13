@@ -1,3 +1,4 @@
+// IGNORE_LEAKED_INTERNAL_TYPES: KT-54568
 fun test1() {
     try {
         { toDouble ->

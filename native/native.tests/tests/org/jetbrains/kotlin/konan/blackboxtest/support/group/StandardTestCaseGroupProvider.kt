@@ -48,6 +48,13 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
 
             val testCases = includedTestDataFiles.map { testDataFile -> createTestCase(testDataFile, settings) }
 
+            val lldbTestCases = testCases.filter { it.kind == TestKind.STANDALONE_LLDB }
+            if (lldbTestCases.isNotEmpty()
+                && (settings.get<OptimizationMode>() != OptimizationMode.DEBUG || !settings.get<LLDB>().isAvailable)
+            ) {
+                lldbTestCases.mapTo(disabledTestCaseIds) { it.id }
+            }
+
             TestCaseGroup.Default(disabledTestCaseIds, testCases)
         }
     }
@@ -200,6 +207,14 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             fixPackageNames(testModules.values, nominalPackageName, testDataFile)
         }
 
+        val lldbSpec = if (testKind == TestKind.STANDALONE_LLDB)
+            parseLLDBSpec(
+                baseDir = testDataFile.parentFile,
+                registeredDirectives,
+                location
+            )
+        else null
+
         val testCase = TestCase(
             id = TestCaseId.TestDataFile(testDataFile),
             kind = testKind,
@@ -209,17 +224,31 @@ internal class StandardTestCaseGroupProvider : TestCaseGroupProvider {
             checks = TestRunChecks(
                 computeExecutionTimeoutCheck(settings, expectedTimeoutFailure),
                 computeExitCodeCheck(testKind, registeredDirectives, location),
-                computeOutputDataFileCheck(testDataFile, registeredDirectives, location)
+                computeOutputDataFileCheck(testDataFile, registeredDirectives, location),
+                lldbSpec?.let { OutputMatcher { output -> lldbSpec.checkLLDBOutput(output, settings.get()) } }
             ),
-            extras = if (testKind == TestKind.STANDALONE_NO_TR)
-                NoTestRunnerExtras(
-                    entryPoint = parseEntryPoint(registeredDirectives, location),
-                    inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
-                )
-            else
-                WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives, location))
+            extras = when (testKind) {
+                TestKind.STANDALONE_NO_TR -> {
+                    NoTestRunnerExtras(
+                        entryPoint = parseEntryPoint(registeredDirectives, location),
+                        inputDataFile = parseInputDataFile(baseDir = testDataFile.parentFile, registeredDirectives, location)
+                    )
+                }
+                TestKind.REGULAR, TestKind.STANDALONE -> {
+                    WithTestRunnerExtras(runnerType = parseTestRunner(registeredDirectives, location))
+                }
+                TestKind.STANDALONE_LLDB -> {
+                    NoTestRunnerExtras(
+                        entryPoint = parseEntryPoint(registeredDirectives, location),
+                        arguments = lldbSpec!!.generateCLIArguments(settings.get<LLDB>().prettyPrinters)
+                    )
+                }
+            }
         )
-        testCase.initialize(findSharedModule = null)
+        testCase.initialize(
+            givenModules = settings.get<CustomKlibs>().klibs.mapToSet(TestModule::Given),
+            findSharedModule = null
+        )
 
         return testCase
     }

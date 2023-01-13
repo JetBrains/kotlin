@@ -8,7 +8,7 @@ FILE: delegatedSuperType.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override fun foo(): R|kotlin/Unit| {
+        public open override fun foo(): R|kotlin/Unit| {
         }
 
     }
@@ -17,7 +17,7 @@ FILE: delegatedSuperType.kt
             super<R|kotlin/Any|>()
         }
 
-        local final field <$$delegate_0>: R|A| = R|<local>/b|
+        private final field $$delegate_0: R|A| = R|<local>/b|
 
         public final val b: R|B| = R|<local>/b|
             public get(): R|B|

@@ -1,0 +1,2 @@
+headers = w/w.h
+compilerOpts = -Ilibs/include

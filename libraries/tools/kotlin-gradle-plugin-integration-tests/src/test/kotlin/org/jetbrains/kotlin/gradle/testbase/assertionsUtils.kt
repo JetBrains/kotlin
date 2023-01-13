@@ -18,3 +18,5 @@ internal fun BuildResult.printBuildOutput() {
         """.trimMargin()
     )
 }
+
+internal fun String.normalizeLineEndings(): String = replace("\n", System.lineSeparator())

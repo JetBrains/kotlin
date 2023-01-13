@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 typealias TopLevelInScript = String
 
 class C {

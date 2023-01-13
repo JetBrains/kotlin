@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirPackageDirective
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.ROOT_PREFIX_FOR_IDE_RESOLUTION_MODE
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -23,19 +25,21 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -44,6 +48,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object FirReferenceResolveHelper {
@@ -214,7 +219,30 @@ internal object FirReferenceResolveHelper {
                 getSymbolByDelegatedConstructorCall(expression, adjustedResolutionExpression, fir, session, symbolBuilder)
             is FirResolvable -> getSymbolsByResolvable(fir, expression, session, symbolBuilder)
             is FirNamedArgumentExpression -> getSymbolsByNameArgumentExpression(expression, analysisSession, symbolBuilder)
+            is FirEqualityOperatorCall -> getSymbolsByEqualsName(fir, session, analysisSession, symbolBuilder)
             else -> handleUnknownFirElement(expression, analysisSession, session, symbolBuilder)
+        }
+    }
+
+    private fun getSymbolsByEqualsName(
+        expression: FirEqualityOperatorCall,
+        session: FirSession,
+        analysisSession: KtFirAnalysisSession,
+        symbolBuilder: KtSymbolByFirBuilder
+    ): Collection<KtSymbol> {
+        val lhs = expression.arguments.firstOrNull() ?: return emptyList()
+        val scope = lhs.typeRef.coneType.scope(
+            session,
+            analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
+            FakeOverrideTypeCalculator.DoNothing
+        ) ?: return emptyList()
+        return buildList {
+            scope.processFunctionsByName(OperatorNameConventions.EQUALS) { functionSymbol ->
+                val parameterSymbol = functionSymbol.valueParameterSymbols.singleOrNull()
+                if (parameterSymbol != null && parameterSymbol.fir.returnTypeRef.isNullableAny) {
+                    add(functionSymbol.buildSymbol(symbolBuilder))
+                }
+            }
         }
     }
 
@@ -237,7 +265,7 @@ internal object FirReferenceResolveHelper {
             // FirConstructor.originalConstructorIfTypeAlias but that doesn't seem to help here as it
             // is null for the constructors we get.
             val constructedType = fir.constructedTypeRef.coneType
-            val constructorReturnType = (fir.calleeReference.resolvedSymbol as? FirConstructorSymbol)?.resolvedReturnTypeRef?.type
+            val constructorReturnType = fir.calleeReference.toResolvedConstructorSymbol()?.resolvedReturnTypeRef?.type
             if (constructedType.classId != constructorReturnType?.classId) {
                 return getSymbolsForResolvedTypeRef(fir.constructedTypeRef as FirResolvedTypeRef, expression, session, symbolBuilder)
             }
@@ -315,7 +343,7 @@ internal object FirReferenceResolveHelper {
     }
 
     private fun FirCall.findCorrespondingParameter(ktValueArgument: KtValueArgument): FirValueParameter? =
-        argumentMapping?.entries?.firstNotNullOfOrNull { (firArgument, firParameter) ->
+        resolvedArgumentMapping?.entries?.firstNotNullOfOrNull { (firArgument, firParameter) ->
             if (firArgument.psi == ktValueArgument) firParameter
             else null
         }
@@ -387,7 +415,8 @@ internal object FirReferenceResolveHelper {
         symbolBuilder: KtSymbolByFirBuilder
     ): Collection<KtSymbol> {
         return if (expression is KtLabelReferenceExpression) {
-            listOf(fir.target.labeledElement.buildSymbol(symbolBuilder))
+            val labeledElement = fir.target.labeledElement
+            if (labeledElement is FirErrorFunction) emptyList() else listOf(labeledElement.buildSymbol(symbolBuilder))
         } else emptyList()
     }
 

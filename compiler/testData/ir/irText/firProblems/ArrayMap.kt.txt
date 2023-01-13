@@ -303,26 +303,26 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       override get
 
     operator fun component1(): Int {
-      return <this>.<get-key>()
+      return <this>.#key
     }
 
     operator fun component2(): T {
-      return <this>.<get-value>()
+      return <this>.#value
     }
 
-    fun copy(key: Int = <this>.<get-key>(), value: T = <this>.<get-value>()): Entry<T> {
+    fun copy(key: Int = <this>.#key, value: T = <this>.#value): Entry<T> {
       return Entry<T>(key = key, value = value)
     }
 
     override fun toString(): String {
-      return "Entry(" + "key=" + <this>.<get-key>() + ", " + "value=" + <this>.<get-value>() + ")"
+      return "Entry(" + "key=" + <this>.#key + ", " + "value=" + <this>.#value + ")"
     }
 
     override fun hashCode(): Int {
-      var result: Int = <this>.<get-key>().hashCode()
+      var result: Int = <this>.#key.hashCode()
       result = result.times(other = 31).plus(other = when {
-        EQEQ(arg0 = <this>.<get-value>(), arg1 = null) -> 0
-        else -> <this>.<get-value>().hashCode()
+        EQEQ(arg0 = <this>.#value, arg1 = null) -> 0
+        else -> <this>.#value.hashCode()
       })
       return result
     }
@@ -336,10 +336,10 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       }
       val tmp0_other_with_cast: Entry<T> = other as Entry<T>
       when {
-        EQEQ(arg0 = <this>.<get-key>(), arg1 = tmp0_other_with_cast.<get-key>()).not() -> return false
+        EQEQ(arg0 = <this>.#key, arg1 = tmp0_other_with_cast.#key).not() -> return false
       }
       when {
-        EQEQ(arg0 = <this>.<get-value>(), arg1 = tmp0_other_with_cast.<get-value>()).not() -> return false
+        EQEQ(arg0 = <this>.#value, arg1 = tmp0_other_with_cast.#value).not() -> return false
       }
       return true
     }

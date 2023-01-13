@@ -302,7 +302,7 @@ __attribute__((swift_name("suspendFunctionChild1")))
  * @note This method converts instances of CancellationException to errors.
  * Other uncaught Kotlin exceptions are fatal.
 */
-- (void)invokeP1:(NSString *)s completionHandler:(void (^)(NSString * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("invoke(p1:completionHandler:)")));
+- (void)invokeP1:(NSString *)p1 completionHandler:(void (^)(NSString * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("invoke(p1:completionHandler:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1098,6 +1098,22 @@ __attribute__((swift_name("Kt54119Kt")))
 + (BOOL)callContainsEntryMap:(NSDictionary<id, id> *)map __attribute__((swift_name("callContainsEntry(map:)")));
 @end
 
+@interface KtKotlinSequenceScope (Kt55736Kt)
+
+/**
+ * @note This method converts instances of CancellationException to errors.
+ * Other uncaught Kotlin exceptions are fatal.
+*/
+- (void)fillWithCompletionHandler:(void (^)(NSError * _Nullable))completionHandler __attribute__((swift_name("fill(completionHandler:)")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt55736Kt")))
+@interface KtKt55736Kt : KtBase
++ (id<KtKotlinKSuspendFunction1>)getFillFunction __attribute__((swift_name("getFillFunction()")));
++ (NSArray<KtInt *> *)callbackBlock:(id<KtKotlinSuspendFunction1>)block __attribute__((swift_name("callback(block:)")));
+@end
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase
@@ -1269,8 +1285,8 @@ __attribute__((swift_name("ObjCNameAKt")))
 @interface KtObjCNameAKt : KtBase
 + (NSString *)withUserId:(NSString *)userId __attribute__((swift_name("with(userId:)")));
 + (BOOL)supportsFeatures:(BOOL)features __attribute__((swift_name("supports(_:)")));
-+ (NSString *)scanForPeripheralsWithServices:(int32_t)serviceUUIDs options:(NSString *)options __attribute__((swift_name("scanForPeripherals(withServices:options:)")));
-+ (NSString *)registerForConnectionEventsWithOptions:(NSString *)options __attribute__((swift_name("registerForConnectionEvents(options:)")));
++ (NSString *)scanForPeripheralsWithServices:(int32_t)withServices options:(NSString *)options __attribute__((swift_name("scanForPeripherals(withServices:options:)")));
++ (NSString *)registerForConnectionEventsWithOptions:(NSString *)withOptions __attribute__((swift_name("registerForConnectionEvents(options:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1286,14 +1302,14 @@ __attribute__((swift_name("MySwiftArray")))
 @interface KtMyObjCArray : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)indexOfObject:(int32_t)element __attribute__((swift_name("index(of:)")));
+- (int32_t)indexOfObject:(int32_t)object __attribute__((swift_name("index(of:)")));
 @property (readonly) int32_t count __attribute__((swift_name("count")));
 @end
 
 __attribute__((swift_name("ObjCNameI1")))
 @protocol KtObjCNameI1
 @required
-- (int32_t)someOtherFunction:(int32_t)receiver otherParam:(int32_t)param __attribute__((swift_name("someOtherFunction(_:otherParam:)")));
+- (int32_t)someOtherFunctionReceiver:(int32_t)receiver otherParam:(int32_t)otherParam __attribute__((swift_name("someOtherFunction(receiver:otherParam:)")));
 @property (readonly) int32_t someOtherValue __attribute__((swift_name("someOtherValue")));
 @end
 
@@ -1302,7 +1318,7 @@ __attribute__((swift_name("SwiftNameC2")))
 @interface KtObjCNameC2 : KtBase <KtObjCNameI1>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)someOtherFunction:(int32_t)receiver otherParam:(int32_t)param __attribute__((swift_name("someOtherFunction(_:otherParam:)")));
+- (int32_t)someOtherFunctionReceiver:(int32_t)receiver otherParam:(int32_t)otherParam __attribute__((swift_name("someOtherFunction(receiver:otherParam:)")));
 @property int32_t someOtherValue __attribute__((swift_name("someOtherValue")));
 @end
 
@@ -1342,7 +1358,7 @@ __attribute__((swift_name("ObjCNameC4")))
 @interface KtObjCNameC4 : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (int32_t)foo:(int32_t)receiver objCParam:(int32_t)param __attribute__((swift_name("foo(_:objCParam:)")));
+- (int32_t)fooObjCReceiver:(int32_t)receiver objCParam:(int32_t)objCParam __attribute__((swift_name("foo(objCReceiver:objCParam:)")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -1377,9 +1393,16 @@ __attribute__((swift_name("ObjCNameSwiftEnum.Companion")))
 @end
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ObjCAvoidPreprocessorName")))
+@interface KtObjCAvoidPreprocessorName : KtBase
+- (instancetype)initWithTime:(int32_t)time __attribute__((swift_name("init(time:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) int32_t time __attribute__((swift_name("time")));
+@end
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ObjCNameBKt")))
 @interface KtObjCNameBKt : KtBase
-+ (int32_t)getSomeValue:(id<KtObjCNameI1>)receiver __attribute__((swift_name("getSomeValue(_:)")));
++ (int32_t)getSomeValueOf:(id<KtObjCNameI1>)receiver __attribute__((swift_name("getSomeValue(of:)")));
 @end
 
 __attribute__((swift_name("OverrideKotlinMethods2")))
@@ -1462,6 +1485,20 @@ __attribute__((swift_name("OverrideMethodsOfAnyKt")))
 + (BOOL)testObj:(id)obj other:(id)other swift:(BOOL)swift error:(NSError * _Nullable * _Nullable)error __attribute__((swift_name("test(obj:other:swift:)")));
 @end
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("RecList")))
+@interface KtRecList<T> : KtBase
+- (instancetype)initWithValue:(NSArray<id> *)value __attribute__((swift_name("init(value:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) NSArray<id> *value __attribute__((swift_name("value")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("RecFunc")))
+@interface KtRecFunc<T> : KtBase
+- (instancetype)initWithValue:(id (^)(void))value __attribute__((swift_name("init(value:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) id (^value)(void) __attribute__((swift_name("value")));
+@end
+
 __attribute__((swift_name("RefinedClassA")))
 @interface KtRefinedClassA : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
@@ -1541,6 +1578,33 @@ __attribute__((swift_name("Person.WorkerContractor")))
 - (NSString *)description __attribute__((swift_name("description()")));
 - (KtPersonWorkerContractor *)doCopyId:(int32_t)id __attribute__((swift_name("doCopy(id:)")));
 @property (readonly) int32_t id __attribute__((swift_name("id")));
+@end
+
+__attribute__((swift_name("SwiftNameManglingI1")))
+@protocol KtSwiftNameManglingI1
+@required
+- (int32_t)clashingMethod __attribute__((swift_name("clashingMethod()")));
+- (int32_t)clashingMethodWithObjCNameInI1 __attribute__((swift_name("swiftClashingMethodWithObjCNameInI1()")));
+- (int32_t)swiftClashingMethodWithObjCNameInI2 __attribute__((swift_name("swiftClashingMethodWithObjCNameInI2()")));
+- (int32_t)clashingMethodWithObjCNameInBoth __attribute__((swift_name("swiftClashingMethodWithObjCNameInBoth()")));
+@property (readonly) int32_t clashingProperty __attribute__((swift_name("clashingProperty")));
+@end
+
+__attribute__((swift_name("SwiftNameManglingI2")))
+@protocol KtSwiftNameManglingI2
+@required
+- (id)clashingMethod __attribute__((swift_name("clashingMethod()")));
+- (id)swiftClashingMethodWithObjCNameInI1 __attribute__((swift_name("swiftClashingMethodWithObjCNameInI1()")));
+- (id)clashingMethodWithObjCNameInI2 __attribute__((swift_name("swiftClashingMethodWithObjCNameInI2()")));
+- (id)clashingMethodWithObjCNameInBoth __attribute__((swift_name("swiftClashingMethodWithObjCNameInBoth()")));
+@property (readonly) id clashingProperty __attribute__((swift_name("clashingProperty")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("SwiftNameManglingKt")))
+@interface KtSwiftNameManglingKt : KtBase
++ (id<KtSwiftNameManglingI1>)i1 __attribute__((swift_name("i1()")));
++ (id<KtSwiftNameManglingI2>)i2 __attribute__((swift_name("i2()")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -2170,16 +2234,16 @@ __attribute__((swift_name("TransformIntToString")))
 @interface KtTransformIntToString : KtBase <KtTransform, KtTransformIntString>
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (NSString *)mapValue:(KtInt *)intValue __attribute__((swift_name("map(value:)")));
-- (NSString *)mapIntValue:(int32_t)intValue __attribute__((swift_name("map(intValue:)")));
+- (NSString *)mapValue:(KtInt *)value __attribute__((swift_name("map(value:)")));
+- (NSString *)mapIntValue:(int32_t)value __attribute__((swift_name("map(intValue:)")));
 @end
 
 __attribute__((swift_name("TransformIntToDecimalString")))
 @interface KtTransformIntToDecimalString : KtTransformIntToString
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (NSString *)mapValue:(KtInt *)intValue __attribute__((swift_name("map(value:)")));
-- (NSString *)mapIntValue:(int32_t)intValue __attribute__((swift_name("map(intValue:)")));
+- (NSString *)mapValue:(KtInt *)value __attribute__((swift_name("map(value:)")));
+- (NSString *)mapIntValue:(int32_t)value __attribute__((swift_name("map(intValue:)")));
 @end
 
 __attribute__((swift_name("TransformIntToLong")))

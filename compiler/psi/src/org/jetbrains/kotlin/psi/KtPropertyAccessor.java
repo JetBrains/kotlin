@@ -140,7 +140,7 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
 
     @Override
     public KtContractEffectList getContractDescription() {
-        return findChildByType(KtNodeTypes.CONTRACT_EFFECT_LIST);
+        return getStubOrPsiChild(KtStubElementTypes.CONTRACT_EFFECT_LIST);
     }
 
     @Override

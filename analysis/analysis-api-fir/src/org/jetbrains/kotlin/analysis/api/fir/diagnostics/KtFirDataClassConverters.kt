@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -199,6 +200,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.WRONG_LONG_SUFFIX) { firDiagnostic ->
         WrongLongSuffixImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.UNSIGNED_LITERAL_WITHOUT_DECLARATIONS_ON_CLASSPATH) { firDiagnostic ->
+        UnsignedLiteralWithoutDeclarationsOnClasspathImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -591,6 +598,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.WRONG_MULTIPLE_INHERITANCE) { firDiagnostic ->
+        WrongMultipleInheritanceImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CONSTRUCTOR_IN_OBJECT) { firDiagnostic ->
         ConstructorInObjectImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -957,6 +971,127 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.ANNOTATION_IN_WHERE_CLAUSE_ERROR) { firDiagnostic ->
         AnnotationInWhereClauseErrorImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.PLUGIN_ANNOTATION_AMBIGUITY) { firDiagnostic ->
+        PluginAnnotationAmbiguityImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.WRONG_JS_QUALIFIER) { firDiagnostic ->
+        WrongJsQualifierImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR) { firDiagnostic ->
+        JsModuleProhibitedOnVarImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE) { firDiagnostic ->
+        JsModuleProhibitedOnNonNativeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NESTED_JS_MODULE_PROHIBITED) { firDiagnostic ->
+        NestedJsModuleProhibitedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED) { firDiagnostic ->
+        RuntimeAnnotationNotSupportedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION) { firDiagnostic ->
+        RuntimeAnnotationOnExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NATIVE_ANNOTATIONS_ALLOWED_ONLY_ON_MEMBER_OR_EXTENSION_FUN) { firDiagnostic ->
+        NativeAnnotationsAllowedOnlyOnMemberOrExtensionFunImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NATIVE_INDEXER_KEY_SHOULD_BE_STRING_OR_NUMBER) { firDiagnostic ->
+        NativeIndexerKeyShouldBeStringOrNumberImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NATIVE_INDEXER_WRONG_PARAMETER_COUNT) { firDiagnostic ->
+        NativeIndexerWrongParameterCountImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NATIVE_INDEXER_CAN_NOT_HAVE_DEFAULT_ARGUMENTS) { firDiagnostic ->
+        NativeIndexerCanNotHaveDefaultArgumentsImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NATIVE_GETTER_RETURN_TYPE_SHOULD_BE_NULLABLE) { firDiagnostic ->
+        NativeGetterReturnTypeShouldBeNullableImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NATIVE_SETTER_WRONG_RETURN_TYPE) { firDiagnostic ->
+        NativeSetterWrongReturnTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_NAME_IS_NOT_ON_ALL_ACCESSORS) { firDiagnostic ->
+        JsNameIsNotOnAllAccessorsImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_NAME_PROHIBITED_FOR_NAMED_NATIVE) { firDiagnostic ->
+        JsNameProhibitedForNamedNativeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_NAME_PROHIBITED_FOR_OVERRIDE) { firDiagnostic ->
+        JsNameProhibitedForOverrideImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED) { firDiagnostic ->
+        JsNameOnPrimaryConstructorProhibitedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_NAME_ON_ACCESSOR_AND_PROPERTY) { firDiagnostic ->
+        JsNameOnAccessorAndPropertyImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY) { firDiagnostic ->
+        JsNameProhibitedForExtensionPropertyImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -1363,6 +1498,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER) { firDiagnostic ->
+        MultiFieldValueClassPrimaryConstructorDefaultParameterImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS) { firDiagnostic ->
+        SecondaryConstructorWithBodyInsideValueClassImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS) { firDiagnostic ->
         ReservedMemberInsideValueClassImpl(
             firDiagnostic.a,
@@ -1370,8 +1517,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS) { firDiagnostic ->
-        SecondaryConstructorWithBodyInsideValueClassImpl(
+    add(FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS) { firDiagnostic ->
+        TypeArgumentOnTypedValueClassEqualsImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -1384,6 +1531,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.VALUE_CLASS_CANNOT_BE_CLONEABLE) { firDiagnostic ->
         ValueClassCannotBeCloneableImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET) { firDiagnostic ->
+        AnnotationOnIllegalMultiFieldValueClassTypedTargetImpl(
+            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -1409,6 +1563,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR) { firDiagnostic ->
+        TypeInferenceOnlyInputTypesErrorImpl(
+            firSymbolBuilder.classifierBuilder.buildTypeParameterSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -1914,6 +2075,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.IMPLICIT_NOTHING_RETURN_TYPE) { firDiagnostic ->
+        ImplicitNothingReturnTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE) { firDiagnostic ->
+        ImplicitNothingPropertyTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.CYCLIC_GENERIC_UPPER_BOUND) { firDiagnostic ->
         CyclicGenericUpperBoundImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -1932,8 +2105,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DYNAMIC_SUPERTYPE) { firDiagnostic ->
+        DynamicSupertypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.DYNAMIC_UPPER_BOUND) { firDiagnostic ->
         DynamicUpperBoundImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DYNAMIC_RECEIVER_NOT_ALLOWED) { firDiagnostic ->
+        DynamicReceiverNotAllowedImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -2815,6 +3000,37 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.LOCAL_VARIABLE_WITH_TYPE_PARAMETERS) { firDiagnostic ->
         LocalVariableWithTypeParametersImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS) { firDiagnostic ->
+        ExplicitTypeArgumentsInPropertyAccessImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LITERAL) { firDiagnostic ->
+        LateinitIntrinsicCallOnNonLiteralImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT) { firDiagnostic ->
+        LateinitIntrinsicCallOnNonLateinitImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION) { firDiagnostic ->
+        LateinitIntrinsicCallInInlineFunctionImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY) { firDiagnostic ->
+        LateinitIntrinsicCallOnNonAccessiblePropertyImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -3876,9 +4092,9 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_INLINE_CLASS) { firDiagnostic ->
-        InefficientEqualsOverridingInInlineClassImpl(
-            firDiagnostic.a,
+    add(FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS) { firDiagnostic ->
+        InefficientEqualsOverridingInValueClassImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -4517,6 +4733,155 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirJvmErrors.JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE) { firDiagnostic ->
         JavaSamInterfaceConstructorReferenceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJvmErrors.JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE) { firDiagnostic ->
+        JavaShadowedProtectedFieldReferenceImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE) { firDiagnostic ->
+        ImplementingFunctionInterfaceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS) { firDiagnostic ->
+        OverridingExternalFunWithOptionalParamsImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE) { firDiagnostic ->
+        OverridingExternalFunWithOptionalParamsWithFakeImpl(
+            firSymbolBuilder.functionLikeBuilder.buildFunctionSymbol(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION) { firDiagnostic ->
+        CallToDefinedExternallyFromNonExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER) { firDiagnostic ->
+        ExternalClassConstructorPropertyParameterImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.EXTERNAL_ENUM_ENTRY_WITH_BODY) { firDiagnostic ->
+        ExternalEnumEntryWithBodyImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.EXTERNAL_ANONYMOUS_INITIALIZER) { firDiagnostic ->
+        ExternalAnonymousInitializerImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.EXTERNAL_DELEGATION) { firDiagnostic ->
+        ExternalDelegationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.EXTERNAL_DELEGATED_CONSTRUCTOR_CALL) { firDiagnostic ->
+        ExternalDelegatedConstructorCallImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.WRONG_BODY_OF_EXTERNAL_DECLARATION) { firDiagnostic ->
+        WrongBodyOfExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION) { firDiagnostic ->
+        WrongInitializerOfExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER) { firDiagnostic ->
+        WrongDefaultValueForExternalFunParameterImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NESTED_EXTERNAL_DECLARATION) { firDiagnostic ->
+        NestedExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.WRONG_EXTERNAL_DECLARATION) { firDiagnostic ->
+        WrongExternalDeclarationImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE) { firDiagnostic ->
+        NestedClassInExternalInterfaceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE) { firDiagnostic ->
+        ExternalTypeExtendsNonExternalTypeImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.INLINE_EXTERNAL_DECLARATION) { firDiagnostic ->
+        InlineExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING) { firDiagnostic ->
+        InlineClassInExternalDeclarationWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION) { firDiagnostic ->
+        InlineClassInExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION) { firDiagnostic ->
+        ExtensionFunctionInExternalDeclarationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE) { firDiagnostic ->
+        NonAbstractMemberOfExternalInterfaceImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE) { firDiagnostic ->
+        NonExternalDeclarationInInappropriateFileImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.DELEGATION_BY_DYNAMIC) { firDiagnostic ->
+        DelegationByDynamicImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

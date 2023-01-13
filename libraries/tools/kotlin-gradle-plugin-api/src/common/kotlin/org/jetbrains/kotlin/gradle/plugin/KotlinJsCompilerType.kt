@@ -5,9 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import java.util.*
+
 enum class KotlinJsCompilerType {
+    @Deprecated("Legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
     LEGACY,
+
     IR,
+
+    @Deprecated("Legacy compiler is deprecated. Migrate your project to the new IR-based compiler")
     BOTH;
 
     companion object {
@@ -25,7 +31,7 @@ enum class KotlinJsCompilerType {
 }
 
 val KotlinJsCompilerType.lowerName
-    get() = name.toLowerCase()
+    get() = name.toLowerCase(Locale.ENGLISH)
 
 fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
     val truncatedString = removeSuffix(compilerType.lowerName)
@@ -33,5 +39,5 @@ fun String.removeJsCompilerSuffix(compilerType: KotlinJsCompilerType): String {
         return truncatedString
     }
 
-    return removeSuffix(compilerType.lowerName.capitalize())
+    return removeSuffix(compilerType.lowerName.capitalize(Locale.ENGLISH))
 }

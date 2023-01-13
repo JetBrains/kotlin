@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -37,7 +36,7 @@ object FirJvmPackageNameAnnotationsChecker : FirAnnotationChecker() {
             reporter.reportOn(expression.source, FirJvmErrors.JVM_PACKAGE_NAME_MUST_BE_VALID_NAME, context)
         }
 
-        val file = context.containingDeclarations.firstOrNull() as? FirFile ?: return
+        val file = context.containingFile ?: return
         if (file.declarations.any { it is FirClass }) {
             reporter.reportOn(expression.source, FirJvmErrors.JVM_PACKAGE_NAME_NOT_SUPPORTED_IN_FILES_WITH_CLASSES, context)
         }

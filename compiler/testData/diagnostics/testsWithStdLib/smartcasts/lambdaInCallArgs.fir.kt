@@ -10,7 +10,7 @@ fun test_1() {
         foo(
             x.length, // stable smartcast
             run { x = "" },
-            x.length  // stable smartcast
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.length  // can be stable smartcast
         )
     }
 }
@@ -33,6 +33,17 @@ fun test_3() {
             x.length, // stable smartcast
             { x = "" },
             x.length  // stable smartcast
+        )
+    }
+}
+
+fun test_4() {
+    var x: String? = null
+    if (x != null) {
+        foo(
+            x.length, // stable smartcast
+            run { x = null },
+            <!SMARTCAST_IMPOSSIBLE!>x<!>.length  // either unstable or not a smartcast
         )
     }
 }

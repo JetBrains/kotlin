@@ -1,32 +1,32 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +CustomEqualsInInlineClasses
+// LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
+// CHECK_BYTECODE_LISTING
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC1<T : Number>(val x: T) {
     fun equals(other: Int) = false
-    fun equals(other: IC1<T>) = true
+    fun equals(other: IC1<*>) = true
 }
 
 class Generic<T, R>(val x: T, val y: R)
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC2<T, R>(val value: Generic<T, R>) {
     fun equals(other: IC1<Double>) = false
-    fun equals(other: IC2<T, R>) = true
+    fun equals(other: IC2<*, *>) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC3<T>(val value: T) {
     fun equals(other: Int) = false
     fun equals(other: IC3<*>) = true
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC4<T>(val value: T) {
     fun equals(other: String) = false
-    fun equals(other: IC4<String>) = true
+    fun equals(other: IC4<*>) = true
 }
 
 

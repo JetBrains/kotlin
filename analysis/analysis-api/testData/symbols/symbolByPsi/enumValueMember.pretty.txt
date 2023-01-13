@@ -1,7 +1,8 @@
-enum class Style {
-  SHEET;
-
-  constructor(value: kotlin.String)
+enum class Style(value: kotlin.String) {
+  SHEET {
+    override val exitAnimation: kotlin.String
+      get()
+  };
 
   val value: kotlin.String
 

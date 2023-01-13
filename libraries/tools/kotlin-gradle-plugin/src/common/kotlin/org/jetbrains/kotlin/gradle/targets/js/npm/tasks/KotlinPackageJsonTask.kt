@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm.tasks
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.MayBeUpToDatePackageJsonTasksRegistry
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.getValue
 import java.io.File
@@ -107,7 +105,6 @@ abstract class KotlinPackageJsonTask : DefaultTask() {
             val npmProject = compilation.npmProject
             val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
-            val rootClean = project.rootProject.tasks.named(BasePlugin.CLEAN_TASK_NAME)
             val npmCachesSetupTask = nodeJs.npmCachesSetupTaskProvider
             val packageJsonTaskName = npmProject.packageJsonTaskName
             val packageJsonUmbrella = nodeJs.packageJsonUmbrellaTaskProvider
@@ -123,7 +120,6 @@ abstract class KotlinPackageJsonTask : DefaultTask() {
 
                 task.dependsOn(target.project.provider { task.findDependentTasks() })
                 task.dependsOn(npmCachesSetupTask)
-                task.mustRunAfter(rootClean)
             }
             packageJsonUmbrella.configure { task ->
                 task.inputs.file(packageJsonTask.map { it.packageJson })

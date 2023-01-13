@@ -14,7 +14,7 @@ fun safeIsString(x: Any?): Boolean? {
 fun elseWithNullableResult(x: Any?) {
     when (safeIsString(x)) {
         false -> x.<!UNRESOLVED_REFERENCE!>length<!>
-        else -> x.length
+        else -> x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 
     when (safeIsString(x)) {
@@ -45,12 +45,12 @@ fun exhaustiveWithNullableResult(x: Any?) {
     when (safeIsString(x)) {
         false -> x.<!UNRESOLVED_REFERENCE!>length<!>
         true -> x.length
-        null -> x.length
+        null -> x.<!UNRESOLVED_REFERENCE!>length<!>
     }
 
     when (safeIsString(x)) {
         false -> x.<!UNRESOLVED_REFERENCE!>length<!>
-        null -> x.length
+        null -> x.<!UNRESOLVED_REFERENCE!>length<!>
         true -> x.length
     }
 }

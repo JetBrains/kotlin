@@ -224,6 +224,7 @@ class HierarchicalMppIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("Works with published JS library")
     fun testHmppWithPublishedJsBothDependency(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        @Suppress("DEPRECATION")
         publishThirdPartyLib(
             projectName = "hierarchical-mpp-with-js-published-modules/third-party-lib",
             withGranularMetadata = true,
@@ -293,6 +294,20 @@ class HierarchicalMppIT : KGPBaseTest() {
                     ":dependsOnJvmWithJava:compileTestKotlinJvm",
                     ":dependsOnJvmWithJava:compileTestJava",
                 )
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("KT-54995: compileAppleMainKotlinMetadata fails on default parameters with `No value passed for parameter 'mustExist'")
+    fun testCompileSharedNativeSourceSetWithOKIODependency(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kt-54995-compileSharedNative-with-okio",
+            gradleVersion = gradleVersion
+        ) {
+            build("assemble") {
+                assertFileExists(projectPath.resolve("build/libs/test-project-jvm.jar"))
+                assertFileExists(projectPath.resolve("build/classes/kotlin/metadata/nativeMain/klib/test-project_nativeMain.klib"))
             }
         }
     }
@@ -715,7 +730,7 @@ class HierarchicalMppIT : KGPBaseTest() {
     @DisplayName("Test sources publication of a multiplatform library")
     fun testSourcesPublication(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         project(
-            "mpp-sources-publication",
+            "mpp-sources-publication/producer",
             gradleVersion = gradleVersion,
             localRepoDir = tempDir
         ).run {
@@ -731,9 +746,9 @@ class HierarchicalMppIT : KGPBaseTest() {
             val iosX64ModuleSources = macOnly { listOf("test/lib-iosx64/1.0/lib-iosx64-1.0-sources.jar") }
             val iosArm64ModuleSources = macOnly { listOf("test/lib-iosarm64/1.0/lib-iosarm64-1.0-sources.jar") }
             val allPublishedSources = rootModuleSources +
-                jvmModuleSources + jvm2ModuleSources +
-                linuxX64ModuleSources + linuxArm64ModuleSources +
-                iosX64ModuleSources + iosArm64ModuleSources
+                    jvmModuleSources + jvm2ModuleSources +
+                    linuxX64ModuleSources + linuxArm64ModuleSources +
+                    iosX64ModuleSources + iosArm64ModuleSources
 
             infix fun Pair<String, List<String>>.and(that: List<String>) = first to (second + that)
 
@@ -783,6 +798,63 @@ class HierarchicalMppIT : KGPBaseTest() {
                 actualSourcePublicationLayoutBySourcesFile.stringifyForBeautifulDiff()
             )
         }
+
+        project(
+            "mpp-sources-publication/consumer",
+            gradleVersion = gradleVersion,
+            localRepoDir = tempDir
+        ) {
+            buildGradleKts.appendText("""
+                testResolutionToSourcesVariant(
+                    "common",
+                    KotlinPlatformType.common,
+                    includeDisambiguation = false
+                )
+
+                testResolutionToSourcesVariant(
+                    "jvm",
+                    KotlinPlatformType.jvm
+                )
+
+                testResolutionToSourcesVariant(
+                    "jvm2",
+                    KotlinPlatformType.jvm
+                )
+
+                testResolutionToSourcesVariant(
+                    "linuxX64",
+                    KotlinPlatformType.native,
+                    nativePlatform = "linux_x64"
+                )
+            """.trimIndent())
+
+            val expectedReports = mapOf(
+                "common" to SourcesVariantResolutionReport(
+                    files = listOf("lib-kotlin-1.0-sources.jar"),
+                    dependencyToVariant = mapOf("test:lib:1.0" to "metadataSourcesElements")
+                ),
+                "jvm" to SourcesVariantResolutionReport(
+                    files = listOf("lib-jvm-1.0-sources.jar"),
+                    dependencyToVariant = mapOf("test:lib:1.0" to "jvmSourcesElements-published",
+                                                "test:lib-jvm:1.0" to "jvmSourcesElements-published")
+                ),
+                "jvm2" to SourcesVariantResolutionReport(
+                    files = listOf("lib-jvm2-1.0-sources.jar"),
+                    dependencyToVariant = mapOf("test:lib:1.0" to "jvm2SourcesElements-published",
+                                                "test:lib-jvm2:1.0" to "jvm2SourcesElements-published")
+                ),
+                "linuxX64" to SourcesVariantResolutionReport(
+                    files = listOf("lib-linuxx64-1.0-sources.jar"),
+                    dependencyToVariant = mapOf("test:lib:1.0" to "linuxX64SourcesElements-published",
+                                                "test:lib-linuxx64:1.0" to "linuxX64SourcesElements-published")
+                ),
+            )
+
+            build("help") { // evaluate only
+                val actualReports = SourcesVariantResolutionReport.parse(output, expectedReports.keys)
+                assertEquals(expectedReports, actualReports)
+            }
+        }
     }
 
     @GradleTest
@@ -799,8 +871,8 @@ class HierarchicalMppIT : KGPBaseTest() {
                 """
                 ${"\n"}
                 dependencies {
-                    "jvmAndJsMainImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
-                    "jvmAndJsMainCompileOnly"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+                    "jvmAndJsMainImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                    "jvmAndJsMainCompileOnly"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
                 }
             """.trimIndent()
             )
@@ -847,7 +919,8 @@ class HierarchicalMppIT : KGPBaseTest() {
     @DisplayName("KT-51946: Temporarily mark HMPP tasks as notCompatibleWithConfigurationCache for Gradle 7.4")
     fun testHmppTasksAreNotIncludedInGradleConfigurationCache(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         with(project("hmppGradleConfigurationCache", gradleVersion = gradleVersion, localRepoDir = tempDir)) {
-            val options = buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
+            val options =
+                buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
 
             build(":lib:publish") {
                 assertTasksExecuted(":lib:publish")
@@ -873,6 +946,7 @@ class HierarchicalMppIT : KGPBaseTest() {
             }
         }
     }
+
     @GradleTest
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_3)
     @DisplayName("KT-51946: Print warning on tasks that are not compatible with configuration cache")
@@ -885,7 +959,8 @@ class HierarchicalMppIT : KGPBaseTest() {
                 assertOutputDoesNotContain("""Task \S+ is not compatible with configuration cache""".toRegex())
             }
 
-            val options = buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
+            val options =
+                buildOptions.copy(configurationCache = true, configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL)
             buildAndFail("clean", "assemble", buildOptions = options) {
                 assertOutputContains("""Task \S+ is not compatible with configuration cache""".toRegex())
             }
@@ -961,6 +1036,24 @@ class HierarchicalMppIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @DisplayName("KT-55071: Shared Native Compilations: Use default parameters declared in dependsOn source set")
+    fun `test shared native compilation with default parameters declared in dependsOn source set`(gradleVersion: GradleVersion) {
+        with(project("kt-55071-compileSharedNative-withDefaultParameters", gradleVersion = gradleVersion)) {
+            build(":producer:publish") {
+                assertTasksExecuted(":producer:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":producer:compileSecondCommonMainKotlinMetadata")
+                assertTasksExecuted(":producer:compileNativeMainKotlinMetadata")
+            }
+
+            build(":consumer:assemble") {
+                assertTasksExecuted(":consumer:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":consumer:compileNativeMainKotlinMetadata")
+            }
+        }
+    }
+
 
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
@@ -1046,6 +1139,45 @@ class HierarchicalMppIT : KGPBaseTest() {
                     useFiles.split(TEST_OUTPUT_ITEMS_SEPARATOR).map { File(it) }
                 )
             }
+        }
+    }
+
+    private data class SourcesVariantResolutionReport(
+        val files: List<String>,
+        val dependencyToVariant: Map<String, String>
+    ) {
+        companion object {
+            fun parse(output: String, targetNames: Iterable<String>): Map<String, SourcesVariantResolutionReport> {
+                val lines = output.lines()
+                return targetNames.associateWith { targetName -> lines.parseForTarget(targetName) }
+            }
+
+            private fun List<String>.parseForTarget(targetName: String) = SourcesVariantResolutionReport(
+                files = parseFiles(targetName),
+                dependencyToVariant = parseResolvedDependencies(targetName)
+            )
+
+            private fun List<String>.betweenMarkers(
+                start: String,
+                end: String
+            ): List<String> {
+                val startPos = indexOf(start)
+                val endPos = indexOf(end)
+
+                return subList(startPos + 1, endPos)
+            }
+
+            private fun List<String>.parseFiles(targetName: String): List<String> =
+                betweenMarkers(
+                    "<RESOLVED SOURCES FILE $targetName>",
+                    "</RESOLVED SOURCES FILE $targetName>"
+                )
+
+            private fun List<String>.parseResolvedDependencies(targetName: String): Map<String, String> =
+                betweenMarkers(
+                    "<RESOLVED DEPENDENCIES OF $targetName>",
+                    "</RESOLVED DEPENDENCIES OF $targetName>"
+                ).associate { it.split(" => ").let { it[0] to it[1] } }
         }
     }
 }

@@ -4,9 +4,7 @@ KtTypeParameterSymbol:
   name: X
   origin: SOURCE
   typeParameters: []
-  upperBounds: [
-    kotlin/Any?
-  ]
+  upperBounds: []
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
@@ -15,6 +13,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /foo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -28,7 +27,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: foo
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: [
@@ -48,7 +47,7 @@ KtFunctionSymbol:
       isVararg: false
       name: x
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: X
       symbolKind: LOCAL
       typeParameters: []

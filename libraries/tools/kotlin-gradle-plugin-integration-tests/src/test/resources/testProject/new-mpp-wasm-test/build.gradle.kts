@@ -8,13 +8,15 @@ repositories {
 }
 
 with(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.apply(rootProject)) {
-    //nightly nodejs that supports wasm M5
-    nodeVersion = "19.0.0-nightly202206017ad5b420ae"
-    nodeDownloadBaseUrl = "https://nodejs.org/download/nightly/"
+    //canary nodejs that supports wasm GC M6
+    nodeVersion = "20.0.0-v8-canary2022112061c569ba0d"
+    nodeDownloadBaseUrl = "https://nodejs.org/download/v8-canary"
 }
 
 with(org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin.apply(rootProject)) {
-    version = "10.7.157"
+    // Test that we can set the version and it is a String.
+    // But use the default version since update this place every time anyway.
+    version = (version as String)
 }
 
 with(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin.apply(rootProject)) {

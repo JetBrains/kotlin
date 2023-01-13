@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -17,9 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyRe
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
 
 fun LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator(
     designation: Iterator<FirElement>,
@@ -61,14 +60,17 @@ private class LLFirDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
 ) {
     private val targetDeclaration = designation.last()
 
-    private inline fun <D : FirCallableDeclaration> D.processCallable(body: (FirDeclarationDesignation) -> Unit) {
+    private inline fun <D : FirCallableDeclaration> D.processCallable(body: (FirDesignation) -> Unit) {
         if (this !== targetDeclaration) return
         if (resolvePhase < FirResolvePhase.TYPES && returnTypeRef is FirResolvedTypeRef) return
         lazyResolveToPhase(FirResolvePhase.TYPES)
         if (returnTypeRef is FirImplicitTypeRef) {
             val declarationList = designation.filterIsInstance<FirDeclaration>()
             check(declarationList.isNotEmpty()) { "Invalid empty declaration designation" }
-            body(FirDeclarationDesignation(declarationList.dropLast(1), this))
+            val designationPath = declarationList.dropLast(1)
+            check(designationPath.all { it is FirRegularClass })
+            @Suppress("UNCHECKED_CAST")
+            body(FirDesignation(designationPath as List<FirRegularClass>, this))
         }
     }
 
@@ -76,17 +78,13 @@ private class LLFirDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
     ): FirSimpleFunction {
-        simpleFunction.processCallable {
-            FirLazyBodiesCalculator.calculateLazyBodiesForFunction(it)
-        }
-
-        return if (simpleFunction.returnTypeRef is FirResolvedTypeRef) {
-            super.transformSimpleFunction(simpleFunction, data)
-        } else {
-            return ResolveTreeBuilder.resolveReturnTypeCalculation(simpleFunction) {
-                super.transformSimpleFunction(simpleFunction, data)
+        if (FirLazyBodiesCalculator.needCalculatingLazyBodyForFunction(simpleFunction)) {
+            simpleFunction.processCallable {
+                FirLazyBodiesCalculator.calculateLazyBodiesForFunction(it)
             }
         }
+
+        return super.transformSimpleFunction(simpleFunction, data)
     }
 
     override fun transformProperty(
@@ -96,12 +94,6 @@ private class LLFirDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
         property.processCallable {
             FirLazyBodiesCalculator.calculateLazyBodyForProperty(it)
         }
-        return if (property.returnTypeRef is FirResolvedTypeRef) {
-            super.transformProperty(property, data)
-        } else {
-            return ResolveTreeBuilder.resolveReturnTypeCalculation(property) {
-                super.transformProperty(property, data)
-            }
-        }
+        return super.transformProperty(property, data)
     }
 }

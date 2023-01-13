@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.CapturedTypeConstructorMarker
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 abstract class IrTypeBase(val kotlinType: KotlinType?) : IrType(), IrTypeProjection {
     override val type: IrType get() = this
@@ -43,8 +42,7 @@ class IrDynamicTypeImpl(
 }
 
 val IrType.originalKotlinType: KotlinType?
-    get() = safeAs<IrTypeBase>()?.kotlinType
-
+    get() = (this as? IrTypeBase)?.kotlinType
 
 object IrStarProjectionImpl : IrStarProjection {
     override fun equals(other: Any?): Boolean = this === other

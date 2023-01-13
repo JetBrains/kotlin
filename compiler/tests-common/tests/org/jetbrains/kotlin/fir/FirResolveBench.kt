@@ -8,14 +8,19 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtIoFileSourceFile
+import org.jetbrains.kotlin.KtPsiSourceFile
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirGlobalResolveProcessor
@@ -110,10 +115,11 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
 
     fun buildFiles(
         builder: RawFirBuilder,
-        ktFiles: List<KtFile>
+        files: Collection<KtPsiSourceFile>
     ): List<FirFile> {
         listener?.before()
-        return ktFiles.map { file ->
+        return files.map { sourceFile ->
+            val file = sourceFile.psiFile as KtFile
             val before = vmStateSnapshot()
             val firFile: FirFile
             val time = measureNanoTime {
@@ -133,19 +139,18 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
 
     fun buildFiles(
         builder: LightTree2Fir,
-        files: List<File>
+        files: Collection<KtSourceFile>
     ): List<FirFile> {
         listener?.before()
         return files.map { file ->
             val before = vmStateSnapshot()
             val firFile: FirFile
             val time = measureNanoTime {
-                val sourceFile = KtIoFileSourceFile(file)
-                val (code, linesMapping) = with(file.inputStream().reader(Charsets.UTF_8)) {
+                val (code, linesMapping) = with(file.getContentsAsStream().reader(Charsets.UTF_8)) {
                     this.readSourceFileWithMapping()
                 }
                 totalLines += linesMapping.linesCount
-                firFile = builder.buildFirFile(code, sourceFile, linesMapping)
+                firFile = builder.buildFirFile(code, file, linesMapping)
                 (builder.session.firProvider as FirProviderImpl).recordFile(firFile)
             }
             val after = vmStateSnapshot()
@@ -281,7 +286,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                             if (type is ConeErrorType) {
                                 errorFunctionCallTypes++
                                 val psi = callee.psi
-                                if (callee is FirErrorNamedReference && psi != null) {
+                                if (callee.isError() && psi != null) {
                                     reportProblem(callee.diagnostic.reason, psi)
                                 }
                             }
@@ -298,7 +303,7 @@ class FirResolveBench(val withProgress: Boolean, val listener: BenchListener? = 
                             if (type is ConeErrorType) {
                                 errorQualifiedAccessTypes++
                                 val psi = callee.psi
-                                if (callee is FirErrorNamedReference && psi != null) {
+                                if (callee.isError() && psi != null) {
                                     reportProblem(callee.diagnostic.reason, psi)
                                 }
                             }

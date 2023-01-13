@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.types.Variance
 
 abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
@@ -26,7 +27,7 @@ abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiSingleFile
                             val returnType = declaration.getReturnKtType()
                             append(declaration.getNameWithPositionString())
                             append(" : ")
-                            appendLine(returnType.render())
+                            appendLine(returnType.render(position = Variance.INVARIANT))
                         }
                     }
                     return super.visitDeclaration(declaration, indent + 2)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,13 +16,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
@@ -111,11 +108,8 @@ class FirStatusResolver(
         isLocal: Boolean,
         overriddenStatuses: List<FirResolvedDeclarationStatus>? = null,
     ): FirResolvedDeclarationStatus {
-        val statuses = overriddenStatuses ?: getOverriddenProperties(property, containingClass)
-            .map {
-                it.lazyResolveToPhase(FirResolvePhase.STATUS)
-                it.status as FirResolvedDeclarationStatus
-            }
+        val statuses = overriddenStatuses
+            ?: getOverriddenProperties(property, containingClass).map { it.status as FirResolvedDeclarationStatus }
 
         val status = property.applyExtensionTransformers { transformStatus(it, property, containingClass, isLocal) }
         return resolveStatus(property, status, containingClass, null, isLocal, statuses)
@@ -142,8 +136,8 @@ class FirStatusResolver(
                 }
                 ProcessorAction.NEXT
             }
-        }.mapNotNull {
-            it.status as? FirResolvedDeclarationStatus
+        }.map {
+            it.status as FirResolvedDeclarationStatus
         }
     }
 
@@ -154,12 +148,15 @@ class FirStatusResolver(
     }
 
     fun resolveStatus(
-        regularClass: FirRegularClass,
+        firClass: FirClass,
         containingClass: FirClass?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        val status = regularClass.applyExtensionTransformers { transformStatus(it, regularClass, containingClass, isLocal) }
-        return resolveStatus(regularClass, status, containingClass, null, isLocal, emptyList())
+        val status = when (firClass) {
+            is FirRegularClass -> firClass.applyExtensionTransformers { transformStatus(it, firClass, containingClass, isLocal) }
+            else -> firClass.status
+        }
+        return resolveStatus(firClass, status, containingClass, null, isLocal, emptyList())
     }
 
     fun resolveStatus(
@@ -306,7 +303,7 @@ class FirStatusResolver(
         if (declaration is FirConstructor) return false
         if (containingClass.typeParameters.all { it.symbol.variance == Variance.INVARIANT }) return false
 
-        if (declaration.receiverTypeRef?.contradictsWith(Variance.IN_VARIANCE) == true) {
+        if (declaration.receiverParameter?.typeRef?.contradictsWith(Variance.IN_VARIANCE) == true) {
             return true
         }
         if (declaration.returnTypeRef.contradictsWith(
@@ -393,16 +390,8 @@ class FirStatusResolver(
                             else -> Modality.OPEN
                         }
                     }
-
-                    else -> {
-                        if (declaration.isOverride &&
-                            (containingClass.modality != Modality.FINAL || containingClass.classKind == ClassKind.ENUM_CLASS)
-                        ) {
-                            Modality.OPEN
-                        } else {
-                            Modality.FINAL
-                        }
-                    }
+                    declaration.isOverride -> Modality.OPEN
+                    else -> Modality.FINAL
                 }
             }
 

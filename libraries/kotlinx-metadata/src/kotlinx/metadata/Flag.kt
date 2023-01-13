@@ -5,6 +5,7 @@
 
 package kotlinx.metadata
 
+import kotlinx.metadata.internal.IgnoreInApiDump
 import org.jetbrains.kotlin.metadata.ProtoBuf.*
 import org.jetbrains.kotlin.metadata.ProtoBuf.Class.Kind as ClassKind
 import org.jetbrains.kotlin.metadata.deserialization.Flags as F
@@ -38,8 +39,10 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags as F
  * @see flagsOf
  */
 class Flag(private val offset: Int, private val bitWidth: Int, private val value: Int) {
+    @IgnoreInApiDump
     internal constructor(field: F.FlagField<*>, value: Int) : this(field.offset, field.bitWidth, value)
 
+    @IgnoreInApiDump
     internal constructor(field: F.BooleanFlagField) : this(field, 1)
 
     internal operator fun plus(flags: Flags): Flags =

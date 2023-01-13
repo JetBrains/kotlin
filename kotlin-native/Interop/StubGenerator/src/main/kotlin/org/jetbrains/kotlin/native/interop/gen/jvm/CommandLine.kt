@@ -33,6 +33,7 @@ const val COMPILE_SOURCES = "Xcompile-source"
 const val SHORT_MODULE_NAME = "Xshort-module-name"
 const val FOREIGN_EXCEPTION_MODE = "Xforeign-exception-mode"
 const val DUMP_BRIDGES = "Xdump-bridges"
+const val DISABLE_EXCEPTION_PRETTIFIER = "Xdisable-exception-prettifier"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
@@ -47,6 +48,8 @@ open class CommonInteropArguments(val argParser: ArgParser) {
             .multiple().delimiter(",")
     val library by argParser.option(ArgType.String, shortName = "l", description = "library to use for building")
             .multiple()
+    val libraryVersion by argParser.option(ArgType.String, shortName = "lv", description = "resulting interop library version")
+            .default("unspecified")
     val repo by argParser.option(ArgType.String, shortName = "r", description = "repository to resolve dependencies")
             .multiple()
     val mode by argParser.option(ArgType.Choice<GenerationMode>(), description = "the way interop library is generated")
@@ -132,6 +135,9 @@ open class CInteropArguments(argParser: ArgParser =
 
     val dumpBridges by argParser.option(ArgType.Boolean, DUMP_BRIDGES,
             description = "Dump generated bridges")
+
+    val disableExceptionPrettifier by argParser.option(ArgType.Boolean, DISABLE_EXCEPTION_PRETTIFIER,
+            description = "Don't hide exceptions with user-friendly ones").default(false)
 }
 
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",

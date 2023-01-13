@@ -1,24 +1,13 @@
 import org.gradle.api.Project
 import java.io.File
 
-apply { plugin("java") }
-apply { plugin("jps-compatible") }
+project.removePrePushHookIfExists()
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" {}
-}
-
-project.addPrePushHookIfMissing()
-
-fun Project.addPrePushHookIfMissing() {
-    val dotGitDirectory = rootProject.getGitDirectory()
-    val hooksDirectory = File(dotGitDirectory, "hooks").also { it.mkdirs() }
-
-    val prePushHook = File(projectDir, "pre-push.sh").also { require(it.exists()) }
-    val prePushTarget = File(hooksDirectory, "pre-push")
-    prePushHook.copyTo(prePushTarget, overwrite = true)
-    prePushTarget.setExecutable(true, true)
+fun Project.removePrePushHookIfExists() {
+    val prePushHookPath = rootProject.getGitDirectory().toPath()
+        .resolve("hooks")
+        .resolve("pre-push")
+    java.nio.file.Files.deleteIfExists(prePushHookPath)
 }
 
 fun Project.getGitDirectory(): File {

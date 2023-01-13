@@ -10,7 +10,6 @@ import com.intellij.psi.impl.InheritanceImplUtil
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.asJava.LightClassGenerationSupport
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.elements.KtLightModifierListDescriptorBased
 import org.jetbrains.kotlin.asJava.hasInterfaceDefaultImpls
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -22,17 +21,8 @@ import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 
-private class KtLightClassModifierList(containingClass: KtLightClassForSourceDeclaration, computeModifiers: () -> Set<String>) :
-    KtLightModifierListDescriptorBased<KtLightClassForSourceDeclaration>(containingClass) {
-
-    private val modifiers by lazyPub { computeModifiers() }
-
-    override fun hasModifierProperty(name: String): Boolean =
-        if (name != PsiModifier.FINAL) name in modifiers else owner.isFinal(PsiModifier.FINAL in modifiers)
-}
-
 // light class for top level or (inner/nested of top level) source declarations
-abstract class KtLightClassImpl constructor(
+abstract class KtLightClassImpl(
     classOrObject: KtClassOrObject,
     jvmDefaultMode: JvmDefaultMode,
 ) : KtLightClassForSourceDeclaration(classOrObject, jvmDefaultMode) {
@@ -43,18 +33,13 @@ abstract class KtLightClassImpl constructor(
 
     override fun isDeprecated(): Boolean = _deprecated
 
-
-    private val _modifierList: PsiModifierList by lazyPub { KtLightClassModifierList(this) { computeModifiers() } }
-
-    override fun getModifierList(): PsiModifierList? = _modifierList
-
-    override fun computeModifiers(): Set<String> {
+    protected open fun computeModifiersByPsi(): Set<String> {
         val psiModifiers = hashSetOf<String>()
 
-        // PUBLIC, PROTECTED, PRIVATE, ABSTRACT, FINAL
+        // PUBLIC, PROTECTED, PRIVATE
         //noinspection unchecked
 
-        for (tokenAndModifier in jetTokenToPsiModifier) {
+        for (tokenAndModifier in ktTokenToPsiModifier) {
             if (classOrObject.hasModifier(tokenAndModifier.first)) {
                 psiModifiers.add(tokenAndModifier.second)
             }
@@ -68,34 +53,34 @@ abstract class KtLightClassImpl constructor(
             psiModifiers.add(PsiModifier.PUBLIC)
         }
 
-        // ABSTRACT | FINAL
-        when {
-            isAbstract() || isSealed() -> {
-                psiModifiers.add(PsiModifier.ABSTRACT)
-            }
-
-            isEnum -> {
-                // Enum class should not be `final`, since its enum entries extend it.
-                // It could be either `abstract` w/o ctor, or empty modality w/ private ctor.
-            }
-
-            !(classOrObject.hasModifier(KtTokens.OPEN_KEYWORD)) -> {
-                val descriptor = lazy { getDescriptor() }
-                var modifier = PsiModifier.FINAL
-                project.applyCompilerPlugins {
-                    modifier = it.interceptModalityBuilding(kotlinOrigin, descriptor, modifier)
-                }
-                if (modifier == PsiModifier.FINAL) {
-                    psiModifiers.add(PsiModifier.FINAL)
-                }
-            }
+        // ABSTRACT
+        if (isAbstract() || isSealed()) {
+            psiModifiers.add(PsiModifier.ABSTRACT)
         }
 
+        // STATIC
         if (!classOrObject.isTopLevel() && !classOrObject.hasModifier(KtTokens.INNER_KEYWORD)) {
             psiModifiers.add(PsiModifier.STATIC)
         }
 
         return psiModifiers
+    }
+
+    protected open fun computeIsFinal(): Boolean = when {
+        classOrObject.hasModifier(KtTokens.FINAL_KEYWORD) -> true
+        isAbstract() || isSealed() -> false
+        isEnum -> false
+        !classOrObject.hasModifier(KtTokens.OPEN_KEYWORD) -> {
+            val descriptor = lazy { getDescriptor() }
+            var modifier = PsiModifier.FINAL
+            project.applyCompilerPlugins {
+                modifier = it.interceptModalityBuilding(kotlinOrigin, descriptor, modifier)
+            }
+
+            modifier == PsiModifier.FINAL
+        }
+
+        else -> false
     }
 
     private fun isAbstract(): Boolean = classOrObject.hasModifier(KtTokens.ABSTRACT_KEYWORD) || isInterface
@@ -221,11 +206,10 @@ abstract class KtLightClassImpl constructor(
             return false
         }
 
-        private val jetTokenToPsiModifier = listOf(
+        private val ktTokenToPsiModifier = listOf(
             KtTokens.PUBLIC_KEYWORD to PsiModifier.PUBLIC,
             KtTokens.INTERNAL_KEYWORD to PsiModifier.PUBLIC,
             KtTokens.PROTECTED_KEYWORD to PsiModifier.PROTECTED,
-            KtTokens.FINAL_KEYWORD to PsiModifier.FINAL,
         )
     }
 }

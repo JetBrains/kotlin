@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.js.isJs
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey
@@ -122,7 +122,7 @@ fun IrClass.serialName(): String {
 
 fun IrClass.findEnumValuesMethod() = this.functions.singleOrNull { f ->
     f.name == Name.identifier("values") && f.valueParameters.isEmpty() && f.extensionReceiverParameter == null && f.dispatchReceiverParameter == null
-} ?: throw AssertionError("Enum class does not have single .values() function")
+} ?: error("Enum class does not have single .values() function")
 
 internal fun IrClass.enumEntries(): List<IrEnumEntry> {
     check(this.kind == ClassKind.ENUM_CLASS)
@@ -208,6 +208,9 @@ internal val List<IrConstructorCall>.hasAnySerialAnnotation: Boolean
 internal val List<IrConstructorCall>.serialNameValue: String?
     get() = findAnnotation(SerializationAnnotations.serialNameAnnotationFqName)?.getStringConstArgument(0) // @SerialName("foo")
 
+
+val IrClass.primaryConstructorOrFail get() = primaryConstructor ?: error("$this is expected to have a primary constructor")
+
 /**
  * True — ALWAYS
  * False — NEVER
@@ -253,4 +256,4 @@ fun IrSimpleType.argumentTypesOrUpperBounds(): List<IrType> {
 }
 
 internal inline fun IrClass.shouldHaveSpecificSyntheticMethods(functionPresenceChecker: () -> IrSimpleFunction?) =
-    !isValue && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)
+    !isSingleFieldValueClass && (isAbstractOrSealedSerializableClass || functionPresenceChecker() != null)

@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
@@ -42,6 +45,22 @@ private class HashCalculatorForIC {
     fun update(data: String) {
         update(data.length)
         update(data.toByteArray())
+    }
+
+    fun update(irElement: IrElement) {
+        irElement.accept(
+            visitor = DumpIrTreeVisitor(
+                out = object : Appendable {
+                    override fun append(csq: CharSequence) = this.apply { update(csq.toString().toByteArray()) }
+                    override fun append(csq: CharSequence, start: Int, end: Int) = append(csq.subSequence(start, end))
+                    override fun append(c: Char) = append(c.toString())
+                }
+            ), data = ""
+        )
+    }
+
+    fun updateAnnotationContainer(annotationContainer: IrAnnotationContainer) {
+        updateForEach(annotationContainer.annotations, ::update)
     }
 
     inline fun <T> updateForEach(collection: Collection<T>, f: (T) -> Unit) {
@@ -80,25 +99,25 @@ internal fun File.fileHashForIC(): ICHash {
 }
 
 internal fun CompilerConfiguration.configHashForIC() = HashCalculatorForIC().apply {
-    val importantBooleanSettingKeys = listOf(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION)
-    updateForEach(importantBooleanSettingKeys) { key ->
+    val importantSettings = listOf(
+        JSConfigurationKeys.GENERATE_DTS,
+        JSConfigurationKeys.MODULE_KIND,
+        JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION
+    )
+    updateForEach(importantSettings) { key ->
         update(key.toString())
-        update(getBoolean(key).toString())
+        update(get(key).toString())
     }
 
     update(languageVersionSettings.toString())
 }.finalize()
 
-internal fun IrElement.irElementHashForIC() = HashCalculatorForIC().also {
-    accept(
-        visitor = DumpIrTreeVisitor(
-            out = object : Appendable {
-                override fun append(csq: CharSequence) = this.apply { it.update(csq.toString().toByteArray()) }
-                override fun append(csq: CharSequence, start: Int, end: Int) = append(csq.subSequence(start, end))
-                override fun append(c: Char) = append(c.toString())
-            }
-        ), data = ""
-    )
+internal fun IrSimpleFunction.irSimpleFunctionHashForIC() = HashCalculatorForIC().also {
+    it.update(this)
+}.finalize()
+
+internal fun IrAnnotationContainer.irAnnotationContainerHashForIC() = HashCalculatorForIC().also {
+    it.updateAnnotationContainer(this)
 }.finalize()
 
 internal fun IrSymbol.irSymbolHashForIC() = HashCalculatorForIC().also {
@@ -110,6 +129,14 @@ internal fun IrSymbol.irSymbolHashForIC() = HashCalculatorForIC().also {
             it.update(typeParameter.symbol.toString())
         }
     }
+    (owner as? IrFunction)?.let { irFunction ->
+        it.updateForEach(irFunction.valueParameters) { functionParam ->
+            // symbol rendering doesn't print default params information
+            // it is important to understand if default params were added or removed
+            it.update(functionParam.defaultValue?.let { 1 } ?: 0)
+        }
+    }
+    (owner as? IrAnnotationContainer)?.let(it::updateAnnotationContainer)
 }.finalize()
 
 internal fun String.stringHashForIC() = HashCalculatorForIC().also { it.update(this) }.finalize()
@@ -131,8 +158,9 @@ internal fun CrossModuleReferences.crossModuleReferencesHashForIC() = HashCalcul
         update(importedModule.relativeRequirePath ?: "")
     }
 
-    updateForEach(transitiveJsExportFrom) { exportFrom ->
-        update(exportFrom.toString())
+    updateForEach(transitiveJsExportFrom) { transitiveExport ->
+        update(transitiveExport.internalName.toString())
+        update(transitiveExport.externalName)
     }
 
     updateForEach(exports.keys.sorted()) { tag ->

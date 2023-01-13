@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 
 object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
@@ -39,6 +40,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = "Enables light tree parser instead of PSI"
     )
 
+    val FIR_DISABLE_LAZY_RESOLVE_CHECKS by directive(
+        description = "Temporary disables lazy resolve checks until the lazy resolve contract violation is fixed"
+    )
+
     val COMPARE_WITH_LIGHT_TREE by directive(
         description = """
             Enable comparing diagnostics between PSI and light tree modes
@@ -64,5 +69,12 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
 
     val ENABLE_PLUGIN_PHASES by directive(
         description = "Enable plugin phases"
+    )
+
+    val IGNORE_LEAKED_INTERNAL_TYPES by stringDirective(
+        description = """
+            Ignore failures in ${FirResolvedTypesVerifier::class}.
+            Directive must contain description of ignoring in argument
+        """.trimIndent()
     )
 }

@@ -67,12 +67,6 @@ public class AnnotationDescriptorImpl implements AnnotationDescriptor {
         return source;
     }
 
-    @NotNull
-    @Override
-    public SourceElement getSourceForArgument(@NotNull Name name) {
-        return SourceElement.NO_SOURCE;
-    }
-
     @Override
     public String toString() {
         return DescriptorRenderer.FQ_NAMES_IN_TYPES.renderAnnotation(this, null);

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -45,7 +45,7 @@ object FirJvmProtectedInSuperClassCompanionCallChecker : FirQualifiedAccessCheck
             resolvedSymbol.visibility
         }
         if (visibility != Visibilities.Protected) return
-        if (resolvedSymbol.getAnnotationByClassId(JVM_STATIC_ANNOTATION_CLASS_ID) != null) return
+        if (resolvedSymbol.getAnnotationByClassId(JVM_STATIC_ANNOTATION_CLASS_ID, context.session) != null) return
         if (!dispatchClassSymbol.isCompanion) return
         val companionContainingClassSymbol =
             dispatchClassSymbol.getContainingDeclarationSymbol(context.session) as? FirRegularClassSymbol ?: return

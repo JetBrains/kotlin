@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,20 +9,17 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isBoolean
-import org.jetbrains.kotlin.fir.types.isNullableAny
-import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal fun isInsideExpectClass(containingClass: FirClass, context: CheckerContext): Boolean {
@@ -119,12 +116,24 @@ fun FirClassSymbol<*>.primaryConstructorSymbol(): FirConstructorSymbol? {
     return null
 }
 
-fun FirSimpleFunction.isTypedEqualsInInlineClass(session: FirSession): Boolean =
+fun FirSimpleFunction.isTypedEqualsInValueClass(session: FirSession): Boolean =
     containingClassLookupTag()?.toFirRegularClassSymbol(session)?.run {
-        with(this@isTypedEqualsInInlineClass) {
-            contextReceivers.isEmpty() && receiverTypeRef == null && name == OperatorNameConventions.EQUALS
-                    && this@run.isInline && valueParameters.size == 1 && returnTypeRef.isBoolean
-                    && valueParameters[0].returnTypeRef.coneType.classId == this@run.classId
+        val valueClassStarProjection = this@run.defaultType().replaceArgumentsWithStarProjections()
+        with(this@isTypedEqualsInValueClass) {
+            contextReceivers.isEmpty() && receiverParameter == null
+                    && name == OperatorNameConventions.EQUALS
+                    && this@run.isInline && valueParameters.size == 1
+                    && (returnTypeRef.isBoolean || returnTypeRef.isNothing)
+                    && valueParameters[0].returnTypeRef.coneType.let { it is ConeClassLikeType && it.replaceArgumentsWithStarProjections() == valueClassStarProjection }
         }
     } ?: false
 
+fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession) = with(session.typeContext) {
+    coneType.typeConstructor().isMultiFieldValueClass() && !coneType.isNullable
+}
+
+val FirCallableSymbol<*>.hasExplicitReturnType: Boolean
+    get() {
+        val returnTypeRef = resolvedReturnTypeRef
+        return returnTypeRef.delegatedTypeRef != null || returnTypeRef is FirImplicitUnitTypeRef
+    }

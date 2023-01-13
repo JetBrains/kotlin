@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.util
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val IrDeclaration.isReal: Boolean get() = !isFakeOverride
 
@@ -115,7 +114,7 @@ fun <S : IrSymbol, T : IrOverridableDeclaration<S>> T.resolveFakeOverrideOrNull(
         collectRealOverrides(toSkip, { it.modality == Modality.ABSTRACT })
             .let { realOverrides ->
                 // Kotlin forbids conflicts between overrides, but they may trickle down from Java.
-                realOverrides.singleOrNull { it.parent.safeAs<IrClass>()?.isInterface != true }
+                realOverrides.singleOrNull { (it.parent as? IrClass)?.isInterface != true }
                 // TODO: We take firstOrNull instead of singleOrNull here because of KT-36188.
                     ?: realOverrides.firstOrNull()
             }

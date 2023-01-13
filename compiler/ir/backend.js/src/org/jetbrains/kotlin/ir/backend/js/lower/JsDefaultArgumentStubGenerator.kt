@@ -62,7 +62,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
     }
 
     private fun IrFunction.introduceDefaultResolution(): IrFunction {
-        val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
+        val irBuilder = context.createIrBuilder(symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
 
         val variables = mutableMapOf<IrValueParameter, IrValueParameter>()
 
@@ -140,7 +140,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
 
     override fun IrFunction.generateDefaultStubBody(originalDeclaration: IrFunction): IrBody {
         val ctx = context
-        val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
+        val irBuilder = context.createIrBuilder(symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
 
         val variables = mutableMapOf<IrValueParameter, IrValueDeclaration>().apply {
             originalDeclaration.dispatchReceiverParameter?.let {
@@ -154,7 +154,7 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
             }
         }
 
-        return irBuilder.irBlockBody(this) {
+        return irBuilder.irBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             +valueParameters.zip(originalDeclaration.valueParameters)
                 .mapNotNull { (new, original) ->
                     createResolutionStatement(

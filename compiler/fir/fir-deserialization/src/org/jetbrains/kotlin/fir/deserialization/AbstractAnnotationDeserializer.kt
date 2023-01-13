@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -36,18 +37,15 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 abstract class AbstractAnnotationDeserializer(
-    private val session: FirSession
+    private val session: FirSession,
+    protected val protocol: SerializerExtensionProtocol
 ) {
-    protected open val protocol: SerializerExtensionProtocol
-        get() = BuiltInSerializerProtocol
-
     open fun inheritAnnotationInfo(parent: AbstractAnnotationDeserializer) {
     }
 
@@ -185,7 +183,9 @@ abstract class AbstractAnnotationDeserializer(
             annotationTypeRef = buildResolvedTypeRef {
                 type = ConeClassLikeLookupTagImpl(classId).constructClassType(emptyArray(), isNullable = false)
             }
-            this.argumentMapping = createArgumentMapping(proto, classId, nameResolver)
+            session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
+                this.argumentMapping = createArgumentMapping(proto, classId, nameResolver)
+            }
             useSiteTarget?.let {
                 this.useSiteTarget = it
             }

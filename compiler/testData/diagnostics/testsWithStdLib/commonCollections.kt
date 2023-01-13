@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 import java.util.*
 fun foo() {
     val al = ArrayList<String>()

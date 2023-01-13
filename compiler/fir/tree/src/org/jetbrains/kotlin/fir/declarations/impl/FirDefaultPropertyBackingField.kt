@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
@@ -26,11 +28,11 @@ class FirDefaultPropertyBackingField(
 ) : FirBackingFieldImpl(
     source = null,
     moduleData = moduleData,
-    resolvePhase = FirResolvePhase.BODY_RESOLVE,
+    resolvePhase = FirResolvePhase.RAW_FIR,
     origin = FirDeclarationOrigin.Synthetic,
     attributes = FirDeclarationAttributes(),
     returnTypeRef = returnTypeRef,
-    receiverTypeRef = null,
+    receiverParameter = null,
     deprecationsProvider = UnresolvedDeprecationProvider,
     containerSource = null,
     dispatchReceiverType = null,
@@ -44,9 +46,9 @@ class FirDefaultPropertyBackingField(
     symbol = FirBackingFieldSymbol(CallableId(BACKING_FIELD)),
     propertySymbol = propertySymbol,
     initializer = null,
-    annotations = annotations,
+    annotations = annotations.toMutableOrEmpty(),
     typeParameters = mutableListOf(),
     status = status,
-    contextReceivers = mutableListOf(),
+    contextReceivers = MutableOrEmptyList.empty(),
 )
 

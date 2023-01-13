@@ -23,7 +23,7 @@ object Test2 {
         fun foo(f: KRunnable) {}
 
         fun test(f: () -> Int) {
-            <!DEBUG_INFO_CALL("fqName: fqName is unknown; typeCall: unresolved")!>foo(<!ARGUMENT_TYPE_MISMATCH!>f<!>)<!>
+            <!DEBUG_INFO_CALL("fqName: Test2.Scope1.foo; typeCall: function")!>foo(<!ARGUMENT_TYPE_MISMATCH!>f<!>)<!>
         }
     }
 }

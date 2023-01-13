@@ -1,0 +1,14 @@
+Apache Harmony
+Copyright 2006, 2010 The Apache Software Foundation.
+
+This product includes software developed at
+The Apache Software Foundation (http://www.apache.org/).
+
+Portions of Apache Harmony were originally developed by
+Intel Corporation and are licensed to the Apache Software
+Foundation under the "Software Grant and Corporate Contribution
+License Agreement" and for which the following copyright notices
+apply
+         (C) Copyright 2005 Intel Corporation
+         (C) Copyright 2005-2006 Intel Corporation
+         (C) Copyright 2006 Intel Corporation

@@ -108,6 +108,10 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
                 model("codegen/customScript", pattern = "^(.*)$")
             }
 
+            testClass<AbstractIrCustomScriptCodegenTest> {
+                model("codegen/customScript", pattern = "^(.*)$")
+            }
+
             testClass<AbstractIrJsTextTestCase> {
                 model("ir/irJsText", pattern = "^(.+)\\.kt(s)?\$")
             }
@@ -278,7 +282,11 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractCompilerLightClassTest> {
-                model("asJava/lightClasses", excludeDirs = listOf("local", "ideRegression"), pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME)
+                model(
+                    "asJava/lightClasses/lightClassByFqName",
+                    excludeDirs = listOf("local", "ideRegression"),
+                    pattern = KT_OR_KTS_WITHOUT_DOTS_IN_NAME,
+                )
             }
 
             testClass<AbstractTypeBindingTest> {

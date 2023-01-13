@@ -12,4 +12,13 @@ internal class LLFirSessionInvalidator(private val invalidateSourcesSession: (LL
         require(session is LLFirResolvableModuleSession)
         invalidateSourcesSession(session)
     }
+
+    internal inline fun <R : Any> withInvalidationOnException(session: LLFirResolvableModuleSession, action: () -> R): R {
+        try {
+            return action()
+        } catch (e: Throwable) {
+            invalidate(session)
+            throw e
+        }
+    }
 }

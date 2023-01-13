@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -28,6 +28,18 @@ public class FirOldFrontendNativeDiagnosticsTestGenerated extends AbstractFirNat
     @TestMetadata("identifiers.kt")
     public void testIdentifiers() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/identifiers.kt");
+    }
+
+    @Test
+    @TestMetadata("isInitialized.kt")
+    public void testIsInitialized() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/isInitialized.kt");
+    }
+
+    @Test
+    @TestMetadata("isInitializedError.kt")
+    public void testIsInitializedError() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/isInitializedError.kt");
     }
 
     @Test

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.jetbrains.kotlin.gradle.internal.reorderPluginClasspathDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
@@ -66,7 +65,7 @@ internal object JsKotlinCompilationDependencyConfigurationsFactory :
 internal class JvmWithJavaCompilationDependencyConfigurationsFactory(private val target: KotlinWithJavaTarget<*, *>) :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
-        val javaSourceSet = this.target.javaSourceSets.maybeCreate(compilationName)
+        val javaSourceSet = this.target.project.javaSourceSets.maybeCreate(compilationName)
         return KotlinCompilationDependencyConfigurationsContainer(
             target = target, compilationName = compilationName, withRuntime = true,
             apiConfigurationName = javaSourceSet.apiConfigurationName,
@@ -227,7 +226,6 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         isVisible = false
         isCanBeConsumed = false
         description = "Kotlin compiler plugins for $compilation"
-        reorderPluginClasspathDependencies()
     }
 
     return DefaultKotlinCompilationConfigurationsContainer(

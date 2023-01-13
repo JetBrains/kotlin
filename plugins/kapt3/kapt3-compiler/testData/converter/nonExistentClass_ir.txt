@@ -1,7 +1,5 @@
-import java.lang.System;
-
-@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 @kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 public final class NonExistentType {
     @org.jetbrains.annotations.Nullable()
     private static final ABCDEF a = null;

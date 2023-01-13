@@ -22,7 +22,7 @@ sealed class Case3 private constructor(val x: Int) {
     class Inheritor2 : Case3("Hello")
 }
 
-class Case3Inheritor3 : Case3(<!ARGUMENT_TYPE_MISMATCH!>20<!>)
+class Case3Inheritor3 : <!INVISIBLE_REFERENCE!>Case3<!>(20)
 
 sealed class Case4 {
     protected constructor(x: Int)

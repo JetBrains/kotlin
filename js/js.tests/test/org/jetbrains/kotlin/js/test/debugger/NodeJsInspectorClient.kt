@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.js.test.debugger
 
+import com.intellij.openapi.util.SystemInfo
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.plugins.websocket.*
@@ -33,8 +34,16 @@ class NodeJsInspectorClient(val scriptPath: String, val args: List<String>) {
      */
     fun <T> run(block: suspend NodeJsInspectorClientContext.() -> T): T = runBlocking {
         val context = NodeJsInspectorClientContextImpl(this@NodeJsInspectorClient)
+
         try {
             runWithContext(context, block)
+        } catch (e: Throwable) {
+            val nodeExitCode = try {
+                context.nodeProcess.exitValue()
+            } catch (_: IllegalThreadStateException) {
+                throw e
+            }
+            throw NodeExitedException(nodeExitCode, e)
         } finally {
             context.release()
         }
@@ -97,6 +106,8 @@ class NodeJsInspectorClient(val scriptPath: String, val args: List<String>) {
 
 private const val NODE_WS_DEBUG_URL_PREFIX = "Debugger listening on ws://"
 
+private const val V8_MAX_OLD_SPACE_SIZE_MB = 4096
+
 /**
  * The actual implementation of the Node.js inspector client.
  */
@@ -104,9 +115,10 @@ private class NodeJsInspectorClientContextImpl(engine: NodeJsInspectorClient) : 
 
     private val logger = Logger.getLogger(this::class.java.name)
 
-    private val nodeProcess = ProcessBuilder(
+    val nodeProcess: Process = ProcessBuilder(
         System.getProperty("javascript.engine.path.NodeJs"),
         "--inspect-brk=0",
+        "--max-old-space-size=$V8_MAX_OLD_SPACE_SIZE_MB",
         engine.scriptPath,
         *engine.args.toTypedArray()
     ).also {
@@ -257,3 +269,27 @@ private class NodeJsInspectorClientContextImpl(engine: NodeJsInspectorClient) : 
 
 private fun ProcessBuilder.joinedCommand(): String =
     command().joinToString(" ") { "\"${it.replace("\"", "\\\"")}\"" }
+
+@Suppress("MemberVisibilityCanBePrivate", "CanBeParameter")
+internal class NodeExitedException(val exitCode: Int, cause: Throwable? = null) : IllegalStateException(createMessage(exitCode), cause) {
+
+    companion object {
+        private fun createMessage(exitCode: Int) = buildString {
+            append("Node process exited with exit code ")
+            append(exitCode)
+            when {
+                !SystemInfo.isWindows && exitCode == 134 -> {
+                    append(" (out of memory). Consider increasing ")
+                    append((::V8_MAX_OLD_SPACE_SIZE_MB).name)
+                }
+                !SystemInfo.isWindows && exitCode == 139 -> {
+                    append(" (segmentation fault). Probably a bug in Node (see https://github.com/nodejs/node/issues/45410)")
+                }
+                SystemInfo.isWindows && exitCode.toUInt() == 0xC0000005U -> {
+                    append(" (access violation). Probably a bug in Node (see https://github.com/nodejs/node/issues/45410)")
+                }
+            }
+            append('.')
+        }
+    }
+}

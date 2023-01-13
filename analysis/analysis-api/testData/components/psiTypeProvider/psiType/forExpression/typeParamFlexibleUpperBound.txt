@@ -1,2 +1,2 @@
-KtType: T!!
+KtType: T & kotlin.Any
 PsiType: PsiType:T

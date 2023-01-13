@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSICS: +UNUSED_PARAMETER
 
 fun foo(x: Int) = 1

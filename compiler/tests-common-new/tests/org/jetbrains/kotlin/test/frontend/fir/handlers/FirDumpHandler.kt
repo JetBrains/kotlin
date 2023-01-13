@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.createFilesWithGeneratedDeclarations
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.extensions.generatedMembers
 import org.jetbrains.kotlin.fir.extensions.generatedNestedClassifiers
 import org.jetbrains.kotlin.fir.renderer.FirClassMemberRenderer
 import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
+import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -30,22 +32,27 @@ class FirDumpHandler(
         get() = listOf(FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        if (FirDiagnosticsDirectives.FIR_DUMP !in module.directives) return
-        val builderForModule = dumper.builderForModule(module)
-        val firFiles = info.firFiles
+        for (part in info.partsForDependsOnModules) {
+            val currentModule = part.module
+            if (FirDiagnosticsDirectives.FIR_DUMP !in currentModule.directives) return
+            val builderForModule = dumper.builderForModule(currentModule)
+            val firFiles = info.mainFirFiles
 
-        val allFiles = buildList {
-            addAll(firFiles.values)
-            addAll(info.session.createFilesWithGeneratedDeclarations())
-        }
+            val allFiles = buildList {
+                addAll(firFiles.values)
+                addAll(part.session.createFilesWithGeneratedDeclarations())
+            }
+            part.session.lazyDeclarationResolver.startResolvingPhase(FirResolvePhase.BODY_RESOLVE)
 
-        val renderer = FirRenderer(
-            builder = builderForModule,
-            packageDirectiveRenderer = FirPackageDirectiveRenderer(),
-            classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(info.session)
-        )
-        allFiles.forEach {
-            renderer.renderElementAsString(it)
+            val renderer = FirRenderer(
+                builder = builderForModule,
+                packageDirectiveRenderer = FirPackageDirectiveRenderer(),
+                classMemberRenderer = FirClassMemberRendererWithGeneratedDeclarations(part.session)
+            )
+            allFiles.forEach {
+                renderer.renderElementAsString(it)
+            }
+            part.session.lazyDeclarationResolver.finishResolvingPhase(FirResolvePhase.BODY_RESOLVE)
         }
     }
 

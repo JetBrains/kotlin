@@ -19,4 +19,13 @@ package foo {
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
+
+    @kotlin.js.JsExport public final class C3 {
+        protected constructor C3(/*0*/ x: kotlin.Int)
+        public constructor C3(/*0*/ x: kotlin.String)
+        public final val x: kotlin.String
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
 }

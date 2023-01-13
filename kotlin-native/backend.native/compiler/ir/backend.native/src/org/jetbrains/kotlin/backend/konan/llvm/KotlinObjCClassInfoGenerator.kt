@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 
-internal class KotlinObjCClassInfoGenerator(override val context: Context) : ContextUtils {
+internal class KotlinObjCClassInfoGenerator(override val generationState: NativeGenerationState) : ContextUtils {
     fun generate(irClass: IrClass) {
         assert(irClass.isFinalClass)
 
-        val objCLLvmDeclarations = context.generationState.llvmDeclarations.forClass(irClass).objCDeclarations!!
+        val objCLLvmDeclarations = generationState.llvmDeclarations.forClass(irClass).objCDeclarations!!
 
         val instanceMethods = generateInstanceMethodDescs(irClass)
 
@@ -28,11 +28,11 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         val classMethods = companionObject?.generateMethodDescs().orEmpty()
 
         val superclassName = irClass.getSuperClassNotAny()!!.let {
-            llvm.imports.add(it.llvmSymbolOrigin)
+            llvm.dependenciesTracker.add(it)
             it.descriptor.getExternalObjCClassBinaryName()
         }
         val protocolNames = irClass.getSuperInterfaces().map {
-            llvm.imports.add(it.llvmSymbolOrigin)
+            llvm.dependenciesTracker.add(it)
             it.name.asString().removeSuffix("Protocol")
         }
 
@@ -148,7 +148,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
         return constPointer(function)
     }
 
-    private val codegen = CodeGenerator(context)
+    private val codegen = CodeGenerator(generationState)
 
     companion object {
         const val createdClassFieldIndex = 11
@@ -158,11 +158,7 @@ internal class KotlinObjCClassInfoGenerator(override val context: Context) : Con
 internal fun CodeGenerator.kotlinObjCClassInfo(irClass: IrClass): LLVMValueRef {
     require(irClass.isKotlinObjCClass())
     return if (isExternal(irClass)) {
-        importGlobal(
-                irClass.kotlinObjCClassInfoSymbolName,
-                runtime.kotlinObjCClassInfo,
-                origin = irClass.llvmSymbolOrigin
-        )
+        importGlobal(irClass.kotlinObjCClassInfoSymbolName, runtime.kotlinObjCClassInfo, irClass)
     } else {
         llvmDeclarations.forClass(irClass).objCDeclarations!!.classInfoGlobal.llvmGlobal
     }

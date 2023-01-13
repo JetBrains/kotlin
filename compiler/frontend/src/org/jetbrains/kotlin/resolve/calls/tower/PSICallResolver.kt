@@ -626,8 +626,8 @@ class PSICallResolver(
             }
             if (allValueArguments.isEmpty()) {
                 throw KotlinExceptionWithAttachments("Can not find an external argument for 'set' method")
-                    .withAttachment("callElement.kt", oldCall.callElement.text)
-                    .withAttachment("file.kt", oldCall.callElement.takeIf { it.isValid }?.containingFile?.text ?: "<no file>")
+                    .withPsiAttachment("callElement.kt", oldCall.callElement)
+                    .withPsiAttachment("file.kt", oldCall.callElement.takeIf { it.isValid }?.containingFile)
             }
             allValueArguments.last()
         } else {

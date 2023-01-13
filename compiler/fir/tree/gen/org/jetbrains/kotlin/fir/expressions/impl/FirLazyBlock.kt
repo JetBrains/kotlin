@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,15 +14,16 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 /*
  * This file was generated automatically
  * DO NOT MODIFY IT MANUALLY
  */
 
-class FirLazyBlock @FirImplementationDetail constructor(
-    override val source: KtSourceElement?,
-) : FirBlock() {
+class FirLazyBlock : FirBlock() {
+    override val source: KtSourceElement? get() = error("FirLazyBlock should be calculated before accessing")
     override val annotations: List<FirAnnotation> get() = error("FirLazyBlock should be calculated before accessing")
     override val statements: List<FirStatement> get() = error("FirLazyBlock should be calculated before accessing")
     override val typeRef: FirTypeRef get() = error("FirLazyBlock should be calculated before accessing")
@@ -46,6 +47,8 @@ class FirLazyBlock @FirImplementationDetail constructor(
     override fun <D> transformOtherChildren(transformer: FirTransformer<D>, data: D): FirLazyBlock {
         return this
     }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

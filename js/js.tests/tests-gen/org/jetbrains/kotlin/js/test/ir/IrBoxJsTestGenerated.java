@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -858,6 +858,30 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("debugStatement.kt")
         public void testDebugStatement() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/debugStatement.kt");
+        }
+
+        @Test
+        @TestMetadata("dynamicSuspendReturn.kt")
+        public void testDynamicSuspendReturn() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/dynamicSuspendReturn.kt");
+        }
+
+        @Test
+        @TestMetadata("dynamicSuspendReturnWithArrayAccess.kt")
+        public void testDynamicSuspendReturnWithArrayAccess() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/dynamicSuspendReturnWithArrayAccess.kt");
+        }
+
+        @Test
+        @TestMetadata("dynamicSuspendReturnWithOperator.kt")
+        public void testDynamicSuspendReturnWithOperator() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/dynamicSuspendReturnWithOperator.kt");
+        }
+
+        @Test
+        @TestMetadata("jsCallInsideCoroutine.kt")
+        public void testJsCallInsideCoroutine() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/jsCallInsideCoroutine.kt");
         }
 
         @Test
@@ -2368,6 +2392,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             }
 
             @Test
+            @TestMetadata("reexport.kt")
+            public void testReexport() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/reexport.kt");
+            }
+
+            @Test
             @TestMetadata("reservedModuleName.kt")
             public void testReservedModuleName() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/reservedModuleName.kt");
@@ -2918,6 +2948,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("overridenMethod.kt")
         public void testOverridenMethod() throws Exception {
             runTest("js/js.translator/testData/box/export/overridenMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("reexport.kt")
+        public void testReexport() throws Exception {
+            runTest("js/js.translator/testData/box/export/reexport.kt");
         }
 
         @Test
@@ -4214,6 +4250,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             }
 
             @Test
+            @TestMetadata("stackTraceAccessInsideInitBlock.kt")
+            public void testStackTraceAccessInsideInitBlock() throws Exception {
+                runTest("js/js.translator/testData/box/expression/misc/stackTraceAccessInsideInitBlock.kt");
+            }
+
+            @Test
             @TestMetadata("stackTraceCapturing.kt")
             public void testStackTraceCapturing() throws Exception {
                 runTest("js/js.translator/testData/box/expression/misc/stackTraceCapturing.kt");
@@ -4461,6 +4503,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             @TestMetadata("complexIsInterface.kt")
             public void testComplexIsInterface() throws Exception {
                 runTest("js/js.translator/testData/box/expression/typeCheck/complexIsInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("kt55758.kt")
+            public void testKt55758() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/kt55758.kt");
             }
 
             @Test

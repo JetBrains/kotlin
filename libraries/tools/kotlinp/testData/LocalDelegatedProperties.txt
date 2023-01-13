@@ -69,6 +69,8 @@ package {
   // local delegated property #2
   // local final /* delegated */ val local3: kotlin/CharSequence?
   //   local final get
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

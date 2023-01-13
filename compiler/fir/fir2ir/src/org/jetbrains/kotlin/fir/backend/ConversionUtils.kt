@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
@@ -23,10 +24,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
@@ -34,7 +32,9 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -60,6 +60,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
@@ -178,23 +179,14 @@ context(Fir2IrComponents)
 fun FirReference.toSymbolForCall(
     dispatchReceiver: FirExpression,
     conversionScope: Fir2IrConversionScope,
+    explicitReceiver: FirExpression?,
     preferGetter: Boolean = true,
-    explicitReceiver: FirExpression? = null, // Actual only for callable references
     isDelegate: Boolean = false,
     isReference: Boolean = false
 ): IrSymbol? {
     return when (this) {
         is FirResolvedNamedReference ->
             resolvedSymbol.toSymbolForCall(
-                dispatchReceiver,
-                preferGetter,
-                explicitReceiver,
-                isDelegate,
-                isReference
-            )
-
-        is FirErrorNamedReference ->
-            candidateSymbol?.toSymbolForCall(
                 dispatchReceiver,
                 preferGetter,
                 explicitReceiver,
@@ -219,31 +211,38 @@ fun FirReference.toSymbolForCall(
     }
 }
 
+private fun FirResolvedQualifier.toLookupTag(): ConeClassLikeLookupTag? = (symbol as? FirClassSymbol)?.toLookupTag()
+
 context(Fir2IrComponents)
 private fun FirCallableSymbol<*>.toSymbolForCall(
     dispatchReceiver: FirExpression,
     preferGetter: Boolean,
+    // Note: in fact LHS for callable references and explicit receiver for normal qualified accesses
     explicitReceiver: FirExpression? = null,
     isDelegate: Boolean = false,
     isReference: Boolean = false
 ): IrSymbol? {
-    val dispatchReceiverLookupTag = when {
-        dispatchReceiver is FirNoReceiverExpression -> {
-            val containingClass = containingClassLookupTag()
-            if (containingClass != null && containingClass.classId != StandardClassIds.Any) {
-                // Make sure that symbol is not extension and is not from inline class
-                val coneType = ((explicitReceiver as? FirResolvedQualifier)?.symbol as? FirClassSymbol)?.defaultType()
-                coneType?.findClassRepresentation(coneType, declarationStorage.session)
-            } else {
-                null
+    val fakeOverrideOwnerLookupTag = when {
+        // Static fake overrides
+        isStatic -> {
+            fir.importedFromObjectOrStaticData?.let {
+                ConeClassLikeLookupTagImpl(it.objectClassId)
+            } ?: (explicitReceiver as? FirResolvedQualifier)?.toLookupTag()
+        }
+        // Member fake override or bound callable reference
+        dispatchReceiver !is FirNoReceiverExpression -> {
+            dispatchReceiver.typeRef.coneType.let { it.findClassRepresentation(it, declarationStorage.session) }
+        }
+        // Unbound callable reference to member (non-extension)
+        isReference && fir.receiverParameter == null -> {
+            // TODO: remove runIf with StandardClassIds.Any comparison after fixing ValueClass::equals case (KT-54887)
+            runIf(containingClassLookupTag()?.classId != StandardClassIds.Any) {
+                (explicitReceiver as? FirResolvedQualifier)?.toLookupTag()
             }
         }
-
-        else -> {
-            val coneType = dispatchReceiver.typeRef.coneType
-            dispatchReceiver.typeRef.coneType.findClassRepresentation(coneType, declarationStorage.session)
-        }
+        else -> null
     }
+
     return when (this) {
         is FirSimpleSyntheticPropertySymbol -> {
             if (isDelegate) {
@@ -251,7 +250,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
             } else {
                 (fir as? FirSyntheticProperty)?.let { syntheticProperty ->
                     if (isReference) {
-                        declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
+                        declarationStorage.getIrPropertySymbol(this, fakeOverrideOwnerLookupTag)
                     } else {
                         val delegateSymbol = if (preferGetter) {
                             syntheticProperty.getter.delegate.symbol
@@ -266,9 +265,9 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
             }
         }
 
-        is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, dispatchReceiverLookupTag)
-        is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this, dispatchReceiverLookupTag)
-        is FirFieldSymbol -> declarationStorage.getIrFieldSymbol(this)
+        is FirFunctionSymbol<*> -> declarationStorage.getIrFunctionSymbol(this, fakeOverrideOwnerLookupTag)
+        is FirPropertySymbol -> declarationStorage.getIrPropertySymbol(this, fakeOverrideOwnerLookupTag)
+        is FirFieldSymbol -> declarationStorage.getIrFieldSymbol(this, fakeOverrideOwnerLookupTag)
         is FirBackingFieldSymbol -> declarationStorage.getIrBackingFieldSymbol(this)
         is FirDelegateFieldSymbol -> declarationStorage.getIrDelegateFieldSymbol(this)
         is FirVariableSymbol<*> -> declarationStorage.getIrValueSymbol(this)
@@ -346,11 +345,16 @@ internal tailrec fun FirCallableSymbol<*>.unwrapSubstitutionAndIntersectionOverr
 }
 
 context(Fir2IrComponents)
-internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(root: FirCallableSymbol<*> = this): FirCallableSymbol<*> {
+internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(
+    owner: ConeClassLikeLookupTag? = containingClassLookupTag()
+): FirCallableSymbol<*> {
     val fir = fir
+
     if (fir is FirConstructor) {
         val originalForTypeAlias = fir.originalConstructorIfTypeAlias
-        if (originalForTypeAlias != null) return originalForTypeAlias.symbol.unwrapCallRepresentative(this)
+        if (originalForTypeAlias != null) {
+            return originalForTypeAlias.symbol.unwrapCallRepresentative(owner)
+        }
     }
 
     if (fir.isIntersectionOverride) {
@@ -360,17 +364,18 @@ internal tailrec fun FirCallableSymbol<*>.unwrapCallRepresentative(root: FirCall
         // interface C : A, B // for C.foo we've got an IR fake override
         // for {A & B} we don't have such an IR declaration, so we're unwrapping it
         if (fir.dispatchReceiverType is ConeIntersectionType) {
-            return fir.baseForIntersectionOverride!!.symbol.unwrapCallRepresentative(this)
+            return fir.baseForIntersectionOverride!!.symbol.unwrapCallRepresentative(owner)
         }
 
         return this
     }
 
-    val overriddenSymbol = fir.originalForSubstitutionOverride?.takeIf {
-        it.containingClassLookupTag() == root.containingClassLookupTag()
-    }?.symbol ?: return this
+    val originalForOverride = fir.originalForSubstitutionOverride
+    if (originalForOverride != null && originalForOverride.containingClassLookupTag() == owner) {
+        return originalForOverride.symbol.unwrapCallRepresentative(owner)
+    }
 
-    return overriddenSymbol.unwrapCallRepresentative(this)
+    return this
 }
 
 context(Fir2IrComponents)
@@ -414,7 +419,7 @@ fun FirTypeScope.processOverriddenFunctionsFromSuperClasses(
 ): ProcessorAction =
     processDirectOverriddenFunctionsWithBaseScope(functionSymbol) { overridden, _ ->
         val unwrapped = if (overridden.fir.isSubstitutionOverride &&
-            overridden.dispatchReceiverClassOrNull() == containingClass.symbol.toLookupTag()
+            overridden.dispatchReceiverClassLookupTagOrNull() == containingClass.symbol.toLookupTag()
         )
             overridden.originalForSubstitutionOverride!!
         else
@@ -430,7 +435,7 @@ fun FirTypeScope.processOverriddenPropertiesFromSuperClasses(
 ): ProcessorAction =
     processDirectOverriddenPropertiesWithBaseScope(propertySymbol) { overridden, _ ->
         val unwrapped = if (overridden.fir.isSubstitutionOverride &&
-            overridden.dispatchReceiverClassOrNull() == containingClass.symbol.toLookupTag()
+            overridden.dispatchReceiverClassLookupTagOrNull() == containingClass.symbol.toLookupTag()
         )
             overridden.originalForSubstitutionOverride!!
         else
@@ -563,7 +568,8 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
     thisOrigin: IrDeclarationOrigin,
     startOffset: Int = this.startOffset,
     endOffset: Int = this.endOffset,
-    name: Name = SpecialNames.THIS
+    name: Name = SpecialNames.THIS,
+    explicitReceiver: FirReceiverParameter? = null,
 ): IrValueParameter {
     return symbolTable.irFactory.createValueParameter(
         startOffset, endOffset, thisOrigin, IrValueParameterSymbolImpl(),
@@ -572,6 +578,7 @@ internal fun IrDeclarationParent.declareThisReceiverParameter(
         isHidden = false, isAssignable = false
     ).apply {
         this.parent = this@declareThisReceiverParameter
+        explicitReceiver?.let { annotationGenerator.generate(this, it) }
     }
 }
 
@@ -645,7 +652,9 @@ fun Fir2IrComponents.createTemporaryVariableForSafeCallConstruction(
     createTemporaryVariable(receiverExpression, conversionScope, "safe_receiver")
 
 fun Fir2IrComponents.computeValueClassRepresentation(klass: FirRegularClass): ValueClassRepresentation<IrSimpleType>? {
-    require((klass.valueClassRepresentation != null) == klass.isInline)
+    require((klass.valueClassRepresentation != null) == klass.isInline) {
+        "Value class has no representation: ${klass.render()}"
+    }
     return klass.valueClassRepresentation?.mapUnderlyingType {
         with(typeConverter) {
             it.toIrType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: ${klass.render()}")
@@ -671,6 +680,11 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
     return buildList {
         for (packageFqName in (topLevelClasses.keys + topLevelCallables.keys)) {
             this += buildFile {
+                symbol = FirFileSymbol()
+                annotationsContainer = buildFileAnnotationsContainer {
+                    moduleData = this@createFilesWithGeneratedDeclarations.moduleData
+                    containingFileSymbol = this@buildFile.symbol
+                }
                 origin = FirDeclarationOrigin.Synthetic
                 moduleData = this@createFilesWithGeneratedDeclarations.moduleData
                 packageDirective = buildPackageDirective {

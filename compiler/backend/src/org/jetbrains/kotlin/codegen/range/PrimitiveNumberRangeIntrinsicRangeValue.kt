@@ -34,9 +34,8 @@ import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.constants.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.org.objectweb.asm.Type
 
 abstract class PrimitiveNumberRangeIntrinsicRangeValue(
     rangeCall: ResolvedCall<out CallableDescriptor>
@@ -100,7 +99,7 @@ abstract class PrimitiveNumberRangeIntrinsicRangeValue(
         step: Int,
         isStartInclusive: Boolean = true
     ): ForLoopGenerator? {
-        val endConstValue = codegen.getCompileTimeConstant(endExpression).safeAs<IntegerValueConstant<*>>() ?: return null
+        val endConstValue = codegen.getCompileTimeConstant(endExpression) as? IntegerValueConstant<*> ?: return null
 
         return when (endConstValue) {
             is ByteValue -> {

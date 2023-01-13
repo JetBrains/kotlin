@@ -26,3 +26,32 @@ class CodePosition(val line: Int, val offset: Int) : Comparable<CodePosition> {
 
     override fun toString(): String = "($line, $offset)"
 }
+
+/**
+ * Calculates an offset from the start of a text for a position,
+ * defined by line and offset in that line.
+ */
+fun String.offsetOf(position: CodePosition): Int {
+    var i = 0
+    var lineCount = 0
+    var offsetInLine = 0
+
+    while (i < length) {
+        val c = this[i]
+
+        if (lineCount == position.line && offsetInLine == position.offset) {
+            return i
+        }
+
+        i++
+        offsetInLine++
+
+        if (Utils.isEndOfLine(c.code)) {
+            offsetInLine = 0
+            lineCount++
+            assert(lineCount <= position.line)
+        }
+    }
+
+    return length
+}

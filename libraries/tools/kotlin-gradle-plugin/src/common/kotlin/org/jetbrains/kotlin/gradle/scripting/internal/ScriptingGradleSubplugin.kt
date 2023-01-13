@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 private const val SCRIPTING_LOG_PREFIX = "kotlin scripting plugin:"
@@ -94,7 +95,7 @@ private const val RESULTS_CONFIGURATION_SUFFIX = "Extensions"
 
 private fun getDiscoveryClasspathConfigurationName(sourceSetName: String): String = when (sourceSetName) {
     "main" -> MAIN_CONFIGURATION_NAME
-    else -> "$sourceSetName${MAIN_CONFIGURATION_NAME.capitalize()}"
+    else -> "$sourceSetName${MAIN_CONFIGURATION_NAME.capitalizeAsciiOnly()}"
 }
 
 private fun getDiscoveryResultsConfigurationName(sourceSetName: String): String =

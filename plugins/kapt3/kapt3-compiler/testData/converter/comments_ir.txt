@@ -1,16 +1,12 @@
-import java.lang.System;
-
-@kotlin.Metadata()
-@java.lang.annotation.Target(value = {})
-@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
+@kotlin.Metadata()
 public abstract @interface Anno {
 }
 
 ////////////////////
 
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public enum EnumError {
@@ -27,8 +23,6 @@ public enum EnumError {
 ////////////////////
 
 
-import java.lang.System;
-
 /**
  * Obj.
  */
@@ -44,8 +38,6 @@ public final class Obj {
 
 ////////////////////
 
-
-import java.lang.System;
 
 /**
  * Test.
@@ -88,6 +80,9 @@ public final class Test {
     java.lang.String a) {
     }
 
+    /**
+     * prop2.
+     */
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getProp2() {
         return null;
@@ -108,9 +103,6 @@ public final class Test {
     java.lang.String v) {
     }
 
-    /**
-     * prop2.
-     */
     @Anno()
     @java.lang.Deprecated()
     public static void getProp2$annotations() {
@@ -119,8 +111,6 @@ public final class Test {
 
 ////////////////////
 
-
-import java.lang.System;
 
 /**
  * Test2
@@ -146,8 +136,6 @@ public final class Test2 {
 ////////////////////
 
 
-import java.lang.System;
-
 /**
  * constructor.
  */
@@ -170,8 +158,6 @@ public final class Test3 {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Test4 {
 
@@ -185,8 +171,6 @@ public final class Test4 {
 
 ////////////////////
 
-
-import java.lang.System;
 
 /**
  * `/ * Failure * /`

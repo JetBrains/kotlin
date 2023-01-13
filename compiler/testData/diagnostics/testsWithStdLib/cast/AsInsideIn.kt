@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // See also KT-10386
 interface A
 class B : A

@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.kpm.idea
 
+import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmDependency
 import org.jetbrains.kotlin.gradle.kpm.external.ExternalVariantApi
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmPlatformDependencyResolver.ArtifactResolution
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder.*

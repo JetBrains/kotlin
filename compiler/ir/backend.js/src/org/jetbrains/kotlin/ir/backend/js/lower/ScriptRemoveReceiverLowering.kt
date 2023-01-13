@@ -45,7 +45,7 @@ class ScriptRemoveReceiverLowering(val context: CommonBackendContext) : FileLowe
             }
 
             override fun visitGetValue(expression: IrGetValue): IrExpression {
-                return if (expression.symbol === script.thisReceiver.symbol) expression.nullConst()
+                return if (expression.symbol === script.thisReceiver?.symbol) expression.nullConst()
                 else expression
             }
 

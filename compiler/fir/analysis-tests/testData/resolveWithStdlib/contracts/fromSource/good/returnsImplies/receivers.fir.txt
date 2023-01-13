@@ -3,13 +3,19 @@ FILE: receivers.kt
     }
     public final fun R|A|.foo(): R|kotlin/Unit| {
     }
-    public final fun R|kotlin/Any?|.myRequireNotNull(): R|kotlin/Unit|
+    @R|kotlin/OptIn|(markerClass = vararg(<getClass>(Q|kotlin/contracts/ExperimentalContracts|))) public final fun R|kotlin/Any?|.myRequireNotNull(): R|kotlin/Unit|
         [R|Contract description]
          <
             Returns(WILDCARD) -> this != null
         >
      {
-        [StubStatement]
+         {
+            R|kotlin/contracts/contract|(<L> = contract@fun R|kotlin/contracts/ContractBuilder|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|kotlin/contracts/ContractBuilder.returns|().R|kotlin/contracts/SimpleEffect.implies|(!=(this@R|/myRequireNotNull|, Null(null)))
+            }
+            )
+        }
+
         when () {
             ==(this@R|/myRequireNotNull|, Null(null)) ->  {
                 throw R|java/lang/IllegalStateException.IllegalStateException|()
@@ -33,7 +39,7 @@ FILE: receivers.kt
             this@R|special/anonymous|.R|/myRequireNotNull|()
         }
         )
-        R|<local>/x|.<Inapplicable(UNSAFE_CALL): /foo>#()
+        R|<local>/x|.R|/foo<Inapplicable(UNSAFE_CALL): /foo>#|()
     }
     public final fun test_4(x: R|A?|): R|kotlin/Unit| {
         R|kotlin/with|<R|A?|, R|kotlin/Unit|>(R|<local>/x|, <L> = with@fun R|A?|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {

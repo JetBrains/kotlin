@@ -31,8 +31,20 @@ internal fun setMetadataFor(
     }
 }
 
+// There was a problem with per-module compilation (KT-55758) when the top-level state (iid) was reinitialized during stdlib module initialization
+// As a result we miss already incremented iid and had the same iids in two different modules
+// So, to keep the state consistent it was moved into the object
+private object InterfaceIdService {
+    var iid: Int = 0
+}
+
+private fun InterfaceIdService.generateInterfaceId(): Int {
+    iid += 1
+    return iid
+}
+
 internal fun interfaceMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
-    return createMetadata("interface", name, associatedObjectKey, associatedObjects, suspendArity, generateInterfaceId())
+    return createMetadata("interface", name, associatedObjectKey, associatedObjects, suspendArity, InterfaceIdService.generateInterfaceId())
 }
 
 internal fun objectMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
@@ -83,19 +95,6 @@ internal external interface Ctor {
     var `$metadata$`: Metadata
     var constructor: Ctor?
     val prototype: dynamic
-}
-
-private var iid: Int? = null
-
-@Suppress("SMARTCAST_IMPOSSIBLE")
-internal fun generateInterfaceId(): Int {
-    if (iid == null) {
-        iid = 1
-    } else {
-        iid += 1
-    }
-
-    return iid
 }
 
 @Suppress("UNUSED_PARAMETER")

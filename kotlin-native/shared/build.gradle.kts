@@ -48,6 +48,10 @@ tasks.jar {
     archiveFileName.set("shared.jar")
 }
 
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform()
+}
+
 dependencies {
     kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
 
@@ -55,4 +59,5 @@ dependencies {
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
     api("org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion")
+    testApiJUnit5()
 }

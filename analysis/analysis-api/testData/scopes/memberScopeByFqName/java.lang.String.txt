@@ -8,7 +8,7 @@ KtJavaFieldSymbol:
   modality: FINAL
   name: value
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/CharArray!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -27,7 +27,7 @@ KtJavaFieldSymbol:
   modality: OPEN
   name: hash
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -40,6 +40,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.hash32
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -53,7 +54,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: hash32
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -73,7 +74,7 @@ KtJavaFieldSymbol:
   modality: OPEN
   name: hash32
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -98,7 +99,7 @@ KtSyntheticJavaPropertySymbol:
     isOverride: false
     modality: OPEN
     origin: JAVA_SYNTHETIC_PROPERTY
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -122,7 +123,7 @@ KtSyntheticJavaPropertySymbol:
   modality: OPEN
   name: length
   origin: JAVA_SYNTHETIC_PROPERTY
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
@@ -140,6 +141,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.isEmpty
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -153,7 +155,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: isEmpty
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -167,6 +169,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointAt
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -180,7 +183,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: codePointAt
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -198,7 +201,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -214,6 +217,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointBefore
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -227,7 +231,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: codePointBefore
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -245,7 +249,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -261,6 +265,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.codePointCount
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -274,7 +279,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: codePointCount
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -292,7 +297,7 @@ KtFunctionSymbol:
       isVararg: false
       name: beginIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -311,7 +316,7 @@ KtFunctionSymbol:
       isVararg: false
       name: endIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -327,6 +332,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.offsetByCodePoints
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -340,7 +346,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: offsetByCodePoints
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -358,7 +364,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -377,7 +383,7 @@ KtFunctionSymbol:
       isVararg: false
       name: codePointOffset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -393,6 +399,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getChars
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -406,7 +413,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: getChars
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -424,7 +431,7 @@ KtFunctionSymbol:
       isVararg: false
       name: dst
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -443,7 +450,7 @@ KtFunctionSymbol:
       isVararg: false
       name: dstBegin
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -459,6 +466,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getChars
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -472,7 +480,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: getChars
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -490,7 +498,7 @@ KtFunctionSymbol:
       isVararg: false
       name: srcBegin
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -509,7 +517,7 @@ KtFunctionSymbol:
       isVararg: false
       name: srcEnd
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -528,7 +536,7 @@ KtFunctionSymbol:
       isVararg: false
       name: dst
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -547,7 +555,7 @@ KtFunctionSymbol:
       isVararg: false
       name: dstBegin
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -566,6 +574,7 @@ KtFunctionSymbol:
   ]
   callableIdIfNonLocal: java/lang/String.getBytes
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -579,7 +588,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -597,7 +606,7 @@ KtFunctionSymbol:
       isVararg: false
       name: srcBegin
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -616,7 +625,7 @@ KtFunctionSymbol:
       isVararg: false
       name: srcEnd
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -635,7 +644,7 @@ KtFunctionSymbol:
       isVararg: false
       name: dst
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -654,7 +663,7 @@ KtFunctionSymbol:
       isVararg: false
       name: dstBegin
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -670,6 +679,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -683,7 +693,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/ByteArray!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -701,7 +711,7 @@ KtFunctionSymbol:
       isVararg: false
       name: charsetName
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -717,6 +727,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -730,7 +741,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/ByteArray!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -748,7 +759,7 @@ KtFunctionSymbol:
       isVararg: false
       name: charset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: java/nio/charset/Charset!
       symbolKind: LOCAL
       typeParameters: []
@@ -764,6 +775,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.getBytes
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -777,7 +789,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: getBytes
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/ByteArray!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -791,6 +803,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.equals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -804,7 +817,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: equals
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -822,7 +835,7 @@ KtFunctionSymbol:
       isVararg: false
       name: anObject
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
@@ -838,6 +851,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.contentEquals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -851,7 +865,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: contentEquals
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -869,7 +883,7 @@ KtFunctionSymbol:
       isVararg: false
       name: sb
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: java/lang/StringBuffer!
       symbolKind: LOCAL
       typeParameters: []
@@ -885,6 +899,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.contentEquals
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -898,7 +913,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: contentEquals
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -916,7 +931,7 @@ KtFunctionSymbol:
       isVararg: false
       name: cs
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
@@ -932,6 +947,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.equalsIgnoreCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -945,7 +961,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: equalsIgnoreCase
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -963,7 +979,7 @@ KtFunctionSymbol:
       isVararg: false
       name: anotherString
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -979,6 +995,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.compareTo
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -992,7 +1009,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: compareTo
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1010,7 +1027,7 @@ KtFunctionSymbol:
       isVararg: false
       name: anotherString
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1026,6 +1043,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.compareToIgnoreCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1039,7 +1057,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: compareToIgnoreCase
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1057,7 +1075,7 @@ KtFunctionSymbol:
       isVararg: false
       name: str
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1073,6 +1091,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.regionMatches
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1086,7 +1105,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: regionMatches
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1104,7 +1123,7 @@ KtFunctionSymbol:
       isVararg: false
       name: toffset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1123,7 +1142,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1142,7 +1161,7 @@ KtFunctionSymbol:
       isVararg: false
       name: ooffset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1161,7 +1180,7 @@ KtFunctionSymbol:
       isVararg: false
       name: len
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1177,6 +1196,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.regionMatches
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1190,7 +1210,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: regionMatches
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1208,7 +1228,7 @@ KtFunctionSymbol:
       isVararg: false
       name: ignoreCase
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Boolean
       symbolKind: LOCAL
       typeParameters: []
@@ -1227,7 +1247,7 @@ KtFunctionSymbol:
       isVararg: false
       name: toffset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1246,7 +1266,7 @@ KtFunctionSymbol:
       isVararg: false
       name: other
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1265,7 +1285,7 @@ KtFunctionSymbol:
       isVararg: false
       name: ooffset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1284,7 +1304,7 @@ KtFunctionSymbol:
       isVararg: false
       name: len
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1300,6 +1320,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.startsWith
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1313,7 +1334,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: startsWith
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1331,7 +1352,7 @@ KtFunctionSymbol:
       isVararg: false
       name: prefix
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1350,7 +1371,7 @@ KtFunctionSymbol:
       isVararg: false
       name: toffset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1366,6 +1387,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.startsWith
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1379,7 +1401,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: startsWith
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1397,7 +1419,7 @@ KtFunctionSymbol:
       isVararg: false
       name: prefix
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1413,6 +1435,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.endsWith
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1426,7 +1449,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: endsWith
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1444,7 +1467,7 @@ KtFunctionSymbol:
       isVararg: false
       name: suffix
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1460,6 +1483,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.hashCode
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1473,7 +1497,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: hashCode
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1487,6 +1511,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1500,7 +1525,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1518,7 +1543,7 @@ KtFunctionSymbol:
       isVararg: false
       name: ch
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1534,6 +1559,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1547,7 +1573,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1565,7 +1591,7 @@ KtFunctionSymbol:
       isVararg: false
       name: ch
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1584,7 +1610,7 @@ KtFunctionSymbol:
       isVararg: false
       name: fromIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1600,6 +1626,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1613,7 +1640,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1631,7 +1658,7 @@ KtFunctionSymbol:
       isVararg: false
       name: str
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1647,6 +1674,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1660,7 +1688,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: indexOf
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1678,7 +1706,7 @@ KtFunctionSymbol:
       isVararg: false
       name: str
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1697,7 +1725,7 @@ KtFunctionSymbol:
       isVararg: false
       name: fromIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1713,6 +1741,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.indexOfSupplementary
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1726,7 +1755,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: indexOfSupplementary
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1744,7 +1773,7 @@ KtFunctionSymbol:
       isVararg: false
       name: ch
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1763,7 +1792,7 @@ KtFunctionSymbol:
       isVararg: false
       name: fromIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1779,6 +1808,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1792,7 +1822,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1810,7 +1840,7 @@ KtFunctionSymbol:
       isVararg: false
       name: ch
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1826,6 +1856,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1839,7 +1870,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1857,7 +1888,7 @@ KtFunctionSymbol:
       isVararg: false
       name: ch
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1876,7 +1907,7 @@ KtFunctionSymbol:
       isVararg: false
       name: fromIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -1892,6 +1923,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1905,7 +1937,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1923,7 +1955,7 @@ KtFunctionSymbol:
       isVararg: false
       name: str
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1939,6 +1971,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOf
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -1952,7 +1985,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: lastIndexOf
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -1970,7 +2003,7 @@ KtFunctionSymbol:
       isVararg: false
       name: str
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -1989,7 +2022,7 @@ KtFunctionSymbol:
       isVararg: false
       name: fromIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -2005,6 +2038,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.lastIndexOfSupplementary
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2018,7 +2052,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: lastIndexOfSupplementary
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2036,7 +2070,7 @@ KtFunctionSymbol:
       isVararg: false
       name: ch
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -2055,7 +2089,7 @@ KtFunctionSymbol:
       isVararg: false
       name: fromIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -2071,6 +2105,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.substring
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2084,7 +2119,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: substring
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2102,7 +2137,7 @@ KtFunctionSymbol:
       isVararg: false
       name: beginIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -2118,6 +2153,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.substring
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2131,7 +2167,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: substring
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2149,7 +2185,7 @@ KtFunctionSymbol:
       isVararg: false
       name: beginIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -2168,7 +2204,7 @@ KtFunctionSymbol:
       isVararg: false
       name: endIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -2184,6 +2220,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.subSequence
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2197,7 +2234,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: subSequence
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: @EnhancedNullability kotlin/CharSequence
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2215,7 +2252,7 @@ KtFunctionSymbol:
       isVararg: false
       name: beginIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -2234,7 +2271,7 @@ KtFunctionSymbol:
       isVararg: false
       name: endIndex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -2250,6 +2287,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.concat
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2263,7 +2301,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: concat
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2281,7 +2319,7 @@ KtFunctionSymbol:
       isVararg: false
       name: str
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -2297,6 +2335,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replace
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2310,7 +2349,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: replace
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2328,7 +2367,7 @@ KtFunctionSymbol:
       isVararg: false
       name: oldChar
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Char
       symbolKind: LOCAL
       typeParameters: []
@@ -2347,7 +2386,7 @@ KtFunctionSymbol:
       isVararg: false
       name: newChar
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Char
       symbolKind: LOCAL
       typeParameters: []
@@ -2363,6 +2402,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replace
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2376,7 +2416,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: replace
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2394,7 +2434,7 @@ KtFunctionSymbol:
       isVararg: false
       name: target
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
@@ -2413,7 +2453,7 @@ KtFunctionSymbol:
       isVararg: false
       name: replacement
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
@@ -2429,6 +2469,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.matches
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2442,7 +2483,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: matches
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2460,7 +2501,7 @@ KtFunctionSymbol:
       isVararg: false
       name: regex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -2476,6 +2517,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.contains
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2489,7 +2531,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: contains
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2507,7 +2549,7 @@ KtFunctionSymbol:
       isVararg: false
       name: s
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/CharSequence!
       symbolKind: LOCAL
       typeParameters: []
@@ -2523,6 +2565,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replaceFirst
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2536,7 +2579,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: replaceFirst
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2554,7 +2597,7 @@ KtFunctionSymbol:
       isVararg: false
       name: regex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -2573,7 +2616,7 @@ KtFunctionSymbol:
       isVararg: false
       name: replacement
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -2589,6 +2632,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.replaceAll
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2602,7 +2646,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: replaceAll
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2620,7 +2664,7 @@ KtFunctionSymbol:
       isVararg: false
       name: regex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -2639,7 +2683,7 @@ KtFunctionSymbol:
       isVararg: false
       name: replacement
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -2655,6 +2699,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.split
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2668,7 +2713,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: split
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2686,7 +2731,7 @@ KtFunctionSymbol:
       isVararg: false
       name: regex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -2705,7 +2750,7 @@ KtFunctionSymbol:
       isVararg: false
       name: limit
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -2721,6 +2766,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.split
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2734,7 +2780,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: split
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: ft<kotlin/Array<kotlin/String!>, kotlin/Array<out kotlin/String!>?>
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2752,7 +2798,7 @@ KtFunctionSymbol:
       isVararg: false
       name: regex
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -2768,6 +2814,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toLowerCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2781,7 +2828,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toLowerCase
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2799,7 +2846,7 @@ KtFunctionSymbol:
       isVararg: false
       name: locale
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: java/util/Locale!
       symbolKind: LOCAL
       typeParameters: []
@@ -2815,6 +2862,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toLowerCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2828,7 +2876,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toLowerCase
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2842,6 +2890,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toUpperCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2855,7 +2904,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toUpperCase
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2873,7 +2922,7 @@ KtFunctionSymbol:
       isVararg: false
       name: locale
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: java/util/Locale!
       symbolKind: LOCAL
       typeParameters: []
@@ -2889,6 +2938,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toUpperCase
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2902,7 +2952,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toUpperCase
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2916,6 +2966,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.trim
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2929,7 +2980,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: trim
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2943,6 +2994,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toString
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2956,7 +3008,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toString
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: @EnhancedNullability kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2970,6 +3022,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.toCharArray
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -2983,7 +3036,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: toCharArray
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/CharArray!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -2997,6 +3050,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.intern
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -3010,7 +3064,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: intern
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/String!
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3024,6 +3078,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: java/lang/String.get
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: false
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -3037,7 +3092,7 @@ KtFunctionSymbol:
   modality: OPEN
   name: get
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Char
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3055,7 +3110,7 @@ KtFunctionSymbol:
       isVararg: false
       name: index
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3101,7 +3156,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3119,7 +3174,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3137,7 +3192,7 @@ KtConstructorSymbol:
       isVararg: false
       name: original
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -3157,7 +3212,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3175,7 +3230,7 @@ KtConstructorSymbol:
       isVararg: false
       name: value
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3195,7 +3250,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3213,7 +3268,7 @@ KtConstructorSymbol:
       isVararg: false
       name: value
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3232,7 +3287,7 @@ KtConstructorSymbol:
       isVararg: false
       name: offset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3251,7 +3306,7 @@ KtConstructorSymbol:
       isVararg: false
       name: count
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3271,7 +3326,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3289,7 +3344,7 @@ KtConstructorSymbol:
       isVararg: false
       name: codePoints
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/IntArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3308,7 +3363,7 @@ KtConstructorSymbol:
       isVararg: false
       name: offset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3327,7 +3382,7 @@ KtConstructorSymbol:
       isVararg: false
       name: count
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3350,7 +3405,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3368,7 +3423,7 @@ KtConstructorSymbol:
       isVararg: false
       name: ascii
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3387,7 +3442,7 @@ KtConstructorSymbol:
       isVararg: false
       name: hibyte
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3406,7 +3461,7 @@ KtConstructorSymbol:
       isVararg: false
       name: offset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3425,7 +3480,7 @@ KtConstructorSymbol:
       isVararg: false
       name: count
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3448,7 +3503,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3466,7 +3521,7 @@ KtConstructorSymbol:
       isVararg: false
       name: ascii
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3485,7 +3540,7 @@ KtConstructorSymbol:
       isVararg: false
       name: hibyte
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3505,7 +3560,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3523,7 +3578,7 @@ KtConstructorSymbol:
       isVararg: false
       name: bytes
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3542,7 +3597,7 @@ KtConstructorSymbol:
       isVararg: false
       name: offset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3561,7 +3616,7 @@ KtConstructorSymbol:
       isVararg: false
       name: length
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3580,7 +3635,7 @@ KtConstructorSymbol:
       isVararg: false
       name: charsetName
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -3600,7 +3655,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3618,7 +3673,7 @@ KtConstructorSymbol:
       isVararg: false
       name: bytes
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3637,7 +3692,7 @@ KtConstructorSymbol:
       isVararg: false
       name: offset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3656,7 +3711,7 @@ KtConstructorSymbol:
       isVararg: false
       name: length
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3675,7 +3730,7 @@ KtConstructorSymbol:
       isVararg: false
       name: charset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: java/nio/charset/Charset!
       symbolKind: LOCAL
       typeParameters: []
@@ -3695,7 +3750,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3713,7 +3768,7 @@ KtConstructorSymbol:
       isVararg: false
       name: bytes
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3732,7 +3787,7 @@ KtConstructorSymbol:
       isVararg: false
       name: charsetName
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/String!
       symbolKind: LOCAL
       typeParameters: []
@@ -3752,7 +3807,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3770,7 +3825,7 @@ KtConstructorSymbol:
       isVararg: false
       name: bytes
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3789,7 +3844,7 @@ KtConstructorSymbol:
       isVararg: false
       name: charset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: java/nio/charset/Charset!
       symbolKind: LOCAL
       typeParameters: []
@@ -3809,7 +3864,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3827,7 +3882,7 @@ KtConstructorSymbol:
       isVararg: false
       name: bytes
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3846,7 +3901,7 @@ KtConstructorSymbol:
       isVararg: false
       name: offset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3865,7 +3920,7 @@ KtConstructorSymbol:
       isVararg: false
       name: length
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -3885,7 +3940,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3903,7 +3958,7 @@ KtConstructorSymbol:
       isVararg: false
       name: bytes
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/ByteArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -3923,7 +3978,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3941,7 +3996,7 @@ KtConstructorSymbol:
       isVararg: false
       name: buffer
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: java/lang/StringBuffer!
       symbolKind: LOCAL
       typeParameters: []
@@ -3961,7 +4016,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3979,7 +4034,7 @@ KtConstructorSymbol:
       isVararg: false
       name: builder
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: java/lang/StringBuilder!
       symbolKind: LOCAL
       typeParameters: []
@@ -3999,7 +4054,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -4017,7 +4072,7 @@ KtConstructorSymbol:
       isVararg: false
       name: value
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []
@@ -4036,7 +4091,7 @@ KtConstructorSymbol:
       isVararg: false
       name: share
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Boolean
       symbolKind: LOCAL
       typeParameters: []
@@ -4059,7 +4114,7 @@ KtConstructorSymbol:
   isExtension: false
   isPrimary: false
   origin: JAVA
-  receiverType: null
+  receiverParameter: null
   returnType: java/lang/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -4077,7 +4132,7 @@ KtConstructorSymbol:
       isVararg: false
       name: offset
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -4096,7 +4151,7 @@ KtConstructorSymbol:
       isVararg: false
       name: count
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
@@ -4115,7 +4170,7 @@ KtConstructorSymbol:
       isVararg: false
       name: value
       origin: JAVA
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/CharArray!
       symbolKind: LOCAL
       typeParameters: []

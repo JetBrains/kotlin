@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.wasm.internal
@@ -233,12 +222,11 @@ internal annotation class WasmOp(val name: String) {
         const val REF_NULL = "REF_NULL"
         const val REF_IS_NULL = "REF_IS_NULL"
         const val REF_FUNC = "REF_FUNC"
-        const val REF_AS_NOT_NULL = "REF_AS_NOT_NULL"
-        const val BR_ON_NULL = "BR_ON_NULL"
-        const val REF_EQ = "REF_EQ"
         const val CALL_REF = "CALL_REF"
         const val RETURN_CALL_REF = "RETURN_CALL_REF"
-        const val FUNC_BIND = "FUNC_BIND"
+        const val REF_AS_NOT_NULL = "REF_AS_NOT_NULL"
+        const val BR_ON_NULL = "BR_ON_NULL"
+        const val BR_ON_NON_NULL = "BR_ON_NON_NULL"
         const val STRUCT_NEW = "STRUCT_NEW"
         const val STRUCT_NEW_DEFAULT = "STRUCT_NEW_DEFAULT"
         const val STRUCT_GET = "STRUCT_GET"
@@ -253,22 +241,20 @@ internal annotation class WasmOp(val name: String) {
         const val ARRAY_SET = "ARRAY_SET"
         const val ARRAY_LEN = "ARRAY_LEN"
         const val ARRAY_COPY = "ARRAY_COPY"
+        const val ARRAY_NEW_DATA = "ARRAY_NEW_DATA"
+        const val ARRAY_NEW_FIXED = "ARRAY_NEW_FIXED"
+        const val ARRAY_NEW_ELEM = "ARRAY_NEW_ELEM"
         const val I31_NEW = "I31_NEW"
         const val I31_GET_S = "I31_GET_S"
         const val I31_GET_U = "I31_GET_U"
-        const val REF_TEST = "REF_TEST"
-        const val REF_CAST = "REF_CAST"
-        const val BR_ON_CAST_FAIL = "BR_ON_CAST_FAIL"
-        const val REF_IS_DATA = "REF_IS_DATA"
-        const val REF_IS_I31 = "REF_IS_I31"
-        const val REF_AS_DATA = "REF_AS_DATA"
-        const val REF_AS_I31 = "REF_AS_I31"
-        const val BR_ON_DATA = "BR_ON_DATA"
-        const val BR_ON_I31 = "BR_ON_I31"
-        const val BR_ON_NON_DATA = "BR_ON_NON_DATA"
-        const val BR_ON_NON_I31 = "BR_ON_NON_I31"
+        const val REF_EQ = "REF_EQ"
         const val EXTERN_INTERNALIZE = "EXTERN_INTERNALIZE"
         const val EXTERN_EXTERNALIZE = "EXTERN_EXTERNALIZE"
+        const val REF_TEST_DEPRECATED = "REF_TEST_DEPRECATED"
+        const val REF_CAST_DEPRECATED = "REF_CAST_DEPRECATED"
+        const val REF_IS_DATA_DEPRECATED = "REF_IS_DATA_DEPRECATED"
+        const val REF_AS_DATA_DEPRECATED = "REF_AS_DATA_DEPRECATED"
+        const val BR_ON_CAST_FAIL_DEPRECATED = "BR_ON_CAST_FAIL_DEPRECATED"
         const val GET_UNIT = "GET_UNIT"
     }
 }

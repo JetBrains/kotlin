@@ -143,7 +143,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
             ),
             futureError = OptInFactoryBasedReporter(
                 Errors.OPT_IN_USAGE_FUTURE_ERROR,
-                getDefaultDiagnosticMessage("This declaration is experimental due to signature types and its usage must be marked (will become an error in 1.6)")
+                getDefaultDiagnosticMessage("This declaration is experimental due to signature types and its usage must be marked (will become an error in future releases)")
             ),
         )
 
@@ -224,14 +224,15 @@ class OptInUsageChecker(project: Project) : CallChecker {
                         moduleAnnotationsResolver, context, languageVersionSettings, visited
                     )
                 )
-                if (this is FunctionDescriptor) {
-                    valueParameters.forEach {
-                        result.addAll(
-                            it.type.loadOptIns(
-                                moduleAnnotationsResolver, context, languageVersionSettings, visited
-                            )
+            }
+            if (this is FunctionDescriptor) {
+                valueParameters.forEach {
+                    result.addAll(
+                        it.type.loadOptIns(
+                            moduleAnnotationsResolver, context, languageVersionSettings, visited,
+                            warningsOnly = this is ConstructorDescriptor
                         )
-                    }
+                    )
                 }
             }
 
@@ -242,7 +243,7 @@ class OptInUsageChecker(project: Project) : CallChecker {
             if (annotations.any { it.fqName == WAS_EXPERIMENTAL_FQ_NAME }) {
                 val accessibility = checkSinceKotlinVersionAccessibility(languageVersionSettings)
                 if (accessibility is SinceKotlinAccessibility.NotAccessibleButWasExperimental) {
-                    result.addAll(accessibility.markerClasses.mapNotNull { it.loadOptInForMarkerAnnotation() })
+                    result.addAll(accessibility.markerClasses.mapNotNull { it.loadOptInForMarkerAnnotation(useFutureError) })
                 }
             }
 
@@ -258,19 +259,20 @@ class OptInUsageChecker(project: Project) : CallChecker {
             moduleAnnotationsResolver: ModuleAnnotationsResolver,
             context: BindingContext,
             languageVersionSettings: LanguageVersionSettings,
-            visitedClassifiers: MutableSet<DeclarationDescriptor>
+            visitedClassifiers: MutableSet<DeclarationDescriptor>,
+            warningsOnly: Boolean = false
         ): Set<OptInDescription> =
             when {
                 this?.isError != false -> emptySet()
                 this is AbbreviatedType -> abbreviation.constructor.declarationDescriptor?.loadOptIns(
                     moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers,
-                    useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
+                    useFutureError = warningsOnly || !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
                 ).orEmpty() + expandedType.loadOptIns(
                     moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers
                 )
                 else -> constructor.declarationDescriptor?.loadOptIns(
                     moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers,
-                    useFutureError = !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
+                    useFutureError = warningsOnly || !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
                 ).orEmpty() + arguments.flatMap {
                     if (it.isStarProjection) emptySet()
                     else it.type.loadOptIns(moduleAnnotationsResolver, context, languageVersionSettings, visitedClassifiers)
@@ -315,7 +317,10 @@ class OptInUsageChecker(project: Project) : CallChecker {
 
         /**
          * Checks whether there's an element lexically above in the tree, annotated with `@OptIn(X::class)`, or a declaration
-         * annotated with `@X` where [annotationFqName] is the FQ name of X
+         * annotated with `@X` where [annotationFqName] is the FQ name of X.
+         *
+         * This implementation also was rewritten for K2 use in intellij repository.
+         * See `org.jetbrains.kotlin.idea.base.fir.codeInsight.FirOptInUsageCheckerKt#isOptInAllowed`.
          */
         fun PsiElement.isOptInAllowed(
             annotationFqName: FqName,

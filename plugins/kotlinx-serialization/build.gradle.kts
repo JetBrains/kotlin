@@ -20,6 +20,7 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
+    testApi(project(":compiler:fir:plugin-utils"))
     testImplementation(projectTests(":generators:test-generator"))
     testApiJUnit5()
 
@@ -29,11 +30,11 @@ dependencies {
     testImplementation(project(":kotlinx-serialization-compiler-plugin.backend"))
     testImplementation(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.0-RC")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0-RC")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.4.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.1")
 
     testRuntimeOnly(intellijCore())
-    testRuntimeOnly(project(":kotlin-reflect"))
+    testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 }

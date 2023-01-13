@@ -1,3 +1,5 @@
+// FIR_DISABLE_LAZY_RESOLVE_CHECKS
+// FIR_IDENTICAL
 // !LANGUAGE: +ProhibitConcurrentHashMapContains
 // FULL_JDK
 

@@ -11,12 +11,15 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirRegularClassBuilder
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
+import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -36,13 +39,13 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override var resolvePhase: FirResolvePhase,
     override val name: Name,
     override val origin: FirDeclarationOrigin.Java,
-    override val annotations: MutableList<FirAnnotation>,
+    override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var status: FirDeclarationStatus,
     override val classKind: ClassKind,
     override val declarations: MutableList<FirDeclaration>,
     override val scopeProvider: FirScopeProvider,
     override val symbol: FirRegularClassSymbol,
-    override val superTypeRefs: MutableList<FirTypeRef>,
+    private val unenhnancedSuperTypes: List<FirTypeRef>,
     override val typeParameters: MutableList<FirTypeParameterRef>,
     internal val javaPackage: JavaPackage?,
     val javaTypeParameterStack: JavaTypeParameterStack,
@@ -61,9 +64,14 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
     override val attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 
+    // TODO: the lazy superTypeRefs is a workaround for KT-55387, some non-lazy solution should probably be used instead
+    override val superTypeRefs: List<FirTypeRef> by lazy {
+        val enhancement = FirSignatureEnhancement(this@FirJavaClass, moduleData.session, overridden = { emptyList() })
+        enhancement.enhanceSuperTypes(unenhnancedSuperTypes)
+    }
+
     override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>) {
-        superTypeRefs.clear()
-        superTypeRefs.addAll(newSuperTypeRefs)
+        error("${::replaceSuperTypeRefs.name} should not be called for ${this::class.simpleName}, ${superTypeRefs::class.simpleName} is lazily calulated")
     }
 
     override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
@@ -99,13 +107,16 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun <D> transformSuperTypeRefs(transformer: FirTransformer<D>, data: D): FirRegularClass {
-        superTypeRefs.transformInplace(transformer, data)
         return this
     }
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirJavaClass {
         status = status.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        annotations = newAnnotations.toMutableOrEmpty()
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaClass {
@@ -146,13 +157,14 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
 
     @OptIn(FirImplementationDetail::class)
     override fun build(): FirJavaClass {
+        @Suppress("UNCHECKED_CAST")
         return FirJavaClass(
             source,
             moduleData,
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             name,
             origin = javaOrigin(isFromSource),
-            annotations,
+            annotations.toMutableOrEmpty(),
             status,
             classKind,
             declarations,

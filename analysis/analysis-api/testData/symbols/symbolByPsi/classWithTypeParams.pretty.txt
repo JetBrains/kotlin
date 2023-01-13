@@ -1,1 +1,1 @@
-class A<@org.jetbrains.annotations.NotNull T, R>
+class A<T, R>

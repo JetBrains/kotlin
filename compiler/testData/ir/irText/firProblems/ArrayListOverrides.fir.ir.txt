@@ -200,13 +200,13 @@ FILE fqName:<root> fileName:/ArrayListOverrides.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () declared in java.util.ArrayList'
           <E>: kotlin.String
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A2 modality:FINAL visibility:public superTypes:[java.util.ArrayList<kotlin.String>]'
-    FUN name:remove visibility:public modality:FINAL <> ($this:<root>.A2, x:kotlin.String) returnType:kotlin.Boolean
+    FUN name:remove visibility:public modality:OPEN <> ($this:<root>.A2, x:kotlin.String) returnType:kotlin.Boolean
       overridden:
         public open fun remove (p0: @[EnhancedNullability] E of java.util.ArrayList): kotlin.Boolean declared in java.util.ArrayList
       $this: VALUE_PARAMETER name:<this> type:<root>.A2
       VALUE_PARAMETER name:x index:0 type:kotlin.String
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun remove (x: kotlin.String): kotlin.Boolean declared in <root>.A2'
+        RETURN type=kotlin.Nothing from='public open fun remove (x: kotlin.String): kotlin.Boolean declared in <root>.A2'
           CONST Boolean type=kotlin.Boolean value=true
     FUN FAKE_OVERRIDE name:elementData visibility:public/*package*/ modality:OPEN <> ($this:java.util.ArrayList<E of java.util.ArrayList>, p0:kotlin.Int) returnType:@[FlexibleNullability] kotlin.String? [fake_override]
       overridden:

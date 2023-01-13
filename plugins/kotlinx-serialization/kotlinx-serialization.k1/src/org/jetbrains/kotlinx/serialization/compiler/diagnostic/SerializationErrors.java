@@ -52,6 +52,7 @@ public interface SerializationErrors {
     DiagnosticFactory3<KtAnnotationEntry, String, String, String> PROVIDED_RUNTIME_TOO_LOW = DiagnosticFactory3.create(ERROR);
 
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> INCONSISTENT_INHERITABLE_SERIALINFO = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory0<PsiElement> META_SERIALIZABLE_NOT_APPLICABLE = DiagnosticFactory0.create(WARNING);
 
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> EXTERNAL_CLASS_NOT_SERIALIZABLE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> EXTERNAL_CLASS_IN_ANOTHER_MODULE = DiagnosticFactory2.create(ERROR);

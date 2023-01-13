@@ -6,27 +6,28 @@
 package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
-import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.ResultingArtifact
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.model.TestModule
 
-abstract class FirOutputArtifact : ResultingArtifact.FrontendOutput<FirOutputArtifact>() {
-    abstract val session: FirSession
-    abstract val firAnalyzerFacade: AbstractFirAnalyzerFacade
-    abstract val allFirFiles: Map<TestFile, FirFile>
+// Only MPP contains several parts inside FirOutputArtifact, other projects only contain single part.
+data class FirOutputPartForDependsOnModule(
+    val module: TestModule,
+    val session: FirSession,
+    val firAnalyzerFacade: AbstractFirAnalyzerFacade,
+    val firFiles: Map<TestFile, FirFile>
+)
+
+abstract class FirOutputArtifact(val partsForDependsOnModules: List<FirOutputPartForDependsOnModule>) : ResultingArtifact.FrontendOutput<FirOutputArtifact>() {
+    val allFirFiles: Map<TestFile, FirFile> = partsForDependsOnModules.fold(emptyMap()) { acc, part -> acc + part.firFiles }
 
     override val kind: FrontendKinds.FIR
         get() = FrontendKinds.FIR
 
-
-    val firFiles: Map<TestFile, FirFile> by lazy { allFirFiles.filterKeys { !it.isAdditional } }
+    val mainFirFiles: Map<TestFile, FirFile> by lazy { allFirFiles.filterKeys { !it.isAdditional } }
 }
 
-data class FirOutputArtifactImpl(
-    override val session: FirSession,
-    override val allFirFiles: Map<TestFile, FirFile>,
-    override val firAnalyzerFacade: FirAnalyzerFacade
-) : FirOutputArtifact()
+class FirOutputArtifactImpl(parts: List<FirOutputPartForDependsOnModule>) : FirOutputArtifact(parts)

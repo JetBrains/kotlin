@@ -36,6 +36,7 @@ class Candidate(
     private val baseSystem: ConstraintStorage,
     override val callInfo: CallInfo,
     val originScope: FirScope?,
+    val importedQualifierForStatic: FirExpression? = null,
     val isFromCompanionObjectTypeScope: Boolean = false
 ) : AbstractCandidate() {
 

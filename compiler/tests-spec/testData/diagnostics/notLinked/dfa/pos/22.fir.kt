@@ -46,8 +46,8 @@ fun case_4(x: Any) {
 fun case_5(x: Any?) {
     if (!(x !is Class.NestedClass?)) {
         if (!!(<!USELESS_IS_CHECK!>x !is Class.NestedClass?<!>)) {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass?")!>x<!>?.prop_4
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & Class.NestedClass")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>prop_4
         }
     }
 }
@@ -76,8 +76,8 @@ fun case_7(x: Any) {
 fun case_8(x: Any?) {
     if (!!!!(x is Int?)) else {
         if (!(x is Int?)) else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int?")!>x<!>?.inv()
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>inv()
         }
     }
 }
@@ -86,8 +86,8 @@ fun case_8(x: Any?) {
 fun case_9(x: Any?) {
     if (!!!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
         if (!!(x !is TypealiasNullableStringIndirect<!REDUNDANT_NULLABLE!>?<!>)) else {
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & TypealiasNullableStringIndirect?")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & TypealiasNullableStringIndirect?")!>x<!>?.get(0)
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any & TypealiasNullableStringIndirect")!>x<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any & TypealiasNullableStringIndirect")!>x<!><!UNNECESSARY_SAFE_CALL!>?.<!>get(0)
         }
     }
 }

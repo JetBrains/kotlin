@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -381,6 +381,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
         @TestMetadata("kt47527.kt")
         public void testKt47527() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/kt47527.kt");
+        }
+
+        @TestMetadata("kt52677.kt")
+        public void testKt52677() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt52677.kt");
         }
 
         @TestMetadata("localClassWithOverrides.kt")
@@ -1950,6 +1955,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/localClassUsedBeforeDeclaration.kt");
         }
 
+        @TestMetadata("localCompanion.kt")
+        public void testLocalCompanion() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/localCompanion.kt");
+        }
+
         @TestMetadata("readWriteProperty.kt")
         public void testReadWriteProperty() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/readWriteProperty.kt");
@@ -1983,6 +1993,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
         @TestMetadata("SimpleTypeMarker.kt")
         public void testSimpleTypeMarker() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SimpleTypeMarker.kt");
+        }
+
+        @TestMetadata("thisInEnumConstructor.kt")
+        public void testThisInEnumConstructor() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/thisInEnumConstructor.kt");
         }
 
         @TestMetadata("TypeParameterBounds.kt")

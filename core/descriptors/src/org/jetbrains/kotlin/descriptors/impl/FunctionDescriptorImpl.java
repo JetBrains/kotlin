@@ -628,6 +628,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         List<ReceiverParameterDescriptor> substitutedContextReceiverParameters = new ArrayList<ReceiverParameterDescriptor>();
         if (!configuration.newContextReceiverParameters.isEmpty()) {
+            int index = 0;
             for (ReceiverParameterDescriptor newContextReceiverParameter : configuration.newContextReceiverParameters) {
                 KotlinType substitutedContextReceiverType =
                         substitutor.substitute(newContextReceiverParameter.getType(), Variance.IN_VARIANCE);
@@ -637,7 +638,8 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
                 ReceiverParameterDescriptor substitutedContextReceiverParameter =
                         DescriptorFactory.createContextReceiverParameterForCallable(substitutedDescriptor, substitutedContextReceiverType,
                                                                                     ((ImplicitContextReceiver)newContextReceiverParameter.getValue()).getCustomLabelName(),
-                                                                                    newContextReceiverParameter.getAnnotations());
+                                                                                    newContextReceiverParameter.getAnnotations(),
+                                                                                    index++);
                 substitutedContextReceiverParameters.add(substitutedContextReceiverParameter);
 
                 wereChanges[0] |= substitutedContextReceiverType != newContextReceiverParameter.getType();

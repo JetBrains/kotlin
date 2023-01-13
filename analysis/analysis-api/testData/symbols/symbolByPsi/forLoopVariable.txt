@@ -6,7 +6,7 @@ KtLocalVariableSymbol:
   isVal: true
   name: loopVariable
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   symbolKind: LOCAL
   typeParameters: []
@@ -17,6 +17,7 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /usage
   contextReceivers: []
+  contractEffects: []
   hasStableParameterNames: true
   isBuiltinFunctionInvoke: false
   isExtension: false
@@ -30,7 +31,7 @@ KtFunctionSymbol:
   modality: FINAL
   name: usage
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []

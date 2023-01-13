@@ -1,6 +1,6 @@
-import org.jetbrains.kotlin.CopyCommonSources
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.cpp.CppConsumerPlugin
+import org.jetbrains.kotlin.cpp.CppUsage
+import org.jetbrains.kotlin.cpp.DependencyHandlerExKt
 import org.jetbrains.gradle.plugins.tools.*
 /*
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
@@ -15,6 +15,7 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 apply plugin: org.jetbrains.kotlin.NativeInteropPlugin
 apply plugin: "maven-publish"
+apply plugin: CppConsumerPlugin
 
 sourceSets {
     compiler {
@@ -40,6 +41,30 @@ compileCli_bcKotlin {
     kotlinOptions.freeCompilerArgs += ['-Xskip-prerelease-check']
 }
 
+configurations {
+    commonFilesBitcode {
+        canBeConsumed = false
+        canBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.LLVM_BITCODE))
+        }
+    }
+    commonEnvBitcode {
+        canBeConsumed = false
+        canBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.LLVM_BITCODE))
+        }
+    }
+}
+
+dependencies {
+    use(DependencyHandlerExKt) {
+        commonFilesBitcode module(project(":kotlin-native:common"), "files")
+        commonEnvBitcode module(project(":kotlin-native:common"), "env")
+    }
+}
+
 kotlinNativeInterop {
     llvm {
 
@@ -63,8 +88,9 @@ kotlinNativeInterop {
 
     files {
         linker 'clang++'
-        linkOutputs ":kotlin-native:common:${hostName}Files"
+        link configurations.commonFilesBitcode
 
+        // TODO: These should come from some sort of commonFilesApi configuration
         headers fileTree('../common/src/files/headers') {
             include '**/*.h'
             include '**/*.hpp'
@@ -76,8 +102,9 @@ kotlinNativeInterop {
 
     env {
         linker 'clang++'
-        linkOutputs ":kotlin-native:common:${hostName}Env"
+        link configurations.commonEnvBitcode
 
+        // TODO: These should come from some sort of commonEnvApi configuration
         headers fileTree('../common/src/env/headers') {
             include '**/*.h'
             include '**/*.hpp'
@@ -108,7 +135,9 @@ dependencies {
     use(DependenciesKt) {
         trove4j_jar commonDependency("org.jetbrains.intellij.deps:trove4j")
         kotlin_reflect_jar commonDependency("org.jetbrains.kotlin:kotlin-reflect")
-        compilerApi commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")
+        compilerApi(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")) { setTransitive(false) }
+        compilerApi(commonDependency("org.jetbrains.intellij.deps:log4j")) { setTransitive(false) }
+        compilerApi(commonDependency("org.jetbrains.intellij.deps:jdom"))
     }
     kotlin_script_runtime_jar project(":kotlin-script-runtime")
 
@@ -126,6 +155,7 @@ dependencies {
     compilerApi project(":kotlin-util-klib")
     compilerApi project(":kotlin-util-klib-metadata")
     compilerApi project(":compiler:ir.serialization.common")
+    compilerApi project(":compiler:fir:fir-serialization")
     compilerApi project(":compiler:ir.psi2ir")
     compilerApi project(":kotlin-native-shared")
     use(IntellijDependenciesKt) {
@@ -153,7 +183,7 @@ jar {
             sourceSets.envInteropStubs.output,
             sourceSets.llvmInteropStubs.output
 
-    dependsOn ':kotlin-native:runtime:hostRuntime', 'external_jars'
+    dependsOn 'external_jars'
 }
 
 def externalJars = ['compiler', 'stdlib', 'reflect', 'script_runtime']

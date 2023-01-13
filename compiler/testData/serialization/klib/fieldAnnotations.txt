@@ -1,0 +1,14 @@
+package test
+
+@field:test.Ann public var x: kotlin.Int
+@delegate:test.Ann public var y: kotlin.Int
+
+public final class A {
+    public constructor A()
+    @field:test.Ann public final var x: kotlin.Int
+    @delegate:test.Ann public final var y: kotlin.Int
+}
+
+public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann()
+}

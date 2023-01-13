@@ -64,7 +64,7 @@ internal fun itoa32(inputValue: Int, radix: Int): String {
     if (sign == 1)
         buf.set(0, CharCodes.MINUS.code.toChar())
 
-    return String(buf)
+    return buf.createString()
 }
 
 private fun utoaDecSimple(buffer: WasmCharArray, numInput: Int, offsetInput: Int) {
@@ -144,7 +144,7 @@ internal fun itoa64(inputValue: Long, radix: Int): String {
     if (sign == 1)
         buf.set(0, CharCodes.MINUS.code.toChar())
 
-    return String(buf)
+    return buf.createString()
 }
 
 // Count number of decimals for u64 values
@@ -178,7 +178,7 @@ internal fun dtoa(value: Double): String {
     val size = dtoaCore(buf, value)
     val ret = WasmCharArray(size)
     buf.copyInto(ret, 0, 0, size)
-    return String(ret)
+    return ret.createString()
 }
 
 private fun dtoaCore(buffer: WasmCharArray, valueInp: Double): Int {

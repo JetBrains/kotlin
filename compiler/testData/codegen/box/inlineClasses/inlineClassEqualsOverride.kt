@@ -1,12 +1,11 @@
 // WITH_STDLIB
-// WORKS_WHEN_VALUE_CLASS
-// LANGUAGE: +ValueClasses, +CustomEqualsInInlineClasses
+// LANGUAGE: +ValueClasses, +CustomEqualsInValueClasses
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_LISTING
 
 import kotlin.math.abs
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC1(val value: Double) {
     fun equals(other: IC1): Boolean {
         return abs(value - other.value) < 0.1
@@ -17,22 +16,42 @@ interface I {
     fun equals(param: IC2): Boolean
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC2(val value: Int) : I {
-    override fun equals(param: IC2): Boolean {
+    override operator fun equals(param: IC2): Boolean {
         return abs(value - param.value) < 2
     }
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC3(val value: Int) {
 
 }
 
-OPTIONAL_JVM_INLINE_ANNOTATION
+@JvmInline
 value class IC4(val value: Int) {
     override fun equals(other: Any?) = TODO()
 }
+
+@JvmInline
+value class IC5(val value: Int) {
+    operator fun equals(other: IC5): Nothing = TODO()
+}
+
+@JvmInline
+value class IC6(val value: Int) {
+    override fun equals(other: Any?): Nothing = TODO()
+}
+
+inline fun <reified T> assertThrows(block: () -> Unit): Boolean {
+    try {
+        block.invoke()
+    } catch (t: Throwable) {
+        return t is T
+    }
+    return false
+}
+
 
 fun box() = when {
     IC1(1.0) != IC1(1.05) -> "Fail 1.1"
@@ -67,6 +86,10 @@ fun box() = when {
 
     IC1(1.0) == Any() -> "Fail 7.1"
     (IC1(1.0) as Any) == Any() -> "Fail 7.2"
+
+    !assertThrows<NotImplementedError> { IC5(0) == IC5(1) } -> "Fail 8.1"
+    !assertThrows<NotImplementedError> { IC6(0) == IC6(1) } -> "Fail 8.2"
+
 
     else -> "OK"
 }

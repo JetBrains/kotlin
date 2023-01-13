@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2: JS_IR
 // EXPECTED_REACHABLE_NODES: 1285
 
 fun <T> rawReturnValue(fn: () -> T): Any {

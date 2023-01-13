@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_ANONYMOUS_PARAMETER -UNUSED_PARAMETER, -UNREACHABLE_CODE
 
 val prop: String = <!CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>
@@ -26,4 +27,13 @@ open class B() : A(<!CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION!>d
     constructor(y: String) : this()
 
     constructor(y: String, z: String) : this(y + z + <!CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>)
+}
+
+private fun exposeClassS() = run {
+    class S {
+        inner class W {
+            val v: String = <!CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION!>definedExternally<!>
+        }
+    }
+    S()
 }

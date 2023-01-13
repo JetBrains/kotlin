@@ -9,12 +9,12 @@ import plugins.signLibraryPublication
 plugins {
     `java-library`
     kotlin("jvm")
-    id("org.jetbrains.dokka")
     `maven-publish`
 }
 
 configureCommonPublicationSettingsForGradle(signLibraryPublication)
 configureKotlinCompileTasksGradleCompatibility()
+addBomCheckTask()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 
 val commonSourceSet = createGradleCommonSourceSet()
@@ -34,9 +34,23 @@ createGradlePluginVariant(
     isGradlePlugin = false
 )
 
+// Used for Gradle 7.4+ versions
+createGradlePluginVariant(
+    GradlePluginVariant.GRADLE_74,
+    commonSourceSet = commonSourceSet,
+    isGradlePlugin = false
+)
+
 // Used for Gradle 7.5+ versions
 createGradlePluginVariant(
     GradlePluginVariant.GRADLE_75,
+    commonSourceSet = commonSourceSet,
+    isGradlePlugin = false
+)
+
+// Used for Gradle 7.6+ versions
+createGradlePluginVariant(
+    GradlePluginVariant.GRADLE_76,
     commonSourceSet = commonSourceSet,
     isGradlePlugin = false
 )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -152,6 +152,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("delegatedProperties.kt")
+    public void testDelegatedProperties() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/delegatedProperties.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/deprecated.kt");
@@ -173,6 +179,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/enums.kt");
+    }
+
+    @Test
+    @TestMetadata("errorExtensionReceiver.kt")
+    public void testErrorExtensionReceiver() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorExtensionReceiver.kt");
     }
 
     @Test
@@ -329,6 +341,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     @TestMetadata("jvmOverloads.kt")
     public void testJvmOverloads() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmOverloads.kt");
+    }
+
+    @Test
+    @TestMetadata("jvmRepeatableAnnotation.kt")
+    public void testJvmRepeatableAnnotation() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmRepeatableAnnotation.kt");
     }
 
     @Test

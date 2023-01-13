@@ -37,6 +37,7 @@ data class BuildOptions(
     val useFir: Boolean = false,
     val usePreciseJavaTracking: Boolean? = null,
     val freeArgs: List<String> = emptyList(),
+    val statisticsForceValidation: Boolean = true,
 ) {
     data class KaptOptions(
         val verbose: Boolean = false,
@@ -50,6 +51,7 @@ data class BuildOptions(
         val jsCompilerType: KotlinJsCompilerType? = null,
         val incrementalJs: Boolean? = null,
         val incrementalJsKlib: Boolean? = null,
+        val compileNoWarn: Boolean = true
     )
 
     fun toArguments(
@@ -113,9 +115,13 @@ data class BuildOptions(
             jsOptions.incrementalJsKlib?.let { arguments.add("-Pkotlin.incremental.js.klib=$it") }
             jsOptions.useIrBackend?.let { arguments.add("-Pkotlin.js.useIrBackend=$it") }
             jsOptions.jsCompilerType?.let { arguments.add("-Pkotlin.js.compiler=$it") }
+            // because we have legacy compiler tests, we need nowarn for compiler testing
+            if (jsOptions.compileNoWarn) {
+                arguments.add("-Pkotlin.js.compiler.nowarn=true")
+            }
+        } else {
+            arguments.add("-Pkotlin.js.compiler.nowarn=true")
         }
-        // because we have legacy compiler tests, we need nowarn for compiler testing
-        arguments.add("-Pkotlin.js.compiler.nowarn=true")
 
         if (androidVersion != null) {
             arguments.add("-Pandroid_tools_version=${androidVersion}")
@@ -127,11 +133,15 @@ data class BuildOptions(
         }
 
         if (useFir) {
-            arguments.add("-Pkotlin.useFir=true")
+            arguments.add("-Pkotlin.useK2=true")
         }
 
         if (usePreciseJavaTracking != null) {
             arguments.add("-Pkotlin.incremental.usePreciseJavaTracking=$usePreciseJavaTracking")
+        }
+
+        if (statisticsForceValidation) {
+            arguments.add("-Pkotlin_performance_profile_force_validation=true")
         }
 
         arguments.addAll(freeArgs)

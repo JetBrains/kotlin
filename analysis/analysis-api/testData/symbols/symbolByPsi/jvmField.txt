@@ -17,7 +17,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Long
     symbolKind: ACCESSOR
     typeParameters: []
@@ -40,7 +40,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: jvmField
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Long
   setter: KtPropertySetterSymbol:
     annotationsList: []
@@ -65,15 +65,15 @@ KtKotlinPropertySymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
-      name: <set-?>
+      name: value
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -89,9 +89,9 @@ KtKotlinPropertySymbol:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
-        name: <set-?>
+        name: value
         origin: SOURCE
-        receiverType: null
+        receiverParameter: null
         returnType: kotlin/Long
         symbolKind: LOCAL
         typeParameters: []
@@ -130,7 +130,7 @@ KtKotlinPropertySymbol:
     isOverride: false
     modality: FINAL
     origin: SOURCE
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
@@ -153,7 +153,7 @@ KtKotlinPropertySymbol:
   modality: FINAL
   name: jvmFieldOnField
   origin: SOURCE
-  receiverType: null
+  receiverParameter: null
   returnType: kotlin/Int
   setter: KtPropertySetterSymbol:
     annotationsList: []
@@ -178,15 +178,15 @@ KtKotlinPropertySymbol:
       isImplicitLambdaParameter: false
       isNoinline: false
       isVararg: false
-      name: <set-?>
+      name: value
       origin: SOURCE
-      receiverType: null
+      receiverParameter: null
       returnType: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
-    receiverType: null
+    receiverParameter: null
     returnType: kotlin/Unit
     symbolKind: ACCESSOR
     typeParameters: []
@@ -202,9 +202,9 @@ KtKotlinPropertySymbol:
         isImplicitLambdaParameter: false
         isNoinline: false
         isVararg: false
-        name: <set-?>
+        name: value
         origin: SOURCE
-        receiverType: null
+        receiverParameter: null
         returnType: kotlin/Int
         symbolKind: LOCAL
         typeParameters: []

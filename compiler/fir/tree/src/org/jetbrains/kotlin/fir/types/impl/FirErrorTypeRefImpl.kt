@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.types.ConeErrorType
@@ -31,7 +32,7 @@ internal class FirErrorTypeRefImpl(
         isFromStubType
     )
 
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }
@@ -40,6 +41,10 @@ internal class FirErrorTypeRefImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {
         transformAnnotations(transformer, data)
         return this
+    }
+
+    override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
+        throw AssertionError("Replacing annotations in FirErrorTypeRefImpl is not supported")
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRefImpl {

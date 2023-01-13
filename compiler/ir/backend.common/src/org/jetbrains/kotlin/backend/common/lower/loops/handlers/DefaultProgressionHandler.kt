@@ -18,19 +18,16 @@ import org.jetbrains.kotlin.ir.util.getPropertyGetter
 import org.jetbrains.kotlin.ir.util.shallowCopy
 
 /** Builds a [HeaderInfo] for progressions not handled by more specialized handlers. */
-internal class DefaultProgressionHandler(private val context: CommonBackendContext, private val allowUnsignedBounds: Boolean = false) :
-    ExpressionHandler {
-
+internal class DefaultProgressionHandler(
+    private val context: CommonBackendContext, private val allowUnsignedBounds: Boolean = false
+) : HeaderInfoHandler<IrExpression, Nothing?> {
     private val symbols = context.ir.symbols
     private val rangeClassesTypes = symbols.rangeClasses.map { it.defaultType }.toSet()
 
-    override fun matchIterable(expression: IrExpression) = ProgressionType.fromIrType(
-        expression.type,
-        symbols,
-        allowUnsignedBounds
-    ) != null
+    override fun matchIterable(expression: IrExpression): Boolean =
+        ProgressionType.fromIrType(expression.type, symbols, allowUnsignedBounds) != null
 
-    override fun build(expression: IrExpression, scopeOwner: IrSymbol): HeaderInfo? =
+    override fun build(expression: IrExpression, data: Nothing?, scopeOwner: IrSymbol): HeaderInfo =
         with(context.createIrBuilder(scopeOwner, expression.startOffset, expression.endOffset)) {
             // Directly use the `first/last/step` properties of the progression.
             val (progressionVar, progressionExpression) = createTemporaryVariableIfNecessary(expression, nameHint = "progression")

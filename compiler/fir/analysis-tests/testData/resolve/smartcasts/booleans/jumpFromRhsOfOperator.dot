@@ -5,17 +5,18 @@ digraph jumpFromRhsOfOperator_kt {
 
     subgraph cluster_0 {
         color=red
-        0 [label="Enter function foo" style="filled" fillcolor=red];
-        1 [label="Exit function foo" style="filled" fillcolor=red];
+        0 [label="Enter class A" style="filled" fillcolor=red];
+        1 [label="Exit class A" style="filled" fillcolor=red];
     }
-    0 -> {1};
-
     subgraph cluster_1 {
-        color=red
-        2 [label="Enter class A" style="filled" fillcolor=red];
-        3 [label="Exit class A" style="filled" fillcolor=red];
+        color=blue
+        2 [label="Enter function foo" style="filled" fillcolor=red];
+        3 [label="Exit function foo" style="filled" fillcolor=red];
     }
-    2 -> {3} [color=green];
+    0 -> {1} [color=green];
+    1 -> {2} [color=green];
+    1 -> {2} [style=dashed];
+    2 -> {3};
 
     subgraph cluster_2 {
         color=red
@@ -31,14 +32,14 @@ digraph jumpFromRhsOfOperator_kt {
                 9 [label="Equality operator !="];
                 10 [label="Exit left part of ||"];
                 11 [label="Enter right part of ||"];
-                12 [label="Function call: R|java/lang/Exception.Exception|()"];
+                12 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
                 13 [label="Throw: throw R|java/lang/Exception.Exception|()"];
                 14 [label="Stub" style="filled" fillcolor=gray];
                 15 [label="Exit ||"];
             }
             16 [label="Access variable R|<local>/a|"];
             17 [label="Smart cast: R|<local>/a|"];
-            18 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            18 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
             19 [label="Exit block"];
         }
         20 [label="Exit function test_1" style="filled" fillcolor=red];
@@ -49,10 +50,9 @@ digraph jumpFromRhsOfOperator_kt {
     7 -> {8};
     8 -> {9};
     9 -> {10};
-    10 -> {15 11};
+    10 -> {11 15};
     11 -> {12};
     12 -> {13};
-    13 -> {20}    [label=onUncaughtException];
     13 -> {14} [style=dotted];
     14 -> {15} [style=dotted];
     15 -> {16};
@@ -75,14 +75,14 @@ digraph jumpFromRhsOfOperator_kt {
                 26 [label="Equality operator =="];
                 27 [label="Exit left part of &&"];
                 28 [label="Enter right part of &&"];
-                29 [label="Function call: R|java/lang/Exception.Exception|()"];
+                29 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
                 30 [label="Throw: throw R|java/lang/Exception.Exception|()"];
                 31 [label="Stub" style="filled" fillcolor=gray];
                 32 [label="Exit &&"];
             }
             33 [label="Access variable R|<local>/a|"];
             34 [label="Smart cast: R|<local>/a|"];
-            35 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            35 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
             36 [label="Exit block"];
         }
         37 [label="Exit function teat_2" style="filled" fillcolor=red];
@@ -93,10 +93,9 @@ digraph jumpFromRhsOfOperator_kt {
     24 -> {25};
     25 -> {26};
     26 -> {27};
-    27 -> {32 28};
+    27 -> {28 32};
     28 -> {29};
     29 -> {30};
-    30 -> {37}    [label=onUncaughtException];
     30 -> {31} [style=dotted];
     31 -> {32} [style=dotted];
     32 -> {33};
@@ -125,7 +124,7 @@ digraph jumpFromRhsOfOperator_kt {
                         45 [label="Equality operator !="];
                         46 [label="Exit left part of ||"];
                         47 [label="Enter right part of ||"];
-                        48 [label="Function call: R|java/lang/Exception.Exception|()"];
+                        48 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
                         49 [label="Throw: throw R|java/lang/Exception.Exception|()"];
                         50 [label="Stub" style="filled" fillcolor=gray];
                         51 [label="Exit ||"];
@@ -139,7 +138,7 @@ digraph jumpFromRhsOfOperator_kt {
                     55 [label="Enter block"];
                     56 [label="Access variable R|<local>/a|"];
                     57 [label="Smart cast: R|<local>/a|"];
-                    58 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                    58 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     59 [label="Exit block"];
                 }
                 60 [label="Exit when branch result"];
@@ -147,7 +146,7 @@ digraph jumpFromRhsOfOperator_kt {
             }
             62 [label="Access variable R|<local>/a|"];
             63 [label="Smart cast: R|<local>/a|"];
-            64 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            64 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
             65 [label="Exit block"];
         }
         66 [label="Exit function test_3" style="filled" fillcolor=red];
@@ -160,14 +159,13 @@ digraph jumpFromRhsOfOperator_kt {
     43 -> {44};
     44 -> {45};
     45 -> {46};
-    46 -> {51 47};
+    46 -> {47 51};
     47 -> {48};
     48 -> {49};
-    49 -> {66}    [label=onUncaughtException];
     49 -> {50} [style=dotted];
     50 -> {51} [style=dotted];
     51 -> {52};
-    52 -> {54 53};
+    52 -> {53 54};
     53 -> {61};
     54 -> {55};
     55 -> {56};
@@ -202,7 +200,7 @@ digraph jumpFromRhsOfOperator_kt {
                         74 [label="Equality operator =="];
                         75 [label="Exit left part of &&"];
                         76 [label="Enter right part of &&"];
-                        77 [label="Function call: R|java/lang/Exception.Exception|()"];
+                        77 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
                         78 [label="Throw: throw R|java/lang/Exception.Exception|()"];
                         79 [label="Stub" style="filled" fillcolor=gray];
                         80 [label="Exit &&"];
@@ -216,7 +214,7 @@ digraph jumpFromRhsOfOperator_kt {
                     84 [label="Enter block"];
                     85 [label="Access variable R|<local>/a|"];
                     86 [label="Smart cast: R|<local>/a|"];
-                    87 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+                    87 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
                     88 [label="Exit block"];
                 }
                 89 [label="Exit when branch result"];
@@ -224,7 +222,7 @@ digraph jumpFromRhsOfOperator_kt {
             }
             91 [label="Access variable R|<local>/a|"];
             92 [label="Smart cast: R|<local>/a|"];
-            93 [label="Function call: R|<local>/a|.R|/A.foo|()"];
+            93 [label="Function call: R|<local>/a|.R|/A.foo|()" style="filled" fillcolor=yellow];
             94 [label="Exit block"];
         }
         95 [label="Exit function test_4" style="filled" fillcolor=red];
@@ -237,14 +235,13 @@ digraph jumpFromRhsOfOperator_kt {
     72 -> {73};
     73 -> {74};
     74 -> {75};
-    75 -> {80 76};
+    75 -> {76 80};
     76 -> {77};
     77 -> {78};
-    78 -> {95}    [label=onUncaughtException];
     78 -> {79} [style=dotted];
     79 -> {80} [style=dotted];
     80 -> {81};
-    81 -> {83 82};
+    81 -> {82 83};
     82 -> {90};
     83 -> {84};
     84 -> {85};
@@ -273,14 +270,14 @@ digraph jumpFromRhsOfOperator_kt {
                 101 [label="Equality operator =="];
                 102 [label="Exit left part of ||"];
                 103 [label="Enter right part of ||"];
-                104 [label="Function call: R|java/lang/Exception.Exception|()"];
+                104 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
                 105 [label="Throw: throw R|java/lang/Exception.Exception|()"];
                 106 [label="Stub" style="filled" fillcolor=gray];
                 107 [label="Exit ||"];
             }
             108 [label="Access variable R|<local>/a|"];
             109 [label="Smart cast: R|<local>/a|"];
-            110 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+            110 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             111 [label="Exit block"];
         }
         112 [label="Exit function test_5" style="filled" fillcolor=red];
@@ -291,10 +288,9 @@ digraph jumpFromRhsOfOperator_kt {
     99 -> {100};
     100 -> {101};
     101 -> {102};
-    102 -> {107 103};
+    102 -> {103 107};
     103 -> {104};
     104 -> {105};
-    105 -> {112}    [label=onUncaughtException];
     105 -> {106} [style=dotted];
     106 -> {107} [style=dotted];
     107 -> {108};
@@ -317,14 +313,14 @@ digraph jumpFromRhsOfOperator_kt {
                 118 [label="Equality operator !="];
                 119 [label="Exit left part of &&"];
                 120 [label="Enter right part of &&"];
-                121 [label="Function call: R|java/lang/Exception.Exception|()"];
+                121 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
                 122 [label="Throw: throw R|java/lang/Exception.Exception|()"];
                 123 [label="Stub" style="filled" fillcolor=gray];
                 124 [label="Exit &&"];
             }
             125 [label="Access variable R|<local>/a|"];
             126 [label="Smart cast: R|<local>/a|"];
-            127 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+            127 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             128 [label="Exit block"];
         }
         129 [label="Exit function teat_6" style="filled" fillcolor=red];
@@ -335,10 +331,9 @@ digraph jumpFromRhsOfOperator_kt {
     116 -> {117};
     117 -> {118};
     118 -> {119};
-    119 -> {124 120};
+    119 -> {120 124};
     120 -> {121};
     121 -> {122};
-    122 -> {129}    [label=onUncaughtException];
     122 -> {123} [style=dotted];
     123 -> {124} [style=dotted];
     124 -> {125};
@@ -367,7 +362,7 @@ digraph jumpFromRhsOfOperator_kt {
                         137 [label="Equality operator =="];
                         138 [label="Exit left part of ||"];
                         139 [label="Enter right part of ||"];
-                        140 [label="Function call: R|java/lang/Exception.Exception|()"];
+                        140 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
                         141 [label="Throw: throw R|java/lang/Exception.Exception|()"];
                         142 [label="Stub" style="filled" fillcolor=gray];
                         143 [label="Exit ||"];
@@ -381,7 +376,7 @@ digraph jumpFromRhsOfOperator_kt {
                     147 [label="Enter block"];
                     148 [label="Access variable R|<local>/a|"];
                     149 [label="Smart cast: R|<local>/a|"];
-                    150 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+                    150 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
                     151 [label="Exit block"];
                 }
                 152 [label="Exit when branch result"];
@@ -389,7 +384,7 @@ digraph jumpFromRhsOfOperator_kt {
             }
             154 [label="Access variable R|<local>/a|"];
             155 [label="Smart cast: R|<local>/a|"];
-            156 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+            156 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             157 [label="Exit block"];
         }
         158 [label="Exit function test_7" style="filled" fillcolor=red];
@@ -402,14 +397,13 @@ digraph jumpFromRhsOfOperator_kt {
     135 -> {136};
     136 -> {137};
     137 -> {138};
-    138 -> {143 139};
+    138 -> {139 143};
     139 -> {140};
     140 -> {141};
-    141 -> {158}    [label=onUncaughtException];
     141 -> {142} [style=dotted];
     142 -> {143} [style=dotted];
     143 -> {144};
-    144 -> {146 145};
+    144 -> {145 146};
     145 -> {153};
     146 -> {147};
     147 -> {148};
@@ -444,7 +438,7 @@ digraph jumpFromRhsOfOperator_kt {
                         166 [label="Equality operator !="];
                         167 [label="Exit left part of &&"];
                         168 [label="Enter right part of &&"];
-                        169 [label="Function call: R|java/lang/Exception.Exception|()"];
+                        169 [label="Function call: R|java/lang/Exception.Exception|()" style="filled" fillcolor=yellow];
                         170 [label="Throw: throw R|java/lang/Exception.Exception|()"];
                         171 [label="Stub" style="filled" fillcolor=gray];
                         172 [label="Exit &&"];
@@ -458,7 +452,7 @@ digraph jumpFromRhsOfOperator_kt {
                     176 [label="Enter block"];
                     177 [label="Access variable R|<local>/a|"];
                     178 [label="Smart cast: R|<local>/a|"];
-                    179 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+                    179 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
                     180 [label="Exit block"];
                 }
                 181 [label="Exit when branch result"];
@@ -466,7 +460,7 @@ digraph jumpFromRhsOfOperator_kt {
             }
             183 [label="Access variable R|<local>/a|"];
             184 [label="Smart cast: R|<local>/a|"];
-            185 [label="Function call: R|<local>/a|.<Inapplicable(UNSAFE_CALL): /A.foo>#()"];
+            185 [label="Function call: R|<local>/a|.R|/A.foo<Inapplicable(UNSAFE_CALL): /A.foo>#|()" style="filled" fillcolor=yellow];
             186 [label="Exit block"];
         }
         187 [label="Exit function test_8" style="filled" fillcolor=red];
@@ -479,14 +473,13 @@ digraph jumpFromRhsOfOperator_kt {
     164 -> {165};
     165 -> {166};
     166 -> {167};
-    167 -> {172 168};
+    167 -> {168 172};
     168 -> {169};
     169 -> {170};
-    170 -> {187}    [label=onUncaughtException];
     170 -> {171} [style=dotted];
     171 -> {172} [style=dotted];
     172 -> {173};
-    173 -> {175 174};
+    173 -> {174 175};
     174 -> {182};
     175 -> {176};
     176 -> {177};

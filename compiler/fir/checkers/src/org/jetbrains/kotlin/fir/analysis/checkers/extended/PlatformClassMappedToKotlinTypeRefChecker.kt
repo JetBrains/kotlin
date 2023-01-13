@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.types.classId
 
 object PlatformClassMappedToKotlinTypeRefChecker : FirTypeRefChecker() {
     override fun check(typeRef: FirTypeRef, context: CheckerContext, reporter: DiagnosticReporter) {
-        if (typeRef is FirResolvedTypeRef) {
+        if (typeRef is FirResolvedTypeRef && typeRef.source != null) {
             val kotlinClass = context.session.platformClassMapper.getCorrespondingKotlinClass(typeRef.type.classId)
             if (kotlinClass != null) {
                 reporter.reportOn(typeRef.source, FirErrors.PLATFORM_CLASS_MAPPED_TO_KOTLIN, kotlinClass.asSingleFqName(), context)

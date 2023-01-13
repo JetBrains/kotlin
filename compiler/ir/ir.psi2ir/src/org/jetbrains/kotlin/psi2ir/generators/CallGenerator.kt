@@ -406,26 +406,26 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         irCall: IrFunctionAccessExpression,
         irResultType: IrType,
         contextReceivers: List<IrExpression>
-    ): IrExpression =
-        if (call.isValueArgumentReorderingRequired()) {
-            generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, irResultType)
+    ): IrExpression {
+        contextReceivers.forEachIndexed(irCall::putValueArgument)
+        return if (call.isValueArgumentReorderingRequired()) {
+            generateCallWithArgumentReordering(irCall, startOffset, endOffset, call, irResultType, contextReceivers.size)
         } else {
-            for ((index, valueArgument) in contextReceivers.withIndex()) {
-                irCall.putValueArgument(index, valueArgument)
-            }
             val valueArguments = call.getValueArgumentsInParameterOrder()
             for ((index, valueArgument) in valueArguments.withIndex()) {
                 irCall.putValueArgument(index + contextReceivers.size, valueArgument)
             }
             irCall
         }
+    }
 
     private fun generateCallWithArgumentReordering(
         irCall: IrFunctionAccessExpression,
         startOffset: Int,
         endOffset: Int,
         call: CallBuilder,
-        irResultType: IrType
+        irResultType: IrType,
+        contextReceiversCount: Int
     ): IrExpression {
         val irBlock = IrBlockImpl(startOffset, endOffset, irResultType, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL)
 
@@ -447,7 +447,7 @@ class CallGenerator(statementGenerator: StatementGenerator) : StatementGenerator
         for (valueArgument in resolvedCall.valueArguments.values) {
             val index = valueArgumentsToIndex[valueArgument]!!
             val irArgument = call.getValueArgument(valueParameters[index]) ?: continue
-            irCall.putValueArgument(index, irArgument.freeze(valueParameters[index].name.asString()))
+            irCall.putValueArgument(index + contextReceiversCount, irArgument.freeze(valueParameters[index].name.asString()))
         }
         irBlock.statements.add(irCall)
         return irBlock

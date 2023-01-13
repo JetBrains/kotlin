@@ -1387,7 +1387,7 @@ private object IgnoredUnitArgumentPassing : ArgumentPassing {
     }
 
     override fun CCallbackBuilder.receiveValue(): IrExpression {
-        return bridgeBuilder.kotlinIrBuilder.irGetObject(irBuiltIns.unitClass)
+        return bridgeBuilder.kotlinIrBuilder.irCall(symbols.theUnitInstance)
     }
 }
 

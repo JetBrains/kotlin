@@ -1,7 +1,5 @@
 package modifiers;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class InternalClass {
 
@@ -14,8 +12,6 @@ public final class InternalClass {
 
 package modifiers;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface InternalInterface {
 }
@@ -24,15 +20,13 @@ public abstract interface InternalInterface {
 
 package modifiers;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public final class Modifiers {
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.Transient()
-    private final transient java.lang.String transientField = "";
     @org.jetbrains.annotations.NotNull()
+    private final transient java.lang.String transientField = "";
     @kotlin.jvm.Volatile()
+    @org.jetbrains.annotations.NotNull()
     private volatile java.lang.String volatileField = "";
 
     public Modifiers() {
@@ -57,21 +51,21 @@ public final class Modifiers {
     public final strictfp void strictFp() {
     }
 
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads() {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
     java.lang.String a) {
         return null;
     }
 
-    @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmOverloads()
+    @org.jetbrains.annotations.NotNull()
     public final java.lang.String overloads(@org.jetbrains.annotations.NotNull()
     java.lang.String a, int n) {
         return null;
@@ -81,8 +75,6 @@ public final class Modifiers {
 ////////////////////
 
 package modifiers;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 final class PrivateClass {
@@ -96,8 +88,6 @@ final class PrivateClass {
 
 package modifiers;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 abstract interface PrivateInterface {
 }
@@ -105,8 +95,6 @@ abstract interface PrivateInterface {
 ////////////////////
 
 package modifiers;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public final class PublicClass {
@@ -120,8 +108,6 @@ public final class PublicClass {
 
 package modifiers;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract class PublicClassPrivateConstructor {
 
@@ -133,8 +119,6 @@ public abstract class PublicClassPrivateConstructor {
 ////////////////////
 
 package modifiers;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public class PublicClassProtectedConstructor {
@@ -156,8 +140,6 @@ public class PublicClassProtectedConstructor {
 
 package modifiers;
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public abstract interface PublicInterface {
 }
@@ -165,8 +147,6 @@ public abstract interface PublicInterface {
 ////////////////////
 
 package modifiers;
-
-import java.lang.System;
 
 @kotlin.Metadata()
 public abstract class SealedClass {

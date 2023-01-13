@@ -68,7 +68,7 @@ fun getExpectedTypePredicate(
     val pseudocode = value.createdAt?.owner ?: return AllTypes
     val typePredicates = LinkedHashSet<TypePredicate?>()
 
-    fun addSubtypesOf(jetType: KotlinType?) = typePredicates.add(jetType?.getSubtypesPredicate())
+    fun addSubtypesOf(kotlinType: KotlinType?) = typePredicates.add(kotlinType?.getSubtypesPredicate())
 
     fun addByExplicitReceiver(resolvedCall: ResolvedCall<*>?) {
         val receiverValue = (resolvedCall ?: return).getExplicitReceiverValue()

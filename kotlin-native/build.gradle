@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.KotlinBuildPusher
 import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
+import org.jetbrains.kotlin.cpp.CppUsage
+import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
 import org.jetbrains.kotlin.CompareDistributionSignatures
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.apache.tools.ant.filters.ReplaceTokens
@@ -33,7 +35,6 @@ buildscript {
 
     repositories {
         mavenCentral()
-        jcenter()
         gradlePluginPortal()
     }
 
@@ -91,11 +92,6 @@ ext {
 }
 
 allprojects {
-    buildscript {
-        repositories {
-            jcenter()
-        }
-    }
     if (path != ":kotlin-native:dependencies") {
         evaluationDependsOn(":kotlin-native:dependencies")
     }
@@ -145,7 +141,17 @@ configurations {
     ftpAntTask
     distPack
     commonSources
+
+    runtimeBitcode {
+        canBeConsumed = false
+        canBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, CppUsage.LLVM_BITCODE))
+        }
+    }
 }
+
+apply plugin: CompilationDatabasePlugin
 
 dependencies {
     ftpAntTask 'org.apache.ant:ant-commons-net:1.9.9'
@@ -162,9 +168,12 @@ dependencies {
     commonSources project(path: ':kotlin-stdlib-common', configuration: 'sources')
     commonSources project(path: ':kotlin-test:kotlin-test-common', configuration: 'sources')
     commonSources project(path: ':kotlin-test:kotlin-test-annotations-common', configuration: 'sources')
+    compilationDatabase project(":kotlin-native:common")
+    compilationDatabase project(":kotlin-native:runtime")
+    runtimeBitcode project(":kotlin-native:runtime")
 }
 
-apply plugin: CompilationDatabasePlugin
+apply plugin: GitClangFormatPlugin
 apply plugin: 'maven-publish'
 apply plugin: BasePlugin
 
@@ -439,11 +448,15 @@ targetList.each { target ->
     }
 
     task("${target}CrossDistBitcodeCopy", type: Copy) {
-        dependsOn ":kotlin-native:runtime:${target}Runtime"
+        def bitcodeFiles = configurations.runtimeBitcode.incoming.artifactView {
+            attributes {
+                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, new TargetWithSanitizer(platformManager.targetByName(target), null))
+            }
+        }.files
 
         destinationDir project.file("$distDir/konan/targets/")
 
-        from(project(':kotlin-native:runtime').file("build/bitcode/main/$target")) {
+        from(bitcodeFiles) {
             include("*.bc")
             exclude("runtime.bc")
             into("$target/native")
@@ -451,7 +464,6 @@ targetList.each { target ->
     }
 
     task("${target}CrossDistRuntime", type: Copy) {
-        dependsOn ":kotlin-native:runtime:${target}Runtime"
         dependsOn ":kotlin-native:${target}CrossDistStdlib"
         dependsOn "${target}CrossDistBitcodeCopy"
 
@@ -578,6 +590,9 @@ void configurePackingLicensesToBundle(AbstractArchiveTask task, boolean contains
         include 'licenses/**'
         if (!containsPlatformLibraries || !isMac()) {
             exclude '**/xcode_license.pdf'
+        }
+        if (!containsPlatformLibraries) {
+            exclude '**/mingw-w64-headers_LICENSE.txt'
         }
         into "${task.archiveBaseName.get()}-${task.archiveVersion.get()}"
     }
@@ -728,17 +743,11 @@ task pusher(type: KotlinBuildPusher){
 }
 
 compilationDatabase {
-    allTargets {
-        mergeFrom(provider { project("common") })
-        mergeFrom(provider { project("runtime") })
-
-        // TODO: Reconsider this
-        task.configure {
-            dependsOn(":kotlin-native:runtime:downloadGoogleTest")
-        }
-    }
+    allTargets {}
 }
 
+// TODO: Replace with a more convenient user-facing task that can build for a specific target.
+//       like compilationDatabase with optional argument --target.
 tasks.register("compdb", Copy) {
     from compilationDatabase.hostTarget.task
     into layout.projectDirectory

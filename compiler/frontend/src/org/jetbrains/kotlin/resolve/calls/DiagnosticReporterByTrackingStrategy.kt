@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.intersectWrappedTypes
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
-import org.jetbrains.kotlin.types.isPossiblyEmpty
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.freshTypeConstructor
@@ -668,13 +667,14 @@ class DiagnosticReporterByTrackingStrategy(
                     @Suppress("UNCHECKED_CAST")
                     val causingTypes = error.causingTypes as List<KotlinType>
                     val causingTypesText = if (incompatibleTypes == causingTypes) "" else ": ${causingTypes.joinToString()}"
-                    val diagnostic = if (error.kind.isPossiblyEmpty()) {
-                        INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION.on(
-                            expression, typeVariableText, incompatibleTypes, error.kind.description, causingTypesText
-                        )
-                    } else {
+                    val diagnostic = if (error.kind.isDefinitelyEmpty) {
                         INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.on(
                             context.languageVersionSettings, expression, typeVariableText,
+                            incompatibleTypes, error.kind.description, causingTypesText
+                        )
+                    } else {
+                        INFERRED_TYPE_VARIABLE_INTO_POSSIBLE_EMPTY_INTERSECTION.on(
+                            expression, typeVariableText,
                             incompatibleTypes, error.kind.description, causingTypesText
                         )
                     }

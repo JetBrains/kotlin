@@ -26,11 +26,12 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     DelegationChecker(),
     KClassWithIncorrectTypeArgumentChecker,
     SuspendLimitationsChecker,
-    InlineClassDeclarationChecker,
-    PropertiesWithBackingFieldsInsideInlineClass(),
-    InnerClassInsideInlineClass(),
+    ValueClassDeclarationChecker,
+    MultiFieldValueClassAnnotationsChecker,
+    PropertiesWithBackingFieldsInsideValueClass(),
+    InnerClassInsideValueClass(),
     AnnotationClassTargetAndRetentionChecker(),
-    ReservedMembersAndConstructsForInlineClass(),
+    ReservedMembersAndConstructsForValueClass(),
     ResultClassInReturnTypeChecker(),
     LocalVariableTypeParametersChecker(),
     ExplicitApiDeclarationChecker(),
@@ -53,6 +54,7 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     CyclicAnnotationsChecker,
     UnsupportedUntilRangeDeclarationChecker,
     DataObjectContentChecker,
+    EnumEntriesRedeclarationChecker,
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(
@@ -60,7 +62,7 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
     ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
     CoroutineSuspendCallChecker, BuilderFunctionsCallChecker, DslScopeViolationCallChecker, MissingDependencyClassChecker,
-    CallableReferenceCompatibilityChecker(), LateinitIntrinsicApplicabilityChecker,
+    CallableReferenceCompatibilityChecker(),
     UnderscoreUsageChecker, AssigningNamedArgumentToVarargChecker(), ImplicitNothingAsTypeParameterCallChecker,
     PrimitiveNumericComparisonCallChecker, LambdaWithSuspendModifierCallChecker,
     UselessElvisCallChecker(), ResultTypeWithNullableOperatorsChecker(), NullableVarargArgumentCallChecker,
@@ -70,7 +72,8 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     ReferencingToUnderscoreNamedParameterOfCatchBlockChecker, VarargWrongExecutionOrderChecker, SelfCallInNestedObjectConstructorChecker,
     NewSchemeOfIntegerOperatorResolutionChecker, EnumEntryVsCompanionPriorityCallChecker, CompanionInParenthesesLHSCallChecker,
     ResolutionToPrivateConstructorOfSealedClassChecker, EqualityCallChecker, UnsupportedUntilOperatorChecker,
-    BuilderInferenceAssignmentChecker, IncorrectCapturedApproximationCallChecker,
+    BuilderInferenceAssignmentChecker, IncorrectCapturedApproximationCallChecker, CompanionIncorrectlyUnboundedWhenUsedAsLHSCallChecker,
+    CustomEnumEntriesMigrationCallChecker,
 )
 private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
 private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(

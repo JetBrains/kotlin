@@ -14,8 +14,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
-import org.jetbrains.kotlin.fir.resolvedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker() {
     override fun check(expression: FirLoopJump, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -36,8 +34,19 @@ object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker
 
             when (element) {
                 expression -> {
-                    if (errorPathElements.any()) {
-                        reporter.reportOn(expression.source, FirErrors.BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY, context)
+                    if (errorPathElements.isNotEmpty()) {
+                        val hasNonInline = errorPathElements.any {
+                            when(it) {
+                                is FirAnonymousFunction -> it.inlineStatus != InlineStatus.Inline
+                                is FirAnonymousFunctionExpression -> it.anonymousFunction.inlineStatus != InlineStatus.Inline
+                                else -> true
+                            }}
+                        if (hasNonInline) {
+                            reporter.reportOn(expression.source, FirErrors.BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY, context)
+                        } else if (!allowInlined) {
+                            reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_FEATURE,
+                                LanguageFeature.BreakContinueInInlineLambdas to context.languageVersionSettings, context)
+                        }
                     }
                     return true
                 }
@@ -63,17 +72,7 @@ object FirBreakOrContinueJumpsAcrossFunctionBoundaryChecker : FirLoopJumpChecker
                     if (findPathAndCheck(element.extensionReceiver) || findPathAndCheck(element.dispatchReceiver)) {
                         return true
                     }
-
-                    val symbol = if (allowInlined) element.calleeReference.resolvedSymbol as? FirFunctionSymbol else null
-                    element.arguments.forEachIndexed { i, argument ->
-                        val expressionToCheck =
-                            if (symbol?.resolvedStatus?.isInline == true
-                                && !symbol.valueParameterSymbols[i].run { isNoinline || isCrossinline }
-                            ) argument.tryInline() else argument
-                        if (findPathAndCheck(expressionToCheck)) {
-                            return true
-                        }
-                    }
+                    if (element.arguments.any(::findPathAndCheck)) return true
                 }
                 is FirCall -> {
                     for (argument in element.arguments) {

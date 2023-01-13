@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 
-internal fun FirDeclaration.checkPhase(requiredResolvePhase: FirResolvePhase) {
+internal fun FirElementWithResolvePhase.checkPhase(requiredResolvePhase: FirResolvePhase) {
     val declarationResolvePhase = resolvePhase
     checkWithAttachmentBuilder(
         declarationResolvePhase >= requiredResolvePhase,
@@ -22,24 +23,24 @@ internal fun FirDeclaration.checkPhase(requiredResolvePhase: FirResolvePhase) {
     }
 }
 
-internal fun FirDeclarationDesignation.checkPathPhase(firResolvePhase: FirResolvePhase) =
+internal fun FirDesignation.checkPathPhase(firResolvePhase: FirResolvePhase) =
     path.forEach { it.checkPhase(firResolvePhase) }
 
-internal fun FirDeclarationDesignation.checkDesignationPhase(firResolvePhase: FirResolvePhase) {
+internal fun FirDesignation.checkDesignationPhase(firResolvePhase: FirResolvePhase) {
     checkPathPhase(firResolvePhase)
-    declaration.checkPhase(firResolvePhase)
+    target.checkPhase(firResolvePhase)
 }
 
-internal fun FirDeclarationDesignation.checkDesignationPhaseForClasses(firResolvePhase: FirResolvePhase) {
+internal fun FirDesignation.checkDesignationPhaseForClasses(firResolvePhase: FirResolvePhase) {
     checkPathPhase(firResolvePhase)
-    if (declaration is FirClassLikeDeclaration) {
-        check(declaration.resolvePhase >= firResolvePhase) {
-            "Expected $firResolvePhase but found ${declaration.resolvePhase}"
+    if (target is FirClassLikeDeclaration) {
+        check(target.resolvePhase >= firResolvePhase) {
+            "Expected $firResolvePhase but found ${target.resolvePhase}"
         }
     }
 }
 
-internal fun FirDeclarationDesignation.isTargetCallableDeclarationAndInPhase(firResolvePhase: FirResolvePhase): Boolean =
-    (declaration as? FirCallableDeclaration)?.let { it.resolvePhase >= firResolvePhase } ?: false
+internal fun FirDesignation.isTargetCallableDeclarationAndInPhase(firResolvePhase: FirResolvePhase): Boolean =
+    (target as? FirCallableDeclaration)?.let { it.resolvePhase >= firResolvePhase } ?: false
 
-internal fun FirDeclarationDesignation.targetContainingDeclaration(): FirDeclaration? = path.lastOrNull()
+internal fun FirDesignation.targetContainingDeclaration(): FirDeclaration? = path.lastOrNull()

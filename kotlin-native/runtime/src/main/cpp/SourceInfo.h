@@ -24,6 +24,7 @@ class SourceInfo {
 public:
     int lineNumber = -1;
     int column = -1;
+    bool nodebug = false;
     std::string& getFileName() { return fileName; }
     void setFilename(const char *newFileName) { fileName = newFileName ?: ""; }
 };

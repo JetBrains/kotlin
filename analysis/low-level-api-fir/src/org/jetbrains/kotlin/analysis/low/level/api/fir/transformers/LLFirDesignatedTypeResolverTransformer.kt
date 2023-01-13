@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDeclarationDesignationWithFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.ResolveTreeBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirTypeResolveTransformer
  * Transform designation into TYPES phase. Affects only for designation, target declaration and it's children
  */
 internal class LLFirDesignatedTypeResolverTransformer(
-    private val designation: FirDeclarationDesignationWithFile,
+    private val designation: FirDesignationWithFile,
     session: FirSession,
     scopeSession: ScopeSession,
 ) : LLFirLazyTransformer, FirTypeResolveTransformer(session, scopeSession) {
@@ -39,39 +39,37 @@ internal class LLFirDesignatedTypeResolverTransformer(
     }
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
-        if (designation.declaration.resolvePhase >= FirResolvePhase.TYPES) return
-        designation.declaration.checkPhase(FirResolvePhase.SUPER_TYPES)
+        if (designation.target.resolvePhase >= FirResolvePhase.TYPES) return
+        designation.target.checkPhase(FirResolvePhase.SUPER_TYPES)
 
-        ResolveTreeBuilder.resolvePhase(designation.declaration, FirResolvePhase.TYPES) {
-            phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.TYPES) {
-                designation.firFile.transform<FirFile, Any?>(this, null)
-            }
+        phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.TYPES) {
+            designation.firFile.transform<FirFile, Any?>(this, null)
         }
 
         declarationTransformer.ensureDesignationPassed()
-        updatePhaseDeep(designation.declaration, FirResolvePhase.TYPES)
+        updatePhaseDeep(designation.target, FirResolvePhase.TYPES)
 
-        checkIsResolved(designation.declaration)
-        checkClassMembersAreResolved(designation.declaration)
+        checkIsResolved(designation.target)
+        (designation.target as? FirDeclaration)?.let { checkClassMembersAreResolved(it) }
     }
 
-    override fun checkIsResolved(declaration: FirDeclaration) {
-        declaration.checkPhase(FirResolvePhase.TYPES)
-        when (declaration) {
+    override fun checkIsResolved(target: FirElementWithResolvePhase) {
+        target.checkPhase(FirResolvePhase.TYPES)
+        when (target) {
             is FirCallableDeclaration -> {
-                checkReturnTypeRefIsResolved(declaration, acceptImplicitTypeRef = true)
-                checkReceiverTypeRefIsResolved(declaration)
+                checkReturnTypeRefIsResolved(target, acceptImplicitTypeRef = true)
+                checkReceiverTypeRefIsResolved(target)
             }
 
             is FirTypeParameter -> {
-                for (bound in declaration.bounds) {
-                    checkTypeRefIsResolved(bound, "type parameter bound", declaration)
+                for (bound in target.bounds) {
+                    checkTypeRefIsResolved(bound, "type parameter bound", target)
                 }
             }
 
             else -> {}
         }
-        checkNestedDeclarationsAreResolved(declaration)
-        checkTypeParametersAreResolved(declaration)
+        checkNestedDeclarationsAreResolved(target)
+        (target as? FirDeclaration)?.let { checkTypeParametersAreResolved(it) }
     }
 }

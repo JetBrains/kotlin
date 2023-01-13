@@ -6,26 +6,27 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import kotlin.reflect.KClass
 
 open class FirDeclarationRendererWithAttributes : FirDeclarationRenderer() {
     override fun FirDeclaration.renderDeclarationAttributes() {
         if (attributes.isNotEmpty()) {
             val attributes = getAttributesWithValues().mapNotNull { (klass, value) ->
-                value?.let { klass.simpleName to value.renderAsDeclarationAttributeValue() }
+                value?.let { klass to value.renderAsDeclarationAttributeValue() }
             }.joinToString { (name, value) -> "$name=$value" }
             printer.print("[$attributes] ")
         }
     }
 
-    private fun FirDeclaration.getAttributesWithValues(): List<Pair<KClass<out FirDeclarationDataKey>, Any?>> {
+    private fun FirDeclaration.getAttributesWithValues(): List<Pair<String, Any?>> {
         val attributesMap = FirDeclarationDataRegistry.allValuesThreadUnsafeForRendering()
-        return attributesMap.entries.sortedBy { it.key.simpleName }.map { (klass, index) -> klass to attributes[index] }
+        return attributesMap.entries
+            .map { it.key.substringAfterLast(".") to it.value }
+            .sortedBy { it.first }
+            .map { (klass, index) -> klass to attributes[index] }
     }
 
     private fun Any.renderAsDeclarationAttributeValue() = when (this) {

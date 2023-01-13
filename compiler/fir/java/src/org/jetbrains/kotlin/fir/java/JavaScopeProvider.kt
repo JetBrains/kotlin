@@ -93,7 +93,7 @@ object JavaScopeProvider : FirScopeProvider() {
                     )
 
             val superTypeScopes = superTypes.mapNotNull {
-                it.scopeForSupertype(useSiteSession, scopeSession, subClass = regularClass)
+                it.scopeForSupertype(useSiteSession, scopeSession, regularClass)
             }
 
             JavaClassUseSiteMemberScope(

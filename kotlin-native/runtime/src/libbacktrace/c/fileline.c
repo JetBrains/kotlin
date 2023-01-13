@@ -330,7 +330,7 @@ backtrace_syminfo_to_full_callback (void *data, uintptr_t pc,
 {
   struct backtrace_call_full *bdata = (struct backtrace_call_full *) data;
 
-  bdata->ret = bdata->full_callback (bdata->full_data, pc, NULL, 0, 0, symname);
+  bdata->ret = bdata->full_callback (bdata->full_data, pc, NULL, 0, 0, symname, 0);
 }
 
 /* An error callback that corresponds to

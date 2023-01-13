@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extractClassesFromArgument
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.loadExperimentalityForMarkerAnnotation
 import org.jetbrains.kotlin.fir.analysis.checkers.extractClassFromArgument
 import org.jetbrains.kotlin.fir.analysis.checkers.modality
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -46,7 +45,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                     reporter.reportOn(expression.source, FirErrors.OPT_IN_WITHOUT_ARGUMENTS, context)
                 } else {
                     val annotationClasses = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)
-                    for (classSymbol in annotationClasses?.extractClassesFromArgument().orEmpty()) {
+                    for (classSymbol in annotationClasses?.extractClassesFromArgument(context.session).orEmpty()) {
                         checkOptInArgumentIsMarker(classSymbol, expression.source, reporter, context)
                     }
                 }
@@ -73,7 +72,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
                     return
                 }
             }
-            val classSymbol = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)?.extractClassFromArgument() ?: return
+            val classSymbol = expression.findArgumentByName(OPT_IN_ANNOTATION_CLASS)?.extractClassFromArgument(context.session) ?: return
             checkOptInArgumentIsMarker(classSymbol, expression.source, reporter, context)
         }
     }
@@ -99,7 +98,7 @@ object FirOptInAnnotationCallChecker : FirAnnotationCallChecker() {
         context: CheckerContext
     ) {
         with(FirOptInUsageBaseChecker) {
-            if (classSymbol.loadExperimentalityForMarkerAnnotation() == null) {
+            if (classSymbol.loadExperimentalityForMarkerAnnotation(context.session) == null) {
                 reporter.reportOn(
                     source,
                     FirErrors.OPT_IN_ARGUMENT_IS_NOT_MARKER,

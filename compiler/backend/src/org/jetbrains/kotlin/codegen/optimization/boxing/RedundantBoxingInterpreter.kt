@@ -20,16 +20,13 @@ import com.google.common.collect.ImmutableSet
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
-import org.jetbrains.org.objectweb.asm.tree.InsnList
-import org.jetbrains.org.objectweb.asm.tree.TypeInsnNode
-import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
+import org.jetbrains.org.objectweb.asm.tree.*
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 
 internal class RedundantBoxingInterpreter(
-    insnList: InsnList,
+    methodNode: MethodNode,
     generationState: GenerationState
-) : BoxingInterpreter(insnList, generationState) {
+) : BoxingInterpreter(methodNode.instructions, generationState) {
 
     val candidatesBoxedValues = RedundantBoxedValuesCollection()
 
@@ -81,6 +78,7 @@ internal class RedundantBoxingInterpreter(
 
     override fun onUnboxing(insn: AbstractInsnNode, value: BoxedBasicValue, resultType: Type) {
         value.descriptor.run {
+            val unboxedType = getUnboxTypeOrOtherwiseMethodReturnType(insn as? MethodInsnNode)
             if (unboxedType == resultType)
                 addAssociatedInsn(value, insn)
             else
@@ -142,7 +140,7 @@ internal class RedundantBoxingInterpreter(
                 Type.getInternalName(Any::class.java) ->
                     true
                 Type.getInternalName(Number::class.java) ->
-                    PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(value.descriptor.unboxedType.sort)
+                    value.descriptor.unboxedTypes.singleOrNull()?.sort?.let { PRIMITIVE_TYPES_SORTS_WITH_WRAPPER_EXTENDS_NUMBER.contains(it) } == true
                 "java/lang/Comparable" ->
                     true
                 else ->

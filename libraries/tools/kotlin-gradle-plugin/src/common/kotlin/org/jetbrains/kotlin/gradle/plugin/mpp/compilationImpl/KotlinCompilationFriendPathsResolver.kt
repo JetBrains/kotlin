@@ -10,8 +10,8 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
-import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.targets.metadata.getMetadataCompilationForSourceSet
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 
 internal interface KotlinCompilationFriendPathsResolver {
@@ -25,14 +25,24 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
 
     override fun resolveFriendPaths(compilation: InternalKotlinCompilation<*>): Iterable<FileCollection> {
         return mutableListOf<FileCollection>().apply {
-            compilation.associateWithClosure.forEach { add(it.output.classesDirs) }
+            compilation.associateWithClosure.forEach {
+                add(it.output.classesDirs)
+                // Adding classes that could be produced to non-default destination for JVM target
+                // Check KotlinSourceSetProcessor for details
+                @Suppress("UNCHECKED_CAST")
+                add(
+                    compilation.project.files(
+                        (it.compileTaskProvider as TaskProvider<KotlinCompileTool>).flatMap { task -> task.destinationDirectory }
+                    )
+                )
+            }
             add(friendArtifactResolver.resolveFriendArtifacts(compilation))
         }
     }
 
     /* Resolution of friend artifacts */
 
-    interface FriendArtifactResolver {
+    fun interface FriendArtifactResolver {
         fun resolveFriendArtifacts(compilation: InternalKotlinCompilation<*>): FileCollection
 
         companion object {
@@ -71,19 +81,6 @@ internal class DefaultKotlinCompilationFriendPathsResolver(
             val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(compilation.defaultSourceSet)
             return compilation.project.files(
                 friendSourceSets.mapNotNull { compilation.target.compilations.findByName(it.name)?.output?.classesDirs }
-            )
-        }
-    }
-
-    object AdditionalSharedNativeMetadataFriendArtifactResolver : FriendArtifactResolver {
-        override fun resolveFriendArtifacts(compilation: InternalKotlinCompilation<*>): FileCollection {
-            // TODO: implement proper dependsOn/refines compiler args for Kotlin/Native and pass the dependsOn klibs separately;
-            //       But for now, those dependencies don't have any special semantics, so passing all them as friends works, too
-            val friendSourceSets = getVisibleSourceSetsFromAssociateCompilations(compilation.defaultSourceSet) +
-                    compilation.defaultSourceSet.internal.dependsOnClosure
-
-            return compilation.project.files(
-                friendSourceSets.mapNotNull { compilation.project.getMetadataCompilationForSourceSet(it)?.output?.classesDirs }
             )
         }
     }

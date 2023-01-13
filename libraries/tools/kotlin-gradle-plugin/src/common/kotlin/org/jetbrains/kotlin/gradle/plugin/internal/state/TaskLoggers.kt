@@ -9,7 +9,7 @@ import org.gradle.api.logging.Logger
 import java.lang.ref.WeakReference
 import java.util.HashMap
 
-// todo: remove when https://github.com/gradle/gradle/issues/2678 is resolved
+// todo: remove when https://github.com/gradle/gradle/issues/16991 is resolved
 internal object TaskLoggers {
     private val taskLoggers = HashMap<String, WeakReference<Logger>>()
 

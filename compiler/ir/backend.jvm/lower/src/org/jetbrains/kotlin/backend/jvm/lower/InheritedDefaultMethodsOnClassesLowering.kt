@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal val inheritedDefaultMethodsOnClassesPhase = makeIrFilePhase(
     ::InheritedDefaultMethodsOnClassesLowering,
@@ -108,11 +107,9 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                         irFunction.dispatchReceiverParameter?.let {
                             putValueArgument(0, irGet(it).reinterpretAsDispatchReceiverOfType(superClassType))
                         }
-                        val mfvcOrOriginal = backendContext.inlineClassReplacements.originalFunctionForMethodReplacement[classOverride]
-                            ?: classOverride
                         val bindingNewFunctionToParameterTemplateStructure = backendContext.multiFieldValueClassReplacements
                             .bindingNewFunctionToParameterTemplateStructure
-                        val structure = bindingNewFunctionToParameterTemplateStructure[mfvcOrOriginal]?.let { structure ->
+                        val structure = bindingNewFunctionToParameterTemplateStructure[classOverride]?.let { structure ->
                             require(structure.sumOf { it.valueParameters.size } == classOverride.explicitParametersCount) {
                                 "Bad parameters structure: $structure"
                             }
@@ -140,7 +137,7 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
                                             irGet(sourceFullValueParameterList[flattenedIndex++])
                                         }
                                         val boxedExpression = remappedParameter.rootMfvcNode.makeBoxedExpression(
-                                            this@irBlockBody, remappedParameter.typeArguments, valueArguments
+                                            this@irBlockBody, remappedParameter.typeArguments, valueArguments, registerPossibleExtraBoxCreation = {}
                                         )
                                         putValueArgument(i, boxedExpression)
                                     }
@@ -286,7 +283,7 @@ internal fun IrSimpleFunction.isDefinitelyNotDefaultImplsMethod(
 
 private fun IrSimpleFunction.isCloneableClone(): Boolean =
     name.asString() == "clone" &&
-            parent.safeAs<IrClass>()?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
+            (parent as? IrClass)?.fqNameWhenAvailable?.asString() == "kotlin.Cloneable" &&
             valueParameters.isEmpty()
 
 internal val interfaceObjectCallsPhase = makeIrFilePhase(

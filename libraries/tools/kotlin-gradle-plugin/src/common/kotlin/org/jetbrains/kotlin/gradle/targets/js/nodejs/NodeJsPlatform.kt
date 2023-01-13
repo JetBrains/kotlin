@@ -1,5 +1,7 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+
 /**
  * Provides platform and architecture names that is used to download NodeJs.
  * See [NodeJsEnv.ivyDependency] that is filled in [NodeJsRootExtension.environment].
@@ -14,7 +16,7 @@ internal object NodeJsPlatform {
     const val SUNOS = "sunos"
 
     val name: String = run {
-        val name = property("os.name").toLowerCase()
+        val name = property("os.name").toLowerCaseAsciiOnly()
         when {
             name.contains("windows") -> WIN
             name.contains("mac") -> DARWIN
@@ -30,7 +32,7 @@ internal object NodeJsPlatform {
     const val ARM64 = "arm64"
 
     val architecture: String = run {
-        val arch = property("os.arch").toLowerCase()
+        val arch = property("os.arch").toLowerCaseAsciiOnly()
         when {
             arch == "aarch64" -> ARM64
             arch.contains("64") -> X64

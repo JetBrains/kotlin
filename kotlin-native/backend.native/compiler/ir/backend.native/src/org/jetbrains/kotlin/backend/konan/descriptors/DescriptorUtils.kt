@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 /**
  * List of all implemented interfaces (including those which implemented by a super class)
@@ -237,26 +236,6 @@ internal fun IrSimpleFunction.bridgeDirectionsTo(overriddenFunction: IrSimpleFun
 fun IrFunctionSymbol.isComparisonFunction(map: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>): Boolean =
         this in map.values
 
-val IrDeclaration.isPropertyAccessor get() =
-    this is IrSimpleFunction && this.correspondingPropertySymbol != null
-
-val IrDeclaration.isPropertyField get() =
-    this is IrField && this.correspondingPropertySymbol != null
-
-val IrDeclaration.isTopLevelDeclaration get() =
-    parent !is IrDeclaration && !this.isPropertyAccessor && !this.isPropertyField
-
-fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
-    this.isTopLevelDeclaration ->
-        this
-    this.isPropertyAccessor ->
-        (this as IrSimpleFunction).correspondingPropertySymbol!!.owner.findTopLevelDeclaration()
-    this.isPropertyField ->
-        (this as IrField).correspondingPropertySymbol!!.owner.findTopLevelDeclaration()
-    else ->
-        (this.parent as IrDeclaration).findTopLevelDeclaration()
-}
-
 internal fun IrClass.isFrozen(context: Context): Boolean {
     val isLegacyMM = context.memoryModel != MemoryModel.EXPERIMENTAL
     return when {
@@ -300,6 +279,3 @@ fun IrFunction.externalSymbolOrThrow(): String? {
 }
 
 val IrFunction.isBuiltInOperator get() = origin == IrBuiltIns.BUILTIN_OPERATOR
-
-fun IrDeclaration.isFromMetadataInteropLibrary() =
-        descriptor.module.isFromInteropLibrary()

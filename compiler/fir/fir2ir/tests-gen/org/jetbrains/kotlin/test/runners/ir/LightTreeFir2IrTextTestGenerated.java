@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -152,6 +152,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         @TestMetadata("enumWithSecondaryCtor.kt")
         public void testEnumWithSecondaryCtor() throws Exception {
             runTest("compiler/testData/ir/irText/classes/enumWithSecondaryCtor.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverridesForJavaNonStaticMembers.kt")
+        public void testFakeOverridesForJavaNonStaticMembers() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/fakeOverridesForJavaNonStaticMembers.kt");
         }
 
         @Test
@@ -490,6 +496,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         @TestMetadata("kt47527.kt")
         public void testKt47527() throws Exception {
             runTest("compiler/testData/ir/irText/declarations/kt47527.kt");
+        }
+
+        @Test
+        @TestMetadata("kt52677.kt")
+        public void testKt52677() throws Exception {
+            runTest("compiler/testData/ir/irText/declarations/kt52677.kt");
         }
 
         @Test
@@ -845,6 +857,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
             @TestMetadata("iteratorOperator.kt")
             public void testIteratorOperator() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/contextReceivers/iteratorOperator.kt");
+            }
+
+            @Test
+            @TestMetadata("kt52791.kt")
+            public void testKt52791() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/contextReceivers/kt52791.kt");
             }
 
             @Test
@@ -2661,6 +2679,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         }
 
         @Test
+        @TestMetadata("localCompanion.kt")
+        public void testLocalCompanion() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/localCompanion.kt");
+        }
+
+        @Test
         @TestMetadata("Modality.kt")
         public void testModality() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/Modality.kt");
@@ -2736,6 +2760,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         @TestMetadata("SyntheticSetterType.kt")
         public void testSyntheticSetterType() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SyntheticSetterType.kt");
+        }
+
+        @Test
+        @TestMetadata("thisInEnumConstructor.kt")
+        public void testThisInEnumConstructor() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/thisInEnumConstructor.kt");
         }
 
         @Test
@@ -2980,6 +3010,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         @TestMetadata("javaNestedClass.kt")
         public void testJavaNestedClass() throws Exception {
             runTest("compiler/testData/ir/irText/stubs/javaNestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("javaNestedClassesInHierarchy.kt")
+        public void testJavaNestedClassesInHierarchy() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/javaNestedClassesInHierarchy.kt");
         }
 
         @Test

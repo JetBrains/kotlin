@@ -85,7 +85,7 @@ object FirNativeObjCRefinementOverridesChecker : FirClassChecker() {
         for (annotation in resolvedAnnotationsWithClassIds) {
             val metaAnnotations = annotation.coneClassLikeType?.lookupTag?.toSymbol(session)?.resolvedAnnotationsWithClassIds.orEmpty()
             for (metaAnnotation in metaAnnotations) {
-                when (metaAnnotation.toAnnotationClassId()) {
+                when (metaAnnotation.toAnnotationClassId(session)) {
                     hidesFromObjCClassId -> {
                         hasObjC = true
                         break

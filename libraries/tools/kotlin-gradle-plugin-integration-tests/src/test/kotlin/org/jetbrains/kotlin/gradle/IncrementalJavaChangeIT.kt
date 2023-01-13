@@ -92,11 +92,11 @@ open class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChangesBas
 }
 
 @DisplayName("Incremental compilation via classpath snapshots with default precise java tracking")
-class IncrementalJavaChangeClasspathSnapshotIT : IncrementalJavaChangeDefaultIT() {
+class IncrementalJavaChangeOldICIT : IncrementalJavaChangeDefaultIT() {
 
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(useGradleClasspathSnapshot = true)
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(useGradleClasspathSnapshot = false)
 
-    @DisplayName("Lib: tracked method signature ABI change")
+    @DisplayName("Lib: method signature ABI change")
     @GradleTest
     override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
@@ -105,12 +105,18 @@ class IncrementalJavaChangeClasspathSnapshotIT : IncrementalJavaChangeDefaultIT(
             javaClassInLib.modify(changeMethodSignature)
 
             build("assemble") {
-                // Fewer Kotlin files are recompiled
-                val expectedSources = sourceFilesRelativeToProject(
-                    listOf("foo/JavaClassChild.kt", "foo/useJavaClass.kt"),
+                val expectedToCompileSources = sourceFilesRelativeToProject(
+                    listOf(
+                        "foo/JavaClassChild.kt",
+                        "foo/useJavaClass.kt",
+                        "foo/useJavaClassFooMethodUsage.kt"
+                    ),
                     subProjectName = "app"
                 )
-                assertCompiledKotlinSources(expectedSources, output)
+                assertCompiledKotlinSources(
+                    expectedToCompileSources,
+                    output
+                )
             }
         }
     }
@@ -124,9 +130,19 @@ class IncrementalJavaChangeClasspathSnapshotIT : IncrementalJavaChangeDefaultIT(
             javaClassInLib.modify(changeMethodBody)
 
             build("assemble") {
-                assertTasksExecuted(":lib:compileKotlin")
-                assertTasksUpToDate(":app:compileKotlin") // App compilation has 'compile avoidance'
-                assertCompiledKotlinSources(emptyList(), output)
+                val expectedToCompileSources = sourceFilesRelativeToProject(
+                    listOf(
+                        "foo/JavaClassChild.kt",
+                        "foo/useJavaClass.kt",
+                        "foo/useJavaClassFooMethodUsage.kt"
+                    ),
+                    subProjectName = "app"
+                )
+
+                assertCompiledKotlinSources(
+                    expectedToCompileSources,
+                    output
+                )
             }
         }
     }
@@ -185,8 +201,7 @@ open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaCha
                 val expectedSources = sourceFilesRelativeToProject(
                     listOf(
                         "foo/TrackedJavaClassChild.kt",
-                        "foo/useTrackedJavaClass.kt",
-                        "foo/useTrackedJavaClassFooMethodUsage.kt"
+                        "foo/useTrackedJavaClass.kt"
                     ),
                     subProjectName = "app"
                 ) + sourceFilesRelativeToProject(
@@ -208,13 +223,6 @@ open class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJavaCha
 
             build("assemble") {
                 val expectedSources = sourceFilesRelativeToProject(
-                    listOf(
-                        "foo/TrackedJavaClassChild.kt",
-                        "foo/useTrackedJavaClass.kt",
-                        "foo/useTrackedJavaClassFooMethodUsage.kt"
-                    ),
-                    subProjectName = "app"
-                ) + sourceFilesRelativeToProject(
                     listOf("bar/useTrackedJavaClassSameModule.kt"),
                     subProjectName = "lib"
                 )
@@ -243,7 +251,7 @@ abstract class IncrementalCompilationJavaChangesBase(
     protected val changeMethodSignature: (String) -> String = { it.replace("String getString", "Object getString") }
     protected val changeMethodBody: (String) -> String = { it.replace("Hello, World!", "Hello, World!!!!") }
 
-    @DisplayName("Lib: method signature ABI change")
+    @DisplayName("Lib: tracked method signature ABI change")
     @GradleTest
     open fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
         defaultProject(gradleVersion) {
@@ -252,18 +260,12 @@ abstract class IncrementalCompilationJavaChangesBase(
             javaClassInLib.modify(changeMethodSignature)
 
             build("assemble") {
-                val expectedToCompileSources = sourceFilesRelativeToProject(
-                    listOf(
-                        "foo/JavaClassChild.kt",
-                        "foo/useJavaClass.kt",
-                        "foo/useJavaClassFooMethodUsage.kt"
-                    ),
+                // Fewer Kotlin files are recompiled
+                val expectedSources = sourceFilesRelativeToProject(
+                    listOf("foo/JavaClassChild.kt", "foo/useJavaClass.kt"),
                     subProjectName = "app"
                 )
-                assertCompiledKotlinSources(
-                    expectedToCompileSources,
-                    output
-                )
+                assertCompiledKotlinSources(expectedSources, output)
             }
         }
     }
@@ -277,19 +279,9 @@ abstract class IncrementalCompilationJavaChangesBase(
             javaClassInLib.modify(changeMethodBody)
 
             build("assemble") {
-                val expectedToCompileSources = sourceFilesRelativeToProject(
-                    listOf(
-                        "foo/JavaClassChild.kt",
-                        "foo/useJavaClass.kt",
-                        "foo/useJavaClassFooMethodUsage.kt"
-                    ),
-                    subProjectName = "app"
-                )
-
-                assertCompiledKotlinSources(
-                    expectedToCompileSources,
-                    output
-                )
+                assertTasksExecuted(":lib:compileKotlin")
+                assertTasksUpToDate(":app:compileKotlin") // App compilation has 'compile avoidance'
+                assertCompiledKotlinSources(emptyList(), output)
             }
         }
     }

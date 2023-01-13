@@ -63,31 +63,27 @@ internal class KtFirOverrideInfoProvider(
 
     override fun getOriginalContainingClassForOverride(symbol: KtCallableSymbol): KtClassOrObjectSymbol? {
         require(symbol is KtFirSymbol<*>)
-        symbol.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val firDeclaration = symbol.firSymbol.fir as FirCallableDeclaration
         val containingClass =
-            getOriginalOverriddenSymbol(firDeclaration)?.containingClassLookupTag()?.toSymbol(rootModuleSession) ?: return null
+            unwrapFakeOverrides(firDeclaration).containingClassLookupTag()?.toSymbol(rootModuleSession) ?: return null
         return analysisSession.firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(containingClass.fir.symbol) as? KtClassOrObjectSymbol
-
     }
 
-    override fun getOriginalOverriddenSymbol(symbol: KtCallableSymbol): KtCallableSymbol? {
+    override fun unwrapFakeOverrides(symbol: KtCallableSymbol): KtCallableSymbol {
         require(symbol is KtFirSymbol<*>)
-        symbol.firSymbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         val firDeclaration = symbol.firSymbol.fir as FirCallableDeclaration
-        return getOriginalOverriddenSymbol(firDeclaration)
-            ?.buildSymbol(analysisSession.firSymbolBuilder) as KtCallableSymbol?
+        return unwrapFakeOverrides(firDeclaration).buildSymbol(analysisSession.firSymbolBuilder) as KtCallableSymbol
     }
 
-    private fun getOriginalOverriddenSymbol(member: FirCallableDeclaration): FirCallableDeclaration? {
+    private fun unwrapFakeOverrides(member: FirCallableDeclaration): FirCallableDeclaration {
         val originalForSubstitutionOverride = member.originalForSubstitutionOverride
-        if (originalForSubstitutionOverride != null) return getOriginalOverriddenSymbol(originalForSubstitutionOverride)
+        if (originalForSubstitutionOverride != null) return unwrapFakeOverrides(originalForSubstitutionOverride)
 
         val originalForIntersectionOverrideAttr = member.originalForIntersectionOverrideAttr
-        if (originalForIntersectionOverrideAttr != null) return getOriginalOverriddenSymbol(originalForIntersectionOverrideAttr)
+        if (originalForIntersectionOverrideAttr != null) return unwrapFakeOverrides(originalForIntersectionOverrideAttr)
 
         val delegatedWrapperData = member.delegatedWrapperData
-        if (delegatedWrapperData != null) return getOriginalOverriddenSymbol(delegatedWrapperData.wrapped)
+        if (delegatedWrapperData != null) return unwrapFakeOverrides(delegatedWrapperData.wrapped)
 
         return member
     }

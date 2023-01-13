@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
+import org.jetbrains.kotlin.gradle.plugin.ide.locateOrRegisterIdeResolveDependenciesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.checkAndReportDeprecatedNativeTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.handleHierarchicalStructureFlagsMigration
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.registerDefaultVariantFactories
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupFragmentsMetadataForKpmModules
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.setupKpmModulesPublication
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
@@ -49,6 +49,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.0"))
 
         handleHierarchicalStructureFlagsMigration(project)
+        checkAndReportDeprecatedNativeTargets(project)
 
         project.plugins.apply(JavaBasePlugin::class.java)
 
@@ -76,6 +77,10 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
 
         exportProjectStructureMetadataForOtherBuilds(kotlinMultiplatformExtension)
+
+        // Ensure that the instance is created and configured during apply
+        project.kotlinIdeMultiplatformImport
+        project.locateOrRegisterIdeResolveDependenciesTask()
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
@@ -206,18 +211,28 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
     project.whenEvaluated {
         // To copy the attributes to the output configurations, find those output configurations and their producing compilations
         // based on the target's components:
-        val outputConfigurationsWithCompilations =
-            target.kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
+        val outputConfigurationsWithCompilations = target.kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
                 kotlinVariant.usages.mapNotNull { usageContext ->
                     project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
                         configuration to usageContext.compilation
                     }
                 }
-            } + listOfNotNull(
-                target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
-                    project.configurations.findByName(target.defaultConfigurationName)?.to(mainCompilation)
-                }
-            )
+            }.toMutableList()
+
+        val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        val defaultTargetConfiguration = project.configurations.findByName(target.defaultConfigurationName)
+        if (mainCompilation != null && defaultTargetConfiguration != null) {
+            outputConfigurationsWithCompilations += defaultTargetConfiguration to mainCompilation
+        }
+
+        // Add usages of android library when its variants are grouped by flavor
+        outputConfigurationsWithCompilations += target.kotlinComponents
+            .filterIsInstance<JointAndroidKotlinTargetComponent>()
+            .flatMap { variant -> variant.usages }
+            .mapNotNull { usage ->
+                val configuration = project.configurations.findByName(usage.dependencyConfigurationName) ?: return@mapNotNull null
+                configuration to usage.compilation
+            }
 
         outputConfigurationsWithCompilations.forEach { (configuration, compilation) ->
             copyAttributes(compilation.attributes, configuration.attributes)

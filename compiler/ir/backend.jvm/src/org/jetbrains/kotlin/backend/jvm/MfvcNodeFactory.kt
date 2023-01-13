@@ -8,8 +8,12 @@ package org.jetbrains.kotlin.backend.jvm
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.parents
+import org.jetbrains.kotlin.backend.jvm.IrPropertyOrIrField.Field
+import org.jetbrains.kotlin.backend.jvm.IrPropertyOrIrField.Property
+import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
+import org.jetbrains.kotlin.backend.jvm.ir.upperBound
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -30,14 +34,14 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 fun createLeafMfvcNode(
     parent: IrDeclarationContainer,
     context: JvmBackendContext,
     type: IrType,
-    rootPropertyName: String?,
-    nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    nameParts: List<Name>,
     fieldAnnotations: List<IrConstructorCall>,
     static: Boolean,
     overriddenNode: LeafMfvcNode?,
@@ -48,8 +52,8 @@ fun createLeafMfvcNode(
 ): LeafMfvcNode {
     require(!type.needsMfvcFlattening()) { "${type.render()} requires flattening" }
 
-    val fullMethodName = NameableMfvcNodeImpl.makeFullMethodName(rootPropertyName, nameParts)
-    val fullFieldName = NameableMfvcNodeImpl.makeFullFieldName(rootPropertyName, nameParts)
+    val fullMethodName = NameableMfvcNodeImpl.makeFullMethodName(methodFullNameMode, nameParts)
+    val fullFieldName = NameableMfvcNodeImpl.makeFullFieldName(nameParts)
 
     val field = oldPropertyBackingField?.let { oldBackingField ->
         context.irFactory.buildField {
@@ -76,7 +80,7 @@ fun createLeafMfvcNode(
         modality,
     ) { receiver -> irGetField(if (field!!.isStatic) null else irGet(receiver!!), field) }
 
-    return LeafMfvcNode(type, rootPropertyName, nameParts, field, unboxMethod, defaultMethodsImplementationSourceNode.isPure())
+    return LeafMfvcNode(type, methodFullNameMode, nameParts, field, unboxMethod, defaultMethodsImplementationSourceNode.isPure())
 }
 
 private fun Pair<IrSimpleFunction?, NameableMfvcNode>?.isPure(): Boolean {
@@ -130,8 +134,8 @@ fun createNameableMfvcNodes(
     context: JvmBackendContext,
     type: IrSimpleType,
     typeArguments: TypeArguments,
-    rootPropertyName: String?,
-    nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    nameParts: List<Name>,
     fieldAnnotations: List<IrConstructorCall>,
     static: Boolean,
     overriddenNode: NameableMfvcNode?,
@@ -144,7 +148,7 @@ fun createNameableMfvcNodes(
     context,
     type,
     typeArguments,
-    rootPropertyName,
+    methodFullNameMode,
     nameParts,
     fieldAnnotations,
     static,
@@ -157,7 +161,7 @@ fun createNameableMfvcNodes(
     parent,
     context,
     type,
-    rootPropertyName,
+    methodFullNameMode,
     nameParts,
     fieldAnnotations,
     static,
@@ -173,8 +177,8 @@ fun createIntermediateMfvcNode(
     context: JvmBackendContext,
     type: IrSimpleType,
     typeArguments: TypeArguments,
-    rootPropertyName: String?,
-    nameParts: List<IndexedNamePart>,
+    methodFullNameMode: MethodFullNameMode,
+    nameParts: List<Name>,
     fieldAnnotations: List<IrConstructorCall>,
     static: Boolean,
     overriddenNode: IntermediateMfvcNode?,
@@ -188,14 +192,14 @@ fun createIntermediateMfvcNode(
     val representation = valueClass.multiFieldValueClassRepresentation!!
 
     val replacements = context.multiFieldValueClassReplacements
-    val rootNode = replacements.getRootMfvcNode(valueClass)!!
+    val rootNode = replacements.getRootMfvcNode(valueClass)
 
-    val oldField = oldGetter?.correspondingPropertySymbol?.owner?.backingField
+    val oldField = oldGetter?.correspondingPropertySymbol?.owner?.backingFieldIfNotDelegate
 
     val shadowBackingFieldProperty = if (oldField == null) oldGetter?.getGetterField()?.correspondingPropertySymbol?.owner else null
     val useOldGetter = oldGetter != null && (oldField == null || !oldGetter.isDefaultGetter(oldField))
 
-    val subnodes = representation.underlyingPropertyNamesToTypes.mapIndexed { index, (name, type) ->
+    val subnodes = representation.underlyingPropertyNamesToTypes.map { (name, type) ->
         val newType = type.substitute(typeArguments) as IrSimpleType
         val newTypeArguments = typeArguments.toMutableMap().apply { putAll(makeTypeArgumentsFromType(newType)) }
         val newDefaultMethodsImplementationSourceNode = when {
@@ -214,8 +218,8 @@ fun createIntermediateMfvcNode(
             context,
             newType,
             newTypeArguments,
-            rootPropertyName,
-            nameParts + IndexedNamePart(index, name),
+            methodFullNameMode,
+            nameParts + name,
             fieldAnnotations,
             static,
             overriddenNode?.let { it[name]!! },
@@ -226,38 +230,50 @@ fun createIntermediateMfvcNode(
         )
     }
 
-    val fullMethodName = NameableMfvcNodeImpl.makeFullMethodName(rootPropertyName, nameParts)
+    val fullMethodName = NameableMfvcNodeImpl.makeFullMethodName(methodFullNameMode, nameParts)
 
     val unboxMethod = if (useOldGetter) oldGetter!! else makeUnboxMethod(
         context, fullMethodName, type, parent, overriddenNode, static, defaultMethodsImplementationSourceNode, oldGetter, modality
     ) { receiver ->
         val valueArguments = subnodes.flatMap { it.fields!! }
             .map { field -> irGetField(if (field.isStatic) null else irGet(receiver!!), field) }
-        rootNode.makeBoxedExpression(this, typeArguments, valueArguments)
+        rootNode.makeBoxedExpression(this, typeArguments, valueArguments, registerPossibleExtraBoxCreation = {})
     }
 
     val hasPureUnboxMethod = defaultMethodsImplementationSourceNode.isPure() && subnodes.all { it.hasPureUnboxMethod }
     return IntermediateMfvcNode(
-        type, rootPropertyName, nameParts, subnodes, unboxMethod, hasPureUnboxMethod, rootNode
+        type, methodFullNameMode, nameParts, subnodes, unboxMethod, hasPureUnboxMethod, rootNode
     )
 }
 
-fun collectPropertiesAfterLowering(irClass: IrClass) = LinkedHashSet<IrProperty>().apply {
-    for (element in irClass.declarations) {
-        if (element is IrField) {
-            element.correspondingPropertySymbol?.owner?.let { add(it) }
-        } else if (element is IrSimpleFunction && element.extensionReceiverParameter == null && element.contextReceiverParametersCount == 0) {
-            element.correspondingPropertySymbol?.owner?.let { add(it) }
-        }
-    }
+fun collectPropertiesAfterLowering(irClass: IrClass): LinkedHashSet<IrProperty> =
+    LinkedHashSet(collectPropertiesOrFieldsAfterLowering(irClass).map { (it as Property).property })
+
+sealed class IrPropertyOrIrField {
+    data class Property(val property: IrProperty) : IrPropertyOrIrField()
+    data class Field(val field: IrField) : IrPropertyOrIrField()
 }
 
+fun collectPropertiesOrFieldsAfterLowering(irClass: IrClass): LinkedHashSet<IrPropertyOrIrField> =
+    LinkedHashSet<IrPropertyOrIrField>().apply {
+        for (element in irClass.declarations) {
+            if (element is IrField) {
+                element.correspondingPropertySymbol?.owner?.takeUnless { it.isDelegated }?.let { add(Property(it)) } ?: add(Field(element))
+            } else if (element is IrSimpleFunction && element.extensionReceiverParameter == null && element.contextReceiverParametersCount == 0) {
+                element.correspondingPropertySymbol?.owner?.let { add(Property(it)) }
+            }
+        }
+    }
+
 private fun IrProperty.isStatic(currentContainer: IrDeclarationContainer) =
-    getterIfDeclared(currentContainer)?.isStatic ?: backingField?.isStatic ?: error("Property without both getter and backing field")
+    getterIfDeclared(currentContainer)?.isStatic
+        ?: backingFieldIfNotDelegate?.isStatic
+        ?: error("Property without both getter and backing field")
 
 fun getRootNode(context: JvmBackendContext, mfvc: IrClass): RootMfvcNode {
     require(mfvc.isMultiFieldValueClass) { "${mfvc.defaultType.render()} does not require flattening" }
     val oldPrimaryConstructor = mfvc.primaryConstructor!!
+    val oldFields = mfvc.fields.filter { !it.isStatic }.toList()
     val representation = mfvc.multiFieldValueClassRepresentation!!
     val properties = collectPropertiesAfterLowering(mfvc).associateBy { it.isStatic(mfvc) to it.name }
 
@@ -268,66 +284,61 @@ fun getRootNode(context: JvmBackendContext, mfvc: IrClass): RootMfvcNode {
     val fields = mfvcNodeWithSubnodesImpl.fields!!
 
     val newPrimaryConstructor = makeMfvcPrimaryConstructor(context, oldPrimaryConstructor, mfvc, leaves, fields)
-    val primaryConstructorImpl = makePrimaryConstructorImpl(context, oldPrimaryConstructor, mfvc, leaves)
+    val primaryConstructorImpl = makePrimaryConstructorImpl(context, oldPrimaryConstructor, mfvc, leaves, mfvcNodeWithSubnodesImpl)
     val boxMethod = makeBoxMethod(context, mfvc, leaves, newPrimaryConstructor)
-    val specializedEqualsMethod = makeSpecializedEqualsMethod(context, mfvc, leaves)
+
+    val customEqualsAny = mfvc.functions.singleOrNull {
+        it.isEquals() && it.origin != IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
+    }
+
+    val customEqualsMfvc = mfvc.functions.singleOrNull {
+        it.name == OperatorNameConventions.EQUALS &&
+                it.contextReceiverParametersCount == 0 &&
+                it.extensionReceiverParameter == null &&
+                it.valueParameters.singleOrNull()?.type?.erasedUpperBound == mfvc
+    }
+
+    val specializedEqualsMethod = makeSpecializedEqualsMethod(context, mfvc, oldFields, customEqualsAny, customEqualsMfvc)
 
     return RootMfvcNode(
-        mfvc, subnodes, oldPrimaryConstructor, newPrimaryConstructor, primaryConstructorImpl, boxMethod, specializedEqualsMethod
+        mfvc, subnodes, oldPrimaryConstructor, newPrimaryConstructor, primaryConstructorImpl, boxMethod,
+        specializedEqualsMethod, customEqualsMfvc == null
     )
 }
 
 private fun makeSpecializedEqualsMethod(
-    context: JvmBackendContext,
-    mfvc: IrClass,
-    leaves: List<LeafMfvcNode>
-) = context.irFactory.buildFun {
-    name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
-    // TODO: Revisit this once we allow user defined equals methods in value classes.
-    origin = JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD
+    context: JvmBackendContext, mfvc: IrClass, oldFields: List<IrField>,
+    customEqualsAny: IrSimpleFunction?, customEqualsMfvc: IrSimpleFunction?
+) = customEqualsMfvc ?: context.irFactory.buildFun {
+    name = OperatorNameConventions.EQUALS
+    origin = IrDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER
     returnType = context.irBuiltIns.booleanType
 }.apply {
     parent = mfvc
-    copyTypeParametersFrom(mfvc)
-    val typeParametersHalf1 = typeParameters.apply {
-        for (it in this) {
-            it.name = Name.guessByFirstCharacter("${it.name.asString()}1")
-        }
-    }
+    createDispatchReceiverParameter()
 
-    copyTypeParametersFrom(mfvc)
-    val typeParametersHalf2 = typeParameters.drop(typeParametersHalf1.size).apply {
-        for (it in this) {
-            it.name = Name.guessByFirstCharacter("${it.name.asString()}2")
-        }
-    }
-
-    val valueParametersHalf1 = leaves.map { leaf ->
-        addValueParameter {
-            this.name = Name.guessByFirstCharacter(
-                "${InlineClassDescriptorResolver.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME}$${leaf.fullFieldName}"
-            )
-            this.type = leaf.type.substitute(mfvc.typeParameters, typeParametersHalf1.map { it.defaultType })
-        }
-    }
-
-    val valueParametersHalf2 = leaves.map { leaf ->
-        addValueParameter {
-            this.name = Name.guessByFirstCharacter(
-                "${InlineClassDescriptorResolver.SPECIALIZED_EQUALS_SECOND_PARAMETER_NAME}$${leaf.fullFieldName}"
-            )
-            this.type = leaf.type.substitute(mfvc.typeParameters, typeParametersHalf2.map { it.defaultType })
-        }
+    val other = addValueParameter {
+        name = Name.identifier("other")
+        type = mfvc.defaultType.upperBound
     }
 
     body = with(context.createJvmIrBuilder(this.symbol)) {
-        val conjunctions = valueParametersHalf1.zip(valueParametersHalf2) { f1, f2 -> irEquals(irGet(f1), irGet(f2)) }
-        irExprBody(conjunctions.reduce { acc, current ->
-            irCall(context.irBuiltIns.andandSymbol).apply {
-                putValueArgument(0, acc)
-                putValueArgument(1, current)
-            }
-        })
+        if (customEqualsAny != null) {
+            irExprBody(irCall(customEqualsAny).apply {
+                dispatchReceiver = irGet(dispatchReceiverParameter!!)
+                putValueArgument(0, irGet(other))
+            })
+        } else {
+            val leftArgs = oldFields.map { irGetField(irGet(dispatchReceiverParameter!!), it) }
+            val rightArgs = oldFields.map { irGetField(irGet(other), it) }
+            val conjunctions = leftArgs.zip(rightArgs) { l, r -> irEquals(l, r) }
+            irExprBody(conjunctions.reduce { acc, current ->
+                irCall(context.irBuiltIns.andandSymbol).apply {
+                    putValueArgument(0, acc)
+                    putValueArgument(1, current)
+                }
+            })
+        }
     }
 }
 
@@ -361,7 +372,8 @@ private fun makePrimaryConstructorImpl(
     context: JvmBackendContext,
     oldPrimaryConstructor: IrConstructor,
     mfvc: IrClass,
-    leaves: List<LeafMfvcNode>
+    leaves: List<LeafMfvcNode>,
+    subnodesImpl: MfvcNodeWithSubnodesImpl,
 ) = context.irFactory.buildFun {
     name = InlineClassAbi.mangledNameFor(oldPrimaryConstructor, false, false)
     visibility = oldPrimaryConstructor.visibility
@@ -374,6 +386,14 @@ private fun makePrimaryConstructorImpl(
     for (leaf in leaves) {
         addValueParameter(leaf.fullFieldName, leaf.type.substitute(mfvc.typeParameters, typeParameters.map { it.defaultType }))
     }
+    for ((index, oldParameter) in oldPrimaryConstructor.valueParameters.withIndex()) {
+        val node = subnodesImpl.subnodes[index]
+        if (node is LeafMfvcNode) {
+            val newIndex = subnodesImpl.subnodeIndices[node]!!.first
+            valueParameters[newIndex].annotations = oldParameter.annotations
+        }
+    }
+    annotations = oldPrimaryConstructor.annotations
     // body is added in the Lowering file as it needs to be lowered
 }
 
@@ -406,10 +426,10 @@ private fun makeRootMfvcNodeSubnodes(
     properties: Map<Pair<Boolean, Name>, IrProperty>,
     context: JvmBackendContext,
     mfvc: IrClass
-) = representation.underlyingPropertyNamesToTypes.mapIndexed { index, (name, type) ->
+) = representation.underlyingPropertyNamesToTypes.map { (name, type) ->
     val typeArguments = makeTypeArgumentsFromType(type)
     val oldProperty = properties[false to name]!!
-    val oldBackingField = oldProperty.backingField
+    val oldBackingField = oldProperty.backingFieldIfNotDelegate
     val oldGetter = oldProperty.getterIfDeclared(mfvc)
     val overriddenNode = oldGetter?.let { getOverriddenNode(context.multiFieldValueClassReplacements, it) as IntermediateMfvcNode? }
     val static = oldProperty.isStatic(mfvc)
@@ -418,8 +438,8 @@ private fun makeRootMfvcNodeSubnodes(
         context,
         type,
         typeArguments,
-        null,
-        listOf(IndexedNamePart(index, name)),
+        MethodFullNameMode.UnboxFunction,
+        listOf(name),
         oldBackingField?.annotations ?: listOf(),
         static,
         overriddenNode,
@@ -451,7 +471,7 @@ fun createIntermediateNodeForMfvcPropertyOfRegularClass(
     oldProperty: IrProperty,
 ): IntermediateMfvcNode {
     val oldGetter = oldProperty.getterIfDeclared(parent)
-    val oldField = oldProperty.backingField
+    val oldField = oldProperty.backingFieldIfNotDelegate
     val type = oldProperty.getter?.returnType ?: oldField?.type ?: error("Either getter or field must exist")
     require(type is IrSimpleType && type.needsMfvcFlattening()) { "Expected MFVC but got ${type.render()}" }
     val fieldAnnotations = oldField?.annotations ?: listOf()
@@ -459,11 +479,24 @@ fun createIntermediateNodeForMfvcPropertyOfRegularClass(
     val overriddenNode = oldGetter?.let { getOverriddenNode(context.multiFieldValueClassReplacements, it) as IntermediateMfvcNode? }
     val modality = if (oldGetter == null || oldGetter.modality == Modality.FINAL) Modality.FINAL else oldGetter.modality
     return createIntermediateMfvcNode(
-        parent, context, type, makeTypeArgumentsFromType(type), oldProperty.name.asString(), listOf(),
+        parent, context, type, makeTypeArgumentsFromType(type), MethodFullNameMode.Getter, listOf(oldProperty.name),
         fieldAnnotations, static, overriddenNode, null, oldGetter, modality, oldField
     ).also {
         updateAnnotationsAndPropertyFromOldProperty(oldProperty)
     }
+}
+
+fun createIntermediateNodeForStandaloneMfvcField(
+    parent: IrDeclarationContainer,
+    context: JvmBackendContext,
+    oldField: IrField,
+): IntermediateMfvcNode {
+    val type = oldField.type
+    require(type is IrSimpleType && type.needsMfvcFlattening()) { "Expected MFVC but got ${type.render()}" }
+    return createIntermediateMfvcNode(
+        parent, context, type, makeTypeArgumentsFromType(type), MethodFullNameMode.Getter, listOf(oldField.name),
+        oldField.annotations, oldField.isStatic, null, null, null, Modality.FINAL, oldField
+    )
 }
 
 private fun getOverriddenNode(replacements: MemoizedMultiFieldValueClassReplacements, getter: IrSimpleFunction): NameableMfvcNode? =
@@ -485,3 +518,5 @@ fun getOptimizedPublicAccess(currentElement: IrElement?, parent: IrClass): Acces
 }
 
 private fun IrProperty.getterIfDeclared(parent: IrDeclarationContainer): IrSimpleFunction? = getter?.takeIf { it in parent.declarations }
+
+private val IrProperty.backingFieldIfNotDelegate get() = backingField?.takeUnless { isDelegated }

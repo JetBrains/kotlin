@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
 
 open class KotlinJsBinaryContainer
@@ -216,8 +217,8 @@ constructor(
         ) =
             lowerCamelCaseName(
                 if (compilation.isMain()) null else compilation.name,
-                mode.name.toLowerCase(),
-                jsBinaryType?.name?.toLowerCase()
+                mode.name.toLowerCaseAsciiOnly(),
+                jsBinaryType?.name?.toLowerCaseAsciiOnly()
             )
     }
 }

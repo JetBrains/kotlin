@@ -30,7 +30,7 @@ internal class KotlinCompilationImplFactory(
         DefaultKotlinCompilationFriendPathsResolver(),
 
     private val compilationSourceSetInclusion: KotlinCompilationSourceSetInclusion =
-        DefaultKotlinCompilationSourceSetInclusion(),
+        KotlinCompilationSourceSetInclusion(),
 
     private val compilationOutputFactory: KotlinCompilationOutputFactory =
         DefaultKotlinCompilationOutputFactory,

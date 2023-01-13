@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 public @interface SamWithReceiver1 {
 }
 
-// FILE: SamConstructor.kt
+// FILE: Sam.java
 @SamWithReceiver1
 public interface Sam {
     void run(String a, String b);

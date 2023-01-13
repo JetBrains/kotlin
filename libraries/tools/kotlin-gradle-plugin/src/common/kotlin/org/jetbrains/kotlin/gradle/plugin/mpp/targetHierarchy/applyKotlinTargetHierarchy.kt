@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 import org.gradle.api.DomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 internal fun applyKotlinTargetHierarchy(
     hierarchyDescriptor: KotlinTargetHierarchyDescriptor,
@@ -39,7 +40,9 @@ private fun applyKotlinTargetHierarchy(
     if (hierarchy.children.isNotEmpty()) {
         childSourceSets.forEach { childSourceSet -> childSourceSet.dependsOn(sharedSourceSet) }
     } else {
-        compilation.defaultSourceSet.dependsOn(sharedSourceSet)
+        compilation.internal.kotlinSourceSets.forAll { compilationSourceSet ->
+            compilationSourceSet.dependsOn(sharedSourceSet)
+        }
     }
 
     return sharedSourceSet

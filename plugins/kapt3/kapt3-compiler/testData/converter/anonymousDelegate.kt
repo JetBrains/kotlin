@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // CORRECT_ERROR_TYPES
 
 import kotlin.reflect.KProperty
@@ -33,7 +32,6 @@ class Test {
     }
 
     val concreteDelegate: Int by ConcreteDelegate()
-
 }
 
 var delegate by object {

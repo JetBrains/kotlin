@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.kotlinp
 
-import kotlinx.metadata.jvm.KotlinClassHeader
+import kotlinx.metadata.jvm.Metadata
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.io.FileInputStream
 
-internal fun File.readKotlinClassHeader(): KotlinClassHeader? {
-    var header: KotlinClassHeader? = null
+internal fun File.readKotlinClassHeader(): Metadata? {
+    var header: Metadata? = null
 
     try {
         val metadataDesc = Type.getDescriptor(Metadata::class.java)
@@ -27,7 +27,7 @@ internal fun File.readKotlinClassHeader(): KotlinClassHeader? {
     return header
 }
 
-private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): AnnotationVisitor =
+private fun readMetadataVisitor(output: (Metadata) -> Unit): AnnotationVisitor =
     object : AnnotationVisitor(Opcodes.API_VERSION) {
         var kind: Int? = null
         var metadataVersion: IntArray? = null
@@ -69,6 +69,6 @@ private fun readMetadataVisitor(output: (KotlinClassHeader) -> Unit): Annotation
         }
 
         override fun visitEnd() {
-            output(KotlinClassHeader(kind, metadataVersion, data1, data2, extraString, packageName, extraInt))
+            output(Metadata(kind, metadataVersion, data1, data2, extraString, packageName, extraInt))
         }
     }

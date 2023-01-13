@@ -7,7 +7,7 @@ STEP 1:
     dependencies: lib1
 STEP 2:
     dependencies: lib1
-    modified config: m.kt, testEnumEntries.kt, testEnumValues.kt
+    added file: m.kt, testEnumEntries.kt, testEnumValues.kt
 STEP 3:
     modifications:
         U : testEnumEntries.3.kt -> testEnumEntries.kt

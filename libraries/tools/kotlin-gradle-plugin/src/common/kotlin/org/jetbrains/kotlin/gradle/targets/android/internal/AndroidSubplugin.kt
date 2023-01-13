@@ -168,7 +168,7 @@ class AndroidSubplugin : KotlinCompilerPluginSupportPlugin {
                 buildString {
                     append(name)
                     append(';')
-                    resDirectories.map { it.dir }.joinTo(this, separator = ";") { it.canonicalPath }
+                    resDirectories.map { it.dir }.joinTo(this, separator = ";") { it.normalize().absolutePath }
                 }
             }
             pluginOptions += CompositeSubpluginOption(

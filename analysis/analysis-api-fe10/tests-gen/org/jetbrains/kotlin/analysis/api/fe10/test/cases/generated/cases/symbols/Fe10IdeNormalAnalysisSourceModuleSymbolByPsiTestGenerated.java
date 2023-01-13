@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -107,6 +107,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("delegatedProp.kt")
+    public void testDelegatedProp() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/delegatedProp.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/deprecated.kt");
@@ -128,6 +134,24 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/enum.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntryFunctions.kt")
+    public void testEnumEntryFunctions() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/enumEntryFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntryOverride.kt")
+    public void testEnumEntryOverride() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/enumEntryOverride.kt");
+    }
+
+    @Test
+    @TestMetadata("enumEntryProperties.kt")
+    public void testEnumEntryProperties() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/enumEntryProperties.kt");
     }
 
     @Test
@@ -161,9 +185,21 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("functionWithTypeAlias.kt")
+    public void testFunctionWithTypeAlias() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/functionWithTypeAlias.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithTypeParams.kt")
     public void testFunctionWithTypeParams() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/functionWithTypeParams.kt");
+    }
+
+    @Test
+    @TestMetadata("functionsFromCompanion.kt")
+    public void testFunctionsFromCompanion() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/functionsFromCompanion.kt");
     }
 
     @Test
@@ -221,6 +257,24 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("outerAndInnerTypeAlias.kt")
+    public void testOuterAndInnerTypeAlias() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/outerAndInnerTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("propertiesFromCompanion.kt")
+    public void testPropertiesFromCompanion() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/propertiesFromCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("similarGenericSignature.kt")
+    public void testSimilarGenericSignature() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/similarGenericSignature.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelFunctions.kt")
     public void testTopLevelFunctions() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/topLevelFunctions.kt");
@@ -242,6 +296,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
     @TestMetadata("typeAnnotations.kt")
     public void testTypeAnnotations() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByPsi/typeAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameters.kt")
+    public void testTypeParameters() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByPsi/typeParameters.kt");
     }
 
     @Test
@@ -275,6 +335,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSymbolByPsiTestGenerated extends A
         @TestMetadata("contextReceiversOnProperty.kt")
         public void testContextReceiversOnProperty() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers/contextReceiversOnProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("similarSignatures.kt")
+        public void testSimilarSignatures() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/contextReceivers/similarSignatures.kt");
         }
     }
 

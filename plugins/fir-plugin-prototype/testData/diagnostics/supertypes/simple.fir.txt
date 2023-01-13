@@ -16,7 +16,7 @@ FILE: simple.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override fun foo(): R|kotlin/Unit| {
+        public open override fun foo(): R|kotlin/Unit| {
         }
 
     }
@@ -31,7 +31,7 @@ FILE: simple.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override fun foo(): R|kotlin/Unit| {
+        public open override fun foo(): R|kotlin/Unit| {
         }
 
     }
@@ -40,7 +40,7 @@ FILE: simple.kt
             super<R|kotlin/Any|>()
         }
 
-        public final override fun foo(): R|kotlin/Unit| {
+        public open override fun foo(): R|kotlin/Unit| {
         }
 
     }

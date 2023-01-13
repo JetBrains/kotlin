@@ -1,0 +1,11 @@
+annotationsList: []
+classId: A.B
+classSymbol: KtNamedClassOrObjectSymbol(<local>/B)
+nullability: NON_NULLABLE
+ownTypeArguments: []
+qualifiers: [
+  qualifier:
+    name: B
+    symbol: KtNamedClassOrObjectSymbol(<local>/B)
+    typeArguments: []
+]

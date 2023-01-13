@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.types
 
+import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForType
@@ -22,6 +23,9 @@ internal class KtFirCapturedType(
     private val builder: KtSymbolByFirBuilder,
 ) : KtCapturedType(), KtFirType {
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
+
+    override val projection: KtTypeProjection
+        get() = withValidityAssertion { builder.typeBuilder.buildTypeProjection(coneType.constructor.projection) }
 
     override val annotationsList: KtAnnotationsList by cached {
         KtFirAnnotationListForType.create(coneType, builder.rootSession, token)

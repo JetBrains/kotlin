@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.cli.jvm.modules
 
+import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.fileTypes.FileType
+import com.intellij.openapi.fileTypes.FileTypeRegistry
 import com.intellij.openapi.vfs.VirtualFile
 import java.io.InputStream
 
@@ -39,4 +42,8 @@ class CtSymClassVirtualFile(
     override fun refresh(p0: Boolean, p1: Boolean, p2: Runnable?) = file.refresh(p0, p1, p2)
 
     override fun getInputStream(): InputStream? = file.inputStream
+
+    override fun getFileType(): FileType = JavaClassFileType.INSTANCE
+
+    override fun getModificationStamp(): Long = file.modificationStamp
 }

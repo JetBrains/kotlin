@@ -97,6 +97,7 @@ public sealed class KtKClassAnnotationValue : KtAnnotationValue() {
      */
     public class KtErrorClassAnnotationValue(
         override val sourcePsi: KtElement?,
+        public val unresolvedQualifierName: String?,
     ) : KtKClassAnnotationValue()
 }
 

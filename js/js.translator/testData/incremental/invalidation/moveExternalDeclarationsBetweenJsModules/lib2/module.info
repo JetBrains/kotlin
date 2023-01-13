@@ -1,0 +1,28 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : test.0.kt -> test.kt
+    added file: test.kt
+STEP 1..2:
+    dependencies: lib1
+STEP 3:
+    dependencies: lib1
+    modifications:
+        U : test.3.kt -> test.kt
+    modified ir: test.kt
+STEP 4:
+    dependencies: lib1
+    updated imports: test.kt
+STEP 5:
+    dependencies: lib1
+    modifications:
+        U : JsModuleC.5.kt -> JsModuleC.kt
+    added file: JsModuleC.kt
+    updated exports: JsModuleC.kt
+    updated imports: test.kt
+STEP 6:
+    dependencies: lib1
+    modifications:
+        U : JsModuleC.6.kt -> JsModuleC.kt
+    modified ir: JsModuleC.kt
+    updated imports: test.kt

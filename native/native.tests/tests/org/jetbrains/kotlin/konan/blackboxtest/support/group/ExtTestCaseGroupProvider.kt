@@ -31,8 +31,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.test.*
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
-import org.jetbrains.kotlin.test.InTextDirectivesUtils.isIgnoredTarget
+import org.jetbrains.kotlin.test.InTextDirectivesUtils.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -72,12 +71,14 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     customSourceTransformers = settings.get<ExternalSourceTransformersProvider>().getSourceTransformers(testDataFile),
                     testRoots = settings.get(),
                     generatedSources = settings.get(),
+                    customKlibs = settings.get(),
+                    pipelineType = settings.get(),
                     timeouts = settings.get()
                 )
 
                 if (extTestDataFile.isRelevant)
                     testCases += extTestDataFile.createTestCase(
-                        definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value,
+                        settings = settings,
                         sharedModules = sharedModules
                     )
                 else
@@ -95,6 +96,8 @@ private class ExtTestDataFile(
     customSourceTransformers: ExternalSourceTransformers?,
     testRoots: TestRoots,
     private val generatedSources: GeneratedSources,
+    private val customKlibs: CustomKlibs,
+    private val pipelineType: PipelineType,
     private val timeouts: Timeouts
 ) {
     private val structure by lazy {
@@ -134,11 +137,20 @@ private class ExtTestDataFile(
 
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
-                && !isIgnoredTarget(TargetBackend.NATIVE, testDataFile) // Checks IGNORE_BACKEND directive.
+                && !isIgnoredNativeTarget(pipelineType, testDataFile) // Checks IGNORE_BACKEND directives.
                 && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
+
+    private fun isIgnoredNativeTarget(pipelineType: PipelineType, testDataFile: File): Boolean {
+        return when (pipelineType) {
+            PipelineType.K1 ->
+                isIgnoredTarget(TargetBackend.NATIVE, testDataFile, IGNORE_BACKEND_DIRECTIVE_PREFIX, IGNORE_BACKEND_K1_DIRECTIVE_PREFIX)
+            PipelineType.K2 ->
+                isIgnoredTarget(TargetBackend.NATIVE, testDataFile, IGNORE_BACKEND_DIRECTIVE_PREFIX, IGNORE_BACKEND_K2_DIRECTIVE_PREFIX)
+        }
+    }
 
     private fun assembleFreeCompilerArgs(): TestCompilerArgs {
         val args = mutableListOf<String>()
@@ -149,11 +161,15 @@ private class ExtTestDataFile(
         return TestCompilerArgs(args)
     }
 
-    fun createTestCase(definitelyStandaloneTest: Boolean, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
+    fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
         assertTrue(isRelevant)
 
+        if (settings.get<MemoryModel>() == MemoryModel.LEGACY) {
+            makeObjectsMutable()
+        }
+
+        val definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
-        makeObjectsMutable()
         patchPackageNames(isStandaloneTest)
         patchFileLevelAnnotations()
         val entryPointFunctionFQN = findEntryPoint()
@@ -280,6 +296,7 @@ private class ExtTestDataFile(
                     val importedFqName = importDirective.importedFqName
                     if (importedFqName == null
                         || importedFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)
+                        || importedFqName.startsWith(KOTLINX_PACKAGE_NAME)
                         || importedFqName.startsWith(HELPERS_PACKAGE_NAME)
                     ) {
                         return
@@ -506,7 +523,10 @@ private class ExtTestDataFile(
             checks = TestRunChecks.Default(timeouts.executionTimeout),
             extras = WithTestRunnerExtras(runnerType = TestRunnerType.DEFAULT)
         )
-        testCase.initialize(sharedModules::get)
+        testCase.initialize(
+            givenModules = customKlibs.klibs.mapToSet(TestModule::Given),
+            findSharedModule = sharedModules::get
+        )
 
         return testCase
     }
@@ -550,7 +570,7 @@ private class ExtTestDataFile(
         private val BOX_FUNCTION_NAME = Name.identifier("box")
         private val OPT_IN_ANNOTATION_NAME = Name.identifier("OptIn")
         private val HELPERS_PACKAGE_NAME = Name.identifier("helpers")
-        private val TYPE_OF_NAME = Name.identifier("typeOf")
+        private val KOTLINX_PACKAGE_NAME = Name.identifier("kotlinx")
 
         private val MANDATORY_SOURCE_TRANSFORMERS: ExternalSourceTransformers = listOf(DiagnosticsRemovingSourceTransformer)
     }
@@ -803,6 +823,8 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
     }
 
     companion object {
+        private val lock = Object()
+
         private fun createPsiFactory(parentDisposable: Disposable): KtPsiFactory {
             val configuration: CompilerConfiguration = KotlinTestUtils.newConfiguration()
             configuration.put(CommonConfigurationKeys.MODULE_NAME, "native-blackbox-test-patching-module")
@@ -813,7 +835,12 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
                 configFiles = EnvironmentConfigFiles.METADATA_CONFIG_FILES
             )
 
-            CoreApplicationEnvironment.registerApplicationDynamicExtensionPoint(TreeCopyHandler.EP_NAME.name, TreeCopyHandler::class.java)
+            synchronized(lock) {
+                CoreApplicationEnvironment.registerApplicationDynamicExtensionPoint(
+                    TreeCopyHandler.EP_NAME.name,
+                    TreeCopyHandler::class.java
+                )
+            }
 
             val project = environment.project as MockProject
             project.registerService(PomModel::class.java, PomModelImpl::class.java)

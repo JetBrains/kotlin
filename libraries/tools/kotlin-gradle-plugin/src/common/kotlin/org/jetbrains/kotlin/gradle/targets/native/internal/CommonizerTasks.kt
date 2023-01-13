@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
+import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
@@ -140,7 +140,7 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
         )
     }
 
-internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<Delete>?
+internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<DefaultTask>?
     get() {
         val commonizeNativeDistributionTask = commonizeNativeDistributionTask ?: return null
         return rootProject.locateOrRegisterTask(
@@ -148,7 +148,16 @@ internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<Delete>
             configureTask = {
                 group = "interop"
                 description = "Deletes all previously commonized klib's from the Kotlin/Native distribution"
-                delete(commonizeNativeDistributionTask.map { it.rootOutputDirectory })
+
+                val commonizerDirectory = commonizeNativeDistributionTask.map { it.rootOutputDirectory }
+                outputs.dir(commonizerDirectory)
+
+                doFirst {
+                    NativeDistributionCommonizerLock(commonizerDirectory.get()).withLock { lockFile ->
+                        val files = commonizerDirectory.get().listFiles().orEmpty().toSet() - lockFile
+                        delete(*files.toTypedArray())
+                    }
+                }
             }
         )
     }

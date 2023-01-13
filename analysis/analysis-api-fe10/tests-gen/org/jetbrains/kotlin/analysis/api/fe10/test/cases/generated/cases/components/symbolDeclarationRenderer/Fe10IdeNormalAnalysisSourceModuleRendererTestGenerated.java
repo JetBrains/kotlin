@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -68,6 +68,12 @@ public class Fe10IdeNormalAnalysisSourceModuleRendererTestGenerated extends Abst
     @TestMetadata("constructorOfAnonymousObject.kt")
     public void testConstructorOfAnonymousObject() throws Exception {
         runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/constructorOfAnonymousObject.kt");
+    }
+
+    @Test
+    @TestMetadata("contextReceiver.kt")
+    public void testContextReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/contextReceiver.kt");
     }
 
     @Test
@@ -218,15 +224,21 @@ public class Fe10IdeNormalAnalysisSourceModuleRendererTestGenerated extends Abst
         }
 
         @Test
-        @TestMetadata("annotaionOnTypes.kt")
-        public void testAnnotaionOnTypes() throws Exception {
-            runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/annotaionOnTypes.kt");
+        @TestMetadata("annotationOnTypes.kt")
+        public void testAnnotationOnTypes() throws Exception {
+            runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/annotationOnTypes.kt");
         }
 
         @Test
-        @TestMetadata("annotaionOnTypesWithComplexExpression.kt")
-        public void testAnnotaionOnTypesWithComplexExpression() throws Exception {
-            runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/annotaionOnTypesWithComplexExpression.kt");
+        @TestMetadata("annotationOnTypesWithComplexExpression.kt")
+        public void testAnnotationOnTypesWithComplexExpression() throws Exception {
+            runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/annotationOnTypesWithComplexExpression.kt");
+        }
+
+        @Test
+        @TestMetadata("contextFunctionTypes.kt")
+        public void testContextFunctionTypes() throws Exception {
+            runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/types/contextFunctionTypes.kt");
         }
     }
 }

@@ -75,7 +75,9 @@ public class PackageCodegenImpl implements PackageCodegen {
             }
             catch (Throwable e) {
                 VirtualFile vFile = file.getVirtualFile();
-                CodegenUtil.reportBackendException(e, "file facade code generation", vFile == null ? null : vFile.getUrl(), null);
+                CodegenUtil.reportBackendException(
+                        e, "file facade code generation", vFile == null ? null : vFile.getUrl(), null, (it) -> null
+                );
             }
         }
     }
@@ -174,7 +176,7 @@ public class PackageCodegenImpl implements PackageCodegen {
             if (fragment == null) {
                 LOG.error(new KotlinExceptionWithAttachments(
                         "package fragment is not found for module:" + state.getModule() + " file:" + file)
-                        .withAttachment("file.kt", file.getText()));
+                        .withPsiAttachment("file.kt", file));
             } else if (!expectedPackageFqName.equals(fragment.getFqName())) {
                 LOG.error("expected package fq name: " + expectedPackageFqName + ", actual: " + fragment.getFqName());
             }

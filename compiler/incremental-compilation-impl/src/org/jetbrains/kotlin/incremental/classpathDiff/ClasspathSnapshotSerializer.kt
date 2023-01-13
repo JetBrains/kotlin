@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 import com.intellij.util.containers.Interner
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.incremental.ConstantValueExternalizer
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -53,27 +54,6 @@ object CachedClasspathSnapshotSerializer {
     }
 }
 
-internal open class DataExternalizerForSealedClass<T>(
-    val baseClass: Class<T>,
-    val inheritorClasses: List<Class<out T>>,
-    val inheritorExternalizers: List<DataExternalizer<*>>
-) : DataExternalizer<T> {
-
-    override fun save(output: DataOutput, objectToExternalize: T) {
-        val inheritorClassIndex =
-            inheritorClasses.indexOfFirst { it.isAssignableFrom(objectToExternalize!!::class.java) }.also { check(it != -1) }
-        output.writeByte(inheritorClassIndex.also { check(it <= Byte.MAX_VALUE) }) // Write byte so the data is smaller
-        @Suppress("UNCHECKED_CAST")
-        (inheritorExternalizers[inheritorClassIndex] as DataExternalizer<T>).save(output, objectToExternalize)
-    }
-
-    override fun read(input: DataInput): T {
-        val inheritorClassIndex = input.readByte().toInt()
-        @Suppress("UNCHECKED_CAST")
-        return inheritorExternalizers[inheritorClassIndex].read(input) as T
-    }
-}
-
 object ClasspathEntrySnapshotExternalizer : DataExternalizer<ClasspathEntrySnapshot> {
 
     override fun save(output: DataOutput, snapshot: ClasspathEntrySnapshot) {
@@ -87,26 +67,23 @@ object ClasspathEntrySnapshotExternalizer : DataExternalizer<ClasspathEntrySnaps
     }
 }
 
-internal object ClassSnapshotExternalizer : DataExternalizerForSealedClass<ClassSnapshot>(
-    baseClass = ClassSnapshot::class.java,
-    inheritorClasses = listOf(AccessibleClassSnapshot::class.java, InaccessibleClassSnapshot::class.java),
-    inheritorExternalizers = listOf(AccessibleClassSnapshotExternalizer, InaccessibleClassSnapshotExternalizer)
+internal object ClassSnapshotExternalizer : DataExternalizer<ClassSnapshot> by DelegateDataExternalizer(
+    types = listOf(AccessibleClassSnapshot::class.java, InaccessibleClassSnapshot::class.java),
+    typesExternalizers = listOf(AccessibleClassSnapshotExternalizer, InaccessibleClassSnapshotExternalizer)
 )
 
-internal object AccessibleClassSnapshotExternalizer : DataExternalizerForSealedClass<AccessibleClassSnapshot>(
-    baseClass = AccessibleClassSnapshot::class.java,
-    inheritorClasses = listOf(KotlinClassSnapshot::class.java, JavaClassSnapshot::class.java),
-    inheritorExternalizers = listOf(KotlinClassSnapshotExternalizer, JavaClassSnapshotExternalizer)
+internal object AccessibleClassSnapshotExternalizer : DataExternalizer<AccessibleClassSnapshot> by DelegateDataExternalizer(
+    types = listOf(KotlinClassSnapshot::class.java, JavaClassSnapshot::class.java),
+    typesExternalizers = listOf(KotlinClassSnapshotExternalizer, JavaClassSnapshotExternalizer)
 )
 
-private object KotlinClassSnapshotExternalizer : DataExternalizerForSealedClass<KotlinClassSnapshot>(
-    baseClass = KotlinClassSnapshot::class.java,
-    inheritorClasses = listOf(
+private object KotlinClassSnapshotExternalizer : DataExternalizer<KotlinClassSnapshot> by DelegateDataExternalizer(
+    types = listOf(
         RegularKotlinClassSnapshot::class.java,
         PackageFacadeKotlinClassSnapshot::class.java,
         MultifileClassKotlinClassSnapshot::class.java
     ),
-    inheritorExternalizers = listOf(
+    typesExternalizers = listOf(
         RegularKotlinClassSnapshotExternalizer,
         PackageFacadeKotlinClassSnapshotExternalizer,
         MultifileClassKotlinClassSnapshotExternalizer
@@ -185,8 +162,8 @@ internal object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> 
         ListExternalizer(StringExternalizer).save(output, info.classHeaderData.toList())
         ListExternalizer(StringExternalizer).save(output, info.classHeaderStrings.toList())
         NullableValueExternalizer(StringExternalizer).save(output, info.multifileClassName)
-        LinkedHashMapExternalizer(StringExternalizer, ConstantExternalizer).save(output, info.constantsMap)
-        LinkedHashMapExternalizer(StringExternalizer, LongExternalizer).save(output, info.inlineFunctionsAndAccessorsMap)
+        MapExternalizer(StringExternalizer, ConstantValueExternalizer).save(output, info.constantsMap)
+        MapExternalizer(InlineFunctionOrAccessorExternalizer, LongExternalizer).save(output, info.inlineFunctionsAndAccessorsMap)
     }
 
     override fun read(input: DataInput): KotlinClassInfo {
@@ -197,8 +174,8 @@ internal object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> 
             classHeaderData = ListExternalizer(StringExternalizer).read(input).toTypedArray(),
             classHeaderStrings = ListExternalizer(StringExternalizer).read(input).toTypedArray(),
             multifileClassName = NullableValueExternalizer(StringExternalizer).read(input),
-            constantsMap = LinkedHashMapExternalizer(StringExternalizer, ConstantExternalizer).read(input),
-            inlineFunctionsAndAccessorsMap = LinkedHashMapExternalizer(StringExternalizer, LongExternalizer).read(input)
+            constantsMap = MapExternalizer(StringExternalizer, ConstantValueExternalizer).read(input),
+            inlineFunctionsAndAccessorsMap = MapExternalizer(InlineFunctionOrAccessorExternalizer, LongExternalizer).read(input)
         )
     }
 }

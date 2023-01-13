@@ -4,7 +4,7 @@ FILE: first.kt
             super<R|kotlin/Any|>()
         }
 
-        public open fun foo(): R|kotlin/Unit| {
+        public final fun foo(): R|kotlin/Unit| {
         }
 
     }

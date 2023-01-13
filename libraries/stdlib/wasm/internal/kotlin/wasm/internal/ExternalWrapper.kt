@@ -6,10 +6,12 @@
 package kotlin.wasm.internal
 
 import kotlin.wasm.internal.reftypes.anyref
+import kotlin.wasm.unsafe.withScopedMemoryAllocator
+import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
 
 internal external interface ExternalInterfaceType
 
-internal class JsExternalBox(val ref: ExternalInterfaceType) {
+internal class JsExternalBox @WasmPrimitiveConstructor constructor(val ref: ExternalInterfaceType) {
     override fun toString(): String =
         externrefToString(ref)
 
@@ -20,8 +22,13 @@ internal class JsExternalBox(val ref: ExternalInterfaceType) {
             false
         }
 
-    override fun hashCode(): Int =
-        externrefHashCode(ref)
+    override fun hashCode(): Int {
+        var hashCode = _hashCode
+        if (hashCode != 0) return hashCode
+        hashCode = externrefHashCode(ref)
+        _hashCode = hashCode
+        return hashCode
+    }
 }
 
 //language=js
@@ -133,12 +140,18 @@ private fun Any.asWasmExternRef(): ExternalInterfaceType =
 internal external fun isNullish(ref: ExternalInterfaceType?): Boolean
 
 internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
-    // If ref is an instance of kotlin class -- return it cased to Any
+    // TODO rewrite it so to get something like:
+    // block {
+    //     refAsAnyref
+    //     br_on_cast_fail null 0 $kotlin.Any
+    //     return
+    // }
+    // If ref is an instance of kotlin class -- return it casted to Any
     val refAsAnyref = ref.externAsWasmAnyref()
-    if (wasm_ref_is_data(refAsAnyref)) {
-        val refAsDataRef = wasm_ref_as_data(refAsAnyref)
-        if (wasm_ref_test<Any>(refAsDataRef)) {
-            return wasm_ref_cast<Any>(refAsDataRef)
+    if (wasm_ref_is_data_deprecated(refAsAnyref)) {
+        val refAsDataRef = wasm_ref_as_data_deprecated(refAsAnyref)
+        if (wasm_ref_test_deprecated<Any>(refAsDataRef)) {
+            return wasm_ref_cast_deprecated<Any>(refAsDataRef)
         }
     }
 
@@ -177,20 +190,23 @@ internal fun kotlinToJsStringAdapter(x: String?): ExternalInterfaceType? {
 
     val srcArray = x.chars
     val stringLength = srcArray.len()
-    val maxStringLength = unsafeGetScratchRawMemorySize() / CHAR_SIZE_BYTES
+    val maxStringLength = STRING_INTEROP_MEM_BUFFER_SIZE / CHAR_SIZE_BYTES
 
-    val memBuffer = unsafeGetScratchRawMemory(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES)
+    @OptIn(UnsafeWasmMemoryApi::class)
+    withScopedMemoryAllocator { allocator ->
+        val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES).address.toInt()
 
-    var result: ExternalInterfaceType? = null
-    var srcStartIndex = 0
-    while (srcStartIndex < stringLength - maxStringLength) {
-        unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, maxStringLength, memBuffer)
-        result = importStringFromWasm(memBuffer, maxStringLength, result)
-        srcStartIndex += maxStringLength
+        var result: ExternalInterfaceType? = null
+        var srcStartIndex = 0
+        while (srcStartIndex < stringLength - maxStringLength) {
+            unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, maxStringLength, memBuffer)
+            result = importStringFromWasm(memBuffer, maxStringLength, result)
+            srcStartIndex += maxStringLength
+        }
+
+        unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, stringLength - srcStartIndex, memBuffer)
+        return importStringFromWasm(memBuffer, stringLength - srcStartIndex, result)
     }
-
-    unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, stringLength - srcStartIndex, memBuffer)
-    return importStringFromWasm(memBuffer, stringLength - srcStartIndex, result)
 }
 
 internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): ExternalInterfaceType? =
@@ -214,26 +230,32 @@ internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): Externa
 )
 internal external fun jsExportStringToWasm(src: ExternalInterfaceType, srcOffset: Int, srcLength: Int, dstAddr: Int)
 
+private const val STRING_INTEROP_MEM_BUFFER_SIZE = 65_536 // 1 page 4KiB
+
 internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
     val stringLength = stringLength(x)
     val dstArray = WasmCharArray(stringLength)
     if (stringLength == 0) {
-        return String(dstArray)
-    }
-    val maxStringLength = unsafeGetScratchRawMemorySize() / CHAR_SIZE_BYTES
-
-    val memBuffer = unsafeGetScratchRawMemory(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES)
-
-    var srcStartIndex = 0
-    while (srcStartIndex < stringLength - maxStringLength) {
-        jsExportStringToWasm(x, srcStartIndex, maxStringLength, memBuffer)
-        unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, maxStringLength, dstArray)
-        srcStartIndex += maxStringLength
+        return dstArray.createString()
     }
 
-    jsExportStringToWasm(x, srcStartIndex, stringLength - srcStartIndex, memBuffer)
-    unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, stringLength - srcStartIndex, dstArray)
-    return String(dstArray)
+    @OptIn(UnsafeWasmMemoryApi::class)
+    withScopedMemoryAllocator { allocator ->
+        val maxStringLength = STRING_INTEROP_MEM_BUFFER_SIZE / CHAR_SIZE_BYTES
+        val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES).address.toInt()
+
+        var srcStartIndex = 0
+        while (srcStartIndex < stringLength - maxStringLength) {
+            jsExportStringToWasm(x, srcStartIndex, maxStringLength, memBuffer)
+            unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, maxStringLength, dstArray)
+            srcStartIndex += maxStringLength
+        }
+
+        jsExportStringToWasm(x, srcStartIndex, stringLength - srcStartIndex, memBuffer)
+        unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, stringLength - srcStartIndex, dstArray)
+    }
+
+    return dstArray.createString()
 }
 
 
@@ -249,6 +271,9 @@ private external fun getJsFalse(): ExternalInterfaceType
 private val jsEmptyString by lazy(::getJsEmptyString)
 private val jsTrue by lazy(::getJsTrue)
 private val jsFalse by lazy(::getJsFalse)
+
+internal fun numberToDoubleAdapter(x: Number): Double =
+    x.toDouble()
 
 internal fun kotlinToJsAnyAdapter(x: Any?): ExternalInterfaceType? =
     if (x == null) null else anyToExternRef(x)
@@ -299,3 +324,9 @@ internal fun kotlinShortToExternRefAdapter(x: Short): ExternalInterfaceType =
 
 internal fun kotlinCharToExternRefAdapter(x: Char): ExternalInterfaceType =
     intToExternref(x.toInt())
+
+@JsFun("() => []")
+internal external fun newJsArray(): ExternalInterfaceType
+
+@JsFun("(array, element) => { array.push(element); }")
+internal external fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfaceType)

@@ -54,6 +54,11 @@ fun FirTypeRef.resolvedTypeFromPrototype(
         buildResolvedTypeRef {
             source = this@resolvedTypeFromPrototype.source
             this.type = type
+            delegatedTypeRef = when (val original = this@resolvedTypeFromPrototype) {
+                is FirResolvedTypeRef -> original.delegatedTypeRef
+                is FirUserTypeRef -> original
+                else -> null
+            }
             annotations += this@resolvedTypeFromPrototype.annotations
         }
     }

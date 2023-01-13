@@ -1,7 +1,7 @@
 FILE: nestedClass.kt
     public? abstract class Base : R|kotlin/Any| {
         public? constructor(s: String): R|Base| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? val s: String = R|<local>/s|
@@ -15,7 +15,7 @@ FILE: nestedClass.kt
 
         public? final? class Derived : Base {
             public? constructor(s: String): R|Outer.Derived| {
-                super<Base>(s#)
+                LAZY_super<Base>
             }
 
         }

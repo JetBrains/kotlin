@@ -27,7 +27,8 @@ open internal class DecomposedCharSet(
         /** Decomposition of the Unicode codepoint */
         private val decomposedChar: IntArray,
         /** Length of useful part of decomposedChar decomposedCharLength <= decomposedChar.length */
-        private val decomposedCharLength: Int) : SimpleSet() {
+        private val decomposedCharLength: Int
+) : SimpleSet() {
 
     /** Contains information about number of chars that were read for a codepoint last time */
     private var readCharsForCodePoint = 1
@@ -41,6 +42,9 @@ open internal class DecomposedCharSet(
         }
         return@lazy strBuff.toString()
     }
+
+    override val consumesFixedLength: Boolean
+        get() = true
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         var strIndex = startIndex

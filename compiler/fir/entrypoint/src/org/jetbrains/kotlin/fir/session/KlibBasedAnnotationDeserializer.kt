@@ -12,14 +12,10 @@ import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 
 class KlibBasedAnnotationDeserializer(
     session: FirSession
-) : AbstractAnnotationDeserializer(session) {
-    override val protocol: SerializerExtensionProtocol
-        get() = KlibMetadataSerializerProtocol
-
+) : AbstractAnnotationDeserializer(session, KlibMetadataSerializerProtocol) {
     override fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation> {
         val annotations = typeProto.getExtension(KlibMetadataProtoBuf.typeAnnotation).orEmpty()
         return annotations.map { deserializeAnnotation(it, nameResolver) }

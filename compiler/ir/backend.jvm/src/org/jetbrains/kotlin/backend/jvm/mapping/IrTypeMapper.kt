@@ -280,4 +280,8 @@ private class IrTypeCheckerContextForTypeMapping(
     override fun functionNTypeConstructor(n: Int): IrClassSymbol {
         return backendContext.irBuiltIns.functionN(n).symbol
     }
+
+    override fun KotlinTypeMarker.getNameForErrorType(): String? {
+        return null
+    }
 }

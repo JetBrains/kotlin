@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.compatible
 class FirExpectActualMatcherProcessor(
     session: FirSession,
     scopeSession: ScopeSession
-) : FirTransformerBasedResolveProcessor(session, scopeSession) {
+) : FirTransformerBasedResolveProcessor(session, scopeSession, FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
     private val enabled = session.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
 
     override val transformer: FirTransformer<Nothing?> = FirExpectActualMatcherTransformer(session, scopeSession)

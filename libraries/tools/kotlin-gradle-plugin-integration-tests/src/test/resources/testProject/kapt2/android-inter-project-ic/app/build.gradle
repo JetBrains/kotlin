@@ -11,7 +11,6 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
     }
 
     // Needed for older AGP. It can be removed when the lowest supported AGP version is 4.2.0 or newer.

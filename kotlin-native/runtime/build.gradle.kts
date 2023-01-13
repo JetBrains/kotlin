@@ -4,6 +4,7 @@
  */
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
+import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.saveProperties
@@ -38,14 +39,28 @@ val targetList: List<String> by project
 bitcode {
     allTargets {
         module("main") {
-            // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
-            if (sanitizer == null) {
-                outputFile.set(layout.buildDirectory.file("bitcode/main/$target/runtime.bc"))
+            sourceSets {
+                main {
+                    // TODO: Split out out `base` module and merge it together with `main` into `runtime.bc`
+                    if (sanitizer == null) {
+                        outputFile.set(layout.buildDirectory.file("bitcode/main/$target/runtime.bc"))
+                    }
+                }
+                testFixtures {}
+                test {}
             }
         }
 
         module("mimalloc") {
-            val srcRoot = file("src/mimalloc")
+            sourceSets {
+                main {
+                    inputFiles.from(srcRoot.dir("c"))
+                    inputFiles.include("**/*.c")
+                    inputFiles.exclude("**/alloc-override*.c", "**/page-queue.c", "**/static.c", "**/bitmap.inc.c")
+                    headersDirs.setFrom(srcRoot.dir("c/include"))
+                }
+            }
+
             compiler.set("clang")
             compilerArgs.set(listOfNotNull(
                     "-std=gnu11",
@@ -58,16 +73,11 @@ bitcode {
                     "-Wno-unused-parameter", /* for windows 32 */
                     "-DMI_TSAN=1".takeIf { sanitizer == SanitizerKind.THREAD },
             ))
-            inputFiles.from("$srcRoot/c")
-            inputFiles.include("**/*.c")
-            inputFiles.exclude("**/alloc-override*.c", "**/page-queue.c", "**/static.c", "**/bitmap.inc.c")
-            headersDirs.setFrom("$srcRoot/c/include")
 
-            onlyIf { targetSupportsMimallocAllocator(target.name) }
+            onlyIf { target.supportsMimallocAllocator() }
         }
 
         module("libbacktrace") {
-            val srcRoot = file("src/libbacktrace")
             val elfSize = when (target.architecture) {
                 TargetArchitecture.X64, TargetArchitecture.ARM64 -> 64
                 TargetArchitecture.X86, TargetArchitecture.ARM32,
@@ -76,6 +86,29 @@ bitcode {
             }
             val useMachO = target.family.isAppleFamily
             val useElf = target.family in listOf(Family.LINUX, Family.ANDROID)
+
+            sourceSets {
+                main {
+                    inputFiles.from(srcRoot.dir("c"))
+                    inputFiles.include(listOfNotNull(
+                            "atomic.c",
+                            "backtrace.c",
+                            "dwarf.c",
+                            "elf.c".takeIf { useElf },
+                            "fileline.c",
+                            "macho.c".takeIf { useMachO },
+                            "mmap.c",
+                            "mmapio.c",
+                            "posix.c",
+                            "print.c",
+                            "simple.c",
+                            "sort.c",
+                            "state.c"
+                    ))
+                    headersDirs.setFrom(srcRoot.dir("c/include"))
+                }
+            }
+
             compiler.set("clang")
             compilerArgs.set(listOfNotNull(
                     "-std=gnu11",
@@ -92,107 +125,202 @@ bitcode {
                     "-DBACKTRACE_ELF_SIZE=$elfSize".takeIf { useElf },
                     "-Wno-atomic-alignment"
             ))
-            inputFiles.from("$srcRoot/c")
-            inputFiles.include(listOfNotNull(
-                    "atomic.c",
-                    "backtrace.c",
-                    "dwarf.c",
-                    "elf.c".takeIf { useElf },
-                    "fileline.c",
-                    "macho.c".takeIf { useMachO },
-                    "mmap.c",
-                    "mmapio.c",
-                    "posix.c",
-                    "print.c",
-                    "simple.c",
-                    "sort.c",
-                    "state.c"
-            ))
-            headersDirs.setFrom("$srcRoot/c/include")
 
-            onlyIf { targetSupportsLibBacktrace(target.name) }
+            onlyIf { target.supportsLibBacktrace() }
         }
 
         module("compiler_interface") {
             headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+            }
         }
 
         module("launcher") {
             headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+            }
         }
 
         module("debug") {
             headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+            }
         }
 
         module("std_alloc") {
             headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+            }
+        }
+
+        module("custom_alloc") {
+            headersDirs.from(files("src/main/cpp", "src/mm/cpp", "src/gc/common/cpp", "src/gc/cms/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
+
+            compilerArgs.add("-DCUSTOM_ALLOCATOR")
+
+            // Directly depends on cms which is only supported with threads.
+            onlyIf { target.supportsThreads() }
         }
 
         module("opt_alloc") {
             headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+            }
         }
 
-        module("exceptionsSupport", file("src/exceptions_support")) {
+        module("exceptionsSupport") {
+            srcRoot.set(layout.projectDirectory.dir("src/exceptions_support"))
             headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+            }
         }
 
-        module("source_info_core_symbolication", file("src/source_info/core_symbolication")) {
+        module("source_info_core_symbolication") {
+            srcRoot.set(layout.projectDirectory.dir("src/source_info/core_symbolication"))
             headersDirs.from(files("src/main/cpp"))
-            onlyIf { targetSupportsCoreSymbolication(target.name) }
+            sourceSets {
+                main {}
+            }
+
+            onlyIf { target.supportsCoreSymbolication() }
         }
-        module("source_info_libbacktrace", file("src/source_info/libbacktrace")) {
+        module("source_info_libbacktrace") {
+            srcRoot.set(layout.projectDirectory.dir("src/source_info/libbacktrace"))
             headersDirs.from(files("src/main/cpp", "src/libbacktrace/c/include"))
-            onlyIf { targetSupportsLibBacktrace(target.name) }
+            sourceSets {
+                main {}
+            }
+
+            onlyIf { target.supportsLibBacktrace() }
         }
 
         module("strict") {
             headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+            }
         }
 
         module("relaxed") {
             headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+            }
         }
 
-        module("profileRuntime", file("src/profile_runtime"))
+        module("profileRuntime") {
+            srcRoot.set(layout.projectDirectory.dir("src/profile_runtime"))
+            sourceSets {
+                main {}
+            }
+        }
 
         module("objc") {
             headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+            }
         }
 
-        module("test_support", outputGroup = "test") {
-            headersDirs.from(files("src/main/cpp"), googletest.headersDirs)
-            dependsOn("downloadGoogleTest")
-        }
-
-        module("legacy_memory_manager", file("src/legacymm")) {
+        module("test_support") {
             headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                testFixtures {
+                    inputFiles.include("**/*.cpp", "**/*.mm")
+                }
+            }
         }
 
-        module("experimental_memory_manager", file("src/mm")) {
+        module("legacy_memory_manager") {
+            srcRoot.set(layout.projectDirectory.dir("src/legacymm"))
+            headersDirs.from(files("src/main/cpp"))
+            sourceSets {
+                main {}
+                testFixtures {}
+            }
+        }
+
+        module("experimental_memory_manager") {
+            srcRoot.set(layout.projectDirectory.dir("src/mm"))
             headersDirs.from(files("src/gc/common/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+                testFixtures {}
+                test {}
+            }
         }
 
-        module("common_gc", file("src/gc/common")) {
+        module("common_gc") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/common"))
             headersDirs.from(files("src/mm/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+                test {}
+            }
         }
 
-        module("noop_gc", file("src/gc/noop")) {
+        module("noop_gc") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/noop"))
             headersDirs.from(files("src/gc/noop/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+                testFixtures {}
+            }
         }
 
-        module("same_thread_ms_gc", file("src/gc/stms")) {
+        module("same_thread_ms_gc") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/stms"))
             headersDirs.from(files("src/gc/stms/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+                testFixtures {}
+                test {}
+            }
         }
 
-        module("concurrent_ms_gc", file("src/gc/cms")) {
+        module("concurrent_ms_gc") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
             headersDirs.from(files("src/gc/cms/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp"))
+            sourceSets {
+                main {}
+                testFixtures {}
+                test {}
+            }
 
-            onlyIf { targetSupportsThreads(target.name) }
+            onlyIf { target.supportsThreads() }
+        }
+
+        module("concurrent_ms_gc_custom") {
+            srcRoot.set(layout.projectDirectory.dir("src/gc/cms"))
+            headersDirs.from(files("src/gc/cms/cpp", "src/gc/common/cpp", "src/mm/cpp", "src/main/cpp", "src/custom_alloc/cpp"))
+            sourceSets {
+                main {}
+                testFixtures {}
+                test {}
+            }
+
+            compilerArgs.add("-DCUSTOM_ALLOCATOR")
+
+            onlyIf { target.supportsThreads() }
         }
 
         testsGroup("std_alloc_runtime_tests") {
             testedModules.addAll("main", "legacy_memory_manager", "strict", "std_alloc", "objc")
+        }
+
+        testsGroup("custom_alloc_runtime_tests") {
+            testedModules.addAll("custom_alloc")
+            testSupportModules.addAll("main", "experimental_memory_manager", "common_gc", "concurrent_ms_gc", "objc")
         }
 
         testsGroup("mimalloc_runtime_tests") {
@@ -222,6 +350,33 @@ bitcode {
         testsGroup("experimentalMM_noop_std_alloc_runtime_tests") {
             testedModules.addAll("main", "experimental_memory_manager", "common_gc", "noop_gc", "std_alloc", "objc")
         }
+    }
+}
+
+val runtimeBitcode by configurations.creating {
+    isCanBeConsumed = false
+    isCanBeResolved = true
+    attributes {
+        attribute(CppUsage.USAGE_ATTRIBUTE, objects.named(CppUsage.LLVM_BITCODE))
+    }
+}
+
+dependencies {
+    runtimeBitcode(project(":kotlin-native:runtime"))
+}
+
+targetList.forEach { targetName ->
+    // TODO: replace with a more convenient user-facing task that can build for a specific target.
+    //       like compileToBitcode with optional argument --target.
+    tasks.register("${targetName}Runtime") {
+        description = "Build all main runtime modules for $targetName"
+        group = CompileToBitcodeExtension.BUILD_TASK_GROUP
+        val dependencies = runtimeBitcode.incoming.artifactView {
+            attributes {
+                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, project.platformManager.targetByName(targetName).withSanitizer())
+            }
+        }.files
+        dependsOn(dependencies)
     }
 }
 
@@ -348,7 +503,12 @@ targetList.forEach { targetName ->
         destinationDir = project.buildDir.resolve("${targetName}Stdlib")
 
         from(project.buildDir.resolve("stdlib/${hostName}/stdlib"))
-        from(project.buildDir.resolve("bitcode/main/$targetName")) {
+        val runtimeFiles = runtimeBitcode.incoming.artifactView {
+            attributes {
+                attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, project.platformManager.targetByName(targetName).withSanitizer())
+            }
+        }.files
+        from(runtimeFiles) {
             include("runtime.bc", "compiler_interface.bc")
             into("default/targets/$targetName/native")
         }

@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @ThreadSafeMutableState
 class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
@@ -234,34 +235,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             TypeResolutionResult.Unresolved -> null to null
         }
 
-        if (symbol == null || symbol !is FirClassifierSymbol<*>) {
-            val diagnostic = when {
-                symbol?.fir is FirEnumEntry -> {
-                    if (isOperandOfIsOperator) {
-                        ConeSimpleDiagnostic("'is' operator can not be applied to an enum entry.", DiagnosticKind.IsEnumEntry)
-                    } else {
-                        ConeSimpleDiagnostic("An enum entry should not be used as a type.", DiagnosticKind.EnumEntryAsType)
-                    }
-                }
-                result is TypeResolutionResult.Ambiguity -> {
-                    ConeAmbiguityError(typeRef.qualifier.last().name, result.typeCandidates.first().applicability, result.typeCandidates)
-                }
-                else -> {
-                    ConeUnresolvedQualifierError(typeRef.render())
-                }
-            }
-            return ConeErrorType(diagnostic, attributes = typeRef.annotations.computeTypeAttributes(session))
-        }
-        if (symbol is FirTypeParameterSymbol) {
-            for (part in typeRef.qualifier) {
-                if (part.typeArgumentList.typeArguments.isNotEmpty()) {
-                    return ConeErrorType(
-                        ConeUnexpectedTypeArgumentsError("Type arguments not allowed", part.typeArgumentList.source)
-                    )
-                }
-            }
-        }
-
         val allTypeArguments = mutableListOf<ConeTypeProjection>()
         var typeArgumentsCount = 0
 
@@ -350,8 +323,44 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             }
         }
 
+        val resultingArguments = allTypeArguments.toTypedArray()
+
+        if (symbol == null || symbol !is FirClassifierSymbol<*>) {
+            val diagnostic = when {
+                symbol?.fir is FirEnumEntry -> {
+                    if (isOperandOfIsOperator) {
+                        ConeSimpleDiagnostic("'is' operator can not be applied to an enum entry.", DiagnosticKind.IsEnumEntry)
+                    } else {
+                        ConeSimpleDiagnostic("An enum entry should not be used as a type.", DiagnosticKind.EnumEntryAsType)
+                    }
+                }
+                result is TypeResolutionResult.Ambiguity -> {
+                    ConeAmbiguityError(typeRef.qualifier.last().name, result.typeCandidates.first().applicability, result.typeCandidates)
+                }
+                else -> {
+                    ConeUnresolvedTypeQualifierError(typeRef.qualifier, isNullable = typeRef.isMarkedNullable)
+                }
+            }
+            return ConeErrorType(
+                diagnostic,
+                typeArguments = resultingArguments,
+                attributes = typeRef.annotations.computeTypeAttributes(session)
+            )
+        }
+
+        if (symbol is FirTypeParameterSymbol) {
+            for (part in typeRef.qualifier) {
+                if (part.typeArgumentList.typeArguments.isNotEmpty()) {
+                    return ConeErrorType(
+                        ConeUnexpectedTypeArgumentsError("Type arguments not allowed", part.typeArgumentList.source),
+                        typeArguments = resultingArguments
+                    )
+                }
+            }
+        }
+
         return symbol.constructType(
-            allTypeArguments.toTypedArray(),
+            resultingArguments,
             typeRef.isMarkedNullable,
             typeRef.annotations.computeTypeAttributes(session)
         ).also {
@@ -466,7 +475,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         val parameters =
             typeRef.contextReceiverTypeRefs.map { it.coneType } +
                     listOfNotNull(typeRef.receiverTypeRef?.coneType) +
-                    typeRef.valueParameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it) } +
+                    typeRef.parameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it, session) } +
                     listOf(typeRef.returnTypeRef.coneType)
         val classId = if (typeRef.isSuspend) {
             StandardClassIds.SuspendFunctionN(typeRef.parametersCount)
@@ -557,7 +566,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             get() = emptyList()
 
         override val callInfo: AbstractCallInfo
-            get() = throw UnsupportedOperationException("Should not be called")
+            get() = shouldNotBeCalled()
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

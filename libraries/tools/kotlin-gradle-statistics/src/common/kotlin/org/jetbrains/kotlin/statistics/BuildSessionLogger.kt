@@ -19,7 +19,8 @@ class BuildSessionLogger(
     rootPath: File,
     private val maxProfileFiles: Int = DEFAULT_MAX_PROFILE_FILES,
     private val maxFileSize: Long = DEFAULT_MAX_PROFILE_FILE_SIZE,
-    private val maxFileAge: Long = DEFAULT_MAX_FILE_AGE
+    private val maxFileAge: Long = DEFAULT_MAX_FILE_AGE,
+    private val forceValuesValidation: Boolean = false
 ) : IStatisticsValuesConsumer {
 
     companion object {
@@ -46,7 +47,7 @@ class BuildSessionLogger(
     private var buildSession: BuildSession? = null
     private var trackingFile: IRecordLogger? = null
 
-    private val metricsContainer = MetricsContainer()
+    private val metricsContainer = MetricsContainer(forceValuesValidation)
 
     @Synchronized
     fun startBuildSession(buildSinceDaemonStart: Long, buildStartedTime: Long?) {
@@ -154,15 +155,12 @@ class BuildSessionLogger(
         closeTrackingFile()
     }
 
-    override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?) {
-        metricsContainer.report(metric, value, subprojectName)
-    }
+    override fun report(metric: BooleanMetrics, value: Boolean, subprojectName: String?, weight: Long?) =
+        metricsContainer.report(metric, value, subprojectName, weight)
 
-    override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?) {
-        metricsContainer.report(metric, value, subprojectName)
-    }
+    override fun report(metric: NumericalMetrics, value: Long, subprojectName: String?, weight: Long?) =
+        metricsContainer.report(metric, value, subprojectName, weight)
 
-    override fun report(metric: StringMetrics, value: String, subprojectName: String?) {
-        metricsContainer.report(metric, value, subprojectName)
-    }
+    override fun report(metric: StringMetrics, value: String, subprojectName: String?, weight: Long?) =
+        metricsContainer.report(metric, value, subprojectName, weight)
 }

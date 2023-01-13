@@ -1,0 +1,68 @@
+KtFunctionSymbol:
+  annotationsList: [
+    kotlin/OptIn(markerClass = [kotlin.contracts.ExperimentalContracts::class])
+      psi: KtAnnotationEntry
+  ]
+  callableIdIfNonLocal: /invalidContract
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: invalidContract
+  origin: SOURCE
+  receiverParameter: null
+  returnType: kotlin/Unit
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: [
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: foo
+      origin: SOURCE
+      receiverParameter: null
+      returnType: kotlin/Any
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+    KtValueParameterSymbol:
+      annotationsList: []
+      callableIdIfNonLocal: null
+      contextReceivers: []
+      generatedPrimaryConstructorProperty: null
+      hasDefaultValue: false
+      isCrossinline: false
+      isExtension: false
+      isImplicitLambdaParameter: false
+      isNoinline: false
+      isVararg: false
+      name: bar
+      origin: SOURCE
+      receiverParameter: null
+      returnType: kotlin/Boolean
+      symbolKind: LOCAL
+      typeParameters: []
+      getContainingModule: KtSourceModule "Sources of main"
+      deprecationStatus: null
+  ]
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

@@ -6,15 +6,21 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceByTraversingWholeTree
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
+import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -35,20 +41,29 @@ internal class FileStructure private constructor(
 
     private val firProvider = firFile.moduleData.session.firProvider
 
-    private val structureElements = ConcurrentHashMap<KtAnnotated, FileStructureElement>()
+    private val structureElements = ConcurrentHashMap<KtElement, FileStructureElement>()
 
     fun getStructureElementFor(element: KtElement): FileStructureElement {
-        val container: KtAnnotated = element.getNonLocalContainingOrThisDeclaration() ?: element.containingKtFile
+        val declaration = element.getNonLocalContainingOrThisDeclaration()
+        val container: KtElement
+        if (declaration != null) {
+            container = declaration
+        } else {
+            val modifierList = PsiTreeUtil.getParentOfType(element, KtModifierList::class.java, false)
+            container = if (modifierList != null && modifierList.nextSibling is PsiErrorElement) {
+                modifierList
+            } else element.containingKtFile
+        }
         return getStructureElementForDeclaration(container)
     }
 
-    private fun getStructureElementForDeclaration(declaration: KtAnnotated): FileStructureElement {
+    private fun getStructureElementForDeclaration(declaration: KtElement): FileStructureElement {
         @Suppress("CANNOT_CHECK_FOR_ERASED")
         val structureElement = structureElements.compute(declaration) { _, structureElement ->
             when {
                 structureElement == null -> createStructureElement(declaration)
                 structureElement is ReanalyzableStructureElement<KtDeclaration, *> && !structureElement.isUpToDate() -> {
-                    structureElement.reanalyze(newKtDeclaration = declaration as KtDeclaration,)
+                    structureElement.reanalyze(newKtDeclaration = declaration as KtDeclaration)
                 }
                 else -> structureElement
             }
@@ -90,6 +105,12 @@ internal class FileStructure private constructor(
                     dcl.acceptChildren(this)
                 }
             }
+
+            override fun visitModifierList(list: KtModifierList) {
+                if (list.parent == ktFile) {
+                    structureElements += getStructureElementFor(list)
+                }
+            }
         })
 
         return structureElements
@@ -102,12 +123,7 @@ internal class FileStructure private constructor(
             firProvider,
             firFile
         )
-        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveDeclaration(
-            firDeclarationToResolve = firDeclaration,
-            scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
-            toPhase = FirResolvePhase.BODY_RESOLVE,
-            checkPCE = true,
-        )
+        firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         return FileElementFactory.createFileStructureElement(
             firDeclaration = firDeclaration,
             ktDeclaration = declaration,
@@ -116,18 +132,26 @@ internal class FileStructure private constructor(
         )
     }
 
-    private fun createStructureElement(container: KtAnnotated): FileStructureElement = when (container) {
-        is KtFile -> {
+    private fun createDanglingModifierListStructure(container: KtElement): FileStructureElement {
+        val firDanglingModifierList = container.findSourceByTraversingWholeTree(moduleComponents.firFileBuilder, firFile) as? FirDanglingModifierList
+                ?: errorWithFirSpecificEntries("No dangling modifier found", psi = container)
+        firDanglingModifierList.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        return DanglingTopLevelModifierListStructureElement(firFile, firDanglingModifierList, moduleComponents, container.containingKtFile)
+    }
+
+    private fun createStructureElement(container: KtElement): FileStructureElement = when {
+        container is KtFile -> {
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
-            moduleComponents.firModuleLazyDeclarationResolver.resolveFileAnnotations(
-                firFile = firFile,
-                annotations = firFile.annotations,
+            moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
+                target = firFile.annotationsContainer,
                 scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),
-                checkPCE = true
+                FirResolvePhase.BODY_RESOLVE,
             )
+
             RootStructureElement(firFile, container, moduleComponents)
         }
-        is KtDeclaration -> createDeclarationStructure(container)
+        container is KtDeclaration -> createDeclarationStructure(container)
+        container is KtModifierList && container.nextSibling is PsiErrorElement -> createDanglingModifierListStructure(container)
         else -> error("Invalid container $container")
     }
 }
