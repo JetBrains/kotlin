@@ -254,15 +254,22 @@ private val wrapInlineDeclarationsWithReifiedTypeParametersLowering = makeBodyLo
     description = "Wrap inline declarations with reified type parameters"
 )
 
-private val functionInliningPhase = makeBodyLoweringPhase(
-    { FunctionInlining(it, it.innerClassesSupport) },
-    name = "FunctionInliningPhase",
-    description = "Perform function inlining",
+private val saveInlineFunctionsBeforeInlining = makeDeclarationTransformerPhase(
+    ::SaveInlineFunctionsBeforeInlining,
+    name = "SaveInlineFunctionsBeforeInlining",
+    description = "Save inline function before inlining",
     prerequisite = setOf(
         expectDeclarationsRemovingPhase, sharedVariablesLoweringPhase,
         localClassesInInlineLambdasPhase, localClassesExtractionFromInlineFunctionsPhase,
         syntheticAccessorLoweringPhase, wrapInlineDeclarationsWithReifiedTypeParametersLowering
     )
+)
+
+private val functionInliningPhase = makeBodyLoweringPhase(
+    { FunctionInlining(it, JsInlineFunctionResolver(it), it.innerClassesSupport) },
+    name = "FunctionInliningPhase",
+    description = "Perform function inlining",
+    prerequisite = setOf(saveInlineFunctionsBeforeInlining)
 )
 
 private val copyInlineFunctionBodyLoweringPhase = makeDeclarationTransformerPhase(
@@ -843,6 +850,7 @@ val loweringList = listOf<Lowering>(
     localClassesExtractionFromInlineFunctionsPhase,
     syntheticAccessorLoweringPhase,
     wrapInlineDeclarationsWithReifiedTypeParametersLowering,
+    saveInlineFunctionsBeforeInlining,
     functionInliningPhase,
     copyInlineFunctionBodyLoweringPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,

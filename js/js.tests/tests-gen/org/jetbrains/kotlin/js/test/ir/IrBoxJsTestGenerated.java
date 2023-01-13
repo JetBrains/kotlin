@@ -5785,6 +5785,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
 
         @Test
+        @TestMetadata("recursiveDependency.kt")
+        public void testRecursiveDependency() throws Exception {
+            runTest("js/js.translator/testData/box/inline/recursiveDependency.kt");
+        }
+
+        @Test
         @TestMetadata("rootConstructor.kt")
         public void testRootConstructor() throws Exception {
             runTest("js/js.translator/testData/box/inline/rootConstructor.kt");

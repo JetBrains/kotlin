@@ -117,7 +117,8 @@ class CrossModuleDependenciesResolver(
                     if (tag in header.optionalCrossModuleImports) {
                         continue
                     }
-                    error("Internal error: cannot find external signature '$tag' for module ${header.moduleName}")
+                    val name = header.nameBindings[tag] ?: "<unknown name>"
+                    error("Internal error: cannot find external signature '$tag' for name '$name' in module ${header.moduleName}")
                 }
 
                 builder.imports += CrossModuleRef(fromModuleBuilder, tag)

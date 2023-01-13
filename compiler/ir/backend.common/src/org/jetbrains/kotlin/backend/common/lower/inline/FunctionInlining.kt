@@ -42,6 +42,7 @@ fun IrExpression.isAdaptedFunctionReference() =
 
 interface InlineFunctionResolver {
     fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction
+    fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol
 }
 
 fun IrFunction.isTopLevelInPackage(name: String, packageName: String): Boolean {
@@ -71,6 +72,10 @@ open class DefaultInlineFunctionResolver(open val context: CommonBackendContext)
 
             else -> (symbol.owner as? IrSimpleFunction)?.resolveFakeOverride() ?: symbol.owner
         }
+    }
+
+    override fun getFunctionSymbol(irFunction: IrFunction): IrFunctionSymbol {
+        return irFunction.symbol
     }
 }
 
@@ -206,7 +211,7 @@ class FunctionInlining(
                 symbol = irReturnableBlockSymbol,
                 origin = null,
                 statements = newStatements,
-                inlineFunctionSymbol = callee.symbol
+                inlineFunctionSymbol = inlineFunctionResolver.getFunctionSymbol(callee)
             ).apply {
                 transformChildrenVoid(object : IrElementTransformerVoid() {
                     override fun visitReturn(expression: IrReturn): IrExpression {
