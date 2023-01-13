@@ -15,11 +15,12 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.calls.checkers.LateinitIntrinsicApplicabilityChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
+import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmExternalInheritanceChecker
 
 object WasmPlatformConfigurator : PlatformConfiguratorBase(
     additionalDeclarationCheckers = listOf(
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
-        JsExternalChecker,
+        JsExternalChecker, WasmExternalInheritanceChecker,
         JsRuntimeAnnotationChecker,
         JsExportAnnotationChecker,
         JsExportDeclarationChecker,

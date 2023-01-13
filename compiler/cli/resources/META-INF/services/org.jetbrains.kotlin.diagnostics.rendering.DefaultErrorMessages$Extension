@@ -2,3 +2,4 @@
 org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm
 org.jetbrains.kotlin.js.resolve.diagnostics.DefaultErrorMessagesJs
 org.jetbrains.kotlin.resolve.konan.diagnostics.DefaultErrorMessagesNative
+org.jetbrains.kotlin.wasm.resolve.diagnostics.DefaultErrorMessagesWasm
