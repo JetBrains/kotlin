@@ -34,7 +34,7 @@ public external interface BlobPropertyBag {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
-    val o = js("({})")
+    val o = newJsObject()
     o["type"] = type
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as BlobPropertyBag
@@ -57,7 +57,7 @@ public external interface FilePropertyBag : BlobPropertyBag {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun FilePropertyBag(lastModified: Int? = undefined, type: String? = ""): FilePropertyBag {
-    val o = js("({})")
+    val o = newJsObject()
     o["lastModified"] = lastModified
     o["type"] = type
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")

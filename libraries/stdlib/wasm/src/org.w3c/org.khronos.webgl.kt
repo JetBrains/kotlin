@@ -42,7 +42,7 @@ public external interface WebGLContextAttributes {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun WebGLContextAttributes(alpha: Boolean? = true, depth: Boolean? = true, stencil: Boolean? = false, antialias: Boolean? = true, premultipliedAlpha: Boolean? = true, preserveDrawingBuffer: Boolean? = false, preferLowPowerToHighPerformance: Boolean? = false, failIfMajorPerformanceCaveat: Boolean? = false): WebGLContextAttributes {
-    val o = js("({})")
+    val o = newJsObject()
     o["alpha"] = alpha
     o["depth"] = depth
     o["stencil"] = stencil
@@ -895,7 +895,7 @@ public external interface WebGLContextEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun WebGLContextEventInit(statusMessage: String? = "", bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): WebGLContextEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["statusMessage"] = statusMessage
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
