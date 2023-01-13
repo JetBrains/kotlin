@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.generators.tests
 
+import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.test.*
+import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsWasmTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -49,6 +51,14 @@ fun main(args: Array<String>) {
 
             testClass<AbstractIrCodegenWasmJsInteropWasmTest> {
                 model("codegen/boxWasmJsInterop", targetBackend = TargetBackend.WASM)
+            }
+        }
+    }
+
+    generateTestGroupSuiteWithJUnit5(args) {
+        testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractDiagnosticsWasmTest> {
+                model("diagnostics/wasmTests")
             }
         }
     }

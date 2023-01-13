@@ -19,6 +19,7 @@ dependencies {
     api(project(":js:js.serializer"))
     api(project(":js:js.dce"))
     api(project(":js:js.sourcemap"))
+    api(project(":wasm:wasm.frontend"))
 
     compileOnly(intellijCore())
 }

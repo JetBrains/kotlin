@@ -20,5 +20,6 @@ public enum EnvironmentConfigFiles {
     JVM_CONFIG_FILES,
     JS_CONFIG_FILES,
     NATIVE_CONFIG_FILES,
+    WASM_CONFIG_FILES,
     METADATA_CONFIG_FILES,
 }

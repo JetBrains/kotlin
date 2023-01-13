@@ -12,6 +12,7 @@ plugins {
 dependencies {
     testApi(commonDependency("junit:junit"))
     testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-common-new"))
     testApi(intellijCore())
 }
 
@@ -130,8 +131,22 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateWa
 
 projectTest(parallel = true) {
     workingDir = rootDir
+    exclude("**/diagnostics/*.class")
     setupV8()
     setupSpiderMonkey()
+    setupWasmStdlib()
+    setupGradlePropertiesForwarding()
+    systemProperty("kotlin.wasm.test.root.out.dir", "$buildDir/")
+}
+
+projectTest(
+    taskName = "diagnosticsTest",
+    parallel = true,
+    jUnitMode = JUnitMode.JUnit5
+) {
+    workingDir = rootDir
+    include("**/diagnostics/*.class")
+    useJUnitPlatform()
     setupWasmStdlib()
     setupGradlePropertiesForwarding()
     systemProperty("kotlin.wasm.test.root.out.dir", "$buildDir/")
