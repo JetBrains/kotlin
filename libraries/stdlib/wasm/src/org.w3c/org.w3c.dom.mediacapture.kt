@@ -111,7 +111,7 @@ public external interface MediaTrackSupportedConstraints {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaTrackSupportedConstraints(width: Boolean? = true, height: Boolean? = true, aspectRatio: Boolean? = true, frameRate: Boolean? = true, facingMode: Boolean? = true, resizeMode: Boolean? = true, volume: Boolean? = true, sampleRate: Boolean? = true, sampleSize: Boolean? = true, echoCancellation: Boolean? = true, autoGainControl: Boolean? = true, noiseSuppression: Boolean? = true, latency: Boolean? = true, channelCount: Boolean? = true, deviceId: Boolean? = true, groupId: Boolean? = true): MediaTrackSupportedConstraints {
-    val o = js("({})")
+    val o = newJsObject()
     o["width"] = width
     o["height"] = height
     o["aspectRatio"] = aspectRatio
@@ -186,7 +186,7 @@ public external interface MediaTrackCapabilities {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaTrackCapabilities(width: ULongRange? = undefined, height: ULongRange? = undefined, aspectRatio: DoubleRange? = undefined, frameRate: DoubleRange? = undefined, facingMode: Array<String>? = undefined, resizeMode: Array<String>? = undefined, volume: DoubleRange? = undefined, sampleRate: ULongRange? = undefined, sampleSize: ULongRange? = undefined, echoCancellation: Array<Boolean>? = undefined, autoGainControl: Array<Boolean>? = undefined, noiseSuppression: Array<Boolean>? = undefined, latency: DoubleRange? = undefined, channelCount: ULongRange? = undefined, deviceId: String? = undefined, groupId: String? = undefined): MediaTrackCapabilities {
-    val o = js("({})")
+    val o = newJsObject()
     o["width"] = width
     o["height"] = height
     o["aspectRatio"] = aspectRatio
@@ -219,7 +219,7 @@ public external interface MediaTrackConstraints : MediaTrackConstraintSet {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaTrackConstraints(advanced: Array<MediaTrackConstraintSet>? = undefined, width: Dynamic? = undefined, height: Dynamic? = undefined, aspectRatio: Dynamic? = undefined, frameRate: Dynamic? = undefined, facingMode: Dynamic? = undefined, resizeMode: Dynamic? = undefined, volume: Dynamic? = undefined, sampleRate: Dynamic? = undefined, sampleSize: Dynamic? = undefined, echoCancellation: Dynamic? = undefined, autoGainControl: Dynamic? = undefined, noiseSuppression: Dynamic? = undefined, latency: Dynamic? = undefined, channelCount: Dynamic? = undefined, deviceId: Dynamic? = undefined, groupId: Dynamic? = undefined): MediaTrackConstraints {
-    val o = js("({})")
+    val o = newJsObject()
     o["advanced"] = advanced
     o["width"] = width
     o["height"] = height
@@ -295,7 +295,7 @@ public external interface MediaTrackConstraintSet {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaTrackConstraintSet(width: Dynamic? = undefined, height: Dynamic? = undefined, aspectRatio: Dynamic? = undefined, frameRate: Dynamic? = undefined, facingMode: Dynamic? = undefined, resizeMode: Dynamic? = undefined, volume: Dynamic? = undefined, sampleRate: Dynamic? = undefined, sampleSize: Dynamic? = undefined, echoCancellation: Dynamic? = undefined, autoGainControl: Dynamic? = undefined, noiseSuppression: Dynamic? = undefined, latency: Dynamic? = undefined, channelCount: Dynamic? = undefined, deviceId: Dynamic? = undefined, groupId: Dynamic? = undefined): MediaTrackConstraintSet {
-    val o = js("({})")
+    val o = newJsObject()
     o["width"] = width
     o["height"] = height
     o["aspectRatio"] = aspectRatio
@@ -373,7 +373,7 @@ public external interface MediaTrackSettings {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaTrackSettings(width: Int? = undefined, height: Int? = undefined, aspectRatio: Double? = undefined, frameRate: Double? = undefined, facingMode: String? = undefined, resizeMode: String? = undefined, volume: Double? = undefined, sampleRate: Int? = undefined, sampleSize: Int? = undefined, echoCancellation: Boolean? = undefined, autoGainControl: Boolean? = undefined, noiseSuppression: Boolean? = undefined, latency: Double? = undefined, channelCount: Int? = undefined, deviceId: String? = undefined, groupId: String? = undefined): MediaTrackSettings {
-    val o = js("({})")
+    val o = newJsObject()
     o["width"] = width
     o["height"] = height
     o["aspectRatio"] = aspectRatio
@@ -415,7 +415,7 @@ public external interface MediaStreamTrackEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaStreamTrackEventInit(track: MediaStreamTrack?, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): MediaStreamTrackEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["track"] = track
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
@@ -444,7 +444,7 @@ public external interface OverconstrainedErrorEventInit : EventInit {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun OverconstrainedErrorEventInit(error: Dynamic? = null.unsafeCast<Dynamic?>(), bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): OverconstrainedErrorEventInit {
-    val o = js("({})")
+    val o = newJsObject()
     o["error"] = error
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
@@ -493,7 +493,7 @@ public external interface MediaStreamConstraints {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun MediaStreamConstraints(video: Dynamic? = false.unsafeCast<Dynamic?>(), audio: Dynamic? = false.unsafeCast<Dynamic?>()): MediaStreamConstraints {
-    val o = js("({})")
+    val o = newJsObject()
     o["video"] = video
     o["audio"] = audio
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
@@ -525,7 +525,7 @@ public external interface DoubleRange {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun DoubleRange(max: Double? = undefined, min: Double? = undefined): DoubleRange {
-    val o = js("({})")
+    val o = newJsObject()
     o["max"] = max
     o["min"] = min
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
@@ -544,7 +544,7 @@ public external interface ConstrainDoubleRange : DoubleRange {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ConstrainDoubleRange(exact: Double? = undefined, ideal: Double? = undefined, max: Double? = undefined, min: Double? = undefined): ConstrainDoubleRange {
-    val o = js("({})")
+    val o = newJsObject()
     o["exact"] = exact
     o["ideal"] = ideal
     o["max"] = max
@@ -565,7 +565,7 @@ public external interface ULongRange {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ULongRange(max: Int? = undefined, min: Int? = undefined): ULongRange {
-    val o = js("({})")
+    val o = newJsObject()
     o["max"] = max
     o["min"] = min
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
@@ -584,7 +584,7 @@ public external interface ConstrainULongRange : ULongRange {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ConstrainULongRange(exact: Int? = undefined, ideal: Int? = undefined, max: Int? = undefined, min: Int? = undefined): ConstrainULongRange {
-    val o = js("({})")
+    val o = newJsObject()
     o["exact"] = exact
     o["ideal"] = ideal
     o["max"] = max
@@ -608,7 +608,7 @@ public external interface ConstrainBooleanParameters {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ConstrainBooleanParameters(exact: Boolean? = undefined, ideal: Boolean? = undefined): ConstrainBooleanParameters {
-    val o = js("({})")
+    val o = newJsObject()
     o["exact"] = exact
     o["ideal"] = ideal
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
@@ -630,7 +630,7 @@ public external interface ConstrainDOMStringParameters {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ConstrainDOMStringParameters(exact: Dynamic? = undefined, ideal: Dynamic? = undefined): ConstrainDOMStringParameters {
-    val o = js("({})")
+    val o = newJsObject()
     o["exact"] = exact
     o["ideal"] = ideal
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
@@ -642,7 +642,7 @@ public external interface Capabilities
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun Capabilities(): Capabilities {
-    val o = js("({})")
+    val o = newJsObject()
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as Capabilities
 }
@@ -652,7 +652,7 @@ public external interface Settings
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun Settings(): Settings {
-    val o = js("({})")
+    val o = newJsObject()
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as Settings
 }
@@ -662,7 +662,7 @@ public external interface ConstraintSet
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun ConstraintSet(): ConstraintSet {
-    val o = js("({})")
+    val o = newJsObject()
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ConstraintSet
 }
@@ -676,7 +676,7 @@ public external interface Constraints : ConstraintSet {
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 @kotlin.internal.InlineOnly
 public inline fun Constraints(advanced: Array<ConstraintSet>? = undefined): Constraints {
-    val o = js("({})")
+    val o = newJsObject()
     o["advanced"] = advanced
     @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as Constraints
