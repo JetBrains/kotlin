@@ -20,6 +20,8 @@ dependencies {
     testImplementation(project(":compiler:cli"))
 
     testImplementation(intellijCore())
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
     testApiJUnit5()
     testImplementation(projectTests(":compiler:tests-common-new"))
