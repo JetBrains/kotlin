@@ -19,12 +19,9 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Java
 
 object FirJvmRedundantRepeatableChecker : FirBasicDeclarationChecker() {
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
-        val kotlinRepeatable = declaration.annotations.find { it.fullyExpandedClassId(context.session) == Repeatable }
-
-        val javaRepeatable = declaration.annotations.find {
-            val expandedClassId = it.fullyExpandedClassId(context.session)
-            expandedClassId == JvmRepeatable || expandedClassId == Java.Repeatable
-        }
+        val kotlinRepeatable = declaration.getAnnotationByClassId(Repeatable, context.session)
+        val javaRepeatable = declaration.getAnnotationByClassId(JvmRepeatable, context.session)
+            ?: declaration.getAnnotationByClassId(Java.Repeatable, context.session)
 
         if (kotlinRepeatable != null && javaRepeatable != null) {
             reporter.reportOn(
