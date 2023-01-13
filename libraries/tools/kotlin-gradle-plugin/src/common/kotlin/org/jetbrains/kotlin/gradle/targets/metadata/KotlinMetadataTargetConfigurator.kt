@@ -336,11 +336,11 @@ class KotlinMetadataTargetConfigurator :
         val project = compilation.target.project
         val sourceSet = compilation.defaultSourceSet
 
-        val transformationTask = project.registerTask<MetadataDependencyTransformationTask>(
-            transformGranularMetadataTaskName(compilation.name),
+        val transformationTask = project.locateOrRegisterTask<MetadataDependencyTransformationTask>(
+            transformGranularMetadataTaskName(sourceSet.name),
             listOf(sourceSet)
         ) {
-            it.description =
+            description =
                 "Generates serialized dependencies metadata for compilation '${compilation.name}' of target '${compilation.target.name}' (for tooling)"
         }
 
