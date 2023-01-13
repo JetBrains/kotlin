@@ -35,7 +35,8 @@ public class KtConstantInitializerValue(
  * See [KtConstantInitializerValue] for more info.
  */
 public class KtNonConstantInitializerValue(
-    override val initializerPsi: KtExpression?
+    override val initializerPsi: KtExpression?,
+    public val annotationValue: KtAnnotationValue? = null
 ) : KtInitializerValue()
 
 /**

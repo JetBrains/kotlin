@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.util.*
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 
@@ -147,17 +148,21 @@ internal fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
     return this.classId == classId
 }
 
-private fun escapeString(str: String): String = buildString {
-    str.forEach { char ->
-        val escaped = when (char) {
-            '\n' -> "\\n"
-            '\r' -> "\\r"
-            '\t' -> "\\t"
-            '\"' -> "\\\""
-            '\\' -> "\\\\"
-            else -> "$char"
+private fun escapeString(s: String): String = buildString {
+    s.forEach {
+        when (it) {
+            '\n' -> append("\\n")
+            '\r' -> append("\\r")
+            '\t' -> append("\\t")
+            '"' -> append("\\\"")
+            '\\' -> append("\\\\")
+            else -> if (it.code in 32..128) {
+                append(it)
+            } else {
+                append("\\u")
+                append("%04x".format(it.code).toUpperCaseAsciiOnly())
+            }
         }
-        append(escaped)
     }
 }
 
@@ -177,7 +182,7 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
             )
 
         is KtConstantAnnotationValue -> {
-            this.constantValue.createPsiLiteral(parent)?.let {
+            constantValue.createPsiExpression(parent)?.let {
                 when (it) {
                     is PsiLiteral -> SymbolPsiLiteral(sourcePsi, parent, it)
                     else -> SymbolPsiExpression(sourcePsi, parent, it)
@@ -212,25 +217,29 @@ private fun KtKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement):
     }
 }
 
-private fun KtConstantValue.asStringForPsiLiteral(): String =
+private fun KtConstantValue.asStringForPsiExpression(): String =
     when (val value = value) {
-        is Char -> "'$value'"
+        Double.NEGATIVE_INFINITY -> "-1.0 / 0.0"
+        Double.NaN -> "0.0 / 0.0"
+        Double.POSITIVE_INFINITY -> "1.0 / 0.0"
+        Float.NEGATIVE_INFINITY -> "-1.0F / 0.0F"
+        Float.NaN -> "0.0F / 0.0F"
+        Float.POSITIVE_INFINITY -> "1.0F / 0.0F"
+        is Char -> "'${escapeString(value.toString())}'"
         is String -> "\"${escapeString(value)}\""
         is Long -> "${value}L"
         is Float -> "${value}f"
         else -> value?.toString() ?: "null"
     }
 
-
-internal fun KtConstantValue.createPsiLiteral(parent: PsiElement): PsiExpression? {
-    val asString = asStringForPsiLiteral()
+internal fun KtConstantValue.createPsiExpression(parent: PsiElement): PsiExpression? {
+    val asString = asStringForPsiExpression()
     return try {
         PsiElementFactory.getInstance(parent.project).createExpressionFromText(asString, parent)
     } catch (_: IncorrectOperationException) {
         null
     }
 }
-
 
 internal fun BitSet.copy(): BitSet = clone() as BitSet
 

@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
-import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
+import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.symbols.KtKotlinPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
@@ -173,7 +174,25 @@ internal class SymbolLightFieldForProperty private constructor(
     }
 
     private val _initializer by lazyPub {
-        _initializerValue?.createPsiLiteral(this)
+        _initializerValue?.createPsiExpression(this) ?: withPropertySymbol { propertySymbol ->
+            if (propertySymbol !is KtKotlinPropertySymbol) return@withPropertySymbol null
+            (propertySymbol.initializer as? KtNonConstantInitializerValue)?.annotationValue?.let(::toPsiExpression)
+        }
+    }
+
+    private fun toPsiExpression(value: KtAnnotationValue): PsiExpression? = when (value) {
+        is KtConstantAnnotationValue ->
+            value.constantValue.createPsiExpression(this)
+        is KtEnumEntryAnnotationValue ->
+            PsiElementFactory.getInstance(project).createExpressionFromText(value.callableId!!.asSingleFqName().asString(), this)
+        is KtArrayAnnotationValue ->
+            PsiElementFactory.getInstance(project).createExpressionFromText(
+                value.values
+                    .map { toPsiExpression(it)?.text ?: return null }
+                    .joinToString(", ", "{", "}"),
+                this
+            )
+        else -> null
     }
 
     override fun getInitializer(): PsiExpression? = _initializer

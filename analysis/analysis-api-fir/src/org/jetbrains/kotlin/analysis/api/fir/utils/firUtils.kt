@@ -106,7 +106,7 @@ internal fun FirExpression.asKtInitializerValue(
                 KtNonConstantInitializerValue(ktExpression)
             }
         } else {
-            KtNonConstantInitializerValue(ktExpression)
+            KtNonConstantInitializerValue(ktExpression, FirAnnotationValueConverter.toConstantValue(this, session))
         }
         else -> KtConstantInitializerValue(evaluated, ktExpression)
     }
