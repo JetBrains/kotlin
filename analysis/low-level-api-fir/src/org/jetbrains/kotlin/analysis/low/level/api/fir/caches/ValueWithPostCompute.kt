@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
-import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 import java.util.concurrent.locks.ReentrantLock
 
 /**
@@ -36,7 +35,6 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
     /**
      * can be in one of the following three states:
      * [ValueIsNotComputed] -- value is not initialized and thread are now executing [_postCompute]
-     * [ExceptionWasThrownDuringValueComputation] -- exception was thrown during value computation, it will be rethrown on every value access
      * [ValueIsPostComputingNow] -- thread with threadId has computed the value and only it can access it during post compute
      * some value of type [VALUE] -- value is computed and post compute was executed, values is visible for all threads
      *
@@ -61,16 +59,13 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                     return stateSnapshot.value as VALUE
                 } else {
                     lock?.lockWithPCECheck(LOCKING_INTERVAL_MS) { // wait until other thread which holds the lock now computes the value
-                        when (val newStateSnapshot = value) {
+                        when (value) {
                             ValueIsNotComputed -> {
                                 // if we have a PCE during value computation, then we will enter the critical section with `value == ValueIsNotComputed`
                                 // in this case, we should try to recalculate the value
                                 return computeValueWithoutLock()
                             }
-                            is ExceptionWasThrownDuringValueComputation -> {
-                                // if some other thread tried to compute the value but failed with the exception
-                                throw newStateSnapshot.error
-                            }
+
                             else -> {
                                 // other thread computed the value for us
                                 return value as VALUE
@@ -83,9 +78,6 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
                 return computeValueWithoutLock()
             } ?: return value as VALUE
 
-            is ExceptionWasThrownDuringValueComputation -> {
-                throw stateSnapshot.error
-            }
             else -> {
                 return stateSnapshot as VALUE
             }
@@ -98,14 +90,10 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
         // if we entered synchronized section that's mean that the value is not yet calculated and was not started to be calculated
         // or the some other thread calculated the value while we were waiting to acquire the lock
 
-        when (val newStateSnapshot = value) {
+        when (value) {
             ValueIsNotComputed -> {
                 // will be computed later, the read of `ValueIsNotComputed` guarantees that lock is not null
                 require(lock!!.isHeldByCurrentThread)
-            }
-            is ExceptionWasThrownDuringValueComputation -> {
-                // if some other thread tried to compute the value but failed with the exception
-                throw newStateSnapshot.error
             }
             else -> {
                 // other thread computed the value for us and set `lock` to null
@@ -122,11 +110,7 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
             _postCompute!!(key, calculated, data)
             calculated
         } catch (e: Throwable) {
-            if (e is Exception && exceptionShouldBeSavedInCache(e)) {
-                value = ExceptionWasThrownDuringValueComputation(e)
-            } else {
-                value = ValueIsNotComputed
-            }
+            value = ValueIsNotComputed
             throw e
         }
         // reading lock = null implies that the value is calculated and stored
@@ -138,20 +122,14 @@ internal class ValueWithPostCompute<KEY, VALUE, DATA>(
         return calculatedValue
     }
 
-    private fun exceptionShouldBeSavedInCache(exception: Exception): Boolean =
-        !shouldIjPlatformExceptionBeRethrown(exception)
-
-
     @Suppress("UNCHECKED_CAST")
-    fun getValueIfComputed(): VALUE? = when (val snapshot = value) {
+    fun getValueIfComputed(): VALUE? = when (value) {
         ValueIsNotComputed -> null
         is ValueIsPostComputingNow -> null
-        is ExceptionWasThrownDuringValueComputation -> throw snapshot.error
         else -> value as VALUE
     }
 
     private class ValueIsPostComputingNow(val value: Any?, val threadId: Long)
-    private class ExceptionWasThrownDuringValueComputation(val error: Throwable)
     private object ValueIsNotComputed
 }
 

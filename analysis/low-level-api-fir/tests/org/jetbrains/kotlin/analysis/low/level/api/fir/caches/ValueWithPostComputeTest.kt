@@ -69,25 +69,6 @@ class ValueWithPostComputeTest {
         Assertions.assertNotEquals(pceOnFirstAccess, pceOnSecondAccess, "different PCE should be thrown on every access")
     }
 
-    @Test
-    fun testNonRecoverableExceptionISavedInCache() {
-        val valueWithPostCompute = ValueWithPostCompute(
-            key = 1,
-            calculate = { "value" to Unit },
-            postCompute = { _, _, _ ->
-                throw IllegalStateException()
-            }
-        )
-
-        val exceptionOnFirstAccess = kotlin.runCatching { valueWithPostCompute.getValue() }.exceptionOrNull()
-        Assertions.assertInstanceOf(IllegalStateException::class.java, exceptionOnFirstAccess)
-
-        val exceptionOnSecondAccess = kotlin.runCatching { valueWithPostCompute.getValue() }.exceptionOrNull()
-        Assertions.assertInstanceOf(IllegalStateException::class.java, exceptionOnSecondAccess)
-
-        Assertions.assertEquals(exceptionOnFirstAccess, exceptionOnSecondAccess, "the same exception should be thrown on every access")
-    }
-
     /**
      * Tests the following scenario:
      *  - thread `t1` access the cache and executes `calculate()` and then `postCompute()` under a lock hold
@@ -142,66 +123,6 @@ class ValueWithPostComputeTest {
             when (val result = resultRef.get()) {
                 is Throwable -> throw result
                 else -> Assertions.assertEquals("t2", result)
-            }
-        }
-    }
-
-    /**
-     * Tests the following scenario:
-     *  - thread `t1` access the cache and executes `calculate()` and then `postCompute()` under a lock hold
-     *  - while the lock hold  by `t1`, `t2` tries to also access the value and waits for the lock to be released by `t1`
-     *  - t1: during the post compute, some non-recoverable exception happens inside the `postCompute()` and exception is saved in the cache
-     *  - t1 releases the lock with the `value` set to `ExceptionWasThrownDuringValueComputation`
-     *  - t2 acquires the lock and should correctly see `ExceptionWasThrownDuringValueComputation` and rethrow the exception
-     */
-    @Test
-    fun testSavedExceptionInCacheFromPostCompute() {
-        class ExceptionWhichWillBeSavedInCache : Exception()
-        for (i in 1..100) {
-            val t1CalledCalculate = CountDownLatch(1)
-            val t2AccessedTheCache = CountDownLatch(1)
-
-            val resultRef = AtomicReference<Any?>(null)
-
-            val valueWithPostCompute = ValueWithPostCompute(
-                key = 1,
-                calculate = {
-                    if (Thread.currentThread().name == "t1") {
-                        t1CalledCalculate.countDown()
-                    }
-                    Thread.currentThread().name to Unit
-                },
-                postCompute = { _, _, _ ->
-                    t2AccessedTheCache.await()
-                    if (Thread.currentThread().name == "t1") {
-                        throw ExceptionWhichWillBeSavedInCache()
-                    }
-                }
-            )
-
-            val t1 = thread(name = "t1") {
-                try {
-                    valueWithPostCompute.getValue()
-                } catch (_: Throwable) {
-                }
-            }
-
-            val t2 = thread(name = "t2") {
-                t1CalledCalculate.await()
-                t2AccessedTheCache.countDown()
-
-                try {
-                    resultRef.set(valueWithPostCompute.getValue())
-                } catch (e: Throwable) {
-                    resultRef.set(e)
-                }
-            }
-            t2.join()
-            t1.join()
-            when (val result = resultRef.get()) {
-                is ExceptionWhichWillBeSavedInCache -> {}
-                is Throwable -> throw result
-                else -> Assertions.fail("Unexpected value $result")
             }
         }
     }
