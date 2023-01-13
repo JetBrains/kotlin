@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.idea.proto.tcs.toByteArray
+import org.jetbrains.kotlin.gradle.idea.proto.toByteArray
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependency
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.re
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.*
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.Companion.logger
 import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 import kotlin.system.measureTimeMillis
 
@@ -35,6 +37,11 @@ internal class IdeMultiplatformImportImpl(
 
     override fun resolveDependenciesSerialized(sourceSetName: String): List<ByteArray> {
         return serialize(resolveDependencies(sourceSetName))
+    }
+
+    override fun resolveExtrasSerialized(owner: Any): ByteArray? {
+        if (owner !is HasMutableExtras) return null
+        return owner.extras.toByteArray(createSerializationContext())
     }
 
     override fun serialize(dependencies: Iterable<IdeaKotlinDependency>): List<ByteArray> {

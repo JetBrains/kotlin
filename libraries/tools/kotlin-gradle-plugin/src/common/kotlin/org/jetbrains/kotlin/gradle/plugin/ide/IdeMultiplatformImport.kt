@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.isSingleKotlinTargetSourceSe
 import org.jetbrains.kotlin.gradle.targets.metadata.isSinglePlatformTypeSourceSet
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.tooling.core.Extras
+import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 interface IdeMultiplatformImport {
 
@@ -36,6 +37,12 @@ interface IdeMultiplatformImport {
     fun resolveDependencies(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency>
 
     fun resolveDependenciesSerialized(sourceSetName: String): List<ByteArray>
+
+    /**
+     * @param owner: Should implement [HasMutableExtras]. Passing [Any] is fine to make it easier to cross
+     *  ClassLoader boundaries. Passing some non [HasMutableExtras] will just return null
+     */
+    fun resolveExtrasSerialized(owner: Any): ByteArray?
 
     fun serialize(dependencies: Iterable<IdeaKotlinDependency>): List<ByteArray>
 

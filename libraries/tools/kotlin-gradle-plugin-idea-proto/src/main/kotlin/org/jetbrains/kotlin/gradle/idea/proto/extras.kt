@@ -8,11 +8,27 @@
 package org.jetbrains.kotlin.gradle.idea.proto
 
 import com.google.protobuf.ByteString
+import com.google.protobuf.InvalidProtocolBufferException
 import org.jetbrains.kotlin.gradle.idea.proto.generated.IdeaExtrasProto
 import org.jetbrains.kotlin.gradle.idea.proto.generated.ideaExtrasProto
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializer
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinSerializationContext
 import org.jetbrains.kotlin.tooling.core.*
+
+fun Extras.toByteArray(context: IdeaKotlinSerializationContext): ByteArray {
+    return context.IdeaExtrasProto(this).toByteArray()
+}
+
+fun IdeaKotlinSerializationContext.Extras(data: ByteArray): MutableExtras? {
+    return try {
+        val proto = IdeaExtrasProto.parseFrom(data)
+        Extras(proto)
+
+    } catch (e: InvalidProtocolBufferException) {
+        logger.error("Failed to deserialize Extras", e)
+        null
+    }
+}
 
 @Suppress("unchecked_cast")
 internal fun IdeaKotlinSerializationContext.IdeaExtrasProto(extras: Extras): IdeaExtrasProto {

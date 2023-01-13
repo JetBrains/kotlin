@@ -1,3 +1,8 @@
+public final class org/jetbrains/kotlin/gradle/idea/proto/ExtrasKt {
+	public static final fun Extras (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;[B)Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+	public static final fun toByteArray (Lorg/jetbrains/kotlin/tooling/core/Extras;Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;)[B
+}
+
 public final class org/jetbrains/kotlin/gradle/idea/proto/kpm/KpmIdeaProto {
 	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Ljava/io/InputStream;)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
 	public static final fun IdeaKpmProject (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinSerializationContext;Ljava/nio/ByteBuffer;)Lorg/jetbrains/kotlin/gradle/idea/kpm/IdeaKpmProject;
