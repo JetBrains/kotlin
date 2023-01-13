@@ -358,5 +358,11 @@ public class FirStandaloneNormalAnalysisSourceModuleSymbolByPsiTestGenerated ext
         public void testParameterInlining() throws Exception {
             runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/parameterInlining.kt");
         }
+
+        @Test
+        @TestMetadata("parameterNotFunctionalType.kt")
+        public void testParameterNotFunctionalType() throws Exception {
+            runTest("analysis/analysis-api/testData/symbols/symbolByPsi/valueParameters/parameterNotFunctionalType.kt");
+        }
     }
 }

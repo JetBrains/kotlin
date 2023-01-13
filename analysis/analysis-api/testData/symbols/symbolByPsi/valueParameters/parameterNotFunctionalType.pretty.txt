@@ -1,0 +1,3 @@
+fun f(p: (kotlin.Int, ERROR_TYPE(Symbol not found for p2)) -> ERROR(Unwrapped type is null), `<no name provided>`: ERROR(No type for parameter))
+
+fun `<no name provided>`()

@@ -30,6 +30,7 @@ abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
             is KtDestructuringDeclaration -> false
             is KtPropertyAccessor -> false
             is KtParameter -> !this.isFunctionTypeParameter && this.parent !is KtParameterList
+            is KtNamedFunction -> this.name != null
             else -> true
         }
 }
