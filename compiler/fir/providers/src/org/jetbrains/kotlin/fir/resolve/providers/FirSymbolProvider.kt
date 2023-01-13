@@ -116,6 +116,10 @@ fun FirSymbolProvider.getRegularClassSymbolByClassId(classId: ClassId): FirRegul
     return getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
 }
 
+fun ClassId.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
+    return session.symbolProvider.getClassLikeSymbolByClassId(this)
+}
+
 val FirSession.symbolProvider: FirSymbolProvider by FirSession.sessionComponentAccessor()
 
 const val DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY: String = "org.jetbrains.kotlin.fir.resolve.providers.FirDependenciesSymbolProvider"

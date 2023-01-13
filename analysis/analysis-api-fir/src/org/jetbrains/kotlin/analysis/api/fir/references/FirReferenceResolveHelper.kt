@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnmatchedTypeArgumentsError
 import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
@@ -71,7 +72,7 @@ internal object FirReferenceResolveHelper {
         symbolBuilder: KtSymbolByFirBuilder,
         calleeReference: FirReference? = null,
     ): KtSymbol? {
-        val classLikeDeclaration = this.toLookupTag().toSymbol(session)?.fir
+        val classLikeDeclaration = this.toSymbol(session)?.fir
         if (classLikeDeclaration is FirRegularClass) {
             if (calleeReference is FirResolvedNamedReference) {
                 val callee = calleeReference.resolvedSymbol.fir as? FirCallableDeclaration
