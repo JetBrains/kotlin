@@ -684,7 +684,7 @@ fun serializeModuleIntoKlib(
         abiVersion = compatibilityMode.abiVersion,
         libraryVersion = null,
         compilerVersion = KotlinCompilerVersion.VERSION,
-        metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
+        metadataVersion = KlibMetadataVersion.INSTANCE,
     )
 
     val properties = Properties().also { p ->
