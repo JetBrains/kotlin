@@ -68,9 +68,11 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
 
         checkRepeatedAnnotations(declaration, context, reporter)
 
-        if (declaration is FirProperty) {
-            checkRepeatedAnnotationsInProperty(declaration, context, reporter)
-        } else if (declaration is FirCallableDeclaration) {
+        if (declaration is FirCallableDeclaration) {
+            if (declaration is FirProperty) {
+                checkRepeatedAnnotationsInProperty(declaration, context, reporter)
+            }
+
             if (declaration.source?.kind is KtRealSourceElementKind && declaration.returnTypeRef.source?.kind is KtRealSourceElementKind) {
                 checkRepeatedAnnotations(declaration.returnTypeRef.coneTypeSafe(), context, reporter)
             }
