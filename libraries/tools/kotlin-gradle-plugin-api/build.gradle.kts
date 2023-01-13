@@ -5,7 +5,8 @@ plugins {
 }
 
 configureDokkaPublication(
-    shouldLinkGradleApi = true
+    shouldLinkGradleApi = true,
+    configurePublishingToKotlinlang = true,
 )
 
 dependencies {

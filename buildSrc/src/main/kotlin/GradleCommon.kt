@@ -589,7 +589,8 @@ fun Project.addBomCheckTask() {
 }
 
 fun Project.configureDokkaPublication(
-    shouldLinkGradleApi: Boolean = false
+    shouldLinkGradleApi: Boolean = false,
+    configurePublishingToKotlinlang: Boolean = false,
 ) {
     if (!kotlinBuildProperties.publishGradlePluginsJavadoc) return
 
@@ -637,6 +638,52 @@ fun Project.configureDokkaPublication(
 
             tasks.named<Jar>(variantSourceSet.javadocJarTaskName) {
                 from(dokkaTask.flatMap { it.outputDirectory })
+            }
+        }
+
+        if (configurePublishingToKotlinlang) {
+            val latestVariant = GradlePluginVariant.values().last()
+            val olderVersionsDir = layout.buildDirectory.dir("dokka/kotlinlangDocumentationOld")
+
+            project.dependencies {
+                // Version is required due to https://github.com/Kotlin/dokka/issues/2812
+                "dokkaPlugin"("org.jetbrains.dokka:versioning-plugin:1.7.20")
+            }
+
+            tasks.register<DokkaTask>("dokkaKotlinlangDocumentation") {
+                description = "Generates documentation reference for Kotlinlang"
+
+                dokkaSourceSets {
+                    pluginsMapConfiguration.put(
+                        "org.jetbrains.dokka.base.DokkaBase",
+                        "{ \"templatesDir\": \"${layout.projectDirectory.dir("dokka-template")}\" }"
+                    )
+                    pluginsMapConfiguration.put(
+                        "org.jetbrains.dokka.versioning.VersioningPlugin",
+                        olderVersionsDir.map { olderVersionsDir ->
+                            "{ \"version\":\"$version\", \"olderVersionsDir\":\"${olderVersionsDir.asFile}\" }"
+                        }
+                    )
+
+                    named(commonSourceSet.name) {
+                        suppress.set(false)
+                        jdkVersion.set(8)
+                    }
+
+                    named(latestVariant.sourceSetName) {
+                        dependsOn(commonSourceSet)
+                        suppress.set(false)
+                        jdkVersion.set(8)
+
+                        if (shouldLinkGradleApi) {
+                            externalDocumentationLink {
+                                url.set(URL(latestVariant.gradleApiJavadocUrl))
+
+                                addWorkaroundForElementList(latestVariant)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
