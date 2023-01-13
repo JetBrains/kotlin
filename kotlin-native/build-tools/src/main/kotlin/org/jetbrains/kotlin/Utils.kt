@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.net.HttpURLConnection
@@ -22,6 +21,11 @@ import org.jetbrains.kotlin.konan.file.File as KFile
 import org.gradle.api.tasks.TaskProvider
 import java.util.*
 import kotlin.collections.HashSet
+
+/**
+ * Copy-pasted from [org.jetbrains.kotlin.library.KLIB_PROPERTY_NATIVE_TARGETS]
+ */
+private const val KLIB_PROPERTY_NATIVE_TARGETS = "native_targets"
 
 //region Project properties.
 

@@ -200,7 +200,6 @@ task sanity {
     dependsOn(tasksOf(FrameworkTest) { task ->
         !UtilsKt.isDependsOnPlatformLibs(task)
     })
-    dependsOn(tasksOf(MetadataComparisonTest))
     // Add regular gradle test tasks
     dependsOn(tasksOf(Test))
     dependsOn(tasksOf(CoverageTest))
@@ -6127,18 +6126,6 @@ if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {
             }
         }
     }
-}
-
-tasks.register("metadata_compare_typedefs", MetadataComparisonTest) {
-    UtilsKt.dependsOnDist(it)
-    enabled = (project.testTarget != 'wasm32')
-    defFile = "interop/basics/typedefs.def"
-}
-
-tasks.register("metadata_compare_unable_to_import", MetadataComparisonTest) {
-    UtilsKt.dependsOnDist(it)
-    enabled = (project.testTarget != 'wasm32')
-    defFile = "interop/basics/unable_to_import.def"
 }
 
 standaloneTest("local_ea_arraysfieldwrite") {

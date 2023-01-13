@@ -20,6 +20,10 @@ const val KLIB_PROPERTY_CONTAINS_ERROR_CODE = "contains_error_code"
 // Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
 const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations"
+
+/**
+ * Copy-pasted to `kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/Utils.kt`
+ */
 const val KLIB_PROPERTY_NATIVE_TARGETS = "native_targets"
 
 // Commonizer-specific:
