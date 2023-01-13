@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.impl.isPre_1_4_Library
+import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
@@ -249,8 +250,19 @@ abstract class KotlinLibraryProperResolverWithAttributes<L : KotlinLibrary>(
         val candidateAbiVersion = candidate.versions.abiVersion
         val candidateLibraryVersion = candidate.versions.libraryVersion
 
+        fun warning(versionName: String, current: String, actual: String) {
+            logger.warning(
+                "skipping $candidatePath. Incompatible $versionName version. " +
+                        "The current default is '$current', found '$actual'. " +
+                        "The library produced by $candidateCompilerVersion compiler"
+            )
+        }
+        if (candidate.versions.metadataVersion?.isCompatible() == false) {
+            warning("KLIB metadata", KlibMetadataVersion.INSTANCE.toString(), candidate.versions.metadataVersion.toString())
+            return false
+        }
         if (candidateAbiVersion?.isCompatible() != true) {
-            logger.warning("skipping $candidatePath. Incompatible abi version. The current default is '${KotlinAbiVersion.CURRENT}', found '${candidateAbiVersion}'. The library produced by ${candidateCompilerVersion} compiler")
+            warning("ABI", KotlinAbiVersion.CURRENT.toString(), candidateAbiVersion.toString())
             return false
         }
 
