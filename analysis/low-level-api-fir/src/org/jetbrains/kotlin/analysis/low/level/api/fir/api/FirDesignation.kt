@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.FileBasedKotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
@@ -19,6 +25,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 
 class FirDesignationWithFile(
     path: List<FirRegularClass>,
@@ -113,6 +121,7 @@ private fun collectDesignationPathWithContainingClass(target: FirDeclaration, co
     fun resolveChunk(classId: ClassId): FirRegularClass {
         val declaration = useSiteSession.firProvider.getFirClassifierByFqName(classId)
             ?: useSiteSession.nullableJavaSymbolProvider?.getClassLikeSymbolByClassId(classId)?.fir
+            ?: findNearClass(classId, target)
 
         check(declaration != null)
 
@@ -125,6 +134,11 @@ private fun collectDesignationPathWithContainingClass(target: FirDeclaration, co
 
     val chain = generateSequence(containingClassId) { it.outerClassId }.map { resolveChunk(it) }
     return chain.toMutableList().also { it.reverse() }
+}
+
+private fun findNearClass(classId: ClassId, target: FirDeclaration): FirRegularClass? {
+    val firFile = target.getContainingFile() ?: return null
+    return FirElementFinder.findClassifierWithClassId(firFile, classId) as? FirRegularClass
 }
 
 fun FirElementWithResolvePhase.collectDesignation(firFile: FirFile): FirDesignationWithFile =
