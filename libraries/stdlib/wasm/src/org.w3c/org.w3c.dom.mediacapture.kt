@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -128,6 +128,7 @@ public inline fun MediaTrackSupportedConstraints(width: Boolean? = true, height:
     o["channelCount"] = channelCount
     o["deviceId"] = deviceId
     o["groupId"] = groupId
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaTrackSupportedConstraints
 }
 
@@ -202,6 +203,7 @@ public inline fun MediaTrackCapabilities(width: ULongRange? = undefined, height:
     o["channelCount"] = channelCount
     o["deviceId"] = deviceId
     o["groupId"] = groupId
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaTrackCapabilities
 }
 
@@ -235,6 +237,7 @@ public inline fun MediaTrackConstraints(advanced: Array<MediaTrackConstraintSet>
     o["channelCount"] = channelCount
     o["deviceId"] = deviceId
     o["groupId"] = groupId
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaTrackConstraints
 }
 
@@ -309,6 +312,7 @@ public inline fun MediaTrackConstraintSet(width: Dynamic? = undefined, height: D
     o["channelCount"] = channelCount
     o["deviceId"] = deviceId
     o["groupId"] = groupId
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaTrackConstraintSet
 }
 
@@ -386,6 +390,7 @@ public inline fun MediaTrackSettings(width: Int? = undefined, height: Int? = und
     o["channelCount"] = channelCount
     o["deviceId"] = deviceId
     o["groupId"] = groupId
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaTrackSettings
 }
 
@@ -415,6 +420,7 @@ public inline fun MediaStreamTrackEventInit(track: MediaStreamTrack?, bubbles: B
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaStreamTrackEventInit
 }
 
@@ -443,6 +449,7 @@ public inline fun OverconstrainedErrorEventInit(error: Dynamic? = null.unsafeCas
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as OverconstrainedErrorEventInit
 }
 
@@ -489,6 +496,7 @@ public inline fun MediaStreamConstraints(video: Dynamic? = false.unsafeCast<Dyna
     val o = js("({})")
     o["video"] = video
     o["audio"] = audio
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as MediaStreamConstraints
 }
 
@@ -520,6 +528,7 @@ public inline fun DoubleRange(max: Double? = undefined, min: Double? = undefined
     val o = js("({})")
     o["max"] = max
     o["min"] = min
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as DoubleRange
 }
 
@@ -540,6 +549,7 @@ public inline fun ConstrainDoubleRange(exact: Double? = undefined, ideal: Double
     o["ideal"] = ideal
     o["max"] = max
     o["min"] = min
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ConstrainDoubleRange
 }
 
@@ -558,6 +568,7 @@ public inline fun ULongRange(max: Int? = undefined, min: Int? = undefined): ULon
     val o = js("({})")
     o["max"] = max
     o["min"] = min
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ULongRange
 }
 
@@ -578,6 +589,7 @@ public inline fun ConstrainULongRange(exact: Int? = undefined, ideal: Int? = und
     o["ideal"] = ideal
     o["max"] = max
     o["min"] = min
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ConstrainULongRange
 }
 
@@ -599,6 +611,7 @@ public inline fun ConstrainBooleanParameters(exact: Boolean? = undefined, ideal:
     val o = js("({})")
     o["exact"] = exact
     o["ideal"] = ideal
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ConstrainBooleanParameters
 }
 
@@ -620,6 +633,7 @@ public inline fun ConstrainDOMStringParameters(exact: Dynamic? = undefined, idea
     val o = js("({})")
     o["exact"] = exact
     o["ideal"] = ideal
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ConstrainDOMStringParameters
 }
 
@@ -629,6 +643,7 @@ public external interface Capabilities
 @kotlin.internal.InlineOnly
 public inline fun Capabilities(): Capabilities {
     val o = js("({})")
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as Capabilities
 }
 
@@ -638,6 +653,7 @@ public external interface Settings
 @kotlin.internal.InlineOnly
 public inline fun Settings(): Settings {
     val o = js("({})")
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as Settings
 }
 
@@ -647,6 +663,7 @@ public external interface ConstraintSet
 @kotlin.internal.InlineOnly
 public inline fun ConstraintSet(): ConstraintSet {
     val o = js("({})")
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ConstraintSet
 }
 
@@ -661,6 +678,7 @@ public external interface Constraints : ConstraintSet {
 public inline fun Constraints(advanced: Array<ConstraintSet>? = undefined): Constraints {
     val o = js("({})")
     o["advanced"] = advanced
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as Constraints
 }
 

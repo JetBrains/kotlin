@@ -15,13 +15,13 @@ dependencies {
 task("downloadIDL", JavaExec::class) {
     main = "org.jetbrains.kotlin.tools.dukat.DownloadKt"
     classpath = sourceSets["main"].runtimeClasspath
-    dependsOn(":dukat:build")
+    dependsOn("build")
 }
 
 task("generateStdlibFromIDL", JavaExec::class) {
     main = "org.jetbrains.kotlin.tools.dukat.LaunchJsKt"
     classpath = sourceSets["main"].runtimeClasspath
-    dependsOn(":dukat:build")
+    dependsOn("build")
     systemProperty("line.separator", "\n")
 }
 
@@ -30,6 +30,6 @@ task("generateStdlibFromIDL", JavaExec::class) {
 task("generateWasmStdlibFromIDL", JavaExec::class) {
     main = "org.jetbrains.kotlin.tools.dukat.LaunchWasmKt"
     classpath = sourceSets["main"].runtimeClasspath
-    dependsOn(":dukat:build")
+    dependsOn("build")
     systemProperty("line.separator", "\n")
 }

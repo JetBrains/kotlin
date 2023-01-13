@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -71,6 +71,7 @@ public inline fun RegistrationOptions(scope: String? = undefined, type: WorkerTy
     val o = js("({})")
     o["scope"] = scope
     o["type"] = type
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as RegistrationOptions
 }
 
@@ -122,6 +123,7 @@ public inline fun ServiceWorkerMessageEventInit(data: Any? = undefined, origin: 
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ServiceWorkerMessageEventInit
 }
 
@@ -187,6 +189,7 @@ public inline fun ClientQueryOptions(includeUncontrolled: Boolean? = false, type
     val o = js("({})")
     o["includeUncontrolled"] = includeUncontrolled
     o["type"] = type
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ClientQueryOptions
 }
 
@@ -213,6 +216,7 @@ public inline fun ExtendableEventInit(bubbles: Boolean? = false, cancelable: Boo
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ExtendableEventInit
 }
 
@@ -241,6 +245,7 @@ public inline fun ForeignFetchOptions(scopes: Array<String>?, origins: Array<Str
     val o = js("({})")
     o["scopes"] = scopes
     o["origins"] = origins
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ForeignFetchOptions
 }
 
@@ -281,6 +286,7 @@ public inline fun FetchEventInit(request: Request?, clientId: String? = null, is
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as FetchEventInit
 }
 
@@ -313,6 +319,7 @@ public inline fun ForeignFetchEventInit(request: Request?, origin: String? = "nu
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ForeignFetchEventInit
 }
 
@@ -333,6 +340,7 @@ public inline fun ForeignFetchResponse(response: Response?, origin: String? = un
     o["response"] = response
     o["origin"] = origin
     o["headers"] = headers
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ForeignFetchResponse
 }
 
@@ -384,6 +392,7 @@ public inline fun ExtendableMessageEventInit(data: Any? = undefined, origin: Str
     o["bubbles"] = bubbles
     o["cancelable"] = cancelable
     o["composed"] = composed
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as ExtendableMessageEventInit
 }
 
@@ -423,6 +432,7 @@ public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod
     o["ignoreMethod"] = ignoreMethod
     o["ignoreVary"] = ignoreVary
     o["cacheName"] = cacheName
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as CacheQueryOptions
 }
 
@@ -449,6 +459,7 @@ public inline fun CacheBatchOperation(type: String? = undefined, request: Reques
     o["request"] = request
     o["response"] = response
     o["options"] = options
+    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
     return o as CacheBatchOperation
 }
 
