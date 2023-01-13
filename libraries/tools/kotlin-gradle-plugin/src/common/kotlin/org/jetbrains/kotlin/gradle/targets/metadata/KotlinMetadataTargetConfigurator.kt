@@ -20,6 +20,8 @@ import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
+import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
@@ -345,6 +347,9 @@ class KotlinMetadataTargetConfigurator :
         }
 
         project.locateOrRegisterTask<Task>(TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA).dependsOn(transformationTask)
+
+        @OptIn(Idea222Api::class)
+        project.ideaImportDependsOn(transformationTask)
 
         val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts
 
