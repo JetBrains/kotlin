@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.util.ModificationTracker
-import com.intellij.psi.PsiJavaCodeReferenceElement
-import com.intellij.psi.PsiReferenceList
+import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightElement
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
@@ -67,4 +67,68 @@ fun KtClassOrObject.getExternalDependencies(): List<ModificationTracker> {
             else -> listOf(outOfBlockModificationTracker)
         }
     }
+}
+
+// There is no other known way found to make PSI types annotated for now (without creating a new instance).
+// It seems we need for platform changes to do it more convenient way (KTIJ-141).
+private val setPsiTypeAnnotationProvider: (PsiType, TypeAnnotationProvider) -> Unit by lazyPub {
+    val klass = PsiType::class.java
+    val providerField = try {
+        klass.getDeclaredField("myAnnotationProvider")
+            .also { it.isAccessible = true }
+    } catch (e: NoSuchFieldException) {
+        if (ApplicationManager.getApplication().isInternal) throw e
+        null
+    } catch (e: SecurityException) {
+        if (ApplicationManager.getApplication().isInternal) throw e
+        null
+    }
+
+    { psiType, provider ->
+        providerField?.set(psiType, provider)
+    }
+}
+
+fun PsiType.annotateByTypeAnnotationProvider(
+    annotations: Sequence<List<PsiAnnotation>>,
+): PsiType {
+    val annotationsIterator = annotations.iterator()
+    if (!annotationsIterator.hasNext()) return this
+
+    if (this is PsiPrimitiveType) {
+        val typeAnnotation = annotationsIterator.next()
+        return if (typeAnnotation.isEmpty()) {
+            this
+        } else {
+            val provider = TypeAnnotationProvider.Static.create(typeAnnotation.toTypedArray())
+            // NB: [PsiType#annotate] makes a clone of the given [PsiType] while manipulating the type annotation provider.
+            // For simple primitive type, it will be okay and intuitive (than reflection hack).
+            annotate(provider)
+        }
+    }
+
+    fun recursiveAnnotator(psiType: PsiType) {
+        if (!annotationsIterator.hasNext()) return
+        val typeAnnotations = annotationsIterator.next()
+
+        when (psiType) {
+            is PsiPrimitiveType -> return // Primitive type cannot be type parameter so we skip it
+            is PsiClassType -> {
+                for (parameterType in psiType.parameters) {
+                    recursiveAnnotator(parameterType)
+                }
+            }
+            is PsiArrayType ->
+                recursiveAnnotator(psiType.componentType)
+            else -> {}
+        }
+
+        if (typeAnnotations.isEmpty()) return
+
+        val provider = TypeAnnotationProvider.Static.create(typeAnnotations.toTypedArray())
+        setPsiTypeAnnotationProvider(psiType, provider)
+    }
+
+    recursiveAnnotator(this)
+    return this
 }

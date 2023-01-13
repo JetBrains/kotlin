@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
-import com.intellij.psi.PsiClassType
-import com.intellij.psi.PsiElement
+import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightReferenceListBuilder
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.*
@@ -14,7 +13,10 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtKClassAnnotationValue.KtN
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
+import org.jetbrains.kotlin.asJava.classes.annotateByTypeAnnotationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -125,4 +127,31 @@ internal fun KtAnnotatedSymbol.computeThrowsList(
     }
 
     annoApp.arguments.forEach { handleAnnotationValue(it.expression) }
+}
+
+context(KtAnalysisSession)
+internal fun annotateByKtType(
+    psiType: PsiType,
+    ktType: KtType,
+    psiContext: PsiTypeElement,
+): PsiType {
+
+    fun KtType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> =
+        sequence {
+            yield(annotations.map { annoApp ->
+                SymbolLightSimpleAnnotation(
+                    annoApp.classId?.asFqNameString(),
+                    psiContext,
+                    annoApp.arguments,
+                    annoApp.psi
+                )
+            })
+            (this@getAnnotationsSequence as? KtNonErrorClassType)?.ownTypeArguments?.forEach { typeProjection ->
+                typeProjection.type?.let {
+                    yieldAll(it.getAnnotationsSequence())
+                }
+            }
+        }
+
+    return psiType.annotateByTypeAnnotationProvider(ktType.getAnnotationsSequence())
 }
