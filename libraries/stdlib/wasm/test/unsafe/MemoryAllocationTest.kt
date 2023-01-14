@@ -3,8 +3,8 @@ package test.wasm.unsafe
 import kotlin.wasm.unsafe.*
 import kotlin.test.*
 
-@JsFun("(a, b) => a + b")
-private external fun jsConcatStrings(a: String, b: String): String
+private fun jsConcatStrings(a: String, b: String): String =
+    js("a + b")
 
 @OptIn(UnsafeWasmMemoryApi::class)
 class MemoryAllocationTest {

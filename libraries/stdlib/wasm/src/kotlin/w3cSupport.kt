@@ -9,5 +9,5 @@ package kotlin.js
 internal val undefined: Nothing? = null
 
 @PublishedApi
-@JsFun("() => ({})")
-internal external fun newJsObject(): Dynamic
+internal fun newJsObject(): Dynamic =
+    js("({})")

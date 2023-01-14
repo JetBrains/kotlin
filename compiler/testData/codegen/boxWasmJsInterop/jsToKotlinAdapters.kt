@@ -11,17 +11,13 @@ inline fun checkNPE(body: () -> Unit) {
     check(throwed)
 }
 
-@JsFun("() => 'abc'")
-external fun notNullString(): String
+fun notNullString(): String = js("'abc'")
 
-@JsFun("() => null")
-external fun notNull2String(): String
+fun notNull2String(): String = js("null")
 
-@JsFun("() => 'abc'")
-external fun nullString(): String?
+fun nullString(): String? = js("'abc'")
 
-@JsFun("() => null")
-external fun null2String(): String?
+fun null2String(): String? = js("null")
 
 fun testString() {
     check(notNullString() == "abc")
@@ -32,17 +28,13 @@ fun testString() {
 
 external interface ExternRef
 
-@JsFun("() => 'abc'")
-external fun notNullExternRef(): ExternRef
+fun notNullExternRef(): ExternRef = js("'abc'")
 
-@JsFun("() => null")
-external fun notNull2ExternRef(): ExternRef
+fun notNull2ExternRef(): ExternRef = js("null")
 
-@JsFun("() => 'abc'")
-external fun nullExternRef(): ExternRef?
+fun nullExternRef(): ExternRef? = js("'abc'")
 
-@JsFun("() => null")
-external fun null2ExternRef(): ExternRef?
+fun null2ExternRef(): ExternRef? = js("null")
 
 
 fun testExterRef() {
@@ -54,17 +46,13 @@ fun testExterRef() {
 
 class DataRef
 
-@JsFun("(x) => x")
-external fun notNullDataRef(x: DataRef): DataRef
+fun notNullDataRef(x: DataRef): DataRef = js("x")
 
-@JsFun("(x) => null")
-external fun notNull2DataRef(x: DataRef): DataRef
+fun notNull2DataRef(x: DataRef): DataRef = js("null")
 
-@JsFun("(x) => x")
-external fun nullDataRef(x: DataRef): DataRef?
+fun nullDataRef(x: DataRef): DataRef? = js("x")
 
-@JsFun("(x) => null")
-external fun null2DataRef(x: DataRef): DataRef?
+fun null2DataRef(x: DataRef): DataRef? = js("null")
 
 fun testDataRef() {
     val dataRef = DataRef()
@@ -74,17 +62,13 @@ fun testDataRef() {
     check (null2DataRef(dataRef) == null)
 }
 
-@JsFun("() => 123")
-external fun notNullInt(): Int
+fun notNullInt(): Int = js("123")
 
-@JsFun("() => null")
-external fun notNull2Int(): Int
+fun notNull2Int(): Int = js("null")
 
-@JsFun("() => 123")
-external fun nullInt(): Int?
+fun nullInt(): Int? = js("123")
 
-@JsFun("() => null")
-external fun null2Int(): Int?
+fun null2Int(): Int? = js("null")
 
 fun testInt() {
     check(notNullInt() == 123)
@@ -93,17 +77,13 @@ fun testInt() {
     check(null2Int() == null)
 }
 
-@JsFun("() => true")
-external fun notNullBoolean(): Boolean
+fun notNullBoolean(): Boolean = js("true")
 
-@JsFun("() => null")
-external fun notNull2Boolean(): Boolean
+fun notNull2Boolean(): Boolean = js("null")
 
-@JsFun("() => true")
-external fun nullBoolean(): Boolean?
+fun nullBoolean(): Boolean? = js("true")
 
-@JsFun("() => null")
-external fun null2Boolean(): Boolean?
+fun null2Boolean(): Boolean? = js("null")
 
 fun testBoolean() {
     check(notNullBoolean() == true)
@@ -112,17 +92,13 @@ fun testBoolean() {
     check(null2Boolean() == null)
 }
 
-@JsFun("() => 123")
-external fun notNullShort(): Short
+fun notNullShort(): Short = js("123")
 
-@JsFun("() => null")
-external fun notNull2Short(): Short
+fun notNull2Short(): Short = js("null")
 
-@JsFun("() => 123")
-external fun nullShort(): Short?
+fun nullShort(): Short? = js("123")
 
-@JsFun("() => null")
-external fun null2Short(): Short?
+fun null2Short(): Short? = js("null")
 
 fun testShort() {
     check(notNullShort() == 123.toShort())
@@ -131,17 +107,13 @@ fun testShort() {
     check(null2Short() == null)
 }
 
-@JsFun("() => 123.5")
-external fun notNullFloat(): Float
+fun notNullFloat(): Float = js("123.5")
 
-@JsFun("() => null")
-external fun notNull2Float(): Float
+fun notNull2Float(): Float = js("null")
 
-@JsFun("() => 123.5")
-external fun nullFloat(): Float?
+fun nullFloat(): Float? = js("123.5")
 
-@JsFun("() => null")
-external fun null2Float(): Float?
+fun null2Float(): Float? = js("null")
 
 fun testFloat() {
     check(notNullFloat() == 123.5f)
@@ -151,17 +123,13 @@ fun testFloat() {
 }
 
 
-@JsFun("() => 123.5")
-external fun notNullNumber(): Number
+fun notNullNumber(): Number = js("123.5")
 
-@JsFun("() => null")
-external fun notNull2Number(): Number
+fun notNull2Number(): Number = js("null")
 
-@JsFun("() => 123.5")
-external fun nullNumber(): Number?
+fun nullNumber(): Number? = js("123.5")
 
-@JsFun("() => null")
-external fun null2Number(): Number?
+fun null2Number(): Number? = js("null")
 
 fun testNumber() {
     check(notNullNumber() == 123.5)

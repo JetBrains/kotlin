@@ -1,13 +1,13 @@
 // IGNORE_BACKEND: JS_IR, JS
 // FILE: file1.kt
-@JsFun("() => 42")
-private external fun clashName(): Int
+private fun clashName(): Int =
+    js("42")
 
 public fun getClashName1(): Int = clashName()
 
 // FILE: file2.kt
-@JsFun("() => 24")
-private external fun clashName(): Int
+private fun clashName(): Int =
+    js("24")
 
 public fun getClashName2(): Int = clashName()
 
