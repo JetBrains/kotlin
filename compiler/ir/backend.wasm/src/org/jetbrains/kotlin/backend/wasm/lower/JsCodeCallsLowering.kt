@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
@@ -32,15 +33,29 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
     private fun transformFunction(function: IrSimpleFunction): List<IrDeclaration>? {
         val body = function.body ?: return null
         check(body is IrBlockBody)  // Should be lowered to block body
-        val returnStatement = body.statements.singleOrNull() as? IrReturn ?: return null
-        val jsCode = returnStatement.value.getJsCode() ?: return null
+        val statement = body.statements.singleOrNull() ?: return null
+
+        val isSingleExpressionJsCode: Boolean
+        val jsCode: String
+        when (statement) {
+            is IrReturn -> {
+                jsCode = statement.value.getJsCode() ?: return null
+                isSingleExpressionJsCode = true
+            }
+            is IrCall -> {
+                jsCode = statement.getJsCode() ?: return null
+                isSingleExpressionJsCode = false
+            }
+            else -> return null
+        }
         val valueParameters = function.valueParameters
         val jsFunCode = buildString {
             append('(')
             append(valueParameters.joinToString { it.name.identifier })
-            append(") => (")
+            append(") => ")
+            if (!isSingleExpressionJsCode) append("{ ")
             append(jsCode)
-            append(")")
+            if (!isSingleExpressionJsCode) append(" }")
         }
         val externalFun = createExternalJsFunction(
             context,
@@ -52,13 +67,13 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
         externalFun.valueParameters = valueParameters.map {
             it.copyTo(externalFun, varargElementType = null, defaultValue = null)
         }
-        val builder = context.createIrBuilder(function.symbol)
-        returnStatement.value = with(builder) {
-            irCall(externalFun).apply {
+        with(context.createIrBuilder(function.symbol)) {
+            val externalCall = irCall(externalFun).apply {
                 valueParameters.forEachIndexed { index, parameter ->
                     putValueArgument(index, irGet(parameter))
                 }
             }
+            body.statements[0] = irReturn(externalCall)
         }
         return listOf(function, externalFun)
     }
