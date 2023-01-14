@@ -24,7 +24,7 @@ private external fun xit(name: String, fn: () -> Any?)
 @JsFun("(e) => { throw e }")
 private external fun jsThrow(jsException: Dynamic)
 
-@JsFun("(message, stack) => { const e = new Error(); e.message = message; e.stack = stack; return e; }")
+@JsFun("(message, stack) => { var e = new Error(); e.message = message; e.stack = stack; return e; }")
 private external fun throwableToJsError(message: String, stack: String): Dynamic
 
 private fun Throwable.toJsError(): Dynamic =
