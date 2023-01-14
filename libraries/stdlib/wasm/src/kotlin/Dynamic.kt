@@ -205,7 +205,8 @@ private fun jsThrow(e: Dynamic) {
     js("throw e;")
 }
 
-@JsFun("""(f) => {
+private fun jsCatch(f: () -> Unit): Dynamic? {
+    js("""
     let result = null;
     try { 
         f();
@@ -213,8 +214,8 @@ private fun jsThrow(e: Dynamic) {
        result = e;
     }
     return result;
-}""")
-private external fun jsCatch(f: () -> Unit): Dynamic?
+    """)
+}
 
 /**
  * For a Dynamic value caught in JS, returns the corresponding [Throwable]

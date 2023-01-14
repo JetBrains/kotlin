@@ -103,7 +103,7 @@ private fun externrefToFloat(ref: ExternalInterfaceType): Float =
 private fun externrefToDouble(ref: ExternalInterfaceType): Double =
     js("Number(ref)")
 
-private external fun intToExternref(x: Int): ExternalInterfaceType =
+private fun intToExternref(x: Int): ExternalInterfaceType =
     js("x")
 
 private fun longToExternref(x: Long): ExternalInterfaceType =

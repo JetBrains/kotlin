@@ -3,8 +3,8 @@ package test.js
 import kotlin.js.*
 import kotlin.test.*
 
-@JsFun("async () => 'foo'")
-internal external fun jsAsyncFoo(): Promise<Dynamic?>
+internal fun jsAsyncFoo(): Promise<Dynamic?> =
+    js("eval(\"(async () => 'foo')()\")")
 
 internal fun jsFoo(): Dynamic =
     js("'foo'")
