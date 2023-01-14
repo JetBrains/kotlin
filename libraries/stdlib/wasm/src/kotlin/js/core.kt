@@ -35,3 +35,25 @@ import kotlin.wasm.internal.ExcludedFromCodegen
  */
 @ExcludedFromCodegen
 public external val definedExternally: Nothing
+
+/**
+ * TODO: Document for Wasm
+ *
+ * Puts the given piece of a JavaScript code right into the calling function.
+ * The compiler replaces call to `js(...)` code with the string constant provided as a parameter.
+ *
+ * Example:
+ *
+ * ``` kotlin
+ * fun logToConsole(message: String): Unit {
+ *     js("console.log(message)")
+ * }
+ * ```
+ *
+ * @param code the piece of JavaScript code to put to the generated code.
+ *        Must be a compile-time constant, otherwise compiler produces error message.
+ *        You can safely refer to local variables of calling function (but not to local variables of outer functions),
+ *        including parameters. You can't refer to functions, properties and classes by their short names.
+ */
+@ExcludedFromCodegen
+public external fun js(code: String): Nothing

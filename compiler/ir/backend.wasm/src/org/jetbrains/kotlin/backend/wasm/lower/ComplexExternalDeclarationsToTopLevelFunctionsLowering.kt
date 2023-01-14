@@ -328,19 +328,30 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         resultType: IrType,
         jsCode: String,
     ): IrSimpleFunction {
-        val res = context.irFactory.buildFun {
-            name = Name.identifier(originalName.asStringStripSpecialMarkers() + suffix)
-            returnType = resultType
-            isExternal = true
-        }
-        val builder = context.createIrBuilder(res.symbol)
-        res.annotations += builder.irCallConstructor(context.wasmSymbols.jsFunConstructor, typeArguments = emptyList()).also {
-            it.putValueArgument(0, builder.irString(jsCode))
-        }
+        val res = createExternalJsFunction(context, originalName, suffix, resultType, jsCode)
         res.parent = currentFile
         addedDeclarations += res
         return res
     }
+}
+
+fun createExternalJsFunction(
+    context: WasmBackendContext,
+    originalName: Name,
+    suffix: String,
+    resultType: IrType,
+    jsCode: String,
+): IrSimpleFunction {
+    val res = context.irFactory.buildFun {
+        name = Name.identifier(originalName.asStringStripSpecialMarkers() + suffix)
+        returnType = resultType
+        isExternal = true
+    }
+    val builder = context.createIrBuilder(res.symbol)
+    res.annotations += builder.irCallConstructor(context.wasmSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+        it.putValueArgument(0, builder.irString(jsCode))
+    }
+    return res
 }
 
 /**
