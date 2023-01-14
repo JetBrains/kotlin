@@ -35,3 +35,30 @@ import kotlin.wasm.internal.ExcludedFromCodegen
  */
 @ExcludedFromCodegen
 public external val definedExternally: Nothing
+
+/**
+ * This function can be used to implement top-level functions and property intializers with JavaScript [code].
+ * Calls to this functions are restricted to be the only expression in function body or property initializer.
+ *
+ * Parameter [code] must be a compile-time constant, otherwise compiler produces error message.
+ *
+ * When used in expression body, [code] must be a JavaScript expression. For example:
+ * ``` kotlin
+ * val version: String = js("process.version")
+ * fun newEmptyJsArray(): JsValue = js("[]")
+ * ```
+ *
+ * When used in bock function body, [code] should be a list of JavaScript statements. For example:
+ * ``` kotlin
+ * fun log(message1: String, message2: String) {
+ *     js("""
+ *     console.log(message1);
+ *     console.log(message2);
+ *     """)
+ * }
+ * ```
+ *
+ * You can safely refer to parameters of calling function from JS [code]. You can't refer to any other Kotlin declarations.
+ */
+@ExcludedFromCodegen
+public external fun js(code: String): Nothing
