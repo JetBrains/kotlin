@@ -131,6 +131,21 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
         sw: JvmSignatureWriter? = null
     ): Type = AbstractTypeMapper.mapType(this, type, mode, sw)
 
+    fun mapVArrayToClassId(type: IrType): Type {
+        require(type is IrSimpleType && type.isVArray)
+        var elementType: IrSimpleType = type
+        var vArrayDimensionsCount = 0
+        while (elementType.isVArray) {
+            vArrayDimensionsCount++
+            elementType = elementType.arguments[0] as IrSimpleType
+        }
+        var asmType = mapType(elementType, TypeMappingMode.CLASS_DECLARATION)
+        while (vArrayDimensionsCount-- > 0) {
+            asmType = AsmUtil.getArrayType(asmType)
+        }
+        return asmType
+    }
+
     override fun JvmSignatureWriter.writeGenericType(type: KotlinTypeMarker, asmType: Type, mode: TypeMappingMode) {
         if (type is IrErrorType) {
             writeAsmType(asmType)

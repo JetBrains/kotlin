@@ -1559,6 +1559,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             public void testVArraySize() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/vArrays/vArraySize.kt");
             }
+
+            @Test
+            @TestMetadata("vArrayTypeChecks.kt")
+            public void testVArrayTypeChecks() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayTypeChecks.kt");
+            }
         }
     }
 

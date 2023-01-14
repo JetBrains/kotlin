@@ -31,7 +31,7 @@ object NewVArray : IntrinsicMethod() {
             } else {
                 mv.newarray(typeMapper.mapType(elementIrType))
             }
-            mv.aconst(AsmUtil.getArrayType(codegen.typeMapper.mapType(expression.getTypeArgument(0)!!, TypeMappingMode.CLASS_DECLARATION)))
+            mv.aconst(typeMapper.mapVArrayToClassId(expression.type))
             mv.invokespecial(vArrayWrapperType, "<init>", "(Ljava/lang/Object;Ljava/lang/Class;)V", false)
             expression.onStack
         }
