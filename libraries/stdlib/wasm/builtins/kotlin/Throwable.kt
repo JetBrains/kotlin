@@ -40,5 +40,5 @@ public open class Throwable(open val message: String?, open val cause: kotlin.Th
     }
 }
 
-@JsFun("() => new Error().stack")
-private external fun captureStackTrace(): ExternalInterfaceType
+private fun captureStackTrace(): ExternalInterfaceType =
+    js("new Error().stack")

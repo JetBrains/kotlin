@@ -9,14 +9,14 @@ import kotlin.wasm.internal.ExternalInterfaceType
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 import kotlin.time.Duration.Companion.milliseconds
 
-@JsFun("() => typeof globalThis !== 'undefined' && typeof globalThis.performance !== 'undefined' ? globalThis.performance : null")
-private external fun tryGetPerformance(): ExternalInterfaceType?
+private fun tryGetPerformance(): ExternalInterfaceType? =
+    js("typeof globalThis !== 'undefined' && typeof globalThis.performance !== 'undefined' ? globalThis.performance : null")
 
-@JsFun("(performance) => performance.now()")
-private external fun getPerformanceNow(performance: ExternalInterfaceType): Double
+private fun getPerformanceNow(performance: ExternalInterfaceType): Double =
+    js("performance.now()")
 
-@JsFun("() => Date.now()")
-private external fun dateNow(): Double
+private fun dateNow(): Double =
+    js("Date.now()")
 
 @SinceKotlin("1.3")
 @ExperimentalTime

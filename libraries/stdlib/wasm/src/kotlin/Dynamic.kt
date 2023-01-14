@@ -46,44 +46,44 @@ internal external fun dynamicSetString(obj: Dynamic, index: String, value: Strin
 internal external fun dynamicSetAny(obj: Dynamic, index: String, value: Any?)
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetBoolean(obj: Dynamic, index: String): Boolean
+internal fun dynamicGetBoolean(obj: Dynamic, index: String): Boolean =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetByte(obj: Dynamic, index: String): Byte
+internal fun dynamicGetByte(obj: Dynamic, index: String): Byte =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetShort(obj: Dynamic, index: String): Short
+internal fun dynamicGetShort(obj: Dynamic, index: String): Short =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetChar(obj: Dynamic, index: String): Char
+internal fun dynamicGetChar(obj: Dynamic, index: String): Char =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetInt(obj: Dynamic, index: String): Int
+internal fun dynamicGetInt(obj: Dynamic, index: String): Int =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetLong(obj: Dynamic, index: String): Long
+internal fun dynamicGetLong(obj: Dynamic, index: String): Long =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetFloat(obj: Dynamic, index: String): Float
+internal fun dynamicGetFloat(obj: Dynamic, index: String): Float =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetDouble(obj: Dynamic, index: String): Double
+internal fun dynamicGetDouble(obj: Dynamic, index: String): Double =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetString(obj: Dynamic, index: String): String?
+internal fun dynamicGetString(obj: Dynamic, index: String): String? =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetAny(obj: Dynamic, index: String): Any?
+internal fun dynamicGetAny(obj: Dynamic, index: String): Any? =
+    js("obj[index]")
 
 @PublishedApi
 internal fun Dynamic.getBoolean(index: String): Boolean = dynamicGetBoolean(this, index)

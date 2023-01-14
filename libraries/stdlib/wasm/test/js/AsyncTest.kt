@@ -6,8 +6,8 @@ import kotlin.test.*
 @JsFun("async () => 'foo'")
 internal external fun jsAsyncFoo(): Promise<Dynamic?>
 
-@JsFun("() => 'foo'")
-internal external fun jsFoo(): Dynamic
+internal fun jsFoo(): Dynamic =
+    js("'foo'")
 
 var state: Dynamic? = null
 

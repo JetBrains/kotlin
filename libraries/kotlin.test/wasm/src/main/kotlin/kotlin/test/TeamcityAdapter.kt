@@ -9,10 +9,11 @@ import kotlin.test.FrameworkAdapter
 import kotlin.math.abs
 import kotlin.js.*
 
-@JsFun("() => (typeof arguments !== 'undefined' && typeof arguments.join !== 'undefined') ? arguments.join(' ') : '' ")
-private external fun d8Arguments(): String
-@JsFun("() => (typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(2).join(' ') : ''")
-private external fun nodeArguments(): String
+private fun d8Arguments(): String =
+    js("(typeof arguments !== 'undefined' && typeof arguments.join !== 'undefined') ? arguments.join(' ') : '' ")
+
+private fun nodeArguments(): String =
+    js("(typeof process != 'undefined' && typeof process.argv != 'undefined') ? process.argv.slice(2).join(' ') : ''")
 
 internal class TeamcityAdapter : FrameworkAdapter {
 

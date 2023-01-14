@@ -85,23 +85,23 @@ return (obj) => {
 )
 private external fun externrefHashCode(ref: ExternalInterfaceType): Int
 
-@JsFun("ref => String(ref)")
-private external fun externrefToString(ref: ExternalInterfaceType): String
+private fun externrefToString(ref: ExternalInterfaceType): String =
+    js("String(ref)")
 
-@JsFun("ref => Number(ref)")
-private external fun externrefToInt(ref: ExternalInterfaceType): Int
+private fun externrefToInt(ref: ExternalInterfaceType): Int =
+    js("Number(ref)")
 
-@JsFun("ref => Number(ref)")
-private external fun externrefToLong(ref: ExternalInterfaceType): Long
+private fun externrefToLong(ref: ExternalInterfaceType): Long =
+    js("Number(ref)")
 
-@JsFun("ref => Boolean(ref)")
-private external fun externrefToBoolean(ref: ExternalInterfaceType): Boolean
+private fun externrefToBoolean(ref: ExternalInterfaceType): Boolean =
+    js("Boolean(ref)")
 
-@JsFun("ref => Number(ref)")
-private external fun externrefToFloat(ref: ExternalInterfaceType): Float
+private fun externrefToFloat(ref: ExternalInterfaceType): Float =
+    js("Number(ref)")
 
-@JsFun("ref => Number(ref)")
-private external fun externrefToDouble(ref: ExternalInterfaceType): Double
+private fun externrefToDouble(ref: ExternalInterfaceType): Double =
+    js("Number(ref)")
 
 @JsFun("x => x")
 private external fun intToExternref(x: Int): ExternalInterfaceType
@@ -118,8 +118,8 @@ private external fun floatToExternref(x: Float): ExternalInterfaceType
 @JsFun("x => x")
 private external fun doubleToExternref(x: Double): ExternalInterfaceType
 
-@JsFun("(lhs, rhs) => lhs === rhs")
-private external fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceType): Boolean
+private fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceType): Boolean =
+    js("lhs === rhs")
 
 private external fun tryGetOrSetExternrefBox(ref: ExternalInterfaceType, ifNotCached: JsExternalBox): JsExternalBox?
 
@@ -136,8 +136,8 @@ private fun ExternalInterfaceType.externAsWasmAnyref(): anyref =
 private fun Any.asWasmExternRef(): ExternalInterfaceType =
     implementedAsIntrinsic
 
-@JsFun("(ref) => ref == null")
-internal external fun isNullish(ref: ExternalInterfaceType?): Boolean
+internal fun isNullish(ref: ExternalInterfaceType?): Boolean =
+    js("ref == null")
 
 internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // TODO rewrite it so to get something like:
@@ -169,8 +169,8 @@ internal fun anyToExternRef(x: Any): ExternalInterfaceType {
         x.asWasmExternRef()
 }
 
-@JsFun("x => x.length")
-internal external fun stringLength(x: ExternalInterfaceType): Int
+internal fun stringLength(x: ExternalInterfaceType): Int =
+    js("x.length")
 
 // kotlin string to js string export
 // TODO Uint16Array may work with byte endian different with Wasm (i.e. little endian)
@@ -259,14 +259,14 @@ internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
 }
 
 
-@JsFun("() => ''")
-private external fun getJsEmptyString(): ExternalInterfaceType
+private fun getJsEmptyString(): ExternalInterfaceType =
+    js("''")
 
-@JsFun("() => true")
-private external fun getJsTrue(): ExternalInterfaceType
+private fun getJsTrue(): ExternalInterfaceType =
+    js("true")
 
-@JsFun("() => false")
-private external fun getJsFalse(): ExternalInterfaceType
+private fun getJsFalse(): ExternalInterfaceType =
+    js("false")
 
 private val jsEmptyString by lazy(::getJsEmptyString)
 private val jsTrue by lazy(::getJsTrue)
@@ -325,8 +325,8 @@ internal fun kotlinShortToExternRefAdapter(x: Short): ExternalInterfaceType =
 internal fun kotlinCharToExternRefAdapter(x: Char): ExternalInterfaceType =
     intToExternref(x.toInt())
 
-@JsFun("() => []")
-internal external fun newJsArray(): ExternalInterfaceType
+internal fun newJsArray(): ExternalInterfaceType =
+    js("[]")
 
 @JsFun("(array, element) => { array.push(element); }")
 internal external fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfaceType)

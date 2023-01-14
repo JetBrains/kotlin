@@ -26,8 +26,8 @@ external fun nullExternRef(x: ExternRef?)
 @JsFun("(x) => { if (x !== null) throw 'error' }")
 external fun null2ExternRef(x: ExternRef?)
 
-@JsFun("() => 'abc'")
-external fun getExternRef(): ExternRef
+fun getExternRef(): ExternRef =
+    js("'abc'")
 
 fun testExterRef() {
     val externRef = getExternRef()
