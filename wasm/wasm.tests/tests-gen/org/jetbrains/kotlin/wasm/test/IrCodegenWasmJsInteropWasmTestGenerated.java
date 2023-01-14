@@ -65,6 +65,11 @@ public class IrCodegenWasmJsInteropWasmTestGenerated extends AbstractIrCodegenWa
         runTest("compiler/testData/codegen/boxWasmJsInterop/imperativeWrapperUninitialised.kt");
     }
 
+    @TestMetadata("jsCode.kt")
+    public void testJsCode() throws Exception {
+        runTest("compiler/testData/codegen/boxWasmJsInterop/jsCode.kt");
+    }
+
     @TestMetadata("jsExport.kt")
     public void testJsExport() throws Exception {
         runTest("compiler/testData/codegen/boxWasmJsInterop/jsExport.kt");

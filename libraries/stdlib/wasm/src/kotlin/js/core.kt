@@ -35,3 +35,36 @@ import kotlin.wasm.internal.ExcludedFromCodegen
  */
 @ExcludedFromCodegen
 public external val definedExternally: Nothing
+
+/**
+ * This function allows you to incorporate JavaScript [code] into Kotlin/Wasm codebase.
+ * It is used to implement top-level functions and initialize top-level properties.
+ *
+ * It is important to note, that calls to [js] function should be the only expression
+ * in a function body or a property initializer.
+ *
+ * [code] parameter should be a compile-time constant.
+ *
+ * When used in an expression context, [code] should contain a single JavaScript expression. For example:
+ *
+ * ``` kotlin
+ * val version: String = js("process.version")
+ * fun newEmptyJsArray(): JsValue = js("[]")
+ * ```
+ *
+ * When used in a function body, [code] is expected to be a list of JavaScript statements. For example:
+ *
+ * ``` kotlin
+ * fun log(message1: String, message2: String) {
+ *     js("""
+ *     console.log(message1);
+ *     console.log(message2);
+ *     """)
+ * }
+ * ```
+ *
+ * You can use parameters of calling function in JavaScript [code].
+ * However, other Kotlin declarations are not visible inside the [code] block.
+ */
+@ExcludedFromCodegen
+public external fun js(code: String): Nothing
