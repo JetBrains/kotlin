@@ -328,5 +328,6 @@ internal fun kotlinCharToExternRefAdapter(x: Char): ExternalInterfaceType =
 internal fun newJsArray(): ExternalInterfaceType =
     js("[]")
 
-@JsFun("(array, element) => { array.push(element); }")
-internal external fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfaceType)
+internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfaceType) {
+    js("array.push(element);")
+}

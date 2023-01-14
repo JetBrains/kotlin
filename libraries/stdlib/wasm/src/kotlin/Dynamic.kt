@@ -203,8 +203,9 @@ fun <T> Nothing?.unsafeCast(): Dynamic? = null
  */
 fun <T> Dynamic.unsafeCast(): T = this as T
 
-@JsFun("e => { throw e; }")
-private external fun jsThrow(e: Dynamic)
+private fun jsThrow(e: Dynamic) {
+    js("throw e;")
+}
 
 @JsFun("""(f) => {
     let result = null;
