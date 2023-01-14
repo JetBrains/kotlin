@@ -63,13 +63,15 @@ val typeToСheckingFunc = mapOf(
     VArrayType.U_LONG to ::isULongVArray
 )
 
-fun check(obj: Any?, expectedType: VArrayType): Boolean {
+fun isTypeExpected(obj: Any?, expectedType: VArrayType): Boolean {
     typeToСheckingFunc.forEach { (type, checkingFunc) ->
         if (type == expectedType && !checkingFunc(obj)) return false
         if (type != expectedType && checkingFunc(obj)) return false
     }
     return true
 }
+
+fun isNoneOfTypes(obj: Any?) = typeToСheckingFunc.none { (type, checkingFunc) -> checkingFunc(obj) }
 
 
 @JvmInline
@@ -106,27 +108,35 @@ fun box(): String {
     val uIntVArray = VArray<UInt>(1) { 0.toUInt() }
     val uLongVArray = VArray<ULong>(1) { 0.toULong() }
 
+    val arrayOfInt = Array<Int>(1) { 0 }
+    val arrayOfStr = Array<String>(1) { "a" }
+    val arrayOfIcInt = Array<IcInt>(1) { IcInt(0) }
 
-    if (!check(boolVArray, VArrayType.BOOL)) return "Fail 1"
-    if (!check(byteVArray, VArrayType.BYTE)) return "Fail 2"
-    if (!check(shortVArray, VArrayType.SHORT)) return "Fail 3"
-    if (!check(intVArray, VArrayType.INT)) return "Fail 4"
-    if (!check(longVArray, VArrayType.LONG)) return "Fail 5"
-    if (!check(floatVArray, VArrayType.FLOAT)) return "Fail 6"
-    if (!check(doubleVArray, VArrayType.DOUBLE)) return "Fail 7"
-    if (!check(charVArray, VArrayType.CHAR)) return "Fail 8"
 
-    if (!check(icIntVArray, VArrayType.IcInt)) return "Fail 9"
-    if (!check(strVArray, VArrayType.STRING)) return "Fail 10"
-    if (!check(icIcIntVArray, VArrayType.IcIcInt)) return "Fail 11"
-    if (!check(icStrVArray, VArrayType.IcStr)) return "Fail 12"
-    if (!check(double3dVArray, VArrayType.DOUBLE_3D)) return "Fail 13"
-    if (!check(str2dVArray, VArrayType.STR_2D)) return "Fail 14"
+    if (!isTypeExpected(boolVArray, VArrayType.BOOL)) return "Fail 1"
+    if (!isTypeExpected(byteVArray, VArrayType.BYTE)) return "Fail 2"
+    if (!isTypeExpected(shortVArray, VArrayType.SHORT)) return "Fail 3"
+    if (!isTypeExpected(intVArray, VArrayType.INT)) return "Fail 4"
+    if (!isTypeExpected(longVArray, VArrayType.LONG)) return "Fail 5"
+    if (!isTypeExpected(floatVArray, VArrayType.FLOAT)) return "Fail 6"
+    if (!isTypeExpected(doubleVArray, VArrayType.DOUBLE)) return "Fail 7"
+    if (!isTypeExpected(charVArray, VArrayType.CHAR)) return "Fail 8"
 
-    if (!check(uByteVArray, VArrayType.U_BYTE)) return "Fail 15"
-    if (!check(uShortVArray, VArrayType.U_SHORT)) return "Fail 16"
-    if (!check(uIntVArray, VArrayType.U_INT)) return "Fail 17"
-    if (!check(uLongVArray, VArrayType.U_LONG)) return "Fail 18"
+    if (!isTypeExpected(icIntVArray, VArrayType.IcInt)) return "Fail 9"
+    if (!isTypeExpected(strVArray, VArrayType.STRING)) return "Fail 10"
+    if (!isTypeExpected(icIcIntVArray, VArrayType.IcIcInt)) return "Fail 11"
+    if (!isTypeExpected(icStrVArray, VArrayType.IcStr)) return "Fail 12"
+    if (!isTypeExpected(double3dVArray, VArrayType.DOUBLE_3D)) return "Fail 13"
+    if (!isTypeExpected(str2dVArray, VArrayType.STR_2D)) return "Fail 14"
+
+    if (!isTypeExpected(uByteVArray, VArrayType.U_BYTE)) return "Fail 15"
+    if (!isTypeExpected(uShortVArray, VArrayType.U_SHORT)) return "Fail 16"
+    if (!isTypeExpected(uIntVArray, VArrayType.U_INT)) return "Fail 17"
+    if (!isTypeExpected(uLongVArray, VArrayType.U_LONG)) return "Fail 18"
+
+    if (!isNoneOfTypes(arrayOfInt)) return "Fail 19"
+    if (!isNoneOfTypes(arrayOfStr)) return "Fail 20"
+    if (!isNoneOfTypes(arrayOfIcInt)) return "Fail 21"
 
     return "OK"
 }
