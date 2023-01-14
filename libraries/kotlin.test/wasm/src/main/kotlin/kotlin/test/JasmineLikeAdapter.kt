@@ -9,23 +9,25 @@ import kotlin.test.FrameworkAdapter
 import kotlin.js.Promise
 
 // Need to wrap into additional lambdas so that js launcher will work without Mocha or any other testing framework
-@JsFun("(name, fn) => describe(name, fn)")
-private external fun describe(name: String, fn: () -> Unit)
+private fun describe(name: String, fn: () -> Unit): Unit =
+    js("describe(name, fn)")
 
-@JsFun("(name, fn) => xdescribe(name, fn)")
-private external fun xdescribe(name: String, fn: () -> Unit)
+private fun xdescribe(name: String, fn: () -> Unit): Unit =
+    js("xdescribe(name, fn)")
 
-@JsFun("(name, fn) => it(name, fn)")
-private external fun it(name: String, fn: () -> Any?)
+private fun it(name: String, fn: () -> Any?): Unit =
+    js("it(name, fn)")
 
-@JsFun("(name, fn) => xit(name, fn)")
-private external fun xit(name: String, fn: () -> Any?)
+private fun xit(name: String, fn: () -> Any?): Unit =
+    js("xit(name, fn)")
 
-@JsFun("(e) => { throw e }")
-private external fun jsThrow(jsException: Dynamic)
+private fun jsThrow(jsException: Dynamic) {
+    js("throw e")
+}
 
-@JsFun("(message, stack) => { const e = new Error(); e.message = message; e.stack = stack; return e; }")
-private external fun throwableToJsError(message: String, stack: String): Dynamic
+private fun throwableToJsError(message: String, stack: String): Dynamic {
+    js("var e = new Error(); e.message = message; e.stack = stack; return e;")
+}
 
 private fun Throwable.toJsError(): Dynamic =
     throwableToJsError(message ?: "", stackTraceToString())
