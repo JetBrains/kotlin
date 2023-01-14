@@ -34,5 +34,5 @@ internal actual fun formatToExactDecimals(value: Double, decimals: Int): String 
     }
 }
 
-@JsFun("(value, decimals) => value.toLocaleString(\"en-us\", ({\"maximumFractionDigits\": decimals}))")
-external internal actual fun formatUpToDecimals(value: Double, decimals: Int): String
+internal actual fun formatUpToDecimals(value: Double, decimals: Int): String =
+    js("(value, decimals) => value.toLocaleString(\"en-us\", ({\"maximumFractionDigits\": decimals}))")

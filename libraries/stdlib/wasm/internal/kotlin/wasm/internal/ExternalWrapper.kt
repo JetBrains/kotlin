@@ -103,20 +103,20 @@ private fun externrefToFloat(ref: ExternalInterfaceType): Float =
 private fun externrefToDouble(ref: ExternalInterfaceType): Double =
     js("Number(ref)")
 
-@JsFun("x => x")
-private external fun intToExternref(x: Int): ExternalInterfaceType
+private external fun intToExternref(x: Int): ExternalInterfaceType =
+    js("x")
 
-@JsFun("x => x")
-private external fun longToExternref(x: Long): ExternalInterfaceType
+private fun longToExternref(x: Long): ExternalInterfaceType =
+    js("x")
 
-@JsFun("x => x")
-private external fun booleanToExternref(x: Boolean): ExternalInterfaceType
+private fun booleanToExternref(x: Boolean): ExternalInterfaceType =
+    js("x")
 
-@JsFun("x => x")
-private external fun floatToExternref(x: Float): ExternalInterfaceType
+private fun floatToExternref(x: Float): ExternalInterfaceType =
+    js("x")
 
-@JsFun("x => x")
-private external fun doubleToExternref(x: Double): ExternalInterfaceType
+private fun doubleToExternref(x: Double): ExternalInterfaceType =
+    js("x")
 
 private fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceType): Boolean =
     js("lhs === rhs")

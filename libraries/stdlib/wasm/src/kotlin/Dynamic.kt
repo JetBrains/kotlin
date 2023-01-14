@@ -181,12 +181,10 @@ operator fun Dynamic.set(index: Int, value: Any?) {
     this[index.toString()] = value
 }
 
-@JsFun("(x) => x")
-private external fun <T> unsafeCastJs(x: String): Dynamic
+private fun <T> unsafeCastJs(x: String): Dynamic = js("x")
 fun <T> String.unsafeCast(): T = unsafeCastJs<T>(this) as T
 
-@JsFun("(x) => x")
-private external fun <T> unsafeCastJs(x: Boolean): Dynamic
+private fun <T> unsafeCastJs(x: Boolean): Dynamic = js("x")
 
 /**
  * Reinterprets boolean value as a value of the specified type [T] without any actual type checking.
