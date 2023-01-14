@@ -39,6 +39,8 @@ class WasmSymbols(
         context.module.getPackage(FqName("kotlin.enums"))
     private val wasmInternalPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin.wasm.internal"))
+    private val kotlinJsPackage: PackageViewDescriptor =
+        context.module.getPackage(FqName("kotlin.js"))
     private val collectionsPackage: PackageViewDescriptor =
         context.module.getPackage(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
     private val builtInsPackage: PackageViewDescriptor =
@@ -328,6 +330,8 @@ class WasmSymbols(
 
     private val jsFunClass = getIrClass(FqName("kotlin.JsFun"))
     val jsFunConstructor by lazy { jsFunClass.constructors.single() }
+
+    val jsCode = getFunction("js", kotlinJsPackage)
 
     private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
         memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor

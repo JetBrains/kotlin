@@ -187,6 +187,12 @@ private val wasmStringSwitchOptimizerLowering = makeWasmModulePhase(
     description = "Replace when with constant string cases to binary search by string hashcodes"
 )
 
+private val jsCodeCallsLowering = makeWasmModulePhase(
+    ::JsCodeCallsLowering,
+    name = "JsCodeCallsLowering",
+    description = "Lower calls to js('code') into @JsFun",
+)
+
 private val complexExternalDeclarationsToTopLevelFunctionsLowering = makeWasmModulePhase(
     ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,
     name = "ComplexExternalDeclarationsToTopLevelFunctionsLowering",
@@ -592,6 +598,7 @@ val wasmPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then
+            jsCodeCallsLowering then
             generateTests then
             excludeDeclarationsFromCodegenPhase then
             expectDeclarationsRemovingPhase then
