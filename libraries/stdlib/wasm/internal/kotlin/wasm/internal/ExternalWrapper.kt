@@ -174,13 +174,13 @@ internal fun stringLength(x: ExternalInterfaceType): Int =
 
 // kotlin string to js string export
 // TODO Uint16Array may work with byte endian different with Wasm (i.e. little endian)
-@JsFun("""(address, length, prefix) => {
+internal fun importStringFromWasm(address: Int, length: Int, prefix: ExternalInterfaceType?): ExternalInterfaceType {
+    js("""
     const mem16 = new Uint16Array(wasmExports.memory.buffer, address, length);
     const str = String.fromCharCode.apply(null, mem16);
-    return (prefix == null) ? str : prefix + str;
+    return (prefix == null) ? str : prefix + str;    
+    """)
 }
-""")
-internal external fun importStringFromWasm(address: Int, length: Int, prefix: ExternalInterfaceType?): ExternalInterfaceType
 
 internal fun kotlinToJsStringAdapter(x: String?): ExternalInterfaceType? {
     // Using nullable String to represent default value
@@ -214,21 +214,18 @@ internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): Externa
 
 // js string to kotlin string import
 // TODO Uint16Array may work with byte endian different with Wasm (i.e. little endian)
-//language=js
-@JsFun(
-    """ (src, srcOffset, srcLength, dstAddr) => {
-        const mem16 = new Uint16Array(wasmExports.memory.buffer, dstAddr, srcLength);
-        let arrayIndex = 0;
-        let srcIndex = srcOffset;
-        while (arrayIndex < srcLength) {
-            mem16.set([src.charCodeAt(srcIndex)], arrayIndex);
-            srcIndex++;
-            arrayIndex++;
-        }
-    }
-"""
-)
-internal external fun jsExportStringToWasm(src: ExternalInterfaceType, srcOffset: Int, srcLength: Int, dstAddr: Int)
+internal fun jsExportStringToWasm(src: ExternalInterfaceType, srcOffset: Int, srcLength: Int, dstAddr: Int) {
+    js("""
+    const mem16 = new Uint16Array(wasmExports.memory.buffer, dstAddr, srcLength);
+    let arrayIndex = 0;
+    let srcIndex = srcOffset;
+    while (arrayIndex < srcLength) {
+        mem16.set([src.charCodeAt(srcIndex)], arrayIndex);
+        srcIndex++;
+        arrayIndex++;
+    }     
+    """)
+}
 
 private const val STRING_INTEROP_MEM_BUFFER_SIZE = 65_536 // 1 page 4KiB
 
