@@ -5,4 +5,4 @@
 
 package kotlin
 
-class VArrayWrapper(val array: Any, val clazz: Class<*>?)
+class VArrayWrapper(val array: Any, val clazz: Class<*>)

@@ -78,6 +78,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.dataClassArrayMemberToStringSymbol.toKey()!! to IrDataClassArrayMemberToString,
                 symbols.singleArgumentInlineFunction.toKey()!! to SingleArgumentInlineFunctionIntrinsic,
                 symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce,
+                symbols.vArrayToClazzIntrinsic.toKey()!! to VArrayToClazz,
                 symbols.signatureStringIntrinsic.toKey()!! to SignatureString,
                 symbols.throwNullPointerException.toKey()!! to ThrowException(Type.getObjectType("java/lang/NullPointerException")),
                 symbols.throwTypeCastException.toKey()!! to ThrowException(Type.getObjectType("kotlin/TypeCastException")),

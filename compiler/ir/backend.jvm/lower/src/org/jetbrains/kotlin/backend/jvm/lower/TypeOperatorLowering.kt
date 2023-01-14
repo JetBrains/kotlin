@@ -26,7 +26,10 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.deepCopyWithVariables
+import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -36,7 +39,13 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.argumentsCount
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getArgument
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getArguments
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getType
+import org.jetbrains.kotlin.types.checker.isClassType
 import org.jetbrains.org.objectweb.asm.Handle
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -60,12 +69,23 @@ internal val typeOperatorLowering = makeIrFilePhase(
 private class TypeOperatorLowering(private val backendContext: JvmBackendContext) :
     FileLoweringPass, IrBuildingTransformer(backendContext) {
 
+    private val vArrayWrapperClazzGetter = with(backendContext) {
+        irFactory.buildFun {
+            name = Name.identifier("getClazz")
+            returnType = ir.symbols.javaLangClass.defaultType
+        }.apply {
+            parent = ir.symbols.vArrayWrapperClass.owner
+            createDispatchReceiverParameter()
+        }
+    }
+
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid()
 
     private fun IrExpression.transformVoid() = transform(this@TypeOperatorLowering, null)
 
     private fun lowerInstanceOf(argument: IrExpression, type: IrType) = with(builder) {
         when {
+            type.isVArray -> isVArrayInstanceIr(builder, argument, type)
             type.isReifiedTypeParameter ->
                 irIs(argument, type)
             argument.type.isNullable() && type.isNullable() -> {
@@ -79,6 +99,19 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
             argument.type.isNullable() && !type.isNullable() && argument.type.erasedUpperBound == type.erasedUpperBound ->
                 irNotEquals(argument, irNull())
             else -> irIs(argument, type.makeNotNull())
+        }
+    }
+
+    private fun isVArrayInstanceIr(builder: IrBuilderWithScope, argument: IrExpression, type: IrType): IrExpression {
+        with(builder) {
+            val vArrayWrapperType = backendContext.ir.symbols.vArrayWrapperClass.defaultType
+            return context.andand(
+                irIs(argument, vArrayWrapperType),
+                irEqeqeq(
+                    irCall(vArrayWrapperClazzGetter).apply { dispatchReceiver = irImplicitCast(argument.deepCopyWithVariables(), vArrayWrapperType) },
+                    irCall(backendContext.ir.symbols.vArrayToClazzIntrinsic).apply { putTypeArgument(0, type) }
+                )
+            )
         }
     }
 

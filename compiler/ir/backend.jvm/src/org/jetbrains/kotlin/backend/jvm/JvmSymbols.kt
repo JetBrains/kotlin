@@ -231,7 +231,8 @@ class JvmSymbols(
     private val enumEntriesKt: IrClassSymbol = createClass(FqName("kotlin.enums.EnumEntriesKt")) { klass ->
         klass.addFunction("enumEntries", enumEntries.defaultType, isStatic = true).apply {
             addValueParameter("entriesProvider",
-                              irBuiltIns.functionN(0).typeWith(irBuiltIns.arrayClass.typeWith(klass.typeParameters.map { it.defaultType })))
+                              irBuiltIns.functionN(0).typeWith(irBuiltIns.arrayClass.typeWith(klass.typeParameters.map { it.defaultType }))
+            )
         }
     }
 
@@ -269,6 +270,8 @@ class JvmSymbols(
             klass.addTypeParameter("T", irBuiltIns.anyNType, Variance.INVARIANT)
             klass.addFunction("desiredAssertionStatus", irBuiltIns.booleanType)
         }
+
+    val vArrayWrapperClass: IrClassSymbol = createClass(FqName("kotlin.VArrayWrapper"))
 
     private val javaLangDeprecatedWithDeprecatedFlag: IrClassSymbol =
         createClass(FqName("java.lang.Deprecated"), classKind = ClassKind.ANNOTATION_CLASS) { klass ->
@@ -598,6 +601,16 @@ class JvmSymbols(
     val desiredAssertionStatus: IrSimpleFunctionSymbol by lazy {
         javaLangClass.functionByName("desiredAssertionStatus")
     }
+
+    val vArrayToClazzIntrinsic: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<varray-to-clazz>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            addTypeParameter("T", irBuiltIns.anyNType)
+            returnType = javaLangClass.defaultType
+        }.symbol
 
     override val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol =
         irFactory.buildFun {

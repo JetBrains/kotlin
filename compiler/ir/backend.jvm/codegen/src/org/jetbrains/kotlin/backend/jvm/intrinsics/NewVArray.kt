@@ -8,12 +8,14 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
+import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.codegen.putReifiedOperationMarkerIfTypeIsReifiedParameter
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.getArrayElementType
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isNullableArray
+import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.org.objectweb.asm.Type
 
 object NewVArray : IntrinsicMethod() {
@@ -29,7 +31,7 @@ object NewVArray : IntrinsicMethod() {
             } else {
                 mv.newarray(typeMapper.mapType(elementIrType))
             }
-            mv.aconst(null)
+            mv.aconst(AsmUtil.getArrayType(codegen.typeMapper.mapType(expression.getTypeArgument(0)!!, TypeMappingMode.CLASS_DECLARATION)))
             mv.invokespecial(vArrayWrapperType, "<init>", "(Ljava/lang/Object;Ljava/lang/Class;)V", false)
             expression.onStack
         }
