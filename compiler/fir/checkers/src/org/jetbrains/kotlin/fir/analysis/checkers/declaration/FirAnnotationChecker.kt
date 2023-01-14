@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
@@ -71,8 +72,16 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
             }
         }
 
-        if (declaration is FirClass && declaration.isEnumClass && self != null) {
-            reporter.reportOn(self.source, FirErrors.SELF_TYPE_INAPPLICABLE_TARGET, "", context)
+        if (self != null) {
+            if (declaration is FirClass) {
+                if (declaration.isEnumClass) {
+                    reporter.reportOn(self.source, FirErrors.SELF_TYPE_INAPPLICABLE_TARGET, "", context)
+                }
+
+                if (declaration.isAnnotationClass) {
+                    reporter.reportOn(self.source, FirErrors.SELF_TYPE_INAPPLICABLE_TARGET, "", context)
+                }
+            }
         }
 
         if (deprecatedSinceKotlin != null) {

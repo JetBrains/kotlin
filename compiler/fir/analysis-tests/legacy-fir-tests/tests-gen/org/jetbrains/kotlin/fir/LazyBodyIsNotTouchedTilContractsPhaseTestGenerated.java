@@ -1464,6 +1464,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/sealedSupertype.kt");
         }
 
+        @TestMetadata("selfTypeForAnnotation.kt")
+        public void testSelfTypeForAnnotation() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypeForAnnotation.kt");
+        }
+
         @TestMetadata("selfTypeForEnumClass.kt")
         public void testSelfTypeForEnumClass() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypeForEnumClass.kt");

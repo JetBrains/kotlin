@@ -1,0 +1,7 @@
+FILE: selfTypeForAnnotation.kt
+    @R|kotlin/Self|() public final annotation class AnnotationClass<out <Self> : R|AnnotationClass<<Self>>|> : R|kotlin/Annotation| {
+        public constructor<out <Self> : R|AnnotationClass<<Self>>|>(): R|AnnotationClass<<Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
