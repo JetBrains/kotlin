@@ -1,14 +1,16 @@
-// IGNORE_BACKEND: JS_IR, JS
 // WASM_FAILS_IN: SM
 
-@JsFun("(x) => { if (x !== 'abc') throw 'error' }")
-external fun notNullString(x: String)
+fun notNullString(x: String) {
+    js("if (x !== 'abc') throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== 'abc') throw 'error' }")
-external fun nullString(x: String?)
+fun nullString(x: String?) {
+    js("if (x !== 'abc') throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== null) throw 'error' }")
-external fun null2String(x: String?)
+fun null2String(x: String?) {
+    js("if (x !== null) throw 'error'")
+}
 
 fun testString() {
     notNullString("abc")
@@ -18,17 +20,20 @@ fun testString() {
 
 external interface ExternRef
 
-@JsFun("(x) => { if (x !== 'abc') throw 'error' }")
-external fun notNullExternRef(x: ExternRef)
+fun notNullExternRef(x: ExternRef) {
+    js("if (x !== 'abc') throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== 'abc') throw 'error' }")
-external fun nullExternRef(x: ExternRef?)
+fun nullExternRef(x: ExternRef?) {
+    js("if (x !== 'abc') throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== null) throw 'error' }")
-external fun null2ExternRef(x: ExternRef?)
+fun null2ExternRef(x: ExternRef?) {
+    js("if (x !== null) throw 'error'")
+}
 
-@JsFun("() => 'abc'")
-external fun getExternRef(): ExternRef
+fun getExternRef(): ExternRef =
+    js("'abc'")
 
 fun testExterRef() {
     val externRef = getExternRef()
@@ -39,14 +44,17 @@ fun testExterRef() {
 
 class DataRef
 
-@JsFun("(x, y) => { if (x === null) throw 'error' }")
-external fun notNullDataRef(x: DataRef)
+fun notNullDataRef(x: DataRef) {
+    js("if (x === null) throw 'error'")
+}
 
-@JsFun("(x, y) => { if (x === null) throw 'error' }")
-external fun nullDataRef(x: DataRef?)
+fun nullDataRef(x: DataRef?) {
+    js("if (x === null) throw 'error'")
+}
 
-@JsFun("(x, y) => { if (x !== null) throw 'error' }")
-external fun null2DataRef(x: DataRef?)
+fun null2DataRef(x: DataRef?) {
+    js("if (x !== null) throw 'error'")
+}
 
 fun testDataRef() {
     val dataRef = DataRef()
@@ -55,14 +63,17 @@ fun testDataRef() {
     null2DataRef(null)
 }
 
-@JsFun("(x) => { if (x !== 123) throw 'error' }")
-external fun notNullInt(x: Int)
+fun notNullInt(x: Int) {
+    js("if (x !== 123) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== 123) throw 'error' }")
-external fun nullInt(x: Int?)
+fun nullInt(x: Int?) {
+    js("if (x !== 123) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== null) throw 'error' }")
-external fun null2Int(x: Int?)
+fun null2Int(x: Int?) {
+    js("if (x !== null) throw 'error'")
+}
 
 fun testInt() {
     notNullInt(123)
@@ -70,14 +81,17 @@ fun testInt() {
     null2Int(null)
 }
 
-@JsFun("(x) => { if (x !== true) throw 'error' }")
-external fun notNullBoolean(x: Boolean)
+fun notNullBoolean(x: Boolean) {
+    js("if (x !== true) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== true) throw 'error' }")
-external fun nullBoolean(x: Boolean?)
+fun nullBoolean(x: Boolean?) {
+    js("if (x !== true) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== null) throw 'error' }")
-external fun null2Boolean(x: Boolean?)
+fun null2Boolean(x: Boolean?) {
+    js("if (x !== null) throw 'error'")
+}
 
 fun testBoolean() {
     notNullBoolean(true)
@@ -85,14 +99,17 @@ fun testBoolean() {
     null2Boolean(null)
 }
 
-@JsFun("(x) => { x == 123 }")
-external fun notNullShort(x: Short)
+fun notNullShort(x: Short) {
+    js("x == 123")
+}
 
-@JsFun("(x) => { if (x !== 123) throw 'error' }")
-external fun nullShort(x: Short?)
+fun nullShort(x: Short?) {
+    js("if (x !== 123) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== null) throw 'error' }")
-external fun null2Short(x: Short?)
+fun null2Short(x: Short?) {
+    js("if (x !== null) throw 'error'")
+}
 
 fun testShort() {
     notNullShort(123.toShort())
@@ -100,14 +117,17 @@ fun testShort() {
     null2Short(null)
 }
 
-@JsFun("(x) => { if (x !== 123.5) throw 'error' }")
-external fun notNullFloat(x: Float)
+fun notNullFloat(x: Float) {
+    js("if (x !== 123.5) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== 123.5) throw 'error' }")
-external fun nullFloat(x: Float?)
+fun nullFloat(x: Float?) {
+    js("if (x !== 123.5) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== null) throw 'error' }")
-external fun null2Float(x: Float?)
+fun null2Float(x: Float?) {
+    js("if (x !== null) throw 'error'")
+}
 
 fun testFloat() {
     notNullFloat(123.5f)
@@ -115,23 +135,29 @@ fun testFloat() {
     null2Float(null)
 }
 
-@JsFun("(x) => { if (x !== 123.5) throw 'error' }")
-external fun notNullNumber(x: Number)
+fun notNullNumber(x: Number) {
+    js("if (x !== 123.5) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== 123.5) throw 'error' }")
-external fun nullNumber(x: Number?)
+fun nullNumber(x: Number?) {
+    js("if (x !== 123.5) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== null) throw 'error' }")
-external fun null2Number(x: Number?)
+fun null2Number(x: Number?) {
+    js("if (x !== null) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== 123) throw 'error' }")
-external fun byte2Number(x: Number)
+fun byte2Number(x: Number) {
+    js("if (x !== 123) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== 123) throw 'error' }")
-external fun notNullByte2Number(x: Number?)
+fun notNullByte2Number(x: Number?) {
+    js("if (x !== 123) throw 'error'")
+}
 
-@JsFun("(x) => { if (x !== null) throw 'error' }")
-external fun nullByte2Number(x: Number?)
+fun nullByte2Number(x: Number?) {
+    js("if (x !== null) throw 'error'")
+}
 
 fun testNumber() {
     notNullNumber(123.5)

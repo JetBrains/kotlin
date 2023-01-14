@@ -19,23 +19,23 @@ fun assertFalse(x: Boolean) {
 
 external interface EI
 
-@JsFun("() => null")
-external fun getNull(): EI?
+fun getNull(): EI? =
+    js("null")
 
-@JsFun("() => undefined")
-external fun getUndefined(): EI?
+fun getUndefined(): EI? =
+    js("undefined")
 
-@JsFun("(ref) => ref === null")
-external fun isJsNull(ref: EI?): Boolean
+fun isJsNull(ref: EI?): Boolean =
+    js("ref === null")
 
-@JsFun("(ref) => ref === undefined")
-external fun isJsUndefined(ref: EI?): Boolean
+fun isJsUndefined(ref: EI?): Boolean =
+    js("ref === undefined")
 
-@JsFun("() => null")
-external fun getJsNullAsNonNullable(): EI
+fun getJsNullAsNonNullable(): EI =
+    js("null")
 
-@JsFun("() => undefined")
-external fun getJsUndefinedAsNonNullable(): EI
+fun getJsUndefinedAsNonNullable(): EI =
+    js("undefined")
 
 inline fun checkNPE(body: () -> Unit) {
     var throwed = false
