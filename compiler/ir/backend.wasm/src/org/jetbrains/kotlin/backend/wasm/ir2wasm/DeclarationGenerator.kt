@@ -76,7 +76,7 @@ class DeclarationGenerator(
         }
 
         val wasmImportModule = declaration.getWasmImportDescriptor()
-        val jsCode = if (declaration.isExternal) declaration.getJsFunAnnotation() else null
+        val jsCode = declaration.getJsFunAnnotation()
         val importedName = when {
             wasmImportModule != null -> {
                 check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
