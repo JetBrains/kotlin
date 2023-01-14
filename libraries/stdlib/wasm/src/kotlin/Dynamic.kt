@@ -3,87 +3,89 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
+
 package kotlin.js
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetBoolean(obj: Dynamic, index: String, value: Boolean)
+internal fun dynamicSetBoolean(obj: Dynamic, index: String, value: Boolean): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetByte(obj: Dynamic, index: String, value: Byte)
+internal fun dynamicSetByte(obj: Dynamic, index: String, value: Byte): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetShort(obj: Dynamic, index: String, value: Short)
+internal fun dynamicSetShort(obj: Dynamic, index: String, value: Short): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetChar(obj: Dynamic, index: String, value: Char)
+internal fun dynamicSetChar(obj: Dynamic, index: String, value: Char): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetInt(obj: Dynamic, index: String, value: Int)
+internal fun dynamicSetInt(obj: Dynamic, index: String, value: Int): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetLong(obj: Dynamic, index: String, value: Long)
+internal fun dynamicSetLong(obj: Dynamic, index: String, value: Long): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetFloat(obj: Dynamic, index: String, value: Float)
+internal fun dynamicSetFloat(obj: Dynamic, index: String, value: Float): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetDouble(obj: Dynamic, index: String, value: Double)
+internal fun dynamicSetDouble(obj: Dynamic, index: String, value: Double): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetString(obj: Dynamic, index: String, value: String?)
+internal fun dynamicSetString(obj: Dynamic, index: String, value: String?): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetAny(obj: Dynamic, index: String, value: Any?)
+internal fun dynamicSetAny(obj: Dynamic, index: String, value: Any?): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetBoolean(obj: Dynamic, index: String): Boolean
+internal fun dynamicGetBoolean(obj: Dynamic, index: String): Boolean =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetByte(obj: Dynamic, index: String): Byte
+internal fun dynamicGetByte(obj: Dynamic, index: String): Byte =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetShort(obj: Dynamic, index: String): Short
+internal fun dynamicGetShort(obj: Dynamic, index: String): Short =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetChar(obj: Dynamic, index: String): Char
+internal fun dynamicGetChar(obj: Dynamic, index: String): Char =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetInt(obj: Dynamic, index: String): Int
+internal fun dynamicGetInt(obj: Dynamic, index: String): Int =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetLong(obj: Dynamic, index: String): Long
+internal fun dynamicGetLong(obj: Dynamic, index: String): Long =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetFloat(obj: Dynamic, index: String): Float
+internal fun dynamicGetFloat(obj: Dynamic, index: String): Float =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetDouble(obj: Dynamic, index: String): Double
+internal fun dynamicGetDouble(obj: Dynamic, index: String): Double =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetString(obj: Dynamic, index: String): String?
+internal fun dynamicGetString(obj: Dynamic, index: String): String? =
+    js("obj[index]")
 
 @PublishedApi
-@JsFun("(obj, index) => obj[index]")
-internal external fun dynamicGetAny(obj: Dynamic, index: String): Any?
+internal fun dynamicGetAny(obj: Dynamic, index: String): Any? =
+    js("obj[index]")
 
 @PublishedApi
 internal fun Dynamic.getBoolean(index: String): Boolean = dynamicGetBoolean(this, index)
@@ -184,14 +186,12 @@ operator fun Dynamic.set(index: Int, value: Any?) {
     this[index.toString()] = value
 }
 
-@JsFun("(x) => x")
-private external fun <T> unsafeCastJs(x: String): Dynamic
+private fun <T> unsafeCastJs(x: String): Dynamic = js("x")
 
 @Suppress("UNCHECKED_CAST")
 fun <T> String.unsafeCast(): T = unsafeCastJs<T>(this) as T
 
-@JsFun("(x) => x")
-private external fun <T> unsafeCastJs(x: Boolean): Dynamic
+private fun <T> unsafeCastJs(x: Boolean): Dynamic = js("x")
 
 /**
  * Reinterprets boolean value as a value of the specified type [T] without any actual type checking.
@@ -210,10 +210,12 @@ fun <T> Nothing?.unsafeCast(): Dynamic? = null
 @Suppress("UNCHECKED_CAST")
 fun <T> Dynamic.unsafeCast(): T = this as T
 
-@JsFun("e => { throw e; }")
-private external fun jsThrow(e: Dynamic)
+private fun jsThrow(e: Dynamic) {
+    js("throw e;")
+}
 
-@JsFun("""(f) => {
+private fun jsCatch(f: () -> Unit): Dynamic? {
+    js("""
     let result = null;
     try { 
         f();
@@ -221,8 +223,8 @@ private external fun jsThrow(e: Dynamic)
        result = e;
     }
     return result;
-}""")
-private external fun jsCatch(f: () -> Unit): Dynamic?
+    """)
+}
 
 /**
  * For a Dynamic value caught in JS, returns the corresponding [Throwable]

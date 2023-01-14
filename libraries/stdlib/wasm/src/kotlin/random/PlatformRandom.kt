@@ -5,8 +5,8 @@
 
 package kotlin.random
 
-@JsFun("() => ((Math.random() * Math.pow(2, 32)) | 0)")
-private external fun initialSeed(): Int
+private fun initialSeed(): Int =
+    js("((Math.random() * Math.pow(2, 32)) | 0)")
 
 internal actual fun defaultPlatformRandom(): Random =
     Random(initialSeed())

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR, JS
 // WASM_FAILS_IN: SM
 // MODULE: main
 // FILE: externals.kt
@@ -29,8 +28,9 @@ fun box(): String = "OK"
 
 // TODO: Rewrite test to use module system
 
-@JsFun("() => { globalThis.main = wasmExports; }")
-external fun hackNonModuleExport()
+fun hackNonModuleExport() {
+    js("globalThis.main = wasmExports;")
+}
 
 fun main() {
     hackNonModuleExport()

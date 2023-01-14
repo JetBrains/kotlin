@@ -3,18 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
+
 package kotlin.io
 
 import kotlin.wasm.internal.*
 
-@JsFun("(error) => console.error(error)")
-internal external fun printError(error: String?): Unit
+internal fun printError(error: String?): Unit =
+    js("console.error(error)")
 
-@JsFun("(message) => console.log(message)")
-private external fun printlnImpl(message: String?): Unit
+private fun printlnImpl(message: String?): Unit =
+    js("console.log(message)")
 
-@JsFun("(message) => typeof write !== 'undefined' ? write(message) : console.log(message)")
-private external fun printImpl(message: String?): Unit
+private fun printImpl(message: String?): Unit =
+    js("typeof write !== 'undefined' ? write(message) : console.log(message)")
 
 /** Prints the line separator to the standard output stream. */
 public actual fun println() {
