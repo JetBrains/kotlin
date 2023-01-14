@@ -6,44 +6,44 @@
 package kotlin.js
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetBoolean(obj: Dynamic, index: String, value: Boolean)
+internal fun dynamicSetBoolean(obj: Dynamic, index: String, value: Boolean): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetByte(obj: Dynamic, index: String, value: Byte)
+internal fun dynamicSetByte(obj: Dynamic, index: String, value: Byte): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetShort(obj: Dynamic, index: String, value: Short)
+internal fun dynamicSetShort(obj: Dynamic, index: String, value: Short): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetChar(obj: Dynamic, index: String, value: Char)
+internal fun dynamicSetChar(obj: Dynamic, index: String, value: Char): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetInt(obj: Dynamic, index: String, value: Int)
+internal fun dynamicSetInt(obj: Dynamic, index: String, value: Int): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetLong(obj: Dynamic, index: String, value: Long)
+internal fun dynamicSetLong(obj: Dynamic, index: String, value: Long): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetFloat(obj: Dynamic, index: String, value: Float)
+internal fun dynamicSetFloat(obj: Dynamic, index: String, value: Float): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetDouble(obj: Dynamic, index: String, value: Double)
+internal fun dynamicSetDouble(obj: Dynamic, index: String, value: Double): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetString(obj: Dynamic, index: String, value: String?)
+internal fun dynamicSetString(obj: Dynamic, index: String, value: String?): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
-@JsFun("(obj, index, value) => obj[index] = value")
-internal external fun dynamicSetAny(obj: Dynamic, index: String, value: Any?)
+internal fun dynamicSetAny(obj: Dynamic, index: String, value: Any?): Unit =
+    js("obj[index] = value")
 
 @PublishedApi
 internal fun dynamicGetBoolean(obj: Dynamic, index: String): Boolean =
