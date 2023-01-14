@@ -16,9 +16,31 @@ fun isStringVArray(p: Any?) = p is VArray<String>
 fun isIcStrVArray(p: Any?) = p is VArray<IcStr>
 fun isDouble3D(p: Any?) = p is VArray<VArray<VArray<Double>>>
 fun isString2D(p: Any?) = p is VArray<VArray<String>>
+fun isUByteVArray(p: Any?) = p is VArray<UByte>
+fun isUShortVArray(p: Any?) = p is VArray<UShort>
+fun isUIntVArray(p: Any?) = p is VArray<UInt>
+fun isULongVArray(p: Any?) = p is VArray<ULong>
+
 
 enum class VArrayType {
-    BOOL, BYTE, SHORT, INT, LONG, FLOAT, DOUBLE, CHAR, IcInt, STRING, IcIcInt, IcStr, DOUBLE_3D, STR_2D
+    BOOL,
+    BYTE,
+    SHORT,
+    INT,
+    LONG,
+    FLOAT,
+    DOUBLE,
+    CHAR,
+    IcInt,
+    STRING,
+    IcIcInt,
+    IcStr,
+    DOUBLE_3D,
+    STR_2D,
+    U_BYTE,
+    U_SHORT,
+    U_INT,
+    U_LONG,
 }
 
 val typeToСheckingFunc = mapOf(
@@ -34,7 +56,11 @@ val typeToСheckingFunc = mapOf(
     VArrayType.IcIcInt to ::isIcIcIntArray,
     VArrayType.IcStr to ::isIcStrVArray,
     VArrayType.DOUBLE_3D to ::isDouble3D,
-    VArrayType.STR_2D to ::isString2D
+    VArrayType.STR_2D to ::isString2D,
+    VArrayType.U_BYTE to ::isUByteVArray,
+    VArrayType.U_SHORT to ::isUShortVArray,
+    VArrayType.U_INT to ::isUIntVArray,
+    VArrayType.U_LONG to ::isULongVArray
 )
 
 fun check(obj: Any?, expectedType: VArrayType): Boolean {
@@ -75,6 +101,12 @@ fun box(): String {
     val double3dVArray = VArray(1) { VArray(1) { VArray(1) { 0.0 } } }
     val str2dVArray = VArray(1) { VArray(1) { "a" } }
 
+    val uByteVArray = VArray<UByte>(1) { 0.toUByte() }
+    val uShortVArray = VArray<UShort>(1) { 0.toUShort() }
+    val uIntVArray = VArray<UInt>(1) { 0.toUInt() }
+    val uLongVArray = VArray<ULong>(1) { 0.toULong() }
+
+
     if (!check(boolVArray, VArrayType.BOOL)) return "Fail 1"
     if (!check(byteVArray, VArrayType.BYTE)) return "Fail 2"
     if (!check(shortVArray, VArrayType.SHORT)) return "Fail 3"
@@ -83,12 +115,18 @@ fun box(): String {
     if (!check(floatVArray, VArrayType.FLOAT)) return "Fail 6"
     if (!check(doubleVArray, VArrayType.DOUBLE)) return "Fail 7"
     if (!check(charVArray, VArrayType.CHAR)) return "Fail 8"
+
     if (!check(icIntVArray, VArrayType.IcInt)) return "Fail 9"
     if (!check(strVArray, VArrayType.STRING)) return "Fail 10"
     if (!check(icIcIntVArray, VArrayType.IcIcInt)) return "Fail 11"
     if (!check(icStrVArray, VArrayType.IcStr)) return "Fail 12"
     if (!check(double3dVArray, VArrayType.DOUBLE_3D)) return "Fail 13"
     if (!check(str2dVArray, VArrayType.STR_2D)) return "Fail 14"
+
+    if (!check(uByteVArray, VArrayType.U_BYTE)) return "Fail 15"
+    if (!check(uShortVArray, VArrayType.U_SHORT)) return "Fail 16"
+    if (!check(uIntVArray, VArrayType.U_INT)) return "Fail 17"
+    if (!check(uLongVArray, VArrayType.U_LONG)) return "Fail 18"
 
     return "OK"
 }
