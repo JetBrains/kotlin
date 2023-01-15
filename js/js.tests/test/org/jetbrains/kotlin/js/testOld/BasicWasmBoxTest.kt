@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
+import org.jetbrains.kotlin.checkers.CompilerTestLanguageVersionSettings
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -265,13 +266,17 @@ abstract class BasicWasmBoxTest(
             .fold(testGroupOutputDir, ::File)
     }
 
-    private fun createConfig(languageVersionSettings: LanguageVersionSettings?): JsConfig {
+    private fun createConfig(languageVersionSettings: CompilerTestLanguageVersionSettings?): JsConfig {
         val configuration = environment.configuration.copy()
         configuration.put(CommonConfigurationKeys.MODULE_NAME, TEST_MODULE)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, true)
-        configuration.languageVersionSettings = languageVersionSettings
-            ?: LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, specificFeatures = extraLanguageFeatures)
+        configuration.languageVersionSettings = LanguageVersionSettingsImpl(
+            languageVersion = languageVersionSettings?.languageVersion ?: LanguageVersion.LATEST_STABLE,
+            apiVersion = languageVersionSettings?.apiVersion ?: ApiVersion.LATEST_STABLE,
+            analysisFlags = languageVersionSettings?.analysisFlags.orEmpty() + mapOf(AnalysisFlags.skipPrereleaseCheck to true),
+            specificFeatures = languageVersionSettings?.extraLanguageFeatures.orEmpty() + extraLanguageFeatures
+        )
         return JsConfig(project, configuration, CompilerEnvironment, null, null)
     }
 
@@ -303,7 +308,7 @@ abstract class BasicWasmBoxTest(
         }
     }
 
-    private class TestFile(val fileName: String, val languageVersionSettings: LanguageVersionSettings?)
+    private class TestFile(val fileName: String, val languageVersionSettings: CompilerTestLanguageVersionSettings?)
 
     override fun createEnvironment() =
         KotlinCoreEnvironment.createForTests(testRootDisposable, CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
