@@ -79,7 +79,12 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
                 variableSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
                 @OptIn(SymbolInternals::class)
                 val variable = variableSymbol.fir
-                val variableSource = variable.source.takeIf { it?.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION }
+                val variableSource = variable.source
+
+                if (variableSource?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
+                    continue
+                }
+
                 when {
                     data == VariableStatus.UNUSED -> {
                         when {

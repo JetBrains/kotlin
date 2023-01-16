@@ -69,4 +69,10 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
     public void testUnresolved() throws Exception {
         runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unresolved.kt");
     }
+
+    @Test
+    @TestMetadata("unusedDestructuring.kt")
+    public void testUnusedDestructuring() throws Exception {
+        runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/unusedDestructuring.kt");
+    }
 }
