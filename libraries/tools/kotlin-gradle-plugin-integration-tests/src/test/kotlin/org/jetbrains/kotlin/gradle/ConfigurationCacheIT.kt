@@ -61,11 +61,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @MppGradlePluginTests
     @DisplayName("works with MPP publishing")
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
-            // KT-49933: Support Gradle Configuration caching with HMPP
-            val publishedTargets = listOf(/*"kotlinMultiplatform",*/ "jvm6", "nodeJs", "linux64", "mingw64", "mingw86")
+            val publishedTargets = listOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64", "mingw86")
 
             testConfigurationCacheOf(
                 ":buildKotlinToolingMetadata", // Remove it when KT-49933 is fixed and `kotlinMultiplatform` publication works
@@ -102,6 +102,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 ":lib:compileTestKotlinIosX64",
                 ":lib:linkDebugTestIosX64",
                 ":lib:transformCommonMainDependenciesMetadata",
+                ":lib:transformCommonMainCInteropDependenciesMetadata"
             )
         }
 
@@ -109,12 +110,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             testConfigurationCacheOf(
                 "build",
                 executedTaskNames = expectedTasks,
-                buildOptions = defaultBuildOptions.copy(
-                    freeArgs = listOf(
-                        // remove after KT-49933 is fixed
-                        "-x", ":lib:transformCommonMainCInteropDependenciesMetadata",
-                    )
-                )
             )
         }
     }
