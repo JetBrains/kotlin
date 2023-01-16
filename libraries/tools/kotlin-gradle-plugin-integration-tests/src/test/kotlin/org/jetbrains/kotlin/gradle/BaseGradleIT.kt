@@ -999,6 +999,16 @@ fun BaseGradleIT.BuildOptions.withFreeCommandLineArgument(argument: String) = co
     freeCommandLineArgs = freeCommandLineArgs + argument
 )
 
+fun BaseGradleIT.BuildOptions.suppressDeprecationWarningsOnAgpLessThan(
+    agpVersion: AGPVersion,
+    @Suppress("UNUSED_PARAMETER") reason: String // just to require specifying a reason for suppressing
+) =
+    if ((androidGradlePluginVersion ?: error("AGP version expected to be configured")) >= agpVersion) {
+        this
+    } else {
+        copy(warningMode = WarningMode.All)
+    }
+
 private const val MAVEN_LOCAL_URL_PLACEHOLDER = "<mavenLocalUrl>"
 internal const val PLUGIN_MARKER_VERSION_PLACEHOLDER = "<pluginMarkerVersion>"
 

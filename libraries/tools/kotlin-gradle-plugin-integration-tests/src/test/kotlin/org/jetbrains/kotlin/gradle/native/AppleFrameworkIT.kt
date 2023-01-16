@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.suppressDeprecationWarningsOnAgpLessThan
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -136,6 +137,9 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "TARGET_BUILD_DIR" to "testBuildDir",
                     "FRAMEWORKS_FOLDER_PATH" to "testFrameworksDir"
                 )
+            ).suppressDeprecationWarningsOnAgpLessThan(
+                AGPVersion.v7_3_0,
+                "uses deprecated IncrementalTaskInputs"
             )
             build("tasks", options = options) {
                 assertSuccessful()
@@ -164,6 +168,9 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "SDK_NAME" to "iphoneos",
                     "ARCHS" to "arm64"
                 )
+            ).suppressDeprecationWarningsOnAgpLessThan(
+                AGPVersion.v7_3_0,
+                "uses deprecated IncrementalTaskInputs"
             )
             build("tasks", options = options) {
                 assertSuccessful()
