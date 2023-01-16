@@ -46,6 +46,7 @@ abstract class ExpressionCheckers {
     open val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = emptySet()
     open val thisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker> = emptySet()
     open val whileLoopCheckers: Set<FirWhileLoopChecker> = emptySet()
+    open val throwExpressionCheckers: Set<FirThrowExpressionChecker> = emptySet()
     open val doWhileLoopCheckers: Set<FirDoWhileLoopChecker> = emptySet()
     open val arrayOfCallCheckers: Set<FirArrayOfCallChecker> = emptySet()
     open val classReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker> = emptySet()
@@ -79,6 +80,7 @@ abstract class ExpressionCheckers {
     @CheckersComponentInternal internal val allCallableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> by lazy { callableReferenceAccessCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers + qualifiedAccessCheckers }
     @CheckersComponentInternal internal val allThisReceiverExpressionCheckers: Set<FirThisReceiverExpressionChecker> by lazy { thisReceiverExpressionCheckers + qualifiedAccessExpressionCheckers + basicExpressionCheckers + qualifiedAccessCheckers }
     @CheckersComponentInternal internal val allWhileLoopCheckers: Set<FirWhileLoopChecker> by lazy { whileLoopCheckers + loopExpressionCheckers + basicExpressionCheckers }
+    @CheckersComponentInternal internal val allThrowExpressionCheckers: Set<FirThrowExpressionChecker> by lazy { throwExpressionCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allDoWhileLoopCheckers: Set<FirDoWhileLoopChecker> by lazy { doWhileLoopCheckers + loopExpressionCheckers + basicExpressionCheckers }
     @CheckersComponentInternal internal val allArrayOfCallCheckers: Set<FirArrayOfCallChecker> by lazy { arrayOfCallCheckers + basicExpressionCheckers + callCheckers }
     @CheckersComponentInternal internal val allClassReferenceExpressionCheckers: Set<FirClassReferenceExpressionChecker> by lazy { classReferenceExpressionCheckers + basicExpressionCheckers }

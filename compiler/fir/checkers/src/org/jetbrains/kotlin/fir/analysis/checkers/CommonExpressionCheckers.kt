@@ -25,6 +25,11 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirRecursiveProblemChecker
         )
 
+    override val throwExpressionCheckers: Set<FirThrowExpressionChecker>
+        get() = setOf(
+            FirThrowExpressionTypeChecker,
+        )
+
     override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker>
         get() = setOf(
             FirOptInUsageAccessChecker,

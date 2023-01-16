@@ -148,6 +148,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allCallCheckers.check(delegatedConstructorCall, data)
     }
 
+    override fun visitThrowExpression(throwExpression: FirThrowExpression, data: CheckerContext) {
+        checkers.allThrowExpressionCheckers.check(throwExpression, data)
+    }
+
     private fun <E : FirStatement> Collection<FirExpressionChecker<E>>.check(
         expression: E,
         context: CheckerContext

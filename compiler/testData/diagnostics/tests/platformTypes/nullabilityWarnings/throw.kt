@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: J.java
 
 import org.jetbrains.annotations.*;

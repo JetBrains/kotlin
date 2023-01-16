@@ -156,7 +156,7 @@ fun illegalReturnIf(): Char {
 }
 
 fun returnNothing(): Nothing {
-    throw 1
+    throw <!TYPE_MISMATCH!>1<!>
 }
 fun f(): Int {
     if (1 < 2) { return 1 } else returnNothing()
