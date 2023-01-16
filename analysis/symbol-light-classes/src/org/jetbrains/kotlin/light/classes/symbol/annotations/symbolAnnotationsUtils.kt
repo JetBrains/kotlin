@@ -123,7 +123,7 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
         annotation.classId?.asFqNameString()?.let(foundAnnotations::add)
 
         val siteTarget = annotation.useSiteTarget
-        if (includeAnnotationsWithoutSite && siteTarget == null || siteTarget == annotationUseSiteTarget) {
+        if (siteTarget == annotationUseSiteTarget || includeAnnotationsWithoutSite && siteTarget == null) {
             result.add(SymbolLightAnnotationForAnnotationCall(annotation, modifierList))
         }
     }
