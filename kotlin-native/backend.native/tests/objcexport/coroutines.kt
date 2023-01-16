@@ -230,10 +230,12 @@ fun startCoroutineUninterceptedOrReturn(fn: suspend () -> Any?, resultHolder: Re
 fun startCoroutineUninterceptedOrReturn(fn: suspend Any?.() -> Any?, receiver: Any?, resultHolder: ResultHolder<Any?>) =
         fn.startCoroutineUninterceptedOrReturn(receiver, ResultHolderCompletion(resultHolder))
 
+/*
 @Throws(Throwable::class)
 @Suppress("INVISIBLE_MEMBER")
 fun startCoroutineUninterceptedOrReturn(fn: suspend Any?.(Any?) -> Any?, receiver: Any?, param: Any?, resultHolder: ResultHolder<Any?>) =
         fn.startCoroutineUninterceptedOrReturn(receiver, param, ResultHolderCompletion(resultHolder))
+*/
 
 @Throws(Throwable::class)
 fun createCoroutineUninterceptedAndResume(fn: suspend () -> Any?, resultHolder: ResultHolder<Any?>) =
