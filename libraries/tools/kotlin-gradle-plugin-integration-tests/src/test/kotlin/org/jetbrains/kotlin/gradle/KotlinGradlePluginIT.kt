@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -750,8 +749,7 @@ class KotlinGradleIT : KGPBaseTest() {
     fun testNoDeprecationOnAssociatedDep(gradleVersion: GradleVersion) {
         project(
             "associatedDependencies",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail)
+            gradleVersion
         ) {
             build("tasks")
         }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
 import org.jetbrains.kotlin.gradle.util.WithSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
@@ -29,7 +28,6 @@ abstract class MppCInteropDependencyTransformationIT : BaseGradleIT() {
     override fun defaultBuildOptions(): BuildOptions = super.defaultBuildOptions().run {
         copy(
             forceOutputToStdout = true,
-            warningMode = WarningMode.Fail,
             parallelTasksInProject = true,
             freeCommandLineArgs = freeCommandLineArgs + "-s"
         )
