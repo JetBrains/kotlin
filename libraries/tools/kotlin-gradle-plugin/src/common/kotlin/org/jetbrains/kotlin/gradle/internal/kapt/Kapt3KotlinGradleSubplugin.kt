@@ -206,7 +206,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             KAPT_INFO_AS_WARNINGS("kapt.info.as.warnings", false),
             KAPT_INCLUDE_COMPILE_CLASSPATH("kapt.include.compile.classpath", true),
             KAPT_KEEP_KDOC_COMMENTS_IN_STUBS("kapt.keep.kdoc.comments.in.stubs", true),
-            KAPT_USE_JVM_IR("kapt.use.jvm.ir", false),
+            KAPT_USE_JVM_IR("kapt.use.jvm.ir", true),
         }
     }
 
