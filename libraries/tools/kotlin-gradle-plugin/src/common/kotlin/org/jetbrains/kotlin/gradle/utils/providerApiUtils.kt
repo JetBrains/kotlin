@@ -112,7 +112,7 @@ internal fun Project.filesProvider(
     vararg buildDependencies: Any,
     provider: () -> Any
 ): ConfigurableFileCollection {
-    return project.files(project.provider(provider)).builtBy(*buildDependencies)
+    return project.files(provider).builtBy(*buildDependencies)
 }
 
 internal fun <T : Task> T.outputFilesProvider(provider: T.() -> Any): ConfigurableFileCollection {
