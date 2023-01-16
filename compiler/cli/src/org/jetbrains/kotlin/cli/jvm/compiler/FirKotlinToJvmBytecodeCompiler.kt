@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.STRONG_WARNING
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.CodegenFactory
 import org.jetbrains.kotlin.codegen.state.GenerationState
@@ -211,7 +209,10 @@ object FirKotlinToJvmBytecodeCompiler {
         val sessionProvider = FirProjectSessionProvider()
 
         val moduleName = module.getModuleName()
-        val libraryList = createLibraryListAndSession(moduleName, sessionProvider, librariesScope, languageVersionSettings)
+        val libraryList = createFirLibraryListAndSession(
+            moduleName, moduleConfiguration, projectEnvironment,
+            scope = librariesScope, librariesScope = librariesScope, friendPaths = module.getFriendPaths(), sessionProvider
+        )
 
         val commonModuleData = runIf(isMppEnabled) {
             FirModuleDataImpl(
@@ -291,36 +292,6 @@ object FirKotlinToJvmBytecodeCompiler {
         val platformOutput = buildResolveAndCheckFir(platformSession, platformKtFiles, diagnosticsReporter)
 
         return if (syntaxErrors || diagnosticsReporter.hasErrors) null else FirResult(platformOutput, commonOutput)
-    }
-
-    private fun CompilationContext.createLibraryListAndSession(
-        moduleName: String,
-        sessionProvider: FirProjectSessionProvider,
-        librariesScope: AbstractProjectFileSearchScope,
-        languageVersionSettings: LanguageVersionSettings
-    ): DependencyListForCliModule {
-        val binaryModuleData = BinaryModuleData.initialize(
-            Name.identifier(moduleName),
-            JvmPlatforms.unspecifiedJvmPlatform,
-            JvmPlatformAnalyzerServices
-        )
-        val libraryList = DependencyListForCliModule.build(binaryModuleData) {
-            dependencies(moduleConfiguration.jvmClasspathRoots.map { it.toPath() })
-            dependencies(moduleConfiguration.jvmModularRoots.map { it.toPath() })
-            friendDependencies(moduleConfiguration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
-            friendDependencies(module.getFriendPaths())
-        }
-        FirJvmSessionFactory.createLibrarySession(
-            Name.identifier(moduleName),
-            sessionProvider,
-            libraryList.moduleDataProvider,
-            projectEnvironment,
-            librariesScope,
-            projectEnvironment.getPackagePartProvider(librariesScope),
-            languageVersionSettings,
-            registerExtraComponents = {},
-        )
-        return libraryList
     }
 
     private fun buildResolveAndCheckFir(

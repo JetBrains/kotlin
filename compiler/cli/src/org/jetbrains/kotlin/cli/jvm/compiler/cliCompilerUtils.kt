@@ -19,18 +19,30 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.output.writeAll
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.fir.BinaryModuleData
+import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.modules.JavaRootPath
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import java.io.File
 
 fun Module.getSourceFiles(
@@ -182,5 +194,38 @@ fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
             }
         }
     }
+}
+
+fun createFirLibraryListAndSession(
+    moduleName: String,
+    configuration: CompilerConfiguration,
+    projectEnvironment: AbstractProjectEnvironment,
+    scope: AbstractProjectFileSearchScope,
+    librariesScope: AbstractProjectFileSearchScope,
+    friendPaths: List<String>,
+    sessionProvider: FirProjectSessionProvider
+): DependencyListForCliModule {
+    val binaryModuleData = BinaryModuleData.initialize(
+        Name.identifier(moduleName),
+        JvmPlatforms.unspecifiedJvmPlatform,
+        JvmPlatformAnalyzerServices
+    )
+    val libraryList = DependencyListForCliModule.build(binaryModuleData) {
+        dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
+        dependencies(configuration.jvmModularRoots.map { it.toPath() })
+        friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+        friendDependencies(friendPaths)
+    }
+    FirJvmSessionFactory.createLibrarySession(
+        Name.identifier(moduleName),
+        sessionProvider,
+        libraryList.moduleDataProvider,
+        projectEnvironment,
+        scope,
+        projectEnvironment.getPackagePartProvider(librariesScope),
+        configuration.languageVersionSettings,
+        registerExtraComponents = {},
+    )
+    return libraryList
 }
 

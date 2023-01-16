@@ -31,8 +31,10 @@ import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.*
+import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -50,8 +52,6 @@ import kotlin.script.experimental.jvm.JvmDependencyFromClassLoader
 import kotlin.script.experimental.jvm.compilationCache
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.jvm
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
-import org.jetbrains.kotlin.name.Name
 
 class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptCompilerProxy {
 
@@ -359,7 +359,15 @@ private fun doCompileWithK2(
     )?.also { (_, _, precompiledBinariesFileScope) ->
         precompiledBinariesFileScope?.let { librariesScope -= it }
     }
-    val libraryList = createLibraryListAndSession(targetId.name, kotlinCompilerConfiguration, projectEnvironment, librariesScope, sessionProvider)
+    val libraryList = createFirLibraryListAndSession(
+        targetId.name,
+        kotlinCompilerConfiguration,
+        projectEnvironment,
+        scope = projectEnvironment.getSearchScopeForProjectLibraries(),
+        librariesScope = librariesScope,
+        friendPaths = emptyList(),
+        sessionProvider
+    )
     val moduleData = FirModuleDataImpl(
         Name.identifier(targetId.name),
         libraryList.regularDependencies,
