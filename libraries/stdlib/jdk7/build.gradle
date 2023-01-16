@@ -80,6 +80,7 @@ compileTestKotlin {
             "-opt-in=kotlin.ExperimentalUnsignedTypes",
             "-opt-in=kotlin.ExperimentalStdlibApi",
             "-opt-in=kotlin.io.path.ExperimentalPathApi",
+            "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
             "-Xcommon-sources=${fileTree('../test').join(',')}",
             "-XXLanguage:+RangeUntilOperator",
     ]

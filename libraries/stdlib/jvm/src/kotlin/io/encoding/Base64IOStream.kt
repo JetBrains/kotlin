@@ -35,7 +35,7 @@ import kotlin.io.encoding.Base64.Default.symbolsPerGroup
  * Closing the returned input stream will close the underlying input stream.
  */
 @SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 public fun InputStream.decodingWith(base64: Base64): InputStream {
     return DecodeInputStream(this, base64)
 }
@@ -54,13 +54,13 @@ public fun InputStream.decodingWith(base64: Base64): InputStream {
  * Closing the returned output stream will close the underlying output stream.
  */
 @SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 public fun OutputStream.encodingWith(base64: Base64): OutputStream {
     return EncodeOutputStream(this, base64)
 }
 
 
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 private class DecodeInputStream(
     private val input: InputStream,
     private val base64: Base64
@@ -228,7 +228,7 @@ private class DecodeInputStream(
     }
 }
 
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 private class EncodeOutputStream(
     private val output: OutputStream,
     private val base64: Base64

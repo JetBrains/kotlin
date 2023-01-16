@@ -176,6 +176,7 @@ compileTestKotlin {
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlin.ExperimentalUnsignedTypes",
                 "-opt-in=kotlin.ExperimentalStdlibApi",
+                "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
                 "-XXLanguage:+RangeUntilOperator",
         ]
         // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.

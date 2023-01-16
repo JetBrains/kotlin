@@ -123,6 +123,7 @@ tasks.withType<KotlinCompile<*>>().configureEach {
         "-opt-in=kotlin.RequiresOptIn",
         "-opt-in=kotlin.ExperimentalUnsignedTypes",
         "-opt-in=kotlin.ExperimentalStdlibApi",
+        "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
         "-XXLanguage:+RangeUntilOperator",
     )
 }

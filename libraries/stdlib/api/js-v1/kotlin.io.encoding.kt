@@ -1,5 +1,5 @@
 @kotlin.SinceKotlin(version = "1.8")
-@kotlin.ExperimentalStdlibApi
+@kotlin.io.encoding.ExperimentalEncodingApi
 public open class Base64 {
     public final fun decode(source: kotlin.ByteArray, startIndex: kotlin.Int = ..., endIndex: kotlin.Int = ...): kotlin.ByteArray
 

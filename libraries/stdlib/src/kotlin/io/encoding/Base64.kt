@@ -16,7 +16,7 @@ import kotlin.native.concurrent.SharedImmutable
  * There are also [Base64.UrlSafe] and [Base64.Mime] instances.
  */
 @SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 public open class Base64 private constructor(
     internal val isUrlSafe: Boolean,
     internal val isMimeScheme: Boolean
@@ -574,7 +574,7 @@ private val base64EncodeMap = byteArrayOf(
     119, 120, 121, 122, 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  43,  47,  /* 48 - 63 */
 )
 
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 @SharedImmutable
 private val base64DecodeMap = IntArray(256).apply {
     this.fill(-1)
@@ -593,7 +593,7 @@ private val base64UrlEncodeMap = byteArrayOf(
     119, 120, 121, 122, 48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  45,  95,  /* 48 - 63 */
 )
 
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 @SharedImmutable
 private val base64UrlDecodeMap = IntArray(256).apply {
     this.fill(-1)
@@ -605,14 +605,14 @@ private val base64UrlDecodeMap = IntArray(256).apply {
 
 
 @SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 internal fun isInMimeAlphabet(symbol: Int): Boolean {
     return symbol in base64DecodeMap.indices && base64DecodeMap[symbol] != -1
 }
 
 
 @SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 internal expect fun Base64.platformCharsToBytes(
     source: CharSequence,
     startIndex: Int,
@@ -621,7 +621,7 @@ internal expect fun Base64.platformCharsToBytes(
 
 
 @SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 internal expect fun Base64.platformEncodeToString(
     source: ByteArray,
     startIndex: Int,
@@ -629,7 +629,7 @@ internal expect fun Base64.platformEncodeToString(
 ): String
 
 @SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 internal expect fun Base64.platformEncodeIntoByteArray(
     source: ByteArray,
     destination: ByteArray,
@@ -639,7 +639,7 @@ internal expect fun Base64.platformEncodeIntoByteArray(
 ): Int
 
 @SinceKotlin("1.8")
-@ExperimentalStdlibApi
+@ExperimentalEncodingApi
 internal expect fun Base64.platformEncodeToByteArray(
     source: ByteArray,
     startIndex: Int,
