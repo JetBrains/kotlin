@@ -13,7 +13,6 @@ import kotlinx.collections.immutable.toPersistentMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirNonUnderContentRootSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.addValueFor
 import org.jetbrains.kotlin.analysis.project.structure.*
@@ -25,6 +24,7 @@ import java.lang.ref.SoftReference
 class LLFirSessionProviderStorage(val project: Project) {
     private val sourceAsUseSiteSessionCache = LLFirSessionsCache()
     private val libraryAsUseSiteSessionCache = LLFirSessionsCache()
+    private val notUnderContentRootSessionCache = LLFirSessionsCache()
 
     private val librariesSessionFactory = LLFirLibrarySessionFactory.getInstance(project)
     private val builtInsSessionFactory = LLFirBuiltinsSessionFactory.getInstance(project)
@@ -44,9 +44,7 @@ class LLFirSessionProviderStorage(val project: Project) {
         }
 
         is KtNotUnderContentRootModule -> {
-            val session = LLFirNonUnderContentRootSessionFactory.getInstance(project)
-                .getNonUnderContentRootSession(useSiteKtModule)
-            LLFirSessionProvider(project, session, KtModuleToSessionMappingByMapImpl(mapOf(useSiteKtModule to session)))
+            createSessionProviderForNotUnderContentRootSession(useSiteKtModule, configureSession)
         }
 
         else -> error("Unexpected ${useSiteKtModule::class.simpleName}")
@@ -86,6 +84,24 @@ class LLFirSessionProviderStorage(val project: Project) {
                 globalComponents,
                 libraryAsUseSiteSessionCache.sessionInvalidator,
                 builtInsSessionFactory.getBuiltinsSession(useSiteKtModule.platform),
+                sessions,
+                configureSession = configureSession,
+            )
+            sessions to session
+        }
+        return LLFirSessionProvider(project, session, KtModuleToSessionMappingByWeakValueMapImpl(sessions))
+    }
+
+    private fun createSessionProviderForNotUnderContentRootSession(
+        useSiteKtModule: KtNotUnderContentRootModule,
+        configureSession: (LLFirSession.() -> Unit)?
+    ): LLFirSessionProvider {
+        val (sessions, session) = notUnderContentRootSessionCache.withMappings(project) { mappings ->
+            val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
+            val session = LLFirSessionFactory.createNotUnderContentRootResolvableSession(
+                project,
+                useSiteKtModule,
+                libraryAsUseSiteSessionCache.sessionInvalidator,
                 sessions,
                 configureSession = configureSession,
             )
@@ -175,6 +191,7 @@ private class FirSessionWithModificationTracker(
 
         val outOfBlockTracker = when (ktModule) {
             is KtSourceModule -> trackerFactory.createModuleWithoutDependenciesOutOfBlockModificationTracker(ktModule)
+            is KtNotUnderContentRootModule -> trackerFactory.createProjectWideOutOfBlockModificationTracker()
             else -> null
         }
         modificationTracker = CompositeModificationTracker.create(

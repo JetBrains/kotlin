@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
@@ -247,7 +248,75 @@ internal object LLFirSessionFactory {
 
             configureSession?.invoke(this)
         }
+    }
 
+    fun createNotUnderContentRootResolvableSession(
+        project: Project,
+        module: KtNotUnderContentRootModule,
+        sessionInvalidator: LLFirSessionInvalidator,
+        sessionsCache: MutableMap<KtModule, LLFirSession>,
+        configureSession: (LLFirSession.() -> Unit)? = null
+    ): LLFirNonUnderContentRootResolvableModuleSession {
+        sessionsCache[module]?.let { return it as LLFirNonUnderContentRootResolvableModuleSession }
+        checkCanceled()
+
+        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(JvmPlatforms.unspecifiedJvmPlatform)
+        val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
+        val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+        val globalResolveComponents = LLFirGlobalResolveComponents(project)
+        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, sessionInvalidator)
+        val contentScope = module.contentScope
+
+        val session = LLFirNonUnderContentRootResolvableModuleSession(module, project, components, builtinsSession.builtinTypes)
+        sessionsCache[module] = session
+        components.session = session
+
+        return session.apply session@{
+            val moduleData = LLFirModuleData(module).apply { bindSession(this@session) }
+            registerModuleData(moduleData)
+            register(FirKotlinScopeProvider::class, scopeProvider)
+
+            registerIdeComponents(project)
+            registerCommonComponents(languageVersionSettings)
+            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
+            registerResolveComponents()
+            registerJavaSpecificResolveComponents()
+
+            val ktFile = module.file as? KtFile
+
+            val provider = LLFirProvider(
+                this,
+                components,
+                if (ktFile != null) FileBasedKotlinDeclarationProvider(ktFile) else EmptyKotlinDeclarationProvider,
+                project.createPackageProvider(contentScope),
+                canContainKotlinPackage = true,
+            )
+
+            register(FirProvider::class, provider)
+            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
+
+            val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
+                add(builtinsSession)
+            }
+
+            register(
+                FirSymbolProvider::class,
+                LLFirModuleWithDependenciesSymbolProvider(
+                    this,
+                    dependencyProvider,
+                    providers = listOfNotNull(
+                        provider.symbolProvider,
+                    )
+                )
+            )
+
+            register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
+            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+            register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.Empty)
+
+            configureSession?.invoke(this)
+        }
     }
 }
 
