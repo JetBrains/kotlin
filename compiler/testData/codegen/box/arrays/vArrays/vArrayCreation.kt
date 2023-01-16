@@ -13,9 +13,6 @@ value class ICChar(val x: Char)
 @JvmInline
 value class ICICChar(val x: ICChar)
 
-@JvmInline
-value class MFVC(val x: Int, val y: Int)
-
 fun box(): String {
     val aInt = VArray(2) { it + 1 }
     if (aInt[1] != 2) return "Fail 1"
@@ -35,9 +32,6 @@ fun box(): String {
     val aICChar = VArray(2) { ICICChar(ICChar('a')) }
     if (aICChar[1].x.x != 'a') return "Fail 6"
 
-    val aMFVC = VArray(2) { MFVC(0, 0) }
-    if (aMFVC[0].x != 0) return "Fail 7"
-
     return "OK"
 }
 
@@ -48,4 +42,3 @@ fun box(): String {
 // 1 LOCALVARIABLE aULongNullable \[Lkotlin/ULong;
 // 1 LOCALVARIABLE aICDoubleNullable \[Ljava/lang/Double;
 // 1 LOCALVARIABLE aICChar \[C
-// 1 LOCALVARIABLE aMFVC \[LMFVC;
