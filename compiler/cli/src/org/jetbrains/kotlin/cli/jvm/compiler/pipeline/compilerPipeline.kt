@@ -420,9 +420,7 @@ private fun buildResolveAndCheckFir(
     countFilesAndLines: KFunction2<Int, Int, Unit>?
 ): ModuleCompilerAnalyzedOutput {
     val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)
-    val (scopeSession, fir) = session.runResolution(firFiles)
-    session.runCheckers(scopeSession, fir, diagnosticsReporter)
-    return ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
+    return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
 }
 
 fun writeOutputs(

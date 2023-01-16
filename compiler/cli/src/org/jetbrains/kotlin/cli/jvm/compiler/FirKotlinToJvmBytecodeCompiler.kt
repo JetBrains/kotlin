@@ -299,10 +299,7 @@ object FirKotlinToJvmBytecodeCompiler {
         ktFiles: List<KtFile>,
         diagnosticsReporter: BaseDiagnosticsCollector
     ): ModuleCompilerAnalyzedOutput {
-        val rawFir = session.buildFirFromKtFiles(ktFiles)
-        val (scopeSession, fir) = session.runResolution(rawFir)
-        session.runCheckers(scopeSession, fir, diagnosticsReporter)
-        return ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
+        return resolveAndCheckFir(session, session.buildFirFromKtFiles(ktFiles), diagnosticsReporter)
     }
 
     private fun CompilationContext.createComponentsForIncrementalCompilation(

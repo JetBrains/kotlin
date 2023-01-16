@@ -52,3 +52,13 @@ fun FirSession.buildFirFromKtFiles(ktFiles: Collection<KtFile>): List<FirFile> {
         }
     }
 }
+
+fun resolveAndCheckFir(
+    session: FirSession,
+    firFiles: List<FirFile>,
+    diagnosticsReporter: DiagnosticReporter
+): ModuleCompilerAnalyzedOutput {
+    val (scopeSession, fir) = session.runResolution(firFiles)
+    session.runCheckers(scopeSession, fir, diagnosticsReporter)
+    return ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
+}
