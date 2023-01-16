@@ -825,11 +825,6 @@ tasks {
     }
 }
 
-fun CopySpec.setExecutablePermissions() {
-    filesMatching("**/bin/*") { mode = 0b111101101 }
-    filesMatching("**/bin/*.bat") { mode = 0b110100100 }
-}
-
 val zipCompiler by task<Zip> {
     dependsOn(dist)
     destinationDirectory.set(file(distDir))
@@ -837,7 +832,6 @@ val zipCompiler by task<Zip> {
 
     from(distKotlinHomeDir)
     into("kotlinc")
-    setExecutablePermissions()
 
     doLast {
         logger.lifecycle("Compiler artifacts packed to ${archiveFile.get().asFile.absolutePath}")
