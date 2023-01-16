@@ -46,6 +46,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import java.lang.reflect.Field
+import java.lang.reflect.Method
 import java.lang.reflect.Type
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
@@ -308,3 +310,17 @@ internal open class CreateKCallableVisitor(private val container: KDeclarationCo
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallableImpl<*> =
         KFunctionImpl(container, descriptor)
 }
+
+internal fun Class<*>.getDeclaredMethodOrNull(name: String, vararg parameterTypes: Class<*>): Method? =
+    try {
+        getDeclaredMethod(name, *parameterTypes)
+    } catch (e: NoSuchMethodException) {
+        null
+    }
+
+internal fun Class<*>.getDeclaredFieldOrNull(name: String): Field? =
+    try {
+        getDeclaredField(name)
+    } catch (e: NoSuchFieldException) {
+        null
+    }

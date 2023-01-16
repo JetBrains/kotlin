@@ -42013,6 +42013,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("companionObjectProperty.kt")
+            public void testCompanionObjectProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/companionObjectProperty.kt");
+            }
+
+            @Test
             @TestMetadata("constructor.kt")
             public void testConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/mapping/constructor.kt");
@@ -42100,6 +42106,18 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             @TestMetadata("methodsFromSuperInterface.kt")
             public void testMethodsFromSuperInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/mapping/methodsFromSuperInterface.kt");
+            }
+
+            @Test
+            @TestMetadata("nonTrivialFunctionNames.kt")
+            public void testNonTrivialFunctionNames() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/nonTrivialFunctionNames.kt");
+            }
+
+            @Test
+            @TestMetadata("nonTrivialPropertyNames.kt")
+            public void testNonTrivialPropertyNames() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/nonTrivialPropertyNames.kt");
             }
 
             @Test

@@ -33661,6 +33661,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/mapping"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
             }
 
+            @TestMetadata("companionObjectProperty.kt")
+            public void testCompanionObjectProperty() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/companionObjectProperty.kt");
+            }
+
             @TestMetadata("constructor.kt")
             public void testConstructor() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/mapping/constructor.kt");
@@ -33734,6 +33739,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("methodsFromSuperInterface.kt")
             public void testMethodsFromSuperInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/mapping/methodsFromSuperInterface.kt");
+            }
+
+            @TestMetadata("nonTrivialFunctionNames.kt")
+            public void testNonTrivialFunctionNames() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/nonTrivialFunctionNames.kt");
+            }
+
+            @TestMetadata("nonTrivialPropertyNames.kt")
+            public void testNonTrivialPropertyNames() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/mapping/nonTrivialPropertyNames.kt");
             }
 
             @TestMetadata("openSuspendFun.kt")
