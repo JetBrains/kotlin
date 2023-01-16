@@ -211,7 +211,12 @@ fun FirReference.toSymbolForCall(
     }
 }
 
-private fun FirResolvedQualifier.toLookupTag(): ConeClassLikeLookupTag? = (symbol as? FirClassSymbol)?.toLookupTag()
+private fun FirResolvedQualifier.toLookupTag(session: FirSession): ConeClassLikeLookupTag? =
+    when (val symbol = symbol) {
+        is FirClassSymbol -> symbol.toLookupTag()
+        is FirTypeAliasSymbol -> symbol.fullyExpandedClass(session)?.toLookupTag()
+        else -> null
+    }
 
 context(Fir2IrComponents)
 private fun FirCallableSymbol<*>.toSymbolForCall(
@@ -225,7 +230,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     val fakeOverrideOwnerLookupTag = when {
         // Static fake overrides
         isStatic -> {
-            ((dispatchReceiver as? FirResolvedQualifier) ?: (explicitReceiver as? FirResolvedQualifier))?.toLookupTag()
+            ((dispatchReceiver as? FirResolvedQualifier) ?: (explicitReceiver as? FirResolvedQualifier))?.toLookupTag(session)
         }
         // Member fake override or bound callable reference
         dispatchReceiver !is FirNoReceiverExpression -> {
@@ -235,7 +240,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
         isReference && fir.receiverParameter == null -> {
             // TODO: remove runIf with StandardClassIds.Any comparison after fixing ValueClass::equals case (KT-54887)
             runIf(containingClassLookupTag()?.classId != StandardClassIds.Any) {
-                (explicitReceiver as? FirResolvedQualifier)?.toLookupTag()
+                (explicitReceiver as? FirResolvedQualifier)?.toLookupTag(session)
             }
         }
         else -> null

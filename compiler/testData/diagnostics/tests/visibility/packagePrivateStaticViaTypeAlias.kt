@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // FILE: javapackage/PackagePrivateGrandparentAbstractClass.java
 
 package javapackage;
