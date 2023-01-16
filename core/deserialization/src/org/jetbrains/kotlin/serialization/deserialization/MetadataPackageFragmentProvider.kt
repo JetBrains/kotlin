@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentDeclarationFilter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
-import java.io.InputStream
 
 class MetadataPackageFragmentProvider(
     storageManager: StorageManager,
@@ -85,16 +83,7 @@ class MetadataPackageFragment(
     private val metadataPartProvider: MetadataPartProvider,
     private val finder: KotlinMetadataFinder
 ) : DeserializedPackageFragment(fqName, storageManager, module) {
-    override val classDataFinder = ClassDataFinder { classId ->
-        val topLevelClassId = generateSequence(classId, ClassId::getOuterClassId).last()
-        val stream = finder.findMetadata(topLevelClassId) ?: return@ClassDataFinder null
-        val (message, nameResolver, version) = readProto(stream)
-        message.class_List.firstOrNull { classProto ->
-            nameResolver.getClassId(classProto.fqName) == classId
-        }?.let { classProto ->
-            ClassData(nameResolver, classProto, version, SourceElement.NO_SOURCE)
-        }
-    }
+    override val classDataFinder = MetadataClassDataFinder(finder)
 
     private lateinit var components: DeserializationComponents
 
@@ -150,23 +139,6 @@ class MetadataPackageFragment(
     override fun hasTopLevelClass(name: Name): Boolean {
         // TODO: check if the corresponding file exists
         return true
-    }
-
-    private fun readProto(stream: InputStream): Triple<ProtoBuf.PackageFragment, NameResolverImpl, BuiltInsBinaryVersion> {
-        val version = BuiltInsBinaryVersion.readFrom(stream)
-
-        if (!version.isCompatibleWithCurrentCompilerVersion()) {
-            // TODO: report a proper diagnostic
-            throw UnsupportedOperationException(
-                "Kotlin metadata definition format version is not supported: " +
-                        "expected ${BuiltInsBinaryVersion.INSTANCE}, actual $version. " +
-                        "Please update Kotlin"
-            )
-        }
-
-        val message = ProtoBuf.PackageFragment.parseFrom(stream, BuiltInSerializerProtocol.extensionRegistry)
-        val nameResolver = NameResolverImpl(message.strings, message.qualifiedNames)
-        return Triple(message, nameResolver, version)
     }
 
     companion object {

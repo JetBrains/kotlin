@@ -46,6 +46,9 @@ class ReflectKotlinClassFinder(private val classLoader: ClassLoader) : KotlinCla
     override fun findMetadata(classId: ClassId): InputStream? = null
 
     // TODO
+    override fun findMetadataTopLevelClassesInPackage(packageFqName: FqName): Set<String>? = null
+
+    // TODO
     override fun hasMetadataPackage(fqName: FqName): Boolean = false
 
     override fun findBuiltInsData(packageFqName: FqName): InputStream? {

@@ -27,6 +27,8 @@ interface KotlinMetadataFinder {
      */
     fun findMetadata(classId: ClassId): InputStream?
 
+    fun findMetadataTopLevelClassesInPackage(packageFqName: FqName): Set<String>?
+
     /**
      * @return `true` iff this finder is able to locate the package with the given [fqName], containing .kotlin_metadata files.
      * Note that returning `true` makes [MetadataPackageFragmentProvider] construct the package fragment for the package,

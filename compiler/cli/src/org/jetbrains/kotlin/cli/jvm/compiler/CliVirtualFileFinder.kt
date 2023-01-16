@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
+import gnu.trove.THashSet
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinder
@@ -47,6 +48,21 @@ class CliVirtualFileFinder(
             classId,
             classId.shortClassName.asString() + MetadataPackageFragment.DOT_METADATA_FILE_EXTENSION
         )?.inputStream
+    }
+
+    override fun findMetadataTopLevelClassesInPackage(packageFqName: FqName): Set<String> {
+        val result = THashSet<String>()
+        index.traverseDirectoriesInPackage(packageFqName, continueSearch = { dir, _ ->
+            for (child in dir.children) {
+                if (child.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION) {
+                    result.add(child.nameWithoutExtension)
+                }
+            }
+
+            true
+        })
+
+        return result
     }
 
     override fun hasMetadataPackage(fqName: FqName): Boolean {

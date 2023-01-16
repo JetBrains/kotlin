@@ -34,12 +34,6 @@ import org.jetbrains.kotlin.utils.toMetadataVersion
 import java.nio.file.Path
 import java.nio.file.Paths
 
-/**
- * Any top level declarations in core/builtins/src are also available from FirBuiltinSymbolProvider (or FirIdeBuiltinSymbolProvider) for IDE
- * so we filter them out to avoid providing the "same" symbols twice.
- */
-private val kotlinBuiltins = setOf("kotlin/ArrayIntrinsicsKt", "kotlin/internal/ProgressionUtilKt")
-
 // This symbol provider loads JVM classes, reading extra info from Kotlin `@Metadata` annotations
 // if present. Use it for library and incremental compilation sessions. For source sessions use
 // `JavaSymbolProvider`, as Kotlin classes should be parsed first.
@@ -59,7 +53,7 @@ class JvmClassFileBasedSymbolProvider(
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         return packagePartProvider.findPackageParts(packageFqName.asString()).mapNotNull { partName ->
-            if (partName in kotlinBuiltins) return@mapNotNull null
+            if (partName in KotlinBuiltins) return@mapNotNull null
             val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
             if (!javaFacade.hasTopLevelClassOf(classId)) return@mapNotNull null
             val jvmMetadataVersion = session.languageVersionSettings.languageVersion.toMetadataVersion()

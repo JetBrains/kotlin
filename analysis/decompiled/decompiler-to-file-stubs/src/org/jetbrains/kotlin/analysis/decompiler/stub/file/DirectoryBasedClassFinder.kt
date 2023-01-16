@@ -38,6 +38,9 @@ class DirectoryBasedClassFinder(
     override fun findMetadata(classId: ClassId): InputStream? = null
 
     // TODO
+    override fun findMetadataTopLevelClassesInPackage(packageFqName: FqName): Set<String>? = null
+
+    // TODO
     override fun hasMetadataPackage(fqName: FqName): Boolean = false
 
     // TODO: load built-ins from packageDirectory?
