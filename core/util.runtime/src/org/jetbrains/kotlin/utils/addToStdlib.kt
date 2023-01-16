@@ -179,6 +179,16 @@ inline fun <T, C : Collection<T>, O> C.ifNotEmpty(body: C.() -> O?): O? = if (is
 
 inline fun <T, O> Array<out T>.ifNotEmpty(body: Array<out T>.() -> O?): O? = if (isNotEmpty()) this.body() else null
 
+/**
+ * @return the collection if it is empty else null
+ */
+inline fun <T, C : Collection<T>, O> C.ifEmpty(body: C.() -> O?): O? = if (isNotEmpty()) null else this.body()
+
+/**
+ * @return the array if it is empty else null
+ */
+inline fun <T, O> Array<out T>.ifEmpty(body: Array<out T>.() -> O?): O? = if (isNotEmpty()) null else this.body()
+
 inline fun <T> measureTimeMillisWithResult(block: () -> T): Pair<Long, T> {
     val start = System.currentTimeMillis()
     val result = block()
