@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.SmartList
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 enum class ProcessResult {
     FOUND, SCOPE_EMPTY;
@@ -54,7 +54,6 @@ abstract class TowerScopeLevel {
         fun consumeCandidate(
             symbol: T,
             dispatchReceiverValue: ReceiverValue?,
-            importedQualifierForStatic: FirExpression?,
             givenExtensionReceiverOptions: List<ReceiverValue>,
             scope: FirScope,
             objectsByName: Boolean = false
@@ -147,7 +146,6 @@ class MemberScopeTowerLevel(
                 output.consumeCandidate(
                     symbol,
                     dispatchReceiverValue,
-                    importedQualifierForStatic = null,
                     givenExtensionReceiverOptions = emptyList(),
                     scope
                 )
@@ -176,7 +174,7 @@ class MemberScopeTowerLevel(
         val candidates = mutableListOf<MemberWithBaseScope<T>>()
         for (group in overridableGroups) {
             val visibleCandidates = group.filter {
-                visibilityChecker.isVisible(it.member.fir, callInfo, dispatchReceiverValue, importedQualifierForStatic = null)
+                visibilityChecker.isVisible(it.member.fir, callInfo, dispatchReceiverValue)
             }
 
             val visibleCandidatesFromSmartcast = visibleCandidates.filter { candidatesMapping.getValue(it) }
@@ -212,7 +210,6 @@ class MemberScopeTowerLevel(
                 output.consumeCandidate(
                     candidate,
                     dispatchReceiverValue,
-                    importedQualifierForStatic = null,
                     givenExtensionReceiverOptions,
                     scope
                 )
@@ -330,26 +327,20 @@ class ScopeTowerLevel(
 
     fun areThereExtensionReceiverOptions(): Boolean = givenExtensionReceiverOptions.isNotEmpty()
 
-    private fun FirCallableDeclaration.importedQualifierForObjectOrStatic(): FirExpression? {
-        val objectClassId = importedFromObjectOrStaticData?.objectClassId ?: return null
-        val symbol = session.symbolProvider.getClassLikeSymbolByClassId(objectClassId)
-        if (symbol is FirRegularClassSymbol) {
-            return buildResolvedQualifier {
-                packageFqName = objectClassId.packageFqName
-                relativeClassFqName = objectClassId.relativeClassName
-                this.symbol = symbol
-            }.apply {
-                resultType = bodyResolveComponents.typeForQualifier(this)
-            }
-        }
-        return null
-    }
-
     private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>): ReceiverValue? {
-        if (candidate.fir.isStatic) return null
-        val importedQualifierReceiver = candidate.fir.importedQualifierForObjectOrStatic()
-        if (importedQualifierReceiver != null) {
-            return ExpressionReceiverValue(importedQualifierReceiver)
+        candidate.fir.importedFromObjectOrStaticData?.let { data ->
+            val objectClassId = data.objectClassId
+            val symbol = session.symbolProvider.getClassLikeSymbolByClassId(objectClassId)
+            if (symbol is FirRegularClassSymbol) {
+                val resolvedQualifier = buildResolvedQualifier {
+                    packageFqName = objectClassId.packageFqName
+                    relativeClassFqName = objectClassId.relativeClassName
+                    this.symbol = symbol
+                }.apply {
+                    resultType = bodyResolveComponents.typeForQualifier(this)
+                }
+                return ExpressionReceiverValue(resolvedQualifier)
+            }
         }
 
         if (candidate !is FirBackingFieldSymbol) {
@@ -404,22 +395,14 @@ class ScopeTowerLevel(
         val receiverExpected = withHideMembersOnly || areThereExtensionReceiverOptions()
         if (candidateReceiverTypeRef == null == receiverExpected) return
         val dispatchReceiverValue = dispatchReceiverValue(candidate)
-        val isStatic = candidate.fir.isStatic
-        val importedQualifierForStatic = runIf(isStatic) {
-            candidate.fir.importedQualifierForObjectOrStatic()
-        }
-        if (dispatchReceiverValue == null &&
-            importedQualifierForStatic == null &&
-            shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)
-        ) {
+        if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
             return
         }
-        val unwrappedCandidate = candidate.fir.importedFromObjectOrStaticData?.original?.symbol.takeIf { !isStatic } ?: candidate
+        val unwrappedCandidate = candidate.fir.importedFromObjectOrStaticData?.original?.symbol ?: candidate
         @Suppress("UNCHECKED_CAST")
         processor.consumeCandidate(
             unwrappedCandidate as T,
             dispatchReceiverValue,
-            importedQualifierForStatic,
             givenExtensionReceiverOptions,
             scope
         )
@@ -465,9 +448,7 @@ class ScopeTowerLevel(
         scope.processClassifiersByName(info.name) {
             empty = false
             processor.consumeCandidate(
-                it,
-                dispatchReceiverValue = null,
-                importedQualifierForStatic = null,
+                it, dispatchReceiverValue = null,
                 givenExtensionReceiverOptions = emptyList(),
                 scope = scope,
                 objectsByName = true

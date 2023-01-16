@@ -544,8 +544,7 @@ internal object CheckVisibility : CheckerStage() {
                 val visible = visibilityChecker.isVisible(
                     declaration,
                     candidate.callInfo,
-                    dispatchReceiverValue = null,
-                    importedQualifierForStatic = null
+                    dispatchReceiverValue = null
                 )
                 if (!visible) {
                     sink.yieldDiagnostic(VisibilityError)

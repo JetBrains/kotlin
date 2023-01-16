@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
@@ -28,11 +27,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 fun FirVisibilityChecker.isVisible(
     declaration: FirMemberDeclaration,
     callInfo: CallInfo,
-    dispatchReceiverValue: ReceiverValue?,
-    importedQualifierForStatic: FirExpression?
+    dispatchReceiverValue: ReceiverValue?
 ): Boolean {
     val staticQualifierForCallable = runIf(declaration is FirCallableDeclaration && declaration.isStatic) {
-        val explicitReceiver = callInfo.explicitReceiver ?: importedQualifierForStatic
+        val explicitReceiver = callInfo.explicitReceiver ?: (dispatchReceiverValue as? ExpressionReceiverValue)?.explicitReceiver
         (explicitReceiver as? FirResolvedQualifier)?.symbol?.fir as? FirRegularClass
     }
     return isVisible(
@@ -51,21 +49,19 @@ fun FirVisibilityChecker.isVisible(
     candidate: Candidate
 ): Boolean {
     val callInfo = candidate.callInfo
-    val dispatchReceiverValue = candidate.dispatchReceiverValue
-    val importedQualifierForStatic = candidate.importedQualifierForStatic
 
-    if (!isVisible(declaration, callInfo, dispatchReceiverValue, importedQualifierForStatic)) {
+    if (!isVisible(declaration, callInfo, candidate.dispatchReceiverValue)) {
         val dispatchReceiverWithoutSmartCastType =
-            removeSmartCastTypeForAttemptToFitVisibility(dispatchReceiverValue, candidate.callInfo.session) ?: return false
+            removeSmartCastTypeForAttemptToFitVisibility(candidate.dispatchReceiverValue, candidate.callInfo.session) ?: return false
 
-        if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType, importedQualifierForStatic)) return false
+        if (!isVisible(declaration, callInfo, dispatchReceiverWithoutSmartCastType)) return false
 
         candidate.dispatchReceiverValue = dispatchReceiverWithoutSmartCastType
     }
 
     val backingField = declaration.getBackingFieldIfApplicable()
     if (backingField != null) {
-        candidate.hasVisibleBackingField = isVisible(backingField, callInfo, dispatchReceiverValue, importedQualifierForStatic)
+        candidate.hasVisibleBackingField = isVisible(backingField, callInfo, candidate.dispatchReceiverValue)
     }
 
     return true
