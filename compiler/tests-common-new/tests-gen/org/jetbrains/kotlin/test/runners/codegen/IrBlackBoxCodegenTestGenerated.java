@@ -1553,6 +1553,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             public void testVArraySize() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/vArrays/vArraySize.kt");
             }
+
+            @Test
+            @TestMetadata("varargParameterOfInlineType.kt")
+            public void testVarargParameterOfInlineType() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/varargParameterOfInlineType.kt");
+            }
         }
     }
 
@@ -23155,12 +23161,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         @TestMetadata("useThisInsideInlineClassGeneric.kt")
         public void testUseThisInsideInlineClassGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/useThisInsideInlineClassGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
-        }
-
-        @Test
-        @TestMetadata("varargParameterOfInlineType.kt")
-        public void testVarargParameterOfInlineType() throws Exception {
-            runTest("compiler/testData/codegen/box/inlineClasses/varargParameterOfInlineType.kt");
         }
 
         @Test

@@ -9,9 +9,15 @@ inline fun <reified T> setFirst(p: VArray<T>, value: T) {
 }
 
 fun box(): String {
-    val vArray = VArray(2) { 42 }
-    if (getFirst(vArray) != 42) return "Fail 1"
-    setFirst(vArray, 24)
-    if (getFirst(vArray) != 24) return "Fail 2"
+    val vArrayInt = VArray(2) { 42 }
+    if (getFirst(vArrayInt) != 42) return "Fail 1.1"
+    setFirst(vArrayInt, 24)
+    if (getFirst(vArrayInt) != 24) return "Fail 2.1"
+
+    val vArrayString = VArray(2) { "a" }
+    if (getFirst(vArrayString) != "a") return "Fail 1.1"
+    setFirst(vArrayString, "b")
+    if (getFirst(vArrayString) != "b") return "Fail 2.1"
+
     return "OK"
 }
