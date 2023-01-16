@@ -28969,6 +28969,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("cannotAccessStaticMemberViaTypeAlias.kt")
+            public void testCannotAccessStaticMemberViaTypeAlias() throws Exception {
+                runTest("compiler/testData/codegen/box/javaVisibility/package/cannotAccessStaticMemberViaTypeAlias.kt");
+            }
+
+            @Test
             @TestMetadata("inheritedPackageStaticField.kt")
             public void testInheritedPackageStaticField() throws Exception {
                 runTest("compiler/testData/codegen/box/javaVisibility/package/inheritedPackageStaticField.kt");

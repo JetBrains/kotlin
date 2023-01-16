@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNullableNothing
@@ -31,7 +34,11 @@ fun FirVisibilityChecker.isVisible(
 ): Boolean {
     val staticQualifierForCallable = runIf(declaration is FirCallableDeclaration && declaration.isStatic) {
         val explicitReceiver = callInfo.explicitReceiver ?: (dispatchReceiverValue as? ExpressionReceiverValue)?.explicitReceiver
-        (explicitReceiver as? FirResolvedQualifier)?.symbol?.fir as? FirRegularClass
+        when (val classLikeSymbol = (explicitReceiver as? FirResolvedQualifier)?.symbol) {
+            is FirRegularClassSymbol -> classLikeSymbol.fir
+            is FirTypeAliasSymbol -> classLikeSymbol.fullyExpandedClass(callInfo.session)?.fir
+            is FirAnonymousObjectSymbol, null -> null
+        }
     }
     return isVisible(
         declaration,

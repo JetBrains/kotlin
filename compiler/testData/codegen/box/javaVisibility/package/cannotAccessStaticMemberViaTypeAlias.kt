@@ -1,9 +1,12 @@
+// TARGET_BACKEND: JVM_IR
 // FILE: javapackage/PackagePrivateGrandparentAbstractClass.java
 
 package javapackage;
 
 /*package-private*/ abstract class PackagePrivateGrandparentAbstractClass {
-    public static void publicStaticMethod() {}
+    public static String publicStaticMethod() {
+        return "OK";
+    }
 }
 
 // FILE: javapackage/PublicParentClass.java
@@ -18,13 +21,4 @@ import javapackage.PublicParentClass
 
 typealias TypeAliasedParent = PublicParentClass
 
-fun foo() {
-    TypeAliasedParent.<!INVISIBLE_REFERENCE!>publicStaticMethod<!>()
-}
-
-class Child : TypeAliasedParent() {
-    fun foo() {
-        TypeAliasedParent.publicStaticMethod()
-        publicStaticMethod()
-    }
-}
+fun box() = TypeAliasedParent.publicStaticMethod()
