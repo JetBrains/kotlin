@@ -234,8 +234,8 @@ internal class SymbolLightAccessorMethod private constructor(
             propertySymbol().returnType.asPsiType(
                 this@SymbolLightAccessorMethod,
                 allowErrorTypes = true,
-            KtTypeMappingMode.RETURN_TYPE,
-            containingClass.isAnnotationType,
+                KtTypeMappingMode.RETURN_TYPE,
+                containingClass.isAnnotationType,
             )
         } ?: nonExistentType()
     }

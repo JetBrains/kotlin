@@ -73,10 +73,11 @@ internal class SymbolLightClassForEnumEntry(
     private val _extendsList: PsiReferenceList? by lazyPub {
         val mappedType = enumConstant.withEnumEntrySymbol { symbol ->
             symbol.returnType.asPsiType(
-            this@SymbolLightClassForEnumEntry,
-            allowErrorTypes = true,
-            KtTypeMappingMode.SUPER_TYPE
-        ) as? PsiClassType} ?: return@lazyPub null
+                this@SymbolLightClassForEnumEntry,
+                allowErrorTypes = true,
+                KtTypeMappingMode.SUPER_TYPE
+            ) as? PsiClassType
+        } ?: return@lazyPub null
 
         KotlinSuperTypeListBuilder(
             kotlinOrigin = enumClass.kotlinOrigin?.getSuperTypeList(),
