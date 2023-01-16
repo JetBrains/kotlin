@@ -3294,6 +3294,9 @@ public final class kotlin/io/encoding/Base64$Default : kotlin/io/encoding/Base64
 	public final fun getUrlSafe ()Lkotlin/io/encoding/Base64;
 }
 
+public abstract interface annotation class kotlin/io/encoding/ExperimentalEncodingApi : java/lang/annotation/Annotation {
+}
+
 public final class kotlin/io/encoding/StreamEncodingKt {
 	public static final fun decodingWith (Ljava/io/InputStream;Lkotlin/io/encoding/Base64;)Ljava/io/InputStream;
 	public static final fun encodingWith (Ljava/io/OutputStream;Lkotlin/io/encoding/Base64;)Ljava/io/OutputStream;
