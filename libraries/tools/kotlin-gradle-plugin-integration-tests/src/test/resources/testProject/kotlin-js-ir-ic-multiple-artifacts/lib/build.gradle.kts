@@ -2,8 +2,6 @@ plugins {
     kotlin("js")
 }
 
-var conf: Configuration? = null
-
 kotlin {
     js {
         val otherCompilation = compilations.create("other")
@@ -16,7 +14,8 @@ kotlin {
             isCanBeConsumed = true
             isCanBeResolved = false
         }
-        conf = otherDist
+        val runtimeOnly by configurations.getting
+        runtimeOnly.extendsFrom(otherDist)
         artifacts {
             add(otherDist.name, tasks.named("otherKlib").map { it.outputs.files.files.first() })
         }
@@ -28,9 +27,6 @@ kotlin {
     sourceSets {
         val main by getting {
             kotlin.exclude("**/other/**")
-            dependencies {
-                runtimeOnly(conf!!)
-            }
         }
         val other by getting {
             kotlin.srcDirs("src/main/kotlin/other")

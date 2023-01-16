@@ -1468,7 +1468,7 @@ class NewMultiplatformIT : BaseGradleIT() {
         @Suppress("DEPRECATION")
         build(
             "runRhino",
-            options = defaultBuildOptions().copy(warningMode = WarningMode.Summary, jsCompilerType = KotlinJsCompilerType.LEGACY)
+            options = defaultBuildOptions().copy(jsCompilerType = KotlinJsCompilerType.LEGACY)
         ) {
             assertSuccessful()
             assertTasksExecuted(":mainProject:processDceBrowserKotlinJs")
@@ -1636,7 +1636,7 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         val groupDir = "build/repo/com/example/"
 
-        build(":mpp-lib:publish", options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
+        build(":mpp-lib:publish") {
             assertSuccessful()
             assertFileExists(groupDir + "mpp-lib")
             assertFileExists(groupDir + "mpp-lib-myjvm")
@@ -1651,7 +1651,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                     add("-Pkotlin.mpp.keepMppDependenciesIntactInPoms=true")
             }.toTypedArray()
 
-            build(*params, options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)) {
+            build(*params) {
                 assertSuccessful()
                 assertTasksExecuted(":jvm-app:publishMainPublicationToMavenRepository")
                 assertTasksExecuted(":js-app:publishMavenPublicationToMavenRepository")

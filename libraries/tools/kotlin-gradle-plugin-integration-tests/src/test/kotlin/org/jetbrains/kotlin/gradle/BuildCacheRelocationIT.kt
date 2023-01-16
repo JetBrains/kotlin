@@ -74,11 +74,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("works with JS/DCE project")
     @GradleTest
     fun testRelocationKotlinJs(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects(
-            "kotlin-js-dce",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary) // Jar tasks produces deprecation warnings
-        )
+        val (firstProject, secondProject) = prepareTestProjects("kotlin-js-dce", gradleVersion)
 
         checkBuildCacheRelocation(
             firstProject,
@@ -97,13 +93,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("works with Multiplatform")
     @GradleTest
     fun testRelocationMultiplatform(gradleVersion: GradleVersion) {
-        val (firstProject, secondProject) = prepareTestProjects(
-            "new-mpp-lib-with-tests",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                warningMode = WarningMode.Summary // Remove it once project will be updated
-            )
-        )
+        val (firstProject, secondProject) = prepareTestProjects("new-mpp-lib-with-tests", gradleVersion)
 
         checkBuildCacheRelocation(
             firstProject,

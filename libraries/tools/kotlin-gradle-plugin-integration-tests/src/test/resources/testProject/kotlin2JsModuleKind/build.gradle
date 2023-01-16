@@ -36,7 +36,7 @@ dependencies {
 task runRhino(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     workingDir = "${buildDir}/kotlin2js/main/"
-    main = 'org.mozilla.javascript.tools.shell.Main'
+    mainClass = 'org.mozilla.javascript.tools.shell.Main'
     args = ["-opt", "-1", "-f", "amd.js", "-f", "kotlin.js", "-f", "app.js", "-f", "check.js"]
 }
 

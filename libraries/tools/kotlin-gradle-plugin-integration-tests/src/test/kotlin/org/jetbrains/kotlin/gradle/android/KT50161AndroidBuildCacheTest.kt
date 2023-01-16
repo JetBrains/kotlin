@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.BuildTask
 import org.gradle.util.GradleVersion
@@ -33,7 +32,6 @@ class KT50161AndroidBuildCacheTest : KGPBaseTest() {
             defaultBuildOptions.copy(
                 androidVersion = agpVersion,
                 buildCacheEnabled = true,
-                warningMode = WarningMode.Summary
             ),
             buildJdk = jdkVersion.location,
         ) {

@@ -553,7 +553,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
     final override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
             jsOptions = defaultJsOptions,
-            warningMode = WarningMode.Summary
         )
 
     protected fun BuildResult.checkIrCompilationMessage() {

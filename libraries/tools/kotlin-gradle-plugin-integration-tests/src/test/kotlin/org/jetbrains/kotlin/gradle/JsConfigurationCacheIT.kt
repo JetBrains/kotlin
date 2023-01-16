@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -21,7 +20,6 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
     final override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
             jsOptions = defaultJsOptions,
-            warningMode = WarningMode.Summary,
             configurationCache = true,
             configurationCacheProblems = BaseGradleIT.ConfigurationCacheProblems.FAIL
         )

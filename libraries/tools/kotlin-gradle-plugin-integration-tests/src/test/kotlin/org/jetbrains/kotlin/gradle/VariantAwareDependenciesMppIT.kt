@@ -36,23 +36,16 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
 
         with(outerProject) {
             embedProject(innerProject)
-            gradleBuildScript(innerProject.projectName).appendText("\nrepositories { jcenter() }; dependencies { implementation rootProject }")
+            gradleBuildScript(innerProject.projectName).appendText("\ndependencies { implementation rootProject }")
 
-            testResolveAllConfigurations(
-                subproject = innerProject.projectName,
-                options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)
-            ) {
+            testResolveAllConfigurations(subproject = innerProject.projectName) {
                 assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
             }
 
             @Suppress("DEPRECATION")
             gradleProperties().appendText(jsCompilerType(KotlinJsCompilerType.LEGACY))
 
-            testResolveAllConfigurations(
-                subproject = innerProject.projectName,
-                skipSetup = true,
-                options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)
-            ) {
+            testResolveAllConfigurations(subproject = innerProject.projectName, skipSetup = true) {
                 assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.jar")
             }
         }
@@ -80,7 +73,7 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
             embedProject(innerProject)
             gradleBuildScript().appendText("\ndependencies { nodeJsMainImplementation project(':${innerProject.projectName}') }")
 
-            testResolveAllConfigurations(innerProject.projectName, options = defaultBuildOptions().copy(warningMode = WarningMode.Summary))
+            testResolveAllConfigurations(innerProject.projectName)
         }
     }
 
@@ -162,10 +155,7 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
             """.trimIndent()
             )
 
-            testResolveAllConfigurations(
-                innerJvmProject.projectName,
-                options = defaultBuildOptions().copy(warningMode = WarningMode.Summary),
-            )
+            testResolveAllConfigurations(innerJvmProject.projectName)
         }
     }
 
@@ -206,10 +196,7 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
                     """.trimIndent()
                 )
 
-                testResolveAllConfigurations(
-                    project.projectName,
-                    options = defaultBuildOptions().copy(warningMode = WarningMode.Summary)
-                )
+                testResolveAllConfigurations(project.projectName)
             }
         }
     }

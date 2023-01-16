@@ -58,7 +58,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         project(
             "kotlin-js-plugin-project",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)
         ) {
             buildGradleKts.modify { it.lines().filter { "html" !in it }.joinToString("\n") }
             kotlinSourcesDir().resolve("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }
@@ -79,7 +78,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         project(
             "kotlin-js-plugin-project",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)
         ) {
             buildGradleKts.modify { it.lines().filter { "html" !in it }.joinToString("\n") }
             kotlinSourcesDir().resolve("Main.kt").modify { "fun f() = listOf(1, 2, 3).joinToString()" }
@@ -352,7 +350,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         project(
             "kotlin-js-plugin-project",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Summary)
         ) {
             assertKotlinTestDependency(
                 listOf("testImplementation"),
