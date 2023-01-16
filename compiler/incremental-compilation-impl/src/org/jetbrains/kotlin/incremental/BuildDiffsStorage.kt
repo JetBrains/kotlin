@@ -64,21 +64,23 @@ data class BuildDiffsStorage(val buildDiffs: List<BuildDifference>) {
             return null
         }
 
-        fun writeToFile(file: File, storage: BuildDiffsStorage, reporter: ICReporter?) {
+        fun writeToFile(icContext: IncrementalCompilationContext, file: File, storage: BuildDiffsStorage) {
             file.parentFile.mkdirs()
 
             try {
-                ObjectOutputStream(file.outputStream().buffered()).use { output ->
-                    output.writeInt(CURRENT_VERSION)
+                icContext.transaction.write(file.toPath()) {
+                    ObjectOutputStream(file.outputStream().buffered()).use { output ->
+                        output.writeInt(CURRENT_VERSION)
 
-                    val diffsToWrite = storage.buildDiffs.sortedBy { it.ts }.takeLast(MAX_DIFFS_ENTRIES)
-                    output.writeInt(diffsToWrite.size)
-                    for (diff in diffsToWrite) {
-                        output.writeBuildDifference(diff)
+                        val diffsToWrite = storage.buildDiffs.sortedBy { it.ts }.takeLast(MAX_DIFFS_ENTRIES)
+                        output.writeInt(diffsToWrite.size)
+                        for (diff in diffsToWrite) {
+                            output.writeBuildDifference(diff)
+                        }
                     }
                 }
             } catch (e: IOException) {
-                reporter?.info { "Could not write diff to file $file: $e" }
+                icContext.reporter.info { "Could not write diff to file $file: $e" }
             }
         }
 

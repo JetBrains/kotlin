@@ -72,9 +72,7 @@ open class IncrementalJsCache(
     var header: ByteArray
         get() = headerFile.readBytes()
         set(value) {
-            icContext.transaction.registerAddedOrChangedFile(headerFile.toPath())
-            cachesDir.mkdirs()
-            headerFile.writeBytes(value)
+            icContext.transaction.writeBytes(headerFile.toPath(), value)
         }
 
     override fun markDirty(removedAndCompiledSources: Collection<File>) {

@@ -148,13 +148,7 @@ open class LookupStorage(
         try {
             if (size != oldSize) {
                 if (size > 0) {
-                    icContext.transaction.registerAddedOrChangedFile(countersFile.toPath())
-                    if (!countersFile.exists()) {
-                        countersFile.parentFile.mkdirs()
-                        countersFile.createNewFile()
-                    }
-
-                    countersFile.writeText("$size\n0")
+                    icContext.transaction.writeText(countersFile.toPath(), "$size\n0")
                 }
             }
         } finally {

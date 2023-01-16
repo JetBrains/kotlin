@@ -28,6 +28,7 @@ import java.util.*
 class BuildDiffsStorageTest {
     lateinit var storageFile: File
     private val random = Random(System.currentTimeMillis())
+    private val icContext = IncrementalCompilationContext(null)
 
     @Before
     fun setUp() {
@@ -54,7 +55,7 @@ class BuildDiffsStorageTest {
     @Test
     fun writeReadSimple() {
         val diffs = BuildDiffsStorage(listOf(getRandomDiff()))
-        BuildDiffsStorage.writeToFile(storageFile, diffs, reporter = null)
+        BuildDiffsStorage.writeToFile(icContext, storageFile, diffs)
 
         val diffsDeserialized = BuildDiffsStorage.readFromFile(storageFile, reporter = null)
         Assert.assertEquals(diffs.toString(), diffsDeserialized.toString())
@@ -64,7 +65,7 @@ class BuildDiffsStorageTest {
     fun writeReadMany() {
         val generated = Array(20) { getRandomDiff() }.toList()
         val diffs = BuildDiffsStorage(generated)
-        BuildDiffsStorage.writeToFile(storageFile, diffs, reporter = null)
+        BuildDiffsStorage.writeToFile(icContext, storageFile, diffs)
 
         val diffsDeserialized = BuildDiffsStorage.readFromFile(storageFile, reporter = null)
         val expected = generated.sortedBy { it.ts }.takeLast(BuildDiffsStorage.MAX_DIFFS_ENTRIES).toTypedArray()
@@ -82,7 +83,7 @@ class BuildDiffsStorageTest {
     @Test
     fun versionChanged() {
         val diffs = BuildDiffsStorage(listOf(getRandomDiff()))
-        BuildDiffsStorage.writeToFile(storageFile, diffs, reporter = null)
+        BuildDiffsStorage.writeToFile(icContext, storageFile, diffs)
 
         val versionBackup = BuildDiffsStorage.CURRENT_VERSION
         try {

@@ -37,6 +37,24 @@ interface CompilationTransaction : Closeable {
     fun markAsSuccessful()
 }
 
+fun CompilationTransaction.write(file: Path, writeAction: () -> Unit) {
+    registerAddedOrChangedFile(file)
+    writeAction()
+}
+
+fun CompilationTransaction.writeText(file: Path, text: String) {
+    writeBytes(file, text.toByteArray())
+}
+
+fun CompilationTransaction.writeBytes(file: Path, array: ByteArray) {
+    write(file) {
+        if (!Files.exists(file.parent)) {
+            Files.createDirectories(file.parent)
+        }
+        Files.write(file, array)
+    }
+}
+
 /**
  * A dummy implementation of compilation transaction
  */

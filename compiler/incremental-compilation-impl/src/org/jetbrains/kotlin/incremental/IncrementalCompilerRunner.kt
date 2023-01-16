@@ -495,8 +495,7 @@ abstract class IncrementalCompilerRunner<
             dirtySources.addAll(compiledSources)
             allDirtySources.addAll(dirtySources)
             val text = allDirtySources.joinToString(separator = System.getProperty("line.separator")) { it.normalize().absolutePath }
-            transaction.registerAddedOrChangedFile(dirtySourcesSinceLastTimeFile.toPath())
-            dirtySourcesSinceLastTimeFile.writeText(text)
+            transaction.writeText(dirtySourcesSinceLastTimeFile.toPath(), text)
 
             val generatedFiles = outputItemsCollector.outputs.map {
                 it.toGeneratedFile(jvmMetadataVersionFromLanguageVersion)
@@ -583,7 +582,7 @@ abstract class IncrementalCompilerRunner<
         }
 
         val dirtyData = DirtyData(buildDirtyLookupSymbols, buildDirtyFqNames)
-        processChangesAfterBuild(compilationMode, currentBuildInfo, dirtyData, transaction)
+        processChangesAfterBuild(icContext, compilationMode, currentBuildInfo, dirtyData)
 
         return exitCode
     }
@@ -615,10 +614,10 @@ abstract class IncrementalCompilerRunner<
     open fun runWithNoDirtyKotlinSources(caches: CacheManager): Boolean = false
 
     private fun processChangesAfterBuild(
+        icContext: IncrementalCompilationContext,
         compilationMode: CompilationMode,
         currentBuildInfo: BuildInfo,
         dirtyData: DirtyData,
-        transaction: CompilationTransaction,
     ) = reporter.measure(BuildTime.IC_WRITE_HISTORY_FILE) {
         val prevDiffs = BuildDiffsStorage.readFromFile(buildHistoryFile, reporter)?.buildDiffs ?: emptyList()
         val newDiff = if (compilationMode is CompilationMode.Incremental) {
@@ -628,8 +627,7 @@ abstract class IncrementalCompilerRunner<
             BuildDifference(currentBuildInfo.startTS, false, emptyDirtyData)
         }
 
-        transaction.registerAddedOrChangedFile(buildHistoryFile.toPath())
-        BuildDiffsStorage.writeToFile(buildHistoryFile, BuildDiffsStorage(prevDiffs + newDiff), reporter)
+        BuildDiffsStorage.writeToFile(icContext, buildHistoryFile, BuildDiffsStorage(prevDiffs + newDiff))
     }
 
     companion object {
