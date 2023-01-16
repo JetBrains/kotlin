@@ -10,6 +10,9 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -22,14 +25,11 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.compileDependenciesTransformationOrFail
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
-import org.jetbrains.kotlin.gradle.utils.outputFilesProvider
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import java.io.File
@@ -109,21 +109,19 @@ private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
 }
 
 private fun CInteropMetadataDependencyTransformationTask.onlyIfSourceSetIsSharedNative() {
-    onlyIf { getCommonizerTarget(sourceSet) is SharedCommonizerTarget }
+    val isSharedCommonizerTarget = getCommonizerTarget(sourceSet) is SharedCommonizerTarget
+    onlyIf { isSharedCommonizerTarget }
 }
 
 internal open class CInteropMetadataDependencyTransformationTask @Inject constructor(
     @Transient @get:Internal val sourceSet: DefaultKotlinSourceSet,
     @get:OutputDirectory val outputDirectory: File,
     @get:Internal val outputLibraryFilesDiscovery: OutputLibraryFilesDiscovery,
-    @get:Internal val cleaning: Cleaning
+    @get:Internal val cleaning: Cleaning,
+    objectFactory: ObjectFactory
 ) : DefaultTask() {
 
-    init {
-        notCompatibleWithConfigurationCacheCompat(
-            "Task $name does not support Gradle Configuration Cache. Check KT-49933 for more info"
-        )
-    }
+    private val parameters = GranularMetadataTransformation.Params(project, sourceSet)
 
     sealed class OutputLibraryFilesDiscovery : Serializable {
         abstract fun resolveOutputLibraryFiles(outputDirectory: File, resolutions: Iterable<ChooseVisibleSourceSets>): Set<File>
@@ -188,33 +186,38 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
     @Suppress("unused")
     @get:Classpath
-    protected val inputArtifactFiles: FileCollection get() = sourceSet
-        .internal
-        .resolvableMetadataConfiguration
-        .withoutProjectDependencies()
+    protected val inputArtifactFiles: FileCollection by lazy {
+        sourceSet
+            .internal
+            .resolvableMetadataConfiguration
+            .withoutProjectDependencies()
+    }
+
+    @get:OutputFile
+    val outputLibrariesFileIndex: RegularFileProperty = objectFactory
+        .fileProperty()
+        .apply { set(outputDirectory.resolve("${sourceSet.name}.transformedCinteropLibraries")) }
 
     @get:Internal
-    protected val chooseVisibleSourceSets
-        get() = sourceSet
-            .compileDependenciesTransformationOrFail
-            .metadataDependencyResolutions
-            .filterIsInstance<ChooseVisibleSourceSets>()
-
-    @Suppress("unused")
-    @get:Nested
-    protected val chooseVisibleSourceSetsProjection
-        get() = chooseVisibleSourceSets.map(::ChooseVisibleSourceSetProjection).toSet()
-
-    @get:Internal
-    val outputLibraryFiles = outputFilesProvider(lazy {
-        outputLibraryFilesDiscovery.resolveOutputLibraryFiles(outputDirectory, chooseVisibleSourceSets)
-    })
+    val outputLibraryFiles: Provider<Set<File>> get() = outputLibrariesFileIndex.map { file ->
+        TransformedCinteropLibrariesFile(file.asFile).read()
+    }
 
     @TaskAction
     protected fun transformDependencies() {
         cleaning.cleanOutputDirectory(outputDirectory)
-        if (getCommonizerTarget(sourceSet) !is SharedCommonizerTarget) return
+        outputDirectory.mkdirs()
+        val transformation = GranularMetadataTransformation(parameters) { emptyList() }
+        val chooseVisibleSourceSets = transformation.metadataDependencyResolutions.filterIsInstance<ChooseVisibleSourceSets>()
+        outputLibraryFilesDiscovery.resolveOutputLibraryFiles(outputDirectory, chooseVisibleSourceSets)
         chooseVisibleSourceSets.forEach(::materializeMetadata)
+        val transformedLibraries = outputLibraryFilesDiscovery.resolveOutputLibraryFiles(outputDirectory, chooseVisibleSourceSets)
+        TransformedCinteropLibrariesFile(outputLibrariesFileIndex.get().asFile).write(transformedLibraries)
+    }
+
+    private fun writeTransformedLibraries(files: Set<File>) {
+        val content = files.joinToString("\n")
+        outputLibrariesFileIndex.get().asFile.writeText(content)
     }
 
     private fun materializeMetadata(
@@ -238,5 +241,16 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
                 componentIdentifier !is ProjectComponentIdentifier
             }
         }.files
+    }
+}
+
+private class TransformedCinteropLibrariesFile(
+    private val indexFile: File
+) {
+    fun read(): Set<File> = indexFile.readLines().mapTo(mutableSetOf()) { File(it) }
+
+    fun write(files: Iterable<File>) {
+        val content = files.joinToString("\n")
+        indexFile.writeText(content)
     }
 }
