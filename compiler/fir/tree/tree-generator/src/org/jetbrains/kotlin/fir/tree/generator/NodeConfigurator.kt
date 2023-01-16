@@ -205,7 +205,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +fieldList("contextReceiverArguments", expression, useMutableOrEmpty = true, withReplace = true)
         }
 
-        qualifiedAccess.configure {
+        qualifiedAccessExpression.configure {
             +typeArguments.withTransform()
             +receivers
             +field("source", sourceElementType, nullable = true, withReplace = true)
@@ -563,7 +563,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         checkedSafeCallSubject.configure {
-            +field("originalReceiverRef", safeCallOriginalReceiverReferenceType)
+            +field("originalReceiverRef", referenceToSimpleExpressionType)
         }
 
         callableReferenceAccess.configure {
@@ -611,13 +611,16 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         }
 
         variableAssignment.configure {
-            +field("lValue", reference)
-            +field("lValueTypeRef", typeRef).withReplace()
+            +field("lValue", expression).withTransform().withReplace()
             +field("rValue", expression).withTransform()
         }
 
         whenSubjectExpression.configure {
             +field("whenRef", whenRefType)
+        }
+
+        desugaredAssignmentValueReferenceExpression.configure {
+            +field("expressionRef", referenceToSimpleExpressionType)
         }
 
         wrappedExpression.configure {

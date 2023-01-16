@@ -213,7 +213,7 @@ class CallAndReferenceGenerator(
         return newType.toTypeProjection(typeProjection.kind)
     }
 
-    private fun FirQualifiedAccess.tryConvertToSamConstructorCall(type: IrType): IrTypeOperatorCall? {
+    private fun FirQualifiedAccessExpression.tryConvertToSamConstructorCall(type: IrType): IrTypeOperatorCall? {
         val calleeReference = calleeReference as? FirResolvedNamedReference ?: return null
         val fir = calleeReference.resolvedSymbol.fir
         if (this is FirFunctionCall && fir is FirSimpleFunction && fir.origin == FirDeclarationOrigin.SamConstructor) {
@@ -227,7 +227,7 @@ class CallAndReferenceGenerator(
     }
 
     private fun FirExpression.superQualifierSymbol(): IrClassSymbol? {
-        if (this !is FirQualifiedAccess) {
+        if (this !is FirQualifiedAccessExpression) {
             return null
         }
         val dispatchReceiverReference = calleeReference
@@ -264,7 +264,7 @@ class CallAndReferenceGenerator(
             else -> null
         }
 
-    private val FirQualifiedAccess.dynamicOperator
+    private val FirQualifiedAccessExpression.dynamicOperator
         get() = when (calleeReference.source?.kind) {
             is KtFakeSourceElementKind.ArrayAccessNameReference -> when (calleeReference.resolved?.name) {
                 OperatorNameConventions.SET -> IrDynamicOperator.EQ
@@ -288,7 +288,7 @@ class CallAndReferenceGenerator(
         }
 
     private fun convertToIrCallForDynamic(
-        qualifiedAccess: FirQualifiedAccess,
+        qualifiedAccess: FirQualifiedAccessExpression,
         explicitReceiverExpression: IrExpression,
         type: IrType,
         calleeReference: FirReference,
@@ -333,7 +333,7 @@ class CallAndReferenceGenerator(
     }
 
     fun convertToIrCall(
-        qualifiedAccess: FirQualifiedAccess,
+        qualifiedAccess: FirQualifiedAccessExpression,
         typeRef: FirTypeRef,
         explicitReceiverExpression: IrExpression?,
         annotationMode: Boolean = false,
@@ -501,13 +501,15 @@ class CallAndReferenceGenerator(
 
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
-        }.applyTypeArguments(variableAssignment).applyReceivers(variableAssignment, convertedExplicitReceiver)
+        }.apply {
+            variableAssignment.unwrapLValue()?.let { applyReceivers(it, convertedExplicitReceiver) }
+        }
     }
 
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment, explicitReceiverExpression: IrExpression?): IrExpression {
         try {
             val type = irBuiltIns.unitType
-            val calleeReference = variableAssignment.calleeReference
+            val calleeReference = variableAssignment.calleeReference ?: error("Reference not resolvable")
             val assignedValue = visitor.convertToIrExpression(variableAssignment.rValue)
 
             val firSymbol = calleeReference.toResolvedBaseSymbol()
@@ -532,7 +534,8 @@ class CallAndReferenceGenerator(
             )
             val origin = variableAssignment.getIrAssignmentOrigin()
 
-            return variableAssignment.convertWithOffsets { startOffset, endOffset ->
+            val lValue = variableAssignment.unwrapLValue() ?: error("Assignment lValue unwrapped to null")
+            return variableAssignment.convertWithOffsets(calleeReference) { startOffset, endOffset ->
                 when (symbol) {
                     is IrFieldSymbol -> IrSetFieldImpl(startOffset, endOffset, symbol, type, origin).apply {
                         value = assignedValue
@@ -548,7 +551,7 @@ class CallAndReferenceGenerator(
                                 origin = origin,
                                 superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
                             ).apply {
-                                putContextReceiverArguments(variableAssignment)
+                                putContextReceiverArguments(lValue)
                                 putValueArgument(0, assignedValue)
                             }
 
@@ -568,7 +571,7 @@ class CallAndReferenceGenerator(
                                 origin = origin,
                                 superQualifierSymbol = variableAssignment.dispatchReceiver.superQualifierSymbol()
                             ).apply {
-                                putValueArgument(putContextReceiverArguments(variableAssignment), assignedValue)
+                                putValueArgument(putContextReceiverArguments(lValue), assignedValue)
                             }
 
                             backingField != null -> IrSetFieldImpl(
@@ -600,7 +603,7 @@ class CallAndReferenceGenerator(
 
                     else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
                 }
-            }.applyTypeArguments(variableAssignment).applyReceivers(variableAssignment, explicitReceiverExpression)
+            }.applyTypeArguments(lValue).applyReceivers(lValue, explicitReceiverExpression)
         } catch (e: Throwable) {
             throw IllegalStateException(
                 "Error while translating ${variableAssignment.render()} " +
@@ -957,7 +960,7 @@ class CallAndReferenceGenerator(
         return this
     }
 
-    internal fun IrExpression.applyTypeArguments(access: FirQualifiedAccess): IrExpression {
+    internal fun IrExpression.applyTypeArguments(access: FirQualifiedAccessExpression): IrExpression {
         if (this !is IrMemberAccessExpression<*>) return this
         val argumentsCount = access.typeArguments.size
         if (argumentsCount <= typeArgumentsCount) {
@@ -986,16 +989,16 @@ class CallAndReferenceGenerator(
         }
     }
 
-    private fun FirQualifiedAccess.findTypeParameter(index: Int): FirTypeParameter? =
+    private fun FirQualifiedAccessExpression.findTypeParameter(index: Int): FirTypeParameter? =
         ((calleeReference as? FirResolvedNamedReference)?.resolvedSymbol?.fir as? FirTypeParametersOwner)?.typeParameters?.get(index)
 
-    private fun FirQualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
+    private fun FirQualifiedAccessExpression.findIrDispatchReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
         findIrReceiver(explicitReceiverExpression, isDispatch = true)
 
-    private fun FirQualifiedAccess.findIrExtensionReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
+    private fun FirQualifiedAccessExpression.findIrExtensionReceiver(explicitReceiverExpression: IrExpression?): IrExpression? =
         findIrReceiver(explicitReceiverExpression, isDispatch = false)
 
-    internal fun FirQualifiedAccess.findIrReceiver(explicitReceiverExpression: IrExpression?, isDispatch: Boolean): IrExpression? {
+    internal fun FirQualifiedAccessExpression.findIrReceiver(explicitReceiverExpression: IrExpression?, isDispatch: Boolean): IrExpression? {
         val firReceiver = if (isDispatch) dispatchReceiver else extensionReceiver
         if (firReceiver == explicitReceiver) {
             return explicitReceiverExpression
@@ -1011,7 +1014,7 @@ class CallAndReferenceGenerator(
             }
     }
 
-    private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccess, explicitReceiverExpression: IrExpression?): IrExpression {
+    private fun IrExpression.applyReceivers(qualifiedAccess: FirQualifiedAccessExpression, explicitReceiverExpression: IrExpression?): IrExpression {
         when (this) {
             is IrMemberAccessExpression<*> -> {
                 val ownerFunction =

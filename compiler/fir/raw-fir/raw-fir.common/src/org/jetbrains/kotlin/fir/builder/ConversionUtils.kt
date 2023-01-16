@@ -531,7 +531,7 @@ private fun FirExpression.checkReceiver(name: String?): Boolean {
 // this = .f(...)
 // receiver = <expr>
 // Returns safe call <expr>?.{ f(...) }
-fun FirQualifiedAccess.createSafeCall(receiver: FirExpression, source: KtSourceElement): FirSafeCallExpression {
+fun FirQualifiedAccessExpression.createSafeCall(receiver: FirExpression, source: KtSourceElement): FirSafeCallExpression {
     val checkedSafeCallSubject = buildCheckedSafeCallSubject {
         @OptIn(FirContractViolation::class)
         this.originalReceiverRef = FirExpressionRef<FirExpression>().apply {
@@ -555,7 +555,7 @@ fun FirQualifiedAccess.createSafeCall(receiver: FirExpression, source: KtSourceE
 // Turns (a?.b).f(...) to a?.{ b.f(...) ) -- for any qualified access `.f(...)`
 // Other patterns remain unchanged
 fun FirExpression.pullUpSafeCallIfNecessary(): FirExpression {
-    if (this !is FirQualifiedAccess) return this
+    if (this !is FirQualifiedAccessExpression) return this
     val safeCall = explicitReceiver as? FirSafeCallExpression ?: return this
     val safeCallSelector = safeCall.selector as? FirExpression ?: return this
 

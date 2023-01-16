@@ -2545,7 +2545,7 @@ open class RawFirBuilder(
             val source = expression.toFirSourceElement()
             val (calleeReference, explicitReceiver, isImplicitInvoke) = splitToCalleeAndReceiver(expression.calleeExpression, source)
 
-            val result: FirQualifiedAccessBuilder = if (expression.valueArgumentList == null && expression.lambdaArguments.isEmpty()) {
+            val result: FirQualifiedAccessExpressionBuilder = if (expression.valueArgumentList == null && expression.lambdaArguments.isEmpty()) {
                 FirPropertyAccessExpressionBuilder().apply {
                     this.source = source
                     this.calleeReference = calleeReference
@@ -2603,7 +2603,7 @@ open class RawFirBuilder(
                 }
 
             val firSelector = selector.toFirExpression("Incorrect selector expression")
-            if (firSelector is FirQualifiedAccess) {
+            if (firSelector is FirQualifiedAccessExpression) {
                 if (expression is KtSafeQualifiedExpression) {
                     @OptIn(FirImplementationDetail::class)
                     firSelector.replaceSource(expression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))

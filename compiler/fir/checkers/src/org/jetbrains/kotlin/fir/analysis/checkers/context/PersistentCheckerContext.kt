@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 class PersistentCheckerContext private constructor(
     override val implicitReceiverStack: PersistentImplicitReceiverStack,
     override val containingDeclarations: PersistentList<FirDeclaration>,
-    override val qualifiedAccessOrAnnotationCalls: PersistentList<FirStatement>,
+    override val qualifiedAccessOrAssignmentsOrAnnotationCalls: PersistentList<FirStatement>,
     override val getClassCalls: PersistentList<FirGetClassCall>,
     override val annotationContainers: PersistentList<FirAnnotationContainer>,
     override val isContractBody: Boolean,
@@ -52,7 +52,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack.add(name, value),
             containingDeclarations,
-            qualifiedAccessOrAnnotationCalls,
+            qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
             isContractBody,
@@ -69,7 +69,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations.add(declaration),
-            qualifiedAccessOrAnnotationCalls,
+            qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
             isContractBody,
@@ -89,7 +89,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
-            this.qualifiedAccessOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall),
+            this.qualifiedAccessOrAssignmentsOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall),
             getClassCalls,
             annotationContainers,
             isContractBody,
@@ -109,7 +109,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
-            qualifiedAccessOrAnnotationCalls,
+            qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls.add(getClassCall),
             annotationContainers,
             isContractBody,
@@ -129,7 +129,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
-            qualifiedAccessOrAnnotationCalls,
+            qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls,
             annotationContainers.add(annotationContainer),
             isContractBody,
@@ -155,7 +155,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
-            qualifiedAccessOrAnnotationCalls,
+            qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
             isContractBody,
@@ -174,7 +174,7 @@ class PersistentCheckerContext private constructor(
         return PersistentCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
-            qualifiedAccessOrAnnotationCalls,
+            qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
             isContractBody = newValue,

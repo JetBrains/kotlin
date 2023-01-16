@@ -18,8 +18,10 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isLateInit
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
+import org.jetbrains.kotlin.fir.expressions.calleeReference
+import org.jetbrains.kotlin.fir.expressions.unwrapLValue
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
@@ -65,7 +67,7 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
     scope: FirDeclaration?,
     scopes: MutableMap<FirPropertySymbol, FirDeclaration?>,
 ) {
-    fun FirQualifiedAccess.hasCorrectReceiver() =
+    fun FirQualifiedAccessExpression.hasCorrectReceiver() =
         (dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver
 
     for (node in graph.nodes) {
@@ -83,17 +85,17 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
             }
 
             node is VariableAssignmentNode -> {
-                val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: continue
-                if (!symbol.fir.isVal || !node.fir.hasCorrectReceiver() || symbol !in properties) continue
+                val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: continue
+                if (!symbol.fir.isVal || node.fir.unwrapLValue()?.hasCorrectReceiver() != true || symbol !in properties) continue
 
-                if (scope != scopes[symbol]) {
+                if (getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
+                    reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
+                } else if (scope != scopes[symbol]) {
                     val error = if (receiver != null)
                         FirErrors.CAPTURED_MEMBER_VAL_INITIALIZATION
                     else
                         FirErrors.CAPTURED_VAL_INITIALIZATION
                     reporter.reportOn(node.fir.lValue.source, error, symbol, context)
-                } else if (getValue(node).values.any { it[symbol]?.canBeRevisited() == true }) {
-                    reporter.reportOn(node.fir.lValue.source, FirErrors.VAL_REASSIGNMENT, symbol, context)
                 }
             }
 

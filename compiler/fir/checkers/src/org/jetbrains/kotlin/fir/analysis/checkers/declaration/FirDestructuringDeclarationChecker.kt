@@ -182,7 +182,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
     }
 
     private val FirExpression.explicitReceiverOfQualifiedAccess: FirQualifiedAccessExpression?
-        get() = (this as? FirQualifiedAccess)?.explicitReceiver?.unwrapped as? FirQualifiedAccessExpression
+        get() = (this as? FirQualifiedAccessExpression)?.explicitReceiver?.unwrapped as? FirQualifiedAccessExpression
 
     private val FirExpression.unwrapped: FirExpression
         get() =

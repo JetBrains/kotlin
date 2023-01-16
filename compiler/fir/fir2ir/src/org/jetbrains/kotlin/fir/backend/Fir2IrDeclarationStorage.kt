@@ -913,7 +913,7 @@ class Fir2IrDeclarationStorage(
                     val setter = property.setter
                     if (delegate != null || property.hasBackingField) {
                         backingField = if (delegate != null) {
-                            ((delegate as? FirQualifiedAccess)?.calleeReference?.toResolvedBaseSymbol()?.fir as? FirTypeParameterRefsOwner)?.let {
+                            ((delegate as? FirQualifiedAccessExpression)?.calleeReference?.toResolvedBaseSymbol()?.fir as? FirTypeParameterRefsOwner)?.let {
                                 classifierStorage.preCacheTypeParameters(it, symbol)
                             }
                             createBackingField(

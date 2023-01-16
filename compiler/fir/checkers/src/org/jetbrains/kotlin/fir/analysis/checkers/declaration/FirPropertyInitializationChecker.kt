@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
@@ -38,7 +39,7 @@ object FirPropertyInitializationChecker : FirRegularClassChecker() {
 
             override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
                 variableAssignment.acceptChildren(this)
-                val propertySymbol = variableAssignment.lValue.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
+                val propertySymbol = variableAssignment.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
                 if (propertySymbol !in declaredLater) return
                 reporter.reportOn(variableAssignment.lValue.source, FirErrors.INITIALIZATION_BEFORE_DECLARATION, propertySymbol, context)
             }

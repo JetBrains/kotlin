@@ -243,7 +243,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
                 }
                 else -> {
                     expression.allOfTypeWithLocalReplace<FirFunctionCall>(operation) { this.calleeReference.name.asString() }
-                        ?: expression.firstOfTypeWithLocalReplace<FirVariableAssignment>(operation) { this.lValue.toString() }
+                        ?: expression.firstOfTypeWithLocalReplace<FirVariableAssignment>(operation) { this.calleeReference.toString() }
                     super.visitBinaryExpression(expression)
                 }
             }

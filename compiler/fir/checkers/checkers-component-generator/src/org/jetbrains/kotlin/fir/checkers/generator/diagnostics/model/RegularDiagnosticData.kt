@@ -90,7 +90,6 @@ enum class PositioningStrategy(private val strategy: String? = null) {
     NAME_IDENTIFIER,
     QUESTION_MARK_BY_TYPE,
     ANNOTATION_USE_SITE,
-    ASSIGNMENT_LHS,
     IMPORT_LAST_NAME,
     DATA_MODIFIER,
     SPREAD_OPERATOR,

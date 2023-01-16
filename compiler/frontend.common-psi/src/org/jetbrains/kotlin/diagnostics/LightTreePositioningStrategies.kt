@@ -950,33 +950,6 @@ object LightTreePositioningStrategies {
         }
     }
 
-    val ASSIGNMENT_LHS: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
-        override fun mark(
-            node: LighterASTNode,
-            startOffset: Int,
-            endOffset: Int,
-            tree: FlyweightCapableTreeStructure<LighterASTNode>
-        ): List<TextRange> {
-            if ((node.tokenType == KtNodeTypes.BINARY_EXPRESSION &&
-                        tree.findDescendantByTypes(node, KtTokens.ALL_ASSIGNMENTS) != null) ||
-                ((node.tokenType == KtNodeTypes.PREFIX_EXPRESSION || node.tokenType == KtNodeTypes.POSTFIX_EXPRESSION) &&
-                        tree.findDescendantByTypes(node, KtTokens.INCREMENT_AND_DECREMENT) != null)
-            ) {
-                val lhs = if (node.tokenType == KtNodeTypes.PREFIX_EXPRESSION) {
-                    tree.lastChildExpression(node)
-                } else {
-                    tree.firstChildExpression(node)
-                }
-                lhs?.let {
-                    tree.unwrapParenthesesLabelsAndAnnotations(it).let { unwrapped ->
-                        return markElement(unwrapped, startOffset, endOffset, tree, node)
-                    }
-                }
-            }
-            return super.mark(node, startOffset, endOffset, tree)
-        }
-    }
-
     val ANNOTATION_USE_SITE: LightTreePositioningStrategy = object : LightTreePositioningStrategy() {
         override fun mark(
             node: LighterASTNode,
@@ -1426,7 +1399,7 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.selector(node: LighterASTNode)
             dotOrDoubleColonFound = true
             continue
         }
-        if (dotOrDoubleColonFound && (tokenType == KtNodeTypes.CALL_EXPRESSION || tokenType == KtNodeTypes.REFERENCE_EXPRESSION)) {
+        if (dotOrDoubleColonFound && child.isExpression()) {
             return child
         }
     }

@@ -86,7 +86,6 @@ import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirContextReceiverArgumentListOwner
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
@@ -124,6 +123,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.FirDesugaredAssignmentValueReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
@@ -256,9 +256,11 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression)  = visitExpression(throwExpression)
 
-    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment)  = visitQualifiedAccess(variableAssignment)
+    override fun visitVariableAssignment(variableAssignment: FirVariableAssignment)  = visitStatement(variableAssignment)
 
     override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression)  = visitExpression(whenSubjectExpression)
+
+    override fun visitDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression)  = visitExpression(desugaredAssignmentValueReferenceExpression)
 
     override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression)  = visitWrappedExpression(wrappedDelegateExpression)
 

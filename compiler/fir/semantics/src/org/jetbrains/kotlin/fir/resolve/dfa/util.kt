@@ -40,10 +40,12 @@ val FirExpression.coneType: ConeKotlinType
 val FirElement.symbol: FirBasedSymbol<*>?
     get() = when (this) {
         is FirResolvable -> symbol
+        is FirVariableAssignment -> unwrapLValue()?.symbol
         is FirDeclaration -> symbol
         is FirWhenSubjectExpression -> whenRef.value.subject?.symbol
         is FirSafeCallExpression -> selector.symbol
         is FirSmartCastExpression -> originalExpression.symbol
+        is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.symbol
         else -> null
     }?.takeIf {
         (this as? FirExpression)?.unwrapSmartcastExpression() is FirThisReceiverExpression ||

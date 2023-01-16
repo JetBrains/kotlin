@@ -91,10 +91,6 @@ private fun ConeDiagnostic.toKtDiagnostic(
 
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidateSymbols)
     is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.createOn(source)
-    is ConeValReassignmentError -> when (val symbol = this.variable) {
-        is FirBackingFieldSymbol -> FirErrors.VAL_REASSIGNMENT_VIA_BACKING_FIELD.errorFactory.createOn(source, symbol)
-        else -> FirErrors.VAL_REASSIGNMENT.createOn(source, symbol)
-    }
 
     is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(this.source ?: source)
     is ConeIllegalAnnotationError -> FirErrors.NOT_AN_ANNOTATION_CLASS.createOn(source, this.name.asString())

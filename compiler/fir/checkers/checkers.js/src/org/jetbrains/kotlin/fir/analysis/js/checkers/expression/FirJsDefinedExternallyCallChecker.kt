@@ -9,17 +9,20 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.closestNonLocal
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessChecker
+import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirBasicExpressionChecker
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isNativeObject
 import org.jetbrains.kotlin.fir.analysis.js.checkers.isPredefinedObject
-import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
-object FirJsDefinedExternallyCallChecker : FirQualifiedAccessChecker() {
-    override fun check(expression: FirQualifiedAccess, context: CheckerContext, reporter: DiagnosticReporter) {
-        val symbol = expression.calleeReference.toResolvedCallableSymbol() ?: return
+object FirJsDefinedExternallyCallChecker : FirBasicExpressionChecker() {
+    override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
+        val symbol = expression.calleeReference?.toResolvedCallableSymbol() ?: return
 
         if (symbol.callableId !in JsStandardClassIds.Callables.definedExternallyPropertyNames) {
             return

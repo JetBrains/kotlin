@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.dispatchReceiverClassTypeOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.psi
@@ -32,7 +33,7 @@ import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 
 object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker() {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
-        val lValue = expression.lValue
+        val lValue = expression.calleeReference
         if (lValue !is FirResolvedNamedReference) return
         if (expression.source?.kind is KtFakeSourceElementKind) return
 

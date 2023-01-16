@@ -111,7 +111,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: CheckerContext) {}
 
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: CheckerContext) {
-            val propertySymbol = variableAssignment.calleeReference.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
+            val propertySymbol = variableAssignment.calleeReference?.toResolvedCallableSymbol() as? FirPropertySymbol ?: return
             val setterSymbol = propertySymbol.setterSymbol ?: return
             checkQualifiedAccess(variableAssignment, setterSymbol, data)
         }
@@ -237,7 +237,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         }
 
         private fun checkQualifiedAccess(
-            qualifiedAccess: FirQualifiedAccess,
+            qualifiedAccess: FirStatement,
             targetSymbol: FirBasedSymbol<*>?,
             context: CheckerContext
         ) {
@@ -253,18 +253,18 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
             checkRecursion(targetSymbol, source, context)
         }
 
-        private fun FirQualifiedAccess.partOfCall(context: CheckerContext): Boolean {
+        private fun FirStatement.partOfCall(context: CheckerContext): Boolean {
             if (this !is FirExpression) return false
-            val containingQualifiedAccess = context.qualifiedAccessOrAnnotationCalls.getOrNull(
-                context.qualifiedAccessOrAnnotationCalls.size - 2
+            val containingQualifiedAccess = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.getOrNull(
+                context.qualifiedAccessOrAssignmentsOrAnnotationCalls.size - 2
             ) ?: return false
-            if (this == (containingQualifiedAccess as? FirQualifiedAccess)?.explicitReceiver) return true
+            if (this == (containingQualifiedAccess as? FirQualifiedAccessExpression)?.explicitReceiver) return true
             val call = containingQualifiedAccess as? FirCall ?: return false
             return call.arguments.any { it.unwrapArgument() == this }
         }
 
         private fun checkVisibilityAndAccess(
-            accessExpression: FirQualifiedAccess,
+            accessExpression: FirStatement,
             calledDeclaration: FirCallableSymbol<*>?,
             source: KtSourceElement,
             context: CheckerContext
@@ -321,16 +321,21 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
 
         private fun checkSuperCalls(
             calledDeclaration: FirCallableSymbol<*>,
-            callExpression: FirQualifiedAccess,
+            callExpression: FirStatement,
             context: CheckerContext
         ) {
-            val receiver = callExpression.dispatchReceiver as? FirQualifiedAccessExpression ?: return
+            val receiver = when (callExpression) {
+                is FirQualifiedAccessExpression -> callExpression.dispatchReceiver
+                is FirVariableAssignment -> callExpression.dispatchReceiver
+                else -> null
+            } as? FirQualifiedAccessExpression ?: return
+
             if (receiver.calleeReference is FirSuperReference) {
                 val dispatchReceiverType = receiver.dispatchReceiver.typeRef.coneType
                 val classSymbol = dispatchReceiverType.toSymbol(session) ?: return
                 if (!classSymbol.isDefinedInInlineFunction()) {
                     reporter.reportOn(
-                        callExpression.dispatchReceiver.source,
+                        receiver.source,
                         FirErrors.SUPER_CALL_FROM_PUBLIC_INLINE,
                         calledDeclaration,
                         context

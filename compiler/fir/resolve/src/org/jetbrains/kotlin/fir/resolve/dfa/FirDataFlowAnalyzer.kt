@@ -794,9 +794,17 @@ abstract class FirDataFlowAnalyzer(
         graphBuilder.exitStringConcatenationCall(call).mergeIncomingFlow()
     }
 
-    private fun FirQualifiedAccess.orderedArguments(callee: FirFunction): Array<out FirExpression?>? {
-        val receiver = extensionReceiver.takeIf { it != FirNoReceiverExpression }
-            ?: dispatchReceiver.takeIf { it != FirNoReceiverExpression }
+    private fun FirStatement.orderedArguments(callee: FirFunction): Array<out FirExpression?>? {
+        fun FirQualifiedAccessExpression.firstReceiver(): FirExpression? =
+            (extensionReceiver.takeIf { it != FirNoReceiverExpression }
+                ?: dispatchReceiver.takeIf { it != FirNoReceiverExpression })
+
+        val receiver = when (this) {
+            is FirQualifiedAccessExpression -> firstReceiver()
+            is FirVariableAssignment -> (lValue as? FirQualifiedAccessExpression)?.firstReceiver()
+            else -> null
+        }
+
         return when (this) {
             is FirFunctionCall -> {
                 val argumentToParameter = resolvedArgumentMapping ?: return null
@@ -811,11 +819,11 @@ abstract class FirDataFlowAnalyzer(
         }
     }
 
-    private fun processConditionalContract(flow: MutableFlow, qualifiedAccess: FirQualifiedAccess) {
+    private fun processConditionalContract(flow: MutableFlow, qualifiedAccess: FirStatement) {
         val callee = when (qualifiedAccess) {
             is FirFunctionCall -> qualifiedAccess.toResolvedCallableSymbol()?.fir as? FirSimpleFunction
             is FirQualifiedAccessExpression -> qualifiedAccess.calleeReference.toResolvedPropertySymbol()?.fir?.getter
-            is FirVariableAssignment -> qualifiedAccess.lValue.toResolvedPropertySymbol()?.fir?.setter
+            is FirVariableAssignment -> qualifiedAccess.calleeReference?.toResolvedPropertySymbol()?.fir?.setter
             else -> null
         } ?: return
 
@@ -837,7 +845,7 @@ abstract class FirDataFlowAnalyzer(
         if (argumentVariables.all { it == null }) return
 
         val typeParameters = callee.typeParameters
-        val substitutor = if (typeParameters.isNotEmpty()) {
+        val substitutor = if (typeParameters.isNotEmpty() && qualifiedAccess is FirQualifiedAccessExpression) {
             @Suppress("UNCHECKED_CAST")
             val substitutionFromArguments = typeParameters.zip(qualifiedAccess.typeArguments).map { (typeParameterRef, typeArgument) ->
                 typeParameterRef.symbol to typeArgument.toConeTypeProjection().type
@@ -870,15 +878,15 @@ abstract class FirDataFlowAnalyzer(
     fun exitLocalVariableDeclaration(variable: FirProperty, hadExplicitType: Boolean) {
         graphBuilder.exitVariableDeclaration(variable).mergeIncomingFlow { flow ->
             val initializer = variable.initializer ?: return@mergeIncomingFlow
-            exitVariableInitialization(flow, initializer, variable, assignment = null, hadExplicitType)
+            exitVariableInitialization(flow, initializer, variable, assignmentLhs = null, hadExplicitType)
         }
     }
 
     fun exitVariableAssignment(assignment: FirVariableAssignment) {
         graphBuilder.exitVariableAssignment(assignment).mergeIncomingFlow { flow ->
-            val property = assignment.lValue.toResolvedPropertySymbol()?.fir ?: return@mergeIncomingFlow
+            val property = assignment.calleeReference?.toResolvedPropertySymbol()?.fir ?: return@mergeIncomingFlow
             if (property.isLocal || property.isVal) {
-                exitVariableInitialization(flow, assignment.rValue, property, assignment, hasExplicitType = false)
+                exitVariableInitialization(flow, assignment.rValue, property, assignment.lValue, hasExplicitType = false)
             } else {
                 // TODO: add unstable smartcast for non-local var
                 val variable = variableStorage.getRealVariableWithoutUnwrappingAlias(flow, assignment)
@@ -894,16 +902,16 @@ abstract class FirDataFlowAnalyzer(
         flow: MutableFlow,
         initializer: FirExpression,
         property: FirProperty,
-        assignment: FirVariableAssignment?,
+        assignmentLhs: FirExpression?,
         hasExplicitType: Boolean,
     ) {
         val propertyVariable = variableStorage.getOrCreateRealVariableWithoutUnwrappingAlias(
             flow,
             property.symbol,
-            assignment ?: property,
+            assignmentLhs ?: property,
             if (property.isVal) PropertyStability.STABLE_VALUE else PropertyStability.LOCAL_VAR
         )
-        val isAssignment = assignment != null
+        val isAssignment = assignmentLhs != null
         if (isAssignment) {
             logicSystem.recordNewAssignment(flow, propertyVariable, context.newAssignmentIndex())
         }

@@ -886,7 +886,7 @@ class FirRenderer(
             }
         }
 
-        override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
+        private fun visitQualifiedAccessExpressionReceivers(qualifiedAccess: FirQualifiedAccessExpression) {
             val explicitReceiver = qualifiedAccess.explicitReceiver
             val dispatchReceiver = qualifiedAccess.dispatchReceiver
             val extensionReceiver = qualifiedAccess.extensionReceiver
@@ -940,7 +940,7 @@ class FirRenderer(
 
         override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
             annotationRenderer?.render(qualifiedAccessExpression)
-            visitQualifiedAccess(qualifiedAccessExpression)
+            visitQualifiedAccessExpressionReceivers(qualifiedAccessExpression)
             qualifiedAccessExpression.calleeReference.accept(this)
             qualifiedAccessExpression.typeArguments.renderTypeArguments()
         }
@@ -957,9 +957,12 @@ class FirRenderer(
             smartCastExpression.originalExpression.accept(this)
         }
 
+        override fun visitDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression) {
+            desugaredAssignmentValueReferenceExpression.expressionRef.value.accept(this)
+        }
+
         override fun visitVariableAssignment(variableAssignment: FirVariableAssignment) {
             annotationRenderer?.render(variableAssignment)
-            visitQualifiedAccess(variableAssignment)
             variableAssignment.lValue.accept(this)
             print(" ")
             print(FirOperation.ASSIGN.operator)
@@ -980,7 +983,7 @@ class FirRenderer(
 
         override fun visitFunctionCall(functionCall: FirFunctionCall) {
             annotationRenderer?.render(functionCall)
-            visitQualifiedAccess(functionCall)
+            visitQualifiedAccessExpressionReceivers(functionCall)
             functionCall.calleeReference.accept(this)
             functionCall.typeArguments.renderTypeArguments()
             visitCall(functionCall)

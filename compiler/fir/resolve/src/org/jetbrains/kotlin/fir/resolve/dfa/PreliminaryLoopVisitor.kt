@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.expressions.explicitReceiver
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -48,7 +49,7 @@ class PreliminaryLoopVisitor {
             // property assignment, the smart cast will be unstable anyway.
             if (variableAssignment.explicitReceiver != null) return
 
-            val reference = variableAssignment.lValue as? FirNamedReference
+            val reference = variableAssignment.calleeReference as? FirNamedReference
             if (reference != null) {
                 requireNotNull(data)
                 reassignedVariablesPerElement.put(data, reference.name)

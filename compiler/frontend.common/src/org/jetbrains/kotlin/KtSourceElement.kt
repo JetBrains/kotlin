@@ -240,6 +240,9 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
 
     // for all implicit receivers (now used for qualifiers only)
     object ImplicitReceiver : KtFakeSourceElementKind()
+
+    // for when on the LHS of an assignment an error expression appears
+    object AssignmentLValueError : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

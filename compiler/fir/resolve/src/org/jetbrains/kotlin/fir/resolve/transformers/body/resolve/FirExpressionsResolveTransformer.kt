@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -133,7 +132,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 transformSuperReceiver(
                     callee,
                     qualifiedAccessExpression,
-                    containingSafeCallExpression?.takeIf { qualifiedAccessExpression == it.receiver }?.selector as? FirQualifiedAccess
+                    containingSafeCallExpression?.takeIf { qualifiedAccessExpression == it.receiver }?.selector as? FirQualifiedAccessExpression
                 )
             }
             is FirDelegateFieldReference -> {
@@ -144,12 +143,19 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             is FirResolvedNamedReference,
             is FirErrorNamedReference -> {
                 if (qualifiedAccessExpression.typeRef !is FirResolvedTypeRef) {
-                    storeTypeFromCallee(qualifiedAccessExpression)
+                    storeTypeFromCallee(qualifiedAccessExpression, isLhsOfAssignment = false)
                 }
                 qualifiedAccessExpression
             }
             else -> {
-                val transformedCallee = resolveQualifiedAccessAndSelectCandidate(qualifiedAccessExpression, isUsedAsReceiver)
+                val transformedCallee = resolveQualifiedAccessAndSelectCandidate(
+                    qualifiedAccessExpression,
+                    isUsedAsReceiver,
+                    when (data) {
+                        is ResolutionMode.AssignmentLValue -> data.variableAssignment
+                        else -> qualifiedAccessExpression
+                    }
+                )
                 // NB: here we can get raw expression because of dropped qualifiers (see transform callee),
                 // so candidate existence must be checked before calling completion
                 if (transformedCallee is FirQualifiedAccessExpression && transformedCallee.candidate() != null) {
@@ -162,22 +168,24 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
             }
         }
-        when (result) {
-            is FirQualifiedAccessExpression -> {
-                dataFlowAnalyzer.exitQualifiedAccessExpression(result)
-                result = components.transformQualifiedAccessUsingSmartcastInfo(result)
-                if (result is FirSmartCastExpression) {
-                    dataFlowAnalyzer.exitSmartCastExpression(result)
+        if (data !is ResolutionMode.AssignmentLValue) {
+            when (result) {
+                is FirQualifiedAccessExpression -> {
+                    dataFlowAnalyzer.exitQualifiedAccessExpression(result)
+                    result = components.transformQualifiedAccessUsingSmartcastInfo(result)
+                    if (result is FirSmartCastExpression) {
+                        dataFlowAnalyzer.exitSmartCastExpression(result)
+                    }
                 }
-            }
-            is FirResolvedQualifier -> {
-                dataFlowAnalyzer.exitResolvedQualifierNode(result)
+                is FirResolvedQualifier -> {
+                    dataFlowAnalyzer.exitResolvedQualifierNode(result)
+                }
             }
         }
         return result
     }
 
-    fun <Q : FirQualifiedAccess> transformExplicitReceiver(qualifiedAccessExpression: Q): Q {
+    fun <Q : FirQualifiedAccessExpression> transformExplicitReceiver(qualifiedAccessExpression: Q): Q {
         val explicitReceiver = qualifiedAccessExpression.explicitReceiver as? FirQualifiedAccessExpression
         if (explicitReceiver is FirQualifiedAccessExpression) {
             val superReference = explicitReceiver.calleeReference as? FirSuperReference
@@ -208,14 +216,15 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     protected open fun resolveQualifiedAccessAndSelectCandidate(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         isUsedAsReceiver: Boolean,
+        callSite: FirElement,
     ): FirStatement {
-        return callResolver.resolveVariableAccessAndSelectCandidate(qualifiedAccessExpression, isUsedAsReceiver)
+        return callResolver.resolveVariableAccessAndSelectCandidate(qualifiedAccessExpression, isUsedAsReceiver, callSite)
     }
 
     fun transformSuperReceiver(
         superReference: FirSuperReference,
         superReferenceContainer: FirQualifiedAccessExpression,
-        containingCall: FirQualifiedAccess?
+        containingCall: FirQualifiedAccessExpression?
     ): FirQualifiedAccessExpression {
         val labelName = superReference.labelName
         val lastDispatchReceiver = implicitReceiverStack.lastDispatchReceiver()
@@ -385,7 +394,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 (calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference) &&
                 functionCall.resultType is FirImplicitTypeRef
             ) {
-                storeTypeFromCallee(functionCall)
+                storeTypeFromCallee(functionCall, isLhsOfAssignment = false)
             }
             if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
             if (calleeReference !is FirSimpleNamedReference) {
@@ -413,7 +422,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     }
                     val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
                     val resultExplicitReceiver = resultExpression.explicitReceiver?.unwrapSmartcastExpression()
-                    if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccess) {
+                    if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccessExpression) {
                         // name.invoke() case
                         callCompleter.completeCall(resultExplicitReceiver, noExpectedType)
                     }
@@ -549,6 +558,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
     }
 
+    @OptIn(FirContractViolation::class)
     override fun transformAssignmentOperatorStatement(
         assignmentOperatorStatement: FirAssignmentOperatorStatement,
         data: ResolutionMode
@@ -612,32 +622,18 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 expectedTypeMismatchIsReportedInChecker = true
             )
             dataFlowAnalyzer.exitFunctionCall(resolvedOperatorCall, callCompleted = true)
+
+            val unwrappedLeftArgument = leftArgument.unwrapSmartcastExpression()
+            val assignmentLeftArgument = buildDesugaredAssignmentValueReferenceExpression {
+                expressionRef = FirExpressionRef<FirExpression>().apply { bind(unwrappedLeftArgument) }
+                source = leftArgument.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
+            }.also { storeTypeFromCallee(it) }
+
             val assignment =
                 buildVariableAssignment {
                     source = assignmentOperatorStatement.source
+                    lValue = assignmentLeftArgument
                     rValue = resolvedOperatorCall
-                    calleeReference = when {
-                        lhsIsVar -> lhsReference!!
-                        else -> buildErrorNamedReference {
-                            source = when (leftArgument) {
-                                is FirFunctionCall -> leftArgument.source
-                                is FirQualifiedAccess ->
-                                    leftArgument.calleeReference.source
-                                else -> leftArgument.source
-                            }
-                            diagnostic = when {
-                                // Use a stub diagnostic to suppress unresolved error here because it would be reported by other logic
-                                lhsReference is FirErrorNamedReference -> ConeStubDiagnostic(ConeUnresolvedReferenceError(lhsReference.name))
-                                lhsSymbol == null -> ConeVariableExpectedError
-                                else -> ConeValReassignmentError(lhsSymbol)
-                            }
-                        }
-                    }
-                    (leftArgument.unwrapSmartcastExpression() as? FirQualifiedAccess)?.let {
-                        dispatchReceiver = it.dispatchReceiver
-                        extensionReceiver = it.extensionReceiver
-                        contextReceiverArguments.addAll(it.contextReceiverArguments)
-                    }
                     annotations += assignmentOperatorStatement.annotations
                 }
             return assignment.transform(transformer, ResolutionMode.ContextIndependent)
@@ -863,49 +859,66 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .also { it.resultType = booleanType }
     }
 
+    override fun transformDesugaredAssignmentValueReferenceExpression(
+        desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        storeTypeFromCallee(desugaredAssignmentValueReferenceExpression)
+        return desugaredAssignmentValueReferenceExpression
+    }
+
     override fun transformVariableAssignment(
         variableAssignment: FirVariableAssignment,
         data: ResolutionMode,
     ): FirStatement = whileAnalysing(session, variableAssignment) {
-        // val resolvedAssignment = transformCallee(variableAssignment)
         variableAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
-        val resolvedAssignment = callResolver.resolveVariableAccessAndSelectCandidate(variableAssignment, isUsedAsReceiver = false)
-        val result = if (resolvedAssignment is FirVariableAssignment) {
-            val completeAssignment = callCompleter.completeCall(resolvedAssignment, noExpectedType).result // TODO: check
-            val resolvedReference = completeAssignment.calleeReference
-            if (assignAltererExtensions != null && resolvedReference is FirResolvedNamedReference) {
-                val alteredAssignments = assignAltererExtensions.mapNotNull { alterer ->
-                    alterer.transformVariableAssignment(variableAssignment)?.let { it to alterer }
-                }
-                when (alteredAssignments.size) {
-                    0 -> {}
-                    1 -> {
-                        val transformedAssignment = alteredAssignments.first().first
-                        return transformedAssignment.transform(transformer, ResolutionMode.ContextIndependent)
-                    }
 
-                    else -> {
-                        val altererNames = alteredAssignments.map { it.second::class.qualifiedName }
-                        val errorReference = buildResolvedErrorReference {
-                            source = resolvedReference.source
-                            name = resolvedReference.name
-                            resolvedSymbol = resolvedReference.resolvedSymbol
-                            diagnostic = ConeAmbiguousAlteredAssign(altererNames)
-                        }
-                        completeAssignment.replaceCalleeReference(errorReference)
+        val isDesugaredIncrementDecrement = variableAssignment.source?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement
+
+        // Expressions like `++a` are desugared into `a = a.inc()` where the LHS is a FirDesugaredAssignmentValueReferenceExpression
+        // that's pointing to the not yet resolved `a` on the RHS. For the resolution to work, the RHS must therefore be resolved first.
+        if (isDesugaredIncrementDecrement) {
+            variableAssignment.transformRValue(transformer, ResolutionMode.ContextIndependent)
+        }
+
+        variableAssignment.transformLValue(transformer, ResolutionMode.AssignmentLValue(variableAssignment))
+
+        val resolvedReference = variableAssignment.calleeReference
+
+        if (assignAltererExtensions != null && resolvedReference is FirResolvedNamedReference) {
+            val alteredAssignments = assignAltererExtensions.mapNotNull { alterer ->
+                alterer.transformVariableAssignment(variableAssignment)?.let { it to alterer }
+            }
+            when (alteredAssignments.size) {
+                0 -> {}
+                1 -> {
+                    val transformedAssignment = alteredAssignments.first().first
+                    return transformedAssignment.transform(transformer, ResolutionMode.ContextIndependent)
+                }
+
+                else -> {
+                    val extensionNames = alteredAssignments.map { it.second::class.qualifiedName }
+                    val errorLValue = buildErrorExpression {
+                        expression = variableAssignment.lValue
+                        source = variableAssignment.lValue.source?.fakeElement(KtFakeSourceElementKind.AssignmentLValueError)
+                        diagnostic = ConeAmbiguousAlteredAssign(extensionNames)
                     }
+                    variableAssignment.replaceLValue(errorLValue)
                 }
             }
+        }
 
-            completeAssignment.transformRValue(
+        val result = if (!isDesugaredIncrementDecrement) {
+            variableAssignment.transformRValue(
                 transformer,
-                withExpectedType(variableAssignment.lValueTypeRef, expectedTypeMismatchIsReportedInChecker = true),
+                withExpectedType(variableAssignment.lValue.typeRef, expectedTypeMismatchIsReportedInChecker = true),
             )
         } else {
-            // This can happen in erroneous code only
-            resolvedAssignment
+            variableAssignment
         }
+
         (result as? FirVariableAssignment)?.let { dataFlowAnalyzer.exitVariableAssignment(it) }
+
         return result
     }
 
@@ -1517,12 +1530,34 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     // ------------------------------------------------------------------------------------------------
 
-    internal fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
+    internal fun storeTypeFromCallee(access: FirQualifiedAccessExpression, isLhsOfAssignment: Boolean) {
         val typeFromCallee = components.typeFromCallee(access)
         access.resultType = typeFromCallee.withReplacedConeType(
-            session.typeApproximator.approximateToSuperType(
-                typeFromCallee.type, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            )
+            if (isLhsOfAssignment) {
+                session.typeApproximator.approximateToSubType(
+                    typeFromCallee.type, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                )
+            } else {
+                session.typeApproximator.approximateToSuperType(
+                    typeFromCallee.type, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                )
+            }
         )
+    }
+
+    private fun storeTypeFromCallee(expression: FirDesugaredAssignmentValueReferenceExpression) {
+        val referencedExpression = expression.expressionRef.value
+
+        if (referencedExpression is FirQualifiedAccessExpression) {
+            val typeFromCallee = components.typeFromCallee(referencedExpression)
+            expression.resultType = typeFromCallee.withReplacedConeType(
+                session.typeApproximator.approximateToSubType(
+                    typeFromCallee.type,
+                    TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                )
+            )
+        } else {
+            expression.resultType = referencedExpression.resultType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+        }
     }
 }

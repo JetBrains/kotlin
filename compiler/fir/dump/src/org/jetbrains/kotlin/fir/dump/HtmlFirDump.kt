@@ -727,7 +727,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
     }
 
     private fun FlowContent.generate(variableAssignment: FirVariableAssignment) {
-        generateReceiver(variableAssignment)
         generate(variableAssignment.lValue)
         +" = "
         generate(variableAssignment.rValue)
@@ -1324,7 +1323,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
-    private fun FlowContent.generateReceiver(access: FirQualifiedAccess) {
+    private fun FlowContent.generateReceiver(access: FirQualifiedAccessExpression) {
         val explicitReceiver = access.explicitReceiver
         if (explicitReceiver != null) {
             generate(explicitReceiver)
@@ -1608,14 +1607,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         +"?."
 
         val selector = safeCallExpression.selector
-        if (selector is FirQualifiedAccess && selector.explicitReceiver == safeCallExpression.checkedSubjectRef.value) {
-            when (selector) {
-                is FirFunctionCall -> {
-                    return generate(selector, skipReceiver = true)
-                }
-                is FirQualifiedAccessExpression -> {
-                    return generate(selector, skipReceiver = true)
-                }
+        if (selector is FirQualifiedAccessExpression && selector.explicitReceiver == safeCallExpression.checkedSubjectRef.value) {
+            return when (selector) {
+                is FirFunctionCall -> generate(selector, skipReceiver = true)
+                else -> generate(selector, skipReceiver = true)
             }
         }
 

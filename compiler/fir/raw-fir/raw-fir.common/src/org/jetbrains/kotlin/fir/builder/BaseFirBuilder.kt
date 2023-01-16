@@ -21,9 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.builder.*
-import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -558,9 +556,12 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                         resultInitializer,
                     FirOperation.ASSIGN,
                     resultInitializer.annotations,
-                    null,
-                    convert
-                )
+                    null
+                ) {
+                    // We want the DesugaredAssignmentValueReferenceExpression on the LHS to point to the same receiver instance
+                    // as in the initializer, therefore don't create a new instance here if the argument is the receiver.
+                    if (this == unwrappedReceiver) convertedReceiver else convert()
+                }
 
                 if (assignment is FirBlock) {
                     statements += assignment.statements
@@ -695,6 +696,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
      * }
      *
      */
+    @OptIn(FirContractViolation::class)
     private fun generateIncrementOrDecrementBlockForQualifiedAccess(
         wholeExpression: T,
         operationReference: T?,
@@ -708,7 +710,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             convert,
             receiverForOperation.toFirSourceElement(),
         ) { qualifiedFir ->
-            val receiverFir = (qualifiedFir as? FirQualifiedAccess)?.explicitReceiver ?: buildErrorExpression {
+            val receiverFir = (qualifiedFir as? FirQualifiedAccessExpression)?.explicitReceiver ?: buildErrorExpression {
                 source = receiverForOperation.toFirSourceElement()
                 diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
             }
@@ -724,7 +726,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 initializer = receiverFir,
             ).also { statements += it }
 
-            val firArgument = generateResolvedAccessExpression(argumentReceiverVariable.source, argumentReceiverVariable).let { receiver ->
+            val receiverSource = receiverFir.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
+            val firArgument = generateResolvedAccessExpression(receiverSource, argumentReceiverVariable).let { receiver ->
                 qualifiedFir.also { if (it is FirQualifiedAccessExpression) it.replaceExplicitReceiver(receiver) }
             }
 
@@ -735,15 +738,14 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 if (firArgument !is FirQualifiedAccessExpression) return@putIncrementOrDecrementStatements
                 statements += buildVariableAssignment {
                     source = desugaredSource
+                    lValue = buildDesugaredAssignmentValueReferenceExpression {
+                        expressionRef = FirExpressionRef<FirExpression>().apply { bind(firArgument) }
+                        source = firArgument.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
+                    }
                     rValue = if (prefix) {
                         generateResolvedAccessExpression(source, resultVar)
                     } else {
                         resultInitializer
-                    }
-                    explicitReceiver = generateResolvedAccessExpression(argumentReceiverVariable.source, argumentReceiverVariable)
-                    calleeReference = buildSimpleNamedReference {
-                        source = firArgument.calleeReference.source
-                        name = (firArgument.calleeReference as FirSimpleNamedReference).name
                     }
                 }
             }
@@ -891,46 +893,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         }
     }
 
-    private fun FirQualifiedAccessBuilder.initializeLValue(
-        left: T?,
-        convertQualified: T.() -> FirQualifiedAccess?
-    ): FirReference {
-        val tokenType = left?.elementType
-        if (left != null) {
-            when (tokenType) {
-                REFERENCE_EXPRESSION -> {
-                    return buildSimpleNamedReference {
-                        source = left.toFirSourceElement()
-                        name = left.getReferencedNameAsName()
-                    }
-                }
-                THIS_EXPRESSION -> {
-                    return buildExplicitThisReference {
-                        source = left.toFirSourceElement()
-                        labelName = left.getLabelName()
-                    }
-                }
-                DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION -> {
-                    val firMemberAccess = left.convertQualified()
-                    return if (firMemberAccess != null) {
-                        explicitReceiver = firMemberAccess.explicitReceiver
-                        firMemberAccess.calleeReference
-                    } else {
-                        buildErrorNamedReference {
-                            source = left.toFirSourceElement()
-                            diagnostic = ConeSimpleDiagnostic("Unsupported qualified LValue: ${left.asText}", DiagnosticKind.Syntax)
-                        }
-                    }
-                }
-            }
-        }
-        return buildErrorNamedReference {
-            source = left?.toFirSourceElement()
-            diagnostic = ConeSimpleDiagnostic("Unsupported LValue: $tokenType", DiagnosticKind.VariableExpected)
-        }
-    }
-
     // T is a PSI or a light-tree node
+    @OptIn(FirContractViolation::class)
     fun T?.generateAssignment(
         baseSource: KtSourceElement?,
         arrayAccessSource: KtSourceElement?,
@@ -1010,10 +974,18 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
         }
 
+        val assignmentLValue = unwrappedLhs.convert()
         return buildVariableAssignment {
             source = baseSource
+            lValue = if (baseSource?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement) {
+                buildDesugaredAssignmentValueReferenceExpression {
+                    expressionRef = FirExpressionRef<FirExpression>().apply { bind(assignmentLValue) }
+                    source = assignmentLValue.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
+                }
+            } else {
+                assignmentLValue
+            }
             rValue = rhsExpression
-            calleeReference = initializeLValue(unwrappedLhs) { convert() as? FirQualifiedAccess }
             this.annotations += annotations
         }
     }
@@ -1025,13 +997,12 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         rhsExpression: FirExpression,
         annotations: List<FirAnnotation>
     ): FirSafeCallExpression {
-        val nestedAccess = safeCallNonAssignment.selector as FirQualifiedAccess
+        val nestedAccess = safeCallNonAssignment.selector as FirQualifiedAccessExpression
 
         val assignment = buildVariableAssignment {
             source = baseSource
+            lValue = nestedAccess
             rValue = rhsExpression
-            calleeReference = nestedAccess.calleeReference
-            explicitReceiver = safeCallNonAssignment.checkedSubjectRef.value
             this.annotations += annotations
         }
 
@@ -1228,10 +1199,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     }
 
     protected fun convertFirSelector(
-        firSelector: FirQualifiedAccess,
+        firSelector: FirQualifiedAccessExpression,
         source: KtSourceElement?,
         receiver: FirExpression
-    ): FirQualifiedAccess {
+    ): FirQualifiedAccessExpression {
         return if (firSelector is FirImplicitInvokeCall) {
             buildImplicitInvokeCall {
                 this.source = source

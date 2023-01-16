@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
-    abstract override val source: KtSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
     abstract override val calleeReference: FirReference
@@ -29,6 +28,7 @@ abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
+    abstract override val source: KtSourceElement?
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitPropertyAccessExpression(this, data)
@@ -36,9 +36,6 @@ abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformPropertyAccessExpression(this, data) as E
-
-    @FirImplementationDetail
-    abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
@@ -55,6 +52,9 @@ abstract class FirPropertyAccessExpression : FirQualifiedAccessExpression() {
     abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
 
     abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
+    @FirImplementationDetail
+    abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>)
 

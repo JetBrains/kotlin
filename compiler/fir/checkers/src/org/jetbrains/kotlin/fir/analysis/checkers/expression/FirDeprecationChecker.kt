@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FutureApiDeprecationInfo
+import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
 import org.jetbrains.kotlin.fir.declarations.getDeprecation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
-import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
@@ -36,11 +34,13 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
     override fun check(expression: FirStatement, context: CheckerContext, reporter: DiagnosticReporter) {
         if (!allowedSourceKinds.contains(expression.source?.kind)) return
         if (expression is FirAnnotation || expression is FirDelegatedConstructorCall) return //checked by FirDeprecatedTypeChecker
-        val resolvable = expression as? FirResolvable ?: return
-        val reference = resolvable.calleeReference.resolved ?: return
-        val referencedSymbol = reference.resolvedSymbol
+        if (expression.isLhsOfAssignment(context)) return
 
-        reportApiStatusIfNeeded(reference.source, referencedSymbol, expression, context, reporter)
+        val calleeReference = expression.calleeReference ?: return
+        val resolvedReference = calleeReference.resolved ?: return
+        val referencedSymbol = resolvedReference.resolvedSymbol
+
+        reportApiStatusIfNeeded(resolvedReference.source, referencedSymbol, expression, context, reporter)
     }
 
     internal fun reportApiStatusIfNeeded(

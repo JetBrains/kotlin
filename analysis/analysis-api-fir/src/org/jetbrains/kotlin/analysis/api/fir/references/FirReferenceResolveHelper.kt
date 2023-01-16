@@ -309,7 +309,7 @@ internal object FirReferenceResolveHelper {
         symbolBuilder: KtSymbolByFirBuilder,
     ): Collection<KtSymbol> {
         if (expression is KtNameReferenceExpression) {
-            return fir.calleeReference.toTargetSymbol(session, symbolBuilder)
+            return fir.calleeReference?.toTargetSymbol(session, symbolBuilder) ?: emptyList()
         }
 
         val assignmentRValue = fir.rValue

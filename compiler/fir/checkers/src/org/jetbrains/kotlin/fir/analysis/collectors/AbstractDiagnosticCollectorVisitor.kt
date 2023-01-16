@@ -36,9 +36,13 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitElement(element: FirElement, data: Nothing?) {
         if (element is FirAnnotationContainer) {
-            visitAnnotationContainer(element, data)
+            withAnnotationContainer(element) {
+                checkElement(element)
+                visitNestedElements(element)
+            }
             return
         }
+
         checkElement(element)
         visitNestedElements(element)
     }

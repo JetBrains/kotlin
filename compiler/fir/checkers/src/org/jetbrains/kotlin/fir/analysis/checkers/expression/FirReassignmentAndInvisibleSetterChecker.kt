@@ -16,17 +16,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
-import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
-import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
@@ -36,7 +33,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
         checkInvisibleSetter(expression, context, reporter)
         checkValReassignmentViaBackingField(expression, context, reporter)
         checkValReassignmentOnValueParameter(expression, context, reporter)
-        checkAssignmentToThis(expression, context, reporter)
+        checkVariableExpected(expression, context, reporter)
         checkValReassignment(expression, context, reporter)
     }
 
@@ -61,7 +58,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
             return false
         }
 
-        val callableSymbol = expression.calleeReference.toResolvedCallableSymbol()
+        val callableSymbol = expression.calleeReference?.toResolvedCallableSymbol()
         if (callableSymbol is FirPropertySymbol && shouldInvisibleSetterBeReported(callableSymbol)) {
             val explicitReceiver = expression.explicitReceiver
             // Try to get type from smartcast
@@ -78,7 +75,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
                 }
             }
             reporter.reportOn(
-                expression.source,
+                expression.lValue.source,
                 FirErrors.INVISIBLE_SETTER,
                 callableSymbol,
                 callableSymbol.setterSymbol?.visibility ?: Visibilities.Private,
@@ -93,7 +90,7 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val backingFieldReference = expression.lValue as? FirBackingFieldReference ?: return
+        val backingFieldReference = expression.calleeReference as? FirBackingFieldReference ?: return
         val propertySymbol = backingFieldReference.resolvedSymbol
         if (propertySymbol.isVar) return
         val closestGetter = context.findClosest<FirPropertyAccessor> { it.isGetter }?.symbol ?: return
@@ -107,22 +104,37 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        val valueParameter = expression.lValue.toResolvedValueParameterSymbol() ?: return
+        val valueParameter = expression.calleeReference?.toResolvedValueParameterSymbol() ?: return
         reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, valueParameter, context)
     }
 
-    private fun checkAssignmentToThis(
+    private fun checkVariableExpected(
         expression: FirVariableAssignment,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        if (expression.lValue is FirThisReference) {
+        val calleeReference = expression.calleeReference
+
+        if (expression.unwrapLValue() !is FirPropertyAccessExpression ||
+            (calleeReference?.isConflictingError() != true && calleeReference?.toResolvedVariableSymbol() == null)
+        ) {
             reporter.reportOn(expression.lValue.source, FirErrors.VARIABLE_EXPECTED, context)
         }
     }
 
+    private fun FirReference.isConflictingError(): Boolean {
+        if (!isError()) return false
+
+        return when (val it = diagnostic) {
+            is ConeSimpleDiagnostic -> it.kind == DiagnosticKind.VariableExpected
+            is ConeUnresolvedNameError -> true
+            is ConeDiagnosticWithCandidates -> it.candidates.any { it.symbol is FirPropertySymbol }
+            else -> false
+        }
+    }
+
     private fun checkValReassignment(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
-        val property = expression.lValue.toResolvedPropertySymbol() ?: return
+        val property = expression.calleeReference?.toResolvedPropertySymbol() ?: return
         if (property.isVar) return
         // Assignments of uninitialized `val`s must be checked via CFG, since the first one is OK.
         // See `FirPropertyInitializationAnalyzer` for locals and `FirMemberPropertiesChecker` for backing fields in initializers.

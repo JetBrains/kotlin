@@ -181,6 +181,13 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         return expressionsTransformer.transformBinaryLogicExpression(binaryLogicExpression, data)
     }
 
+    override fun transformDesugaredAssignmentValueReferenceExpression(
+        desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        return expressionsTransformer.transformDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression, data)
+    }
+
     override fun transformVariableAssignment(
         variableAssignment: FirVariableAssignment,
         data: ResolutionMode

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
  */
 
 class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
-    override var source: KtSourceElement?,
     override var typeRef: FirTypeRef,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var calleeReference: FirReference,
@@ -35,6 +34,7 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override var source: KtSourceElement?,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
 ) : FirPropertyAccessExpression() {
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -88,11 +88,6 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
         return this
     }
 
-    @FirImplementationDetail
-    override fun replaceSource(newSource: KtSourceElement?) {
-        source = newSource
-    }
-
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -123,6 +118,11 @@ class FirPropertyAccessExpressionImpl @FirImplementationDetail constructor(
 
     override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
         extensionReceiver = newExtensionReceiver
+    }
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {
+        source = newSource
     }
 
     override fun replaceNonFatalDiagnostics(newNonFatalDiagnostics: List<ConeDiagnostic>) {

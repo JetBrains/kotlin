@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
@@ -120,7 +120,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
      * resulting candidate is *not* marked as inapplicable and needs to be post-processed.
      */
     private fun OverloadCandidate.preserveCalleeInapplicability() {
-        val callSite = candidate.callInfo.callSite as? FirQualifiedAccess ?: return
+        val callSite = candidate.callInfo.callSite
         val calleeReference = callSite.calleeReference as? FirDiagnosticHolder ?: return
         val diagnostic = calleeReference.diagnostic as? ConeInapplicableCandidateError ?: return
         if (diagnostic.applicability != CandidateApplicability.INAPPLICABLE) return

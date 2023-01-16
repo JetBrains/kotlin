@@ -78,7 +78,14 @@ internal fun <T : IrElement> KtSourceElement?.convertWithOffsets(
     return f(startOffset, endOffset)
 }
 
-internal fun <T : IrElement> FirQualifiedAccess.convertWithOffsets(
+internal fun <T : IrElement> FirQualifiedAccessExpression.convertWithOffsets(
+    f: (startOffset: Int, endOffset: Int) -> T
+): T {
+    return convertWithOffsets(this.calleeReference, f)
+}
+
+internal fun <T : IrElement> FirStatement.convertWithOffsets(
+    calleeReference: FirReference,
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
     val psi = calleeReference.psi
@@ -718,7 +725,7 @@ fun FirDeclaration?.computeIrOrigin(predefinedOrigin: IrDeclarationOrigin? = nul
 }
 
 fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
-    val calleeReferenceSymbol = calleeReference.toResolvedCallableSymbol() ?: return IrStatementOrigin.EQ
+    val calleeReferenceSymbol = calleeReference?.toResolvedCallableSymbol() ?: return IrStatementOrigin.EQ
     val rValue = rValue
     if (rValue is FirFunctionCall && calleeReferenceSymbol.callableId.isLocal) {
         val callableId = rValue.calleeReference.toResolvedCallableSymbol()?.callableId
@@ -736,9 +743,8 @@ fun FirVariableAssignment.getIrAssignmentOrigin(): IrStatementOrigin {
                     IrStatementOrigin.POSTFIX_DECR
             }
 
-            if (calleeReference.source?.kind is KtFakeSourceElementKind &&
-                calleeReferenceSymbol == rValue.explicitReceiver?.toResolvedCallableSymbol()
-            ) {
+            val kind = rValue.source?.kind
+            if (kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement || kind == KtFakeSourceElementKind.DesugaredCompoundAssignment) {
                 if (callableName == OperatorNameConventions.PLUS) {
                     return IrStatementOrigin.PLUSEQ
                 } else if (callableName == OperatorNameConventions.MINUS) {

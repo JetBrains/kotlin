@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
  */
 
 open class FirFunctionCallImpl @FirImplementationDetail constructor(
-    override var source: KtSourceElement?,
     override var typeRef: FirTypeRef,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
@@ -36,6 +35,7 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override var source: KtSourceElement?,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
     override val origin: FirFunctionCallOrigin,
@@ -93,11 +93,6 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
         return this
     }
 
-    @FirImplementationDetail
-    override fun replaceSource(newSource: KtSourceElement?) {
-        source = newSource
-    }
-
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -124,6 +119,11 @@ open class FirFunctionCallImpl @FirImplementationDetail constructor(
 
     override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
         extensionReceiver = newExtensionReceiver
+    }
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {
+        source = newSource
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

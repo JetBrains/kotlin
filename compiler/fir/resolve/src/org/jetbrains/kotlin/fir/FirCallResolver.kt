@@ -121,8 +121,8 @@ class FirCallResolver(
     )
 
     /** WARNING: This function is public for the analysis API and should only be used there. */
-    fun <T : FirQualifiedAccess> collectAllCandidates(
-        qualifiedAccess: T,
+    fun collectAllCandidates(
+        qualifiedAccess: FirQualifiedAccessExpression,
         name: Name,
         containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
         resolutionContext: ResolutionContext = transformer.resolutionContext
@@ -134,21 +134,22 @@ class FirCallResolver(
         return collector.allCandidates.map { OverloadCandidate(it, isInBestCandidates = it in result.candidates) }
     }
 
-    private fun <T : FirQualifiedAccess> collectCandidates(
-        qualifiedAccess: T,
+    private fun collectCandidates(
+        qualifiedAccess: FirQualifiedAccessExpression,
         name: Name,
         forceCallKind: CallKind? = null,
         origin: FirFunctionCallOrigin = FirFunctionCallOrigin.Regular,
         containingDeclarations: List<FirDeclaration> = transformer.components.containingDeclarations,
         resolutionContext: ResolutionContext = transformer.resolutionContext,
-        collector: CandidateCollector? = null
+        collector: CandidateCollector? = null,
+        callSite: FirElement = qualifiedAccess,
     ): ResolutionResult {
         val explicitReceiver = qualifiedAccess.explicitReceiver
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
         val typeArguments = (qualifiedAccess as? FirFunctionCall)?.typeArguments.orEmpty()
 
         val info = CallInfo(
-            qualifiedAccess,
+            callSite,
             forceCallKind ?: if (qualifiedAccess is FirFunctionCall) CallKind.Function else CallKind.VariableAccess,
             name,
             explicitReceiver,
@@ -188,8 +189,12 @@ class FirCallResolver(
         return ResolutionResult(info, result.currentApplicability, reducedCandidates)
     }
 
-    fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidate(qualifiedAccess: T, isUsedAsReceiver: Boolean): FirStatement {
-        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver) { true }
+    fun resolveVariableAccessAndSelectCandidate(
+        qualifiedAccess: FirQualifiedAccessExpression,
+        isUsedAsReceiver: Boolean,
+        callSite: FirElement,
+    ): FirStatement {
+        return resolveVariableAccessAndSelectCandidateImpl(qualifiedAccess, isUsedAsReceiver, callSite) { true }
     }
 
     fun resolveOnlyEnumOrQualifierAccessAndSelectCandidate(
@@ -202,19 +207,20 @@ class FirCallResolver(
         }
     }
 
-    private fun <T : FirQualifiedAccess> resolveVariableAccessAndSelectCandidateImpl(
-        qualifiedAccess: T,
+    private fun resolveVariableAccessAndSelectCandidateImpl(
+        qualifiedAccess: FirQualifiedAccessExpression,
         isUsedAsReceiver: Boolean,
-        acceptCandidates: (Collection<Candidate>) -> Boolean
+        callSite: FirElement = qualifiedAccess,
+        acceptCandidates: (Collection<Candidate>) -> Boolean,
     ): FirStatement {
         val callee = qualifiedAccess.calleeReference as? FirSimpleNamedReference ?: return qualifiedAccess
 
         @Suppress("NAME_SHADOWING")
-        val qualifiedAccess = transformer.transformExplicitReceiver(qualifiedAccess)
+        val qualifiedAccess = qualifiedAccess.let(transformer::transformExplicitReceiver)
         val nonFatalDiagnosticFromExpression = (qualifiedAccess as? FirPropertyAccessExpression)?.nonFatalDiagnostics
 
         val basicResult by lazy(LazyThreadSafetyMode.NONE) {
-            collectCandidates(qualifiedAccess, callee.name)
+            collectCandidates(qualifiedAccess, callee.name, callSite = callSite)
         }
 
         // Even if it's not receiver, it makes sense to continue qualifier if resolution is unsuccessful
@@ -327,7 +333,7 @@ class FirCallResolver(
                 replaceContextReceiverArguments(candidate.contextReceiverArguments())
             }
         }
-        if (qualifiedAccess is FirExpression) transformer.storeTypeFromCallee(qualifiedAccess)
+        transformer.storeTypeFromCallee(qualifiedAccess, isLhsOfAssignment = callSite is FirVariableAssignment)
         return qualifiedAccess
     }
 

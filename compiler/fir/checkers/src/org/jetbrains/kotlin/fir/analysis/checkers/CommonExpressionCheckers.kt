@@ -22,17 +22,13 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirUnderscoreChecker,
             FirExpressionAnnotationChecker,
             FirDeprecationChecker,
-            FirRecursiveProblemChecker
+            FirRecursiveProblemChecker,
+            FirOptInUsageAccessChecker,
         )
 
     override val throwExpressionCheckers: Set<FirThrowExpressionChecker>
         get() = setOf(
             FirThrowExpressionTypeChecker,
-        )
-
-    override val qualifiedAccessCheckers: Set<FirQualifiedAccessChecker>
-        get() = setOf(
-            FirOptInUsageAccessChecker,
         )
 
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker>
@@ -83,7 +79,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker>
         get() = setOf(
             FirReassignmentAndInvisibleSetterChecker,
-            FirAssignmentTypeMismatchChecker
+            FirAssignmentTypeMismatchChecker,
         )
 
     override val whenExpressionCheckers: Set<FirWhenExpressionChecker>

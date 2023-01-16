@@ -28,12 +28,12 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 internal class FirIntegerLiteralOperatorCallImpl(
-    override var source: KtSourceElement?,
     override var typeRef: FirTypeRef,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
+    override var source: KtSourceElement?,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
     override val origin: FirFunctionCallOrigin,
@@ -103,11 +103,6 @@ internal class FirIntegerLiteralOperatorCallImpl(
         return this
     }
 
-    @FirImplementationDetail
-    override fun replaceSource(newSource: KtSourceElement?) {
-        source = newSource
-    }
-
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -126,6 +121,11 @@ internal class FirIntegerLiteralOperatorCallImpl(
 
     override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?) {
         explicitReceiver = newExplicitReceiver
+    }
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {
+        source = newSource
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

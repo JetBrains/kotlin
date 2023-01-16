@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 abstract class FirImplicitInvokeCall : FirFunctionCall() {
-    abstract override val source: KtSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
     abstract override val contextReceiverArguments: List<FirExpression>
@@ -28,6 +27,7 @@ abstract class FirImplicitInvokeCall : FirFunctionCall() {
     abstract override val explicitReceiver: FirExpression?
     abstract override val dispatchReceiver: FirExpression
     abstract override val extensionReceiver: FirExpression
+    abstract override val source: KtSourceElement?
     abstract override val argumentList: FirArgumentList
     abstract override val calleeReference: FirNamedReference
     abstract override val origin: FirFunctionCallOrigin
@@ -37,9 +37,6 @@ abstract class FirImplicitInvokeCall : FirFunctionCall() {
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformImplicitInvokeCall(this, data) as E
-
-    @FirImplementationDetail
-    abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
@@ -54,6 +51,9 @@ abstract class FirImplicitInvokeCall : FirFunctionCall() {
     abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
 
     abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
+    @FirImplementationDetail
+    abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceArgumentList(newArgumentList: FirArgumentList)
 

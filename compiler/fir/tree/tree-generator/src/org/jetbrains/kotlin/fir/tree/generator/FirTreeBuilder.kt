@@ -108,7 +108,6 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val whenExpression by element(Expression, expression, resolvable)
     val whenBranch by element(Expression)
     val contextReceiverArgumentListOwner by element(Expression)
-    val qualifiedAccess by element(Expression, resolvable, statement, contextReceiverArgumentListOwner)
     val checkNotNullCall by element(Expression, expression, call, resolvable)
     val elvisExpression by element(Expression, expression, resolvable)
 
@@ -119,7 +118,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val errorFunction by element(Declaration, function, diagnosticHolder)
     val errorProperty by element(Declaration, variable, diagnosticHolder)
     val danglingModifierList by element(Declaration, declaration, diagnosticHolder)
-    val qualifiedAccessExpression by element(Expression, expression, qualifiedAccess)
+    val qualifiedAccessExpression by element(Expression, expression, resolvable, contextReceiverArgumentListOwner)
     val qualifiedErrorAccessExpression by element(Expression, expression, diagnosticHolder)
     val propertyAccessExpression by element(Expression, qualifiedAccessExpression)
     val functionCall by element(Expression, qualifiedAccessExpression, call)
@@ -147,8 +146,9 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val returnExpression by element(Expression, jump)
     val stringConcatenationCall by element(Expression, call, expression)
     val throwExpression by element(Expression, expression)
-    val variableAssignment by element(Expression, qualifiedAccess)
+    val variableAssignment by element(Expression, statement)
     val whenSubjectExpression by element(Expression, expression)
+    val desugaredAssignmentValueReferenceExpression by element(Expression, expression)
 
     val wrappedDelegateExpression by element(Expression, wrappedExpression)
 

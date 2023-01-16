@@ -86,7 +86,6 @@ import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
 import org.jetbrains.kotlin.fir.expressions.FirContextReceiverArgumentListOwner
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
 import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
@@ -124,6 +123,7 @@ import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.expressions.FirThrowExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
+import org.jetbrains.kotlin.fir.expressions.FirDesugaredAssignmentValueReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
@@ -479,10 +479,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(contextReceiverArgumentListOwner, data)
     }
 
-    open fun transformQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: D): FirStatement {
-        return transformElement(qualifiedAccess, data)
-    }
-
     open fun transformCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: D): FirStatement {
         return transformElement(checkNotNullCall, data)
     }
@@ -629,6 +625,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): FirStatement {
         return transformElement(whenSubjectExpression, data)
+    }
+
+    open fun transformDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression, data: D): FirStatement {
+        return transformElement(desugaredAssignmentValueReferenceExpression, data)
     }
 
     open fun transformWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): FirStatement {
@@ -1055,10 +1055,6 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformContextReceiverArgumentListOwner(contextReceiverArgumentListOwner, data)
     }
 
-    final override fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: D): FirStatement {
-        return transformQualifiedAccess(qualifiedAccess, data)
-    }
-
     final override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: D): FirStatement {
         return transformCheckNotNullCall(checkNotNullCall, data)
     }
@@ -1205,6 +1201,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): FirStatement {
         return transformWhenSubjectExpression(whenSubjectExpression, data)
+    }
+
+    final override fun visitDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression, data: D): FirStatement {
+        return transformDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression, data)
     }
 
     final override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): FirStatement {

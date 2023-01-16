@@ -655,7 +655,7 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
 
 private typealias TargetLists = AnnotationTargetLists
 
-fun FirQualifiedAccess.explicitReceiverIsNotSuperReference(): Boolean {
+fun FirQualifiedAccessExpression.explicitReceiverIsNotSuperReference(): Boolean {
     return (this.explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference !is FirSuperReference
 }
 
@@ -727,4 +727,10 @@ fun FirBasedSymbol<*>.getAnnotationStringParameter(classId: ClassId, session: Fi
     val annotation = getAnnotationByClassId(classId, session) as? FirAnnotationCall
     val expression = annotation?.argumentMapping?.mapping?.values?.firstOrNull() as? FirConstExpression<*>
     return expression?.value as? String
+}
+
+fun FirElement.isLhsOfAssignment(context: CheckerContext): Boolean {
+    if (this !is FirQualifiedAccessExpression) return false
+    val lastQualified = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull { it != this } ?: return false
+    return lastQualified is FirVariableAssignment && lastQualified.lValue == this
 }

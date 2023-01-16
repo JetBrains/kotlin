@@ -18,25 +18,22 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirQualifiedAccessExpression : FirExpression(), FirQualifiedAccess {
-    abstract override val source: KtSourceElement?
+abstract class FirQualifiedAccessExpression : FirExpression(), FirResolvable, FirContextReceiverArgumentListOwner {
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
     abstract override val calleeReference: FirReference
     abstract override val contextReceiverArguments: List<FirExpression>
-    abstract override val typeArguments: List<FirTypeProjection>
-    abstract override val explicitReceiver: FirExpression?
-    abstract override val dispatchReceiver: FirExpression
-    abstract override val extensionReceiver: FirExpression
+    abstract val typeArguments: List<FirTypeProjection>
+    abstract val explicitReceiver: FirExpression?
+    abstract val dispatchReceiver: FirExpression
+    abstract val extensionReceiver: FirExpression
+    abstract override val source: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitQualifiedAccessExpression(this, data)
 
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformQualifiedAccessExpression(this, data) as E
-
-    @FirImplementationDetail
-    abstract override fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
@@ -46,19 +43,22 @@ abstract class FirQualifiedAccessExpression : FirExpression(), FirQualifiedAcces
 
     abstract override fun replaceContextReceiverArguments(newContextReceiverArguments: List<FirExpression>)
 
-    abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
+    abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 
-    abstract override fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
+    abstract fun replaceExplicitReceiver(newExplicitReceiver: FirExpression?)
 
-    abstract override fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
+    abstract fun replaceDispatchReceiver(newDispatchReceiver: FirExpression)
 
-    abstract override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+    abstract fun replaceExtensionReceiver(newExtensionReceiver: FirExpression)
+
+    @FirImplementationDetail
+    abstract fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 
     abstract override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 
-    abstract override fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+    abstract fun <D> transformTypeArguments(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 
-    abstract override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
+    abstract fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccessExpression
 }

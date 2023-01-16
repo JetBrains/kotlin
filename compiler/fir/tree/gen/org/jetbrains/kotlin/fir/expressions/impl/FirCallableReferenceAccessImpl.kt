@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 internal class FirCallableReferenceAccessImpl(
-    override var source: KtSourceElement?,
     override var typeRef: FirTypeRef,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
@@ -34,6 +33,7 @@ internal class FirCallableReferenceAccessImpl(
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override var source: KtSourceElement?,
     override var calleeReference: FirNamedReference,
     override var hasQuestionMarkAtLHS: Boolean,
 ) : FirCallableReferenceAccess() {
@@ -88,11 +88,6 @@ internal class FirCallableReferenceAccessImpl(
         return this
     }
 
-    @FirImplementationDetail
-    override fun replaceSource(newSource: KtSourceElement?) {
-        source = newSource
-    }
-
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -119,6 +114,11 @@ internal class FirCallableReferenceAccessImpl(
 
     override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
         extensionReceiver = newExtensionReceiver
+    }
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {
+        source = newSource
     }
 
     override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {

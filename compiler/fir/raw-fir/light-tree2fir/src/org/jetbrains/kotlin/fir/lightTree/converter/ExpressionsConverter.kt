@@ -552,7 +552,7 @@ class ExpressionsConverter(
         }
 
         var result = firSelector
-        (firSelector as? FirQualifiedAccess)?.let {
+        (firSelector as? FirQualifiedAccessExpression)?.let {
             if (isSafe) {
                 @OptIn(FirImplementationDetail::class)
                 it.replaceSource(dotQualifiedExpression.toFirSourceElement(KtFakeSourceElementKind.DesugaredSafeCallExpression))
@@ -562,7 +562,7 @@ class ExpressionsConverter(
                 )
             }
 
-            result = convertFirSelector(it, dotQualifiedExpression.toFirSourceElement(), firReceiver!!) as? FirExpression
+            result = convertFirSelector(it, dotQualifiedExpression.toFirSourceElement(), firReceiver!!)
         }
 
         val receiver = firReceiver
@@ -663,7 +663,7 @@ class ExpressionsConverter(
             )
         }
 
-        val builder: FirQualifiedAccessBuilder = if (hasArguments) {
+        val builder: FirQualifiedAccessExpressionBuilder = if (hasArguments) {
             val builder = if (isImplicitInvoke) FirImplicitInvokeCallBuilder() else FirFunctionCallBuilder()
             builder.apply {
                 this.source = source
@@ -682,7 +682,7 @@ class ExpressionsConverter(
         return builder.apply {
             this.explicitReceiver = explicitReceiver
             typeArguments += firTypeArguments
-        }.build() as FirExpression
+        }.build()
     }
 
     /**

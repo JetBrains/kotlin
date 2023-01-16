@@ -944,18 +944,6 @@ object PositioningStrategies {
         }
     }
 
-    val ASSIGNMENT_LHS: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
-        override fun mark(element: PsiElement): List<TextRange> {
-            if (element is KtBinaryExpression && element.operationToken in KtTokens.ALL_ASSIGNMENTS) {
-                element.left.let { left -> left.unwrapParenthesesLabelsAndAnnotations()?.let { return markElement(it) } }
-            }
-            if (element is KtUnaryExpression && element.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
-                element.baseExpression.let { arg -> arg.unwrapParenthesesLabelsAndAnnotations()?.let { return markElement(it) } }
-            }
-            return super.mark(element)
-        }
-    }
-
     val IMPORT_LAST_NAME: PositioningStrategy<PsiElement> = object : PositioningStrategy<PsiElement>() {
 
         override fun isValid(element: PsiElement): Boolean {

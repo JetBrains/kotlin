@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
@@ -79,20 +79,20 @@ internal interface KtFirAnalysisSessionComponent {
         )
     }
 
-    fun FirQualifiedAccess.createSubstitutorFromTypeArguments(): KtSubstitutor? {
+    fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(): KtSubstitutor? {
         return createConeSubstitutorFromTypeArguments()?.toKtSubstitutor()
     }
 
-    fun FirQualifiedAccess.createSubstitutorFromTypeArguments(callableSymbol: FirCallableSymbol<*>): KtSubstitutor {
+    fun FirQualifiedAccessExpression.createSubstitutorFromTypeArguments(callableSymbol: FirCallableSymbol<*>): KtSubstitutor {
         return createConeSubstitutorFromTypeArguments(callableSymbol).toKtSubstitutor()
     }
 
-    fun FirQualifiedAccess.createConeSubstitutorFromTypeArguments(): ConeSubstitutor? {
+    fun FirQualifiedAccessExpression.createConeSubstitutorFromTypeArguments(): ConeSubstitutor? {
         val symbol = calleeReference.toResolvedCallableSymbol() ?: return null
         return createConeSubstitutorFromTypeArguments(symbol)
     }
 
-    fun FirQualifiedAccess.createConeSubstitutorFromTypeArguments(callableSymbol: FirCallableSymbol<*>): ConeSubstitutor {
+    fun FirQualifiedAccessExpression.createConeSubstitutorFromTypeArguments(callableSymbol: FirCallableSymbol<*>): ConeSubstitutor {
         val typeArgumentMap = buildMap {
             // Type arguments are ignored defensively if `callableSymbol` can't provide enough type parameters (and vice versa). For
             // example, when call candidates are collected, the candidate's `callableSymbol` might have fewer type parameters than the

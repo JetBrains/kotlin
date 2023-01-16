@@ -25,10 +25,7 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirPropertyWithExplicitBackingFieldResolvedNamedReference
@@ -289,24 +286,29 @@ private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowe
 }
 
 fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirResolvedTypeRef {
-    return when (val newCallee = access.calleeReference) {
+    val calleeReference = access.calleeReference
+    return typeFromCallee(access, calleeReference)
+}
+
+fun BodyResolveComponents.typeFromCallee(access: FirElement, calleeReference: FirReference): FirResolvedTypeRef {
+    return when (calleeReference) {
         is FirErrorNamedReference ->
             buildErrorTypeRef {
                 source = access.source?.fakeElement(KtFakeSourceElementKind.ErrorTypeRef)
-                diagnostic = ConeStubDiagnostic(newCallee.diagnostic)
+                diagnostic = ConeStubDiagnostic(calleeReference.diagnostic)
             }
         is FirNamedReferenceWithCandidate -> {
-            typeFromSymbol(newCallee.candidateSymbol, false)
+            typeFromSymbol(calleeReference.candidateSymbol, false)
         }
         is FirPropertyWithExplicitBackingFieldResolvedNamedReference -> {
-            val symbol = newCallee.getNarrowedDownSymbol(session)
+            val symbol = calleeReference.getNarrowedDownSymbol(session)
             typeFromSymbol(symbol, false)
         }
         is FirResolvedNamedReference -> {
-            typeFromSymbol(newCallee.resolvedSymbol, false)
+            typeFromSymbol(calleeReference.resolvedSymbol, false)
         }
         is FirThisReference -> {
-            val labelName = newCallee.labelName
+            val labelName = calleeReference.labelName
             val implicitReceiver = implicitReceiverStack[labelName]
             buildResolvedTypeRef {
                 source = null
@@ -319,19 +321,19 @@ fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirReso
             }
         }
         is FirSuperReference -> {
-            val labelName = newCallee.labelName
+            val labelName = calleeReference.labelName
             val implicitReceiver =
                 if (labelName != null) implicitReceiverStack[labelName] as? ImplicitDispatchReceiverValue
                 else implicitReceiverStack.lastDispatchReceiver()
             val resolvedTypeRef =
-                newCallee.superTypeRef as? FirResolvedTypeRef
+                calleeReference.superTypeRef as? FirResolvedTypeRef
                     ?: implicitReceiver?.boundSymbol?.fir?.superTypeRefs?.singleOrNull() as? FirResolvedTypeRef
             resolvedTypeRef ?: buildErrorTypeRef {
-                source = newCallee.source
+                source = calleeReference.source
                 diagnostic = ConeUnresolvedNameError(Name.identifier("super"))
             }
         }
-        else -> error("Failed to extract type from: $newCallee")
+        else -> error("Failed to extract type from: $calleeReference")
     }
 }
 
@@ -397,6 +399,7 @@ private fun FirSmartCastExpressionBuilder.applyResultTypeRef() {
         else
             originalExpression.typeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
 }
+
 private fun <T : FirExpression> BodyResolveComponents.transformExpressionUsingSmartcastInfo(
     expression: T,
     stability: PropertyStability,
@@ -528,22 +531,15 @@ fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirReg
     }
 }
 
-fun <T> BodyResolveComponents.initialTypeOfCandidate(
-    candidate: Candidate,
-    call: T
-): ConeKotlinType where T : FirResolvable, T : FirStatement {
-    return initialTypeOfCandidate(candidate, typeFromCallee(call))
-}
-
 fun BodyResolveComponents.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
     val typeRef = typeFromSymbol(candidate.symbol, makeNullable = false)
-    return initialTypeOfCandidate(candidate, typeRef)
+    return typeRef.initialTypeOfCandidate(candidate)
 }
 
-private fun initialTypeOfCandidate(candidate: Candidate, typeRef: FirResolvedTypeRef): ConeKotlinType {
+fun FirResolvedTypeRef.initialTypeOfCandidate(candidate: Candidate): ConeKotlinType {
     val system = candidate.system
     val resultingSubstitutor = system.buildCurrentSubstitutor()
-    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(typeRef.type)) as ConeKotlinType
+    return resultingSubstitutor.safeSubstitute(system, candidate.substitutor.substituteOrSelf(type)) as ConeKotlinType
 }
 
 fun FirCallableDeclaration.getContainingClass(session: FirSession): FirRegularClass? =

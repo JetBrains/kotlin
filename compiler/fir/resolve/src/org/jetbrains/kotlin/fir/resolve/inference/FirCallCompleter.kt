@@ -81,7 +81,8 @@ class FirCallCompleter(
         )
 
     private fun <T> completeCall(
-        call: T, expectedTypeRef: FirTypeRef?,
+        call: T,
+        expectedTypeRef: FirTypeRef?,
         mayBeCoercionToUnitApplied: Boolean,
         expectedTypeMismatchIsReportedInChecker: Boolean,
         isFromCast: Boolean,
@@ -90,14 +91,10 @@ class FirCallCompleter(
             where T : FirResolvable, T : FirStatement {
         val typeRef = components.typeFromCallee(call)
 
-        if (call is FirVariableAssignment) {
-            call.replaceLValueTypeRef(typeRef)
-        }
-
         val reference = call.calleeReference as? FirNamedReferenceWithCandidate ?: return CompletionResult(call, true)
 
         val candidate = reference.candidate
-        val initialType = components.initialTypeOfCandidate(candidate, call)
+        val initialType = typeRef.initialTypeOfCandidate(candidate)
 
         if (call is FirExpression) {
             val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(initialType)

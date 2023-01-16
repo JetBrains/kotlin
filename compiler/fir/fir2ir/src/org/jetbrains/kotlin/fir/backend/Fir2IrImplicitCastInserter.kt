@@ -274,10 +274,10 @@ class Fir2IrImplicitCastInserter(
     internal fun implicitCastFromDispatchReceiver(
         original: IrExpression,
         originalTypeRef: FirTypeRef,
-        calleeReference: FirReference,
+        calleeReference: FirReference?,
         conversionTypeContext: ConversionTypeContext,
     ): IrExpression {
-        val referencedDeclaration = calleeReference.toResolvedCallableSymbol()?.unwrapCallRepresentative()?.fir
+        val referencedDeclaration = calleeReference?.toResolvedCallableSymbol()?.unwrapCallRepresentative()?.fir
 
         val dispatchReceiverType =
             referencedDeclaration?.dispatchReceiverType as? ConeClassLikeType

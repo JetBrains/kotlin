@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun BodyResolveComponents.findTypesForSuperCandidates(
     superTypeRefs: List<FirTypeRef>,
-    containingCall: FirQualifiedAccess,
+    containingCall: FirQualifiedAccessExpression,
 ): List<ConeKotlinType> {
     val supertypes = superTypeRefs.map { (it as FirResolvedTypeRef).type }
     val isMethodOfAny = containingCall is FirFunctionCall && isCallingMethodOfAny(containingCall)

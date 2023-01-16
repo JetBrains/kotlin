@@ -8,9 +8,12 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirExpressionRef
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirDesugaredAssignmentValueReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
@@ -20,45 +23,34 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
  * DO NOT MODIFY IT MANUALLY
  */
 
-internal class FirVariableAssignmentImpl(
+internal class FirDesugaredAssignmentValueReferenceExpressionImpl(
     override val source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override var lValue: FirExpression,
-    override var rValue: FirExpression,
-) : FirVariableAssignment() {
+    override val expressionRef: FirExpressionRef<FirExpression>,
+) : FirDesugaredAssignmentValueReferenceExpression() {
+    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        typeRef.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
-        lValue.accept(visitor, data)
-        rValue.accept(visitor, data)
     }
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDesugaredAssignmentValueReferenceExpressionImpl {
+        typeRef = typeRef.transform(transformer, data)
         transformAnnotations(transformer, data)
-        transformLValue(transformer, data)
-        transformRValue(transformer, data)
         return this
     }
 
-    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
+    override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDesugaredAssignmentValueReferenceExpressionImpl {
         annotations.transformInplace(transformer, data)
         return this
     }
 
-    override fun <D> transformLValue(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
-        lValue = lValue.transform(transformer, data)
-        return this
-    }
-
-    override fun <D> transformRValue(transformer: FirTransformer<D>, data: D): FirVariableAssignmentImpl {
-        rValue = rValue.transform(transformer, data)
-        return this
+    override fun replaceTypeRef(newTypeRef: FirTypeRef) {
+        typeRef = newTypeRef
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
-    }
-
-    override fun replaceLValue(newLValue: FirExpression) {
-        lValue = newLValue
     }
 }

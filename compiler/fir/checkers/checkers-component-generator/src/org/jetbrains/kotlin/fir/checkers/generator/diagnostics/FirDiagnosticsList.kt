@@ -64,7 +64,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val BREAK_OR_CONTINUE_OUTSIDE_A_LOOP by error<PsiElement>()
         val NOT_A_LOOP_LABEL by error<PsiElement>()
         val BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY by error<KtExpressionWithLabel>()
-        val VARIABLE_EXPECTED by error<PsiElement>(PositioningStrategy.ASSIGNMENT_LHS)
+        val VARIABLE_EXPECTED by error<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED)
         val DELEGATION_IN_INTERFACE by error<PsiElement>()
         val DELEGATION_NOT_TO_INTERFACE by error<PsiElement>()
         val NESTED_CLASS_NOT_ALLOWED by error<KtNamedDeclaration>(PositioningStrategy.DECLARATION_NAME) {
@@ -91,7 +91,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER by error<KtParameter>(PositioningStrategy.VAL_OR_VAR_NODE) {
             parameter<KtKeywordToken>("valOrVar")
         }
-        val INVISIBLE_SETTER by error<PsiElement>(PositioningStrategy.ASSIGNMENT_LHS) {
+        val INVISIBLE_SETTER by error<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<FirPropertySymbol>("property")
             parameter<Visibility>("visibility")
             parameter<CallableId>("callableId")
@@ -1135,10 +1135,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val UNINITIALIZED_ENUM_COMPANION by error<KtExpression>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<FirRegularClassSymbol>("enumClass")
         }
-        val VAL_REASSIGNMENT by error<KtExpression> {
+        val VAL_REASSIGNMENT by error<KtExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<FirVariableSymbol<*>>("variable")
         }
-        val VAL_REASSIGNMENT_VIA_BACKING_FIELD by deprecationError<KtExpression>(LanguageFeature.RestrictionOfValReassignmentViaBackingField) {
+        val VAL_REASSIGNMENT_VIA_BACKING_FIELD by deprecationError<KtExpression>(LanguageFeature.RestrictionOfValReassignmentViaBackingField, PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<FirBackingFieldSymbol>("property")
         }
         val CAPTURED_VAL_INITIALIZATION by error<KtExpression> {
@@ -1147,7 +1147,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val CAPTURED_MEMBER_VAL_INITIALIZATION by error<KtExpression> {
             parameter<FirPropertySymbol>("property")
         }
-        val SETTER_PROJECTED_OUT by error<KtBinaryExpression>(PositioningStrategy.ASSIGNMENT_LHS) {
+        val SETTER_PROJECTED_OUT by error<KtBinaryExpression>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<FirPropertySymbol>("property")
         }
         val WRONG_INVOCATION_KIND by warning<PsiElement> {

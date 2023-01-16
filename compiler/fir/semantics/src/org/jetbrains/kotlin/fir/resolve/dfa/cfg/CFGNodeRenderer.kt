@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
-import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
-import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.renderer.FirCallNoArgumentsRenderer
@@ -55,7 +53,7 @@ fun CFGNode<*>.render(): String =
                         CfgRenderer.renderAsCallableDeclarationString(fir)
                     }"
 
-                is VariableAssignmentNode -> "Assignment: ${CfgRenderer.renderElementAsString(fir.lValue)}"
+                is VariableAssignmentNode -> "Assignment: ${fir.calleeReference?.let(CfgRenderer::renderElementAsString)}"
                 is FunctionCallNode -> "Function call: ${CfgRenderer.renderElementAsString(fir)}"
                 is DelegatedConstructorCallNode -> "Delegated constructor call: ${CfgRenderer.renderElementAsString(fir)}"
                 is StringConcatenationCallNode -> "String concatenation call: ${CfgRenderer.renderElementAsString(fir)}"

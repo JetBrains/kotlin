@@ -106,7 +106,8 @@ fun SmartPrinter.printElement(element: Element) {
             }
 
             allFields.filter { it.withReplace }.forEach {
-                val override = overridenFields[it, it] && !(it.name == "source" && fullQualifiedName.endsWith("FirQualifiedAccess"))
+                val override = overridenFields[it, it] &&
+                        !(it.name == "source" && fullQualifiedName.endsWith("FirQualifiedAccessExpression"))
                 it.replaceDeclaration(override, forceNullable = it.useNullableForReplace)
                 for (overridenType in it.overridenTypes) {
                     it.replaceDeclaration(true, overridenType)

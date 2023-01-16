@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLoc
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -226,7 +227,12 @@ internal class NonReanalyzableDeclarationStructureElement(
     }
 }
 
-internal class DanglingTopLevelModifierListStructureElement(firFile: FirFile, val fir: FirDeclaration, moduleComponents: LLFirModuleResolveComponents, override val psi: KtAnnotated) :
+internal class DanglingTopLevelModifierListStructureElement(
+    firFile: FirFile,
+    val fir: FirDeclaration,
+    moduleComponents: LLFirModuleResolveComponents,
+    override val psi: KtAnnotated
+) :
     FileStructureElement(firFile, moduleComponents) {
     override val mappings = KtToFirMapping(fir, FirElementsRecorder())
 

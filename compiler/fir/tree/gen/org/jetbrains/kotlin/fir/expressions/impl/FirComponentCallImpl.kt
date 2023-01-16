@@ -32,12 +32,12 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 @OptIn(FirImplementationDetail::class)
 internal class FirComponentCallImpl(
-    override var source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override var source: KtSourceElement?,
     override var argumentList: FirArgumentList,
     override var explicitReceiver: FirExpression,
     override val componentIndex: Int,
@@ -99,11 +99,6 @@ internal class FirComponentCallImpl(
         return this
     }
 
-    @FirImplementationDetail
-    override fun replaceSource(newSource: KtSourceElement?) {
-        source = newSource
-    }
-
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -126,6 +121,11 @@ internal class FirComponentCallImpl(
 
     override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
         extensionReceiver = newExtensionReceiver
+    }
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {
+        source = newSource
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

@@ -29,7 +29,7 @@ object FirConstructorCallChecker : FirFunctionCallChecker() {
                 reporter.reportOn(expression.source, FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS, context)
             }
             if (declarationClass.classKind == ClassKind.ANNOTATION_CLASS &&
-                context.qualifiedAccessOrAnnotationCalls.all { call ->
+                context.qualifiedAccessOrAssignmentsOrAnnotationCalls.all { call ->
                     call !is FirAnnotation
                 } &&
                 context.containingDeclarations.all { klass ->

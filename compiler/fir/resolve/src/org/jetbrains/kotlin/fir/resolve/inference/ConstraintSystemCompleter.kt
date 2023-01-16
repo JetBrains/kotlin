@@ -503,7 +503,7 @@ fun FirStatement.processAllContainingCallCandidates(processBlocks: Boolean, proc
         }
 
         is FirVariableAssignment -> {
-            processCandidateIfApplicable(processor, processBlocks)
+            (lValue as? FirResolvable)?.processCandidateIfApplicable(processor, processBlocks)
             rValue.processAllContainingCallCandidates(processBlocks, processor)
         }
 

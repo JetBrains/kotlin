@@ -354,13 +354,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             publicImplementation()
         }
 
-        impl(variableAssignment) {
-            default("lValue") {
-                value = "calleeReference"
-                customSetter = "calleeReference = value"
-            }
-        }
-
         impl(anonymousFunction) {
             default("resolvePhase", "FirResolvePhase.DECLARATIONS")
         }
@@ -390,6 +383,10 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
                 withGetter = true
             }
             useTypes(whenExpression)
+        }
+
+        impl(desugaredAssignmentValueReferenceExpression) {
+            useTypes(expression)
         }
 
         impl(wrappedDelegateExpression) {

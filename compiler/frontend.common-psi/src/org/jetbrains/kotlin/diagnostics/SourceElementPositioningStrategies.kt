@@ -263,11 +263,6 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.ANNOTATION_USE_SITE
     )
 
-    val ASSIGNMENT_LHS = SourceElementPositioningStrategy(
-        LightTreePositioningStrategies.ASSIGNMENT_LHS,
-        PositioningStrategies.ASSIGNMENT_LHS
-    )
-
     val IMPORT_LAST_NAME = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.IMPORT_LAST_NAME,
         PositioningStrategies.IMPORT_LAST_NAME

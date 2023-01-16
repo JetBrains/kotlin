@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildErrorLoop
 import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.references.FirReference
@@ -68,9 +69,13 @@ fun FirExpression.toResolvedCallableReference(): FirResolvedNamedReference? {
 }
 
 fun FirExpression.toReference(): FirReference? {
-    if (this is FirWrappedArgumentExpression) return expression.toResolvedCallableReference()
-    if (this is FirSmartCastExpression) return originalExpression.toReference()
-    return (this as? FirResolvable)?.calleeReference
+    return when (this) {
+        is FirWrappedArgumentExpression -> expression.toResolvedCallableReference()
+        is FirSmartCastExpression -> originalExpression.toReference()
+        is FirDesugaredAssignmentValueReferenceExpression -> expressionRef.value.toReference()
+        is FirResolvable -> calleeReference
+        else -> null
+    }
 }
 
 fun FirExpression.toResolvedCallableSymbol(): FirCallableSymbol<*>? {
@@ -122,3 +127,22 @@ fun <T : FirStatement> FirBlock.replaceFirstStatement(factory: (T) -> FirStateme
 }
 
 fun FirExpression.unwrapArgument(): FirExpression = (this as? FirWrappedArgumentExpression)?.expression ?: this
+
+val FirVariableAssignment.explicitReceiver: FirExpression? get() = unwrapLValue()?.explicitReceiver
+
+val FirVariableAssignment.dispatchReceiver: FirExpression get() = unwrapLValue()?.dispatchReceiver ?: FirNoReceiverExpression
+
+val FirVariableAssignment.extensionReceiver: FirExpression get() = unwrapLValue()?.extensionReceiver ?: FirNoReceiverExpression
+
+val FirVariableAssignment.calleeReference: FirReference? get() = lValue.toReference()
+
+val FirVariableAssignment.contextReceiverArguments: List<FirExpression> get() = unwrapLValue()?.contextReceiverArguments ?: emptyList()
+
+fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
+    val lValue = lValue
+    return lValue as? FirQualifiedAccessExpression
+        ?: (lValue as? FirDesugaredAssignmentValueReferenceExpression)?.expressionRef?.value as? FirQualifiedAccessExpression
+}
+
+val FirElement.calleeReference: FirReference?
+    get() = (this as? FirResolvable)?.calleeReference ?: (this as? FirVariableAssignment)?.calleeReference

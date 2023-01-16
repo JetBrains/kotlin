@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.renderForDebugging
+import org.jetbrains.kotlin.fir.types.*
 
 class ErrorNodeDiagnosticCollectorComponent(
     session: FirSession,
@@ -63,13 +60,9 @@ class ErrorNodeDiagnosticCollectorComponent(
 
     private fun processErrorReference(reference: FirNamedReference, diagnostic: ConeDiagnostic, context: CheckerContext) {
         val source = reference.source ?: return
-        val qualifiedAccessOrAnnotationCall = context.qualifiedAccessOrAnnotationCalls.lastOrNull()?.takeIf {
+        val qualifiedAccessOrAnnotationCall = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull()?.takeIf {
             // Use the source of the enclosing FirQualifiedAccess if it is exactly the call to the erroneous callee.
-            when (it) {
-                is FirQualifiedAccess -> it.calleeReference == reference
-                is FirAnnotationCall -> it.calleeReference == reference
-                else -> false
-            }
+            it.calleeReference == reference
         }
         // Don't report duplicated unresolved reference on annotation entry (already reported on its type)
         if (source.elementType == KtNodeTypes.ANNOTATION_ENTRY && diagnostic is ConeUnresolvedNameError) return
@@ -79,7 +72,7 @@ class ErrorNodeDiagnosticCollectorComponent(
         ) return
 
         // If the receiver cannot be resolved, we skip reporting any further problems for this call.
-        if (qualifiedAccessOrAnnotationCall is FirQualifiedAccess) {
+        if (qualifiedAccessOrAnnotationCall is FirQualifiedAccessExpression) {
             if (qualifiedAccessOrAnnotationCall.dispatchReceiver.cannotBeResolved() ||
                 qualifiedAccessOrAnnotationCall.extensionReceiver.cannotBeResolved() ||
                 qualifiedAccessOrAnnotationCall.explicitReceiver.cannotBeResolved()

@@ -138,10 +138,6 @@ object ConeVariableExpectedError : ConeDiagnostic {
     override val reason: String get() = "Variable expected"
 }
 
-class ConeValReassignmentError(val variable: FirVariableSymbol<*>) : ConeDiagnostic {
-    override val reason: String get() = "Re-assigning a val variable"
-}
-
 class ConeContractDescriptionError(override val reason: String) : ConeDiagnostic
 
 class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic {

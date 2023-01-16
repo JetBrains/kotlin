@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -71,7 +71,7 @@ private fun convertArgument(argument: Any?, firSymbolBuilder: KtSymbolByFirBuild
         is FirCallableDeclaration -> convertArgument(argument, firSymbolBuilder)
         is FirMemberDeclaration -> convertArgument(argument, firSymbolBuilder)
         is FirDeclaration -> convertArgument(argument, firSymbolBuilder)
-        is FirQualifiedAccess -> convertArgument(argument, firSymbolBuilder)
+        is FirQualifiedAccessExpression -> convertArgument(argument, firSymbolBuilder)
         is FirExpression -> convertArgument(argument, firSymbolBuilder)
         is ConeKotlinType -> convertArgument(argument, firSymbolBuilder)
         is FirTypeRef -> convertArgument(argument, firSymbolBuilder)
@@ -163,7 +163,7 @@ private fun convertArgument(argument: FirDeclaration, firSymbolBuilder: KtSymbol
     return firSymbolBuilder.buildSymbol(argument)
 }
 
-private fun convertArgument(argument: FirQualifiedAccess, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
+private fun convertArgument(argument: FirQualifiedAccessExpression, firSymbolBuilder: KtSymbolByFirBuilder): Any? {
     return argument.source!!.psi as KtExpression
 }
 

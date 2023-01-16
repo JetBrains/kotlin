@@ -29,13 +29,13 @@ import org.jetbrains.kotlin.fir.FirImplementationDetail
  */
 
 internal class FirImplicitInvokeCallImpl(
-    override var source: KtSourceElement?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var contextReceiverArguments: MutableOrEmptyList<FirExpression>,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override var explicitReceiver: FirExpression?,
     override var dispatchReceiver: FirExpression,
     override var extensionReceiver: FirExpression,
+    override var source: KtSourceElement?,
     override var argumentList: FirArgumentList,
     override var calleeReference: FirNamedReference,
 ) : FirImplicitInvokeCall() {
@@ -95,11 +95,6 @@ internal class FirImplicitInvokeCallImpl(
         return this
     }
 
-    @FirImplementationDetail
-    override fun replaceSource(newSource: KtSourceElement?) {
-        source = newSource
-    }
-
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
@@ -126,6 +121,11 @@ internal class FirImplicitInvokeCallImpl(
 
     override fun replaceExtensionReceiver(newExtensionReceiver: FirExpression) {
         extensionReceiver = newExtensionReceiver
+    }
+
+    @FirImplementationDetail
+    override fun replaceSource(newSource: KtSourceElement?) {
+        source = newSource
     }
 
     override fun replaceArgumentList(newArgumentList: FirArgumentList) {

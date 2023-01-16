@@ -704,7 +704,7 @@ class Fir2IrVisitor(
 
     internal fun convertToIrReceiverExpression(
         expression: FirExpression?,
-        calleeReference: FirReference,
+        calleeReference: FirReference?,
         callableReferenceAccess: FirCallableReferenceAccess? = null
     ): IrExpression? {
         return when (expression) {
@@ -779,7 +779,7 @@ class Fir2IrVisitor(
         val incrementStatement = this[index + 1]
         if (incrementStatement !is FirVariableAssignment) return null
 
-        if (incrementStatement.lValue.toResolvedCallableSymbol() != variable) return null
+        if (incrementStatement.calleeReference?.toResolvedCallableSymbol() != variable) return null
 
         val origin = incrementStatement.getIrAssignmentOrigin()
         return if (origin == IrStatementOrigin.EQ) null else origin

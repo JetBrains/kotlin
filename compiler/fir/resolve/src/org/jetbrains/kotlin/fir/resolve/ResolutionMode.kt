@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
+import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode.Companion.prettyString
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 
@@ -86,6 +86,10 @@ sealed class ResolutionMode {
         }
     }
 
+    class AssignmentLValue(val variableAssignment: FirVariableAssignment) : ResolutionMode() {
+        override fun toString(): String = "AssignmentLValue: ${variableAssignment.render()}"
+    }
+
     private companion object {
         private fun FirTypeRef?.prettyString(): String {
             if (this == null) return "null"
@@ -98,6 +102,7 @@ sealed class ResolutionMode {
 fun ResolutionMode.expectedType(components: BodyResolveComponents, allowFromCast: Boolean = false): FirTypeRef? = when (this) {
     is ResolutionMode.WithExpectedType -> expectedTypeRef
     is ResolutionMode.ContextIndependent,
+    is ResolutionMode.AssignmentLValue,
     is ResolutionMode.ReceiverResolution -> components.noExpectedType
     is ResolutionMode.WithExpectedTypeFromCast -> expectedTypeRef.takeIf { allowFromCast }
     is ResolutionMode.WithSuggestedType -> suggestedTypeRef

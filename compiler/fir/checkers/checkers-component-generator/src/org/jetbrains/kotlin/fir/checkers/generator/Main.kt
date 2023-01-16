@@ -31,7 +31,6 @@ fun main(args: Array<String>) {
     val expressionPackage = "$basePackage.checkers.expression"
     generateCheckersComponents(generationPath, expressionPackage, "FirExpressionChecker") {
         alias<FirStatement>("BasicExpressionChecker")
-        alias<FirQualifiedAccess>("QualifiedAccessChecker")
         alias<FirQualifiedAccessExpression>("QualifiedAccessExpressionChecker")
         alias<FirCall>("CallChecker")
         alias<FirFunctionCall>("FunctionCallChecker")

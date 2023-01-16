@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctiona
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
-import org.jetbrains.kotlin.fir.resolve.transformers.toExpectedType
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.types.constructStarProjectedType
@@ -317,7 +316,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
 
         // Second, replace result type of delegate expression with stub type if delegate not yet resolved
-        if (delegateExpression is FirQualifiedAccess) {
+        if (delegateExpression is FirQualifiedAccessExpression) {
             val calleeReference = delegateExpression.calleeReference
             if (calleeReference is FirNamedReferenceWithCandidate) {
                 val system = calleeReference.candidate.system
@@ -736,7 +735,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, data.expectedTypeRef, data)
             is ResolutionMode.WithSuggestedType ->
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, data.suggestedTypeRef, data)
-            is ResolutionMode.ContextIndependent, is ResolutionMode.ReceiverResolution ->
+            is ResolutionMode.ContextIndependent, is ResolutionMode.AssignmentLValue, is ResolutionMode.ReceiverResolution ->
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, buildImplicitTypeRef(), data)
             is ResolutionMode.WithStatus, is ResolutionMode.WithExpectedTypeFromCast ->
                 throw AssertionError("Should not be here in WithStatus/WithExpectedTypeFromCast mode")

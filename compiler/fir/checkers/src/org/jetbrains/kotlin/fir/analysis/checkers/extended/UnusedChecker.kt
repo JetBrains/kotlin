@@ -44,7 +44,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
         override fun visitNode(node: CFGNode<*>) {}
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
-            val variableSymbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
+            val variableSymbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return
             val dataPerNode = data[node] ?: return
             for (dataPerLabel in dataPerNode.values) {
                 val data = dataPerLabel[variableSymbol] ?: continue
@@ -210,7 +210,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
             val dataForNode = visitNode(node, data)
-            val symbol = node.fir.lValue.toResolvedPropertySymbol() ?: return dataForNode
+            val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return dataForNode
             return update(dataForNode, symbol) update@{ prev ->
                 val toPut = when {
                     symbol !in localProperties -> {
@@ -247,7 +247,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             annotation: FirAnnotation,
         ): PathAwareVariableStatusInfo {
             return if (annotation is FirAnnotationCall) {
-                val qualifiedAccesses = annotation.argumentList.arguments.mapNotNull { it as? FirQualifiedAccess }.toTypedArray()
+                val qualifiedAccesses = annotation.argumentList.arguments.mapNotNull { it as? FirQualifiedAccessExpression }.toTypedArray()
                 visitQualifiedAccesses(dataForNode, *qualifiedAccesses)
             } else {
                 dataForNode
@@ -256,9 +256,9 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
 
         private fun visitQualifiedAccesses(
             dataForNode: PathAwareVariableStatusInfo,
-            vararg qualifiedAccesses: FirQualifiedAccess,
+            vararg qualifiedAccesses: FirQualifiedAccessExpression,
         ): PathAwareVariableStatusInfo {
-            fun retrieveSymbol(qualifiedAccess: FirQualifiedAccess): FirPropertySymbol? {
+            fun retrieveSymbol(qualifiedAccess: FirQualifiedAccessExpression): FirPropertySymbol? {
                 return qualifiedAccess.calleeReference.toResolvedPropertySymbol()?.takeIf { it in localProperties }
             }
 

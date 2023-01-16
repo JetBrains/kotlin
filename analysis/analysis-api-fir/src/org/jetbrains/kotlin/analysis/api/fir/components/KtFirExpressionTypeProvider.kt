@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.constructFunctionalType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -58,7 +59,9 @@ internal class KtFirExpressionTypeProvider(
                 }
             }
             is FirVariableAssignment -> {
-                if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
+                if (fir.lValue.source?.psi == expression) {
+                    fir.lValue.typeRef.coneType.asKtType()
+                } else if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
                     fir.rValue.typeRef.coneType.asKtType()
                 } else {
                     analysisSession.builtinTypes.UNIT

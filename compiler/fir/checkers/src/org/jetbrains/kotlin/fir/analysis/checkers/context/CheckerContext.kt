@@ -31,7 +31,7 @@ abstract class CheckerContext : MutableDiagnosticContext() {
     // Context
     abstract val implicitReceiverStack: ImplicitReceiverStack
     abstract val containingDeclarations: List<FirDeclaration>
-    abstract val qualifiedAccessOrAnnotationCalls: List<FirStatement>
+    abstract val qualifiedAccessOrAssignmentsOrAnnotationCalls: List<FirStatement>
     abstract val getClassCalls: List<FirGetClassCall>
     abstract val annotationContainers: List<FirAnnotationContainer>
     abstract val isContractBody: Boolean

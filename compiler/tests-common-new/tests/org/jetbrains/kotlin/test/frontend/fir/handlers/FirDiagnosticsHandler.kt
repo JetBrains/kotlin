@@ -167,7 +167,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             private fun reportDynamic(element: FirResolvable) {
                 val calleeDeclaration = element.calleeReference.toResolvedCallableSymbol() ?: return
                 val isInvokeCallWithDynamicReceiver = calleeDeclaration.name == OperatorNameConventions.INVOKE
-                        && element is FirQualifiedAccess
+                        && element is FirQualifiedAccessExpression
                         && element.dispatchReceiver.typeRef.isFunctionTypeWithDynamicReceiver(firFile.moduleData.session)
 
                 if (calleeDeclaration.origin !is FirDeclarationOrigin.DynamicScope && !isInvokeCallWithDynamicReceiver) {
@@ -207,7 +207,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
             override fun visitSafeCallExpression(safeCallExpression: FirSafeCallExpression) {
                 val selector = safeCallExpression.selector
-                if (selector is FirQualifiedAccess) {
+                if (selector is FirQualifiedAccessExpression) {
                     val reference = selector.calleeReference as FirNamedReference
                     consumer.reportCallDiagnostic(safeCallExpression, reference)
                     consumer.reportContainingClassDiagnostic(safeCallExpression, reference)

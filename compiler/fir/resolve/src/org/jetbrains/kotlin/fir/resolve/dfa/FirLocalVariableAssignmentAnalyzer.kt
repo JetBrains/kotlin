@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.expressions.explicitReceiver
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
@@ -380,7 +381,7 @@ internal class FirLocalVariableAssignmentAnalyzer {
             override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: MiniCfgData) {
                 visitElement(variableAssignment, data)
                 if (variableAssignment.explicitReceiver != null) return
-                data.recordAssignment(variableAssignment.lValue)
+                variableAssignment.calleeReference?.let { data.recordAssignment(it) }
             }
 
             override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: MiniCfgData) {

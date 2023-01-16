@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.name.Name
 class MutableCheckerContext private constructor(
     override val implicitReceiverStack: PersistentImplicitReceiverStack,
     override val containingDeclarations: MutableList<FirDeclaration>,
-    override val qualifiedAccessOrAnnotationCalls: MutableList<FirStatement>,
+    override val qualifiedAccessOrAssignmentsOrAnnotationCalls: MutableList<FirStatement>,
     override val getClassCalls: MutableList<FirGetClassCall>,
     override val annotationContainers: MutableList<FirAnnotationContainer>,
     override var isContractBody: Boolean,
@@ -50,7 +50,7 @@ class MutableCheckerContext private constructor(
         return MutableCheckerContext(
             implicitReceiverStack.add(name, value),
             containingDeclarations,
-            qualifiedAccessOrAnnotationCalls,
+            qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
             isContractBody,
@@ -73,12 +73,12 @@ class MutableCheckerContext private constructor(
     }
 
     override fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): MutableCheckerContext {
-        qualifiedAccessOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall)
+        qualifiedAccessOrAssignmentsOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall)
         return this
     }
 
     override fun dropQualifiedAccessOrAnnotationCall() {
-        qualifiedAccessOrAnnotationCalls.removeAt(qualifiedAccessOrAnnotationCalls.size - 1)
+        qualifiedAccessOrAssignmentsOrAnnotationCalls.removeAt(qualifiedAccessOrAssignmentsOrAnnotationCalls.size - 1)
     }
 
     override fun addGetClassCall(getClassCall: FirGetClassCall): MutableCheckerContext {
@@ -109,7 +109,7 @@ class MutableCheckerContext private constructor(
         return MutableCheckerContext(
             implicitReceiverStack,
             containingDeclarations,
-            qualifiedAccessOrAnnotationCalls,
+            qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
             isContractBody,

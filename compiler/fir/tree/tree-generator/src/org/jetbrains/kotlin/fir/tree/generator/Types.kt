@@ -46,7 +46,7 @@ val coneKotlinTypeType = type(ConeKotlinType::class)
 val coneSimpleKotlinTypeType = type(ConeSimpleKotlinType::class)
 
 val whenRefType = generatedType("", "FirExpressionRef<FirWhenExpression>")
-val safeCallOriginalReceiverReferenceType = generatedType("", "FirExpressionRef<FirExpression>")
+val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef<FirExpression>")
 val safeCallCheckedSubjectReferenceType = generatedType("", "FirExpressionRef<FirCheckedSafeCallSubject>")
 
 val firModuleDataType = type("fir", "FirModuleData")

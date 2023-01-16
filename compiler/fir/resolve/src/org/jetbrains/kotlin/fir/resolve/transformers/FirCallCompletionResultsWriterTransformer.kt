@@ -83,7 +83,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
-    private fun <T : FirQualifiedAccess> prepareQualifiedTransform(
+    private fun <T : FirQualifiedAccessExpression> prepareQualifiedTransform(
         qualifiedAccessExpression: T, calleeReference: FirNamedReferenceWithCandidate
     ): T {
         val subCandidate = calleeReference.candidate
@@ -129,7 +129,7 @@ class FirCallCompletionResultsWriterTransformer(
             extensionReceiver = extensionReceiver.transformSingle(integerOperatorApproximator, expectedExtensionReceiverType)
         }
 
-        qualifiedAccessExpression.apply {
+        (qualifiedAccessExpression as? FirQualifiedAccessExpression)?.apply {
             replaceCalleeReference(calleeReference.toResolvedReference())
             replaceDispatchReceiver(dispatchReceiver)
             replaceExtensionReceiver(extensionReceiver)
@@ -146,11 +146,7 @@ class FirCallCompletionResultsWriterTransformer(
             qualifiedAccessExpression.replaceNonFatalDiagnostics(nonFatalDiagnostics)
         }
 
-        if (qualifiedAccessExpression is FirQualifiedAccessExpression) {
-            qualifiedAccessExpression.replaceTypeRef(typeRef)
-        } else if (qualifiedAccessExpression is FirVariableAssignment) {
-            qualifiedAccessExpression.replaceLValueTypeRef(typeRef)
-        }
+        qualifiedAccessExpression.replaceTypeRef(typeRef)
 
         if (declaration !is FirErrorFunction) {
             qualifiedAccessExpression.replaceTypeArguments(typeArguments)
@@ -405,25 +401,6 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
-    override fun transformVariableAssignment(
-        variableAssignment: FirVariableAssignment,
-        data: ExpectedArgumentType?,
-    ): FirStatement {
-        val calleeReference = variableAssignment.calleeReference as? FirNamedReferenceWithCandidate ?: return variableAssignment
-
-        // Initialize lValueTypeRef
-        val qualifiedTransform = prepareQualifiedTransform(variableAssignment, calleeReference)
-        val lValueTypeRef = qualifiedTransform.lValueTypeRef as FirResolvedTypeRef
-        val resultLValueType = lValueTypeRef.substituteTypeRef(calleeReference.candidate)
-        resultLValueType.ensureResolvedTypeDeclaration(session)
-        variableAssignment.replaceLValueTypeRef(resultLValueType)
-        session.lookupTracker?.recordTypeResolveAsLookup(resultLValueType, variableAssignment.lValue.source, context.file.source)
-
-        return variableAssignment.apply {
-            replaceCalleeReference(calleeReference.toResolvedReference())
-        }
-    }
-
     override fun transformSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: ExpectedArgumentType?): FirStatement {
         return smartCastExpression.transformOriginalExpression(this, data)
     }
@@ -509,7 +486,7 @@ class FirCallCompletionResultsWriterTransformer(
     }
 
     private fun computeTypeArguments(
-        access: FirQualifiedAccess,
+        access: FirQualifiedAccessExpression,
         candidate: Candidate
     ): List<FirTypeProjection> {
         val typeArguments = computeTypeArgumentTypes(candidate)

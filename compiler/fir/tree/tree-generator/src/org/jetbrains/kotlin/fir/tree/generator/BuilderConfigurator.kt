@@ -45,8 +45,8 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             withCopy()
         }
 
-        val qualifiedAccessBuilder by builder {
-            fields from qualifiedAccess without "calleeReference"
+        val qualifiedAccessExpressionBuilder by builder {
+            fields from qualifiedAccessExpression without "calleeReference"
         }
 
         val callBuilder by builder {
@@ -79,7 +79,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         val abstractFunctionCallBuilder by builder {
-            parents += qualifiedAccessBuilder
+            parents += qualifiedAccessExpressionBuilder
             parents += callBuilder
             fields from functionCall
         }
@@ -152,12 +152,12 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(propertyAccessExpression) {
-            parents += qualifiedAccessBuilder
+            parents += qualifiedAccessExpressionBuilder
             defaultNoReceivers()
         }
 
         builder(callableReferenceAccess) {
-            parents += qualifiedAccessBuilder
+            parents += qualifiedAccessExpressionBuilder
             defaultNull("explicitReceiver")
             defaultNoReceivers()
             defaultFalse("hasQuestionMarkAtLHS")
@@ -245,7 +245,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         }
 
         builder(thisReceiverExpression) {
-            parents += qualifiedAccessBuilder
+            parents += qualifiedAccessExpressionBuilder
             default("isImplicit", "false")
         }
 
@@ -255,11 +255,6 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
 
         builder(thisReference, "FirImplicitThisReference") {
             default("contextReceiverNumber", "-1")
-        }
-
-        builder(variableAssignment) {
-            parents += qualifiedAccessBuilder
-            defaultNoReceivers()
         }
 
         builder(anonymousFunction) {
