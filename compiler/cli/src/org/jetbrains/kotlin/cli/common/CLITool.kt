@@ -58,8 +58,8 @@ abstract class CLITool<A : CommonToolArguments> {
         val collector = PrintingMessageCollector(errStream, messageRenderer, arguments.verbose)
 
         try {
-            if (PlainTextMessageRenderer.COLOR_ENABLED) {
-                AnsiConsole.systemInstall()
+            if (messageRenderer is PlainTextMessageRenderer) {
+                messageRenderer.enableColorsIfNeeded()
             }
 
             errStream.print(messageRenderer.renderPreamble())
@@ -80,8 +80,8 @@ abstract class CLITool<A : CommonToolArguments> {
         } finally {
             errStream.print(messageRenderer.renderConclusion())
 
-            if (PlainTextMessageRenderer.COLOR_ENABLED) {
-                AnsiConsole.systemUninstall()
+            if (messageRenderer is PlainTextMessageRenderer) {
+                messageRenderer.disableColorsIfNeeded()
             }
         }
     }
