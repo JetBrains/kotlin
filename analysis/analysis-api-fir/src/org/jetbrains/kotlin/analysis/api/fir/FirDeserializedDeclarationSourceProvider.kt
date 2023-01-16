@@ -9,13 +9,13 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -44,16 +44,17 @@ internal object FirDeserializedDeclarationSourceProvider {
         function: FirSimpleFunction,
         project: Project
     ): PsiElement? {
+        val baseFunction = function.delegatedWrapperData?.wrapped ?: function
         val candidates = if (function.isTopLevel) {
             project.createDeclarationProvider(function.scope(project)).getTopLevelFunctions(function.symbol.callableId)
                 .filter(KtNamedFunction::isCompiled)
         } else {
-            function.containingKtClass(project)?.body?.functions
-                ?.filter { it.name == function.name.asString() && it.isCompiled() }
+            baseFunction.containingKtClass(project)?.body?.functions
+                ?.filter { it.name == baseFunction.name.asString() && it.isCompiled() }
                 .orEmpty()
         }
 
-        return function.unwrapFakeOverrides().chooseCorrespondingPsi(candidates)
+        return baseFunction.unwrapFakeOverrides().chooseCorrespondingPsi(candidates)
     }
 
     private fun provideSourceForProperty(property: FirProperty, project: Project): PsiElement? {
