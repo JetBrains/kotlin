@@ -128,7 +128,8 @@ internal fun ResolvedComponentResult.toSingleKpmModuleIdentifier(): KpmModuleIde
     return toKpmModuleIdentifier(moduleClassifier)
 }
 
-internal fun ResolvedVariantResult.toSingleKpmModuleIdentifier(): KpmModuleIdentifier = toKpmModuleIdentifiers().single()
+internal fun ResolvedVariantResult.toSingleKpmModuleIdentifier(): KpmModuleIdentifier = toKpmModuleIdentifiers().singleOrNull()
+    ?: error("Unexpected amount of KPM Identifiers from '$this'. Only single Module Identifier was expected")
 
 private fun ResolvedComponentResult.toKpmModuleIdentifier(moduleClassifier: String?): KpmModuleIdentifier {
     return when (val id = id) {
