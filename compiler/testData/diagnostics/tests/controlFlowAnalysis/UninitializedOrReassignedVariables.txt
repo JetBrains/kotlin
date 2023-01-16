@@ -16,6 +16,8 @@ package uninitialized_reassigned_variables {
     public fun t4(): kotlin.Unit
     public fun t4(/*0*/ a: uninitialized_reassigned_variables.A): kotlin.Unit
     public fun t5(): kotlin.Unit
+    public fun t6(): kotlin.Unit
+    public fun t7(): kotlin.Unit
     public fun test(/*0*/ m: uninitialized_reassigned_variables.M): kotlin.Unit
     public fun test1(/*0*/ m: uninitialized_reassigned_variables.M): kotlin.Unit
 

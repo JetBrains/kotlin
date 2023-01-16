@@ -54,5 +54,5 @@ fun case3() {
 fun case4() {
     <!VARIABLE_EXPECTED!>for (x in 1..2) {}<!>  = TODO();
 
-    <!VARIABLE_EXPECTED!>while (false) { }<!> = TODO()
+    <!EXPRESSION_EXPECTED, VARIABLE_EXPECTED!>while (false) { }<!> = TODO()
 }

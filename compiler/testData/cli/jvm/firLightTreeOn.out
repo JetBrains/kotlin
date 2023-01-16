@@ -1,5 +1,14 @@
 warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
-compiler/testData/cli/jvm/firLightTree.kt:3:5: error: classifier 'class System : Any' does not have a companion object, and thus must be initialized here
-    java.lang.System = null
+compiler/testData/cli/jvm/firLightTree.kt:2:5: error: variable expected
+    this += "Alpha"
     ^
+compiler/testData/cli/jvm/firLightTree.kt:3:15: error: classifier 'class System : Any' does not have a companion object, and thus must be initialized here
+    java.lang.System = null
+              ^
+compiler/testData/cli/jvm/firLightTree.kt:3:15: error: variable expected
+    java.lang.System = null
+              ^
+compiler/testData/cli/jvm/firLightTree.kt:3:24: error: null can not be a value of a non-null type
+    java.lang.System = null
+                       ^
 COMPILATION_ERROR

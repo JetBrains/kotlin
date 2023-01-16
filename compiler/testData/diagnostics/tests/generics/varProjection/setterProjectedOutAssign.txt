@@ -1,6 +1,15 @@
 package
 
 public fun test(/*0*/ t: Tr<*>): kotlin.Unit
+public fun test2(/*0*/ t: JavaClass<*>): kotlin.Unit
+
+public interface JavaClass</*0*/ T : kotlin.Any!> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun getV(): T!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun setV(/*0*/ v: T!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 
 public interface Tr</*0*/ T> {
     public abstract var v: T

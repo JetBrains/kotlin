@@ -1,6 +1,6 @@
 KT element: KtNameReferenceExpression
-FIR element: FirResolvedNamedReferenceImpl
-FIR source kind: ReferenceInAtomicQualifiedAccess
+FIR element: FirVariableAssignmentImpl
+FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-R|<local>/i|
+R|<local>/i| = R|<local>/i|.R|kotlin/Int.plus|(Int(1))

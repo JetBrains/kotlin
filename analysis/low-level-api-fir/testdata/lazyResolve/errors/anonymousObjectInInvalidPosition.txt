@@ -73,7 +73,7 @@ FILE: anonymousObjectInInvalidPosition.kt
 
 CONTRACTS:
 FILE: anonymousObjectInInvalidPosition.kt
-    private final [CONTRACTS] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)<Unsupported LValue: NULL># = object : A<Int> {
+    private final [CONTRACTS] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {
         private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<<implicit>>()
         }
@@ -91,7 +91,7 @@ FILE: anonymousObjectInInvalidPosition.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: anonymousObjectInInvalidPosition.kt
-    private final [IMPLICIT_TYPES_BODY_RESOLVE] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)<Unsupported LValue: NULL># = object : A<Int> {
+    private final [IMPLICIT_TYPES_BODY_RESOLVE] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {
         private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<<implicit>>()
         }
@@ -109,7 +109,7 @@ FILE: anonymousObjectInInvalidPosition.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: anonymousObjectInInvalidPosition.kt
-    private final [ANNOTATIONS_ARGUMENTS_MAPPING] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)<Unsupported LValue: NULL># = object : A<Int> {
+    private final [ANNOTATIONS_ARGUMENTS_MAPPING] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {
         private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<<implicit>>()
         }
@@ -127,7 +127,7 @@ FILE: anonymousObjectInInvalidPosition.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: anonymousObjectInInvalidPosition.kt
-    private final [EXPECT_ACTUAL_MATCHING] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)<Unsupported LValue: NULL># = object : A<Int> {
+    private final [EXPECT_ACTUAL_MATCHING] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {
         private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<<implicit>>()
         }
@@ -145,7 +145,7 @@ FILE: anonymousObjectInInvalidPosition.kt
 
 BODY_RESOLVE:
 FILE: anonymousObjectInInvalidPosition.kt
-    private final [BODY_RESOLVE] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)<Unsupported LValue: NULL># = object : R|A<kotlin/Int>| {
+    private final [BODY_RESOLVE] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : R|A<kotlin/Int>| {
         private [BODY_RESOLVE] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
@@ -163,7 +163,7 @@ FILE: anonymousObjectInInvalidPosition.kt
 
 FILE RAW TO BODY:
 FILE: anonymousObjectInInvalidPosition.kt
-    private final [BODY_RESOLVE] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)<Unsupported LValue: NULL># = object : R|A<kotlin/Int>| {
+    private final [BODY_RESOLVE] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : R|A<kotlin/Int>| {
         private [BODY_RESOLVE] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }

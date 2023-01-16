@@ -4169,6 +4169,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("AsInCompoundAssignment.kt")
+            public void testAsInCompoundAssignment() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/cast/AsInCompoundAssignment.kt");
+            }
+
+            @Test
             @TestMetadata("AsInExpressionBody.kt")
             public void testAsInExpressionBody() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/cast/AsInExpressionBody.kt");

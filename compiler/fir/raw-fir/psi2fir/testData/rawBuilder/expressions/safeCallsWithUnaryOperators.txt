@@ -62,7 +62,7 @@ FILE: safeCallsWithUnaryOperators.kt
         R|<local>/<unary>|
         lval <receiver>: <implicit> = a#?.{ $subj$.b# }
         lval <unary>: <implicit> = R|<local>/<receiver>|.d#()
-        R|<local>/<receiver>|.d# = R|<local>/<unary>|.inc#()
+        R|<local>/<receiver>|.d#() = R|<local>/<unary>|.inc#()
         R|<local>/<unary>|
     }
     public? final? fun foo2(): R|kotlin/Unit| {
@@ -128,6 +128,6 @@ FILE: safeCallsWithUnaryOperators.kt
         R|<local>/<unary-result>|
         lval <receiver>: <implicit> = a#?.{ $subj$.b# }
         lval <unary-result>: <implicit> = R|<local>/<receiver>|.d#().inc#()
-        R|<local>/<receiver>|.d# = R|<local>/<unary-result>|
+        R|<local>/<receiver>|.d#() = R|<local>/<unary-result>|
         R|<local>/<unary-result>|
     }

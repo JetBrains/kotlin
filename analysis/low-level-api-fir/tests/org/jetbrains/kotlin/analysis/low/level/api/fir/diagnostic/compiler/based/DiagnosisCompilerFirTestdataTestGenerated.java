@@ -4631,6 +4631,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("assignmentWithWrongLhs.kt")
+        public void testAssignmentWithWrongLhs() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/assignmentWithWrongLhs.kt");
+        }
+
+        @Test
         @TestMetadata("backingField.kt")
         public void testBackingField() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/backingField.kt");

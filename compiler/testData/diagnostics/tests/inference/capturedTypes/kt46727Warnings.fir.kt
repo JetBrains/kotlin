@@ -43,7 +43,7 @@ public class Bar<T> {
 }
 
 fun takeStarBar(x: Bar<*>) {
-    <!SETTER_PROJECTED_OUT!>x.value<!> = "test"
+    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
     x.value <!UNRESOLVED_REFERENCE!>+=<!> "test"
 }
 
@@ -74,7 +74,7 @@ public class Bar2<T> {
 }
 
 fun takeStarBar2(x: Bar2<*>) {
-    <!SETTER_PROJECTED_OUT!>x.value<!> = "test"
+    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
     x.value <!UNRESOLVED_REFERENCE!>+=<!> "test"
 }
 
@@ -106,7 +106,7 @@ class Bar3<T> {
 }
 
 fun takeStarBar3(x: Bar3<*>) {
-    <!SETTER_PROJECTED_OUT!>x.value<!> = "test"
+    x.value = <!ASSIGNMENT_TYPE_MISMATCH!>"test"<!>
     x.value <!UNRESOLVED_REFERENCE!>+=<!> "test"
 }
 

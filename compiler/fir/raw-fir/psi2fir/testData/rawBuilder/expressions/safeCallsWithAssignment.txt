@@ -9,5 +9,5 @@ FILE: safeCallsWithAssignment.kt
         a#?.{ $subj$.b#.get#(IntegerLiteral(0)).set#(IntegerLiteral(0), IntegerLiteral(1)) }
         a#?.{ $subj$.b# }?.{ $subj$.c#.get#(IntegerLiteral(0)).set#(IntegerLiteral(0), IntegerLiteral(1)) }
         a#?.{ $subj$.b# }.c#.get#(IntegerLiteral(0)).set#(IntegerLiteral(0), IntegerLiteral(1))
-        a#?.{ $subj$.b# }.d# = IntegerLiteral(1)
+        a#?.{ $subj$.b# }.d#() = IntegerLiteral(1)
     }

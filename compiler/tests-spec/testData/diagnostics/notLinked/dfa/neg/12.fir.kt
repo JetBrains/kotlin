@@ -5,7 +5,7 @@
 fun case_1() {
     var x: Int? = 11
     x!!
-    try {x = null;} finally { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!> <!UNSAFE_OPERATOR_CALL!>+=<!> 10; }
+    try {x = null;} finally { <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?"), DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>x<!> <!UNSAFE_OPERATOR_CALL!>+=<!> 10; }
 }
 
 // TESTCASE NUMBER: 2

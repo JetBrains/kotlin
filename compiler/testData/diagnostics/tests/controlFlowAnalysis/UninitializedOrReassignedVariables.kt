@@ -104,6 +104,21 @@ fun t5() {
     }
 }
 
+fun t6() {
+    val i = 0
+    fun t5() {
+        <!VAL_REASSIGNMENT!>i<!> += 3
+    }
+}
+
+fun t7() {
+    for (i in 0..2) {
+        fun t5() {
+            <!VAL_REASSIGNMENT!>i<!> = 3
+        }
+    }
+}
+
 // ------------------------------------------------
 // backing fields
 

@@ -24,7 +24,7 @@ fun <T> bar() {
 
     B::class.equals(<!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>)
 
-    T = ""
+    <!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, VARIABLE_EXPECTED!>T<!> = ""
 }
 
 fun baz(a: Any) {}

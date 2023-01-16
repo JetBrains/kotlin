@@ -18,12 +18,12 @@ class Data(var x: Foo)
 
 class B : Foo() {
     fun baz(a: Foo, t: Foo, d: Data) {
-        <!INVISIBLE_SETTER!>a.bar<!> = t.bar
-        <!INVISIBLE_SETTER!>a.foo<!> = t.foo
+        a.<!INVISIBLE_SETTER!>bar<!> = t.bar
+        a.<!INVISIBLE_SETTER!>foo<!> = t.foo
 
         if (d.x is B) {
-            <!INVISIBLE_SETTER!>d.x.bar<!> = d.x.bar + ""
-            <!INVISIBLE_SETTER!>d.x.foo<!> = d.x.foo + ""
+            d.x.<!INVISIBLE_SETTER!>bar<!> = d.x.bar + ""
+            d.x.<!INVISIBLE_SETTER!>foo<!> = d.x.foo + ""
         }
     }
 }

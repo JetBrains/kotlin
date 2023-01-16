@@ -73,5 +73,5 @@ class B5 : A5() {
 }
 
 fun test5() {
-    <!INVISIBLE_SETTER!>B5().attribute<!> = "c"
+    B5().<!INVISIBLE_SETTER!>attribute<!> = "c"
 }
