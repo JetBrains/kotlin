@@ -36,15 +36,6 @@ internal abstract class SymbolLightAbstractAnnotation(parent: PsiElement) :
 
     override fun getNameReferenceElement(): PsiJavaCodeReferenceElement = _nameReferenceElement
 
-    private class SymbolAnnotationParameterList(parent: PsiAnnotation) : KtLightElementBase(parent), PsiAnnotationParameterList {
-        override val kotlinOrigin: KtElement? = null
-        override fun getAttributes(): Array<PsiNameValuePair> = emptyArray() //TODO()
-    }
-
-    private val annotationParameterList: PsiAnnotationParameterList = SymbolAnnotationParameterList(this)
-
-    override fun getParameterList(): PsiAnnotationParameterList = annotationParameterList
-
     override fun delete() {
         kotlinOrigin?.delete()
     }
