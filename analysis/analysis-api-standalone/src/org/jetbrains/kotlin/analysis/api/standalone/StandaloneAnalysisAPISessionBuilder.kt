@@ -138,7 +138,6 @@ public class StandaloneAnalysisAPISessionBuilder(
             )
             registerService(LLFirBuiltinsSessionFactory::class.java, LLFirBuiltinsSessionFactory(this))
             RegisterComponentService.registerLLFirLibrarySessionFactory(this)
-            RegisterComponentService.registerLLFirNonUnderContentRootSessionFactory(this)
 
             registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
             registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
