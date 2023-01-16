@@ -4443,6 +4443,10 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/kt53151/objclib.def'
         it.compilerOpts "-F$projectDir/interop/objc/kt53151/testFramework"
     }
+    createInterop("objc_kt55938") {
+        it.defFile 'interop/objc/kt55938/objclib.def'
+        it.headers "$projectDir/interop/objc/kt55938/objclib.h"
+    }
 
     createInterop("kt49034_struct") {
         it.defFile 'interop/objc/kt49034/struct/kt49034.def'
@@ -5166,6 +5170,7 @@ if (PlatformInfo.isAppleTarget(project)) {
                 UtilsKt.codesign(project, "$buildDir/libobjc_kt42172.dylib")
             }
         }
+
     }
 
     interopTest("interop_objc_kt48816_without_lazy_ir_for_caches") {
@@ -5195,6 +5200,34 @@ if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_kt53151") {
         source = "interop/objc/kt53151/main.kt"
         interop = "objc_kt53151"
+    }
+
+    interopTest("interop_objc_kt55938") {
+        source = "interop/objc/kt55938/main.kt"
+        lib = "interop/objc/kt55938/lib.kt"
+        interop = "objc_kt55938"
+        useGoldenData = true
+        enabled = cacheTesting != null
+        flags = [
+                "-Xauto-cache-from=$testOutputRoot/local/objc_kt55938",
+                "-Xauto-cache-from=$testOutputRoot/local/interop_objc_kt55938",
+                "-Xauto-cache-dir=$testOutputRoot/local/interop_objc_kt55938/cache",
+                "-Werror" // to forbid retry with auto-cache disabled
+        ]
+
+        doBeforeBuild {
+            mkdir(buildDir)
+            def cacheDir = new File("-Xauto-cache-dir=$testOutputRoot/local/interop_objc_kt55938/cache")
+            cacheDir.deleteDir()
+            project.extensions.execClang.execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/objc/kt55938/objclib.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjc_kt55938.dylib"
+            }
+            if (UtilsKt.isSimulatorTarget(project, project.target)) {
+                UtilsKt.codesign(project, "$buildDir/libobjc_kt55938.dylib")
+            }
+        }
     }
 
     standaloneTest("objc_arc_contract") {
