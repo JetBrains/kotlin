@@ -52,10 +52,9 @@ import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.report.BuildMetricsService
-import org.jetbrains.kotlin.gradle.report.BuildReportMode
-import org.jetbrains.kotlin.gradle.report.BuildReportsService
-import org.jetbrains.kotlin.gradle.report.ReportingSettings
+import org.jetbrains.kotlin.gradle.report.*
+import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
+import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.ir.DISABLE_PRE_IR
@@ -188,7 +187,8 @@ abstract class GradleCompileTaskProvider @Inject constructor(
     projectLayout: ProjectLayout,
     gradle: Gradle,
     task: Task,
-    project: Project
+    project: Project,
+    incrementalModuleInfoProvider: Provider<IncrementalModuleInfoProvider>
 ) {
 
     @get:Internal
@@ -217,26 +217,8 @@ abstract class GradleCompileTaskProvider @Inject constructor(
         .property(project.rootProject.name.normalizeForFlagFile())
 
     @get:Internal
-    val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> = objectFactory.property(
-        /**
-         * See https://youtrack.jetbrains.com/issue/KT-46820. Build service that holds the incremental info may
-         * be instantiated during execution phase and there could be multiple threads trying to do that. Because the
-         * underlying mechanism does not support multi-threaded access, we need to add external synchronization.
-         */
-        synchronized(gradle.sharedServices) {
-            gradle.sharedServices.registerIfAbsent(
-                IncrementalModuleInfoBuildService.getServiceName(), IncrementalModuleInfoBuildService::class.java
-            ) {
-                it.parameters.info.set(
-                    objectFactory.providerWithLazyConvention {
-                        GradleCompilerRunner.buildModulesInfo(gradle)
-                    }
-                )
-            }.also {
-                task.usesService(it)
-            }
-        }
-    )
+    val buildModulesInfo: Provider<out IncrementalModuleInfoProvider> = objectFactory
+        .property(incrementalModuleInfoProvider)
 
     @get:Internal
     val errorsFile: Provider<File?> = objectFactory
@@ -250,6 +232,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     workerExecutor: WorkerExecutor
 ) : AbstractKotlinCompileTool<T>(objectFactory),
     CompileUsingKotlinDaemonWithNormalization,
+    UsesBuildMetricsService,
+    UsesBuildReportsService,
+    UsesIncrementalModuleInfoBuildService,
+    UsesCompilerSystemPropertiesService,
+    UsesVariantImplementationFactories,
     BaseKotlinCompile {
 
     init {
@@ -291,12 +278,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @Deprecated("Scheduled for removal with Kotlin 1.9", ReplaceWith("moduleName"))
     @get:Input
     abstract val ownModuleName: Property<String>
-
-    @get:Internal
-    internal abstract val buildMetricsService: Property<BuildMetricsService?>
-
-    @get:Internal
-    internal abstract val buildReportsService: Property<BuildReportsService?>
 
     @get:Internal
     val startParameters = BuildReportsService.getStartParameters(project)
@@ -346,7 +327,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     protected val gradleCompileTaskProvider: Provider<GradleCompileTaskProvider> = objectFactory
         .property(
-            objectFactory.newInstance<GradleCompileTaskProvider>(project.gradle, this, project)
+            objectFactory.newInstance<GradleCompileTaskProvider>(project.gradle, this, project, incrementalModuleInfoProvider)
         )
 
     @get:Internal
@@ -380,10 +361,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                     }
             }
         )
-
-    private val systemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project.gradle).also {
-        usesService(it)
-    }
 
     @get:Internal
     internal abstract val preciseCompilationResultsBackup: Property<Boolean>
@@ -936,25 +913,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
     workerExecutor: WorkerExecutor
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     KotlinCompilationTask<KotlinJsCompilerOptions>,
+    UsesLibraryFilterCachingService,
     KotlinJsCompile {
 
     init {
         incremental = true
         compilerOptions.verbose.convention(logger.isDebugEnabled)
-    }
-
-    internal abstract class LibraryFilterCachingService : BuildService<BuildServiceParameters.None>, AutoCloseable {
-        internal data class LibraryFilterCacheKey(val dependency: File, val irEnabled: Boolean, val preIrDisabled: Boolean)
-
-        private val cache = ConcurrentHashMap<LibraryFilterCacheKey, Boolean>()
-
-        fun getOrCompute(key: LibraryFilterCacheKey, compute: (File) -> Boolean) = cache.computeIfAbsent(key) {
-            compute(it.dependency)
-        }
-
-        override fun close() {
-            cache.clear()
-        }
     }
 
     override val kotlinOptions: KotlinJsOptions = KotlinJsOptionsCompat(
@@ -1115,9 +1079,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
             JsLibraryUtils::isKotlinJavascriptLibrary
         }
 
-    @get:Internal
-    internal abstract val libraryCache: Property<LibraryFilterCachingService>
-
     @get:Input
     internal val jsLegacyNoWarn: Provider<Boolean> = objectFactory.property(
         PropertiesProvider(project).jsCompilerNoWarn
@@ -1126,7 +1087,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Internal
     protected val libraryFilter: (File) -> Boolean
         get() = { file ->
-            libraryCache.get().getOrCompute(file.asLibraryFilterCacheKey, libraryFilterBody)
+            libraryFilterCacheService.get().getOrCompute(file.asLibraryFilterCacheKey, libraryFilterBody)
         }
 
     override val incrementalProps: List<FileCollection>

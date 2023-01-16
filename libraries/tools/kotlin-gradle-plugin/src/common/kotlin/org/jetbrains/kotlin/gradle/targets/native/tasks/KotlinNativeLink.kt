@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
+import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
 import org.jetbrains.kotlin.gradle.targets.native.tasks.buildKotlinNativeBinaryLinkerArgs
 import org.jetbrains.kotlin.gradle.utils.*
@@ -48,6 +48,7 @@ constructor(
     private val objectFactory: ObjectFactory,
     private val execOperations: ExecOperations
 ) : AbstractKotlinCompileTool<StubK2NativeCompilerArguments>(objectFactory),
+    UsesKonanPropertiesBuildService,
     KotlinToolTask<KotlinCommonCompilerToolOptions> {
     @Deprecated("Visibility will be lifted to private in the future releases")
     @get:Internal
@@ -240,9 +241,6 @@ constructor(
             """.trimMargin()
         }
     }
-
-    @get:Internal
-    internal abstract val konanPropertiesService: Property<KonanPropertiesBuildService>
 
     @Suppress("DEPRECATION")
     @get:Classpath

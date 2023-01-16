@@ -5,13 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KClass
+
+internal interface UsesVariantImplementationFactories : Task
 
 /**
  * Provides a way for Gradle plugin variants to register specific implementation factories,
@@ -44,7 +49,7 @@ abstract class VariantImplementationFactories : BuildService<BuildServiceParamet
     interface VariantImplementationFactory
 
     companion object {
-        fun getProvider(
+        private fun getProvider(
             gradle: Gradle
         ): Provider<VariantImplementationFactories> {
             // Use class loader hashcode in case there are multiple class loaders in the same build
@@ -55,18 +60,27 @@ abstract class VariantImplementationFactories : BuildService<BuildServiceParamet
                 ) {}
         }
 
+        fun getProvider(
+            project: Project
+        ) = getProvider(project.gradle).also { serviceProvider ->
+            SingleActionPerProject.run(project, UsesVariantImplementationFactories::class.java.name) {
+                project.tasks.withType<UsesVariantImplementationFactories>().configureEach { task ->
+                    task.usesService(serviceProvider)
+                }
+            }
+        }
+
+        @Deprecated("Should be used with `Project` instance to be able to declare usages in tasks", level = DeprecationLevel.ERROR)
         fun get(gradle: Gradle): VariantImplementationFactories = getProvider(gradle).get()
+
+        fun get(project: Project): VariantImplementationFactories = getProvider(project).get()
     }
 }
 
-internal inline fun <reified T : VariantImplementationFactories.VariantImplementationFactory> Gradle.variantImplementationFactory(): T =
+internal inline fun <reified T : VariantImplementationFactories.VariantImplementationFactory> Project.variantImplementationFactory(): T =
     VariantImplementationFactories.get(this)[T::class]
-
-internal fun Task.declareVariantImplementationFactoryUsage() {
-    usesService(VariantImplementationFactories.getProvider(project.gradle))
-}
 
 internal inline fun <
         reified T : VariantImplementationFactories.VariantImplementationFactory
-        > Gradle.variantImplementationFactoryProvider(): Provider<T> =
+        > Project.variantImplementationFactoryProvider(): Provider<T> =
     VariantImplementationFactories.getProvider(this).map { it[T::class] }

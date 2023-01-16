@@ -37,7 +37,7 @@ internal class PlatformLibrariesGenerator(val project: Project, val konanTarget:
         File(distribution.platformDefs(konanTarget)).absoluteFile
 
     private val konanPropertiesService: KonanPropertiesBuildService
-        get() = KonanPropertiesBuildService.registerIfAbsent(project.gradle).get()
+        get() = KonanPropertiesBuildService.registerIfAbsent(project).get()
 
     private val konanCacheKind: NativeCacheKind by lazy {
         project.getKonanCacheKind(konanTarget)

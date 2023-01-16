@@ -96,7 +96,7 @@ internal abstract class AbstractKotlinPlugin(
             )
             inspectTask.classesListFile.disallowChanges()
 
-            val sourceSetClassesDir = project.gradle
+            val sourceSetClassesDir = project
                 .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
                 .getInstance(project)
                 .sourceSetsIfAvailable
@@ -134,7 +134,7 @@ internal abstract class AbstractKotlinPlugin(
             }
         }
 
-        project.gradle
+        project
             .variantImplementationFactory<MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory>()
             .getInstance()
             .applyConfiguration(project, target, shouldRewritePoms)
@@ -163,7 +163,6 @@ internal abstract class AbstractKotlinPlugin(
         ) {
             val project = kotlinTarget.project
             val javaSourceSets = project
-                .gradle
                 .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
                 .getInstance(project)
                 .sourceSets

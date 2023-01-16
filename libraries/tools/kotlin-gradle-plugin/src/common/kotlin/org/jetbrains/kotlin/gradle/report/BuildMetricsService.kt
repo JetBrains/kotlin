@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.tasks.Internal
 import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
@@ -24,11 +27,17 @@ import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
-import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
+
+internal interface UsesBuildMetricsService : Task {
+    @get:Internal
+    val buildMetricsService: Property<BuildMetricsService?>
+}
 
 abstract class BuildMetricsService : BuildService<BuildServiceParameters.None>, OperationCompletionListener {
 
@@ -127,7 +136,7 @@ abstract class BuildMetricsService : BuildService<BuildServiceParameters.None>, 
         private val serviceClass = BuildMetricsService::class.java
         private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 
-        fun registerIfAbsent(project: Project): Provider<BuildMetricsService>? {
+        private fun registerIfAbsentImpl(project: Project): Provider<BuildMetricsService>? {
             // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
             project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
                 @Suppress("UNCHECKED_CAST")
@@ -143,6 +152,13 @@ abstract class BuildMetricsService : BuildService<BuildServiceParameters.None>, 
             return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {}!!
         }
 
+        fun registerIfAbsent(project: Project) = registerIfAbsentImpl(project)?.also { serviceProvider ->
+            SingleActionPerProject.run(project, UsesBuildMetricsService::class.java.name) {
+                project.tasks.withType<UsesBuildMetricsService>().configureEach { task ->
+                    task.usesService(serviceProvider)
+                }
+            }
+        }
     }
 
 }

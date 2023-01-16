@@ -117,7 +117,7 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
                 addCommonSourceSetToPlatformSourceSet(commonSourceSet, platformProject)
 
                 // Workaround for older versions of Kotlin/Native overriding the old signature
-                commonProject.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                commonProject.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
                     .getInstance(commonProject)
                     .sourceSetsIfAvailable
                     ?.findByName(commonSourceSet.name)

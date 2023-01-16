@@ -29,7 +29,7 @@ internal fun isConfigurationCacheAvailable(gradle: Gradle) =
     } ?: false
 
 internal fun Project.readSystemPropertyAtConfigurationTime(key: String): Provider<String> {
-    return providers.systemProperty(key).usedAtConfigurationTime(gradle.configurationTimePropertiesAccessor)
+    return providers.systemProperty(key).usedAtConfigurationTime(configurationTimePropertiesAccessor)
 }
 
 internal fun unavailableValueError(propertyName: String): Nothing =

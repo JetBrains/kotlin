@@ -42,7 +42,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         get() = when (val compilation = compilationInfo.safeAs<KotlinCompilationInfo.TCS>()?.origin) {
             is KotlinWithJavaCompilation<*, *> -> compilation.javaSourceSet
             is KotlinJvmCompilation -> if (compilation.target.withJavaEnabled) {
-                project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+                project.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
                     .getInstance(project)
                     .sourceSets
                     .maybeCreate(compilation.name)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
@@ -14,6 +15,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.tasks.Internal
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
@@ -25,6 +27,8 @@ import org.jetbrains.kotlin.gradle.plugin.stat.CompileStatisticsData
 import org.jetbrains.kotlin.gradle.plugin.stat.GradleBuildStartParameters
 import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.formatSize
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
@@ -36,6 +40,11 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import kotlin.system.measureTimeMillis
+
+internal interface UsesBuildReportsService : Task {
+    @get:Internal
+    val buildReportsService: Property<BuildReportsService?>
+}
 
 abstract class BuildReportsService : BuildService<BuildReportsService.Parameters>, AutoCloseable, OperationCompletionListener {
 
@@ -301,7 +310,10 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             )
         }
 
-        fun registerIfAbsent(project: Project, buildMetricsService: Provider<BuildMetricsService>): Provider<BuildReportsService>? {
+        private fun registerIfAbsentImpl(
+            project: Project,
+            buildMetricsService: Provider<BuildMetricsService>
+        ): Provider<BuildReportsService>? {
             val serviceClass = BuildReportsService::class.java
             val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
 
@@ -345,6 +357,15 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                 }
             }
         }
+
+        fun registerIfAbsent(project: Project, buildMetricsService: Provider<BuildMetricsService>) =
+            registerIfAbsentImpl(project, buildMetricsService)?.also { serviceProvider ->
+                SingleActionPerProject.run(project, UsesBuildReportsService::class.java.name) {
+                    project.tasks.withType<UsesBuildReportsService>().configureEach { task ->
+                        task.usesService(serviceProvider)
+                    }
+                }
+            }
 
         private fun setupTags(gradle: Gradle): ArrayList<StatTag> {
             val additionalTags = ArrayList<StatTag>()

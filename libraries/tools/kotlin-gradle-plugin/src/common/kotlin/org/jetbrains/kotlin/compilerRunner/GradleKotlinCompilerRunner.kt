@@ -382,7 +382,7 @@ internal open class GradleCompilerRunner(
             project: Project,
             sourceSetName: String
         ): File? {
-            val sourceSets = project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+            val sourceSets = project.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
                 .getInstance(project)
                 .sourceSetsIfAvailable ?: return null
             val sourceSet = sourceSets.findByName(sourceSetName) ?: return null

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.gradle.plugin.internal.IdeaSyncDetector
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
 
 internal val Project.isInIdeaSync
-    get() = gradle
-        .variantImplementationFactory<IdeaSyncDetector.IdeaSyncDetectorVariantFactory>()
+    get() = variantImplementationFactory<IdeaSyncDetector.IdeaSyncDetectorVariantFactory>()
         .getInstance(this)
         .isInIdeaSync

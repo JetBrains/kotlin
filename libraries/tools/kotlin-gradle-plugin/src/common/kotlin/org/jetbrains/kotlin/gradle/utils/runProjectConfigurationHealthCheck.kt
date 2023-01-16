@@ -82,7 +82,7 @@ private fun Project.syncExceptionsAreNotEmpty(): Boolean {
 private val Project.providerModeSystemPropertyValue: Provider<String>
     get() = providers
         .systemProperty(KotlinDslModelsParameters.PROVIDER_MODE_SYSTEM_PROPERTY_NAME)
-        .usedAtConfigurationTime(gradle.configurationTimePropertiesAccessor)
+        .usedAtConfigurationTime(configurationTimePropertiesAccessor)
 
 private fun Project.inLenientMode() =
     providerModeSystemPropertyValue.orNull == KotlinDslModelsParameters.CLASSPATH_MODE_SYSTEM_PROPERTY_VALUE

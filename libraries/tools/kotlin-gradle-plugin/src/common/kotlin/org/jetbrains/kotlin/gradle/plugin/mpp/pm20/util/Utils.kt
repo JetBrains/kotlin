@@ -26,8 +26,7 @@ fun Project.currentBuildId(): BuildIdentifier =
  * The base name to use for archive files.
  */
 val Project.archivesName
-    get() = gradle
-        .variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
+    get() = variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
         .getInstance(this)
         .archivesName
 
@@ -37,8 +36,7 @@ val Project.archivesName
  * @return The directory. Never returns null.
  */
 val Project.distsDirectory
-    get() = gradle
-        .variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
+    get() = variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
         .getInstance(this)
         .distsDirectory
 
@@ -48,7 +46,6 @@ val Project.distsDirectory
  * @return The directory. Never returns null.
  */
 val Project.libsDirectory
-    get() = gradle
-        .variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
+    get() = variantImplementationFactory<BasePluginConfiguration.BasePluginConfigurationVariantFactory>()
         .getInstance(this)
         .libsDirectory
