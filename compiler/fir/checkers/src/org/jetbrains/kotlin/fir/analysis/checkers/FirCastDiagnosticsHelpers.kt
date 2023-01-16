@@ -114,7 +114,6 @@ private fun isFinal(type: ConeSimpleKotlinType, session: FirSession): Boolean {
 }
 
 fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: CheckerContext): Boolean {
-    if ((subtype as? ConeClassLikeType)?.toSymbol(context.session)?.name == Name.identifier("VArray")) return false
     val typeContext = context.session.typeContext
 
     val isNonReifiedTypeParameter = subtype.isNonReifiedTypeParameter()
@@ -147,6 +146,13 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     // Check that we are actually casting to a generic type
     // NOTE: this does not account for 'as Array<List<T>>'
     if (subtype.allParameterReified()) return false
+
+    if (subtype.isVArray) {
+        val argument = subtype.typeArguments.singleOrNull() ?: return false
+        if (argument.kind == ProjectionKind.INVARIANT && (argument.type?.isPrimitive == true) || (argument.type?.isUnsignedType == true)) {
+            return false
+        }
+    }
 
     val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype, context)
 

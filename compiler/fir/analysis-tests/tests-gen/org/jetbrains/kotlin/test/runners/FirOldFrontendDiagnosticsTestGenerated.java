@@ -34268,6 +34268,22 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/varrays")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Varrays {
+            @Test
+            public void testAllFilesPresentInVarrays() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/varrays"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("vArraysTypeChecks.kt")
+            public void testVArraysTypeChecks() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/varrays/vArraysTypeChecks.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/visibility")
         @TestDataPath("$PROJECT_ROOT")
         public class Visibility {
