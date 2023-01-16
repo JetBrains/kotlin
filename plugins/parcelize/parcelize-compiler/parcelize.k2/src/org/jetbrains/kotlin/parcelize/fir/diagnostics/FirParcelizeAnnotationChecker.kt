@@ -13,7 +13,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallCh
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeType
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -93,8 +95,8 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker() {
         if (annotationContainer is FirValueParameter && annotationContainer.correspondingProperty?.fromPrimaryConstructor == true) {
             val enclosingClass = context.findClosestClassOrObject() ?: return
 
-            val annotationType = annotationCall.typeRef.coneType
-            if (enclosingClass.annotations.any { it.typeRef.coneType == annotationType }) {
+            val annotationType = annotationCall.toAnnotationClassLikeType(context.session) ?: return
+            if (enclosingClass.hasAnnotation(annotationType, context.session)) {
                 val reportElement = annotationCall.calleeReference.source ?: annotationCall.source
                 reporter.reportOn(reportElement, KtErrorsParcelize.REDUNDANT_TYPE_PARCELER, enclosingClass.symbol, context)
             }
