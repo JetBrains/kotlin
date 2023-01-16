@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.ContextReceiverGroup
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
@@ -327,38 +331,69 @@ class ScopeTowerLevel(
 
     fun areThereExtensionReceiverOptions(): Boolean = givenExtensionReceiverOptions.isNotEmpty()
 
-    private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>): ReceiverValue? {
+    private fun FirRegularClassSymbol.toResolvedQualifierExpressionReceiver(source: KtSourceElement?): ExpressionReceiverValue {
+        val resolvedQualifier = buildResolvedQualifier {
+            packageFqName = classId.packageFqName
+            relativeClassFqName = classId.relativeClassName
+            this.symbol = this@toResolvedQualifierExpressionReceiver
+            this.source = source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
+        }.apply {
+            resultType = bodyResolveComponents.typeForQualifier(this)
+        }
+        return ExpressionReceiverValue(resolvedQualifier)
+    }
+
+    private fun FirRegularClassSymbol.findJavaSuperClassSymbol(): FirRegularClassSymbol? {
+        var currentSymbol = this
+        while (currentSymbol.origin !is FirDeclarationOrigin.Java) {
+            var baseClassSymbol: FirRegularClassSymbol? = null
+            for (superType in currentSymbol.resolvedSuperTypes) {
+                val symbol = superType.fullyExpandedType(session).toSymbol(session)
+                if (symbol is FirRegularClassSymbol && symbol.classKind == ClassKind.CLASS) {
+                    baseClassSymbol = symbol
+                    break
+                }
+            }
+            currentSymbol = baseClassSymbol ?: return null
+        }
+        return currentSymbol
+    }
+
+    private fun dispatchReceiverValue(candidate: FirCallableSymbol<*>, callInfo: CallInfo): ReceiverValue? {
         candidate.fir.importedFromObjectOrStaticData?.let { data ->
             val objectClassId = data.objectClassId
             val symbol = session.symbolProvider.getClassLikeSymbolByClassId(objectClassId)
             if (symbol is FirRegularClassSymbol) {
-                val resolvedQualifier = buildResolvedQualifier {
-                    packageFqName = objectClassId.packageFqName
-                    relativeClassFqName = objectClassId.relativeClassName
-                    this.symbol = symbol
-                }.apply {
-                    resultType = bodyResolveComponents.typeForQualifier(this)
-                }
-                return ExpressionReceiverValue(resolvedQualifier)
+                return symbol.toResolvedQualifierExpressionReceiver(callInfo.callSite.source)
             }
         }
 
-        if (candidate !is FirBackingFieldSymbol) {
-            return null
-        }
+        if (candidate is FirBackingFieldSymbol) {
+            val lookupTag = candidate.fir.propertySymbol.dispatchReceiverClassLookupTagOrNull()
+            return when {
+                lookupTag != null -> {
+                    bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
+                        (implicitReceiverValue.type as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag == lookupTag
+                    }
+                }
 
-        val lookupTag = candidate.fir.propertySymbol.dispatchReceiverClassLookupTagOrNull()
-        return when {
-            lookupTag != null -> {
-                bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
-                    (implicitReceiverValue.type as? ConeClassLikeType)?.fullyExpandedType(session)?.lookupTag == lookupTag
+                else -> {
+                    bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver()
                 }
             }
-
-            else -> {
-                bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver()
-            }
         }
+        if (candidate.isStatic && callInfo.explicitReceiver == null && candidate.isJavaOrEnhancement) {
+            val lookupTag = candidate.fir.containingClassLookupTag() ?: return null
+            val implicitDispatchReceiverValue = bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
+                implicitReceiverValue is ImplicitDispatchReceiverValue && implicitReceiverValue.boundSymbol.fir.isSubclassOf(
+                    lookupTag, session, isStrict = false, lookupInterfaces = false
+                )
+            } ?: return null
+            // Note: we know that candidate is from Java, so normally we should find this class and its Java superclass
+            val regularClassSymbol = implicitDispatchReceiverValue.boundSymbol as? FirRegularClassSymbol ?: return null
+            return regularClassSymbol.findJavaSuperClassSymbol()?.toResolvedQualifierExpressionReceiver(callInfo.callSite.source)
+        }
+        return null
     }
 
     private fun shouldSkipCandidateWithInconsistentExtensionReceiver(candidate: FirCallableSymbol<*>): Boolean {
@@ -386,6 +421,7 @@ class ScopeTowerLevel(
 
     private fun <T : FirBasedSymbol<*>> consumeCallableCandidate(
         candidate: FirCallableSymbol<*>,
+        callInfo: CallInfo,
         processor: TowerScopeLevelProcessor<T>
     ) {
         val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
@@ -394,7 +430,7 @@ class ScopeTowerLevel(
         }
         val receiverExpected = withHideMembersOnly || areThereExtensionReceiverOptions()
         if (candidateReceiverTypeRef == null == receiverExpected) return
-        val dispatchReceiverValue = dispatchReceiverValue(candidate)
+        val dispatchReceiverValue = dispatchReceiverValue(candidate, callInfo)
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
             return
         }
@@ -421,7 +457,7 @@ class ScopeTowerLevel(
             includeInnerConstructors = includeInnerConstructors
         ) { candidate ->
             empty = false
-            consumeCallableCandidate(candidate, processor)
+            consumeCallableCandidate(candidate, info, processor)
         }
         return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }
@@ -434,7 +470,7 @@ class ScopeTowerLevel(
         session.lookupTracker?.recordCallLookup(info, scope.scopeOwnerLookupNames)
         scope.processPropertiesByName(info.name) { candidate ->
             empty = false
-            consumeCallableCandidate(candidate, processor)
+            consumeCallableCandidate(candidate, info, processor)
         }
         return if (empty) ProcessResult.SCOPE_EMPTY else ProcessResult.FOUND
     }

@@ -34615,6 +34615,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("packagePrivateStaticInterfaceMethod.kt")
+            public void testPackagePrivateStaticInterfaceMethod() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/packagePrivateStaticInterfaceMethod.kt");
+            }
+
+            @Test
+            @TestMetadata("packagePrivateStaticViaInternal.kt")
+            public void testPackagePrivateStaticViaInternal() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/packagePrivateStaticViaInternal.kt");
+            }
+
+            @Test
             @TestMetadata("packagePrivateStaticViaTypeAlias.kt")
             public void testPackagePrivateStaticViaTypeAlias() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/packagePrivateStaticViaTypeAlias.kt");

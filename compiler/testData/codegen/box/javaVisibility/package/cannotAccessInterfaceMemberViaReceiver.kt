@@ -3,17 +3,15 @@
 
 package javapackage;
 
-/*package-private*/ abstract class PackagePrivateGrandparentAbstractClass {
-    public static void publicStaticMethod() {}
-
-    public static String publicStaticField = "OK";
+/*package-private*/ interface PackagePrivateGrandparentInterface {
+    String publicStaticField = "OK";
 }
 
 // FILE: javapackage/PublicParentClass.java
 
 package javapackage;
 
-public class PublicParentClass extends PackagePrivateGrandparentAbstractClass {}
+public class PublicParentClass implements PackagePrivateGrandparentInterface {}
 
 // FILE: Child.kt
 
@@ -21,7 +19,6 @@ import javapackage.PublicParentClass
 
 class Child : PublicParentClass() {
     fun foo(): String {
-        publicStaticMethod()
         return publicStaticField
     }
 }

@@ -28963,9 +28963,21 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("cannotAccessInterfaceMemberViaReceiver.kt")
+            public void testCannotAccessInterfaceMemberViaReceiver() throws Exception {
+                runTest("compiler/testData/codegen/box/javaVisibility/package/cannotAccessInterfaceMemberViaReceiver.kt");
+            }
+
+            @Test
             @TestMetadata("cannotAccessStaticMemberViaReceiver.kt")
             public void testCannotAccessStaticMemberViaReceiver() throws Exception {
                 runTest("compiler/testData/codegen/box/javaVisibility/package/cannotAccessStaticMemberViaReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("cannotAccessStaticMemberViaReceiver2.kt")
+            public void testCannotAccessStaticMemberViaReceiver2() throws Exception {
+                runTest("compiler/testData/codegen/box/javaVisibility/package/cannotAccessStaticMemberViaReceiver2.kt");
             }
 
             @Test

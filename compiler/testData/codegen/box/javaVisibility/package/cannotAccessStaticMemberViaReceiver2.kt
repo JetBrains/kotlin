@@ -17,9 +17,9 @@ public class PublicParentClass extends PackagePrivateGrandparentAbstractClass {}
 
 // FILE: Child.kt
 
-import javapackage.PublicParentClass
+typealias Base = javapackage.PublicParentClass
 
-class Child : PublicParentClass() {
+class Child : Base() {
     fun foo(): String {
         publicStaticMethod()
         return publicStaticField
