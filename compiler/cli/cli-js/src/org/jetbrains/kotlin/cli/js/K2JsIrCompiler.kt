@@ -58,6 +58,8 @@ import org.jetbrains.kotlin.fir.pipeline.runCheckers
 import org.jetbrains.kotlin.fir.pipeline.runResolution
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
+import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
@@ -629,7 +631,12 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 jsOutputName = null
             ) { file ->
                 val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
-                serializeSingleFirFile(firFile, session, scopeSession, metadataVersion)
+                serializeSingleFirFile(
+                    firFile,
+                    session,
+                    scopeSession,
+                    FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable())
+                )
             }
         }
 

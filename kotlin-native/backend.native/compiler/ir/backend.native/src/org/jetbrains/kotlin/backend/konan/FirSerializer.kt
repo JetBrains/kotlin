@@ -12,15 +12,23 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.library.SerializedIrFile
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.utils.toMetadataVersion
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
+import org.jetbrains.kotlin.psi
 
 internal fun PhaseContext.firSerializer(
         input: Fir2IrOutput
@@ -42,7 +50,11 @@ internal fun PhaseContext.firSerializer(
             expectDescriptorToSymbol = mutableMapOf() // TODO: expect -> actual mapping
     ) { file ->
         val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
-        serializeSingleFirFile(firFile, input.session, input.scopeSession, metadataVersion)
+        serializeSingleFirFile(
+                firFile,
+                input.session,
+                input.scopeSession,
+                FirNativeKLibSerializerExtension(input.session, metadataVersion, FirElementAwareSerializableStringTable()))
     }
 }
 
@@ -101,4 +113,39 @@ internal fun PhaseContext.serializeNativeModule(
             )
 
     return SerializerOutput(serializedMetadata, serializedIr, null, dependencies)
+}
+
+class FirNativeKLibSerializerExtension(
+        override val session: FirSession,
+        override val metadataVersion: BinaryVersion,
+        override val stringTable: FirElementAwareSerializableStringTable
+) : FirKLibSerializerExtension(session, metadataVersion, stringTable) {
+    private fun declarationFileId(declaration: FirMemberDeclaration): Int? {
+        val fileName = declaration.source.psi?.containingFile?.name ?: return null
+        return stringTable.getStringIndex(fileName)
+    }
+
+    override fun serializeFunction(
+            function: FirFunction,
+            proto: ProtoBuf.Function.Builder,
+            versionRequirementTable: MutableVersionRequirementTable?,
+            childSerializer: FirElementSerializer
+    ) {
+        // inspired by KlibMetadataSerializerExtension.serializeFunction
+        declarationFileId(function)?.let { proto.setExtension(KlibMetadataProtoBuf.functionFile, it) }
+        // TODO serialize function.annotations and KDocString
+        super.serializeFunction(function, proto, versionRequirementTable, childSerializer)
+    }
+
+    override fun serializeProperty(
+            property: FirProperty,
+            proto: ProtoBuf.Property.Builder,
+            versionRequirementTable: MutableVersionRequirementTable?,
+            childSerializer: FirElementSerializer
+    ) {
+        // inspired by KlibMetadataSerializerExtension.serializeProperty
+        declarationFileId(property)?.let { proto.setExtension(KlibMetadataProtoBuf.propertyFile, it) }
+        // TODO serialize property.annotations and KDocString
+        super.serializeProperty(property, proto, versionRequirementTable, childSerializer)
+    }
 }
