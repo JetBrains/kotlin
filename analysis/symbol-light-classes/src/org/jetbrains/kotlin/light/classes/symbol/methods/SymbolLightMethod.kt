@@ -137,8 +137,6 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
 
     override fun isValid(): Boolean = super.isValid() && functionDeclaration?.isValid ?: functionSymbolPointer.isValid(ktModule)
 
-    override fun isOverride(): Boolean = withFunctionSymbol { it.getDirectlyOverriddenSymbols().isNotEmpty() }
-
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         return super.isEquivalentTo(another) || isOriginEquivalentTo(another)
     }
