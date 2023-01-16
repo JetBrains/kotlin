@@ -261,18 +261,14 @@ class HierarchicalMppIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("KT-48370: Multiplatform Gradle build fails for Native targets with \"we cannot choose between the following variants of project\"")
-    fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) = with(
+    fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project(
-            projectName = "hierarchical-mpp-multi-modules",
-            gradleVersion = gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                warningMode = WarningMode.Summary
+            "hierarchical-mpp-multi-modules", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                warningMode = WarningMode.All // Workaround for KT-55751
             )
-        )
-    ) {
-        build(
-            "assemble",
-        )
+        ) {
+            build("assemble")
+        }
     }
 
     @GradleTest
