@@ -233,6 +233,3 @@ fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>) = annotations.any
     val lookupTag = it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return@any false
     lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
 }
-
-fun FirAnnotation.fullyExpandedClassId(useSiteSession: FirSession): ClassId? =
-    unexpandedConeClassLikeType?.fullyExpandedType(useSiteSession)?.classId

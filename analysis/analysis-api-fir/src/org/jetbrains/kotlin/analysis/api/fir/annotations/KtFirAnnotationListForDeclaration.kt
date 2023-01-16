@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.ClassId
 
@@ -37,19 +38,17 @@ internal class KtFirAnnotationListForDeclaration private constructor(
     ): Boolean = withValidityAssertion {
         firSymbol.resolvedAnnotationsWithClassIds.any {
             (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) &&
-                    it.fullyExpandedClassId(useSiteSession) == classId
+                    it.toAnnotationClassId(useSiteSession) == classId
         }
     }
 
     override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
-        firSymbol.resolvedAnnotationsWithClassIds.any {
-            it.fullyExpandedClassId(useSiteSession) == classId
-        }
+        firSymbol.resolvedAnnotationsWithClassIds.hasAnnotation(classId, useSiteSession)
     }
 
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
         firSymbol.resolvedAnnotationsWithArguments.mapNotNull { annotation ->
-            if (annotation.fullyExpandedClassId(useSiteSession) != classId) return@mapNotNull null
+            if (annotation.toAnnotationClassId(useSiteSession) != classId) return@mapNotNull null
             annotation.toKtAnnotationApplication(useSiteSession)
         }
     }

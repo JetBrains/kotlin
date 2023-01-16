@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
@@ -64,7 +64,7 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
 
 internal fun FirAnnotation.toKtAnnotationApplication(useSiteSession: FirSession): KtAnnotationApplication {
     return KtAnnotationApplication(
-        fullyExpandedClassId(useSiteSession),
+        toAnnotationClassId(useSiteSession),
         psi as? KtCallElement,
         useSiteTarget,
         FirAnnotationValueConverter.toNamedConstantValue(

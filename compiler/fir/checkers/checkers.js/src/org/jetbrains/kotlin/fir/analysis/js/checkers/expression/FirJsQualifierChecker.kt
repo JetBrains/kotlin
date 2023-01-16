@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.js.validateQualifier
@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.Annotations.JsQualifier
 
 object FirJsQualifierChecker : FirAnnotationCallChecker() {
     override fun check(expression: FirAnnotationCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotationFqName = expression.fullyExpandedClassId(context.session)
-
-        if (annotationFqName != JsQualifier) {
+        if (expression.toAnnotationClassId(context.session) != JsQualifier) {
             return
         }
 

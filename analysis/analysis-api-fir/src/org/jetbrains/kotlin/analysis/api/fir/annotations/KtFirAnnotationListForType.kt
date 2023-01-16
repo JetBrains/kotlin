@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClassId
+import org.jetbrains.kotlin.fir.declarations.hasAnnotation
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.customAnnotations
 import org.jetbrains.kotlin.name.ClassId
@@ -33,25 +34,23 @@ internal class KtFirAnnotationListForType private constructor(
     ): Boolean = withValidityAssertion {
         coneType.customAnnotations.any {
             (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) &&
-                    it.fullyExpandedClassId(useSiteSession) == classId
+                    it.toAnnotationClassId(useSiteSession) == classId
         }
     }
 
     override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
-        coneType.customAnnotations.any {
-            it.fullyExpandedClassId(useSiteSession) == classId
-        }
+        coneType.customAnnotations.hasAnnotation(classId, useSiteSession)
     }
 
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
         coneType.customAnnotations.mapNotNull { annotation ->
-            if (annotation.fullyExpandedClassId(useSiteSession) != classId) return@mapNotNull null
+            if (annotation.toAnnotationClassId(useSiteSession) != classId) return@mapNotNull null
             annotation.toKtAnnotationApplication(useSiteSession)
         }
     }
 
     override val annotationClassIds: Collection<ClassId>
-        get() = withValidityAssertion { coneType.customAnnotations.mapNotNull { it.fullyExpandedClassId(useSiteSession) } }
+        get() = withValidityAssertion { coneType.customAnnotations.mapNotNull { it.toAnnotationClassId(useSiteSession) } }
 
     companion object {
         fun create(
