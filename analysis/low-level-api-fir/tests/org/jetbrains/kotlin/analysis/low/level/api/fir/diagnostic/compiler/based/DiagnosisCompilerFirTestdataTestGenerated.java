@@ -1532,6 +1532,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("customSelfTypeForClassWithSelfAnnotation.kt")
+            public void testCustomSelfTypeForClassWithSelfAnnotation() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/customSelfTypeForClassWithSelfAnnotation.kt");
+            }
+
+            @Test
             @TestMetadata("cyclicConstructorDelegationCall.kt")
             public void testCyclicConstructorDelegationCall() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/cyclicConstructorDelegationCall.kt");

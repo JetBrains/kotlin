@@ -1,0 +1,11 @@
+FILE: customSelfTypeForClassWithSelfAnnotation.kt
+    @R|kotlin/Self|() public final class ClassWithCustomSelfTypeParameter<Self, out <Self> : R|ClassWithCustomSelfTypeParameter<Self, <Self>>|> : R|kotlin/Any| {
+        public constructor<Self, out <Self> : R|ClassWithCustomSelfTypeParameter<Self, <Self>>|>(): R|ClassWithCustomSelfTypeParameter<Self, <Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun returnType(): R|Self| {
+            ^returnType (this@R|/ClassWithCustomSelfTypeParameter| as R|<Self>|)
+        }
+
+    }

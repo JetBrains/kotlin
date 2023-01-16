@@ -1792,6 +1792,11 @@ internal class NullableOnDefinitelyNotNullableImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NullableOnDefinitelyNotNullable(), KtAbstractFirDiagnostic<KtTypeReference>
 
+internal class SelfTypeParameterForClassWithSelfTypeImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.SelfTypeParameterForClassWithSelfType(), KtAbstractFirDiagnostic<KtTypeParameter>
+
 internal class ExtensionInClassReferenceNotAllowedImpl(
     override val referencedDeclaration: KtCallableSymbol,
     override val firDiagnostic: KtPsiDiagnostic,

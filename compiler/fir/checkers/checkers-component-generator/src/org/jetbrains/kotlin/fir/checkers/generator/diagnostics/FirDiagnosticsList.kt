@@ -732,6 +732,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INCORRECT_LEFT_COMPONENT_OF_INTERSECTION by error<KtTypeReference>()
         val INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION by error<KtTypeReference>()
         val NULLABLE_ON_DEFINITELY_NOT_NULLABLE by error<KtTypeReference>()
+
+        val SELF_TYPE_PARAMETER_FOR_CLASS_WITH_SELF_TYPE by error<KtTypeParameter>()
     }
 
     val REFLECTION by object : DiagnosticGroup("Reflection") {

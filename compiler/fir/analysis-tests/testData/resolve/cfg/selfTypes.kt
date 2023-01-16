@@ -116,3 +116,30 @@ class SelfTypeAsTypeParameterInExtends : SelfTypeParameterInterface<Self> {
         return this as Self
     }
 }
+
+@Self
+class SelfTypeWithSelfFunction {
+   fun Self(): Self {
+       return this as Self
+   }
+}
+
+interface ClassWithTypeParameter<out T> {
+    fun foo(): T
+}
+
+@Self
+class ClassExtendingInterfaceWithTypeParameter : ClassWithTypeParameter<Self> {
+    override fun foo(): Self {
+        return this as Self
+    }
+}
+
+@Self
+class QualifiedThisClass {
+    inner class Inner {
+        fun foo(): Self {
+            return this@QualifiedThisClass as Self
+        }
+    }
+}

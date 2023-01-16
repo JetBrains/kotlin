@@ -430,6 +430,7 @@ object FirErrors {
     val INCORRECT_LEFT_COMPONENT_OF_INTERSECTION by error0<KtTypeReference>()
     val INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION by error0<KtTypeReference>()
     val NULLABLE_ON_DEFINITELY_NOT_NULLABLE by error0<KtTypeReference>()
+    val SELF_TYPE_PARAMETER_FOR_CLASS_WITH_SELF_TYPE by error0<KtTypeParameter>()
 
     // Reflection
     val EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED by error1<KtExpression, FirCallableSymbol<*>>(SourceElementPositioningStrategies.REFERENCE_BY_QUALIFIED)

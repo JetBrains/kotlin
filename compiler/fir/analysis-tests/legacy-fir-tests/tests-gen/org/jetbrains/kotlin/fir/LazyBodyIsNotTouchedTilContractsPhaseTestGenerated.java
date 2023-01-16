@@ -1339,6 +1339,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/constructorInInterface.kt");
         }
 
+        @TestMetadata("customSelfTypeForClassWithSelfAnnotation.kt")
+        public void testCustomSelfTypeForClassWithSelfAnnotation() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/customSelfTypeForClassWithSelfAnnotation.kt");
+        }
+
         @TestMetadata("cyclicConstructorDelegationCall.kt")
         public void testCyclicConstructorDelegationCall() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/cyclicConstructorDelegationCall.kt");

@@ -1492,6 +1492,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NullableOnDefinitelyNotNullable::class
     }
 
+    abstract class SelfTypeParameterForClassWithSelfType : KtFirDiagnostic<KtTypeParameter>() {
+        override val diagnosticClass get() = SelfTypeParameterForClassWithSelfType::class
+    }
+
     abstract class ExtensionInClassReferenceNotAllowed : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = ExtensionInClassReferenceNotAllowed::class
         abstract val referencedDeclaration: KtCallableSymbol

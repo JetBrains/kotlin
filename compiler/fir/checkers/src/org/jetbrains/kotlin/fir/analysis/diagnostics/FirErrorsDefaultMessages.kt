@@ -479,6 +479,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SEALED_SUPERTYPE_IN_LOCAL_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SELF_TYPE_INAPPLICABLE_TARGET
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SELF_TYPE_PARAMETER_FOR_CLASS_WITH_SELF_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SENSELESS_COMPARISON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SENSELESS_NULL_IN_WHEN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.SETTER_PROJECTED_OUT
@@ -1251,6 +1252,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(DYNAMIC_UPPER_BOUND, "Dynamic type can not be used as an upper bound")
+        map.put(SELF_TYPE_PARAMETER_FOR_CLASS_WITH_SELF_TYPE, "Custom Self type parameter cannot be declared for classes with @Self.")
 
         // Reflection
         map.put(

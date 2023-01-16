@@ -18392,6 +18392,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("selfTypesInSealedInterface.kt")
+        public void testSelfTypesInSealedInterface() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/selfTypesInSealedInterface.kt");
+        }
+
+        @Test
         @TestMetadata("SuspendExtension.kt")
         public void testSuspendExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");
