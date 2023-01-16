@@ -101,8 +101,8 @@ class ControlFlowGraphBuilder {
             val edge = exitNode.edgeFrom(it)
             // * NormalPath: last expression = return value
             // * UncaughtExceptionPath: last expression = whatever threw, *not* a return value
-            // * ReturnPath(this lambda): these go from `finally` blocks, so that's not the return value;
-            //   look in `nonDirectJumps` instead.
+            // * Other labels can only originate from finally block exits - look in nonDirectJumps to find the last node
+            //   before the block was entered
             it.takeIf { edge.kind.usedInCfa && edge.label == NormalPath }?.returnExpression()
         }
         return nonDirectJumps[exitNode].mapNotNullTo(returnValues) { it.returnExpression() }
@@ -620,7 +620,7 @@ class ControlFlowGraphBuilder {
 
     fun exitJump(jump: FirJump<*>): JumpNode {
         val node = createJumpNode(jump)
-        addNonTerminatingNode(node)
+        addNonSuccessfullyTerminatingNode(node)
 
         if (jump is FirReturnExpression && jump.target.labeledElement is FirAnonymousFunction) {
             // TODO: these should be DFA-only edges; they should be pointed into the postponed function exit node?
@@ -637,7 +637,7 @@ class ControlFlowGraphBuilder {
         } ?: return node
         val nextFinally = finallyEnterNodes.topOrNull()?.takeIf { it.level > nextNode.level }
         if (nextFinally != null) {
-            addEdge(node, nextFinally, propagateDeadness = false, label = nextNode.returnPathLabel)
+            addEdge(node, nextFinally, propagateDeadness = false, label = nextNode)
             nonDirectJumps.put(nextNode, node)
         } else if (nextNode.returnPathIsBackwards) {
             addBackEdge(node, nextNode)
@@ -646,14 +646,6 @@ class ControlFlowGraphBuilder {
         }
         return node
     }
-
-    private val CFGNode<*>.returnPathLabel: EdgeLabel
-        get() = when (this) {
-            is FunctionExitNode -> ReturnPath(fir.symbol)
-            is LoopConditionEnterNode -> LoopContinuePath(loop)
-            is LoopExitNode -> LoopBreakPath(fir)
-            else -> throw IllegalStateException("not a labeled jump target: $this")
-        }
 
     // while (x) { continue }
     //       ^------------/ back
@@ -867,9 +859,8 @@ class ControlFlowGraphBuilder {
         addEdge(node, nextNode, propagateDeadness = false)
         for (catchEnterNode in catchNodes.pop().asReversed()) {
             catchBlocksInProgress.push(catchEnterNode)
-            // At least merge the data flow from enter + exit...but this doesn't really help,
-            // see the comment for `addExceptionEdgesFrom`. Better than nothing, though.
-            // Like `finally`, `catch` nodes are only dead if the entire try-catch is dead.
+            // TODO: figure out if this edge is correct.
+            //   try { x = /* something non-throwing like variable read */ } catch (...) { /* can assume assignment didn't happen? */ }
             addEdge(node, catchEnterNode, propagateDeadness = false)
         }
         return node
@@ -942,15 +933,15 @@ class ControlFlowGraphBuilder {
         return exitNode
     }
 
-    private fun CFGNode<*>.addReturnEdges(nodes: Iterable<CFGNode<*>>, minLevel: Int) {
+    private fun <T> CFGNode<*>.addReturnEdges(nodes: Iterable<T>, minLevel: Int) where T : CFGNode<*>, T : EdgeLabel {
         for (node in nodes) {
             when {
                 // TODO: this check is imprecise and can add redundant edges:
                 //   x@{ try { return@x } finally {}; try {} finally { /* return@x target is in nonDirectJumps */ }
                 node.level < minLevel || node !in nonDirectJumps -> continue
                 // TODO: if the input to finally with that label is dead, then so should be the exit probably
-                node.returnPathIsBackwards -> addBackEdge(this, node, label = node.returnPathLabel)
-                else -> addEdge(this, node, propagateDeadness = false, label = node.returnPathLabel)
+                node.returnPathIsBackwards -> addBackEdge(this, node, label = node)
+                else -> addEdge(this, node, propagateDeadness = false, label = node)
             }
         }
     }
@@ -964,20 +955,11 @@ class ControlFlowGraphBuilder {
         return node
     }
 
-    // TODO: these edges are true for literally any node in the graph. Their existence for *some* nodes might lead
-    //  to a false sense of security, but things are broken. This should be some sort of implicit knowledge instead
-    //  of requiring a ton of edges? (Some nodes never throw, but calls are never safe, and most useful stuff is calls.)
-    //    var x: Any?
-    //    x = ""
-    //    try {
-    //      x = null
-    //      listOf(1, 2, 3).single()
-    //      x = ""
-    //    } catch (e: Throwable) { x.length } // oops
-    //  R8 devs say they tried the "implicit knowledge" way but failed and decided to add all the edges - bad sign...
     private fun addExceptionEdgesFrom(node: CFGNode<*>) {
+        if (!node.canThrow) return
+
         val nextCatch = catchNodes.topOrNull()
-        if (nextCatch != null) {
+        if (!nextCatch.isNullOrEmpty() && nextCatch.first().level > levelOfNextExceptionCatchingGraph()) {
             for (catchEnterNode in nextCatch) {
                 addEdge(node, catchEnterNode, propagateDeadness = false)
             }
@@ -1249,17 +1231,14 @@ class ControlFlowGraphBuilder {
     private fun addNewSimpleNode(node: CFGNode<*>, isDead: Boolean = false) {
         addEdge(lastNodes.pop(), node, preferredKind = if (isDead) EdgeKind.DeadForward else EdgeKind.Forward)
         lastNodes.push(node)
+        addExceptionEdgesFrom(node)
     }
 
-    private fun addNonTerminatingNode(node: CFGNode<*>) {
+    private fun addNonSuccessfullyTerminatingNode(node: CFGNode<*>) {
         popAndAddEdge(node)
         val stub = createStubNode()
         addEdge(node, stub)
         lastNodes.push(stub)
-    }
-
-    private fun addNonSuccessfullyTerminatingNode(node: CFGNode<*>) {
-        addNonTerminatingNode(node)
         addExceptionEdgesFrom(node)
     }
 

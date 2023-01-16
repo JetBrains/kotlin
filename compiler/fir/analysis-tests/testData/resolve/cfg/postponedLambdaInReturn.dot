@@ -324,7 +324,7 @@ digraph postponedLambdaInReturn_kt {
     86 -> {87};
     87 -> {88};
     88 -> {89} [color=green];
-    89 -> {90};
+    89 -> {90 94};
     90 -> {107};
     90 -> {91} [style=dotted];
     91 -> {92} [style=dotted];
