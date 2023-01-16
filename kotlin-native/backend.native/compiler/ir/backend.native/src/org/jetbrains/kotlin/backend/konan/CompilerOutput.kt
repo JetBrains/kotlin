@@ -17,8 +17,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.cli.bc
 
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
@@ -22,9 +21,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
@@ -49,7 +47,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                            @Nullable paths: KotlinPaths?): ExitCode {
 
         if (arguments.version) {
-            println("Kotlin/Native: ${CompilerVersion.CURRENT}")
+            println("Kotlin/Native: ${KotlinCompilerVersion.getVersion() ?: "SNAPSHOT"}")
             return ExitCode.OK
         }
 
@@ -76,7 +74,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 |Compilation failed: ${e.message}
 
                 | * Source files: ${environment.getSourceFiles().joinToString(transform = KtFile::getName)}
-                | * Compiler version info: Konan: ${CompilerVersion.CURRENT} / Kotlin: ${KotlinVersion.CURRENT}
+                | * Compiler version: ${KotlinCompilerVersion.getVersion()}
                 | * Output kind: ${configuration.get(KonanConfigKeys.PRODUCE)}
 
                 """.trimMargin())

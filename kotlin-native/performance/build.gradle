@@ -38,9 +38,6 @@ ext.kotlin_root = project.file("../..").absolutePath
 project.logger.info("kotlin_root: $kotlin_root")
 globalProperties.load(new java.io.FileReader(project.file("$kotlin_root/gradle.properties")))
 ext.kotlinNativeVersionInResources = true
-//TODO: fix VersionGeneratorKt.kotlinNativeVersionValue(project)
-def versionString = VersionGeneratorKt.kotlinNativeVersionResourceFile(project).readLines().first()
-def kotlinNativeVersionObject = CompilerVersionKt.parseCompilerVersion(versionString)
 
 def platformManager = new PlatformManager(DistributionKt.buildDistribution(UtilsKt.getKotlinNativeDist(project).path), false)
 def kotlinDist = null
@@ -67,10 +64,8 @@ subprojects { proj ->
     proj.ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(proj)
     proj.ext["kotlin.native.home"] = proj.projectDir.relativePath(UtilsKt.getKotlinNativeDist(project))
     proj.ext["konan.home"] = proj.ext["kotlin.native.home"]
-    proj.ext["konanVersion"] = kotlinNativeVersionObject.toString()
     proj.ext["kotlin.native.enabled"] = true
     proj.logger.info("${proj.name}<<<[kotlin.native.home] = ${proj.ext["kotlin.native.home"]}")
-    proj.logger.info("${proj.name}<<<[konanVersion] = ${proj.ext["konanVersion"]}>>>")
     if (project.hasProperty("kotlin_dist")) {
         proj.ext["kotlin_dist"] = kotlinDist.path
         proj.logger.info("${proj.name}<<<[kotlin_dist] = ${proj.ext["kotlin_dist"]}>>>")
@@ -80,6 +75,7 @@ subprojects { proj ->
     proj.ext["kotlinVersion"] = findProperty("deployVersion")?.toString()?.identity { deploySnapshotStr ->
                 if (deploySnapshotStr != "default.snapshot") deploySnapshotStr else defaultSnapshotVersion
             } ?: proj.ext["buildNumber"]
+    proj.logger.info("${proj.name}<<<[kotlinVersion] = ${proj.ext["kotlinVersion"]}>>>")
 
     proj.repositories {
         mavenCentral()

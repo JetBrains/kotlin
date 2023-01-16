@@ -88,23 +88,6 @@ java {
     }
 }
 
-val generateCompilerVersion by tasks.registering(VersionGenerator::class) {
-    kotlinNativeVersionInResources=true
-    defaultVersionFileLocation()
-}
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-    dependsOn(generateCompilerVersion)
-}
-
-tasks.clean {
-    doFirst {
-        val versionSourceDirectory = project.konanVersionGeneratedSrc()
-        if (versionSourceDirectory.exists()) {
-            versionSourceDirectory.delete()
-        }
-    }
-}
-
 sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
     kotlin.srcDir("src/main/kotlin")
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
@@ -115,7 +98,6 @@ sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourc
         kotlin.srcDir("../compiler/util-klib/src")
         kotlin.srcDir("../native/utils/src")
     }
-    kotlin.srcDir(project.kotlinNativeVersionSrc())
     /**
      * TODO: mentioned bellow and Co it'd be better to move to :kotlin-native:performance:buildSrc,
      * because all this relates to benchmarking.

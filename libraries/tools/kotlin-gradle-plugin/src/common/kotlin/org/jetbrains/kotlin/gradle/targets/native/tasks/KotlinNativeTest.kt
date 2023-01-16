@@ -20,11 +20,8 @@ import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
-import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
-import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 import java.util.concurrent.Callable
 import javax.inject.Inject
@@ -152,9 +149,7 @@ abstract class KotlinNativeTest: KotlinTest() {
 
         // The KotlinTest expects that the exit code is zero even if some tests failed.
         // In this case it can check exit code and distinguish test failures from crashes.
-        // But K/N allows forcing a zero exit code only since 1.3 (which was included in Kotlin 1.3.40).
-        // Thus we check the exit code only for newer versions.
-        val checkExitCode = konanVersion.isAtLeast(1, 3, 0)
+        val checkExitCode = true
 
         val cliArgs = testCommand.cliArgs("TEAMCITY", checkExitCode, includePatterns, excludePatterns, args)
 

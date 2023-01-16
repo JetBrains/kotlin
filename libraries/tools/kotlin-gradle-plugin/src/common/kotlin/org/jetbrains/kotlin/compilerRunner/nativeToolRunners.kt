@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
-import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.plugin.mpp.nativeUseEmbeddableCompilerJar
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.properties.resolvablePropertyString
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -35,8 +33,8 @@ internal val Project.konanHome: String
 internal val Project.disableKonanDaemon: Boolean
     get() = PropertiesProvider(this).nativeDisableCompilerDaemon == true
 
-internal val Project.konanVersion: CompilerVersion
-    get() = PropertiesProvider(this).nativeVersion?.let { CompilerVersion.fromString(it) }
+internal val Project.konanVersion: String
+    get() = PropertiesProvider(this).nativeVersion
         ?: NativeCompilerDownloader.DEFAULT_KONAN_VERSION
 
 internal fun Project.getKonanCacheKind(target: KonanTarget): NativeCacheKind {
@@ -67,7 +65,7 @@ internal abstract class KotlinNativeToolRunner(
 ) : KotlinToolRunner(executionContext) {
 
     class Settings(
-        val konanVersion: CompilerVersion,
+        val konanVersion: String,
         val konanHome: String,
         val konanPropertiesFile: File,
         val useXcodeMessageStyle: Boolean,
@@ -102,16 +100,8 @@ internal abstract class KotlinNativeToolRunner(
     }
 
     final override val execSystemProperties by lazy {
-        // Still set konan.home for versions prior to 1.4-M3.
-        val konanHomeRequired = !settings.konanVersion.isAtLeast(1, 4, 0) ||
-                settings.konanVersion.toString(showMeta = false, showBuild = false) in listOf("1.4-M1", "1.4-M2")
-
         val messageRenderer = if (settings.useXcodeMessageStyle) MessageRenderer.XCODE_STYLE else MessageRenderer.GRADLE_STYLE
-
-        listOfNotNull(
-            if (konanHomeRequired) "konan.home" to settings.konanHome else null,
-            MessageRenderer.PROPERTY_KEY to messageRenderer.name
-        ).toMap()
+        mapOf(MessageRenderer.PROPERTY_KEY to messageRenderer.name)
     }
 
     final override val classpath get() = settings.classpath.files

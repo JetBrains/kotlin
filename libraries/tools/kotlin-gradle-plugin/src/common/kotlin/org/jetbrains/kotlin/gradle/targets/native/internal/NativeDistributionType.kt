@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.isAtLeast
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType.*
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
-import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 internal enum class NativeDistributionType(val suffix: String?, val mustGeneratePlatformLibs: Boolean) {
@@ -59,19 +56,11 @@ internal class NativeDistributionTypeProvider(private val project: Project) {
         }
     }
 
-    fun getDistributionType(version: CompilerVersion): NativeDistributionType {
+    fun getDistributionType(version: String): NativeDistributionType {
         if (propertiesProvider.nativeDeprecatedRestricted != null) {
             warning("Project property 'kotlin.native.restrictedDistribution' is deprecated. Please use 'kotlin.native.distribution.type=light' instead")
         }
 
-        return if (version.isAtLeast(1, 4, 0)) {
-            chooseDistributionType(prebuiltType = PREBUILT, lightType = LIGHT, defaultType = PREBUILT)
-        } else {
-            // In 1.3, the distribution type can be chosen for Mac hosts only.
-            if (!HostManager.hostIsMac) {
-                return PREBUILT_1_3
-            }
-            chooseDistributionType(prebuiltType = PREBUILT_1_3, lightType = LIGHT_1_3, defaultType = PREBUILT_1_3)
-        }
+        return chooseDistributionType(prebuiltType = PREBUILT, lightType = LIGHT, defaultType = PREBUILT)
     }
 }

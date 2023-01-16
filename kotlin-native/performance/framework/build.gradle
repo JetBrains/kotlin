@@ -97,7 +97,7 @@ task konanJsonReport {
                                                                                     "linkBenchmarksAnalyzerDebugFrameworkMacos${archSuffix}".toString(),
                                                                                     "cinteropLibcurlMacos${archSuffix}".toString()])
             def properties = getCommonProperties() + ['type'           : 'native',
-                                                      'compilerVersion': "${konanVersion}".toString(),
+                                                      'compilerVersion': "${kotlinVersion}".toString(),
                                                       'flags'          : compilerFlags(buildType).sort(),
                                                       'benchmarks'     : '[]',
                                                       'compileTime'    : [nativeCompileTime],

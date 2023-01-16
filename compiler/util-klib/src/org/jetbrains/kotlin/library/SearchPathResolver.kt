@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.impl.createKotlinLibraryComponents
 import org.jetbrains.kotlin.library.impl.isPre_1_4_Library
@@ -222,12 +221,6 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
         return result
     }
 }
-
-fun CompilerVersion.compatible(other: CompilerVersion) =
-    this.major == other.major
-            && this.minor == other.minor
-            && this.maintenance == other.maintenance
-
 
 // This is a library resolver aware of attributes shared between platforms,
 // such as abi version.

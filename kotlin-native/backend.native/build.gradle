@@ -21,11 +21,8 @@ sourceSets {
     compiler {
         kotlin {
             srcDir 'compiler/ir/backend.native/src/'
-            srcDir(VersionGeneratorKt.kotlinNativeVersionSrc(project))
         }
         resources.srcDir 'compiler/ir/backend.native/resources/'
-        /* PATH to META-INF */
-        resources.srcDir VersionGeneratorKt.kotlinNativeVersionResourceFile(project).parentFile.parent
     }
     cli_bc {
         kotlin.srcDir 'cli.bc/src'
@@ -235,7 +232,7 @@ publishing {
         maven(MavenPublication) {
             groupId = 'org.jetbrains.kotlin'
             artifactId = 'backend.native'
-            version = konanVersionFull
+            version = kotlinVersion
 
             from components.java
         }
