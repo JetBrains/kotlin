@@ -58,7 +58,9 @@ annotation class MyRefinedAnnotationC
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationD
 
-@HiddenFromObjC
+typealias HFOC = HiddenFromObjC
+
+@HFOC
 <!REDUNDANT_SWIFT_REFINEMENT!>@ShouldRefineInSwift<!>
 var refinedProperty: Int = 0
 
@@ -92,7 +94,7 @@ interface InterfaceB {
     val barA: Int
     @ShouldRefineInSwift
     val barB: Int
-    @HiddenFromObjC
+    @HFOC
     fun fooA()
     @HiddenFromObjC
     fun fooB()

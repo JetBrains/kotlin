@@ -1,6 +1,6 @@
 package
 
-@kotlin.native.HiddenFromObjC @kotlin.native.ShouldRefineInSwift public var refinedProperty: kotlin.Int
+@HFOC /* = kotlin.native.HiddenFromObjC */ @kotlin.native.ShouldRefineInSwift public var refinedProperty: kotlin.Int
 @kotlin.native.HiddenFromObjC @plugin.PluginHiddenFromObjC @kotlin.native.ShouldRefineInSwift @plugin.PluginShouldRefineInSwift public fun multipleMixedRefinementsFunction(): kotlin.Unit
 @kotlin.native.HiddenFromObjC @plugin.PluginHiddenFromObjC public fun multipleObjCRefinementsFunction(): kotlin.Unit
 @kotlin.native.ShouldRefineInSwift @plugin.PluginShouldRefineInSwift public fun multipleSwiftRefinementsFunction(): kotlin.Unit
@@ -75,7 +75,7 @@ public interface InterfaceB {
     public abstract val barA: kotlin.Int
     @kotlin.native.ShouldRefineInSwift public abstract val barB: kotlin.Int
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    @kotlin.native.HiddenFromObjC public abstract fun fooA(): kotlin.Unit
+    @HFOC /* = kotlin.native.HiddenFromObjC */ public abstract fun fooA(): kotlin.Unit
     @kotlin.native.HiddenFromObjC public abstract fun fooB(): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -108,6 +108,7 @@ public interface InterfaceB {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias HFOC = kotlin.native.HiddenFromObjC
 
 package kotlin {
 

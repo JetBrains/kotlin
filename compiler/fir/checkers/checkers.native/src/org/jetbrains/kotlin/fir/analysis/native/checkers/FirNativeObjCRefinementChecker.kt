@@ -44,8 +44,7 @@ object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker() {
         val objCAnnotations = mutableListOf<FirAnnotation>()
         val swiftAnnotations = mutableListOf<FirAnnotation>()
         for (annotation in annotations) {
-            val metaAnnotations = annotation.unexpandedConeClassLikeType?.lookupTag
-                ?.toSymbol(session)?.resolvedAnnotationsWithClassIds.orEmpty()
+            val metaAnnotations = annotation.toAnnotationClassLikeSymbol(session)?.resolvedAnnotationsWithClassIds.orEmpty()
             for (metaAnnotation in metaAnnotations) {
                 when (metaAnnotation.toAnnotationClassId(session)) {
                     hidesFromObjCClassId -> {
