@@ -28963,6 +28963,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("cannotAccessStaticMemberViaReceiver.kt")
+            public void testCannotAccessStaticMemberViaReceiver() throws Exception {
+                runTest("compiler/testData/codegen/box/javaVisibility/package/cannotAccessStaticMemberViaReceiver.kt");
+            }
+
+            @Test
             @TestMetadata("inheritedPackageStaticField.kt")
             public void testInheritedPackageStaticField() throws Exception {
                 runTest("compiler/testData/codegen/box/javaVisibility/package/inheritedPackageStaticField.kt");
