@@ -31,6 +31,11 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 
+internal object AppleXcodeTasks {
+    const val embedAndSignTaskPrefix = "embedAndSign"
+    const val embedAndSignTaskPostfix = "AppleFrameworkForXcode"
+}
+
 private object XcodeEnvironment {
     val buildType: NativeBuildType?
         get() {
@@ -144,7 +149,7 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     val envFrameworkSearchDir = XcodeEnvironment.frameworkSearchDir
     val envSign = XcodeEnvironment.sign
 
-    val frameworkTaskName = lowerCamelCaseName("embedAndSign", framework.namePrefix, "AppleFrameworkForXcode")
+    val frameworkTaskName = lowerCamelCaseName(AppleXcodeTasks.embedAndSignTaskPrefix, framework.namePrefix, AppleXcodeTasks.embedAndSignTaskPostfix)
 
     if (envBuildType == null || envTargets.isEmpty() || envEmbeddedFrameworksDir == null || envFrameworkSearchDir == null) {
         locateOrRegisterTask<DefaultTask>(frameworkTaskName) { task ->

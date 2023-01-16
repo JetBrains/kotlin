@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
@@ -362,6 +363,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         }
 
     /**
+     * Forces K/N compiler to print messages which could be parsed by Xcode
+     */
+    val nativeUseXcodeMessageStyle: Boolean?
+        get() = booleanProperty(KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE)
+
+    /**
      * Allows a user to specify additional arguments of a JVM executing KLIB commonizer.
      */
     val commonizerJvmArgs: List<String>
@@ -548,6 +555,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_BUILD_REPORT_SINGLE_FILE = "kotlin.build.report.single_file"
         const val KOTLIN_BUILD_REPORT_HTTP_URL = "kotlin.build.report.http.url"
         const val KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING = "kotlin.options.suppressFreeCompilerArgsModificationWarning"
+        const val KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE = "kotlin.native.useXcodeMessageStyle"
     }
 
     companion object {
