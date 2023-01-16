@@ -7,11 +7,14 @@
 
 package org.jetbrains.kotlin.gradle.regressionTests
 
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.kotlin.dsl.repositories
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
+import kotlin.test.fail
 
 @Suppress("DEPRECATION") /* Configurations are scheduled for removal */
 class KT55929MetadataConfigurationsTest {
@@ -108,6 +111,41 @@ class KT55929MetadataConfigurationsTest {
                 sourceSet.intransitiveMetadataConfigurationName,
                 "org.sample:commonMainApi:1.0.0"
             )
+        }
+    }
+
+    @Test
+    fun `test - deprecated metadata configurations - do not list stdlib-common - for platform source sets`() {
+        val project = buildProject {
+            enableDefaultStdlibDependency(true)
+            enableIntransitiveMetadataConfiguration(true)
+            applyMultiplatformPlugin()
+            repositories {
+                mavenLocal()
+                mavenCentral()
+            }
+        }
+
+        val kotlin = project.multiplatformExtension
+        kotlin.targetHierarchy.default()
+        kotlin.linuxX64()
+        kotlin.linuxArm64()
+
+        kotlin.sourceSets.getByName("commonMain").dependencies {
+            implementation(kotlin("stdlib"))
+        }
+
+        project.evaluate()
+
+        val stdlibCommonFound = project.configurations.getByName(
+            kotlin.sourceSets.getByName("linuxX64Main").implementationMetadataConfigurationName
+        ).resolvedConfiguration.resolvedArtifacts.any { artifact ->
+            val id = artifact.id.componentIdentifier
+            id is ModuleComponentIdentifier && id.module == "kotlin-stdlib-common"
+        }
+
+        if(stdlibCommonFound) {
+            fail("Unexpectedly resolved stdlib-common for 'linuxX64Main'")
         }
     }
 }
