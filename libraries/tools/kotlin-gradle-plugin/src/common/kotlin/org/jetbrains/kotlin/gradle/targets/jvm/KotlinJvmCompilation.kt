@@ -45,7 +45,7 @@ open class KotlinJvmCompilation @Inject internal constructor(
     val compileJavaTaskProvider: TaskProvider<out JavaCompile>?
         get() = if (target.withJavaEnabled) {
             val project = target.project
-            val javaSourceSets = project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+            val javaSourceSets = project.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
                 .getInstance(project)
                 .sourceSets
             val javaSourceSet = javaSourceSets.getByName(compilationName)

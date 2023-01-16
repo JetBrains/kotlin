@@ -6,15 +6,25 @@
 package org.jetbrains.kotlin.gradle.testing.internal
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import java.io.*
 import java.util.concurrent.ConcurrentHashMap
 
 internal typealias TaskError = Pair<String, Error>
+
+internal interface UsesTestReportService : Task {
+    @get:Internal
+    val testReportServiceProvider: Property<TestReportService>
+}
 
 /**
  * A build service required for correct test failures detection in [KotlinTestReport] as it requires cross-task interaction.
@@ -101,14 +111,19 @@ internal abstract class TestReportService : BuildService<TestReportService.TestR
     }
 
     companion object {
-        fun registerIfAbsent(project: Project): Provider<TestReportService> {
-            return project.gradle.sharedServices
+        fun registerIfAbsent(project: Project): Provider<TestReportService> =
+            project.gradle.sharedServices
                 .registerIfAbsent(
                     "${TestReportService::class.java.canonicalName}_${project.path}",
                     TestReportService::class.java
                 ) { spec ->
                     spec.parameters.testTasksStateFile.set(project.buildDir.resolve("test-results/kotlin-test-tasks-state.bin"))
+                }.also { serviceProvider ->
+                    SingleActionPerProject.run(project, UsesTestReportService::class.java.name) {
+                        project.tasks.withType<UsesTestReportService>().configureEach { task ->
+                            task.usesService(serviceProvider)
+                        }
+                    }
                 }
-        }
     }
 }

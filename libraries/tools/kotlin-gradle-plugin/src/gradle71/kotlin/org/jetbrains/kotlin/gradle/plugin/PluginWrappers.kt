@@ -141,6 +141,7 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
 }
 
 private fun Project.registerVariantImplementations() {
+    @Suppress("DEPRECATION_ERROR")
     val factories = VariantImplementationFactories.get(gradle)
     factories[IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class] =
         IdeaSyncDetectorG71.IdeaSyncDetectorVariantFactoryG71()

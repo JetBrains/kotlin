@@ -76,7 +76,7 @@ class KotlinModelBuilder(private val kotlinPluginVersion: String, private val an
         private fun Project.pathOrName() = if (path == ":") name else path
 
         private fun AbstractKotlinCompile<*>.createSourceSet(project: Project, projectType: KotlinProject.ProjectType): SourceSet? {
-            val javaSourceSet = project.gradle
+            val javaSourceSet = project
                 .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
                 .getInstance(project)
                 .sourceSetsIfAvailable

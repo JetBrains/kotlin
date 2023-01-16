@@ -12,8 +12,12 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.compilerRunner.CompilerSystemPropertiesService
+import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
+import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
+import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
@@ -23,6 +27,7 @@ import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildReportsService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
+import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
 /**
@@ -48,6 +53,13 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             }
         }
 
+        val compilerSystemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project)
+        val buildMetricsService = BuildMetricsService.registerIfAbsent(project)
+        val buildReportsService = buildMetricsService?.let { BuildReportsService.registerIfAbsent(project, buildMetricsService) }
+        val incrementalModuleInfoProvider =
+            IncrementalModuleInfoBuildService.registerIfAbsent(project, objectFactory.providerWithLazyConvention {
+                GradleCompilerRunner.buildModulesInfo(project.gradle)
+            })
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
 
@@ -59,14 +71,14 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                 .disallowChanges()
 
             task.localStateDirectories.from(task.taskBuildLocalStateDirectory).disallowChanges()
-            BuildMetricsService.registerIfAbsent(project)?.also { metricsService ->
-                task.buildMetricsService.value(metricsService)
-                task.usesService(metricsService)
-                BuildReportsService.registerIfAbsent(project, metricsService)?.also { reportsService ->
-                    task.buildReportsService.value(reportsService)
-                    task.usesService(reportsService)
+            buildMetricsService?.also { metricsService ->
+                task.buildMetricsService.value(metricsService).disallowChanges()
+                buildReportsService?.also { reportsService ->
+                    task.buildReportsService.value(reportsService).disallowChanges()
                 }
             }
+            task.systemPropertiesService.value(compilerSystemPropertiesService).disallowChanges()
+            task.incrementalModuleInfoProvider.value(incrementalModuleInfoProvider).disallowChanges()
 
             propertiesProvider.kotlinDaemonJvmArgs?.let { kotlinDaemonJvmArgs ->
                 task.kotlinDaemonJvmArguments.set(providers.provider {
@@ -112,7 +124,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     compilation.internal.configurations.pluginConfiguration
                 )
             }
-            task.declareVariantImplementationFactoryUsage()
             task.moduleName.set(providers.provider { compilationInfo.moduleName })
             @Suppress("DEPRECATION")
             task.ownModuleName.set(project.provider { compilationInfo.moduleName })

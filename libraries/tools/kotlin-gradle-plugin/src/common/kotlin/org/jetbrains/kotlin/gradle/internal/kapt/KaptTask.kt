@@ -268,7 +268,7 @@ abstract class KaptTask @Inject constructor(
             return project
                 .providers
                 .gradleProperty(KAPT_VERBOSE_OPTION_NAME)
-                .usedAtConfigurationTime(project.gradle.configurationTimePropertiesAccessor)
+                .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
                 .map { it.toString().toBoolean() }
                 .orElse(false)
         }

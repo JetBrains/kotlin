@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.internal
 
-import org.gradle.api.invocation.Gradle
+import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactories
 import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
@@ -35,9 +35,8 @@ internal class DefaultConfigurationTimePropertiesAccessor : ConfigurationTimePro
     override fun <T> Provider<T>.usedAtConfigurationTime(): Provider<T> = this
 }
 
-internal val Gradle.configurationTimePropertiesAccessor
-    get() = gradle
-        .variantImplementationFactory<ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory>()
+internal val Project.configurationTimePropertiesAccessor
+    get() = variantImplementationFactory<ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory>()
         .getInstance()
 
 internal fun <T> Provider<T>.usedAtConfigurationTime(accessor: ConfigurationTimePropertiesAccessor) = with(accessor) {

@@ -5,15 +5,25 @@
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.gradle.api.invocation.Gradle
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
+
+internal interface UsesCompilerSystemPropertiesService : Task {
+    @get:Internal
+    val systemPropertiesService: Property<CompilerSystemPropertiesService>
+}
 
 internal abstract class CompilerSystemPropertiesService : BuildService<CompilerSystemPropertiesService.Parameters>, AutoCloseable {
     internal interface Parameters : BuildServiceParameters {
@@ -53,19 +63,25 @@ internal abstract class CompilerSystemPropertiesService : BuildService<CompilerS
     }
 
     companion object {
-        fun registerIfAbsent(gradle: Gradle): Provider<CompilerSystemPropertiesService> = gradle.sharedServices.registerIfAbsent(
+        fun registerIfAbsent(project: Project): Provider<CompilerSystemPropertiesService> = project.gradle.sharedServices.registerIfAbsent(
             "${CompilerSystemPropertiesService::class.java.canonicalName}_${CompilerSystemPropertiesService::class.java.classLoader.hashCode()}",
             CompilerSystemPropertiesService::class.java
         ) { service ->
-            if (isConfigurationCacheAvailable(gradle)) {
+            if (isConfigurationCacheAvailable(project.gradle)) {
                 service.parameters.properties.set(
                     CompilerSystemProperties.values()
                         .filterNot { it.alwaysDirectAccess }
                         .associate {
-                            it.property to gradle.rootProject.providers.systemProperty(it.property)
-                                .usedAtConfigurationTime(gradle.configurationTimePropertiesAccessor)
+                            it.property to project.providers.systemProperty(it.property)
+                                .usedAtConfigurationTime(project.configurationTimePropertiesAccessor)
                         }.toMap()
                 )
+            }
+        }.also { serviceProvider ->
+            SingleActionPerProject.run(project, UsesCompilerSystemPropertiesService::class.java.name) {
+                project.tasks.withType<UsesCompilerSystemPropertiesService>().configureEach { task ->
+                    task.usesService(serviceProvider)
+                }
             }
         }
     }

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.internal.DefaultConfigurationTimePrope
  * This helper function is for simple tests that are testing granular logic without applying Kotlin plugin
  */
 fun Gradle.registerConfigurationTimePropertiesAccessorForTests() {
+    @Suppress("DEPRECATION_ERROR")
     VariantImplementationFactories.get(gradle).putIfAbsent(
         ConfigurationTimePropertiesAccessor.ConfigurationTimePropertiesAccessorVariantFactory::class,
         DefaultConfigurationTimePropertiesAccessorVariantFactory()

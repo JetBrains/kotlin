@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
-import org.jetbrains.kotlin.gradle.report.BuildMetricsService
+import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
@@ -53,7 +53,7 @@ constructor(
     @Transient
     override val compilation: KotlinJsCompilation,
     private val objects: ObjectFactory
-) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl {
+) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
     @Transient
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val versions = nodeJs.versions
@@ -68,9 +68,6 @@ constructor(
     @get:Inject
     open val execHandleFactory: ExecHandleFactory
         get() = injected
-
-    @get:Internal
-    internal abstract val buildMetricsService: Property<BuildMetricsService?>
 
     private val metrics: Property<BuildMetricsReporter> = project.objects
         .property(BuildMetricsReporterImpl())

@@ -140,6 +140,7 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
 }
 
 private fun Project.registerVariantImplementations() {
+    @Suppress("DEPRECATION_ERROR")
     val factories = VariantImplementationFactories.get(gradle)
     factories[MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class] =
         MavenPluginConfiguratorG6.Gradle6MavenPluginConfiguratorVariantFactory()

@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.gradle.utils.toUri
  * In this case, only topmost aggregate test task will override reporting,
  * event if child tasks will be executed.
  */
-abstract class KotlinTestReport : TestReport() {
+abstract class KotlinTestReport : TestReport(), UsesTestReportService {
     @Transient
     @Internal
     val testTasks = mutableListOf<AbstractTestTask>()
@@ -70,8 +70,6 @@ abstract class KotlinTestReport : TestReport() {
     @Input
     var ignoreFailures: Boolean = false
 
-    @get:Internal
-    internal abstract val testReportServiceProvider: Property<TestReportService>
     private val testReportService
         get() = testReportServiceProvider.get()
 

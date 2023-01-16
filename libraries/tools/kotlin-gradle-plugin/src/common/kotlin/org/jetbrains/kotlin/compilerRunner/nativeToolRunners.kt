@@ -45,7 +45,7 @@ internal fun Project.getKonanCacheKind(target: KonanTarget): NativeCacheKind {
     return when {
         targetCacheKind != null -> targetCacheKind
         commonCacheKind != null -> commonCacheKind
-        else -> KonanPropertiesBuildService.registerIfAbsent(gradle).get().defaultCacheKindForTarget(target)
+        else -> KonanPropertiesBuildService.registerIfAbsent(this).get().defaultCacheKindForTarget(target)
     }
 }
 

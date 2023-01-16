@@ -58,7 +58,7 @@ abstract class KotlinJvmTarget @Inject constructor(
         withJavaEnabled = true
 
         project.plugins.apply(JavaPlugin::class.java)
-        val javaSourceSets = project.gradle.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
+        val javaSourceSets = project.variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
             .getInstance(project)
             .sourceSets
         AbstractKotlinPlugin.setUpJavaSourceSets(this, duplicateJavaSourceSetsAsKotlinSourceSets = false)

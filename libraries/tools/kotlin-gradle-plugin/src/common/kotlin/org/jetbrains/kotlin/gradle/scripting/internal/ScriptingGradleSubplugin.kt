@@ -56,7 +56,6 @@ class ScriptingGradleSubplugin : Plugin<Project> {
 
         project.afterEvaluate {
             val javaSourceSets = project
-                .gradle
                 .variantImplementationFactory<JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory>()
                 .getInstance(project)
                 .sourceSetsIfAvailable

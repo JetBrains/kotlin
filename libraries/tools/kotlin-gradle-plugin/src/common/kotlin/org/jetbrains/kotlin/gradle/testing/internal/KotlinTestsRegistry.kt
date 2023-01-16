@@ -87,7 +87,7 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
             aggregate.description = description
             aggregate.group = JavaBasePlugin.VERIFICATION_GROUP
 
-            val compatibilityHelper = project.gradle
+            val compatibilityHelper = project
                 .variantImplementationFactory<KotlinTestReportCompatibilityHelper.KotlinTestReportCompatibilityHelperVariantFactory>()
                 .getInstance(project.objects)
 
@@ -99,7 +99,6 @@ class KotlinTestsRegistry(val project: Project, val allTestsTaskName: String = "
                 aggregate.extensions.extraProperties.set("idea.internal.test", true)
             }
             aggregate.htmlReportFile.value(compatibilityHelper.getDestinationDirectory(aggregate).file("index.html")).disallowChanges()
-            aggregate.usesService(testReportService)
             aggregate.testReportServiceProvider.value(testReportService).finalizeValueOnRead()
             aggregate.testReportCompatibilityHelper.value(compatibilityHelper).finalizeValueOnRead()
 

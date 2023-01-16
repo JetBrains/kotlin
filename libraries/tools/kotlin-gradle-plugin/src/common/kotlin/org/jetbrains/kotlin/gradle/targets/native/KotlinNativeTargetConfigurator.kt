@@ -60,6 +60,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         // which leads to not able run project.afterEvaluate because of wrong context
         // this afterEvaluate comes from NativeCompilerOptions
         val compilationCompilerOptions = binary.compilation.compilerOptions
+        val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project)
         val result = registerTask<KotlinNativeLink>(
             binary.linkTaskName, listOf(binary)
         ) {
@@ -67,7 +68,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             it.group = BasePlugin.BUILD_GROUP
             it.description = "Links ${binary.outputKind.description} '${binary.name}' for a target '${target.name}'."
             it.enabled = binary.konanTarget.enabledOnCurrentHost
-            val konanPropertiesBuildService = KonanPropertiesBuildService.registerIfAbsent(project.gradle)
             it.konanPropertiesService.set(konanPropertiesBuildService)
             it.usesService(konanPropertiesBuildService)
             it.toolOptions.freeCompilerArgs.convention(
