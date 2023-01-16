@@ -6059,6 +6059,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("smartCastInCatch.kt")
+            public void testSmartCastInCatch() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/smartCastInCatch.kt");
+            }
+
+            @Test
             @TestMetadata("throwInLambda.kt")
             public void testThrowInLambda() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/throwInLambda.kt");

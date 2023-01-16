@@ -90,9 +90,12 @@ digraph initializationInTry_kt {
     15 -> {16};
     16 -> {17};
     17 -> {18};
+    17 -> {24} [label="onUncaughtException"];
     18 -> {19};
+    18 -> {24} [label="onUncaughtException"];
     19 -> {20};
     20 -> {21};
+    20 -> {24} [label="onUncaughtException"];
     21 -> {22};
     22 -> {23};
     23 -> {24};
@@ -157,8 +160,10 @@ digraph initializationInTry_kt {
     38 -> {39};
     39 -> {40};
     40 -> {41};
+    40 -> {46} [label="onUncaughtException"];
     41 -> {42};
     42 -> {43};
+    42 -> {46} [label="onUncaughtException"];
     43 -> {44};
     44 -> {45};
     45 -> {46};

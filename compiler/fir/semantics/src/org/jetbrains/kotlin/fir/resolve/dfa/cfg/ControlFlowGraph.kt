@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirLoop
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val kind: Kind) {
     @set:CfgInternals
@@ -91,19 +89,17 @@ data class Edge(
     }
 }
 
-sealed class EdgeLabel(val label: String?) {
-    override fun toString(): String {
-        return label ?: ""
-    }
+sealed interface EdgeLabel {
+    val label: String?
 }
 
-object NormalPath : EdgeLabel(label = null)
-object UncaughtExceptionPath : EdgeLabel(label = "onUncaughtException")
+object NormalPath : EdgeLabel {
+    override val label: String? get() = null
+}
 
-// TODO: Label `return`ing edge with this.
-data class ReturnPath(val target: FirFunctionSymbol<*>) : EdgeLabel(label = "return@${target.callableId}")
-data class LoopBreakPath(val loop: FirLoop) : EdgeLabel(loop.label?.let { "break@${it.name}" } ?: "break")
-data class LoopContinuePath(val loop: FirLoop) : EdgeLabel(loop.label?.let { "continue@${it.name}" } ?: "continue")
+object UncaughtExceptionPath : EdgeLabel {
+    override val label: String get() = "onUncaughtException"
+}
 
 enum class EdgeKind(
     val usedInDfa: Boolean, // propagate flow to alive nodes

@@ -177,12 +177,12 @@ digraph inplaceLambdaInControlFlowExpressions_kt {
     43 -> {44} [style=dashed];
     44 -> {45};
     45 -> {46};
-    46 -> {47};
+    46 -> {47 53};
     47 -> {48};
     48 -> {49};
     49 -> {50} [color=green];
     49 -> {59} [color=red];
-    50 -> {51};
+    50 -> {51 53};
     51 -> {52};
     52 -> {53 59};
     53 -> {54};
