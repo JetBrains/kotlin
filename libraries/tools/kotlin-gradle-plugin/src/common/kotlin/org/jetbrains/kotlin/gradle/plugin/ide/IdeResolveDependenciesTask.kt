@@ -23,12 +23,10 @@ import java.io.File
 import java.lang.reflect.Type
 
 internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<IdeResolveDependenciesTask> {
-    return locateOrRegisterTask<IdeResolveDependenciesTask>("resolveIdeDependencies") { task ->
+    return locateOrRegisterTask("resolveIdeDependencies") { task ->
         task.description = "Debugging/Diagnosing task that will resolve dependencies for the IDE"
         task.group = "ide"
         task.notCompatibleWithConfigurationCacheCompat("Just a debugging util")
-    }.also {
-        it.dependsOn(locateOrRegisterTask<Task>(KotlinMetadataTargetConfigurator.TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA))
     }
 }
 
@@ -37,7 +35,11 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
  * This will invoke the [IdeMultiplatformImport] to resolve all dependencies (like the IDE would).
  * Outputs are written as json and protobufs
  */
-internal open class IdeResolveDependenciesTask : DefaultTask() {
+internal open class IdeResolveDependenciesTask : DefaultTask(), IdeDependencyResolver.WithBuildDependencies {
+
+    override fun dependencies(project: Project): Iterable<Any> = listOf(
+        project.locateOrRegisterTask<Task>(KotlinMetadataTargetConfigurator.TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA)
+    )
 
     @TaskAction
     fun resolveDependencies() {
