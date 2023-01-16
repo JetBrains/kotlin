@@ -101,11 +101,16 @@ class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
+        val realmVersion = if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_5)) {
+            "10.13.0-transformer-api"
+        } else {
+            "10.13.0"
+        }
         project(
             "android-realm".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
-            buildJdk = jdkVersion.location
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion")),
+            buildJdk = jdkVersion.location,
         ) {
             build("assembleDebug") {
                 assertKaptSuccessful()
@@ -165,7 +170,7 @@ class Kapt3AndroidExternalIT : Kapt3BaseIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            val safeArgsVersion = if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_0)) "2.5.3" else "2.1.0"
+            val safeArgsVersion = if (gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_0)) "2.5.3" else "2.3.5"
             build("assembleDebug", "-Psafe_args_version=$safeArgsVersion") {
                 assertFileInProjectExists("build/generated/source/navigation-args/debug/test/androidx/navigation/StartFragmentDirections.java")
                 assertFileInProjectExists("build/tmp/kotlin-classes/debug/test/androidx/navigation/StartFragmentKt.class")
