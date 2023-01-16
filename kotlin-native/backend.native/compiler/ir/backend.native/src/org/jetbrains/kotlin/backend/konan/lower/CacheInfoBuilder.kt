@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_FUNCTION_CLASS
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.isExternalObjCClass
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.ir.IrElement
@@ -96,8 +97,11 @@ internal class CacheInfoBuilder(
 
             override fun visitGetObjectValue(expression: IrGetObjectValue) {
                 expression.acceptChildrenVoid(this)
-
-                processFunction(generationState.context.getObjectClassInstanceFunction(expression.symbol.owner))
+                val singleton = expression.symbol.owner
+                val isExternalObjCCompanion = singleton.isCompanion && (singleton.parent as IrClass).isExternalObjCClass()
+                if (!isExternalObjCCompanion) {
+                    processFunction(generationState.context.getObjectClassInstanceFunction(singleton))
+                }
             }
 
             override fun visitGetEnumValue(expression: IrGetEnumValue) {
