@@ -53,7 +53,6 @@ class CandidateFactory private constructor(
         explicitReceiverKind: ExplicitReceiverKind,
         scope: FirScope?,
         dispatchReceiverValue: ReceiverValue? = null,
-        importedQualifierForStatic: FirExpression? = null,
         givenExtensionReceiverOptions: List<ReceiverValue> = emptyList(),
         objectsByName: Boolean = false
     ): Candidate {
@@ -69,7 +68,6 @@ class CandidateFactory private constructor(
             baseSystem,
             callInfo,
             scope,
-            importedQualifierForStatic,
             isFromCompanionObjectTypeScope = when (explicitReceiverKind) {
                 ExplicitReceiverKind.EXTENSION_RECEIVER ->
                     givenExtensionReceiverOptions.singleOrNull().isCandidateFromCompanionObjectTypeScope()
