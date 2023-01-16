@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.upperBoundIfFlexible
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirAssignmentPluginAssignAltererExtension(
@@ -34,7 +33,7 @@ class FirAssignmentPluginAssignAltererExtension(
     }
 
     private fun FirVariableAssignment.supportsTransformVariableAssignment(): Boolean {
-        return when (val lSymbol = lValue.toResolvedVariableSymbol()) {
+        return when (val lSymbol = calleeReference?.toResolvedVariableSymbol()) {
             is FirPropertySymbol -> lSymbol.isVal && !lSymbol.isLocal && lSymbol.hasSpecialAnnotation()
             is FirBackingFieldSymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
             is FirFieldSymbol -> lSymbol.isVal && lSymbol.hasSpecialAnnotation()
@@ -46,7 +45,7 @@ class FirAssignmentPluginAssignAltererExtension(
         session.annotationMatchingService.isAnnotated(resolvedReturnType.upperBoundIfFlexible().toRegularClassSymbol(session))
 
     private fun buildFunctionCall(variableAssignment: FirVariableAssignment): FirFunctionCall {
-        val leftArgument = variableAssignment.lValue
+        val leftArgument = variableAssignment.calleeReference!!
         val leftSymbol = leftArgument.toResolvedVariableSymbol()!!
         val leftResolvedType = leftSymbol.resolvedReturnTypeRef
         val rightArgument = variableAssignment.rValue
@@ -55,8 +54,8 @@ class FirAssignmentPluginAssignAltererExtension(
             explicitReceiver = buildPropertyAccessExpression {
                 source = leftArgument.source
                 typeRef = leftResolvedType
-                calleeReference = variableAssignment.calleeReference
-                typeArguments += variableAssignment.typeArguments
+                calleeReference = leftArgument
+                (variableAssignment.lValue as? FirQualifiedAccessExpression)?.typeArguments?.let(typeArguments::addAll)
                 annotations += variableAssignment.annotations
                 explicitReceiver = variableAssignment.explicitReceiver
                 dispatchReceiver = variableAssignment.dispatchReceiver

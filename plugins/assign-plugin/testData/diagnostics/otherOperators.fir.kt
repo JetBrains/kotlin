@@ -50,6 +50,6 @@ fun `should not effect error reporting for other operators`() {
     task<!NO_SET_METHOD!>[0]<!> = StringProperty("Fail")
 
     // a.get(i) = b should not be translated to a.get(i).assign(b)
-    task.<!FUNCTION_CALL_EXPECTED!>get<!>(0) = StringProperty("Fail")
-    nullTask?.<!FUNCTION_CALL_EXPECTED!>get<!>(0) = StringProperty("Fail")
+    task.<!VARIABLE_EXPECTED!>get(0)<!> = StringProperty("Fail")
+    nullTask?.<!VARIABLE_EXPECTED!>get(0)<!> = StringProperty("Fail")
 }

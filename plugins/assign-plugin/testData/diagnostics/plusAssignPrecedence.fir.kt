@@ -96,7 +96,7 @@ fun box(): String {
     task.valInput <!UNRESOLVED_REFERENCE!>+=<!> "K"
     task.varInput <!UNRESOLVED_REFERENCE!>+=<!> "K"
 
-    task.<!VAL_REASSIGNMENT!>valInputWithPlus<!> += "K"
+    task.valInputWithPlus += "K"
 
     task.varInputWithPlusAndPlusAssign <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> "K"
 
