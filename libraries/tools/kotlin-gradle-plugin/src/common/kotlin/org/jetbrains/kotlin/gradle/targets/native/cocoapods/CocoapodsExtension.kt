@@ -157,9 +157,19 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
     /**
      * Add a CocoaPods dependency to the pod built from this project.
+     *
+     * @param linkOnly designates that the pod will be used only for dynamic framework linking and not for the cinterops. Code from it won't
+     * be accessible for referencing from Kotlin but its native symbols will be visible while linking the framework.
      */
     @JvmOverloads
-    fun pod(name: String, version: String? = null, path: File? = null, moduleName: String = name.asModuleName(), headers: String? = null) {
+    fun pod(
+        name: String,
+        version: String? = null,
+        path: File? = null,
+        moduleName: String = name.asModuleName(),
+        headers: String? = null,
+        linkOnly: Boolean = false,
+    ) {
         // Empty string will lead to an attempt to create two podDownload tasks.
         // One is original podDownload and second is podDownload + pod.name
         require(name.isNotEmpty()) { "Please provide not empty pod name to avoid ambiguity" }
@@ -197,6 +207,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
                 this.headers = headers
                 this.version = version
                 source = podSource?.let { Path(it) }
+                this.linkOnly = linkOnly
             }
         )
     }
@@ -275,6 +286,16 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
 
         @get:Internal
         var packageName: String = "cocoapods.$moduleName"
+
+        /**
+         * Designates that the pod will be used only for dynamic framework linking and not for the cinterops. Code from it won't be
+         * accessible for referencing from Kotlin but its native symbols will be visible while linking the framework.
+         *
+         * For static frameworks adding this flag is equivalent to removing the pod dependency entirely (because pods are not used for
+         * static framework linking).
+         */
+        @get:Input
+        var linkOnly: Boolean = false
 
         @Input
         override fun getName(): String = name

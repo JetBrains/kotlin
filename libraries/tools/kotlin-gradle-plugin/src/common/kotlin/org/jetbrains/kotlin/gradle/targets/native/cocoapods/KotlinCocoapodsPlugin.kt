@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.gradle.targets.native.cocoapods.kotlinArtifactsPodsp
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -297,7 +298,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         val moduleNames = mutableSetOf<String>()
 
         cocoapodsExtension.pods.all { pod ->
-            if (moduleNames.contains(pod.moduleName)) {
+            if (pod.linkOnly || moduleNames.contains(pod.moduleName)) {
                 return@all
             }
             moduleNames.add(pod.moduleName)
@@ -743,6 +744,19 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         }
     }
 
+    private fun checkLinkOnlyNotUsedWithStaticFramework(project: Project, cocoapodsExtension: CocoapodsExtension) {
+        project.runProjectConfigurationHealthCheckWhenEvaluated {
+            cocoapodsExtension.pods.all { pod ->
+                if (pod.linkOnly && cocoapodsExtension.podFrameworkIsStatic.get()) {
+                    logger.warn("""
+                        Dependency on '${pod.name}' with option 'linkOnly=true' is unused for building static frameworks.
+                        When using static linkage you will need to provide all dependencies for linking the framework into a final application.
+                    """.trimIndent())
+                }
+            }
+        }
+    }
+
     override fun apply(project: Project): Unit = with(project) {
 
         pluginManager.withPlugin("kotlin-multiplatform") {
@@ -774,6 +788,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             }
             createInterops(project, kotlinExtension, cocoapodsExtension)
             configureLinkingOptions(project, cocoapodsExtension)
+            checkLinkOnlyNotUsedWithStaticFramework(project, cocoapodsExtension)
         }
     }
 

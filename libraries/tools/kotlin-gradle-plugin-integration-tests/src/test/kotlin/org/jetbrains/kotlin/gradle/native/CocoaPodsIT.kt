@@ -1088,6 +1088,58 @@ class CocoaPodsIT : BaseGradleIT() {
         assertContains(manifestLines, "linkerOpts=-framework AFNetworking")
     }
 
+    @Test
+    fun testLinkOnlyPods() = with(project) {
+        gradleBuildScript().appendToCocoapodsBlock("""
+            pod("AFNetworking") { linkOnly = true }
+            pod("SSZipArchive", linkOnly = true)
+            pod("SDWebImage/Core")
+        """.trimIndent())
+
+        build(":linkPodDebugFrameworkIOS", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+            assertSuccessful()
+
+            assertTasksExecuted(":podBuildAFNetworkingIphonesimulator")
+            assertTasksExecuted(":podBuildSDWebImageIphonesimulator")
+            assertTasksExecuted(":podBuildSSZipArchiveIphonesimulator")
+
+            assertTasksExecuted(":cinteropSDWebImageIOS")
+            assertTasksNotRegistered(":cinteropAFNetworkingIOS")
+            assertTasksNotRegistered(":cinteropSSZipArchiveIOS")
+
+            assertContains("""
+            |	-linker-option
+            |	-framework
+            |	-linker-option
+            |	AFNetworking
+            """.trimMargin())
+
+            assertContains("""
+            |	-linker-option
+            |	-framework
+            |	-linker-option
+            |	SSZipArchive
+            """.trimMargin())
+        }
+    }
+
+    @Test
+    fun testUsageLinkOnlyWithStaticFrameworkProducesMessage() = with(project) {
+        gradleBuildScript().appendToCocoapodsBlock("""
+            framework {
+                isStatic = true
+            }
+
+            pod("AFNetworking") { linkOnly = true }
+        """.trimIndent())
+
+        build(":linkPodDebugFrameworkIOS", "-Pkotlin.native.cocoapods.generate.wrapper=true") {
+            assertSuccessful()
+
+            assertContains("Dependency on 'AFNetworking' with option 'linkOnly=true' is unused for building static frameworks")
+        }
+    }
+
     // test configuration phase
 
     private class CustomHooks {
