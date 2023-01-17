@@ -1,5 +1,5 @@
 // DO_NOT_CHECK_NON_PSI_SYMBOL_RESTORE_K1
-// PRETTY_RENDERING_MODE: RENDER_SYMBOLS_NESTED
+// PRETTY_RENDERERE_OPTION: BODY_WITH_MEMBERS
 
 annotation class PropertyAnnotation
 annotation class FieldAnnotation

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K1
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.DO_NOT_CHECK_SYMBOL_RESTORE_K2
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERING_MODE
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.SymbolTestDirectives.PRETTY_RENDERER_OPTION
+import org.jetbrains.kotlin.analysis.api.renderer.declarations.KtDeclarationRenderer
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.KtClassifierBodyRenderer
+import org.jetbrains.kotlin.analysis.api.renderer.types.renderers.KtUsualClassTypeRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithTypeParameters
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
@@ -28,16 +30,16 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
+import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.test.fail
 
 abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
-    private val renderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
+    private val defaultRenderer = KtDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
 
-    open val prettyRenderMode: PrettyRenderingMode = PrettyRenderingMode.RENDER_SYMBOLS_LINE_BY_LINE
+    open val defaultRendererOption: PrettyRendererOption? = null
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
@@ -53,11 +55,11 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         val directiveToIgnoreSymbolRestore = directives.doNotCheckSymbolRestoreDirective()
         val directiveToIgnoreNonPsiSymbolRestore = directives.doNotCheckNonPsiSymbolRestoreDirective()
 
-        val prettyRenderOptions = when (directives.singleOrZeroValue(PRETTY_RENDERING_MODE) ?: prettyRenderMode) {
-            PrettyRenderingMode.RENDER_SYMBOLS_LINE_BY_LINE -> renderer
-            PrettyRenderingMode.RENDER_SYMBOLS_NESTED -> renderer.with {
-                classifierBodyRenderer = KtClassifierBodyRenderer.BODY_WITH_MEMBERS
-            }
+        val prettyRenderer = buildList {
+            addIfNotNull(defaultRendererOption)
+            addAll(directives[PRETTY_RENDERER_OPTION])
+        }.fold(defaultRenderer) { acc, prettyRenderingMode ->
+            prettyRenderingMode.transformation(acc)
         }
 
         fun KtAnalysisSession.safePointer(ktSymbol: KtSymbol): PointerWrapper? {
@@ -100,7 +102,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
                     .map { (symbol, shouldBeRendered) ->
                         PointerWithRenderedSymbol(
                             pointer = safePointer(symbol),
-                            rendered = renderSymbolForComparison(symbol),
+                            rendered = renderSymbolForComparison(symbol, directives),
                             shouldBeRendered = shouldBeRendered,
                         )
                     }
@@ -110,10 +112,10 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
                     PointerWithRenderedSymbol(
                         safePointer(symbol),
                         when (symbol) {
-                            is KtDeclarationSymbol -> symbol.render(prettyRenderOptions)
+                            is KtDeclarationSymbol -> symbol.render(prettyRenderer)
                             is KtFileSymbol -> prettyPrint {
                                 printCollection(symbol.getFileScope().getAllSymbols().asIterable(), separator = "\n\n") {
-                                    append(it.render(prettyRenderOptions))
+                                    append(it.render(prettyRenderer))
                                 }
                             }
 
@@ -137,6 +139,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
             ktFile = ktFile,
             pointersWithRendered = pointersWithRendered.pointers,
             testServices = testServices,
+            directives = directives,
         )
 
         if (directiveToIgnoreSymbolRestore == null) {
@@ -146,6 +149,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
                 ktFile = ktFile,
                 pointersWithRendered = pointersWithRendered.pointers,
                 testServices = testServices,
+                directives = directives,
             )
         }
     }
@@ -204,6 +208,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         ktFile: KtFile,
         pointersWithRendered: List<PointerWithRenderedSymbol>,
         testServices: TestServices,
+        directives: RegisteredDirectives,
     ) {
         var failed = false
         val restoredPointers = mutableListOf<KtSymbolPointer<*>>()
@@ -219,7 +224,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
                     val restored = pointer.restoreSymbol() ?: error("Symbol $expectedRender was not restored")
                     restoredPointers += pointer
 
-                    val actualRender = renderSymbolForComparison(restored)
+                    val actualRender = renderSymbolForComparison(restored, directives)
                     if (shouldBeRendered) {
                         actualRender
                     } else {
@@ -285,8 +290,9 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
         }
     }
 
-    protected open fun KtAnalysisSession.renderSymbolForComparison(symbol: KtSymbol): String {
-        return with(DebugSymbolRenderer(renderExtra = true)) { render(symbol) }
+    protected open fun KtAnalysisSession.renderSymbolForComparison(symbol: KtSymbol, directives: RegisteredDirectives): String {
+        val renderExpandedTypes = directives[PRETTY_RENDERER_OPTION].any { it == PrettyRendererOption.FULLY_EXPANDED_TYPES }
+        return with(DebugSymbolRenderer(renderExtra = true, renderExpandedTypes = renderExpandedTypes)) { render(symbol) }
     }
 }
 
@@ -315,12 +321,26 @@ object SymbolTestDirectives : SimpleDirectivesContainer() {
         description = "Symbol restoring w/o psi for some symbols in current test is not supported yet in K2",
     )
 
-    val PRETTY_RENDERING_MODE by enumDirective(description = "Explicit rendering mode") { PrettyRenderingMode.valueOf(it) }
+    val PRETTY_RENDERER_OPTION by enumDirective(description = "Explicit rendering mode") { PrettyRendererOption.valueOf(it) }
 }
 
-enum class PrettyRenderingMode {
-    RENDER_SYMBOLS_LINE_BY_LINE,
-    RENDER_SYMBOLS_NESTED,
+enum class PrettyRendererOption(val transformation: (KtDeclarationRenderer) -> KtDeclarationRenderer) {
+    BODY_WITH_MEMBERS(
+        { renderer ->
+            renderer.with {
+                classifierBodyRenderer = KtClassifierBodyRenderer.BODY_WITH_MEMBERS
+            }
+        }
+    ),
+    FULLY_EXPANDED_TYPES(
+        { renderer ->
+            renderer.with {
+                typeRenderer = typeRenderer.with {
+                    usualClassTypeRenderer = KtUsualClassTypeRenderer.AS_FULLY_EXPANDED_CLASS_TYPE_WITH_TYPE_ARGUMENTS
+                }
+            }
+        }
+    )
 }
 
 data class SymbolsData(

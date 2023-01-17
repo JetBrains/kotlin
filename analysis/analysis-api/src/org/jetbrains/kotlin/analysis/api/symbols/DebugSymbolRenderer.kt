@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,6 +41,7 @@ import kotlin.reflect.jvm.isAccessible
 public class DebugSymbolRenderer(
     public val renderExtra: Boolean = false,
     public val renderTypeByProperties: Boolean = false,
+    public val renderExpandedTypes: Boolean = false,
 ) {
 
     context(KtAnalysisSession)
@@ -200,17 +201,20 @@ public class DebugSymbolRenderer(
 
     context(KtAnalysisSession)
     private fun PrettyPrinter.renderType(type: KtType) {
+        val typeToRender = if (renderExpandedTypes) type.fullyExpandedType else type
         if (renderTypeByProperties) {
-            renderByPropertyNames(type)
+            renderByPropertyNames(typeToRender)
             return
         }
-        if (type.annotations.isNotEmpty()) {
-            renderList(type.annotations, renderSymbolsFully = false)
+
+        if (typeToRender.annotations.isNotEmpty()) {
+            renderList(typeToRender.annotations, renderSymbolsFully = false)
             append(' ')
         }
-        when (type) {
+
+        when (typeToRender) {
             is KtClassErrorType -> append("ERROR_TYPE")
-            else -> append(type.asStringForDebugging())
+            else -> append(typeToRender.asStringForDebugging())
         }
     }
 

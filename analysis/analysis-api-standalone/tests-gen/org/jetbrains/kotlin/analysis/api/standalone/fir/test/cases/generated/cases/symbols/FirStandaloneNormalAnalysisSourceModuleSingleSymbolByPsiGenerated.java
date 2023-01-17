@@ -47,6 +47,18 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
     }
 
     @Test
+    @TestMetadata("ExpandedParameterType.kt")
+    public void testExpandedParameterType() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/ExpandedParameterType.kt");
+    }
+
+    @Test
+    @TestMetadata("ExpandedReturnType.kt")
+    public void testExpandedReturnType() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/ExpandedReturnType.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithReceiverAnnotation.kt")
     public void testFunctionWithReceiverAnnotation() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/functionWithReceiverAnnotation.kt");

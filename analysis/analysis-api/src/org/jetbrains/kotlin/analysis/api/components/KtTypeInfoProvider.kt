@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -23,6 +23,7 @@ public abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
     public abstract fun isDenotable(type: KtType): Boolean
     public abstract fun isArrayOrPrimitiveArray(type: KtType): Boolean
     public abstract fun isNestedArray(type: KtType): Boolean
+    public abstract fun fullyExpandedType(type: KtType): KtType
 }
 
 public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
@@ -100,6 +101,24 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
                 }
                 else -> null
             }
+        }
+
+    /**
+     * Unwraps type aliases.
+     * Example:
+     * ```
+     * interface Base
+     *
+     * typealias FirstAlias = @Anno1 Base
+     * typealias SecondAlias = @Anno2 FirstAlias
+     *
+     * fun foo(): @Anno3 SecondAlias = TODO()
+     * ```
+     * The return type of **foo** will be **@Anno3 @Anno2 @Anno1 Base** instead of **@Anno3 SecondAlias**
+     */
+    public val KtType.fullyExpandedType: KtType
+        get() = withValidityAssertion {
+            analysisSession.typeInfoProvider.fullyExpandedType(this)
         }
 
     /**

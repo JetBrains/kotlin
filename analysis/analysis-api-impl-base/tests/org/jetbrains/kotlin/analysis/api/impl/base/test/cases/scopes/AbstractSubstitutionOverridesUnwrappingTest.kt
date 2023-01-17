@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractSubstitutionOverridesUnwrappingTest : AbstractSymbolTest() {
@@ -30,7 +31,7 @@ abstract class AbstractSubstitutionOverridesUnwrappingTest : AbstractSymbolTest(
         return SymbolsData(classSymbolUnderCaret.getMemberScope().getAllSymbols().toList())
     }
 
-    override fun KtAnalysisSession.renderSymbolForComparison(symbol: KtSymbol): String {
+    override fun KtAnalysisSession.renderSymbolForComparison(symbol: KtSymbol, directives: RegisteredDirectives): String {
         return with(DebugSymbolRenderer()) { renderForSubstitutionOverrideUnwrappingTest(symbol) }
     }
 
