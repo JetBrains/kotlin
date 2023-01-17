@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
@@ -382,7 +383,11 @@ class ScopeTowerLevel(
                 }
             }
         }
-        if (candidate.isStatic && callInfo.explicitReceiver == null && candidate.isJavaOrEnhancement) {
+        if (candidate.isStatic && candidate.isJavaOrEnhancement) {
+            val explicitReceiver = callInfo.explicitReceiver
+            if (explicitReceiver is FirResolvedQualifier) {
+                return ExpressionReceiverValue(explicitReceiver)
+            }
             val lookupTag = candidate.fir.containingClassLookupTag() ?: return null
             val implicitDispatchReceiverValue = bodyResolveComponents.implicitReceiverStack.lastDispatchReceiver { implicitReceiverValue ->
                 implicitReceiverValue is ImplicitDispatchReceiverValue && implicitReceiverValue.boundSymbol.fir.isSubclassOf(

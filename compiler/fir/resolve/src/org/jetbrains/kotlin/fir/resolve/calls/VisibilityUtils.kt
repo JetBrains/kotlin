@@ -33,7 +33,7 @@ fun FirVisibilityChecker.isVisible(
     dispatchReceiverValue: ReceiverValue?
 ): Boolean {
     val staticQualifierForCallable = runIf(declaration is FirCallableDeclaration && declaration.isStatic) {
-        val explicitReceiver = callInfo.explicitReceiver ?: (dispatchReceiverValue as? ExpressionReceiverValue)?.explicitReceiver
+        val explicitReceiver = (dispatchReceiverValue as? ExpressionReceiverValue)?.explicitReceiver
         when (val classLikeSymbol = (explicitReceiver as? FirResolvedQualifier)?.symbol) {
             is FirRegularClassSymbol -> classLikeSymbol.fir
             is FirTypeAliasSymbol -> classLikeSymbol.fullyExpandedClass(callInfo.session)?.fir

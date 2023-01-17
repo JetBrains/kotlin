@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -330,7 +331,10 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             )
         }
 
-        if (dispatchReceiver != null) {
+        // Note: private static symbols aren't accessible by use-site dispatch receiver
+        // See e.g. diagnostics/tests/scopes/inheritance/statics/hidePrivateByPublic.kt,
+        // private A.a becomes visible from outside without filtering static callables here
+        if (dispatchReceiver != null && (symbol !is FirCallableSymbol || !symbol.isStatic)) {
             val fir = symbol.fir
             val dispatchReceiverParameterClassSymbol =
                 (fir as? FirCallableDeclaration)
