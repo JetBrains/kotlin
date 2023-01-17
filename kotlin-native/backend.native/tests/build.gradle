@@ -5234,6 +5234,14 @@ if (PlatformInfo.isAppleTarget(project)) {
         useGoldenData = true
         UtilsKt.dependsOnPlatformLibs(it)
     }
+
+    standaloneTest("interop_kt40426") {
+        // Test depends on iOS-specific UIKit
+        enabled = (project.testTarget == 'ios_x64' || project.testTarget == 'ios_simulator_arm64' || project.testTarget == 'ios_arm64')
+        source = "interop/objc/kt40426/main.kt"
+        useGoldenData = true
+        UtilsKt.dependsOnPlatformLibs(it)
+    }
 }
 
 tasks.register("KT-50983", KonanDriverTest) {
