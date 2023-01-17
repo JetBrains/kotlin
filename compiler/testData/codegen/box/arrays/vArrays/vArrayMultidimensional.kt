@@ -3,7 +3,7 @@
 // ENABLE_JVM_IR_INLINER
 
 inline fun <reified T> test3DVArray(initVal: T, otherVal: T): Boolean {
-    val vArray3D = Array(2) { Array(3) { Array(4) { initVal } } }
+    val vArray3D = VArray(2) { VArray(3) { VArray(4) { initVal } } }
     vArray3D[1][2][3] = otherVal
     return vArray3D[0][0][0] == initVal && vArray3D[1][2][3] == otherVal
 }
@@ -33,3 +33,15 @@ fun box(): String {
 
     return "OK"
 }
+
+// CHECK_BYTECODE_TEXT
+// 1 ANEWARRAY \[\[Z
+// 2 ANEWARRAY \[\[B
+// 2 ANEWARRAY \[\[S
+// 3 ANEWARRAY \[\[I
+// 2 ANEWARRAY \[\[J
+// 1 ANEWARRAY \[\[F
+// 1 ANEWARRAY \[\[D
+// 1 ANEWARRAY \[\[C
+// 1 ANEWARRAY \[\[Ljava/lang/String;
+// 2 ANEWARRAY \[\[Ljava/lang/Object;
