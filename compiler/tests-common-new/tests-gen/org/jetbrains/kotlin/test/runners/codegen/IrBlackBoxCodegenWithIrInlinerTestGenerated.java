@@ -1531,9 +1531,9 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
-            @TestMetadata("vArrayCopy.kt")
-            public void testVArrayCopy() throws Exception {
-                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayCopy.kt");
+            @TestMetadata("vArrayClone.kt")
+            public void testVArrayClone() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayClone.kt");
             }
 
             @Test
