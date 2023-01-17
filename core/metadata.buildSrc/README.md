@@ -1,0 +1,1 @@
+The only purpose of this module is to extract code from `metadata` module, so that we could depend on it from `buildSrc/build.gradle.kts`
