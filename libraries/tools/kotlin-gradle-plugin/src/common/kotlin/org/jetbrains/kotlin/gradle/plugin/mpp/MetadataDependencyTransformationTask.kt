@@ -139,7 +139,7 @@ open class MetadataDependencyTransformationTask
                     is MetadataDependencyResolution.ChooseVisibleSourceSets ->
                         objectFactory.transformMetadataLibrariesForBuild(resolution, outputsDir, true)
                     is MetadataDependencyResolution.KeepOriginalDependency ->
-                        transformationParameters.resolvedMetadataConfiguration.componentArtifacts(resolution.dependency).map { it.file }
+                        transformationParameters.resolvedMetadataConfiguration.getArtifacts(resolution.dependency).map { it.file }
                     is MetadataDependencyResolution.Exclude -> emptyList()
                 }
             }

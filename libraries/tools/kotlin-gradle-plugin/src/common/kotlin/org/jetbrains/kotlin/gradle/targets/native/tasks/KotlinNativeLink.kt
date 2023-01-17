@@ -215,7 +215,7 @@ constructor(
             .allDependencies
             .filterIsInstance<ResolvedDependencyResult>()
             .forEach {
-                val dependencyFiles = exportLibrariesResolvedGraph.dependencyArtifacts(it).map { it.file }.filterKlibsPassedToCompiler()
+                val dependencyFiles = exportLibrariesResolvedGraph.getArtifacts(it).map { it.file }.filterKlibsPassedToCompiler()
                 if (!apiFiles.files.containsAll(dependencyFiles)) {
                     failed.add(it)
                 }
@@ -225,7 +225,7 @@ constructor(
             val failedDependenciesList = failed.joinToString(separator = "\n") {
                 val componentId = it.selected.id
                 when (componentId) {
-                    is ModuleComponentIdentifier -> "|Files: ${exportLibrariesResolvedGraph.dependencyArtifacts(it).map { it.file }}"
+                    is ModuleComponentIdentifier -> "|Files: ${exportLibrariesResolvedGraph.getArtifacts(it).map { it.file }}"
                     is ProjectComponentIdentifier -> "|Project ${componentId.projectPath}"
                     else -> "|${componentId.displayName}"
                 }
