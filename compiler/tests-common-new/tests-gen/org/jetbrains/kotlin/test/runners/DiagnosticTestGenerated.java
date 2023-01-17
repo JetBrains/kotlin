@@ -33745,6 +33745,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("vArraysTypeArguments.kt")
+            public void testVArraysTypeArguments() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/vArrays/vArraysTypeArguments.kt");
+            }
+
+            @Test
             @TestMetadata("vArraysTypeChecks.kt")
             public void testVArraysTypeChecks() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/vArrays/vArraysTypeChecks.kt");

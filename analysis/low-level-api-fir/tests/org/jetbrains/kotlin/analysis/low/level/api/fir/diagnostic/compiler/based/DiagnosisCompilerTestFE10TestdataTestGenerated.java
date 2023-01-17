@@ -33649,6 +33649,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("vArraysTypeArguments.kt")
+            public void testVArraysTypeArguments() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/vArrays/vArraysTypeArguments.kt");
+            }
+
+            @Test
             @TestMetadata("vArraysTypeChecks.kt")
             public void testVArraysTypeChecks() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/vArrays/vArraysTypeChecks.kt");
