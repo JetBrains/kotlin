@@ -243,6 +243,7 @@ fun deserializeClassToSymbol(
 }
 
 private val ARRAY = Name.identifier("Array")
+private val VARRAY = Name.identifier("VArray")
 private val ARRAY_CLASSES: Set<Name> = setOf(
     ARRAY,
     Name.identifier("ByteArray"),
@@ -253,6 +254,7 @@ private val ARRAY_CLASSES: Set<Name> = setOf(
     Name.identifier("FloatArray"),
     Name.identifier("DoubleArray"),
     Name.identifier("BooleanArray"),
+    VARRAY,
 )
 
 private val JAVA_IO_SERIALIZABLE = ClassId.topLevel(FqName("java.io.Serializable"))
@@ -283,7 +285,7 @@ private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, di
         origin = FirDeclarationOrigin.Library
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         returnTypeRef = buildResolvedTypeRef {
-            val typeArguments = if (classId.shortClassName == ARRAY) {
+            val typeArguments = if (classId.shortClassName == ARRAY || classId.shortClassName == VARRAY) {
                 arrayOf(
                     ConeTypeParameterTypeImpl(
                         ConeTypeParameterLookupTag(this@addCloneForArrayIfNeeded.typeParameters.first().symbol), isNullable = false
