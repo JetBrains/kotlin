@@ -14,10 +14,14 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import java.io.File
+
+data class CommonAnalysisResult(val moduleDescriptor: ModuleDescriptor, val bindingContext: BindingContext)
 
 internal val KotlinCoreEnvironment.destDir: File?
     get() = configuration.get(CLIConfigurationKeys.METADATA_DESTINATION_DIRECTORY)
@@ -26,7 +30,7 @@ internal fun runCommonAnalysisForSerialization(
     environment: KotlinCoreEnvironment,
     dependOnBuiltins: Boolean,
     dependencyContainerFactory: () -> CommonDependenciesContainer?
-): AnalyzerWithCompilerReport? {
+): CommonAnalysisResult? {
     if (environment.destDir == null) {
         val configuration = environment.configuration
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -36,25 +40,31 @@ internal fun runCommonAnalysisForSerialization(
 
     val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
 
-    var analyzer: AnalyzerWithCompilerReport
+    var analysisResultWithHasErrors: AnalysisResultWithHasErrors
     do {
         performanceManager.notifyAnalysisStarted()
-        analyzer = runCommonAnalysisIteration(environment, dependOnBuiltins, dependencyContainerFactory())
-        val result = analyzer.analysisResult
+        analysisResultWithHasErrors = runCommonAnalysisIteration(environment, dependOnBuiltins, dependencyContainerFactory())
+        val result = analysisResultWithHasErrors.result
         if (result is AnalysisResult.RetryWithAdditionalRoots) {
             environment.addKotlinSourceRoots(result.additionalKotlinRoots)
         }
         performanceManager.notifyAnalysisFinished()
     } while (result is AnalysisResult.RetryWithAdditionalRoots)
 
-    return if (analyzer.analysisResult.shouldGenerateCode) analyzer else null
+    val analysisResult = analysisResultWithHasErrors.result
+    return if (analysisResult.shouldGenerateCode && !analysisResultWithHasErrors.hasErrors)
+        CommonAnalysisResult(analysisResult.moduleDescriptor, analysisResult.bindingContext)
+    else
+        null
 }
+
+private data class AnalysisResultWithHasErrors(val result: AnalysisResult, val hasErrors: Boolean)
 
 private fun runCommonAnalysisIteration(
     environment: KotlinCoreEnvironment,
     dependOnBuiltins: Boolean,
     dependencyContainer: CommonDependenciesContainer?
-): AnalyzerWithCompilerReport {
+): AnalysisResultWithHasErrors {
     val configuration = environment.configuration
     val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
     val files = environment.getSourceFiles()
@@ -76,5 +86,5 @@ private fun runCommonAnalysisIteration(
         }
     }
 
-    return analyzer
+    return AnalysisResultWithHasErrors(analyzer.analysisResult, analyzer.hasErrors())
 }

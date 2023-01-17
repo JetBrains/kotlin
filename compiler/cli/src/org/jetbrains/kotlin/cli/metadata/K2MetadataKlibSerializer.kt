@@ -45,20 +45,16 @@ internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBin
         val configuration = environment.configuration
         val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
 
-        val analyzer = runCommonAnalysisForSerialization(environment, true, dependencyContainerFactory = {
+        val analysisResult = runCommonAnalysisForSerialization(environment, true, dependencyContainerFactory = {
             KlibMetadataDependencyContainer(
                 configuration,
                 LockBasedStorageManager("K2MetadataKlibSerializer")
             )
-        })
-
-        if (analyzer == null || analyzer.hasErrors()) return
-
-        val (_, moduleDescriptor) = analyzer.analysisResult
+        }) ?: return
 
         performanceManager.notifyGenerationStarted()
         val destDir = checkNotNull(environment.destDir)
-        performSerialization(configuration, moduleDescriptor, destDir, environment.project)
+        performSerialization(configuration, analysisResult.moduleDescriptor, destDir, environment.project)
         performanceManager.notifyGenerationFinished()
     }
 
