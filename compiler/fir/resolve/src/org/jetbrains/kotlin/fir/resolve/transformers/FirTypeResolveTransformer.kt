@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -220,7 +220,7 @@ open class FirTypeResolveTransformer(
     }
 
     override fun transformDeclaration(declaration: FirDeclaration, data: Any?): FirDeclaration = withDeclaration(declaration) {
-        super.transformDeclaration(declaration, data)
+        transformElement(declaration, data)
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
