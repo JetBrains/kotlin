@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -15,8 +14,7 @@ import org.junit.jupiter.api.DisplayName
 @DisplayName("Tests for multiplatform testing")
 class MppTestsIT : KGPBaseTest() {
     @DisplayName("KT-54634: MPP testing logic is compatible with API changes in Gradle 7.6")
-    // TODO: move 7.6 version to additional versions once max supported version will be 7.6 or higher
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_7_6, additionalVersions = [TestVersions.Gradle.G_7_5])
+    @GradleTestVersions(additionalVersions = [TestVersions.Gradle.G_7_5, TestVersions.Gradle.G_7_6])
     @GradleTest
     fun testKt54634(gradleVersion: GradleVersion) {
         project(
