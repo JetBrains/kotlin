@@ -1,0 +1,20 @@
+KtAnonymousObjectSymbol:
+  annotationsList: []
+  classIdIfNonLocal: null
+  classKind: ANONYMOUS_OBJECT
+  name: null
+  origin: SOURCE
+  superTypes: [
+    [
+      Anno3()
+        psi: KtAnnotationEntry
+      Anno2()
+        psi: KtAnnotationEntry
+      Anno1()
+        psi: KtAnnotationEntry
+    ] @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
+  ]
+  symbolKind: LOCAL
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

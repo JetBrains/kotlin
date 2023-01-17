@@ -1,0 +1,1 @@
+object : @Anno1 @Anno2 @Anno3 BaseClass()

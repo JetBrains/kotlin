@@ -125,6 +125,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
     }
 
     @Test
+    @TestMetadata("javaFieldWithTypeAnnotation.kt")
+    public void testJavaFieldWithTypeAnnotation() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaFieldWithTypeAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("javaMethod.kt")
     public void testJavaMethod() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/javaMethod.kt");
@@ -176,6 +182,12 @@ public class FirIdeNormalAnalysisSourceModuleSymbolByReferenceTestGenerated exte
     @TestMetadata("setterValueParameter.kt")
     public void testSetterValueParameter() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/symbolByReference/setterValueParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAnnotationOnBackingField.kt")
+    public void testTypeAnnotationOnBackingField() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/symbolByReference/typeAnnotationOnBackingField.kt");
     }
 
     @Test

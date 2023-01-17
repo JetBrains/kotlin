@@ -1,0 +1,27 @@
+KtPropertyGetterSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  hasBody: true
+  hasStableParameterNames: true
+  isDefault: false
+  isExtension: false
+  isInline: false
+  isOverride: false
+  modality: FINAL
+  origin: SOURCE
+  receiverParameter: null
+  returnType: [
+    Anno1()
+      psi: KtAnnotationEntry
+    Anno2()
+      psi: KtAnnotationEntry
+    Anno3()
+      psi: KtAnnotationEntry
+  ] @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+  symbolKind: ACCESSOR
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

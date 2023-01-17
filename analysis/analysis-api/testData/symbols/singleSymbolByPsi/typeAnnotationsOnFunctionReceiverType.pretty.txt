@@ -1,0 +1,1 @@
+fun @Anno1 @Anno2 @Anno3 BaseInterface.foo()

@@ -1,0 +1,2 @@
+@Anno1
+var field: @Anno1 kotlin.String!
