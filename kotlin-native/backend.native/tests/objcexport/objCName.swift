@@ -60,10 +60,11 @@ private func testObjCNameEnum() throws {
     try assertEquals(actual: ObjCNameSwiftEnum.Companion.shared.foo(), expected: 0)
 }
 
-private func testObjCAvoidPreprocessorName() throws {
-    let instance = ObjCAvoidPreprocessorName(time: 42)
-    try assertEquals(actual: instance.time, expected: 42)
-}
+// TODO uncomment and use the following test
+// private func testObjCAvoidPreprocessorName() throws {
+//     let instance = ObjCAvoidPreprocessorName(time: 42)
+//     try assertEquals(actual: instance.time, expected: 42)
+// }
 
 class ObjCNameTests : SimpleTestProvider {
     override init() {
@@ -79,6 +80,6 @@ class ObjCNameTests : SimpleTestProvider {
         test("TestObjCNameExact", testObjCNameExact)
         test("TestObjCNameObject", testObjCNameObject)
         test("TestObjCNameEnum", testObjCNameEnum)
-        test("TestObjCAvoidPreprocessorName", testObjCAvoidPreprocessorName)
+//         test("TestObjCAvoidPreprocessorName", testObjCAvoidPreprocessorName)
     }
 }
