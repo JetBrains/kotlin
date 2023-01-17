@@ -1531,12 +1531,6 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
-            @TestMetadata("multidimensionalVArray.kt")
-            public void testMultidimensionalVArray() throws Exception {
-                runTest("compiler/testData/codegen/box/arrays/vArrays/multidimensionalVArray.kt");
-            }
-
-            @Test
             @TestMetadata("vArrayCopy.kt")
             public void testVArrayCopy() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayCopy.kt");
@@ -1552,6 +1546,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             @TestMetadata("vArrayIterator.kt")
             public void testVArrayIterator() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayIterator.kt");
+            }
+
+            @Test
+            @TestMetadata("vArrayMultidimensional.kt")
+            public void testVArrayMultidimensional() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayMultidimensional.kt");
             }
 
             @Test
