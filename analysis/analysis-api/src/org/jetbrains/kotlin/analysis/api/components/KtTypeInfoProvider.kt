@@ -114,7 +114,7 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
      *
      * fun foo(): @Anno3 SecondAlias = TODO()
      * ```
-     * The return type of **foo** will be **@Anno3 @Anno2 @Anno1 Base** instead of **@Anno3 SecondAlias**
+     * The return type of `foo` will be `@Anno3 @Anno2 @Anno1 Base` instead of `@Anno3 SecondAlias`
      */
     public val KtType.fullyExpandedType: KtType
         get() = withValidityAssertion {
