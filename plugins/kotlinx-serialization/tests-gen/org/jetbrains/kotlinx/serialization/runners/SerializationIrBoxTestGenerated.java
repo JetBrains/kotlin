@@ -56,6 +56,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("delegatedInterface.kt")
+    public void testDelegatedInterface() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/delegatedInterface.kt");
+    }
+
+    @Test
     @TestMetadata("enumsAreCached.kt")
     public void testEnumsAreCached() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/enumsAreCached.kt");
