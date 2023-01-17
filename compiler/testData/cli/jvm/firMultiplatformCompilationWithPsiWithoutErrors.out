@@ -8,6 +8,5 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-warning: compiler flag -Xuse-k2 is deprecated, please use "-language-version 2.0" instead
 warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
 OK
