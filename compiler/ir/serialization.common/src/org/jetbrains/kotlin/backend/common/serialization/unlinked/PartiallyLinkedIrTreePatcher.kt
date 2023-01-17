@@ -339,7 +339,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
             return if (declaration.origin is PartiallyLinkedDeclarationOrigin)
-                declaration // There are nor expressions neither annotations to patch.
+                declaration // There are neither expressions nor annotations to patch.
             else {
                 declaration.filterUnusableAnnotations()
                 super.visitDeclaration(declaration)
