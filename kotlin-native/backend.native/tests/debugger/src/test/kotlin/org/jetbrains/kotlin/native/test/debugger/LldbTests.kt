@@ -495,44 +495,4 @@ class LldbTests {
         """.trimIndent().lldb(program)
     }
 
-    @Test
-    fun `inline function parameters are visible`() = lldbTest("""
-        data class A(var x: Int)
-
-        inline fun foo(p1: Int, p2: Int, f: (A, Int, Int) -> Unit) { 
-            val tmp = A(0)
-            println()
-            f(tmp, p1, p2)
-        }
-
-        fun main() {
-            val tmp1 = 1
-            val tmp2 = 2
-            foo(tmp1, tmp2) { pix, piy, piz ->
-                pix.x + piy + piz
-            }
-
-            listOf(1, 2, 3).filter {
-                it > 1
-            }
-        }    
-        """, """
-        > b main.kt:5
-        > b main.kt:17
-        > ${lldbCommandRunOrContinue()}
-        > v
-        (int) p1 = 1
-        (int) p2 = 2
-        (ObjHeader *) tmp = [x: ...]
-        > n
-        > s
-        > v
-        (ObjHeader *) pix = [x: ...]
-        (int) piy = 1
-        (int) piz = 2
-        > c
-        > v
-        (int) it = 1
-        > q
-    """)
 }

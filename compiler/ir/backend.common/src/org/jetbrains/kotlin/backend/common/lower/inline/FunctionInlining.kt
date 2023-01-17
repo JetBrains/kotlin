@@ -204,8 +204,6 @@ class FunctionInlining(
             newStatements.addAll(evaluationStatements)
             statements.mapTo(newStatements) { it.transform(transformer, data = null) as IrStatement }
 
-            saveParameterToExpressionMapping(callee, copiedCallee)
-
             return IrReturnableBlockImpl(
                 startOffset = callSite.startOffset,
                 endOffset = callSite.endOffset,
@@ -231,13 +229,6 @@ class FunctionInlining(
                     }
                 })
                 patchDeclarationParents(parent) // TODO: Why it is not enough to just run SetDeclarationsParentVisitor?
-            }
-        }
-
-        private fun saveParameterToExpressionMapping(callee: IrFunction, copiedCallee: IrFunction) {
-            for ((parameter, copiedParameter) in callee.valueParameters.zip(copiedCallee.valueParameters)) {
-                val expression = substituteMap[copiedParameter] ?: continue
-                context.mapping.inlinedParameterToExpression[parameter] = expression
             }
         }
 

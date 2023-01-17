@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty
@@ -22,7 +21,6 @@ interface Mapping {
     val reflectedNameAccessor: Delegate<IrClass, IrSimpleFunction>
     val suspendFunctionsToFunctionWithContinuations: Delegate<IrSimpleFunction, IrSimpleFunction>
     val functionWithContinuationsToSuspendFunctions: Delegate<IrSimpleFunction, IrSimpleFunction>
-    val inlinedParameterToExpression: Delegate<IrValueParameter, IrExpression>
 
     abstract class Delegate<K : IrDeclaration, V> {
         abstract operator fun get(key: K): V?
@@ -43,16 +41,12 @@ interface DelegateFactory {
     fun <K : IrDeclaration, V : IrDeclaration> newDeclarationToDeclarationMapping(): Mapping.Delegate<K, V>
 
     fun <K : IrDeclaration, V : Collection<IrDeclaration>> newDeclarationToDeclarationCollectionMapping(): Mapping.Delegate<K, V>
-
-    fun <K : IrDeclaration, V : IrExpression> newDeclarationToExpressionMapping(): Mapping.Delegate<K, V>
 }
 
 object DefaultDelegateFactory : DelegateFactory {
     override fun <K : IrDeclaration, V : IrDeclaration> newDeclarationToDeclarationMapping(): Mapping.Delegate<K, V> = newMappingImpl()
 
     override fun <K : IrDeclaration, V : Collection<IrDeclaration>> newDeclarationToDeclarationCollectionMapping(): Mapping.Delegate<K, V> = newMappingImpl()
-
-    override fun <K : IrDeclaration, V : IrExpression> newDeclarationToExpressionMapping(): Mapping.Delegate<K, V> = newMappingImpl()
 
     private fun <K : IrDeclaration, V> newMappingImpl() = object : Mapping.Delegate<K, V>() {
         private val map: MutableMap<K, V> = ConcurrentHashMap()
@@ -85,7 +79,6 @@ open class DefaultMapping(delegateFactory: DelegateFactory = DefaultDelegateFact
     override val reflectedNameAccessor: Mapping.Delegate<IrClass, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
     override val suspendFunctionsToFunctionWithContinuations: Mapping.Delegate<IrSimpleFunction, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
     override val functionWithContinuationsToSuspendFunctions: Mapping.Delegate<IrSimpleFunction, IrSimpleFunction> = delegateFactory.newDeclarationToDeclarationMapping()
-    override val inlinedParameterToExpression: Mapping.Delegate<IrValueParameter, IrExpression> = delegateFactory.newDeclarationToExpressionMapping()
 }
 
 fun <V : Any> KMutableProperty0<V?>.getOrPut(fn: () -> V) = this.get() ?: fn().also {

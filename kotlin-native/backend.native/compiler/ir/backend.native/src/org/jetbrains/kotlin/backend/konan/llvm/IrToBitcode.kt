@@ -2065,7 +2065,6 @@ internal class CodeGeneratorVisitor(
         val returnableBlockScope = ReturnableBlockScope(value, resultSlot)
         generateDebugTrambolineIf("inline", value)
         using(returnableBlockScope) {
-            storeInlinedParametersDebugInfo(value)
             using(VariableScope()) {
                 value.statements.forEach {
                     generateStatement(it)
@@ -2085,22 +2084,6 @@ internal class CodeGeneratorVisitor(
             codegen.theUnitInstanceRef.llvm
         } else {
             LLVMGetUndef(value.type.toLLVMType(llvm))!!
-        }
-    }
-
-    private fun storeInlinedParametersDebugInfo(block: IrReturnableBlock) {
-        val inlineFunctionSymbol = block.inlineFunctionSymbol ?: return
-        val function = inlineFunctionSymbol.owner
-        for (parameter in function.valueParameters) {
-            if (parameter.type.isFunctionTypeOrSubtype()) continue
-            val expression = context.mapping.inlinedParameterToExpression[parameter] as? IrGetValue ?: continue
-            val variableLocation = debugInfoIfNeeded(function, parameter) ?: continue
-            val variableManager = functionGenerationContext.vars
-            val index = variableManager.indexOf(expression.symbol.owner)
-            if (index >= 0) {
-                val variableRecord = variableManager.variables[index] as? VariableManager.SlotRecord ?: continue
-                functionGenerationContext.inlineFunctionDebugInfo.addVariableRecord(variableRecord, variableLocation)
-            }
         }
     }
 
