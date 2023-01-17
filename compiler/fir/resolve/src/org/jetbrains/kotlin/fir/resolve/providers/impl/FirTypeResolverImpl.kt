@@ -224,6 +224,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         result: TypeResolutionResult,
         areBareTypesAllowed: Boolean,
         topContainer: FirDeclaration?,
+        containerDeclaration: FirDeclaration?,
         isOperandOfIsOperator: Boolean
     ): ConeKotlinType {
 
@@ -362,7 +363,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return symbol.constructType(
             resultingArguments,
             typeRef.isMarkedNullable,
-            typeRef.annotations.computeTypeAttributes(session, containerDeclaration = topContainer)
+            typeRef.annotations.computeTypeAttributes(session, containerDeclaration = containerDeclaration)
         ).also {
             val lookupTag = it.lookupTag
             if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
@@ -525,7 +526,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     result,
                     areBareTypesAllowed,
                     scopeClassDeclaration.topContainer ?: scopeClassDeclaration.containingDeclarations.lastOrNull(),
-                    isOperandOfIsOperator
+                    scopeClassDeclaration.containerDeclaration,
+                    isOperandOfIsOperator,
                 ) to (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic
             }
             is FirFunctionTypeRef -> createFunctionalType(typeRef) to null
