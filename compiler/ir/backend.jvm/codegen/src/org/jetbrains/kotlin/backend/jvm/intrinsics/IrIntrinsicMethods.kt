@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -54,6 +55,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(kotlinJvmFqn, arrayFqn, "isArrayOf", emptyList()) to IsArrayOf,
                 Key(kotlinFqn, null, "arrayOfNulls", listOf(intFqn)) to NewArray,
                 Key(kotlinFqn, null, "vArrayOfNulls", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, StandardClassIds.VArray.asSingleFqName(), "iterator", emptyList()) to VArrayIterator,
                 Key(cloneableFqn, null, "clone", emptyList()) to Clone,
                 Key(kotlinFqn, null, "enumValues", listOf()) to EnumValues,
                 Key(kotlinFqn, null, "enumValueOf", listOf(stringFqn)) to EnumValueOf,
@@ -168,27 +170,30 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         PrimitiveType.NUMBER_TYPES.flatMap { type -> numberConversionMethods(type.symbol) } +
                 numberConversionMethods(irBuiltIns.numberClass)
 
-    private fun vArrayMethods() =
-        arrayMethods(irBuiltIns.vArrayClass.owner.typeParameters.single().symbol, irBuiltIns.vArrayClass, VArrayIterator)
+    private fun vArrayMethods() = arrayMethods(irBuiltIns.vArrayClass.owner.typeParameters.single().symbol, irBuiltIns.vArrayClass)
 
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
         symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) ->
             arrayMethods(
                 primitiveType.symbol,
-                array,
-                ArrayIterator
+                array
             )
-        } + arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array, ArrayIterator)
+        } + arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
 
-    private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol, arrayIteratorIntrinsic: IntrinsicMethod) =
-        listOf(
+    private fun arrayMethods(
+        elementClass: IrClassifierSymbol,
+        arrayClass: IrClassSymbol,
+    ): List<Pair<Key, IntrinsicMethod>> {
+        val methods = mutableListOf(
             createKeyMapping(ArraySize, arrayClass, "<get-size>"),
             createKeyMapping(NewArray, arrayClass, "<init>", irBuiltIns.intClass),
             createKeyMapping(ArraySet, arrayClass, "set", irBuiltIns.intClass, elementClass),
             createKeyMapping(ArrayGet, arrayClass, "get", irBuiltIns.intClass),
             createKeyMapping(Clone, arrayClass, "clone"),
-            createKeyMapping(arrayIteratorIntrinsic, arrayClass, "iterator")
         )
+        if (arrayClass != irBuiltIns.vArrayClass) methods.add(createKeyMapping(ArrayIterator, arrayClass, "iterator"))
+        return methods
+    }
 
     private fun primitiveComparisonIntrinsics(
         typeToIrFun: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>,

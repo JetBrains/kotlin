@@ -33,9 +33,8 @@ object VArrayIterator : IntrinsicMethod() {
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IrIntrinsicFunction {
-        val receiverTypeMapped = classCodegen.typeMapper.mapType(expression.dispatchReceiver!!.type)
-        val owner = classCodegen.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
-        return IrIntrinsicFunction.create(expression, signature, classCodegen, owner) {
+        val receiverTypeMapped = classCodegen.typeMapper.mapType(expression.extensionReceiver!!.type)
+        return IrIntrinsicFunction.create(expression, signature, classCodegen, receiverTypeMapped) {
             if (AsmUtil.isPrimitive(receiverTypeMapped.elementType)) {
                 it.invokestatic(
                     "kotlin/jvm/internal/ArrayIteratorsKt",
@@ -47,7 +46,7 @@ object VArrayIterator : IntrinsicMethod() {
                 it.invokestatic(
                     "kotlin/jvm/internal/ArrayIteratorKt",
                     "vArrayIterator",
-                    "(${owner.descriptor})${signature.returnType.descriptor}",
+                    "([Ljava/lang/Object;)${signature.returnType.descriptor}",
                     false
                 )
             }

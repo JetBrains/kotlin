@@ -94,3 +94,8 @@ public inline fun <reified T : Enum<T>> enumValues(): Array<T>
  */
 @SinceKotlin("1.1")
 public inline fun <reified T : Enum<T>> enumValueOf(name: String): T
+
+/**
+ * Returns an iterator for VArray
+ */
+inline operator fun <reified T> VArray<T>.iterator(): VArrayIterator<T>
