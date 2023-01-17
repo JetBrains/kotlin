@@ -230,7 +230,7 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
     val fakeOverrideOwnerLookupTag = when {
         // Static fake overrides
         isStatic -> {
-            ((dispatchReceiver as? FirResolvedQualifier) ?: (explicitReceiver as? FirResolvedQualifier))?.toLookupTag(session)
+            (dispatchReceiver as? FirResolvedQualifier)?.toLookupTag(session)
         }
         // Member fake override or bound callable reference
         dispatchReceiver !is FirNoReceiverExpression -> {

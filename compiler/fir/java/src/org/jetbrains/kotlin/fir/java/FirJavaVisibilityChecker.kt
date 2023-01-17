@@ -13,12 +13,14 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
@@ -41,7 +43,13 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
                 } else {
                     val ownerLookupTag = symbol.getOwnerLookupTag() ?: return false
                     if (canSeeProtectedMemberOf(
-                            symbol, containingDeclarations, dispatchReceiver, ownerLookupTag, session,
+                            symbol,
+                            containingDeclarations,
+                            // Note: dispatch receiver isn't relevant for Java protected static
+                            // See e.g. diagnostics/tests/visibility/packagePrivateStatic.kt
+                            dispatchReceiver.takeUnless { symbol is FirCallableSymbol && symbol.isStatic },
+                            ownerLookupTag,
+                            session,
                             isVariableOrNamedFunction = symbol.isVariableOrNamedFunction(),
                             isSyntheticProperty = symbol.fir is FirSyntheticPropertyAccessor,
                             supertypeSupplier
