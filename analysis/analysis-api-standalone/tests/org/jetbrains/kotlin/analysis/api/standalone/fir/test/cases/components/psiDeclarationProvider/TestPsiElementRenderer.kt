@@ -9,9 +9,24 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiParameter
 import org.jetbrains.kotlin.psi.KtElement
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtParameter
 
 object TestPsiElementRenderer {
     fun render(psiElement: PsiElement): String = when (psiElement) {
+        is KtNamedFunction -> buildString {
+            append("KtNamedFunction:")
+            append(psiElement.name)
+            append("(")
+            psiElement.valueParameters.joinTo(this) { render(it) }
+            append(")")
+        }
+        is KtParameter -> buildString {
+            if (psiElement.isVarArg) {
+                append("vararg ")
+            }
+            append(psiElement.name)
+        }
         is KtElement -> psiElement.text
         is PsiMethod -> buildString {
             append("PsiMethod:")
