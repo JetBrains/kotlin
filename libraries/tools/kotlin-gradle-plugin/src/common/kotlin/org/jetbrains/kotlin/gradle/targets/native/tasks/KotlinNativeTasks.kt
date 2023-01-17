@@ -784,7 +784,7 @@ internal class CacheBuilder(
             .filterIsInstance<ResolvedDependencyResult>()
             .forEach { ensureDependencyPrecached(it, visitedDependencies) }
 
-        val artifactsToAddToCache = dependencyArtifacts(dependency).filter { needCache(it.file.absolutePath) }
+        val artifactsToAddToCache = getArtifacts(dependency).filter { needCache(it.file.absolutePath) }
 
         if (artifactsToAddToCache.isEmpty()) return
 
@@ -848,7 +848,7 @@ internal class CacheBuilder(
                 args += "-Xcache-directory=${it.absolutePath}"
             }
             getAllDependencies(dependency)
-                .flatMap { dependencyArtifacts(it) }
+                .flatMap { getArtifacts(it) }
                 .map { it.file }
                 .filterKlibsPassedToCompiler()
                 .forEach {

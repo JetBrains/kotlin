@@ -231,7 +231,7 @@ internal class GranularMetadataTransformation(
 
         val compositeMetadataArtifact = params
             .resolvedMetadataConfiguration
-            .dependencyArtifacts(dependency)
+            .getArtifacts(dependency)
             .singleOrNull()
             // Make sure that resolved metadata artifact is actually Multiplatform one
             ?.takeIf { it.variant.attributes.containsMultiplatformAttributes }

@@ -51,7 +51,7 @@ private fun computeDependenciesHash(dependency: ResolvedDependencyResult, resolv
         if (partialLinkage) append("#__PL__#")
 
         (listOf(dependency) + getAllDependencies(dependency))
-            .flatMap { resolvedConfiguration.dependencyArtifacts(it) }
+            .flatMap { resolvedConfiguration.getArtifacts(it) }
             .map { it.file.absolutePath }
             .distinct()
             .sortedBy { it }
@@ -72,7 +72,7 @@ internal fun getDependenciesCacheDirectories(
 ): List<File>? {
     return getAllDependencies(dependency)
         .flatMap { childDependency ->
-            resolvedConfiguration.dependencyArtifacts(childDependency).map {
+            resolvedConfiguration.getArtifacts(childDependency).map {
                 if (libraryFilter(it)) {
                     val cacheDirectory = getCacheDirectory(
                         rootCacheDirectory = rootCacheDirectory,

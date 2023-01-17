@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.artifacts.ArtifactCollection
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ResolveException
+import org.gradle.api.artifacts.ResolvedConfiguration
 import org.gradle.api.artifacts.result.*
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.tooling.core.withClosure
@@ -20,8 +21,7 @@ import org.jetbrains.kotlin.tooling.core.withClosure
  *
  * Has similar API as non-configuration cache friendly Gradle's [ResolvedConfiguration]
  */
-internal class LazyResolvedConfiguration
-private constructor(
+internal class LazyResolvedConfiguration private constructor(
     private val resolvedComponentsRootProvider: Lazy<ResolvedComponentResult>,
     private val artifactCollection: ArtifactCollection,
     private val configurationName: String,
@@ -35,80 +35,50 @@ private constructor(
         configurationName = configuration.name
     )
 
-    val root get() = resolvedComponentsRootProvider.value
     val files: FileCollection get() = artifactCollection.artifactFiles
-    val artifacts get() = artifactCollection.artifacts
 
-    private val artifactsByComponentId by TransientLazy { artifacts.groupBy { it.id.componentIdentifier } }
+    val root by resolvedComponentsRootProvider
 
-    val allDependencies: List<DependencyResult> get() {
-        val visited = mutableSetOf<DependencyResult>()
-        fun DependencyResult.allDependenciesRecursive(): List<DependencyResult> {
-            if (this in visited) return emptyList()
-            visited += this
-            return if (this is ResolvedDependencyResult) {
-                listOf(this) + selected.dependencies.flatMap { it.allDependenciesRecursive() }
-            } else {
-                listOf(this)
-            }
+    private val resolvedArtifacts: Set<ResolvedArtifactResult> get() = artifactCollection.artifacts
+
+    private val artifactsByComponentId by TransientLazy { resolvedArtifacts.groupBy { it.id.componentIdentifier } }
+
+    val allDependencies: Set<DependencyResult> by TransientLazy {
+        root.dependencies.withClosure<DependencyResult> {
+            if (it is ResolvedDependencyResult) it.selected.dependencies
+            else emptyList()
         }
-
-        return root.dependencies.flatMap { it.allDependenciesRecursive() }
     }
 
-    /**
-     * Returns artifacts of a given dependency walking through external variants (the ones that referenced in `available-at`)
-     * For example given a MPP library:
-     *        lib
-     *      /     \
-     *  lib-jvm  lib-iosX64
-     *
-     *  And some requested dependency on `lib` in `jvmMain` source set. In this case it should be resolved to `lib-jvm`
-     *  so requesting [dependencyArtifacts] for `lib` should actually return a jvm artifact from `lib-jvm`
-     *
-     *  If you need to avoid such behavior see [moduleArtifacts]
-     */
-    fun dependencyArtifacts(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult> {
-        val componentId = dependency.resolvedVariant.findNonExternalVariant().owner
+    fun getArtifacts(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult> {
+        val componentId = dependency.resolvedVariant.lastExternalVariantOrSelf().owner
         return artifactsByComponentId[componentId] ?: emptyList()
     }
 
-    fun componentArtifacts(component: ResolvedComponentResult): List<ResolvedArtifactResult> {
-        val componentIds = component.variants.map { it.findNonExternalVariant().owner }
+    fun getArtifacts(component: ResolvedComponentResult): List<ResolvedArtifactResult> {
+        val componentIds = component.variants.map { it.lastExternalVariantOrSelf().owner }
         return componentIds.flatMap { artifactsByComponentId[it].orEmpty() }
     }
 
-    private fun ResolvedVariantResult.findNonExternalVariant(): ResolvedVariantResult =
-        if (externalVariant.isPresent) {
-            externalVariant.get().findNonExternalVariant()
-        } else {
-            this
-        }
-
-    /**
-     * Returns own artifacts of a given dependency.
-     * Acts in the same way as [org.gradle.api.artifacts.ResolvedDependency.getModuleArtifacts].
-     *
-     * To get artifacts from External Variants (aka `available-at`) use [dependencyArtifacts]
-     */
-    fun moduleArtifacts(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult> {
-        val componentId = dependency.resolvedVariant.owner
-        return artifactsByComponentId[componentId] ?: emptyList()
+    private tailrec fun ResolvedVariantResult.lastExternalVariantOrSelf(): ResolvedVariantResult {
+        return if (externalVariant.isPresent) externalVariant.get().lastExternalVariantOrSelf() else this
     }
 
-    override fun toString(): String = "ResolvedDependencyGraph(configuration='$configurationName')"
+    override fun toString(): String = "LazyResolvedConfiguration(configuration='$configurationName')"
 }
 
-internal val LazyResolvedConfiguration.allResolvedDependencies: Set<ResolvedDependencyResult> get() = allDependencies
-    .filterIsInstance<ResolvedDependencyResult>()
-    .toSet()
+internal val LazyResolvedConfiguration.allResolvedDependencies: Set<ResolvedDependencyResult>
+    get() = allDependencies
+        .filterIsInstance<ResolvedDependencyResult>()
+        .toSet()
 
 /**
- * Same as [LazyResolvedConfiguration.dependencyArtifacts] except it returns null for cases when dependency is resolved
+ * Same as [LazyResolvedConfiguration.getArtifacts] except it returns null for cases when dependency is resolved
  * but artifact is not available. For example when host-specific part of the library is not yet published
  */
-internal fun LazyResolvedConfiguration.dependencyArtifactsOrNull(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult>? = try {
-    dependencyArtifacts(dependency)
-} catch (_: ResolveException) {
-    null
-}
+internal fun LazyResolvedConfiguration.dependencyArtifactsOrNull(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult>? =
+    try {
+        getArtifacts(dependency)
+    } catch (_: ResolveException) {
+        null
+    }
