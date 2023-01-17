@@ -38,6 +38,7 @@ internal fun checkAndReportDeprecatedNativeTargets(project: Project) {
  */
 internal fun checkAndReportDeprecatedMppProperties(project: Project) {
     val projectProperties = project.kotlinPropertiesProvider
+    if (projectProperties.ignoreHmppDeprecationWarnings == true) return
 
     val warnings = deprecatedMppProperties.mapNotNull { propertyName ->
         projectProperties.property(propertyName)?.let { getMppDeprecationWarningMessageForProperty(propertyName) }
