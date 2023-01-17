@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.collectSources
@@ -28,6 +26,8 @@ import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
 import org.jetbrains.kotlin.fir.pipeline.buildFirViaLightTree
 import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
+import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
+import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.fir.session.FirCommonSessionFactory
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
@@ -40,31 +40,20 @@ import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
-import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
-internal class FirMetadataSerializer(private val metadataVersion: BuiltInsBinaryVersion) {
-    fun serialize(environment: KotlinCoreEnvironment, rootDisposable: Disposable) {
+internal class FirMetadataSerializer(
+    configuration: CompilerConfiguration,
+    environment: KotlinCoreEnvironment
+) : AbstractMetadataSerializer<ModuleCompilerAnalyzedOutput>(configuration, environment) {
+    override fun analyze(): ModuleCompilerAnalyzedOutput? {
         val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
-
         performanceManager.notifyAnalysisStarted()
-        val compilerResult = runFirCompiler(environment, performanceManager, rootDisposable) ?: return
-        performanceManager.notifyAnalysisFinished()
 
-        performanceManager.notifyGenerationStarted()
-        performSerialization(compilerResult, environment.configuration, checkNotNull(environment.destDir))
-        performanceManager.notifyGenerationFinished()
-    }
-
-    private fun runFirCompiler(
-        environment: KotlinCoreEnvironment,
-        performanceManager: CommonCompilerPerformanceManager,
-        rootDisposable: Disposable
-    ): ModuleCompilerAnalyzedOutput? {
         val configuration = environment.configuration
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val moduleName = Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>")
@@ -164,19 +153,30 @@ internal class FirMetadataSerializer(private val metadataVersion: BuiltInsBinary
             null
         } else {
             result
+        }.also {
+            performanceManager.notifyAnalysisFinished()
         }
     }
 
-    private fun performSerialization(firOutput: ModuleCompilerAnalyzedOutput, configuration: CompilerConfiguration, destDir: File) {
+    override fun serialize(analysisResult: ModuleCompilerAnalyzedOutput, destDir: File) {
         val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 
-        for (firFile in firOutput.fir) {
-            val packageFragment = serializeSingleFirFile(firFile, firOutput.session, firOutput.scopeSession, metadataVersion)
+        val (session, scopeSession, fir) = analysisResult
+
+        val languageVersionSettings = environment.configuration.languageVersionSettings
+        for (firFile in fir) {
+            val packageFragment = serializeSingleFirFile(
+                firFile,
+                session,
+                scopeSession,
+                FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
+                languageVersionSettings
+            )
             fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }.add(packageFragment.toByteArray())
         }
 
         val header = KlibMetadataProtoBuf.Header.newBuilder()
-        header.moduleName = firOutput.session.moduleData.name.asString()
+        header.moduleName = session.moduleData.name.asString()
 
         if (configuration.languageVersionSettings.isPreRelease()) {
             header.flags = KlibMetadataHeaderFlags.PRE_RELEASE

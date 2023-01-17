@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.cli.metadata
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
@@ -35,33 +34,24 @@ import java.io.DataOutputStream
 import java.io.File
 
 open class MetadataSerializer(
-    private val metadataVersion: BuiltInsBinaryVersion,
-    private val dependOnOldBuiltIns: Boolean
-) {
+    configuration: CompilerConfiguration,
+    environment: KotlinCoreEnvironment,
+    private val dependOnOldBuiltIns: Boolean,
+    definedMetadataVersion: BuiltInsBinaryVersion? = null
+) : AbstractMetadataSerializer<CommonAnalysisResult>(configuration, environment, definedMetadataVersion) {
     protected var totalSize = 0
     protected var totalFiles = 0
 
-    fun serialize(environment: KotlinCoreEnvironment) {
-        val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
-
-        val analysisResult = runCommonAnalysisForSerialization(environment, dependOnOldBuiltIns, dependencyContainerFactory = { null })
-            ?: return
-
-        val (moduleDescriptor, bindingContext) = analysisResult
-
-        performanceManager.notifyGenerationStarted()
-        val destDir = checkNotNull(environment.destDir)
-        performSerialization(
-            environment.getSourceFiles(), bindingContext, moduleDescriptor, destDir, environment.project,
-            environment.configuration.languageVersionSettings
-        )
-        performanceManager.notifyGenerationFinished()
+    override fun analyze(): CommonAnalysisResult? {
+        return runCommonAnalysisForSerialization(environment, dependOnOldBuiltIns, dependencyContainerFactory = { null })
     }
 
-    protected open fun performSerialization(
-        files: Collection<KtFile>, bindingContext: BindingContext, module: ModuleDescriptor, destDir: File, project: Project?,
-        languageVersionSettings: LanguageVersionSettings,
-    ) {
+    override fun serialize(analysisResult: CommonAnalysisResult, destDir: File) {
+        val languageVersionSettings = environment.configuration.languageVersionSettings
+        val files = environment.getSourceFiles()
+        val project = environment.project
+        val (module, bindingContext) = analysisResult
+
         val packageTable = hashMapOf<FqName, PackageParts>()
 
         for (file in files) {

@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -31,13 +30,6 @@ internal fun runCommonAnalysisForSerialization(
     dependOnBuiltins: Boolean,
     dependencyContainerFactory: () -> CommonDependenciesContainer?
 ): CommonAnalysisResult? {
-    if (environment.destDir == null) {
-        val configuration = environment.configuration
-        val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        messageCollector.report(CompilerMessageSeverity.ERROR, "Specify destination via -d")
-        return null
-    }
-
     val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
 
     var analysisResultWithHasErrors: AnalysisResultWithHasErrors

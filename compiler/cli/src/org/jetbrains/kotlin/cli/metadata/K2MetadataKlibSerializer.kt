@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.metadata
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.impl.KlibMetadataModuleDescriptorFactoryImpl
-import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -40,30 +38,23 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.utils.keysToMap
 import java.io.File
 
-internal class K2MetadataKlibSerializer(private val metadataVersion: BuiltInsBinaryVersion) {
-    fun serialize(environment: KotlinCoreEnvironment) {
-        val configuration = environment.configuration
-        val performanceManager = configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
-
-        val analysisResult = runCommonAnalysisForSerialization(environment, true, dependencyContainerFactory = {
+internal class K2MetadataKlibSerializer(
+    configuration: CompilerConfiguration,
+    environment: KotlinCoreEnvironment
+) : AbstractMetadataSerializer<CommonAnalysisResult>(configuration, environment) {
+    override fun analyze(): CommonAnalysisResult? {
+        return runCommonAnalysisForSerialization(environment, true, dependencyContainerFactory = {
             KlibMetadataDependencyContainer(
                 configuration,
                 LockBasedStorageManager("K2MetadataKlibSerializer")
             )
-        }) ?: return
-
-        performanceManager.notifyGenerationStarted()
-        val destDir = checkNotNull(environment.destDir)
-        performSerialization(configuration, analysisResult.moduleDescriptor, destDir, environment.project)
-        performanceManager.notifyGenerationFinished()
+        })
     }
 
-    private fun performSerialization(
-        configuration: CompilerConfiguration,
-        module: ModuleDescriptor,
-        destDir: File,
-        project: Project
-    ) {
+    override fun serialize(analysisResult: CommonAnalysisResult, destDir: File) {
+        val project = environment.project
+        val module = analysisResult.moduleDescriptor
+
         val serializedMetadata: SerializedMetadata = KlibMetadataMonolithicSerializer(
             configuration.languageVersionSettings,
             metadataVersion,

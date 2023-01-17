@@ -112,17 +112,13 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
         checkKotlinPackageUsage(environment.configuration, environment.getSourceFiles())
 
         try {
-            val metadataVersion =
-                configuration.get(CommonConfigurationKeys.METADATA_VERSION) as? BuiltInsBinaryVersion ?: BuiltInsBinaryVersion.INSTANCE
-            if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-                FirMetadataSerializer(metadataVersion).serialize(environment, rootDisposable)
-            } else {
-                if (arguments.expectActualLinker) {
-                    K2MetadataKlibSerializer(metadataVersion).serialize(environment)
-                } else {
-                    MetadataSerializer(metadataVersion, true).serialize(environment)
-                }
+            val useFir = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
+            val metadataSerializer = when {
+                useFir -> FirMetadataSerializer(configuration, environment)
+                arguments.expectActualLinker -> K2MetadataKlibSerializer(configuration, environment)
+                else -> MetadataSerializer(configuration, environment, dependOnOldBuiltIns = true)
             }
+            metadataSerializer.analyzeAndSerialize()
         } catch (e: CompilationException) {
             collector.report(EXCEPTION, OutputMessageUtil.renderException(e), MessageUtil.psiElementToMessageLocation(e.element))
             return ExitCode.INTERNAL_ERROR
