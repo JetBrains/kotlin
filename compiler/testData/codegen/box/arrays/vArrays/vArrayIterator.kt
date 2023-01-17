@@ -36,7 +36,7 @@ value class IcStr(val x: String)
 value class IcIntN(val x: Int?)
 
 @JvmInline
-value class IcIcIntN(val x : IcInt?)
+value class IcIcIntN(val x: IcInt?)
 
 fun testBoolVarray() = testArray(VArray(3) { it > 0 }, "falsetruetrue")
 
@@ -54,10 +54,16 @@ fun testFloatVArray() = testArray(VArray(3) { it.toFloat() }, "0.01.02.0")
 
 fun testDoubleVArray() = testArray(VArray(3) { it.toFloat() }, "0.01.02.0")
 
+fun testUByteVArray() = testArray(VArray(3) { it.toUByte() }, "012")
+fun testUShortVArray() = testArray(VArray(3) { it.toUShort() }, "012")
+fun testUIntVArray() = testArray(VArray(3) { it.toUInt() }, "012")
+fun testULongVArray() = testArray(VArray(3) { it.toULong() }, "012")
+
+
 fun testStringVArray() = testArray(VArray(3) { it.toString() }, "012")
 
-fun testIntNVArray() = testArray(VArray(3){if (it > 0) it else null}, "null12")
-fun testStringNVArray() = testArray(VArray(3){if (it > 0) it.toString() else null}, "null12")
+fun testIntNVArray() = testArray(VArray(3) { if (it > 0) it else null }, "null12")
+fun testStringNVArray() = testArray(VArray(3) { if (it > 0) it.toString() else null }, "null12")
 
 fun testIcIntVarray() = testArray(VArray(3) { IcInt(it) }, "IcInt(x=0)IcInt(x=1)IcInt(x=2)")
 
@@ -67,7 +73,8 @@ fun testIcStrVArray() = testArray(VArray(3) { IcStr(it.toString()) }, "IcStr(x=0
 
 fun testIcIntNVArray() = testArray(VArray(3) { IcIntN(if (it > 0) it else null) }, "IcIntN(x=null)IcIntN(x=1)IcIntN(x=2)")
 
-fun testIcIcIntNVArray() = testArray(VArray(3){IcIcIntN(if (it > 0) IcInt(it) else null)}, "IcIcIntN(x=null)IcIcIntN(x=IcInt(x=1))IcIcIntN(x=IcInt(x=2))")
+fun testIcIcIntNVArray() =
+    testArray(VArray(3) { IcIcIntN(if (it > 0) IcInt(it) else null) }, "IcIcIntN(x=null)IcIcIntN(x=IcInt(x=1))IcIcIntN(x=IcInt(x=2))")
 
 fun box(): String {
     if (!testBoolVarray()) return "Fail 1"
@@ -79,16 +86,21 @@ fun box(): String {
     if (!testFloatVArray()) return "Fail 7"
     if (!testDoubleVArray()) return "Fail 8"
 
-    if (!testStringVArray()) return "Fail 9"
+    if (!testUByteVArray()) return "Fail 9"
+    if (!testUShortVArray()) return "Fail 10"
+    if (!testUIntVArray()) return "Fail 11"
+    if (!testULongVArray()) return "Fail 12"
 
-    if (!testIntNVArray()) return "Fail 10"
-    if (!testStringNVArray()) return "Fail 11"
+    if (!testStringVArray()) return "Fail 13"
 
-    if (!testIcIntVarray()) return "Fail 12"
-    if (!testIcIcIntVArray()) return "Fail 13"
-    if (!testIcStrVArray()) return "Fail 14"
-    if (!testIcIntNVArray()) return "Fail 15"
-    if (!testIcIcIntNVArray()) return "Fail 16"
+    if (!testIntNVArray()) return "Fail 14"
+    if (!testStringNVArray()) return "Fail 15"
+
+    if (!testIcIntVarray()) return "Fail 16"
+    if (!testIcIcIntVArray()) return "Fail 17"
+    if (!testIcStrVArray()) return "Fail 18"
+    if (!testIcIntNVArray()) return "Fail 19"
+    if (!testIcIcIntNVArray()) return "Fail 20"
 
     return "OK"
 }
