@@ -41,6 +41,7 @@ dependencies {
     api(kotlinStdlib())
     embedded(project(":kotlinx-metadata"))
     embedded(project(":core:metadata"))
+    embedded(project(":core:metadata.buildSrc"))
     embedded(project(":core:metadata.jvm"))
     embedded(protobufLite())
     testImplementation(project(":kotlin-test:kotlin-test-junit"))

@@ -26,6 +26,7 @@ dependencies {
     embedded(project(":kotlinx-metadata"))
     embedded(project(":core:compiler.common"))
     embedded(project(":core:metadata"))
+    embedded(project(":core:metadata.buildSrc"))
     embedded(project(":core:deserialization"))
     embedded(project(":core:deserialization.common"))
     embedded(project(":compiler:serialization"))

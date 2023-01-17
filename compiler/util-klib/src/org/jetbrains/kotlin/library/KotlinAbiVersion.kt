@@ -26,7 +26,7 @@ fun String.parseKotlinAbiVersion(): KotlinAbiVersion {
     }
 }
 
-// TODO: consider inheriting this class from BinaryVersion (but that requires a module structure refactoring.)
+// TODO: consider inheriting this class from BinaryVersion
 //  Advantages: code reuse.
 //  Disadvantages: BinaryVersion is a problematic class, because it doesn't represent any logical entity in the codebase, it's just a
 //  way to reuse common logic for Kotlin versions. But unfortunately, BinaryVersion is used in a lot of API definitions, which makes
