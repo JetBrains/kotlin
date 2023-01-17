@@ -33640,6 +33640,22 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/vArrays")
+        @TestDataPath("$PROJECT_ROOT")
+        public class VArrays {
+            @Test
+            public void testAllFilesPresentInVArrays() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/vArrays"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("vArraysTypeChecks.kt")
+            public void testVArraysTypeChecks() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/vArrays/vArraysTypeChecks.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/valueClasses")
         @TestDataPath("$PROJECT_ROOT")
         public class ValueClasses {

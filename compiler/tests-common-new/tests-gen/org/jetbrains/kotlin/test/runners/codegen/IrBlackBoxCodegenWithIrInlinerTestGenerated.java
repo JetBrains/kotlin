@@ -1555,6 +1555,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
+            @TestMetadata("vArrayTypeChecks.kt")
+            public void testVArrayTypeChecks() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayTypeChecks.kt");
+            }
+
+            @Test
             @TestMetadata("varargParameterOfInlineType.kt")
             public void testVarargParameterOfInlineType() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/vArrays/varargParameterOfInlineType.kt");

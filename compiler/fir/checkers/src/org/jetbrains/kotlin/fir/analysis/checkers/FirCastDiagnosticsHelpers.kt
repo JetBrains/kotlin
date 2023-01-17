@@ -146,6 +146,13 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     // NOTE: this does not account for 'as Array<List<T>>'
     if (subtype.allParameterReified()) return false
 
+    if (subtype.isVArray) {
+        val argument = subtype.typeArguments.singleOrNull() ?: return false
+        if (argument.kind == ProjectionKind.INVARIANT && (argument.type?.isPrimitive == true) || (argument.type?.isUnsignedType == true)) {
+            return false
+        }
+    }
+
     val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype, context)
 
     // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
