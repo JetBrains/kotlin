@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.*
@@ -78,7 +79,7 @@ internal fun serializablePropertiesForIrBackend(
 
     val (primaryCtorSerializableProps, bodySerializableProps) = properties
         .asSequence()
-        .filter { !it.isFakeOverride && !it.isDelegated }
+        .filter { !it.isFakeOverride && !it.isDelegated && it.origin != IrDeclarationOrigin.DELEGATED_MEMBER }
         .filter(::isPropSerializable)
         .map {
             val isConstructorParameterWithDefault = primaryParamsAsProps[it] ?: false
