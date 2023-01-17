@@ -3090,6 +3090,9 @@ public final class kotlin/coroutines/intrinsics/IntrinsicsKt {
 	public static final fun createCoroutineUnintercepted (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
 	public static final fun getCOROUTINE_SUSPENDED ()Ljava/lang/Object;
 	public static final fun intercepted (Lkotlin/coroutines/Continuation;)Lkotlin/coroutines/Continuation;
+	public static final fun wrapWithContinuationImpl (Lkotlin/jvm/functions/Function1;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun wrapWithContinuationImpl (Lkotlin/jvm/functions/Function2;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static final fun wrapWithContinuationImpl (Lkotlin/jvm/functions/Function3;Ljava/lang/Object;Ljava/lang/Object;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
 
 public final class kotlin/coroutines/jvm/internal/Boxing {

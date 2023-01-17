@@ -24,7 +24,7 @@ import kotlin.internal.InlineOnly
 @InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
-): Any? = this.asDynamic()(completion, false)
+): Any? = this.asDynamic()(if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion, false)
 
 /**
  * Starts an unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
@@ -43,14 +43,18 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     completion: Continuation<T>
-): Any? = this.asDynamic()(receiver, completion, false)
+): Any? = this.asDynamic()(
+    receiver, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion, false
+)
 
 @InlineOnly
 internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? = this.asDynamic()(receiver, param, completion, false)
+): Any? = this.asDynamic()(
+    receiver, param, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion, false
+)
 
 /**
  * Creates unintercepted coroutine without receiver and with result type [T].
@@ -147,5 +151,15 @@ private inline fun <T> createCoroutineFromSuspendFunction(
             exception?.let { throw it }
             return block()
         }
+    }
+}
+
+@PublishedApi
+internal fun <T> createSimpleCoroutineFromSuspendFunction(
+    completion: Continuation<T>
+): CoroutineImpl = object : CoroutineImpl(completion as Continuation<Any?>) {
+    override fun doResume(): Any? {
+        if (exception != null) throw exception as Throwable
+        return result
     }
 }

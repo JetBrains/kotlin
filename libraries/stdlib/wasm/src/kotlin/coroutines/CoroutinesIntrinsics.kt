@@ -24,7 +24,9 @@ import kotlin.wasm.internal.*
 @kotlin.internal.InlineOnly
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(this, completion)
+): Any? = startCoroutineUninterceptedOrReturnIntrinsic0(
+    this, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+)
 
 /**
  * Starts an unintercepted coroutine with receiver type [R] and result type [T] and executes it until its first suspension.
@@ -43,7 +45,9 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
 public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedOrReturn(
     receiver: R,
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic1(this, receiver, completion)
+): Any? = startCoroutineUninterceptedOrReturnIntrinsic1(
+    this, receiver, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+)
 
 @Suppress("UNCHECKED_CAST")
 @kotlin.internal.InlineOnly
@@ -51,7 +55,9 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
     receiver: R,
     param: P,
     completion: Continuation<T>
-): Any? = startCoroutineUninterceptedOrReturnIntrinsic2(this, receiver, param, completion)
+): Any? = startCoroutineUninterceptedOrReturnIntrinsic2(
+    this, receiver, param, if (this !is CoroutineImpl) createSimpleCoroutineFromSuspendFunction(completion) else completion
+)
 
 /**
  * Creates unintercepted coroutine without receiver and with result type [T].
@@ -136,5 +142,15 @@ private inline fun <T> createCoroutineFromSuspendFunction(
             exception?.let { throw it }
             return block()
         }
+    }
+}
+
+@PublishedApi
+internal fun <T> createSimpleCoroutineFromSuspendFunction(
+    completion: Continuation<T>
+): CoroutineImpl = object : CoroutineImpl(completion as Continuation<Any?>) {
+    override fun doResume(): Any? {
+        if (exception != null) throw exception as Throwable
+        return result
     }
 }

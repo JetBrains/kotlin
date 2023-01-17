@@ -9255,6 +9255,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("releaseIntercepted.kt")
+            public void testReleaseIntercepted() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/releaseIntercepted.kt");
+            }
+
+            @Test
             @TestMetadata("resultExceptionOrNullInLambda.kt")
             public void testResultExceptionOrNullInLambda() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/intrinsicSemantics/resultExceptionOrNullInLambda.kt");

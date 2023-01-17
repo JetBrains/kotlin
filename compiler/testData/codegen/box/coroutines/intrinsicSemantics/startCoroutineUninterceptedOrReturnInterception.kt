@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// IGNORE_BACKEND: NATIVE
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
@@ -19,7 +20,7 @@ suspend fun suspendWithException(): String = suspendCoroutine { x ->
     }
 }
 
-fun builder(shouldSuspend: Boolean, expectedCount: Int, c: suspend () -> String): String {
+fun builder(testNum: Int, shouldSuspend: Boolean, expectedCount: Int, c: suspend () -> String): String {
     callback = {}
     var fromSuspension: String? = null
     var counter = 0
@@ -43,15 +44,15 @@ fun builder(shouldSuspend: Boolean, expectedCount: Int, c: suspend () -> String)
 
     callback()
 
-    if (counter != expectedCount) throw RuntimeException("fail 0")
+    if (counter != expectedCount) throw RuntimeException("fail 0 $testNum $counter != $expectedCount")
 
     if (shouldSuspend) {
-        if (result !== COROUTINE_SUSPENDED) throw RuntimeException("fail 1")
-        if (fromSuspension == null) throw RuntimeException("fail 2")
+        if (result !== COROUTINE_SUSPENDED) throw RuntimeException("fail 1 $testNum $result")
+        if (fromSuspension == null) throw RuntimeException("fail 2 $testNum")
         return fromSuspension!!
     }
 
-    if (result === COROUTINE_SUSPENDED) throw RuntimeException("fail 3")
+    if (result === COROUTINE_SUSPENDED) throw RuntimeException("fail 3 $testNum")
     return result as String
 }
 
@@ -77,11 +78,16 @@ private class DispatchedContinuation<T>(
 }
 
 fun box(): String {
-    if (builder(false, 0) { "OK" } != "OK") return "fail 4"
-    if (builder(true, 1) { suspendHere() } != "OK") return "fail 5"
+    if (builder(0, false, 0) { "OK" } != "OK") return "fail 4"
+    if (builder(1, true, 1) { suspendHere() } != "OK") return "fail 5"
+    if (builder(2, true, 1) { suspend{}(); suspendHere() } != "OK") return "fail 51"
 
-    if (builder(false, 0) { throw RuntimeException("OK") } != "Exception: OK") return "fail 6"
-    if (builder(true, 1) { suspendWithException() } != "Exception: OK") return "fail 7"
+    if (builder(3, false, 0) { throw RuntimeException("OK") } != "Exception: OK") return "fail 6"
+    if (builder(4, true, 1) { suspendWithException() } != "Exception: OK") return "fail 7"
+    if (builder(5, true, 1) { suspend{}(); suspendWithException() } != "Exception: OK") return "fail 71"
+
+    if (builder(6, true, 1, ::suspendHere) != "OK") return "fail 8"
+    if (builder(7, true, 1, ::suspendWithException) != "Exception: OK") return "fail 9"
 
     return "OK"
 }
