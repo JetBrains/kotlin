@@ -7,9 +7,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
-import org.gradle.api.model.ObjectFactory
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
@@ -154,6 +155,15 @@ data class KotlinWebpackConfig(
                 var warnings: Boolean
             ) : Serializable
         }
+
+        data class App(
+            var browser: Browser
+        ) : Serializable {
+            data class Browser(
+                var name: String,
+                var args: List<String>
+            ) : Serializable
+        }
     }
 
     fun save(configFile: File) {
@@ -216,7 +226,40 @@ data class KotlinWebpackConfig(
         if (devServer == null) return
 
         appendLine("// dev server")
-        appendLine("config.devServer = ${json(devServer!!)};")
+
+        if (devServer!!.open !is DevServer.App) {
+            appendLine("config.devServer = ${json(devServer!!)};")
+        } else {
+            val open = devServer!!.open as DevServer.App
+
+            val jsonO = Gson().toJsonTree(devServer!!).asJsonObject
+
+            jsonO.add(
+                "open",
+                JsonObject().apply {
+                    add(
+                        "app",
+                        JsonObject().apply {
+                            addProperty("name", "${"$"}browserName${"$"}")
+                            add("arguments", Gson().toJsonTree(open.browser.args).asJsonArray)
+                        }
+                    )
+                }
+            )
+
+            //language=ES6
+            appendLine(
+                """
+                // noinspection JSUnnecessarySemicolon
+                ;(function(config) {
+                    const apps = require('kotlin-test-js-runner/detect-correct-browser');
+                    const browserName = apps[${open.browser.name.jsQuoted()}]
+                    config.devServer = ${json(jsonO).replace("\"${"$"}browserName${"$"}\"", "browserName.bin")}
+                })(config);
+            """.trimIndent()
+            )
+        }
+
         appendLine()
     }
 

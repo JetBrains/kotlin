@@ -11,9 +11,11 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
+import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
@@ -128,11 +130,30 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     )()
                     task.description = "start ${mode.name.toLowerCaseAsciiOnly()} webpack dev server"
 
+                    val openValue = if (compilation.platformType == KotlinPlatformType.wasm) {
+                        KotlinWebpackConfig.DevServer.App(
+                            KotlinWebpackConfig.DevServer.App.Browser(
+                                "chrome canary",
+                                listOf(
+                                    "--js-flags=" +
+                                            mutableListOf<String>()
+                                                .apply { addWasmExperimentalArguments() }
+                                                .joinToString(" ")
+                                )
+                            ),
+                        )
+                    } else {
+                        true
+                    }
+
                     webpackMajorVersion.choose(
                         {
                             task.devServer = KotlinWebpackConfig.DevServer(
-                                open = true,
-                                static = mutableListOf(compilation.output.resourcesDir.canonicalPath),
+                                open = openValue,
+                                static = mutableListOf(
+                                    "./kotlin",
+                                    compilation.output.resourcesDir.canonicalPath,
+                                ),
                                 client = KotlinWebpackConfig.DevServer.Client(
                                     KotlinWebpackConfig.DevServer.Client.Overlay(
                                         errors = true,

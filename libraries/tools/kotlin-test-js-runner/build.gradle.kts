@@ -50,6 +50,7 @@ tasks {
             "tc-log-appender.js",
             "tc-log-error-webpack.js",
             "webpack-5-debug.js",
+            "detect-correct-browser.js",
             "package.json",
             "rollup.config.js",
             "tsconfig.json",
@@ -76,6 +77,7 @@ tasks {
 val jar by tasks.creating(Jar::class) {
     dependsOn(tasks.named("yarnBuild"))
     from(projectDir.resolve("lib"))
+    from(projectDir.resolve("package.json"))
 }
 
 artifacts {
