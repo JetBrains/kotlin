@@ -19,8 +19,6 @@ external interface JsResult {
     val copy01: String
     val copy10: String
     val copy11: String
-    val component1: Int
-    val component2: Int
 }
 
 @JsModule("lib")
@@ -40,15 +38,6 @@ fun box(): String {
     if (res.copy11 != "[13::11]") {
         return "Fail4: ${res.copy11}"
     }
-    if (res.component1 != 3) {
-        return "Fail5: ${res.component1}"
-    }
-    if (res.component2 != 7) {
-        return "Fail6: ${res.component2}"
-    }
-
-
-
 
     return "OK"
 }

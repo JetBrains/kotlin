@@ -21,3 +21,11 @@ data class KT39423(
     val a: String,
     val b: Int? = null
 )
+
+@JsExport
+abstract class WithComponent1 {
+    abstract fun component1(): String
+}
+
+@JsExport
+data class Test2(val value1: String, val value2: String): WithComponent1()

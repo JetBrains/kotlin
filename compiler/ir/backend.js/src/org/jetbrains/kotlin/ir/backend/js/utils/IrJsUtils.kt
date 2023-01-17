@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -23,6 +24,8 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isEnumClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.FqName
 
@@ -70,6 +73,11 @@ val IrFunctionAccessExpression.typeArguments: List<IrType?>
 
 val IrFunctionAccessExpression.valueArguments: List<IrExpression?>
     get() = List(valueArgumentsCount) { getValueArgument(it) }
+val IrClass.isInstantiableEnum: Boolean
+    get() = isEnumClass && !isExpect && !isEffectivelyExternal()
+
+val IrDeclaration.parentEnumClassOrNull: IrClass?
+    get() = parents.filterIsInstance<IrClass>().firstOrNull { it.isInstantiableEnum }
 
 // TODO: the code is written to pass Repl tests, so we should understand. why in Repl tests we don't have backingField
 fun JsIrBackendContext.getVoid(): IrExpression =

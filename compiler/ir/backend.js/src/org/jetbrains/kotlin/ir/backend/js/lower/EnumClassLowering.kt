@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.isInstantiableEnum
+import org.jetbrains.kotlin.ir.backend.js.utils.parentEnumClassOrNull
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -58,26 +60,6 @@ private fun createEntryAccessorName(enumName: String, enumEntry: IrEnumEntry) =
     "${enumName}_${enumEntry.name.identifier}_getInstance"
 
 private fun IrEnumEntry.getType(irClass: IrClass) = (correspondingClass ?: irClass).defaultType
-
-class EnumClassPreventExportOfNonExportedMembersLowering(val context: JsIrBackendContext) : DeclarationTransformer {
-    override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration !is IrSimpleFunction || declaration.parentEnumClassOrNull?.isExported(context) != true) return null
-
-        val syntheticGetterBody = declaration.body as? IrSyntheticBody ?: return null
-
-        if (syntheticGetterBody.kind == IrSyntheticBodyKind.ENUM_ENTRIES) {
-            declaration.correspondingPropertySymbol?.owner?.let {
-                it.annotations += generateJsExportIgnoreCall()
-            }
-        }
-
-        return null
-    }
-
-    private fun generateJsExportIgnoreCall(): IrConstructorCall {
-        return JsIrBuilder.buildConstructorCall(context.intrinsics.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol)
-    }
-}
 
 // Should be applied recursively
 class EnumClassConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
@@ -476,12 +458,6 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
             }
         }
 }
-
-private val IrClass.isInstantiableEnum: Boolean
-    get() = isEnumClass && !isExpect && !isEffectivelyExternal()
-
-private val IrDeclaration.parentEnumClassOrNull: IrClass?
-    get() = parents.filterIsInstance<IrClass>().firstOrNull { it.isInstantiableEnum }
 
 private const val ENTRIES_FIELD_NAME = "\$ENTRIES"
 

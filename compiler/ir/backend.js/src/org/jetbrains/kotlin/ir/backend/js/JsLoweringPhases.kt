@@ -135,6 +135,12 @@ private val validateIrAfterLowering = makeCustomJsModulePhase(
     description = "Validate IR after lowering"
 ).toModuleLowering()
 
+private val preventExportOfSyntheticDeclarationsLowering = makeDeclarationTransformerPhase(
+    ::ExcludeSyntheticDeclarationsFromExportLowering,
+    name = "ExcludeSyntheticDeclarationsFromExportLowering",
+    description = "Exclude synthetic declarations which we don't want to export such as `Enum.entries` or `DataClass::componentN`",
+)
+
 val scriptRemoveReceiverLowering = makeJsModulePhase(
     ::ScriptRemoveReceiverLowering,
     name = "ScriptRemoveReceiver",
@@ -358,12 +364,6 @@ private val enumEntryCreateGetInstancesFunsLoweringPhase = makeDeclarationTransf
     prerequisite = setOf(enumClassConstructorLoweringPhase)
 )
 
-private val enumClassPreventExportOfNonExportedMembersLowering = makeDeclarationTransformerPhase(
-    ::EnumClassPreventExportOfNonExportedMembersLowering,
-    name = "EnumClassPreventExportOfNonExportedMembersLowering",
-    description = "Exclude non-exportable enum members such as `Enum.entries`",
-)
-
 private val enumSyntheticFunsLoweringPhase = makeDeclarationTransformerPhase(
     { EnumSyntheticFunctionsAndPropertiesLowering(it, supportRawFunctionReference = true) },
     name = "EnumSyntheticFunctionsAndPropertiesLowering",
@@ -372,7 +372,6 @@ private val enumSyntheticFunsLoweringPhase = makeDeclarationTransformerPhase(
         enumClassConstructorLoweringPhase,
         enumClassCreateInitializerLoweringPhase,
         enumEntryCreateGetInstancesFunsLoweringPhase,
-        enumClassPreventExportOfNonExportedMembersLowering
     )
 )
 
@@ -847,6 +846,7 @@ private val jsSuspendArityStorePhase = makeDeclarationTransformerPhase(
 val loweringList = listOf<Lowering>(
     scriptRemoveReceiverLowering,
     validateIrBeforeLowering,
+    preventExportOfSyntheticDeclarationsLowering,
     inventNamesForLocalClassesPhase,
     annotationInstantiationLowering,
     expectDeclarationsRemovingPhase,
@@ -894,7 +894,6 @@ val loweringList = listOf<Lowering>(
     enumEntryInstancesBodyLoweringPhase,
     enumClassCreateInitializerLoweringPhase,
     enumEntryCreateGetInstancesFunsLoweringPhase,
-    enumClassPreventExportOfNonExportedMembersLowering,
     enumSyntheticFunsLoweringPhase,
     enumUsageLoweringPhase,
     externalEnumUsageLoweringPhase,
