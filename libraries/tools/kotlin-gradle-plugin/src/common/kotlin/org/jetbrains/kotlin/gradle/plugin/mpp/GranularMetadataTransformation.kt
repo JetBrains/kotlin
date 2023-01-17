@@ -9,11 +9,14 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.component.*
 import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
+import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -105,6 +108,8 @@ internal class GranularMetadataTransformation(
     val params: Params,
     visibleSourceSetsFromParentsProvider: () -> Iterable<Map<ComponentIdentifierKey, Set<String>>>
 ) {
+    private val logger = Logging.getLogger("GranularMetadataTransformation[${params.sourceSetName}]")
+
     class Params(
         val sourceSetName: String,
         val resolvedMetadataConfiguration: LazyResolvedConfiguration,
@@ -167,10 +172,12 @@ internal class GranularMetadataTransformation(
                 continue
             }
 
+            logger.debug("Transform dependency: $resolvedDependency")
             val dependencyResult = processDependency(
                 resolvedDependency,
                 visibleSourceSetsFromParents[componentId.uniqueKey].orEmpty()
             )
+            logger.debug("Transformation result of dependency $resolvedDependency: $dependencyResult")
 
             result.add(dependencyResult)
 
@@ -226,9 +233,13 @@ internal class GranularMetadataTransformation(
             .resolvedMetadataConfiguration
             .dependencyArtifacts(dependency)
             .singleOrNull()
+            // Make sure that resolved metadata artifact is actually Multiplatform one
+            ?.takeIf { it.variant.attributes.containsMultiplatformAttributes }
             // expected only ony Composite Metadata Klib, but if dependency got resolved into platform variant
             // when source set is a leaf then we might get multiple artifacts in such case we must return KeepOriginal
             ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
+
+        logger.debug("Transform composite metadata artifact: '${compositeMetadataArtifact.file}'")
 
         val mppDependencyMetadataExtractor = params.projectStructureMetadataExtractorFactory.create(compositeMetadataArtifact)
 
@@ -356,3 +367,6 @@ private val KotlinMultiplatformExtension.platformCompilationSourceSets: Set<Stri
         .toSet()
 
 internal val GranularMetadataTransformation?.metadataDependencyResolutionsOrEmpty get() = this?.metadataDependencyResolutions ?: emptyList()
+
+internal val AttributeContainer.containsMultiplatformAttributes: Boolean get() =
+    keySet().any { it.name == KotlinPlatformType.attribute.name }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
-import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
@@ -367,9 +366,6 @@ class KotlinMetadataTargetConfigurator :
     }
 
     private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.containsMultiplatformAttributes
-
-    private val AttributeContainer.containsMultiplatformAttributes: Boolean get() =
-        keySet().any { it.name == KotlinPlatformType.attribute.name }
 
     private val KotlinSourceSet.dependsOnClassesDirs: FileCollection get() = project.filesProvider {
         internal.dependsOnClosure.mapNotNull { hierarchySourceSet ->
