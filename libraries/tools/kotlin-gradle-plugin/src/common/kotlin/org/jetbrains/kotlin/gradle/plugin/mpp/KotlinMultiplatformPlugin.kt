@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.locateOrRegisterIdeResolveDependenciesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companion.sourceSetFreeCompilerArgsPropertyName
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.addBuildListenerForXcode
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.checkAndReportDeprecatedMppProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.checkAndReportDeprecatedNativeTargets
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.handleHierarchicalStructureFlagsMigration
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
@@ -49,6 +50,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         checkGradleCompatibility("the Kotlin Multiplatform plugin", GradleVersion.version("6.0"))
 
+        checkAndReportDeprecatedMppProperties(project)
         handleHierarchicalStructureFlagsMigration(project)
         checkAndReportDeprecatedNativeTargets(project)
 
