@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
@@ -199,8 +200,10 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         .apply { set(outputDirectory.resolve("${sourceSet.name}.transformedCinteropLibraries")) }
 
     @get:Internal
-    val outputLibraryFiles: Provider<Set<File>> get() = outputLibrariesFileIndex.map { file ->
-        TransformedCinteropLibrariesFile(file.asFile).read()
+    val outputLibraryFiles: FileCollection = project.filesProvider {
+        outputLibrariesFileIndex.map { file ->
+            TransformedCinteropLibrariesFile(file.asFile).read()
+        }
     }
 
     @TaskAction
@@ -213,11 +216,6 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         chooseVisibleSourceSets.forEach(::materializeMetadata)
         val transformedLibraries = outputLibraryFilesDiscovery.resolveOutputLibraryFiles(outputDirectory, chooseVisibleSourceSets)
         TransformedCinteropLibrariesFile(outputLibrariesFileIndex.get().asFile).write(transformedLibraries)
-    }
-
-    private fun writeTransformedLibraries(files: Set<File>) {
-        val content = files.joinToString("\n")
-        outputLibrariesFileIndex.get().asFile.writeText(content)
     }
 
     private fun materializeMetadata(
@@ -250,7 +248,7 @@ private class TransformedCinteropLibrariesFile(
     fun read(): Set<File> = indexFile.readLines().mapTo(mutableSetOf()) { File(it) }
 
     fun write(files: Iterable<File>) {
-        val content = files.joinToString("\n")
+        val content = files.joinToString(System.lineSeparator())
         indexFile.writeText(content)
     }
 }

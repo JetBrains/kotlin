@@ -106,7 +106,7 @@ internal fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetName, Sourc
 }
 
 private fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Map<KotlinSourceSet, FileCollection> {
-    val commonTarget = targets.withType<KotlinMetadataTarget>().singleOrNull() ?: return emptyMap()
+    val commonTarget = metadata()
 
     val compilations = commonTarget.compilations
 

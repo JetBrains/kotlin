@@ -13,12 +13,12 @@ import org.gradle.api.artifacts.result.ResolvedComponentResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.addExtension
-import org.jetbrains.kotlin.gradle.plugin.findExtension
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
+import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 
-class MppDependencyProjectStructureMetadataExtractorFactory(
+internal class MppDependencyProjectStructureMetadataExtractorFactory(
     private val projectStructureMetadataByProjectPath: Map<String, Provider<KotlinProjectStructureMetadata?>>
 ) {
     fun create(
@@ -41,19 +41,14 @@ class MppDependencyProjectStructureMetadataExtractorFactory(
 
     companion object {
         private val extensionName = MppDependencyProjectStructureMetadataExtractorFactory::class.java.simpleName
-        fun getOrCreate(project: Project): MppDependencyProjectStructureMetadataExtractorFactory {
-            val existing = project.findExtension<MppDependencyProjectStructureMetadataExtractorFactory>(extensionName)
-            if (existing != null) return existing
-
-            val projectStructureMetadataByProjectPath = collectProjectStructureMetadataFromAllProjects(project)
-            val newFactory = MppDependencyProjectStructureMetadataExtractorFactory(projectStructureMetadataByProjectPath)
-            project.addExtension(extensionName, newFactory)
-            return newFactory
-        }
+        fun getOrCreate(project: Project): MppDependencyProjectStructureMetadataExtractorFactory =
+            project.extraProperties.getOrPut(extensionName) {
+                val projectStructureMetadataByProjectPath = collectProjectStructureMetadataFromAllProjects(project)
+                MppDependencyProjectStructureMetadataExtractorFactory(projectStructureMetadataByProjectPath)
+            }
 
         /**
-         * Collect Kotlin Project StructureMetadata only for TCS model.
-         * TODO: Add support for KPM and auxiliary modules
+         * Collect Kotlin Project StructureMetadata.
          */
         private fun collectProjectStructureMetadataFromAllProjects(project: Project): Map<String, Provider<KotlinProjectStructureMetadata?>> {
             return project.rootProject.allprojects.associateBy { it.path }.mapValues { (_, subProject) ->

@@ -39,7 +39,7 @@ private fun Project.collectAllPlatformCompilationData(): List<SourceSetVisibilit
 }
 
 private fun KotlinCompilation<*>.toPlatformCompilationData() = SourceSetVisibilityProvider.PlatformCompilationData(
-    sourceSets = allKotlinSourceSets.map { it.name }.toSet(),
+    allSourceSets = allKotlinSourceSets.map { it.name }.toSet(),
     resolvedDependenciesConfiguration = LazyResolvedConfiguration(project.configurations.getByName(compileDependencyConfigurationName)),
     hostSpecificMetadataConfiguration = project
         .configurations
@@ -56,7 +56,7 @@ internal class SourceSetVisibilityProvider(
     )
 
     class PlatformCompilationData(
-        val sourceSets: Set<KotlinSourceSetName>,
+        val allSourceSets: Set<KotlinSourceSetName>,
         val resolvedDependenciesConfiguration: LazyResolvedConfiguration,
         val hostSpecificMetadataConfiguration: LazyResolvedConfiguration?
     )
@@ -86,7 +86,7 @@ internal class SourceSetVisibilityProvider(
 
         val visiblePlatformVariantNames: Set<String?> =
             platformCompilations
-                .filter { visibleFromSourceSet in it.sourceSets }
+                .filter { visibleFromSourceSet in it.allSourceSets }
                 .mapTo(mutableSetOf()) { resolvedConfiguration ->
                     val resolvedVariant = resolvedConfiguration
                         .resolvedDependenciesConfiguration
