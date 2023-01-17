@@ -198,7 +198,7 @@ class SubpuginsIT : KGPBaseTest() {
 
     @DisplayName("KT-51378: Using 'kotlin-dsl' with latest plugin version in buildSrc module")
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_6_8 // Gradle usage of sam-with-receivers subplugin was added in this version
+        minVersion = TestVersions.Gradle.G_7_0 // Kotlin compiler 1.9 throws error on 1.3 language level (Gradle 6)
     )
     @GradleTest
     fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion) {
