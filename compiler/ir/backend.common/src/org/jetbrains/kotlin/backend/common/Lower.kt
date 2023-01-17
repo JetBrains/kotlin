@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 interface FileLoweringPass {
     fun lower(irFile: IrFile)
@@ -75,6 +76,8 @@ fun FileLoweringPass.lower(
         lower(it)
     } catch (e: CompilationException) {
         e.file = it
+        throw e
+    } catch (e: KotlinExceptionWithAttachments) {
         throw e
     } catch (e: Throwable) {
         throw e.wrapWithCompilationException(
