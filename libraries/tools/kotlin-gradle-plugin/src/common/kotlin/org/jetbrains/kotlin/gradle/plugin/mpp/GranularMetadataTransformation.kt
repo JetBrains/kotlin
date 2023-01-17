@@ -299,20 +299,19 @@ internal class GranularMetadataTransformation(
         )
     }
 
+    /**
+     * Behaves as [ModuleIds.fromComponent]
+     */
     private fun ResolvedDependencyResult.toModuleDependencyIdentifier(): ModuleDependencyIdentifier {
-        return when(val componentId = selected.id) {
+        val component = selected
+        return when(val componentId = component.id) {
             is ModuleComponentIdentifier -> ModuleDependencyIdentifier(componentId.group, componentId.module)
             is ProjectComponentIdentifier -> {
                 if (componentId.build.isCurrentBuild) {
                     params.projectData[componentId.projectPath]?.moduleId?.get()
                         ?: error("Cant find project Module ID by ${componentId.projectPath}")
                 } else {
-                    when (val requestedModule = requested) {
-                        is ProjectComponentSelector -> params.projectData[requestedModule.projectPath]?.moduleId?.get()
-                            ?: error("Cant find project Module ID by ${requestedModule.projectPath}")
-                        is ModuleComponentSelector -> ModuleDependencyIdentifier(requestedModule.group, requestedModule.module)
-                        else -> error("Unknown ComponentSelector: '$requestedModule'")
-                    }
+                    ModuleDependencyIdentifier(component.moduleVersion?.group ?: "unspecified", component.moduleVersion?.name ?: "unspecified")
                 }
             }
 
