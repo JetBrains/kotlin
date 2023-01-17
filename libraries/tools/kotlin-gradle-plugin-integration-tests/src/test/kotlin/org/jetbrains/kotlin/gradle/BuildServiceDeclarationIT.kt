@@ -17,6 +17,7 @@ import org.junit.jupiter.api.DisplayName
 class BuildServiceDeclarationIT : KGPBaseTest() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(
         warningMode = WarningMode.All // we currently have other warnings when `STABLE_CONFIGURATION_CACHE` is enabled unrelated to build services declaration, so we check for this kind of warnings in the build output
+        // see KT-55563 and KT-55740
     )
 
     @DisplayName("Build services are registered for Kotlin/JVM projects")
