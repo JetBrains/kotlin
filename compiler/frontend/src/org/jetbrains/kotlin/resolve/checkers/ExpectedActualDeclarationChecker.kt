@@ -181,14 +181,13 @@ class ExpectedActualDeclarationChecker(
         }
 
         // Here we have exactly one compatible actual and/or some weakly incompatible. In either case, we don't report anything on expect...
-        val actualMembers = actuals.filter { it.key.isCompatibleOrWeakCompatible() }.flatMap { it.value }
+        val actualMembers = actuals.asSequence()
+            .filter { it.key.isCompatibleOrWeakCompatible() }.flatMap { it.value.asSequence() }
 
         // ...except diagnostics regarding missing actual keyword, because in that case we won't start looking for the actual at all
         if (checkActualModifier) {
             actualMembers.forEach { reportMissingActualModifier(it, reportOn = null, trace) }
         }
-
-        reportExpectAndActualInTheSameModule(reportOn, actualMembers, trace)
 
         expectActualTracker.reportExpectActual(expected = expectDescriptor, actualMembers = actualMembers)
     }
@@ -196,28 +195,10 @@ class ExpectedActualDeclarationChecker(
     private fun reportMissingActualModifier(actual: MemberDescriptor, reportOn: KtNamedDeclaration?, trace: BindingTrace) {
         if (actual.isActual) return
         @Suppress("NAME_SHADOWING")
-        val reportOn = reportOn ?: actual.declarationSource ?: return
+        val reportOn = reportOn ?: (actual.source as? KotlinSourceElement)?.psi as? KtNamedDeclaration ?: return
 
         if (requireActualModifier(actual)) {
             trace.report(Errors.ACTUAL_MISSING.on(reportOn))
-        }
-    }
-
-    private val MemberDescriptor.declarationSource: KtNamedDeclaration?
-        get() = (this.source as? KotlinSourceElement)?.psi as? KtNamedDeclaration
-
-    private fun reportExpectAndActualInTheSameModule(
-        expectSource: KtNamedDeclaration,
-        actualMembers: List<MemberDescriptor>,
-        trace: BindingTrace
-    ) {
-        if (expectSource.containingKtFile.isCommonSource == true) return
-        val actualMembersWithModifier = actualMembers.filter { it.isActual }
-        if (actualMembersWithModifier.isEmpty()) return
-        trace.report(Errors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE.on(expectSource))
-        for (actual in actualMembersWithModifier) {
-            val actualSource = actual.declarationSource ?: continue
-            trace.report(Errors.EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE.on(actualSource))
         }
     }
 
@@ -230,7 +211,7 @@ class ExpectedActualDeclarationChecker(
         }
     }
 
-    private fun ExpectActualTracker.reportExpectActual(expected: MemberDescriptor, actualMembers: List<MemberDescriptor>) {
+    private fun ExpectActualTracker.reportExpectActual(expected: MemberDescriptor, actualMembers: Sequence<MemberDescriptor>) {
         if (this is ExpectActualTracker.DoNothing) return
 
         val expectedFile = sourceFile(expected) ?: return
