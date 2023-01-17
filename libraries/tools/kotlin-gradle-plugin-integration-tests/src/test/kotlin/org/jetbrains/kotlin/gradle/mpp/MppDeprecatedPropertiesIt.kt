@@ -25,8 +25,10 @@ class MppDeprecatedPropertiesIt : KGPBaseTest() {
                     separator = System.lineSeparator(),
                 ) { (prop, value) -> "$prop=$value" }
             )
-
             checkDeprecations(isDeprecationExpected = true)
+
+            this.gradleProperties.appendText("kotlin.mpp.deprecatedProperties.nowarn=true${System.lineSeparator()}")
+            checkDeprecations(isDeprecationExpected = false)
         }
     }
 
