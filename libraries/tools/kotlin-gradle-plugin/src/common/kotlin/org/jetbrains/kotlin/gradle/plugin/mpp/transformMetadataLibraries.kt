@@ -27,7 +27,7 @@ internal fun Project.transformMetadataLibrariesForIde(
         }
 
         is ArtifactMetadataProvider -> transformMetadataLibrariesForIde(
-            kotlinTransformedMetadataLibraryDirectoryForIde, resolution, metadataProvider
+            layout.kotlinTransformedMetadataLibraryDirectoryForIde, resolution, metadataProvider
         )
     }
 }
