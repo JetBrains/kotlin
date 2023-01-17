@@ -477,9 +477,9 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithError.args");
         }
 
-        @TestMetadata("firMultiplatformCompilationWithLightTreeWithoutErrors.args")
-        public void testFirMultiplatformCompilationWithLightTreeWithoutErrors() throws Exception {
-            runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithLightTreeWithoutErrors.args");
+        @TestMetadata("firMultiplatformCompilationWithPsiWithoutErrors.args")
+        public void testFirMultiplatformCompilationWithPsiWithoutErrors() throws Exception {
+            runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithPsiWithoutErrors.args");
         }
 
         @TestMetadata("firMultiplatformCompilationWithoutErrors.args")
@@ -1481,9 +1481,9 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/anonymousObjectType.args");
         }
 
-        @TestMetadata("fir.args")
-        public void testFir() throws Exception {
-            runTest("compiler/testData/cli/metadata/fir.args");
+        @TestMetadata("anonymousObjectTypeWithFir.args")
+        public void testAnonymousObjectTypeWithFir() throws Exception {
+            runTest("compiler/testData/cli/metadata/anonymousObjectTypeWithFir.args");
         }
 
         @TestMetadata("inheritorOfExpectSealedClass.args")
@@ -1491,9 +1491,19 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/inheritorOfExpectSealedClass.args");
         }
 
+        @TestMetadata("inheritorOfExpectSealedClassWithFir.args")
+        public void testInheritorOfExpectSealedClassWithFir() throws Exception {
+            runTest("compiler/testData/cli/metadata/inheritorOfExpectSealedClassWithFir.args");
+        }
+
         @TestMetadata("kotlinPackage.args")
         public void testKotlinPackage() throws Exception {
             runTest("compiler/testData/cli/metadata/kotlinPackage.args");
+        }
+
+        @TestMetadata("kotlinPackageWithFir.args")
+        public void testKotlinPackageWithFir() throws Exception {
+            runTest("compiler/testData/cli/metadata/kotlinPackageWithFir.args");
         }
 
         @TestMetadata("moduleName.args")
@@ -1501,9 +1511,19 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/moduleName.args");
         }
 
+        @TestMetadata("moduleNameWithFir.args")
+        public void testModuleNameWithFir() throws Exception {
+            runTest("compiler/testData/cli/metadata/moduleNameWithFir.args");
+        }
+
         @TestMetadata("optionalExpectationUsage.args")
         public void testOptionalExpectationUsage() throws Exception {
             runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");
+        }
+
+        @TestMetadata("optionalExpectationUsageWithFir.args")
+        public void testOptionalExpectationUsageWithFir() throws Exception {
+            runTest("compiler/testData/cli/metadata/optionalExpectationUsageWithFir.args");
         }
     }
 }
