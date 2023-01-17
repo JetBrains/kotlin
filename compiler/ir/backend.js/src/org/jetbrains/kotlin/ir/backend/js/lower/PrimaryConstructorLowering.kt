@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrInstanceInitializerCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.util.constructors
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -27,7 +28,7 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
     private var IrClass.syntheticPrimaryConstructor by context.mapping.classToSyntheticPrimaryConstructor
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrClass) {
+        if (declaration is IrClass && !declaration.isInterface) {
             val constructors = declaration.constructors
 
             if (constructors.any { it.isPrimary }) return null
