@@ -214,6 +214,7 @@
 /core/deserialization.common/ "Kotlin Compiler Core"
 /core/deserialization.common.jvm/ "Kotlin Compiler Core"
 /core/metadata/ "Kotlin Compiler Core"
+/core/metadata.buildSrc/ "Kotlin Compiler Core"
 /core/metadata.jvm/ "Kotlin JVM"
 /core/reflection.jvm/ "Kotlin Libraries"
 /core/script.runtime/ "Kotlin Compiler Core"

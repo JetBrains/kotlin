@@ -43,6 +43,7 @@ dependencies {
 
     embedded(project(":kotlin-reflect-api")) { isTransitive = false }
     embedded(project(":core:metadata")) { isTransitive = false }
+    embedded(project(":core:metadata.buildSrc")) { isTransitive = false }
     embedded(project(":core:metadata.jvm")) { isTransitive = false }
     embedded(project(":core:compiler.common")) { isTransitive = false }
     embedded(project(":core:compiler.common.jvm")) { isTransitive = false }

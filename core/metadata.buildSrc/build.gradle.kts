@@ -6,8 +6,6 @@ plugins {
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 dependencies {
-    api(project(":core:metadata.buildSrc"))
-    api(protobufLite())
     api(kotlinStdlib())
 }
 
