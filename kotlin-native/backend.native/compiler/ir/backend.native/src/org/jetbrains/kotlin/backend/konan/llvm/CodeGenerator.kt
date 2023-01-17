@@ -238,20 +238,35 @@ private inline fun <T : FunctionGenerationContext> generateFunctionBody(
 internal data class LocationInfoRange(var start: LocationInfo, var end: LocationInfo?)
 
 internal interface StackLocalsManager {
-    fun alloc(irClass: IrClass, cleanFieldsExplicitly: Boolean): LLVMValueRef
+    fun alloc(irClass: IrClass): LLVMValueRef
 
     fun allocArray(irClass: IrClass, count: LLVMValueRef): LLVMValueRef
 
     fun clean(refsOnly: Boolean)
+
+    fun enterScope()
+    fun exitScope()
 }
 
 internal class StackLocalsManagerImpl(
         val functionGenerationContext: FunctionGenerationContext,
         val bbInitStackLocals: LLVMBasicBlockRef
 ) : StackLocalsManager {
-    private class StackLocal(val isArray: Boolean, val irClass: IrClass,
-                             val bodyPtr: LLVMValueRef, val objHeaderPtr: LLVMValueRef,
-                             val gcRootSetSlot: LLVMValueRef?)
+    private var scopeDepth = 0
+    override fun enterScope() { scopeDepth++ }
+    override fun exitScope() { scopeDepth-- }
+    private fun isRootScope() = scopeDepth == 0
+
+    private class StackLocal(
+            val arraySize: Int?,
+            val irClass: IrClass,
+            val stackAllocationPtr: LLVMValueRef,
+            val objHeaderPtr: LLVMValueRef,
+            val gcRootSetSlot: LLVMValueRef?
+    ) {
+        val isArray
+            get() = arraySize != null
+    }
 
     private val stackLocals = mutableListOf<StackLocal>()
 
@@ -260,7 +275,7 @@ internal class StackLocalsManagerImpl(
     private fun FunctionGenerationContext.createRootSetSlot() =
             if (context.memoryModel == MemoryModel.EXPERIMENTAL) alloca(kObjHeaderPtr) else null
 
-    override fun alloc(irClass: IrClass, cleanFieldsExplicitly: Boolean): LLVMValueRef = with(functionGenerationContext) {
+    override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
         val classInfo = llvmDeclarations.forClass(irClass)
         val type = classInfo.bodyType
         val stackLocal = appendingTo(bbInitStackLocals) {
@@ -273,12 +288,13 @@ internal class StackLocalsManagerImpl(
             val typeInfo = codegen.typeInfoForAllocation(irClass)
             setTypeInfoForLocalObject(objectHeader, typeInfo)
             val gcRootSetSlot = createRootSetSlot()
-            StackLocal(false, irClass, stackSlot, objectHeader, gcRootSetSlot)
+            StackLocal(null, irClass, stackSlot, objectHeader, gcRootSetSlot)
         }
 
         stackLocals += stackLocal
-        if (cleanFieldsExplicitly)
+        if (!isRootScope()) {
             clean(stackLocal, false)
+        }
         if (stackLocal.gcRootSetSlot != null) {
             storeStackRef(stackLocal.objHeaderPtr, stackLocal.gcRootSetSlot)
         }
@@ -332,11 +348,14 @@ internal class StackLocalsManagerImpl(
                     constCount * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[irClass.symbol]).toInt() / 8
             )
             val gcRootSetSlot = createRootSetSlot()
-            StackLocal(true, irClass, arraySlot, arrayHeaderSlot, gcRootSetSlot)
+            StackLocal(constCount, irClass, arraySlot, arrayHeaderSlot, gcRootSetSlot)
         }
 
         stackLocals += stackLocal
         val result = bitcast(kObjHeaderPtr, stackLocal.objHeaderPtr)
+        if (!isRootScope()) {
+            clean(stackLocal, false)
+        }
         if (stackLocal.gcRootSetSlot != null) {
             storeStackRef(result, stackLocal.gcRootSetSlot)
         }
@@ -347,8 +366,14 @@ internal class StackLocalsManagerImpl(
 
     private fun clean(stackLocal: StackLocal, refsOnly: Boolean) = with(functionGenerationContext) {
         if (stackLocal.isArray) {
-            if (stackLocal.irClass.symbol == context.ir.symbols.array)
+            if (stackLocal.irClass.symbol == context.ir.symbols.array) {
                 call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
+            } else if (!refsOnly) {
+                memset(bitcast(llvm.int8PtrType, structGep(stackLocal.stackAllocationPtr, 1, "arrayBody")),
+                        0,
+                        stackLocal.arraySize!! * LLVMSizeOfTypeInBits(codegen.llvmTargetData, arrayToElementType[stackLocal.irClass.symbol]).toInt() / 8
+                )
+            }
         } else {
             val info = llvmDeclarations.forClass(stackLocal.irClass)
             val type = info.bodyType
@@ -356,7 +381,7 @@ internal class StackLocalsManagerImpl(
                 val fieldType = LLVMStructGetTypeAtIndex(type, fieldIndex)!!
 
                 if (isObjectType(fieldType)) {
-                    val fieldPtr = LLVMBuildStructGEP(builder, stackLocal.bodyPtr, fieldIndex, "")!!
+                    val fieldPtr = LLVMBuildStructGEP(builder, stackLocal.stackAllocationPtr, fieldIndex, "")!!
                     if (refsOnly)
                         storeHeapRef(kNullObjHeaderPtr, fieldPtr)
                     else
@@ -365,7 +390,7 @@ internal class StackLocalsManagerImpl(
             }
 
             if (!refsOnly) {
-                val bodyPtr = ptrToInt(stackLocal.bodyPtr, codegen.intPtrType)
+                val bodyPtr = ptrToInt(stackLocal.stackAllocationPtr, codegen.intPtrType)
                 val bodySize = LLVMSizeOfTypeInBits(codegen.llvmTargetData, type).toInt() / 8
                 val serviceInfoSize = runtime.pointerSize
                 val serviceInfoSizeLlvm = LLVMConstInt(codegen.intPtrType, serviceInfoSize.toLong(), 1)!!
@@ -778,12 +803,9 @@ internal abstract class FunctionGenerationContext(
     fun allocInstance(typeInfo: LLVMValueRef, lifetime: Lifetime, resultSlot: LLVMValueRef?) : LLVMValueRef =
             call(llvm.allocInstanceFunction, listOf(typeInfo), lifetime, resultSlot = resultSlot)
 
-    fun allocInstance(irClass: IrClass, lifetime: Lifetime, stackLocalsManager: StackLocalsManager, resultSlot: LLVMValueRef?) =
+    fun allocInstance(irClass: IrClass, lifetime: Lifetime, resultSlot: LLVMValueRef?) =
         if (lifetime == Lifetime.STACK)
-            stackLocalsManager.alloc(irClass,
-                    // In case the allocation is not from the root scope, fields must be cleaned up explicitly,
-                    // as the object might be being reused.
-                    cleanFieldsExplicitly = stackLocalsManager != this.stackLocalsManager)
+            stackLocalsManager.alloc(irClass)
         else
             allocInstance(codegen.typeInfoForAllocation(irClass), lifetime, resultSlot)
 

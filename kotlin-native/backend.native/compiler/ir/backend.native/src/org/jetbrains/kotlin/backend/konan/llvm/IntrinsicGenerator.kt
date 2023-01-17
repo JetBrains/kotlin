@@ -117,8 +117,6 @@ internal interface IntrinsicGeneratorEnvironment {
 
     val exceptionHandler: ExceptionHandler
 
-    val stackLocalsManager: StackLocalsManager
-
     fun calculateLifetime(element: IrElement): Lifetime
 
     fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime,
@@ -418,7 +416,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val typeParameterT = context.ir.symbols.createUninitializedInstance.descriptor.typeParameters[0]
         val enumClass = callSite.getTypeArgument(typeParameterT)!!
         val enumIrClass = enumClass.getClass()!!
-        return allocInstance(enumIrClass, environment.calculateLifetime(callSite), environment.stackLocalsManager, resultSlot)
+        return allocInstance(enumIrClass, environment.calculateLifetime(callSite), resultSlot)
     }
 
     private fun FunctionGenerationContext.emitGetPointerSize(): LLVMValueRef =
