@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -134,7 +135,7 @@ class FirNativeKLibSerializerExtension(
         function.annotations.forEach {
             proto.addExtension(KlibMetadataProtoBuf.functionAnnotation, annotationSerializer.serializeAnnotation(it))
         }
-        // TODO serialize KDocString
+        // TODO serialize KDocString, functionExtensionReceiverAnnotation
         super.serializeFunction(function, proto, versionRequirementTable, childSerializer)
     }
 
@@ -157,7 +158,14 @@ class FirNativeKLibSerializerExtension(
         property.annotations.forEach {
             proto.addExtension(KlibMetadataProtoBuf.propertyAnnotation, annotationSerializer.serializeAnnotation(it))
         }
-        // TODO serialize KDocString
+        // TODO serialize:
+        // KDocString
+        // propertyGetterAnnotation
+        // propertySetterAnnotation
+        // propertyBackingFieldAnnotation
+        // propertyDelegatedFieldAnnotation
+        // propertyExtensionReceiverAnnotation
+
         super.serializeProperty(property, proto, versionRequirementTable, childSerializer)
     }
 
@@ -191,4 +199,19 @@ class FirNativeKLibSerializerExtension(
         }
         super.serializeEnumEntry(enumEntry, proto)
     }
+
+    override fun serializeTypeAnnotation(annotation: FirAnnotation, proto: ProtoBuf.Type.Builder) {
+        annotation.annotations.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        super.serializeTypeAnnotation(annotation, proto)
+    }
+
+    override fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
+        typeParameter.annotations.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        super.serializeTypeParameter(typeParameter, proto)
+    }
+
 }
