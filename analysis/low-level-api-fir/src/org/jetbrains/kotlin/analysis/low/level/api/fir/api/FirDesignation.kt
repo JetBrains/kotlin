@@ -19,11 +19,13 @@ import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
@@ -113,10 +115,7 @@ private fun collectDesignationPathWithContainingClass(target: FirDeclaration, co
         return null
     }
 
-    val useSiteSession = when (target) {
-        is FirSyntheticProperty -> target.getter.moduleData.session
-        else -> target.moduleData.session
-    }
+    val useSiteSession = getTargetSession(target)
 
     fun resolveChunk(classId: ClassId): FirRegularClass {
         val declaration = useSiteSession.firProvider.getFirClassifierByFqName(classId)
@@ -134,6 +133,22 @@ private fun collectDesignationPathWithContainingClass(target: FirDeclaration, co
 
     val chain = generateSequence(containingClassId) { it.outerClassId }.map { resolveChunk(it) }
     return chain.toMutableList().also { it.reverse() }
+}
+
+private fun getTargetSession(target: FirDeclaration): FirSession {
+    if (target is FirSyntheticProperty) {
+        return getTargetSession(target.getter)
+    }
+
+    if (target is FirCallableDeclaration) {
+        val containingSymbol = target.containingClassLookupTag()?.toSymbol(target.moduleData.session)
+        if (containingSymbol != null) {
+            // Synthetic declarations might have a call site session
+            return containingSymbol.moduleData.session
+        }
+    }
+
+    return target.moduleData.session
 }
 
 private fun findNearClass(classId: ClassId, target: FirDeclaration): FirRegularClass? {
