@@ -1537,6 +1537,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
+            @TestMetadata("vArrayCopy.kt")
+            public void testVArrayCopy() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayCopy.kt");
+            }
+
+            @Test
             @TestMetadata("vArrayCreation.kt")
             public void testVArrayCreation() throws Exception {
                 runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayCreation.kt");
@@ -1549,9 +1555,9 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
-            @TestMetadata("vArrayReifiedGeneric.kt")
-            public void testVArrayReifiedGeneric() throws Exception {
-                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayReifiedGeneric.kt");
+            @TestMetadata("vArrayReifiedTypeArgument.kt")
+            public void testVArrayReifiedTypeArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/arrays/vArrays/vArrayReifiedTypeArgument.kt");
             }
 
             @Test
