@@ -121,6 +121,24 @@ __attribute__((swift_name("KotlinBoolean")))
 @end
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("CoroKt")))
+@interface KtCoroKt : KtBase
+
+/**
+ * @note This method converts instances of CancellationException to errors.
+ * Other uncaught Kotlin exceptions are fatal.
+*/
++ (void)fooWithCompletionHandler:(void (^)(NSString * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("foo(completionHandler:)")));
++ (id<KtKotlinKSuspendFunction0>)fooref __attribute__((swift_name("fooref()")));
+
+/**
+ * @note This method converts instances of CancellationException to errors.
+ * Other uncaught Kotlin exceptions are fatal.
+*/
++ (void)boxWithCompletionHandler:(void (^)(NSString * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("box(completionHandler:)")));
+@end
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("CoroutineException")))
 @interface KtCoroutineException : KtKotlinThrowable
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
@@ -1396,7 +1414,7 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ObjCAvoidPreprocessorName")))
 @interface KtObjCAvoidPreprocessorName : KtBase
 - (instancetype)initWithTime:(int32_t)time __attribute__((swift_name("init(time:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) int32_t time __attribute__((swift_name("time")));
+@property (readonly) int32_t __TIME_ __attribute__((swift_name("__TIME_")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -3034,8 +3052,8 @@ __attribute__((swift_name("ValuesKt")))
 + (BOOL)isBlockNullBlock:(void (^ _Nullable)(void))block __attribute__((swift_name("isBlockNull(block:)")));
 + (BOOL)isFunctionObj:(id _Nullable)obj __attribute__((swift_name("isFunction(obj:)")));
 + (BOOL)isFunction0Obj:(id _Nullable)obj __attribute__((swift_name("isFunction0(obj:)")));
-+ (void)takeForwardDeclaredClassObj:(ForwardDeclaredClass *)obj __attribute__((swift_name("takeForwardDeclaredClass(obj:)")));
-+ (void)takeForwardDeclaredProtocolObj:(id<ForwardDeclared>)obj __attribute__((swift_name("takeForwardDeclaredProtocol(obj:)")));
++ (void)takeForwardDeclaredClassObj:(id)obj __attribute__((swift_name("takeForwardDeclaredClass(obj:)")));
++ (void)takeForwardDeclaredProtocolObj:(id)obj __attribute__((swift_name("takeForwardDeclaredProtocol(obj:)")));
 + (void)error __attribute__((swift_name("error()"))) __attribute__((unavailable("error")));
 + (void)warning __attribute__((swift_name("warning()"))) __attribute__((deprecated("warning")));
 + (void)gc __attribute__((swift_name("gc()")));
