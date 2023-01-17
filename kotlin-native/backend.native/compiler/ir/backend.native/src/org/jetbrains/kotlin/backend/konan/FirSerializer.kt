@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
@@ -133,7 +134,10 @@ class FirNativeKLibSerializerExtension(
     ) {
         // inspired by KlibMetadataSerializerExtension.serializeFunction
         declarationFileId(function)?.let { proto.setExtension(KlibMetadataProtoBuf.functionFile, it) }
-        // TODO serialize function.annotations and KDocString
+        function.annotations.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.functionAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        // TODO serialize KDocString
         super.serializeFunction(function, proto, versionRequirementTable, childSerializer)
     }
 
@@ -145,7 +149,23 @@ class FirNativeKLibSerializerExtension(
     ) {
         // inspired by KlibMetadataSerializerExtension.serializeProperty
         declarationFileId(property)?.let { proto.setExtension(KlibMetadataProtoBuf.propertyFile, it) }
-        // TODO serialize property.annotations and KDocString
+        property.annotations.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.propertyAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        // TODO serialize KDocString
         super.serializeProperty(property, proto, versionRequirementTable, childSerializer)
+    }
+
+    override fun serializeClass(
+            klass: FirClass,
+            proto: ProtoBuf.Class.Builder,
+            versionRequirementTable: MutableVersionRequirementTable,
+            childSerializer: FirElementSerializer
+    ) {
+        klass.annotations.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        // TODO serialize KDocString
+        super.serializeClass(klass, proto, versionRequirementTable, childSerializer)
     }
 }
