@@ -106,6 +106,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends
         runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/setterWithAnnotations.kt");
     }
 
+    @Test
+    @TestMetadata("typeAnnotationsWithTypeAlias.kt")
+    public void testTypeAnnotationsWithTypeAlias() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsWithTypeAlias.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/analysis-api/testData/symbols/singleSymbolByPsi/contracts")
     @TestDataPath("$PROJECT_ROOT")

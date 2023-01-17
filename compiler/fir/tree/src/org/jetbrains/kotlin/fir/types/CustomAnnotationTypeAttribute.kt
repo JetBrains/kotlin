@@ -13,15 +13,20 @@ import kotlin.reflect.KClass
 
 class CustomAnnotationTypeAttribute(
     val annotations: List<FirAnnotation>,
-    val containerSymbol: FirBasedSymbol<out FirDeclaration>? = null,
+    val containerSymbols: List<FirBasedSymbol<out FirDeclaration>> = emptyList(),
 ) : ConeAttribute<CustomAnnotationTypeAttribute>() {
+    constructor(annotations: List<FirAnnotation>, containerSymbol: FirBasedSymbol<out FirDeclaration>?) : this(
+        annotations,
+        listOfNotNull(containerSymbol),
+    )
+
     override fun union(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun intersect(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
     override fun add(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute {
         if (other == null || other === this) return this
-        return CustomAnnotationTypeAttribute(annotations + other.annotations, containerSymbol)
+        return CustomAnnotationTypeAttribute(annotations + other.annotations, containerSymbols + other.containerSymbols)
     }
 
     override fun isSubtypeOf(other: CustomAnnotationTypeAttribute?): Boolean = true
