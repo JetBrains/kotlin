@@ -103,7 +103,7 @@ private val ComponentIdentifier.uniqueKey get(): ComponentIdentifierKey =
 
 internal class GranularMetadataTransformation(
     val params: Params,
-    parentVisibleSourceSetsProvider: () -> Iterable<Map<ComponentIdentifierKey, Set<String>>>
+    visibleSourceSetsFromParentsProvider: () -> Iterable<Map<ComponentIdentifierKey, Set<String>>>
 ) {
     class Params(
         val sourceSetName: String,
@@ -130,8 +130,8 @@ internal class GranularMetadataTransformation(
         val moduleId: Provider<ModuleDependencyIdentifier>
     )
 
-    private val parentVisibleSourceSets: Map<ComponentIdentifierKey, Set<String>> by lazy {
-        parentVisibleSourceSetsProvider().reduceOrNull { acc, map -> acc mergeWith map }.orEmpty()
+    private val visibleSourceSetsFromParents: Map<ComponentIdentifierKey, Set<String>> by lazy {
+        visibleSourceSetsFromParentsProvider().reduceOrNull { acc, map -> acc mergeWith map }.orEmpty()
     }
 
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
@@ -140,7 +140,7 @@ internal class GranularMetadataTransformation(
         metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
             .groupBy { it.dependency.id.uniqueKey }
-            .mapValues { (_, visibleSourceSets) -> visibleSourceSets.flatMapTo(mutableSetOf()) { it.allVisibleSourceSetNames } }
+            .mapValues { (_, visibleSourceSets) -> visibleSourceSets.flatMap { it.allVisibleSourceSetNames }.toSet() }
     }
 
     private fun doTransform(): Iterable<MetadataDependencyResolution> {
@@ -169,7 +169,7 @@ internal class GranularMetadataTransformation(
 
             val dependencyResult = processDependency(
                 resolvedDependency,
-                parentVisibleSourceSets[componentId.uniqueKey].orEmpty()
+                visibleSourceSetsFromParents[componentId.uniqueKey].orEmpty()
             )
 
             result.add(dependencyResult)

@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
-import java.util.concurrent.Callable
 
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompileDependenciesMetadata"
@@ -360,7 +359,7 @@ class KotlinMetadataTargetConfigurator :
         compilation.compileDependencyFiles += project.filesProvider { artifacts.filterNot { it.isMpp }.map { it.file } }
 
         // Transformed Multiplatform Libraries based on source set visibility
-        compilation.compileDependencyFiles += project.files(transformationTask.flatMap { it.transformedLibraries })
+        compilation.compileDependencyFiles += project.files(transformationTask.map { it.transformedLibraries })
 
         if (compilation is KotlinSharedNativeCompilation && sourceSet is DefaultKotlinSourceSet) {
             compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
@@ -388,7 +387,7 @@ class KotlinMetadataTargetConfigurator :
     ) {
         val granularMetadataTransformation = GranularMetadataTransformation(
             params = GranularMetadataTransformation.Params(project, sourceSet),
-            parentVisibleSourceSetsProvider = {
+            visibleSourceSetsFromParentsProvider = {
                 dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
                     .map { it.compileDependenciesTransformationOrFail.visibleSourceSetsByComponentId }
             }

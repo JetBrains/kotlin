@@ -41,7 +41,7 @@ open class MetadataDependencyTransformationTask
     private val transformationParameters = GranularMetadataTransformation.Params(project, kotlinSourceSet)
 
     @get:OutputDirectory
-    val outputsDir: File get() = projectLayout.kotlinTransformedMetadataLibraryDirectoryForBuild(transformationParameters.sourceSetName)
+    internal val outputsDir: File get() = projectLayout.kotlinTransformedMetadataLibraryDirectoryForBuild(transformationParameters.sourceSetName)
 
     @Suppress("unused") // Gradle input
     @get:InputFiles
@@ -50,13 +50,17 @@ open class MetadataDependencyTransformationTask
     @get:NormalizeLineEndings
     internal val configurationToResolve: FileCollection = kotlinSourceSet.internal.resolvableMetadataConfiguration
 
-    @delegate:Transient // Only needed for configuring task inputs
-    private val participatingSourceSets: Set<KotlinSourceSet> by lazy {
+    @Transient // Only needed for configuring task inputs
+    private val participatingSourceSetsLazy: Lazy<Set<KotlinSourceSet>>? = lazy {
         kotlinSourceSet.internal.withDependsOnClosure.toMutableSet().apply {
             if (any { it.name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME })
                 add(project.kotlinExtension.sourceSets.getByName(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME))
         }
     }
+
+    private val participatingSourceSets: Set<KotlinSourceSet> get() = participatingSourceSetsLazy?.value
+        ?: error("`participatingSourceSets` is null. " +
+                 "Probably it is accessed it during Task Execution with state loaded from Configuration Cache")
 
     @Suppress("unused") // Gradle input
     @get:Input
@@ -76,30 +80,26 @@ open class MetadataDependencyTransformationTask
     }
 
     @get:OutputFile
-    val transformedLibrariesFileIndex: RegularFileProperty = objectFactory
+    internal val transformedLibrariesFileIndex: RegularFileProperty = objectFactory
         .fileProperty()
         .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.transformedLibraries")) }
 
     @get:OutputFile
-    val visibleSourceSetsFile: RegularFileProperty = objectFactory
+    internal val visibleSourceSetsFile: RegularFileProperty = objectFactory
         .fileProperty()
         .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.visibleSourceSets")) }
 
     @get:InputFiles
-    val parentVisibleSourceSetFiles: ConfigurableFileCollection = objectFactory
-        .fileCollection()
-        .from(
-            {
-                val parentSourceSets: List<Provider<File>> = dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).mapNotNull {
-                    project
-                        .tasks
-                        .locateTask<MetadataDependencyTransformationTask>(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it.name))
-                        ?.flatMap { it.visibleSourceSetsFile.map { it.asFile } }
-                }
+    val parentVisibleSourceSetFiles: ConfigurableFileCollection = project.filesProvider {
+        val parentSourceSets: List<Provider<File>> = dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).mapNotNull {
+            project
+                .tasks
+                .locateTask<MetadataDependencyTransformationTask>(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it.name))
+                ?.flatMap { it.visibleSourceSetsFile.map { it.asFile } }
+        }
 
-                parentSourceSets
-            }
-        )
+        parentSourceSets
+    }
 
     //endregion Task Configuration State & Inputs
 
@@ -107,7 +107,7 @@ open class MetadataDependencyTransformationTask
     fun transformMetadata() {
         val transformation = GranularMetadataTransformation(
             params = transformationParameters,
-            parentVisibleSourceSetsProvider = { parentVisibleSourceSetFiles.map(::readVisibleSourceSetsFile) }
+            visibleSourceSetsFromParentsProvider = { parentVisibleSourceSetFiles.map(::readVisibleSourceSetsFile) }
         )
 
         if (outputsDir.isDirectory) {
@@ -155,7 +155,7 @@ open class MetadataDependencyTransformationTask
             files
         }
 
-        val content = fileList.joinToString("\n")
+        val content = fileList.joinToString(System.lineSeparator())
 
         transformedLibrariesFileIndex.get().asFile.writeText(content)
     }
@@ -175,7 +175,9 @@ open class MetadataDependencyTransformationTask
         }
 
     @get:Internal // Warning! transformedLibraries is available only after Task Execution
-    val transformedLibraries: Provider<List<File>> get() = transformedLibrariesFileIndex.map { regularFile ->
-        regularFile.asFile.readLines().map { File(it) }
+    val transformedLibraries: FileCollection = project.filesProvider {
+        transformedLibrariesFileIndex.map { regularFile ->
+            regularFile.asFile.readLines().map { File(it) }
+        }
     }
 }
