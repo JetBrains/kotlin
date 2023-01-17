@@ -203,7 +203,7 @@ class TypeDeserializer(
             else -> null
         }
         return result ?: ErrorUtils.createErrorTypeWithArguments(
-            ErrorTypeKind.INCONSISTENT_SUSPEND_FUNCTION, arguments, functionTypeConstructor
+            ErrorTypeKind.INCONSISTENT_SUSPEND_FUNCTION, arguments, functionTypeConstructor.toString()
         )
     }
 
