@@ -504,7 +504,7 @@ internal fun prepareTool(target: String?, flavor: KotlinPlatform, runFromDaemon:
             if (!runFromDaemon) it.prepare() // Daemon prepares the tool himself. (See KonanToolRunner.kt)
         }
 
-internal val predefinedObjCClassesIncludingCategories: Set<String> by lazy { setOf("NSView") }
+internal val predefinedObjCClassesIncludingCategories: Set<String> by lazy { setOf("NSView", "UIView") }
 
 internal fun buildNativeLibrary(
         tool: ToolConfig,
