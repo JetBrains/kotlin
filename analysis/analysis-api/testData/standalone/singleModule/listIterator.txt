@@ -1,2 +1,2 @@
 Resolved to:
-public abstract fun add(element: T): kotlin.Unit
+KtNamedFunction:add(element)

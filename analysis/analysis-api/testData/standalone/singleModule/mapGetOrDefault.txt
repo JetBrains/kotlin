@@ -1,2 +1,2 @@
 Resolved to:
-@kotlin.SinceKotlin @kotlin.internal.PlatformDependent public open fun getOrDefault(key: K, defaultValue: V): V { /* compiled code */ }
+KtNamedFunction:getOrDefault(key, defaultValue)
