@@ -44,6 +44,10 @@ internal fun PartialLinkageCase.renderErrorMessage(): String = buildString {
             wrongTypeOfDeclaration(actualDeclarationSymbol, expectedDeclarationDescription)
         }
 
+        is ExpressionDispatchReceiverMismatch -> expression(expression) {
+            dispatchReceiverMismatch(expression.symbol, excessiveDispatchReceiver)
+        }
+
         is ExpressionsUsesInaccessibleDeclaration -> expression(expression) {
             inaccessibleDeclaration(referencedDeclarationSymbol, declaringModule, useSiteModule)
         }
@@ -349,6 +353,20 @@ private fun StringBuilder.expressionWithPartiallyLinkedClassifier(
     }
 
     append("Expression").cause(cause, omitSubjectIf = null, printIntermediateCause)
+}
+
+private fun Appendable.dispatchReceiverMismatch(
+    invokedFunctionSymbol: IrFunctionSymbol,
+    excessiveDispatchReceiver: Boolean
+): Appendable {
+    return if (excessiveDispatchReceiver) {
+        append("The call site provides excessive dispatch receiver parameter 'this' that is not needed for the ")
+        declarationKind(invokedFunctionSymbol, capitalized = false)
+    } else {
+        append("The call site does not provide a dispatch receiver parameter 'this' that the ")
+        declarationKind(invokedFunctionSymbol, capitalized = false)
+        append(" requires")
+    }
 }
 
 private fun Appendable.inaccessibleDeclaration(
