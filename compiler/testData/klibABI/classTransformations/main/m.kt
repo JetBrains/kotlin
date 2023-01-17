@@ -125,29 +125,27 @@ fun box() = abiTest {
     expectSuccess("Foo") { getCompanionAndNestedObjectsSwap() }
     expectSuccess("Foo") { getCompanionAndNestedObjectsSwapInline() }
 
-    // TODO: check absence of the required dispatch receiver in constructor of inner class
-//    expectFailure(linkage("?")) { getNestedToInnerName() }
-//    expectFailure(linkage("?")) { getNestedToInnerNameInline() }
-//    expectFailure(linkage("Can not get instance of singleton 'Object': 'Object' is inner class while object is expected")) { getNestedToInnerObjectName() }
-//    expectFailure(linkage("Can not get instance of singleton 'Object': 'Object' is inner class while object is expected")) { getNestedToInnerObjectNameInline() }
-//    expectFailure(linkage("Can not get instance of singleton 'Companion': 'Companion' is inner class while object is expected")) { getNestedToInnerCompanionName() }
-//    expectFailure(linkage("Can not get instance of singleton 'Companion': 'Companion' is inner class while object is expected")) { getNestedToInnerCompanionNameInline() }
-//    expectFailure(linkage("?")) { getNestedToInnerNestedName() }
-//    expectFailure(linkage("?")) { getNestedToInnerNestedNameInline() }
-//    expectFailure(linkage("?")) { getNestedToInnerInnerName() }
-//    expectFailure(linkage("?")) { getNestedToInnerInnerNameInline() }
+    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerName() }
+    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerNameInline() }
+    expectFailure(linkage("Can not get instance of singleton 'Object': 'Object' is inner class while object is expected")) { getNestedToInnerObjectName() }
+    expectFailure(linkage("Can not get instance of singleton 'Object': 'Object' is inner class while object is expected")) { getNestedToInnerObjectNameInline() }
+    expectFailure(linkage("Can not get instance of singleton 'Companion': 'Companion' is inner class while object is expected")) { getNestedToInnerCompanionName() }
+    expectFailure(linkage("Can not get instance of singleton 'Companion': 'Companion' is inner class while object is expected")) { getNestedToInnerCompanionNameInline() }
+    expectFailure(linkage("Constructor 'Nested.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerNestedName() }
+    expectFailure(linkage("Constructor 'Nested.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerNestedNameInline() }
+    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerInnerName() }
+    expectFailure(linkage("Constructor 'NestedToInner.<init>' can not be called: The call site does not provide a dispatch receiver parameter 'this' that the constructor requires")) { getNestedToInnerInnerNameInline() }
 
-    // TODO: check presence of excessive dispatch receiver in constructor of nested class
-//    expectFailure(linkage("?")) { getInnerToNestedName() }
-//    expectFailure(linkage("?")) { getInnerToNestedNameInline() }
-//    expectFailure(linkage("?")) { getInnerToNestedObjectName() }
-//    expectFailure(linkage("?")) { getInnerToNestedObjectNameInline() }
-//    expectFailure(linkage("?")) { getInnerToNestedCompanionName() }
-//    expectFailure(linkage("?")) { getInnerToNestedCompanionNameInline() }
-//    expectFailure(linkage("?")) { getInnerToNestedNestedName() }
-//    expectFailure(linkage("?")) { getInnerToNestedNestedNameInline() }
-//    expectFailure(linkage("?")) { getInnerToNestedInnerName() }
-//    expectFailure(linkage("?")) { getInnerToNestedInnerNameInline() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedName() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedNameInline() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedObjectName() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedObjectNameInline() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedCompanionName() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedCompanionNameInline() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedNestedName() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedNestedNameInline() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedInnerName() }
+    expectFailure(linkage("Constructor 'InnerToNested.<init>' can not be called: The call site provides excessive dispatch receiver parameter 'this' that is not needed for the constructor")) { getInnerToNestedInnerNameInline() }
 
     expectFailure(linkage("Constructor 'AnnotationClassWithChangedParameterType.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithChangedParameterType.<init>'")) { getAnnotationClassWithChangedParameterType() }
     expectFailure(linkage("Constructor 'AnnotationClassWithChangedParameterType.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithChangedParameterType.<init>'")) { getAnnotationClassWithChangedParameterTypeInline() }

@@ -388,6 +388,7 @@ internal class PartiallyLinkedIrTreePatcher(
             checkReferencedDeclaration(symbol)
                 ?: checkReferencedDeclaration(superQualifierSymbol)
                 ?: checkExpressionTypeArguments()
+                ?: checkDispatchReceiver(symbol.owner)
         }
 
         override fun visitConstructorCall(expression: IrConstructorCall) = expression.maybeThrowLinkageError {
@@ -396,6 +397,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 ?: checkReferencedDeclarationType(expression.symbol.owner.parentAsClass, "regular class") { constructedClass ->
                     constructedClass.kind == ClassKind.CLASS || constructedClass.kind == ClassKind.ANNOTATION_CLASS
                 }
+                ?: checkDispatchReceiver(symbol.owner)
         }
 
         override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = expression.maybeThrowLinkageError {
@@ -404,12 +406,20 @@ internal class PartiallyLinkedIrTreePatcher(
                 ?: checkReferencedDeclarationType(expression.symbol.owner.parentAsClass, "enum class") { constructedClass ->
                     constructedClass.kind == ClassKind.ENUM_CLASS || constructedClass.symbol == builtIns.enumClass
                 }
+                ?: checkDispatchReceiver(symbol.owner)
+        }
+
+        override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = expression.maybeThrowLinkageError {
+            checkReferencedDeclaration(symbol)
+                ?: checkExpressionTypeArguments()
+                ?: checkDispatchReceiver(symbol.owner)
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
                 ?: checkReferencedDeclaration(reflectionTarget)
                 ?: checkExpressionTypeArguments()
+                ?: checkDispatchReceiver(symbol.owner)
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference) = expression.maybeThrowLinkageError {
@@ -575,6 +585,18 @@ internal class PartiallyLinkedIrTreePatcher(
             return if (!checkDeclarationType(declaration))
                 ExpressionUsesWrongTypeOfDeclaration(this, declaration.symbol, expectedDeclarationDescription)
             else null
+        }
+
+        private fun <D : IrFunction> IrMemberAccessExpression<IrFunctionSymbol>.checkDispatchReceiver(
+            declaration: D
+        ): PartialLinkageCase? {
+            val expressionHasDispatchReceiver = dispatchReceiver != null
+            val declarationHasDispatchReceiver = declaration.dispatchReceiverParameter != null
+
+            return if (expressionHasDispatchReceiver != declarationHasDispatchReceiver)
+                ExpressionDispatchReceiverMismatch(this, expressionHasDispatchReceiver)
+            else
+                null
         }
 
         private fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrElement {

@@ -9,14 +9,8 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrEnumConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.*
 
 /**
  * Describes a reason why an [IrDeclaration] or an [IrExpression] is partially linked. Subclasses represent various causes of the p.l.
@@ -102,6 +96,18 @@ internal sealed interface PartialLinkageCase {
         val actualDeclarationSymbol: IrSymbol,
         val expectedDeclarationDescription: String
     ) : PartialLinkageCase
+
+    /**
+     * Expression that refers to an IR function has an excessive or a missing dispatch receiver parameter.
+     *
+     * Applicable to: Expressions.
+     */
+    class ExpressionDispatchReceiverMismatch(
+        val expression: IrMemberAccessExpression<IrFunctionSymbol>,
+        val excessiveDispatchReceiver: Boolean
+    ) : PartialLinkageCase {
+        // val missingDispatchReceiver get() = !excessiveDispatchReceiver
+    }
 
     /**
      * Expression refers an IR declaration that is not accessible at the use site.
