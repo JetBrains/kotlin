@@ -81,6 +81,6 @@ private fun ConeKotlinType.customAnnotationsWithLazyResolve(phase: FirResolvePha
     val custom = attributes.custom ?: return emptyList()
     val annotations = custom.annotations.ifEmpty { return emptyList() }
 
-    custom.containerDeclaration?.lazyResolveToPhase(phase)
+    custom.containerSymbol?.lazyResolveToPhase(phase)
     return annotations
 }

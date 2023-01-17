@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import kotlin.reflect.KClass
 
 class CustomAnnotationTypeAttribute(
     val annotations: List<FirAnnotation>,
-    val containerDeclaration: FirDeclaration? = null,
+    val containerSymbol: FirBasedSymbol<out FirDeclaration>? = null,
 ) : ConeAttribute<CustomAnnotationTypeAttribute>() {
     override fun union(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute? = null
 
@@ -20,7 +21,7 @@ class CustomAnnotationTypeAttribute(
 
     override fun add(other: CustomAnnotationTypeAttribute?): CustomAnnotationTypeAttribute {
         if (other == null || other === this) return this
-        return CustomAnnotationTypeAttribute(annotations + other.annotations, containerDeclaration)
+        return CustomAnnotationTypeAttribute(annotations + other.annotations, containerSymbol)
     }
 
     override fun isSubtypeOf(other: CustomAnnotationTypeAttribute?): Boolean = true

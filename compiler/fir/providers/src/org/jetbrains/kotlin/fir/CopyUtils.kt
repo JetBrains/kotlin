@@ -108,9 +108,11 @@ fun List<FirAnnotation>.computeTypeAttributes(
             }
         }
     }
+
     if (customAnnotations.isNotEmpty()) {
-        attributes += CustomAnnotationTypeAttribute(customAnnotations, containerDeclaration)
+        attributes += CustomAnnotationTypeAttribute(customAnnotations, containerDeclaration?.symbol)
     }
+
     return ConeAttributes.create(attributes)
 }
 
