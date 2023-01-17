@@ -401,7 +401,6 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                     "commonTestCompileOnlyDependenciesMetadata" to listOf("!kotlin-test-common"),
                     "jvmAndJsTestApiDependenciesMetadata" to listOf("kotlin-test-common"),
                     "jvmAndJsTestCompileOnlyDependenciesMetadata" to listOf("kotlin-test-common"),
-                    "jvmAndJsTestImplementationDependenciesMetadata" to listOf("!kotlin-test-common"),
                 ),
                 isBuildGradleKts = true
             )
