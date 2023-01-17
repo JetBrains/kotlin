@@ -76,8 +76,7 @@ class JpsKotlinCompilerRunner {
 
         @Synchronized
         private fun getOrCreateDaemonConnection(newConnection: () -> CompileServiceSession?): CompileServiceSession? {
-            // TODO: consider adding state "ping" to the daemon interface
-            if (_jpsCompileServiceSession == null || _jpsCompileServiceSession!!.compileService.getDaemonOptions() !is CompileService.CallResult.Good<DaemonOptions>) {
+            if (_jpsCompileServiceSession == null || _jpsCompileServiceSession!!.compileService.isAlive() !is CompileService.CallResult.Good<RemoteVoid?>) {
                 releaseCompileServiceSession()
                 _jpsCompileServiceSession = newConnection()
             }

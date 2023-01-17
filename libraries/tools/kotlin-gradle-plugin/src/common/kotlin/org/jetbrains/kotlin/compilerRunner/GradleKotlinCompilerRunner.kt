@@ -17,11 +17,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.arguments.*
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.daemon.client.CompileServiceSession
-import org.jetbrains.kotlin.daemon.common.CompilerId
-import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
-import org.jetbrains.kotlin.daemon.common.filterExtractProps
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -55,7 +50,7 @@ Using real taskProvider cause "field 'taskProvider' from type 'org.jetbrains.kot
 value 'fixed(class org.jetbrains.kotlin.gradle.tasks.KotlinCompile_Decorated, task ':compileKotlin')'
 is not assignable to 'org.gradle.api.tasks.TaskProvider'" exception
  */
-internal open class GradleCompilerRunner(
+internal abstract class GradleCompilerRunner(
     protected val taskProvider: GradleCompileTaskProvider,
     protected val jdkToolsJar: File?,
     protected val compilerExecutionSettings: CompilerExecutionSettings,
@@ -217,59 +212,12 @@ internal open class GradleCompilerRunner(
         )
     }
 
-    protected open fun runCompilerAsync(
+    protected abstract fun runCompilerAsync(
         workArgs: GradleKotlinCompilerWorkArguments,
         taskOutputsBackup: TaskOutputsBackup?
-    ): WorkQueue? {
-        try {
-            buildMetrics.addTimeMetric(BuildPerformanceMetric.CALL_WORKER)
-            val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs)
-            kotlinCompilerRunnable.run()
-        } catch (e: FailedCompilationException) {
-            // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)
-            if (taskOutputsBackup != null && (e is CompilationErrorException || e is OOMErrorException)) {
-                buildMetrics.measure(BuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
-                    taskOutputsBackup.restoreOutputs()
-                }
-            }
-
-            throw e
-        }
-
-        return null
-    }
+    ): WorkQueue?
 
     companion object {
-        @Synchronized
-        internal fun getDaemonConnectionImpl(
-            clientIsAliveFlagFile: File,
-            sessionIsAliveFlagFile: File,
-            compilerFullClasspath: List<File>,
-            messageCollector: MessageCollector,
-            daemonJvmArgs: List<String>?,
-            isDebugEnabled: Boolean
-        ): CompileServiceSession? {
-            val compilerId = CompilerId.makeCompilerId(compilerFullClasspath)
-            val daemonJvmOptions = configureDaemonJVMOptions(
-                inheritMemoryLimits = true,
-                inheritOtherJvmOptions = false,
-                inheritAdditionalProperties = true
-            ).also { opts ->
-                if (!daemonJvmArgs.isNullOrEmpty()) {
-                    opts.jvmParams.addAll(
-                        daemonJvmArgs.filterExtractProps(opts.mappers, "", opts.restMapper)
-                    )
-                }
-            }
-
-            return KotlinCompilerRunnerUtils.newDaemonConnection(
-                compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile,
-                messageCollector = messageCollector,
-                isDebugEnabled = isDebugEnabled,
-                daemonJVMOptions = daemonJvmOptions
-            )
-        }
-
         @Volatile
         private var cachedGradle = WeakReference<Gradle>(null)
 

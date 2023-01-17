@@ -19,6 +19,11 @@ kotlin.sourceSets.all {
 val kotlinGradlePluginTest = project(":kotlin-gradle-plugin").sourceSets.named("test").map { it.output }
 
 dependencies {
+    testImplementation(project(":kotlin-gradle-plugin-api")) {
+        capabilities {
+            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
+        }
+    }
     testImplementation(project(":kotlin-gradle-plugin")) {
         capabilities {
             requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-common")

@@ -468,6 +468,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val kotlinDaemonJvmArgs: String?
         get() = this.property("kotlin.daemon.jvmargs")
 
+    val cacheDaemonConnection: Boolean
+        get() = booleanProperty("kotlin.daemon.cacheConnection") ?: true
+
     val kotlinCompilerExecutionStrategy: KotlinCompilerExecutionStrategy
         get() = KotlinCompilerExecutionStrategy.fromProperty(
             this.property("kotlin.compiler.execution.strategy")?.toLowerCaseAsciiOnly()

@@ -675,6 +675,10 @@ class CompileServiceImpl(
         CompileService.CallResult.Good(daemonOptions)
     }
 
+    override fun isAlive(): CompileService.CallResult<RemoteVoid?> = ifAlive {
+        CompileService.CallResult.Good(null)
+    }
+
     override fun getDaemonJVMOptions(): CompileService.CallResult<DaemonJVMOptions> = ifAlive {
         log.info("getDaemonJVMOptions: $daemonJVMOptions")// + daemonJVMOptions.mappers.flatMap { it.toArgs("-") })
 
