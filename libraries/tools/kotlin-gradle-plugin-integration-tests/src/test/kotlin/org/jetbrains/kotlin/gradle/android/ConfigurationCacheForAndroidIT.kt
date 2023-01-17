@@ -5,27 +5,28 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.AbstractConfigurationCacheIT
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_42
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Configuration cache in Android project")
 @AndroidGradlePluginTests
+@AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
 class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        androidVersion = AGP_42,
-        // Workaround for a deprecation warning from AGP
-        // Relying on FileTrees for ignoring empty directories when using @SkipWhenEmpty has been deprecated.
-        warningMode = WarningMode.None,
-    )
-
     @DisplayName("works in android plus kapt project")
-    @GradleTest
-    fun testAndroidKaptProject(gradleVersion: GradleVersion) {
-        project("kapt2/android-dagger", gradleVersion) {
+    @GradleAndroidTest
+    fun testAndroidKaptProject(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "kapt2/android-dagger",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
             gradleProperties.append("\nkapt.incremental.apt=false")
 
             testConfigurationCacheOf(
@@ -37,9 +38,18 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
     }
 
     @DisplayName("works in android project")
-    @GradleTest
-    fun testKotlinAndroidProject(gradleVersion: GradleVersion) {
-        project("AndroidProject", gradleVersion) {
+    @GradleAndroidTest
+    fun testKotlinAndroidProject(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "AndroidProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
             testConfigurationCacheOf(
                 ":Lib:compileFlavor1DebugKotlin",
                 ":Android:compileFlavor1DebugKotlin"
@@ -48,9 +58,18 @@ class ConfigurationCacheForAndroidIT : AbstractConfigurationCacheIT() {
     }
 
     @DisplayName("works with android tests")
-    @GradleTest
-    fun testKotlinAndroidProjectTests(gradleVersion: GradleVersion) {
-        project("AndroidIncrementalMultiModule", gradleVersion) {
+    @GradleAndroidTest
+    fun testKotlinAndroidProjectTests(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "AndroidIncrementalMultiModule",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
             testConfigurationCacheOf(
                 ":app:compileDebugAndroidTestKotlin",
                 ":app:compileDebugUnitTestKotlin"
