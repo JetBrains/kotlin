@@ -15,19 +15,16 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmContentRoot
 import org.jetbrains.kotlin.cli.jvm.config.K2MetadataConfigurationKeys
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.impl.KlibMetadataModuleDescriptorFactoryImpl
+import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -55,7 +52,7 @@ internal class K2MetadataKlibSerializer(
         val project = environment.project
         val module = analysisResult.moduleDescriptor
 
-        val serializedMetadata: SerializedMetadata = KlibMetadataMonolithicSerializer(
+        val serializedMetadata = KlibMetadataMonolithicSerializer(
             configuration.languageVersionSettings,
             metadataVersion,
             project,
@@ -64,27 +61,7 @@ internal class K2MetadataKlibSerializer(
             includeOnlyModuleContent = true
         ).serializeModule(module)
 
-        val versions = KotlinLibraryVersioning(
-            abiVersion = KotlinAbiVersion.CURRENT,
-            libraryVersion = null,
-            compilerVersion = KotlinCompilerVersion.getVersion(),
-            metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
-            irVersion = null
-        )
-
-        buildKotlinLibrary(
-            emptyList(),
-            serializedMetadata,
-            null,
-            versions,
-            destDir.absolutePath,
-            configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-            nopack = true,
-            perFile = false,
-            manifestProperties = null,
-            dataFlowGraph = null,
-            builtInsPlatform = BuiltInsPlatform.COMMON
-        )
+        buildKotlinMetadataLibrary(configuration, serializedMetadata, destDir)
     }
 }
 

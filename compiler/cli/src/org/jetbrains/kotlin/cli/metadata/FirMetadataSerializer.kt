@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.collectSources
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createContextForIncrementalCompilation
-import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirModuleDataImpl
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
@@ -32,14 +35,9 @@ import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.fir.session.FirCommonSessionFactory
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.SerializedMetadata
-import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -195,27 +193,7 @@ internal class FirMetadataSerializer(
 
         val serializedMetadata = SerializedMetadata(module, fragmentParts, fragmentNames)
 
-        val versions = KotlinLibraryVersioning(
-            abiVersion = KotlinAbiVersion.CURRENT,
-            libraryVersion = null,
-            compilerVersion = KotlinCompilerVersion.getVersion(),
-            metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
-            irVersion = null
-        )
-
-        buildKotlinLibrary(
-            emptyList(),
-            serializedMetadata,
-            null,
-            versions,
-            destDir.absolutePath,
-            configuration[CommonConfigurationKeys.MODULE_NAME]!!,
-            nopack = true,
-            perFile = false,
-            manifestProperties = null,
-            dataFlowGraph = null,
-            builtInsPlatform = BuiltInsPlatform.COMMON
-        )
+        buildKotlinMetadataLibrary(configuration, serializedMetadata, destDir)
     }
 }
 
