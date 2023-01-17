@@ -511,7 +511,7 @@ internal class AdapterGenerator(
             return this
         }
         // Expect the expected type to be a suspend functional type.
-        if (!parameterType.isSuspendFunctionType(session)) {
+        if (!parameterType.isSuspendOrKSuspendFunctionType(session)) {
             return this
         }
         val expectedFunctionalType = parameterType.suspendFunctionTypeToFunctionType(session)

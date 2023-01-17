@@ -253,7 +253,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     else
         mappedArguments
 
-    val suspendConversionStrategy = if ((function as? FirSimpleFunction)?.isSuspend != true && expectedType.isSuspendFunctionType(session))
+    val suspendConversionStrategy = if ((function as? FirSimpleFunction)?.isSuspend != true && expectedType.isSuspendOrKSuspendFunctionType(session))
         SuspendConversionStrategy.SUSPEND_CONVERSION
     else
         SuspendConversionStrategy.NO_CONVERSION

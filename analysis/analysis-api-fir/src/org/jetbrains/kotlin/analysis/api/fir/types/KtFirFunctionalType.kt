@@ -49,7 +49,7 @@ internal class KtFirFunctionalType(
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
 
-    override val isSuspend: Boolean get() = withValidityAssertion { coneType.isSuspendFunctionType(builder.rootSession) }
+    override val isSuspend: Boolean get() = withValidityAssertion { coneType.isSuspendOrKSuspendFunctionType(builder.rootSession) }
     override val arity: Int
         get() = withValidityAssertion {
             if (coneType.isExtensionFunctionType) coneType.typeArguments.size - 2

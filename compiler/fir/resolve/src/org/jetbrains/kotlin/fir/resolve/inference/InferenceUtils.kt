@@ -100,7 +100,7 @@ fun extractLambdaInfoFromFunctionalType(
     return ResolvedLambdaAtom(
         argument,
         expectedType,
-        expectedType.isSuspendFunctionType(session),
+        expectedType.isSuspendOrKSuspendFunctionType(session),
         receiverType,
         contextReceivers,
         parameters,

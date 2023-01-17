@@ -266,7 +266,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
 
     override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
         require(this is ConeSimpleKotlinType)
-        return isSuspendFunctionType(session)
+        return isSuspendOrKSuspendFunctionType(session)
     }
 
     override fun SimpleTypeMarker.isKClass(): Boolean {

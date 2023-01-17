@@ -18386,6 +18386,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("SuspendFunctionReference.kt")
+        public void testSuspendFunctionReference() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/SuspendFunctionReference.kt");
+        }
+
+        @Test
         @TestMetadata("unqualifiedEnum.kt")
         public void testUnqualifiedEnum() throws Exception {
             runTest("compiler/testData/codegen/box/fir/unqualifiedEnum.kt");

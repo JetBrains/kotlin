@@ -640,7 +640,7 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (needUpdateLambdaType) {
-            val isSuspend = expectedType?.isSuspendFunctionType(session) ?: result.isExplicitlySuspend(session)
+            val isSuspend = expectedType?.isSuspendOrKSuspendFunctionType(session) ?: result.isExplicitlySuspend(session)
             result.replaceTypeRef(result.constructFunctionalTypeRef(isSuspend))
             session.lookupTracker?.recordTypeResolveAsLookup(result.typeRef, result.source, context.file.source)
         }

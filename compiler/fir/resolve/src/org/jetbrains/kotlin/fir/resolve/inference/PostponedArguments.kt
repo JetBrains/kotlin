@@ -105,7 +105,7 @@ private fun extractLambdaInfo(
     session: FirSession,
     candidate: Candidate?
 ): ResolvedLambdaAtom {
-    val isSuspend = expectedType?.isSuspendFunctionType(session) ?: false
+    val isSuspend = expectedType?.isSuspendOrKSuspendFunctionType(session) ?: false
 
     val isFunctionSupertype =
         expectedType != null && expectedType.lowerBoundIfFlexible()

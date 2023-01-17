@@ -17562,6 +17562,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testSuspendExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");
         }
+
+        @Test
+        @TestMetadata("SuspendFunctionReference.kt")
+        public void testSuspendFunctionReference() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/SuspendFunctionReference.kt");
+        }
     }
 
     @Nested

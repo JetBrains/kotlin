@@ -288,7 +288,7 @@ private fun argumentTypeWithSuspendConversion(
     // TODO: should refer to LanguageVersionSettings.SuspendConversion
 
     // Expect the expected type to be a suspend functional type.
-    if (!expectedType.isSuspendFunctionType(session)) {
+    if (!expectedType.isSuspendOrKSuspendFunctionType(session)) {
         return null
     }
 

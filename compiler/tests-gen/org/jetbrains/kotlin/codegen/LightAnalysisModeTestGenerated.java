@@ -14552,6 +14552,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         public void testNotFoundClasses() throws Exception {
             runTest("compiler/testData/codegen/box/fir/notFoundClasses.kt");
         }
+
+        @TestMetadata("SuspendFunctionReference.kt")
+        public void testSuspendFunctionReference() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/SuspendFunctionReference.kt");
+        }
     }
 
     @TestMetadata("compiler/testData/codegen/box/fullJdk")

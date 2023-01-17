@@ -69,7 +69,7 @@ fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirExpres
     isLambda && returnStatements.any { it is FirUnitExpression }
 
 fun FirAnonymousFunction.isExplicitlySuspend(session: FirSession): Boolean =
-    typeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendFunctionType(session) == true
+    typeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendOrKSuspendFunctionType(session) == true
 
 fun FirAnonymousFunction.addReturnToLastStatementIfNeeded() {
     // If this lambda's resolved, expected return type is Unit, we don't need an explicit return statement.

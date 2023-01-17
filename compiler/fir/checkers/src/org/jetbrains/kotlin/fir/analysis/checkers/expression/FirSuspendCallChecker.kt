@@ -130,7 +130,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
     private fun findEnclosingSuspendFunction(context: CheckerContext): FirFunction? {
         return context.containingDeclarations.lastOrNull {
             when (it) {
-                is FirAnonymousFunction -> it.typeRef.coneType.isSuspendFunctionType(context.session)
+                is FirAnonymousFunction -> it.typeRef.coneType.isSuspendOrKSuspendFunctionType(context.session)
                 is FirSimpleFunction -> it.isSuspend
                 else -> false
             }
@@ -218,7 +218,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
         calledDeclarationSymbol: FirCallableSymbol<*>
     ): Triple<FirExpression?, FirExpression?, ConeKotlinType?> {
         if (this is FirImplicitInvokeCall &&
-            dispatchReceiver != FirNoReceiverExpression && dispatchReceiver.typeRef.coneType.isSuspendFunctionType(session)
+            dispatchReceiver != FirNoReceiverExpression && dispatchReceiver.typeRef.coneType.isSuspendOrKSuspendFunctionType(session)
         ) {
             val variableForInvoke = dispatchReceiver
             val variableForInvokeType = variableForInvoke.typeRef.coneType

@@ -85,8 +85,12 @@ fun ConeKotlinType.isFunctionalOrSuspendFunctionalType(session: FirSession): Boo
 }
 
 // SuspendFunction, KSuspendFunction
-fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
+fun ConeKotlinType.isSuspendOrKSuspendFunctionType(session: FirSession): Boolean {
     return isFunctionalType(session) { it.isSuspendType }
+}
+
+fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
+    return isFunctionalType(session) { it == FunctionClassKind.SuspendFunction }
 }
 
 // KFunction, KSuspendFunction
@@ -97,14 +101,14 @@ fun ConeKotlinType.isKFunctionType(session: FirSession): Boolean {
 fun ConeKotlinType.kFunctionTypeToFunctionType(session: FirSession): ConeClassLikeType {
     require(this.isKFunctionType(session))
     val kind =
-        if (isSuspendFunctionType(session)) FunctionClassKind.SuspendFunction
+        if (isSuspendOrKSuspendFunctionType(session)) FunctionClassKind.SuspendFunction
         else FunctionClassKind.Function
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size - 1))
     return ConeClassLikeTypeImpl(ConeClassLikeLookupTagImpl(functionalTypeId), typeArguments, isNullable = false)
 }
 
 fun ConeKotlinType.suspendFunctionTypeToFunctionType(session: FirSession): ConeClassLikeType {
-    require(this.isSuspendFunctionType(session))
+    require(this.isSuspendOrKSuspendFunctionType(session))
     val kind =
         if (isKFunctionType(session)) FunctionClassKind.KFunction
         else FunctionClassKind.Function
@@ -113,7 +117,7 @@ fun ConeKotlinType.suspendFunctionTypeToFunctionType(session: FirSession): ConeC
 }
 
 fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: FirSession, continuationClassId: ClassId): ConeClassLikeType {
-    require(this.isSuspendFunctionType(session))
+    require(this.isSuspendOrKSuspendFunctionType(session))
     val kind =
         if (isKFunctionType(session)) FunctionClassKind.KFunction
         else FunctionClassKind.Function
@@ -138,24 +142,24 @@ fun ConeKotlinType.isSubtypeOfFunctionalType(session: FirSession, expectedFuncti
 }
 
 fun ConeKotlinType.findSubtypeOfNonSuspendFunctionalType(session: FirSession, expectedFunctionalType: ConeClassLikeType): ConeKotlinType? {
-    require(expectedFunctionalType.isBuiltinFunctionalType(session) && !expectedFunctionalType.isSuspendFunctionType(session))
+    require(expectedFunctionalType.isBuiltinFunctionalType(session) && !expectedFunctionalType.isSuspendOrKSuspendFunctionType(session))
     return when (this) {
         is ConeClassLikeType -> {
             // Expect the argument type is not a suspend functional type.
-            if (isSuspendFunctionType(session) || !isSubtypeOfFunctionalType(session, expectedFunctionalType))
+            if (isSuspendOrKSuspendFunctionType(session) || !isSubtypeOfFunctionalType(session, expectedFunctionalType))
                 null
             else
                 this
         }
         is ConeIntersectionType -> {
-            if (intersectedTypes.any { it.isSuspendFunctionType(session) })
+            if (intersectedTypes.any { it.isSuspendOrKSuspendFunctionType(session) })
                 null
             else
                 intersectedTypes.find { it.findSubtypeOfNonSuspendFunctionalType(session, expectedFunctionalType) != null }
         }
         is ConeTypeParameterType -> {
             val bounds = lookupTag.typeParameterSymbol.resolvedBounds.map { it.coneType }
-            if (bounds.any { it.isSuspendFunctionType(session) })
+            if (bounds.any { it.isSuspendOrKSuspendFunctionType(session) })
                 null
             else
                 bounds.find { it.findSubtypeOfNonSuspendFunctionalType(session, expectedFunctionalType) != null }

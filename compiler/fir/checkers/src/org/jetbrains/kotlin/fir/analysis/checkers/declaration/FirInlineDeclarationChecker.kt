@@ -355,7 +355,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
         for (param in function.valueParameters) {
             val coneType = param.returnTypeRef.coneType
             val isFunctionalType = coneType.isFunctionalType(context.session)
-            val isSuspendFunctionalType = coneType.isSuspendFunctionType(context.session)
+            val isSuspendFunctionalType = coneType.isSuspendOrKSuspendFunctionType(context.session)
             val defaultValue = param.defaultValue
 
             if (!(isFunctionalType || isSuspendFunctionalType) && (param.isNoinline || param.isCrossinline)) {
@@ -438,7 +438,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
             function.valueParameters.any { param ->
                 val type = param.returnTypeRef.coneType
                 !param.isNoinline && !type.isNullable
-                        && (type.isFunctionalType(session) || type.isSuspendFunctionType(session))
+                        && (type.isFunctionalType(session) || type.isSuspendOrKSuspendFunctionType(session))
             }
         if (hasInlinableParameters) return
         if (function.isInlineOnly(session)) return

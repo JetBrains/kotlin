@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
+import org.jetbrains.kotlin.fir.types.isSuspendOrKSuspendFunctionType
 import org.jetbrains.kotlin.name.JvmNames.SYNCHRONIZED_ANNOTATION_CLASS_ID
 
 object FirSynchronizedAnnotationChecker : FirFunctionChecker() {
@@ -33,7 +33,7 @@ object FirSynchronizedAnnotationChecker : FirFunctionChecker() {
             return
         }
         if (declaration.isSuspend ||
-            (declaration as? FirAnonymousFunction)?.typeRef?.coneType?.isSuspendFunctionType(session) == true
+            (declaration as? FirAnonymousFunction)?.typeRef?.coneType?.isSuspendOrKSuspendFunctionType(session) == true
         ) {
             reporter.reportOn(annotation.source, FirJvmErrors.SYNCHRONIZED_ON_SUSPEND, context)
             return

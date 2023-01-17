@@ -492,7 +492,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
         require(this is ConeKotlinType)
         return isTypeOrSubtypeOf {
-            (it.lowerBoundIfFlexible() as ConeKotlinType).isSuspendFunctionType(session)
+            (it.lowerBoundIfFlexible() as ConeKotlinType).isSuspendOrKSuspendFunctionType(session)
         }
     }
 
