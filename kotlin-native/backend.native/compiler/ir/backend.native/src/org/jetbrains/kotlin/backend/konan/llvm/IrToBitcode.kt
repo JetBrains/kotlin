@@ -130,8 +130,6 @@ private interface CodeContext {
 
     val exceptionHandler: ExceptionHandler
 
-    val stackLocalsManager: StackLocalsManager
-
     /**
      * Declares the variable.
      * @return index of declared variable.
@@ -189,6 +187,16 @@ private interface CodeContext {
      * Returns [DIScopeOpaqueRef] instance for corresponding scope.
      */
     fun scope(): DIScopeOpaqueRef?
+
+    /**
+     * Called, when context is pushed on stack
+     */
+    fun onEnter() {}
+
+    /**
+     * Called, when context is removed from stack
+     */
+    fun onExit() {}
 }
 
 //-------------------------------------------------------------------------//
@@ -216,9 +224,6 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
         override val exceptionHandler: ExceptionHandler
             get() = currentCodeContext.exceptionHandler
-
-        override val stackLocalsManager: StackLocalsManager
-            get() = currentCodeContext.stackLocalsManager
 
         override fun evaluateCall(function: IrFunction, args: List<LLVMValueRef>, resultLifetime: Lifetime, superClass: IrClass?, resultSlot: LLVMValueRef?) =
                 evaluateSimpleFunctionCall(function, args, resultLifetime, superClass, resultSlot)
@@ -255,8 +260,6 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         override fun genContinue(destination: IrContinue) = unsupported()
 
         override val exceptionHandler get() = unsupported()
-
-        override val stackLocalsManager: StackLocalsManager get() = unsupported()
 
         override fun genDeclareVariable(variable: IrVariable, value: LLVMValueRef?, variableLocation: VariableDebugLocation?) = unsupported(variable)
 
@@ -295,10 +298,12 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
         val oldCodeContext = currentCodeContext
         if (codeContext != null) {
             currentCodeContext = codeContext
+            codeContext.onEnter()
         }
         try {
             return block()
         } finally {
+            codeContext?.onExit()
             currentCodeContext = oldCodeContext
         }
     }
@@ -570,7 +575,16 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
     //-------------------------------------------------------------------------//
 
-    private inner class LoopScope(val loop: IrLoop) : InnerScopeImpl() {
+    private open inner class StackLocalsScope() : InnerScopeImpl() {
+        override fun onEnter() {
+            functionGenerationContext.stackLocalsManager.enterScope()
+        }
+        override fun onExit() {
+            functionGenerationContext.stackLocalsManager.exitScope()
+        }
+    }
+
+    private inner class LoopScope(val loop: IrLoop) : StackLocalsScope() {
         val loopExit  = functionGenerationContext.basicBlock("loop_exit", loop.endLocation)
         val loopCheck = functionGenerationContext.basicBlock("loop_check", loop.condition.startLocation)
 
@@ -587,9 +601,6 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
             } else
                 super.genContinue(destination)
         }
-
-        override val stackLocalsManager: StackLocalsManager =
-            object : StackLocalsManager by functionGenerationContext.stackLocalsManager { }
     }
 
     //-------------------------------------------------------------------------//
@@ -729,8 +740,6 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
         override val exceptionHandler: ExceptionHandler
             get() = ExceptionHandler.Caller
-
-        override val stackLocalsManager get() = functionGenerationContext.stackLocalsManager
 
         override fun functionScope(): CodeContext = this
 
@@ -1326,7 +1335,6 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
             functionGenerationContext.br(loopScope.loopCheck)
             functionGenerationContext.positionAtEnd(loopScope.loopExit)
-
         }
 
         assert(loop.type.isUnit())
@@ -2490,8 +2498,7 @@ internal class CodeGeneratorVisitor(val generationState: NativeGenerationState, 
 
                 constructedClass.isObjCClass() -> error("Call should've been lowered: ${callee.dump()}")
 
-                else -> functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee),
-                        currentCodeContext.stackLocalsManager, resultSlot = resultSlot)
+                else -> functionGenerationContext.allocInstance(constructedClass, resultLifetime(callee), resultSlot = resultSlot)
             }
             evaluateSimpleFunctionCall(callee.symbol.owner,
                     listOf(thisValue) + args, Lifetime.IRRELEVANT /* constructor doesn't return anything */)
