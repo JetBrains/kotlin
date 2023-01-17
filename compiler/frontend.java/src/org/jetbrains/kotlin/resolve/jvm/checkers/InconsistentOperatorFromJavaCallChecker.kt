@@ -20,9 +20,10 @@ import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /**
- * This checker detects if call by operator convention to a Java method violates some expected contract:
- * - "key in map" commonly resolves to an stdlib extension that calls Map.containsKey(),
- *   but there's a member in ConcurrentHashMap with acceptable signature that delegates to `containsValue` instead
+ * This checker detects if a call by operator 'contains' convention to a Java method violates the expected contract:
+ * * "key in map" commonly resolves to stdlib extension that calls Map.containsKey(),
+ * but there's a member in ConcurrentHashMap with acceptable signature that delegates to `containsValue` instead,
+ * leading to an unexpected result. See KT-18053
  */
 object InconsistentOperatorFromJavaCallChecker : CallChecker {
     private val CONCURRENT_HASH_MAP_FQ_NAME = FqName("java.util.concurrent.ConcurrentHashMap")
