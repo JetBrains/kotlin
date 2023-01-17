@@ -30,7 +30,7 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
                 val sourceSetContent = artifactContent.findSourceSet(visibleSourceSet) ?: return@mapNotNull null
                 val sourceSetMetadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
 
-                val metadataLibraryOutputFile = sourceSet.internal.project.kotlinTransformedMetadataLibraryDirectoryForIde
+                val metadataLibraryOutputFile = sourceSet.internal.project.layout.kotlinTransformedMetadataLibraryDirectoryForIde
                     .resolve(sourceSetMetadataBinary.relativeFile)
 
                 metadataLibraryOutputFile.parentFile.mkdirs()
