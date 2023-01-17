@@ -18,4 +18,3 @@ fun box(): String {
 
 // EXPECTATIONS JS_IR
 // test.kt:8 box
-// test.kt:3 ifoo

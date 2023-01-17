@@ -60,7 +60,7 @@ class JsDebugRunner(testServices: TestServices, private val localVariables: Bool
         if (esModules) return
 
         // This file generated in the FULL mode should be self-sufficient.
-        val jsFilePath = getAllFilesForRunner(testServices, modulesToArtifact)[TranslationMode.FULL]?.single()
+        val jsFilePath = getAllFilesForRunner(testServices, modulesToArtifact)[TranslationMode.FULL_DEV]?.single()
             ?: error("Only FULL translation mode is supported")
 
         val mainModule = JsEnvironmentConfigurator.getMainModule(testServices)

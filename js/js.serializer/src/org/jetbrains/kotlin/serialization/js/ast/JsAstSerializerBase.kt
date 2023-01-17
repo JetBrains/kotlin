@@ -199,6 +199,10 @@ abstract class JsAstSerializerBase {
                 builder.thisLiteral = JsAstProtoBuf.ThisLiteral.newBuilder().build()
             }
 
+            override fun visitSuper(x: JsSuperRef) {
+                builder.superLiteral = JsAstProtoBuf.SuperLiteral.newBuilder().build()
+            }
+
             override fun visitNull(x: JsNullLiteral) {
                 builder.nullLiteral = JsAstProtoBuf.NullLiteral.newBuilder().build()
             }
@@ -249,14 +253,16 @@ abstract class JsAstSerializerBase {
             }
 
             override fun visitFunction(x: JsFunction) {
-                val functionBuilder = JsAstProtoBuf.Function.newBuilder()
-                x.parameters.forEach { functionBuilder.addParameter(serializeParameter(it)) }
-                x.name?.let { functionBuilder.nameId = serialize(it) }
-                functionBuilder.body = serialize(x.body)
-                if (x.isLocal) {
-                    functionBuilder.local = true
-                }
-                builder.function = functionBuilder.build()
+                builder.function = serializeFunction(x)
+            }
+
+            override fun visitClass(x: JsClass) {
+                val classBuilder = JsAstProtoBuf.Class.newBuilder()
+                x.name?.let { classBuilder.nameId = serialize(it) }
+                x.baseClass?.let { classBuilder.superExpression = serialize(it) }
+                x.constructor?.let { classBuilder.constructor = serializeFunction(it) }
+                x.members.forEach { classBuilder.addMember(serializeFunction(it)) }
+                builder.class_ = classBuilder.build()
             }
 
             override fun visitDocComment(comment: JsDocComment) {
@@ -392,6 +398,19 @@ abstract class JsAstSerializerBase {
         return blockBuilder.build()
     }
 
+    protected fun serializeFunction(function: JsFunction): JsAstProtoBuf.Function {
+        val functionBuilder = JsAstProtoBuf.Function.newBuilder()
+        function.parameters.forEach { functionBuilder.addParameter(serializeParameter(it)) }
+        function.modifiers.forEach { functionBuilder.addModifier(map(it)) }
+        function.name?.let { functionBuilder.nameId = serialize(it) }
+        functionBuilder.body = serialize(function.body)
+        if (function.isLocal) {
+            functionBuilder.local = true
+        }
+        return functionBuilder.build()
+    }
+
+
     protected fun serializeVars(vars: JsVars): JsAstProtoBuf.Vars {
         val varsBuilder = JsAstProtoBuf.Vars.newBuilder()
         for (varDecl in vars.vars) {
@@ -417,6 +436,12 @@ abstract class JsAstSerializerBase {
         unaryBuilder.type = map(x.operator)
         unaryBuilder.postfix = postfix
         return unaryBuilder.build()
+    }
+
+    protected fun map(modifier: JsFunction.Modifier) = when (modifier) {
+        JsFunction.Modifier.STATIC -> JsAstProtoBuf.Function.Modifier.STATIC
+        JsFunction.Modifier.SET -> JsAstProtoBuf.Function.Modifier.SET
+        JsFunction.Modifier.GET -> JsAstProtoBuf.Function.Modifier.GET
     }
 
     protected fun map(op: JsBinaryOperator) = when (op) {

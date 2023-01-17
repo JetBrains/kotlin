@@ -5,8 +5,6 @@
 
 package kotlin.js
 
-import kotlin.reflect.KClass
-
 @PublishedApi
 internal fun <T : Enum<T>> enumValuesIntrinsic(): Array<T> =
     throw IllegalStateException("Should be replaced by compiler")
@@ -52,7 +50,4 @@ internal annotation class JsFun(val code: String)
  * This information is used for generating special tagged types inside d.ts files, for more strict usage of implicitly exported entities
  */
 @Target(AnnotationTarget.CLASS)
-internal annotation class JsImplicitExport()
-
-@Target(AnnotationTarget.CLASS)
-internal annotation class JsSubtypeCheckable(vararg val implements: KClass<*>)
+internal annotation class JsImplicitExport

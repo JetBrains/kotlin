@@ -144,7 +144,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     arguments.irSafeExternalBooleanDiagnostic,
                     messageCollector
                 ),
-                granularity = arguments.granularity
+                granularity = arguments.granularity,
+                es6mode = arguments.useEsClasses
             )
         }
 
@@ -668,7 +669,14 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 compilerConfiguration = configurationJs,
                 irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                 mainArguments = mainCallArguments,
-                compilerInterfaceFactory = { mainModule, cfg -> JsIrCompilerWithIC(mainModule, cfg, arguments.granularity) }
+                compilerInterfaceFactory = { mainModule, cfg ->
+                    JsIrCompilerWithIC(
+                        mainModule,
+                        cfg,
+                        arguments.granularity,
+                        es6mode = arguments.useEsClasses
+                    )
+                }
             )
 
             val artifacts = cacheUpdater.actualizeCaches()

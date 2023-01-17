@@ -9,26 +9,35 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 internal class JsUsefulDeclarationProcessor(
     override val context: JsIrBackendContext,
     printReachabilityInfo: Boolean,
     removeUnusedAssociatedObjects: Boolean
 ) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects) {
-
     private val equalsMethod = getMethodOfAny("equals")
     private val hashCodeMethod = getMethodOfAny("hashCode")
+    private val isEsModules = context.configuration[JSConfigurationKeys.MODULE_KIND] == ModuleKind.ES
 
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitCall(expression: IrCall, data: IrDeclaration) {
             super.visitCall(expression, data)
+
+            if (expression.usePrototype(data)) {
+                context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(expression.symbol.owner, "access to super type")
+            }
+
             when (expression.symbol) {
                 context.intrinsics.jsBoxIntrinsic -> {
                     val inlineClass = context.inlineClassesUtils.getInlinedClass(expression.getTypeArgument(0)!!)!!
@@ -68,6 +77,21 @@ internal class JsUsefulDeclarationProcessor(
                     constructedClasses += classToCreate
                 }
 
+                context.intrinsics.jsCreateThisSymbol -> {
+                    val jsClassOrThis = expression.getValueArgument(0)
+
+                    val classTypeToCreate = when (jsClassOrThis) {
+                        is IrCall -> jsClassOrThis.getTypeArgument(0)!!
+                        is IrGetValue -> jsClassOrThis.type
+                        else -> error("Unexpected first argument of createThis function call")
+                    }
+
+                    val classToCreate = classTypeToCreate.classifierOrFail.owner as IrClass
+
+                    classToCreate.enqueue(data, "intrinsic: jsCreateThis")
+                    constructedClasses += classToCreate
+                }
+
                 context.intrinsics.jsEquals -> {
                     equalsMethod.enqueue(data, "intrinsic: jsEquals")
                 }
@@ -83,26 +107,6 @@ internal class JsUsefulDeclarationProcessor(
                 context.intrinsics.jsPlus -> {
                     if (expression.getValueArgument(0)?.type?.classOrNull == context.irBuiltIns.stringClass) {
                         toStringMethod.enqueue(data, "intrinsic: jsPlus")
-                    }
-                }
-
-                context.intrinsics.jsConstruct -> {
-                    val callType = expression.getTypeArgument(0)!!
-                    val constructor = callType.getClass()!!.primaryConstructor
-                    constructor!!.enqueue(data, "ctor call from jsConstruct-intrinsic")
-                }
-
-                context.intrinsics.es6DefaultType -> {
-                    //same as jsClass
-                    val ref = expression.getTypeArgument(0)!!.classifierOrFail.owner as IrDeclaration
-                    ref.enqueue(data, "intrinsic: jsClass")
-                    referencedJsClasses += ref
-
-                    //Generate klass in `val currResultType = resultType || klass`
-                    val arg = expression.getTypeArgument(0)!!
-                    val klass = arg.getClass()
-                    if (klass != null) {
-                        constructedClasses.add(klass)
                     }
                 }
 
@@ -137,48 +141,57 @@ internal class JsUsefulDeclarationProcessor(
                 }
         }
 
-        if (irClass.containsMetadata()) {
-            when {
-                irClass.isObject -> context.intrinsics.metadataObjectConstructorSymbol.owner.enqueue(irClass, "object metadata")
+        if (!irClass.containsMetadata()) return
 
-                irClass.isInterface -> {
-                    context.intrinsics.implementSymbol.owner.enqueue(irClass, "interface metadata")
-                    context.intrinsics.metadataInterfaceConstructorSymbol.owner.enqueue(irClass, "interface metadata")
-                }
+        when {
+            irClass.isObject -> context.intrinsics.metadataObjectConstructorSymbol.owner.enqueue(irClass, "object metadata")
 
-                else -> {
-                    context.intrinsics.metadataClassConstructorSymbol.owner.enqueue(irClass, "class metadata")
-                }
+            irClass.isInterface -> {
+                context.intrinsics.implementSymbol.owner.enqueue(irClass, "interface metadata")
+                context.intrinsics.metadataInterfaceConstructorSymbol.owner.enqueue(irClass, "interface metadata")
             }
+
+            else -> context.intrinsics.metadataClassConstructorSymbol.owner.enqueue(irClass, "class metadata")
         }
 
-        if (!irClass.isExpect && !irClass.isExternal && !irClass.defaultType.isAny()) {
-            if (!irClass.isInterface) {
-                context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "class metadata")
-            }
+        context.intrinsics.setMetadataForSymbol.owner.enqueue(irClass, "metadata")
 
-            if (irClass.superTypes.any { !it.isInterface() }) {
-                context.intrinsics.jsObjectCreateSymbol.owner.enqueue(irClass, "class metadata")
-            }
+        if (irClass.containsInterfaceDefaultImplementation()) {
+            context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "interface default implementation")
+        }
 
-            if (irClass.isInner || irClass.isObject) {
-                context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irClass, "class metadata")
-            }
+        if ((!context.es6mode || !isEsModules) && (irClass.isInner || irClass.isObject)) {
+            context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irClass, "object lazy initialization")
+        }
 
-            context.intrinsics.setMetadataForSymbol.owner.enqueue(irClass, "metadata")
+        if (context.es6mode) return
+
+        if (!irClass.isInterface) {
+            context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irClass, "class prototype access")
+        }
+
+        if (irClass.superTypes.any { !it.isInterface() }) {
+            context.intrinsics.jsObjectCreateSymbol.owner.enqueue(irClass, "class inheritance code")
         }
     }
 
     override fun processSimpleFunction(irFunction: IrSimpleFunction) {
         super.processSimpleFunction(irFunction)
 
+        if (irFunction.isEs6ConstructorReplacement) {
+            constructedClasses += irFunction.dispatchReceiverParameter?.type?.classOrNull?.owner!!
+        }
+
         if (irFunction.isReal && irFunction.body != null) {
             irFunction.parentClassOrNull?.takeIf { it.isInterface }?.enqueue(irFunction, "interface default method is used")
         }
 
+        if (context.es6mode && isEsModules) return
+
         val property = irFunction.correspondingPropertySymbol?.owner ?: return
 
-        if (property.isExported(context) || property.isOverriddenExternal()) {
+        if (property.isExported(context) || property.getJsName() != null || property.isOverriddenExternal()) {
+            context.intrinsics.jsPrototypeOfSymbol.owner.enqueue(irFunction, "property for export")
             context.intrinsics.jsDefinePropertySymbol.owner.enqueue(irFunction, "property for export")
         }
     }
@@ -225,8 +238,24 @@ internal class JsUsefulDeclarationProcessor(
     }
 
     override fun isExported(declaration: IrDeclaration): Boolean = declaration.isExported(context)
-}
 
+    private fun IrCall.usePrototype(container: IrDeclaration?): Boolean {
+        if (superQualifierSymbol == null) return false
+
+        val currentFun = (container as? IrSimpleFunction)
+        val currentClass = currentFun?.parentClassOrNull
+
+        return !context.es6mode ||
+                currentFun?.dispatchReceiverParameter == null ||
+                currentClass != null && (currentClass.isInner || currentClass.isLocal)
+    }
+
+    private fun IrClass.containsInterfaceDefaultImplementation(): Boolean {
+        return superTypes.any { it.classOrNull?.owner?.isExternal == true } ||
+                isExported(context) ||
+                isInterface && declarations.any { it is IrFunction && it.body != null }
+    }
+}
 
 private fun Collection<IrClass>.filterDescendantsOf(bases: Collection<IrClass>): Collection<IrClass> {
     val visited = hashSetOf<IrClass>()

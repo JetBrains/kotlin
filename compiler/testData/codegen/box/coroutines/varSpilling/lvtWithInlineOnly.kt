@@ -1,6 +1,6 @@
 // WITH_STDLIB
 // FULL_JDK
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 
 import kotlin.coroutines.*
 

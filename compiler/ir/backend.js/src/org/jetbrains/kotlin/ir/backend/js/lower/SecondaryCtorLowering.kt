@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
-import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class SecondaryConstructorLowering(val context: JsIrBackendContext) : DeclarationTransformer {
 
@@ -234,6 +234,7 @@ private fun JsIrBackendContext.buildConstructorFactory(constructor: IrConstructo
 class SecondaryFactoryInjectorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
+        if (context.es6mode) return
         // TODO Simplify? Is this needed at all?
         var parentFunction: IrFunction? = container as? IrFunction
         var declaration = container
@@ -266,14 +267,7 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
 
         val target = expression.symbol.owner
         return if (target.isSecondaryConstructorCall) {
-            val factory = with(context) {
-                if (es6mode) mapping.secondaryConstructorToDelegate[target]
-                    ?: compilationException(
-                        "Not found IrFunction for secondary ctor",
-                        expression
-                    )
-                else buildConstructorFactory(target, target.parentAsClass)
-            }
+            val factory = context.buildConstructorFactory(target, target.parentAsClass)
             replaceSecondaryConstructorWithFactoryFunction(expression, factory.symbol)
         } else expression
     }
@@ -285,18 +279,8 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
 
         return if (target.isSecondaryConstructorCall) {
             val klass = target.parentAsClass
-            val delegate = with(context) {
-                if (es6mode) mapping.secondaryConstructorToDelegate[target]
-                    ?: compilationException(
-                        "Not found IrFunction for secondary ctor",
-                        expression
-                    )
-                else buildConstructorDelegate(target, klass)
-            }
+            val delegate = context.buildConstructorDelegate(target, klass)
             val newCall = replaceSecondaryConstructorWithFactoryFunction(expression, delegate.symbol)
-            if (context.es6mode) {
-                return newCall
-            }
 
             val readThis = expression.run {
                 if (data is IrConstructor) {
@@ -315,16 +299,19 @@ private class CallsiteRedirectionTransformer(private val context: JsIrBackendCon
     private fun replaceSecondaryConstructorWithFactoryFunction(
         call: IrFunctionAccessExpression,
         newTarget: IrSimpleFunctionSymbol
-    ) = IrCallImpl(
-        call.startOffset, call.endOffset, call.type, newTarget,
-        typeArgumentsCount = call.typeArgumentsCount,
-        valueArgumentsCount = newTarget.owner.valueParameters.size
-    ).apply {
+    ): IrCall {
+        val irClass = call.symbol.owner.parentAsClass
+        return IrCallImpl(
+            call.startOffset, call.endOffset, call.type, newTarget,
+            typeArgumentsCount = call.typeArgumentsCount,
+            valueArgumentsCount = newTarget.owner.valueParameters.size,
+            superQualifierSymbol = irClass.symbol.takeIf { context.es6mode && call.isSyntheticDelegatingReplacement }
+        ).apply {
+            copyTypeArgumentsFrom(call)
 
-        copyTypeArgumentsFrom(call)
-
-        for (i in 0 until call.valueArgumentsCount) {
-            putValueArgument(i, call.getValueArgument(i))
+            for (i in 0 until call.valueArgumentsCount) {
+                putValueArgument(i, call.getValueArgument(i))
+            }
         }
     }
 }

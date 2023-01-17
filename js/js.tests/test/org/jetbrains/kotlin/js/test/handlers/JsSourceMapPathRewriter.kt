@@ -23,10 +23,10 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val supportedTranslationModes = arrayOf(
-            TranslationMode.FULL,
-            TranslationMode.FULL_DCE_MINIMIZED_NAMES,
-            TranslationMode.PER_MODULE,
-            TranslationMode.PER_MODULE_DCE_MINIMIZED_NAMES,
+            TranslationMode.FULL_DEV,
+            TranslationMode.FULL_PROD_MINIMIZED_NAMES,
+            TranslationMode.PER_MODULE_DEV,
+            TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES,
         )
         val testModules = testServices.moduleStructure.modules
         val allTestFiles = testModules.flatMap { it.files }

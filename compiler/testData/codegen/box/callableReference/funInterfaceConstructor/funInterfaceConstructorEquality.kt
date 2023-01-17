@@ -7,7 +7,7 @@
 //  ^ Failed: ks1 != ks2 (same file, same SAM type)
 
 // IGNORE_BACKEND: JS
-// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
 //  ^ Failed: ks1 != ks2 (same file, same SAM type)
 
 // FILE: funInterfaceConstructorEquality.kt

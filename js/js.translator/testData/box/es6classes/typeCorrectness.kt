@@ -1,4 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1358
+
 open class A(var value: Int)
 
 open class B : A {

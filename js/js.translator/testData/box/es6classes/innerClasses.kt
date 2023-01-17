@@ -1,4 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1343
+
 abstract class A {
     abstract fun foo(): String
 

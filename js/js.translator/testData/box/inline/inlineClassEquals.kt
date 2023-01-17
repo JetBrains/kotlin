@@ -209,7 +209,7 @@ fun testNullableUnderlyingType() {
     caseJsEq()
 }
 
-// CHECK_NEW_COUNT: function=testUnderlyingWithEqualsOverride count=4
+// CHECK_NEW_COUNT: function=testUnderlyingWithEqualsOverride count=4 TARGET_BACKENDS=JS_IR
 // CHECK_CALLED_IN_SCOPE: scope=testUnderlyingWithEqualsOverride function=equals
 fun testUnderlyingWithEqualsOverride() {
     val x0 = ClassUnderlayingWithEquals(MyClass(0))

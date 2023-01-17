@@ -15,19 +15,19 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
 object JsIrBuilder {
-
-
     object SYNTHESIZED_DECLARATION : IrDeclarationOriginImpl("SYNTHESIZED_DECLARATION")
 
     fun buildCall(
         target: IrSimpleFunctionSymbol,
         type: IrType? = null,
         typeArguments: List<IrType>? = null,
-        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
+        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
+        superQualifierSymbol: IrClassSymbol? = null,
     ): IrCall {
         val owner = target.owner
         return IrCallImpl(
@@ -35,6 +35,7 @@ object JsIrBuilder {
             UNDEFINED_OFFSET,
             type ?: owner.returnType,
             target,
+            superQualifierSymbol = superQualifierSymbol,
             typeArgumentsCount = owner.typeParameters.size,
             valueArgumentsCount = owner.valueParameters.size,
             origin = origin
@@ -46,54 +47,95 @@ object JsIrBuilder {
         }
     }
 
-    fun buildConstructorCall(
-        target: IrConstructorSymbol,
-        type: IrType? = null,
-        typeArguments: List<IrType>? = null,
-        constructorTypeArguments: List<IrType>? = null,
-        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
-    ): IrConstructorCall {
+    fun buildArray(elements: List<IrExpression>, type: IrType, elementType: IrType): IrExpression {
+        return IrVarargImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            type,
+            elementType,
+            elements
+        )
+    }
+
+    fun buildDelegatingConstructorCall(target: IrConstructorSymbol, typeArguments: List<IrType?>? = null): IrDelegatingConstructorCall {
         val owner = target.owner
-        val parent = owner.parentAsClass
-        return IrConstructorCallImpl(
+        val irClass = owner.parentAsClass
+
+        return IrDelegatingConstructorCallImpl(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            type ?: owner.returnType,
+            owner.returnType,
             target,
-            typeArgumentsCount = parent.typeParameters.size,
+            typeArgumentsCount = irClass.typeParameters.size,
             valueArgumentsCount = owner.valueParameters.size,
-            constructorTypeArgumentsCount = owner.typeParameters.size,
-            origin = origin
         ).apply {
             typeArguments?.let {
-                assert(typeArguments.size == typeArgumentsCount)
-                it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
-            }
-            constructorTypeArguments?.let {
-                assert(constructorTypeArguments.size == constructorTypeArgumentsCount)
+                assert(it.size == typeArgumentsCount)
                 it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
             }
         }
     }
+
+    fun buildConstructorCall(
+        target: IrConstructorSymbol,
+        typeArguments: List<IrType?>? = null,
+        constructorTypeArguments: List<IrType?>? = null,
+        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
+    ): IrConstructorCall {
+        val owner = target.owner
+        val irClass = owner.parentAsClass
+
+        return IrConstructorCallImpl(
+            UNDEFINED_OFFSET,
+            UNDEFINED_OFFSET,
+            owner.returnType,
+            target,
+            typeArgumentsCount = irClass.typeParameters.size,
+            constructorTypeArgumentsCount = owner.typeParameters.size,
+            valueArgumentsCount = owner.valueParameters.size,
+            origin = origin
+        ).apply {
+            typeArguments?.let {
+                assert(it.size == typeArgumentsCount)
+                it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
+            }
+
+            constructorTypeArguments?.let {
+                assert(it.size == typeArgumentsCount)
+                it.withIndex().forEach { (i, t) -> putTypeArgument(i, t) }
+            }
+        }
+    }
+
+    fun buildRawReference(targetSymbol: IrFunctionSymbol, type: IrType): IrRawFunctionReference =
+        IrRawFunctionReferenceImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol)
 
     fun buildReturn(targetSymbol: IrFunctionSymbol, value: IrExpression, type: IrType) =
         IrReturnImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, targetSymbol, value)
 
     fun buildThrow(type: IrType, value: IrExpression) = IrThrowImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, value)
 
-    fun buildValueParameter(parent: IrFunction, name: String, index: Int, type: IrType): IrValueParameter =
+    fun buildValueParameter(
+        parent: IrFunction,
+        name: String,
+        index: Int,
+        type: IrType,
+        isAssignable: Boolean = false,
+        origin: IrDeclarationOrigin = SYNTHESIZED_DECLARATION
+    ): IrValueParameter =
         buildValueParameter(parent) {
-            this.origin = SYNTHESIZED_DECLARATION
+            this.origin = origin
             this.name = Name.identifier(name)
             this.index = index
             this.type = type
+            this.isAssignable = isAssignable
         }
 
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
         IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, classSymbol)
 
-    fun buildGetValue(symbol: IrValueSymbol) =
-        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+    fun buildGetValue(symbol: IrValueSymbol, origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT) =
+        IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, origin)
 
     fun buildSetValue(symbol: IrValueSymbol, value: IrExpression) =
         IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)

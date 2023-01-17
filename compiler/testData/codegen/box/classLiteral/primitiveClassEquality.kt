@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR, WASM
+// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, WASM
 
 // boxed primitive comparisons
 fun isBoolean(a: Any) = a::class == true::class

@@ -17,13 +17,11 @@ import org.jetbrains.kotlin.ir.backend.js.utils.JsAnnotations
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -72,18 +70,13 @@ class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
                 ?.also { new -> variables[param] = new } ?: param
         }
 
-        val defaultResolutionStatements = valueParameters.mapNotNull {
-            irBuilder.createResolutionStatement(it, it.defaultValue?.expression)
-        }
+        val blockBody = body as? IrBlockBody
 
-        if (variables.isNotEmpty()) {
-            body?.transformChildren(VariableRemapper(variables), null)
-
-            body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
-                statements += defaultResolutionStatements
-                statements += body?.statements ?: emptyList()
-            }
-
+        if (blockBody != null && variables.isNotEmpty()) {
+            blockBody.transformChildren(VariableRemapper(variables), null)
+            blockBody.statements.addAll(0, valueParameters.mapNotNull {
+                irBuilder.createResolutionStatement(it, it.defaultValue?.expression)
+            })
         }
 
         return also {

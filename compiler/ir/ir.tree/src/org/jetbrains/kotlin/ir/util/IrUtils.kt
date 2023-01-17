@@ -205,6 +205,12 @@ val IrProperty.isSimpleProperty: Boolean
 val IrClass.functions: Sequence<IrSimpleFunction>
     get() = declarations.asSequence().filterIsInstance<IrSimpleFunction>()
 
+val IrClass.superClass: IrClass?
+    get() = superTypes
+        .firstOrNull { !it.isInterface() && !it.isAny() }
+        ?.classOrNull
+        ?.owner
+
 val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
     get() = owner.functions.map { it.symbol }
 
@@ -823,8 +829,11 @@ fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<Ir
 fun IrFunction.copyParameterDeclarationsFrom(from: IrFunction) {
     assert(typeParameters.isEmpty())
     copyTypeParametersFrom(from)
-    val substitutionMap = makeTypeParameterSubstitutionMap(from, this)
-    copyValueParametersFrom(from, substitutionMap)
+    copyValueParametersFrom(from)
+}
+
+fun IrFunction.copyValueParametersFrom(from: IrFunction) {
+    copyValueParametersFrom(from, makeTypeParameterSubstitutionMap(from, this))
 }
 
 fun IrTypeParametersContainer.copyTypeParameters(

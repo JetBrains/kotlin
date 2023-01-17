@@ -1,4 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1347
+
 var sideEffect = ""
 
 abstract class A {

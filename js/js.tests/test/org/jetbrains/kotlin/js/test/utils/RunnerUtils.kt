@@ -42,7 +42,7 @@ fun TestModule.getNameFor(file: TestFile, testServices: TestServices): String {
 private fun extractJsFiles(
     testServices: TestServices,
     modules: List<TestModule>,
-    mode: TranslationMode = TranslationMode.FULL,
+    mode: TranslationMode = TranslationMode.FULL_DEV,
 ): Pair<List<String>, List<String>> {
     val outputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, mode)
 
@@ -67,13 +67,13 @@ private fun extractJsFiles(
     return before to after
 }
 
-fun getAdditionalFilePathes(testServices: TestServices, mode: TranslationMode = TranslationMode.FULL): List<String> {
+fun getAdditionalFilePathes(testServices: TestServices, mode: TranslationMode = TranslationMode.FULL_DEV): List<String> {
     return getAdditionalFiles(testServices, mode, true).map { it.absolutePath }
 }
 
 fun getAdditionalFiles(
     testServices: TestServices,
-    mode: TranslationMode = TranslationMode.FULL,
+    mode: TranslationMode = TranslationMode.FULL_DEV,
     shouldCopyFiles: Boolean = false
 ): List<File> {
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
@@ -99,13 +99,13 @@ fun getAdditionalFiles(
     return additionalFiles
 }
 
-fun getAdditionalMainFilePathes(testServices: TestServices, mode: TranslationMode = TranslationMode.FULL): List<String> {
+fun getAdditionalMainFilePathes(testServices: TestServices, mode: TranslationMode = TranslationMode.FULL_DEV): List<String> {
     return getAdditionalMainFiles(testServices, mode, shouldCopyFiles = true).map { it.absolutePath }
 }
 
 fun getAdditionalMainFiles(
     testServices: TestServices,
-    mode: TranslationMode = TranslationMode.FULL,
+    mode: TranslationMode = TranslationMode.FULL_DEV,
     shouldCopyFiles: Boolean = false
 ): List<File> {
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
@@ -174,7 +174,7 @@ fun getAllFilesForRunner(
         val additionalMainFiles = getAdditionalMainFilePathes(testServices)
         // Old BE
         val outputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices)
-        val dceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE_MINIMIZED_NAMES)
+        val dceOutputDir = JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_PROD_MINIMIZED_NAMES)
 
         val artifactsPaths = modulesToArtifact.values.map { it.outputFile.absolutePath }.filter { !File(it).isDirectory }
         val allJsFiles = additionalFiles + inputJsFilesBefore + artifactsPaths + commonFiles + additionalMainFiles + inputJsFilesAfter
@@ -185,12 +185,12 @@ fun getAllFilesForRunner(
         val runIrDce = JsEnvironmentConfigurationDirectives.RUN_IR_DCE in globalDirectives
         val onlyIrDce = JsEnvironmentConfigurationDirectives.ONLY_IR_DCE in globalDirectives
         if (!onlyIrDce) {
-            result[TranslationMode.FULL] = allJsFiles
+            result[TranslationMode.FULL_DEV] = allJsFiles
         }
         if (runIrDce) {
             val dceJsFiles = artifactsPaths.map { it.replace(outputDir.absolutePath, dceOutputDir.absolutePath) }
             val dceAllJsFiles = additionalFiles + inputJsFilesBefore + dceJsFiles + commonFiles + additionalMainFiles + inputJsFilesAfter
-            result[TranslationMode.FULL_DCE_MINIMIZED_NAMES] = dceAllJsFiles
+            result[TranslationMode.FULL_PROD_MINIMIZED_NAMES] = dceAllJsFiles
         }
 
         return result
@@ -199,7 +199,7 @@ fun getAllFilesForRunner(
 
 fun getOnlyJsFilesForRunner(testServices: TestServices, modulesToArtifact: Map<TestModule, BinaryArtifacts.Js>): List<String> {
     return getAllFilesForRunner(testServices, modulesToArtifact).let {
-        it[TranslationMode.FULL] ?: it[TranslationMode.PER_MODULE]!!
+        it[TranslationMode.FULL_DEV] ?: it[TranslationMode.PER_MODULE_DEV]!!
     }
 }
 

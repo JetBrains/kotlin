@@ -107,4 +107,11 @@ interface KotlinJsCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommon
      */
     @get:org.gradle.api.tasks.Input
     val typedArrays: org.gradle.api.provider.Property<kotlin.Boolean>
+
+    /**
+     * Generated JavaScript will use ES2015 classes.
+     * Default value: false
+     */
+    @get:org.gradle.api.tasks.Input
+    val useEsClasses: org.gradle.api.provider.Property<kotlin.Boolean>
 }

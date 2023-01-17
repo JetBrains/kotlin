@@ -54,4 +54,6 @@ object ExpressionIds {
     const val PROPERTY_REFERENCE = 19
     const val INVOCATION = 20
     const val NEW = 21
+    const val CLASS = 22
+    const val SUPER_REF = 23
 }

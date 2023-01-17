@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR
+// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
 
 // The code in this test should be prohibited in the frontend, see KT-36188.
 

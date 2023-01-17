@@ -212,6 +212,10 @@ internal fun unreachable(): Nothing
 internal fun jsArguments(): Any?
 
 @JsIntrinsic
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
+internal fun <reified T : Any> jsNewAnonymousClass(superClass: JsClass<T>): JsClass<T>
+
+@JsIntrinsic
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE") // TODO: mark `inline` and skip in inliner
 internal fun <reified T : Any> jsClassIntrinsic(): JsClass<T>
 

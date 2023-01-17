@@ -72,10 +72,15 @@ message Expression {
         PropertyReference property_reference = 40;
         Invocation invocation = 41;
         Instantiation instantiation = 42;
+        SuperLiteral super_literal = 43;
+        Class class = 44;
     }
 }
 
 message ThisLiteral {
+}
+
+message SuperLiteral {
 }
 
 message NullLiteral {
@@ -111,6 +116,20 @@ message Function {
     optional int32 name_id = 2;
     required Statement body = 3;
     optional bool local = 4 [default = false];
+    repeated Modifier modifier = 5;
+
+    enum Modifier {
+        STATIC = 1;
+        GET = 2;
+        SET = 3;
+    }
+}
+
+message Class {
+    optional int32 name_id = 1;
+    optional Expression super_expression = 2;
+    optional Function constructor = 3;
+    repeated Function member = 4;
 }
 
 message Parameter {

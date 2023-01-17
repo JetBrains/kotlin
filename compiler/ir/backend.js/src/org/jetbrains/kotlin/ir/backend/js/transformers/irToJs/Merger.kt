@@ -39,8 +39,9 @@ class Merger(
                     importStatements.putIfAbsent(declaration, JsVars(JsVars.JsVar(importName, rename(importExpression))))
                 }
 
-                val classModels = mutableMapOf<JsName, JsIrIcClassModel>() + f.classes
-                f.classes.clear()
+                val classModels = (mutableMapOf<JsName, JsIrIcClassModel>() + f.classes)
+                    .also { f.classes.clear() }
+
                 classModels.entries.forEach { (name, model) ->
                     f.classes[rename(name)] = JsIrIcClassModel(model.superClasses.map { rename(it) }).also {
                         it.preDeclarationBlock.statements += model.preDeclarationBlock.statements

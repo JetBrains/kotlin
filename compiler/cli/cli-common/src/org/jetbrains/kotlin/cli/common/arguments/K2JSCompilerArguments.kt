@@ -292,6 +292,17 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     var strictImplicitExportType: Boolean by FreezableVar(false)
 
     @GradleOption(
+        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT,
+        shouldGenerateDeprecatedKotlinOptions = true,
+    )
+    @Argument(
+        value = "-Xes-classes",
+        description = "Generated JavaScript will use ES2015 classes."
+    )
+    var useEsClasses: Boolean by FreezableVar(false)
+
+    @GradleOption(
         value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
         gradleInputType = GradleInputTypes.INPUT,
         shouldGenerateDeprecatedKotlinOptions = true,

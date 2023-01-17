@@ -38,13 +38,20 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.ComparisonFailure
 import java.io.File
 import java.util.EnumSet
 
-abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
+abstract class AbstractJsIrInvalidationTest : AbstractInvalidationTest(TargetBackend.JS_IR, "incrementalOut/invalidation")
+abstract class AbstractJsIrES6InvalidationTest : AbstractInvalidationTest(TargetBackend.JS_IR_ES6, "incrementalOut/invalidationES6")
+
+abstract class AbstractInvalidationTest(
+    private val targetBackend: TargetBackend,
+    private val workingDirPath: String
+) : KotlinTestWithEnvironment() {
     companion object {
         private val OUT_DIR_PATH = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
@@ -297,7 +304,13 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
                     irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
                     mainArguments = null,
                     compilerInterfaceFactory = { mainModule, cfg ->
-                        JsIrCompilerWithIC(mainModule, cfg, JsGenerationGranularity.PER_MODULE, setOf(FqName(BOX_FUNCTION_NAME)))
+                        JsIrCompilerWithIC(
+                            mainModule,
+                            cfg,
+                            JsGenerationGranularity.PER_MODULE,
+                            setOf(FqName(BOX_FUNCTION_NAME)),
+                            targetBackend == TargetBackend.JS_IR_ES6
+                        )
                     }
                 )
 
@@ -418,7 +431,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     }
 
     private fun testWorkingDir(testName: String): File {
-        val dir = File(File(File(OUT_DIR_PATH), "incrementalOut/invalidation"), testName)
+        val dir = File(File(File(OUT_DIR_PATH), workingDirPath), testName)
 
         dir.invalidateDir()
 

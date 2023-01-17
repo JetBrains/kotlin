@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS, JS_IR, WASM, NATIVE
+// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, WASM, NATIVE
 // TODO: Fir2Ir generates overrides as finals.
 
 @JvmInline

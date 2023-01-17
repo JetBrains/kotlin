@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.ir.expressions
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-
 abstract class IrStatementOriginImpl(val debugName: String) : IrStatementOrigin {
     override fun toString(): String = debugName
 }

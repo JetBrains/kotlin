@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
+import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -91,19 +92,7 @@ class JsDefaultParameterInjector(override val context: JsIrBackendContext) :
             0,
             1
         ).apply {
-            putValueArgument(
-                0,
-                IrCallImpl(
-                    UNDEFINED_OFFSET,
-                    UNDEFINED_OFFSET,
-                    context.dynamicType,
-                    context.intrinsics.jsClass,
-                    1,
-                    0
-                ).apply {
-                    putTypeArgument(0, owner.defaultType)
-                }
-            )
+            putValueArgument(0, owner.jsConstructorReference(context))
         }
     }
 

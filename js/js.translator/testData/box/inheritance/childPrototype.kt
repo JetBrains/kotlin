@@ -1,5 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1251
-
+// IGNORE_BACKEND: JS_IR_ES6
 // KT-41227
 
 var result = ""

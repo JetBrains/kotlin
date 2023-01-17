@@ -1,4 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1341
+
 open class A(val x: Int, val y: Int) {
     constructor(x: Int) : this(x, x)
 }

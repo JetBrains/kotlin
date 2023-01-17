@@ -6,6 +6,7 @@
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
+// WITH_STDLIB
 // FILE: functions.kt
 
 @file:JsExport
@@ -65,3 +66,9 @@ fun <A, B, C, D, E> generic3(a: A, b: B, c: C, d: D): E? = null
 inline fun inlineFun(x: Int, callback: (Int) -> Unit) {
     callback(x)
 }
+
+
+fun formatList(value: List<*>): String = value.joinToString(", ") { it.toString() }
+
+
+fun createList(): List<*> = listOf(1, 2, 3)

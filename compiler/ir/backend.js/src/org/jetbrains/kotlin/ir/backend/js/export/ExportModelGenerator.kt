@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_INIT_BOX_PARAMETER
-import org.jetbrains.kotlin.ir.backend.js.lower.ES6AddInternalParametersToConstructorPhase.ES6_RESULT_TYPE_PARAMETER
+import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
+import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -86,7 +86,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     returnType = exportType(function.returnType),
                     typeParameters = function.typeParameters.map(::exportTypeParameter),
                     isMember = parent is IrClass,
-                    isStatic = function.isStaticMethodOfClass,
+                    isStatic = function.isStaticMethod,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
                     isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
                     ir = function,
@@ -100,10 +100,9 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
         if (!constructor.isPrimary) return null
-        val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) +
-                constructor.valueParameters.filterNot { it.origin === ES6_RESULT_TYPE_PARAMETER || it.origin === ES6_INIT_BOX_PARAMETER }
+        val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) + constructor.valueParameters
         return ExportedConstructor(
-            parameters = allValueParameters.map { exportParameter(it) },
+            parameters = allValueParameters.filterNot { it.isBoxParameter }.map { exportParameter(it) },
             visibility = constructor.visibility.toExportedVisibility()
         )
     }
@@ -695,6 +694,9 @@ private class ExportedClassDeclarationsInfo(
 
 private val IrClassifierSymbol.isInterface
     get() = (owner as? IrClass)?.isInterface == true
+
+private val IrFunction.isStaticMethod: Boolean
+    get() = isEs6ConstructorReplacement || isStaticMethodOfClass
 
 private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithName? {
     // Only actual public declarations with name can be exported

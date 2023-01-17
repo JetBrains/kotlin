@@ -152,11 +152,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsAnyToString = getInternalFunction("anyToString")
     val jsCompareTo = getInternalFunction("compareTo")
     val jsEquals = getInternalFunction("equals")
-    val jsConstruct = getInternalFunction("construct")
     val jsNewTarget = getInternalFunction("jsNewTarget")
     val jsEmptyObject = getInternalFunction("emptyObject")
     val jsOpenInitializerBox = getInternalFunction("openInitializerBox")
-    val es6DefaultType = getInternalFunction("DefaultType")
 
     val jsImul = getInternalFunction("imul")
 
@@ -166,6 +164,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsNativeBoolean = getInternalFunction("nativeBoolean")
     val jsBooleanInExternalLog = getInternalFunction("booleanInExternalLog")
     val jsBooleanInExternalException = getInternalFunction("booleanInExternalException")
+
+    val jsNewAnonymousClass = getInternalFunction("jsNewAnonymousClass")
 
     // Coroutines
 
@@ -369,7 +369,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val jsPrototypeOfSymbol = getInternalFunction("protoOf")
     val jsDefinePropertySymbol = getInternalFunction("defineProp")
-    val jsObjectCreateSymbol = getInternalFunction("objectCreate") // Object.create
+    val jsObjectCreateSymbol = getInternalFunction("objectCreate")                 // Object.create(x)
+    val jsCreateThisSymbol = getInternalFunction("createThis")                     // Object.create(x.prototype)
+    val jsBoxApplySymbol = getInternalFunction("boxApply")
+    val jsCreateExternalThisSymbol = getInternalFunction("createExternalThis")
 
     // Helpers:
 

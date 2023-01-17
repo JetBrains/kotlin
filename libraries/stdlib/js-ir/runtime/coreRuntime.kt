@@ -149,5 +149,36 @@ internal fun <T> objectCreate(proto: T?) =
     js("Object.create(proto)")
 
 @Suppress("UNUSED_PARAMETER")
+internal fun createThis(ctor: Ctor, box: dynamic): dynamic {
+    val self = js("Object.create(ctor.prototype)")
+    boxApply(self, box)
+    return self
+}
+
+@Suppress("UNUSED_PARAMETER")
+internal fun boxApply(self: dynamic, box: dynamic) {
+    if (box !== VOID) js("Object.assign(self, box)")
+}
+
+@OptIn(JsIntrinsic::class)
+@Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE", "REIFIED_TYPE_PARAMETER_NO_INLINE")
+internal fun <reified T : Any> createExternalThis(
+    ctor: JsClass<T>,
+    superExternalCtor: JsClass<T>,
+    parameters: Array<Any?>,
+    box: dynamic
+): T {
+    val selfCtor = if (box === VOID) {
+        ctor
+    } else {
+        val newCtor: dynamic = jsNewAnonymousClass(ctor)
+        js("Object.assign(newCtor.prototype, box)")
+        newCtor.constructor = ctor
+        newCtor
+    }
+    return js("Reflect.construct(superExternalCtor, parameters, selfCtor)")
+}
+
+@Suppress("UNUSED_PARAMETER")
 internal fun defineProp(obj: Any, name: String, getter: Any?, setter: Any?) =
     js("Object.defineProperty(obj, name, { configurable: true, get: getter, set: setter })")

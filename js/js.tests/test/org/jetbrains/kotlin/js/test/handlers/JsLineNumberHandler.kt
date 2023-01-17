@@ -34,14 +34,14 @@ import java.io.File
  */
 class JsLineNumberHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
 
-    private val translationModeForIr = TranslationMode.PER_MODULE
+    private val translationModeForIr = TranslationMode.PER_MODULE_DEV
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {
         when (val artifact = info.unwrap()) {
             is BinaryArtifacts.Js.OldJsArtifact ->
-                verifyModule(module, TranslationMode.FULL, artifact.translationResult.cast<TranslationResult.Success>().program, "JS")
+                verifyModule(module, TranslationMode.FULL_DEV, artifact.translationResult.cast<TranslationResult.Success>().program, "JS")
             is BinaryArtifacts.Js.JsIrArtifact -> {
                 val testModules = testServices.moduleStructure.modules
                 val moduleId2TestModule = testModules.associateBy { it.name.safeModuleName }

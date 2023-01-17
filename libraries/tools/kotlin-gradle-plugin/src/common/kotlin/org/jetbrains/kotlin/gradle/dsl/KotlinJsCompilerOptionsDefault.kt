@@ -49,6 +49,9 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
     override val typedArrays: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(true)
 
+    override val useEsClasses: org.gradle.api.provider.Property<kotlin.Boolean> =
+        objectFactory.property(kotlin.Boolean::class.java).convention(false)
+
     internal fun fillCompilerArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments) {
         super.fillCompilerArguments(args)
         args.friendModulesDisabled = friendModulesDisabled.get()
@@ -64,6 +67,7 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
         args.sourceMapPrefix = sourceMapPrefix.orNull
         args.target = target.get()
         args.typedArrays = typedArrays.get()
+        args.useEsClasses = useEsClasses.get()
     }
 
     internal fun fillDefaultValues(args: org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments) {
@@ -81,5 +85,6 @@ internal abstract class KotlinJsCompilerOptionsDefault @javax.inject.Inject cons
         args.sourceMapPrefix = null
         args.target = "v5"
         args.typedArrays = true
+        args.useEsClasses = false
     }
 }

@@ -1,5 +1,4 @@
-// IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND_K2: JS_IR
+// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6
 
 class Outer(val x: Any) {
     inner class Inner(

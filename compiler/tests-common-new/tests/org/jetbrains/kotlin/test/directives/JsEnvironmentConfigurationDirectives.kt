@@ -230,13 +230,18 @@ object JsEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         applicability = DirectiveApplicability.Global
     )
 
+    val ES6_MODE by directive(
+        description = "Enables the Kotlin/JS compilation with ES-classes",
+        applicability = DirectiveApplicability.Global
+    )
+
     val ES_MODULES by directive(
-        description = "",
+        description = "Specify that the compiled js-sources will use ESM module system",
         applicability = DirectiveApplicability.Global
     )
 
     val ENTRY_ES_MODULE by directive(
-        description = "",
+        description = "Specify the entry point that imports other ESM modules",
         applicability = DirectiveApplicability.File
     )
 

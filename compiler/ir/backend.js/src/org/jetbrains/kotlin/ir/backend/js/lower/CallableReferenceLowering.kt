@@ -179,7 +179,11 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
                 origin = if (isKReference || !isLambda) FUNCTION_REFERENCE_IMPL else LAMBDA_IMPL
                 name = makeContextDependentName()
             }.apply {
-                superTypes = listOfNotNull(superClass, referenceType, secondFunctionInterface?.symbol?.typeWithArguments(referenceType.arguments))
+                superTypes = listOfNotNull(
+                    this@CallableReferenceBuilder.superClass,
+                    referenceType,
+                    secondFunctionInterface?.symbol?.typeWithArguments(referenceType.arguments)
+                )
 //                if (samSuperType == null)
 //                    superTypes += functionSuperClass.typeWith(parameterTypes)
 //                if (irFunctionReference.isSuspend) superTypes += context.ir.symbols.suspendFunctionInterface.defaultType

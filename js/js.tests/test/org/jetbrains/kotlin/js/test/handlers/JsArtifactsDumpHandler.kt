@@ -39,9 +39,9 @@ class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(
         val minOutputDir = File(dceOutputDir, originalFile.nameWithoutExtension)
 
         copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices), outputDir)
-        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_DCE_MINIMIZED_NAMES), dceOutputDir)
-        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE), perModuleOutputDir)
-        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_DCE_MINIMIZED_NAMES), preModuleDceOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_PROD_MINIMIZED_NAMES), dceOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_DEV), perModuleOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES), preModuleDceOutputDir)
         copy(JsEnvironmentConfigurator.getMinificationJsArtifactsOutputDir(testServices), minOutputDir)
     }
 

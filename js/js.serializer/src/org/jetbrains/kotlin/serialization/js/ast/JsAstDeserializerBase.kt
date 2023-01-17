@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.serialization.js.ast
 
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.util.*
 
 abstract class JsAstDeserializerBase {
@@ -218,6 +219,7 @@ abstract class JsAstDeserializerBase {
 
     protected fun deserializeNoMetadataHelper(proto: JsAstProtoBuf.Expression): JsExpression = when (proto.expressionCase) {
         JsAstProtoBuf.Expression.ExpressionCase.THIS_LITERAL -> JsThisRef()
+        JsAstProtoBuf.Expression.ExpressionCase.SUPER_LITERAL -> JsSuperRef()
         JsAstProtoBuf.Expression.ExpressionCase.NULL_LITERAL -> JsNullLiteral()
         JsAstProtoBuf.Expression.ExpressionCase.TRUE_LITERAL -> JsBooleanLiteral(true)
         JsAstProtoBuf.Expression.ExpressionCase.FALSE_LITERAL -> JsBooleanLiteral(false)
@@ -251,15 +253,18 @@ abstract class JsAstDeserializerBase {
             )
         }
 
+        JsAstProtoBuf.Expression.ExpressionCase.CLASS -> {
+            val classProto = proto.class_
+            JsClass(
+                runIf(classProto.hasNameId()) { deserializeName(classProto.nameId) },
+                runIf(classProto.hasSuperExpression()) { deserialize(classProto.superExpression) as JsNameRef },
+                runIf(classProto.hasConstructor()) { deserializeFunction(classProto.constructor) },
+                classProto.memberList.map(::deserializeFunction).toMutableList()
+            )
+        }
+
         JsAstProtoBuf.Expression.ExpressionCase.FUNCTION -> {
-            val functionProto = proto.function
-            JsFunction(scope, deserialize(functionProto.body) as JsBlock, "").apply {
-                parameters += functionProto.parameterList.map { deserializeParameter(it) }
-                if (functionProto.hasNameId()) {
-                    name = deserializeName(functionProto.nameId)
-                }
-                isLocal = functionProto.local
-            }
+            deserializeFunction(proto.function)
         }
 
         JsAstProtoBuf.Expression.ExpressionCase.DOC_COMMENT -> {
@@ -345,6 +350,17 @@ abstract class JsAstDeserializerBase {
         JsAstProtoBuf.Expression.ExpressionCase.EXPRESSION_NOT_SET -> error("Unknown expression")
     }
 
+    protected fun deserializeFunction(functionProto: JsAstProtoBuf.Function): JsFunction {
+        return JsFunction(scope, deserialize(functionProto.body) as JsBlock, "").apply {
+            modifiers += functionProto.modifierList.map(::map)
+            parameters += functionProto.parameterList.map { deserializeParameter(it) }
+            if (functionProto.hasNameId()) {
+                name = deserializeName(functionProto.nameId)
+            }
+            isLocal = functionProto.local
+        }
+    }
+
     protected fun deserializeVars(proto: JsAstProtoBuf.Vars): JsVars {
         val vars = JsVars(proto.multiline)
         for (declProto in proto.declarationList) {
@@ -405,6 +421,12 @@ abstract class JsAstDeserializerBase {
 
 
     protected fun deserializeString(id: Int): String = stringTable[id]
+
+    protected fun map(modifier: JsAstProtoBuf.Function.Modifier) = when (modifier) {
+        JsAstProtoBuf.Function.Modifier.STATIC -> JsFunction.Modifier.STATIC
+        JsAstProtoBuf.Function.Modifier.SET -> JsFunction.Modifier.SET
+        JsAstProtoBuf.Function.Modifier.GET -> JsFunction.Modifier.GET
+    }
 
     protected fun map(op: JsAstProtoBuf.BinaryOperation.Type) = when (op) {
         JsAstProtoBuf.BinaryOperation.Type.MUL -> JsBinaryOperator.MUL

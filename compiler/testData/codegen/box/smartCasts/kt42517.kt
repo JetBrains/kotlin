@@ -2,8 +2,7 @@
 // WASM_MUTE_REASON: JAVA
 // WITH_STDLIB
 // FULL_JDK
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS
+// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6
 
 fun Any.copyValueIfNeeded(): Any {
     return when (this) {

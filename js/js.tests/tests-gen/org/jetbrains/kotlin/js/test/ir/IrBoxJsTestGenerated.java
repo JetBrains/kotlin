@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
     @Test
     public void testAllFilesPresentInBox() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true, "es6classes");
     }
 
     @Nested
@@ -1838,106 +1838,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("superCallInEnumLiteral.kt")
         public void testSuperCallInEnumLiteral() throws Exception {
             runTest("js/js.translator/testData/box/enum/superCallInEnumLiteral.kt");
-        }
-    }
-
-    @Nested
-    @TestMetadata("js/js.translator/testData/box/es6classes")
-    @TestDataPath("$PROJECT_ROOT")
-    public class Es6classes {
-        @Test
-        public void testAllFilesPresentInEs6classes() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/es6classes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
-        }
-
-        @Test
-        @TestMetadata("builtItTypes.kt")
-        public void testBuiltItTypes() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/builtItTypes.kt");
-        }
-
-        @Test
-        @TestMetadata("defaultPrimary.kt")
-        public void testDefaultPrimary() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/defaultPrimary.kt");
-        }
-
-        @Test
-        @TestMetadata("defaultPrimaryExtendsAny.kt")
-        public void testDefaultPrimaryExtendsAny() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/defaultPrimaryExtendsAny.kt");
-        }
-
-        @Test
-        @TestMetadata("defaultPrimaryExtendsExternal.kt")
-        public void testDefaultPrimaryExtendsExternal() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/defaultPrimaryExtendsExternal.kt");
-        }
-
-        @Test
-        @TestMetadata("defaultPrimaryWithSuper.kt")
-        public void testDefaultPrimaryWithSuper() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/defaultPrimaryWithSuper.kt");
-        }
-
-        @Test
-        @TestMetadata("delegation.kt")
-        public void testDelegation() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/delegation.kt");
-        }
-
-        @Test
-        @TestMetadata("fieldAccess.kt")
-        public void testFieldAccess() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/fieldAccess.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritedFromExternalBySecondaryCtor.kt")
-        public void testInheritedFromExternalBySecondaryCtor() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/inheritedFromExternalBySecondaryCtor.kt");
-        }
-
-        @Test
-        @TestMetadata("inheritedFromExternalClass.kt")
-        public void testInheritedFromExternalClass() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/inheritedFromExternalClass.kt");
-        }
-
-        @Test
-        @TestMetadata("initBlocks.kt")
-        public void testInitBlocks() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/initBlocks.kt");
-        }
-
-        @Test
-        @TestMetadata("innerClasses.kt")
-        public void testInnerClasses() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/innerClasses.kt");
-        }
-
-        @Test
-        @TestMetadata("isInitializedFieldBeforeObjectCreation.kt")
-        public void testIsInitializedFieldBeforeObjectCreation() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/isInitializedFieldBeforeObjectCreation.kt");
-        }
-
-        @Test
-        @TestMetadata("primaryToSecondary.kt")
-        public void testPrimaryToSecondary() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/primaryToSecondary.kt");
-        }
-
-        @Test
-        @TestMetadata("typeCorrectness.kt")
-        public void testTypeCorrectness() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/typeCorrectness.kt");
-        }
-
-        @Test
-        @TestMetadata("unboxChain.kt")
-        public void testUnboxChain() throws Exception {
-            runTest("js/js.translator/testData/box/es6classes/unboxChain.kt");
         }
     }
 

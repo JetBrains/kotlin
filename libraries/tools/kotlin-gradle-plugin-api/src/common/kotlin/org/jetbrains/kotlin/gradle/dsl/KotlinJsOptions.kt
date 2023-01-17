@@ -133,4 +133,12 @@ interface KotlinJsOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions 
     var typedArrays: kotlin.Boolean
         get() = options.typedArrays.get()
         set(value) = options.typedArrays.set(value)
+
+    /**
+     * Generated JavaScript will use ES2015 classes.
+     * Default value: false
+     */
+    var useEsClasses: kotlin.Boolean
+        get() = options.useEsClasses.get()
+        set(value) = options.useEsClasses.set(value)
 }

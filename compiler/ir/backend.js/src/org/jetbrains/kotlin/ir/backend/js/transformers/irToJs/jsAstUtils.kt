@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -31,7 +32,6 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
-
 
 fun jsUndefined(context: IrNamer, backendContext: JsIrBackendContext): JsExpression {
     return when (val void = backendContext.getVoid()) {
@@ -114,6 +114,7 @@ fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerat
     val body = declaration.body?.accept(IrElementToJsStatementTransformer(), functionContext) as? JsBlock ?: JsBlock()
 
     val function = JsFunction(emptyScope, body, "member function ${name ?: "annon"}")
+        .apply { if (declaration.isEs6ConstructorReplacement) modifiers.add(JsFunction.Modifier.STATIC) }
         .withSource(declaration, context, useNameOf = declaration)
 
     function.name = name
@@ -147,6 +148,7 @@ fun translateCall(
     transformer: IrElementToJsExpressionTransformer
 ): JsExpression {
     val function = expression.symbol.owner.realOverrideTarget
+    val currentDispatchReceiver = context.currentFunction?.parentClassOrNull
 
     context.staticContext.intrinsics[function.symbol]?.let {
         return it(expression, context)
@@ -192,6 +194,10 @@ fun translateCall(
             Pair(impl, impl.parentAsClass)
         } else {
             Pair(function, superQualifier.owner)
+        }
+
+        if (expression.isSyntheticDelegatingReplacement || currentDispatchReceiver.canUseSuperRef(function, context, klass)) {
+            return JsInvocation(JsNameRef(context.getNameForMemberFunction(target), JsSuperRef()), arguments)
         }
 
         val callRef = if (klass.isInterface) {
@@ -373,12 +379,15 @@ fun translateCallArguments(
 ): List<JsExpression> {
     val size = expression.valueArgumentsCount
 
-    val varargParameterIndex = expression.symbol.owner.realOverrideTarget.varargParameterIndex()
+    val function = expression.symbol.owner
+    val varargParameterIndex = function.realOverrideTarget.varargParameterIndex()
 
     val validWithNullArgs = expression.validWithNullArgs()
     val arguments = (0 until size)
         .mapTo(ArrayList(size)) { index ->
-            expression.getValueArgument(index).checkOnNullability(validWithNullArgs)
+            expression.getValueArgument(index).checkOnNullability(
+                validWithNullArgs || function.valueParameters[index].isBoxParameter
+            )
         }
         .dropLastWhile {
             allowDropTailVoids &&
@@ -635,3 +644,11 @@ private val nameMappingOriginAllowList = setOf(
     BOUND_VALUE_PARAMETER,
     JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER,
 )
+
+private fun IrClass?.canUseSuperRef(function: IrFunction, context: JsGenerationContext, superClass: IrClass): Boolean {
+    return this != null &&
+            function.origin != IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION &&
+            context.staticContext.backendContext.es6mode &&
+            !superClass.isInterface && !isInner && !isLocal &&
+            context.currentFunction?.isEs6ConstructorReplacement != true
+}

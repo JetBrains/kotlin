@@ -25,7 +25,7 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         val ktFiles = module.files.filter { it.isKtFile }.map { it.originalContent }
         val jsProgram = when (val artifact = info.unwrap()) {
             is BinaryArtifacts.Js.OldJsArtifact -> (artifact.translationResult as TranslationResult.Success).program
-            is BinaryArtifacts.Js.JsIrArtifact -> artifact.compilerResult.outputs[TranslationMode.FULL]?.jsProgram ?: return
+            is BinaryArtifacts.Js.JsIrArtifact -> artifact.compilerResult.outputs[TranslationMode.FULL_DEV]?.jsProgram ?: return
             else -> return
         }
         processJsProgram(jsProgram, ktFiles, module.targetBackend!!)

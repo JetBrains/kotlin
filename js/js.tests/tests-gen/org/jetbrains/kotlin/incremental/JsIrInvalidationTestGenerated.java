@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 @TestMetadata("js/js.translator/testData/incremental/invalidation")
 @TestDataPath("$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners.class)
-public class InvalidationTestGenerated extends AbstractInvalidationTest {
+public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest {
     private void runTest(String testDataFilePath) throws Exception {
         KotlinTestUtils.runTest(this::doTest, TargetBackend.JS_IR, testDataFilePath);
     }

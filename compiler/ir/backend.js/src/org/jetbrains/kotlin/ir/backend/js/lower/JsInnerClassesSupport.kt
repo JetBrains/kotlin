@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.backend.js.JsMapping
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder.SYNTHESIZED_DECLARATION
+import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
@@ -41,7 +42,7 @@ class JsInnerClassesSupport(mapping: JsMapping, private val irFactory: IrFactory
 
                 irFactory.buildField {
                     origin = IrDeclarationOrigin.FIELD_FOR_OUTER_THIS
-                    name = Name.identifier("\$this")
+                    name = Name.identifier(Namer.SYNTHETIC_RECEIVER_NAME)
                     type = outerClass.defaultType
                     visibility = DescriptorVisibilities.PROTECTED
                     isFinal = true

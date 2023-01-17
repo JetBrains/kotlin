@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
@@ -44,7 +45,7 @@ class JsClassUsageInReflectionLowering(val backendContext: JsIrBackendContext) :
 
     private fun IrClassReference.generateDirectValueUsage(): IrExpression? {
         return with(backendContext) {
-            when(val classSymbol = symbol as? IrClassSymbol ?: return null) {
+            when (val classSymbol = symbol as? IrClassSymbol ?: return null) {
                 irBuiltIns.nothingClass -> null
                 irBuiltIns.anyClass ->
                     JsIrBuilder.buildCall(intrinsics.jsCode).apply {
@@ -59,10 +60,7 @@ class JsClassUsageInReflectionLowering(val backendContext: JsIrBackendContext) :
                         )
                     }
 
-                else ->
-                    JsIrBuilder.buildCall(intrinsics.jsClass, origin = JsStatementOrigins.CLASS_REFERENCE).apply {
-                        putTypeArgument(0, classSymbol.owner.defaultType)
-                    }
+                else -> classSymbol.owner.jsConstructorReference(backendContext)
             }
         }
     }

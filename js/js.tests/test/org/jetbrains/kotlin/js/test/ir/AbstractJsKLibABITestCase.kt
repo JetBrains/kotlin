@@ -237,11 +237,11 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
 
         val compiledResult = transformer.generateModule(
             modules = ir.allModules,
-            modes = setOf(TranslationMode.PER_MODULE),
+            modes = setOf(TranslationMode.PER_MODULE_DEV),
             relativeRequirePath = false
         )
 
-        return compiledResult.outputs[TranslationMode.PER_MODULE] ?: error("No compiler output")
+        return compiledResult.outputs[TranslationMode.PER_MODULE_DEV] ?: error("No compiler output")
     }
 
     private fun KotlinCoreEnvironment.createPsiFiles(sourceDir: File): List<KtFile> {

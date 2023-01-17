@@ -15,10 +15,13 @@ object Namer {
 
     val OUTER_NAME = "\$outer"
     val UNREACHABLE_NAME = "\$unreachable"
+    val THROWABLE_CONSTRUCTOR = "\$throwableCtor"
 
     val DELEGATE = "\$delegate"
 
     val IMPLICIT_RECEIVER_NAME = "this"
+    val SYNTHETIC_RECEIVER_NAME = "\$this"
+    val ES6_BOX_PARAMETER_NAME = "\$box"
 
     val ARGUMENTS = JsNameRef("arguments")
 

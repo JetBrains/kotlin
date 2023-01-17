@@ -29,6 +29,12 @@ private fun DeclarationContainerLoweringPass.runOnFilesPostfix(files: Iterable<I
 
 private fun ClassLoweringPass.runOnFilesPostfix(moduleFragment: IrModuleFragment) = moduleFragment.files.forEach { runOnFilePostfix(it) }
 
+private fun List<Lowering>.toCompilerPhase() =
+    map {
+        @Suppress("USELESS_CAST")
+        it.modulePhase as CompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>, Iterable<IrModuleFragment>>
+    }.reduce { acc, lowering -> acc.then(lowering) }
+
 private fun makeJsModulePhase(
     lowering: (JsIrBackendContext) -> FileLoweringPass,
     name: String,
@@ -683,19 +689,6 @@ private val typeOperatorLoweringPhase = makeBodyLoweringPhase(
     )
 )
 
-private val es6AddInternalParametersToConstructorPhase = makeBodyLoweringPhase(
-    ::ES6AddInternalParametersToConstructorPhase,
-    name = "ES6CreateInitFunctionPhase",
-    description = "Add `box` and `resultType` params, create init functions for constructors"
-)
-
-private val es6ConstructorLowering = makeBodyLoweringPhase(
-    ::ES6ConstructorLowering,
-    name = "ES6ConstructorLoweringPhase",
-    description = "Lower constructors",
-    prerequisite = setOf(es6AddInternalParametersToConstructorPhase)
-)
-
 private val secondaryConstructorLoweringPhase = makeDeclarationTransformerPhase(
     ::SecondaryConstructorLowering,
     name = "SecondaryConstructorLoweringPhase",
@@ -791,10 +784,31 @@ private val invokeStaticInitializersPhase = makeBodyLoweringPhase(
     prerequisite = setOf(objectDeclarationLoweringPhase)
 )
 
+private val es6AddBoxParameterToConstructorsLowering = makeDeclarationTransformerPhase(
+    ::ES6AddBoxParameterToConstructorsLowering,
+    name = "ES6AddBoxParameterToConstructorsLowering",
+    description = "Add box parameter to a constructor if needed",
+)
+
+private val es6ConstructorLowering = makeDeclarationTransformerPhase(
+    ::ES6ConstructorLowering,
+    name = "ES6ConstructorLowering",
+    description = "Lower constructors declarations to support ES classes",
+    prerequisite = setOf(es6AddBoxParameterToConstructorsLowering)
+)
+
+private val es6ConstructorUsageLowering = makeBodyLoweringPhase(
+    ::ES6ConstructorCallLowering,
+    name = "ES6ConstructorCallLowering",
+    description = "Lower constructor usages to support ES classes",
+    prerequisite = setOf(es6ConstructorLowering)
+)
+
 private val objectUsageLoweringPhase = makeBodyLoweringPhase(
     ::ObjectUsageLowering,
     name = "ObjectUsageLowering",
-    description = "Transform IrGetObjectValue into instance generator call"
+    description = "Transform IrGetObjectValue into instance generator call",
+    prerequisite = setOf(primaryConstructorLoweringPhase)
 )
 
 private val escapedIdentifiersLowering = makeBodyLoweringPhase(
@@ -808,7 +822,6 @@ private val implicitlyExportedDeclarationsMarkingLowering = makeDeclarationTrans
     name = "ImplicitlyExportedDeclarationsMarkingLowering",
     description = "Add @JsImplicitExport annotation to declarations which are not exported but are used inside other exported declarations as a type"
 )
-
 
 private val cleanupLoweringPhase = makeBodyLoweringPhase(
     { CleanupLowering() },
@@ -912,8 +925,6 @@ val loweringList = listOf<Lowering>(
     defaultParameterCleanerPhase,
     captureStackTraceInThrowablesPhase,
     throwableSuccessorsLoweringPhase,
-    es6AddInternalParametersToConstructorPhase,
-    es6ConstructorLowering,
     varargLoweringPhase,
     multipleCatchesLoweringPhase,
     errorExpressionLoweringPhase,
@@ -927,10 +938,13 @@ val loweringList = listOf<Lowering>(
     inlineClassDeclarationLoweringPhase,
     inlineClassUsageLoweringPhase,
     autoboxingTransformerPhase,
-    blockDecomposerLoweringPhase,
     objectDeclarationLoweringPhase,
+    blockDecomposerLoweringPhase,
     invokeStaticInitializersPhase,
     objectUsageLoweringPhase,
+    es6AddBoxParameterToConstructorsLowering,
+    es6ConstructorLowering,
+    es6ConstructorUsageLowering,
     callsLoweringPhase,
     escapedIdentifiersLowering,
     implicitlyExportedDeclarationsMarkingLowering,
@@ -947,10 +961,56 @@ val pirLowerings = loweringList.filter { it is DeclarationLowering || it is Body
 val jsPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
-    lower = loweringList.map {
-        @Suppress("USELESS_CAST")
-        it.modulePhase as CompilerPhase<JsIrBackendContext, Iterable<IrModuleFragment>, Iterable<IrModuleFragment>>
-    }.reduce { acc, lowering -> acc.then(lowering) },
+    lower = loweringList.toCompilerPhase(),
+    actions = setOf(defaultDumper.toMultiModuleAction(), validationAction.toMultiModuleAction()),
+    nlevels = 1
+)
+
+private val es6CollectConstructorsWhichNeedBoxParameterLowering = makeDeclarationTransformerPhase(
+    ::ES6CollectConstructorsWhichNeedBoxParameters,
+    name = "ES6CollectConstructorsWhichNeedBoxParameters",
+    description = "[Optimization] Collect all of the constructors which requires box parameter",
+)
+
+private val es6BoxParameterOptimization = makeBodyLoweringPhase(
+    ::ES6ConstructorBoxParameterOptimizationLowering,
+    name = "ES6ConstructorBoxParameterOptimizationLowering",
+    description = "[Optimization] Remove box parameter from the constructors which don't require box parameter",
+    prerequisite = setOf(es6CollectConstructorsWhichNeedBoxParameterLowering)
+)
+
+private val es6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering = makeDeclarationTransformerPhase(
+    ::ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
+    name = "ES6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering",
+    description = "[Optimization] Collect all of the constructors which could be translated into a regular constructor",
+)
+
+private val es6PrimaryConstructorOptimizationLowering = makeDeclarationTransformerPhase(
+    ::ES6PrimaryConstructorOptimizationLowering,
+    name = "ES6PrimaryConstructorOptimizationLowering",
+    description = "[Optimization] Replace synthetically generated static fabric method with a plain old ES6 constructors whenever it's possible",
+    prerequisite = setOf(es6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering)
+)
+
+private val es6PrimaryConstructorUsageOptimizationLowering = makeBodyLoweringPhase(
+    ::ES6PrimaryConstructorUsageOptimizationLowering,
+    name = "ES6PrimaryConstructorUsageOptimizationLowering",
+    description = "[Optimization] Replace usage of synthetically generated static fabric method with a plain old ES6 constructors whenever it's possible",
+    prerequisite = setOf(es6BoxParameterOptimization, es6PrimaryConstructorOptimizationLowering)
+)
+
+val optimizationLoweringList = listOf<Lowering>(
+    es6CollectConstructorsWhichNeedBoxParameterLowering,
+    es6CollectPrimaryConstructorsWhichCouldBeOptimizedLowering,
+    es6BoxParameterOptimization,
+    es6PrimaryConstructorOptimizationLowering,
+    es6PrimaryConstructorUsageOptimizationLowering,
+)
+
+val jsOptimizationPhases = SameTypeNamedCompilerPhase(
+    name = "IrModuleOptimizationLowering",
+    description = "IR module optimization lowering",
+    lower = optimizationLoweringList.toCompilerPhase(),
     actions = setOf(defaultDumper.toMultiModuleAction(), validationAction.toMultiModuleAction()),
     nlevels = 1
 )

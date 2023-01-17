@@ -69,9 +69,9 @@ fun box() {
 // test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:
-// test.kt:4 <init>:
 // test.kt:4 <init>: x=1:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String
+// test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
@@ -80,9 +80,9 @@ fun box() {
 // test.kt:8 <init properties test.kt>:
 // test.kt:8 <init properties test.kt>:
 // test.kt:12 box:
-// test.kt:4 <init>:
 // test.kt:4 <init>: x=1:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String
+// test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
@@ -93,9 +93,9 @@ fun box() {
 // test.kt:13 box$lambda: w=1:number, x=1:number
 // test.kt:1 component3:
 // test.kt:15 box$lambda: w=1:number, x=1:number, y=48:number
-// test.kt:4 <init>:
 // test.kt:4 <init>: x=1:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String
+// test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
@@ -104,9 +104,9 @@ fun box() {
 // test.kt:15 box$lambda: w=1:number, x=1:number, y=48:number, a=1:number
 // test.kt:1 component3:
 // test.kt:16 box$lambda: w=1:number, x=1:number, y=48:number, a=1:number, c=48:number
-// test.kt:4 <init>:
 // test.kt:4 <init>: x=1:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String
+// test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number
 // test.kt:4 <init>: x=1:number, y="":kotlin.String, z=48:number

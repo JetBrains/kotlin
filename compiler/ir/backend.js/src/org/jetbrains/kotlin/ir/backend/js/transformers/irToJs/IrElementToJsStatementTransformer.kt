@@ -65,7 +65,11 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitComposite(expression: IrComposite, context: JsGenerationContext): JsStatement {
-        return JsBlock(expression.statements.map { it.accept(this, context) }).withSource(expression, context)
+        return if (expression.statements.isEmpty()) {
+            JsEmpty
+        } else {
+            JsBlock(expression.statements.map { it.accept(this, context) }).withSource(expression, context)
+        }
     }
 
     override fun visitExpression(expression: IrExpression, context: JsGenerationContext): JsStatement {

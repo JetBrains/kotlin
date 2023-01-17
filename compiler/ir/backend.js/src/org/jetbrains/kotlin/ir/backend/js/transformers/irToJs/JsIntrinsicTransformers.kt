@@ -119,11 +119,6 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
                 JsObjectLiteral()
             }
 
-            add(intrinsics.es6DefaultType) { call, context ->
-                val typeArgument = call.getTypeArgument(0)!!
-                typeArgument.getClassRef(context)
-            }
-
             addIfNotNull(intrinsics.jsCode) { call, _ ->
                 compilationException(
                     "Should not be called",
@@ -272,6 +267,16 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(intrinsics.jsInvokeSuspendSuperTypeWithReceiverAndParam, suspendInvokeTransform)
 
             add(intrinsics.jsArguments) { _, _ -> Namer.ARGUMENTS }
+
+            add(intrinsics.jsNewAnonymousClass) { call, context ->
+                val baseClass = translateCallArguments(call, context).single() as JsNameRef
+                JsClass(baseClass = baseClass)
+            }
+
+            add(intrinsics.void.owner.getter!!.symbol) { _, context ->
+                val backingField = context.getNameForField(intrinsics.void.owner.backingField!!)
+                JsNameRef(backingField)
+            }
         }
     }
 

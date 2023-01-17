@@ -1,4 +1,5 @@
 // EXPECTED_REACHABLE_NODES: 1371
+
 inline class I1(val a: Int)
 inline class I2(val i: I1)
 inline class I3(val i: I2)
