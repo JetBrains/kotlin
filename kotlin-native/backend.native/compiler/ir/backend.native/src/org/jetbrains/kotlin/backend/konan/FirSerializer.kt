@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -141,6 +138,14 @@ class FirNativeKLibSerializerExtension(
         super.serializeFunction(function, proto, versionRequirementTable, childSerializer)
     }
 
+    override fun serializeValueParameter(parameter: FirValueParameter, proto: ProtoBuf.ValueParameter.Builder) {
+        parameter.annotations.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        super.serializeValueParameter(parameter, proto)
+    }
+
+
     override fun serializeProperty(
             property: FirProperty,
             proto: ProtoBuf.Property.Builder,
@@ -167,5 +172,23 @@ class FirNativeKLibSerializerExtension(
         }
         // TODO serialize KDocString
         super.serializeClass(klass, proto, versionRequirementTable, childSerializer)
+    }
+
+    override fun serializeConstructor(
+            constructor: FirConstructor,
+            proto: ProtoBuf.Constructor.Builder,
+            childSerializer: FirElementSerializer
+    ) {
+        constructor.annotations.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.constructorAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        super.serializeConstructor(constructor, proto, childSerializer)
+    }
+
+    override fun serializeEnumEntry(enumEntry: FirEnumEntry, proto: ProtoBuf.EnumEntry.Builder) {
+        enumEntry.annotations.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.enumEntryAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        super.serializeEnumEntry(enumEntry, proto)
     }
 }
