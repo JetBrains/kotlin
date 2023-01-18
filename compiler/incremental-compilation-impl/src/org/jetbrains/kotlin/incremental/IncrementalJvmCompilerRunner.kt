@@ -69,7 +69,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.io.File
 
-@TestOnly
+// Used for maven incremental compilation into {@link K2JVMCompileMojo#runIncrementalCompiler} and for test
 fun makeIncrementally(
     cachesDir: File,
     sourceRoots: Iterable<File>,
@@ -340,7 +340,7 @@ open class IncrementalJvmCompilerRunner(
         dirtyFiles.addByDirtySymbols(removedClassesChanges.dirtyLookupSymbols)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNames)
         dirtyFiles.addByDirtyClasses(removedClassesChanges.dirtyClassesFqNamesForceRecompile)
-        return CompilationMode.Incremental(dirtyFiles)
+        return CompilationMode.Incremental(dirtyFiles, changedFiles.removed)
     }
 
     private fun processChangedJava(changedFiles: ChangedFiles.Known, caches: IncrementalJvmCachesManager): BuildAttribute? {
