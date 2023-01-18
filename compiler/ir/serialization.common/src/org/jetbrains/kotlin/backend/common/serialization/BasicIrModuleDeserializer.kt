@@ -140,18 +140,25 @@ abstract class BasicIrModuleDeserializer(
     /**
      * @see KlibFileSignatureProvider
      */
-    private fun getFileSignature(fqName: String, fileName: String): IdSignature.FileSignature {
-        // FIXME: Emit proper linker errors instead of throwing exceptions!!!
-        val matchingFiles = fileMap[Pair(fileName, FqName(fqName))]
-            ?: error("Could not find file $fileName with fqName $fqName in the current module")
+    private fun getFileSignature(deserializer: IdSignatureDeserializer, fqName: FqName, filePath: String): IdSignature.FileSignature {
+        val matchingFiles = fileMap[Pair(filePath, fqName)]
+            ?: deserializer.invalidIdSignature("Could not find file $filePath in package $fqName in the current module.")
         when (matchingFiles.size) {
-            0 -> error("Could not find file $fileName with fqName $fqName in the current module")
+            0 -> deserializer.invalidIdSignature("Could not find file $filePath in package $fqName in the current module.")
             1 -> return IdSignature.FileSignature(matchingFiles[0].file.symbol)
             else -> {
                 // A rare case where we have multiple DIFFERENT files with the SAME path in the SAME package.
                 // Albeit this is a really cursed situation, it is not prohibited by the frontend.
                 // However, the current design of klibs doesn't allow this, so we emit a linker error.
-                error("Multiple files in the current module have the path $fileName and are located in the package $fqName. It is unclear which file to use.")
+                deserializer.invalidIdSignature(
+                    buildString {
+                        append("Ambiguous file signature: multiple files in the current module have the path ")
+                        append(filePath)
+                        append(" and are located in the package ")
+                        append(fqName)
+                        append(". It is unclear which file to use.")
+                    }
+                )
             }
         }
     }

@@ -27,7 +27,7 @@ class IrSymbolDeserializer(
     val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
     fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
-    fileSignatureProvider: KlibFileSignatureProvider?,
+    fileSignatureProvider: KlibFileSignatureProvider = KlibFileSignatureProvider.Default,
     val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
 
@@ -86,7 +86,8 @@ class IrSymbolDeserializer(
         }
     }
 
-    val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSignature, fileSignatureProvider)
+    val signatureDeserializer =
+        IdSignatureDeserializer(libraryFile, fileSignature, fileSignatureProvider)
 
     fun deserializeIdSignature(index: Int): IdSignature {
         return signatureDeserializer.deserializeIdSignature(index)
