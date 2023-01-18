@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.isBuiltinFunctionalType
+import org.jetbrains.kotlin.fir.types.isSomeFunctionalType
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
 import org.jetbrains.kotlin.resolve.descriptorUtil.OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.utils.addToStdlib.same
@@ -104,7 +104,7 @@ class FirOverloadByLambdaReturnTypeResolver(
             .values.singleOrNull()?.toMap() ?: return null
 
         if (!lambdas.values.same { it.parameters.size }) return null
-        if (!lambdas.values.all { it.expectedType?.isBuiltinFunctionalType(session) == true }) return null
+        if (!lambdas.values.all { it.expectedType?.isSomeFunctionalType(session) == true }) return null
 
         val originalCalleeReference = call.calleeReference
 

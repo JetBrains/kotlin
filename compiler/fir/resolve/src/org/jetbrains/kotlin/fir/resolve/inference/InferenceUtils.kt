@@ -36,7 +36,7 @@ fun extractLambdaInfoFromFunctionalType(
             duringCompletion
         )
     }
-    if (!expectedType.isBuiltinFunctionalType(session)) return null
+    if (!expectedType.isSomeFunctionalType(session)) return null
 
     val singleStatement = argument.body?.statements?.singleOrNull() as? FirReturnExpression
     if (argument.returnType == null && singleStatement != null &&

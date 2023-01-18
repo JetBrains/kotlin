@@ -56,6 +56,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.safeSubstitute
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -581,18 +582,15 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
             result
         }
         // referenced function of a Kotlin function type
-        FirDeclarationOrigin.BuiltIns -> {
-            if (dispatchReceiverClassLookupTagOrNull()?.isBuiltinFunctionalType() == true) {
-                ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
-            } else {
-                null
-            }
+        FirDeclarationOrigin.BuiltIns -> runIf(dispatchReceiverClassLookupTagOrNull()?.isSomeFunctionalType(session) == true) {
+            ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
         }
-        FirDeclarationOrigin.Synthetic -> null
-        FirDeclarationOrigin.DynamicScope -> null
-        FirDeclarationOrigin.RenamedForOverride -> null
-        FirDeclarationOrigin.WrappedIntegerOperator -> null
-        FirDeclarationOrigin.ScriptCustomization -> null
+
+        FirDeclarationOrigin.Synthetic,
+        FirDeclarationOrigin.DynamicScope,
+        FirDeclarationOrigin.RenamedForOverride,
+        FirDeclarationOrigin.WrappedIntegerOperator,
+        FirDeclarationOrigin.ScriptCustomization,
         is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
     }
 }

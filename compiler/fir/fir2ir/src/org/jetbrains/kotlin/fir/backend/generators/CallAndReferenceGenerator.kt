@@ -188,7 +188,7 @@ class CallAndReferenceGenerator(
         // This would cause ClassCastException in case of usual type approximation,
         // because '{ X1 & ... & Xm }' would be approximated to 'Nothing'.
         // JVM_OLD just relies on type mapping for generic argument types in such case.
-        if (!kotlinType.isKFunctionType(session))
+        if (!kotlinType.isReflectFunctionalType(session))
             return kotlinType
         if (kotlinType !is ConeSimpleKotlinType)
             return kotlinType

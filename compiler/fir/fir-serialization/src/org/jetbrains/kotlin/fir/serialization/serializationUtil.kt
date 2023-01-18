@@ -5,11 +5,14 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
+import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.languageVersionSettings
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.typeContext
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
@@ -21,3 +24,22 @@ class TypeApproximatorForMetadataSerializer(session: FirSession) :
     }
 }
 
+fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: FirSession, continuationClassId: ClassId): ConeClassLikeType {
+    require(this.isSuspendFunctionType(session))
+    val kind =
+        if (isReflectFunctionalType(session)) FunctionClassKind.KFunction
+        else FunctionClassKind.Function
+    val fullyExpandedType = type.fullyExpandedType(session)
+    val typeArguments = fullyExpandedType.typeArguments
+    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size))
+    val lastTypeArgument = typeArguments.last()
+    return ConeClassLikeTypeImpl(
+        functionalTypeId.toLookupTag(),
+        typeArguments = (typeArguments.dropLast(1) + continuationClassId.toLookupTag().constructClassType(
+            arrayOf(lastTypeArgument),
+            isNullable = false
+        ) + lastTypeArgument).toTypedArray(),
+        isNullable = fullyExpandedType.isNullable,
+        attributes = fullyExpandedType.attributes
+    )
+}

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -25,16 +24,15 @@ import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.constructClassType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -53,7 +51,7 @@ open class FirBuiltinSymbolProvider(
     val kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSymbolProvider(session) {
     private val allPackageFragments = loadBuiltIns().groupBy { it.fqName }
-    private val syntheticFunctionalInterfaceCache = SyntheticFunctionalInterfaceCache(moduleData, kotlinScopeProvider)
+    private val syntheticFunctionalInterfaceCache = SyntheticFunctionalInterfaceCache(session, moduleData, kotlinScopeProvider)
 
     private fun loadBuiltIns(): List<BuiltInsPackageFragment> {
         val classLoader = this::class.java.classLoader
@@ -201,7 +199,11 @@ private data class BinaryVersionAndPackageFragment(
     }
 }
 
-private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModuleData, private val kotlinScopeProvider: FirKotlinScopeProvider) {
+private class SyntheticFunctionalInterfaceCache(
+    private val session: FirSession,
+    private val moduleData: FirModuleData,
+    private val kotlinScopeProvider: FirKotlinScopeProvider
+) {
     private val syntheticFunctionalInterfaceCache =
         moduleData.session.firCachesFactory.createCache(::createSyntheticFunctionalInterface)
 
@@ -212,7 +214,7 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
     private fun createSyntheticFunctionalInterface(classId: ClassId): FirRegularClassSymbol? {
         return with(classId) {
             val className = relativeClassName.asString()
-            val kind = FunctionClassKind.byClassNamePrefix(packageFqName, className) ?: return@with null
+            val kind = session.functionalTypeService.getKindByClassNamePrefix(packageFqName, className) ?: return null
             val prefix = kind.classNamePrefix
             val arity = className.substring(prefix.length).toIntOrNull() ?: return null
             FirRegularClassSymbol(classId).apply symbol@{
@@ -279,55 +281,30 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
                         isTailRec = false
                         isExternal = false
                         isSuspend =
-                            kind == FunctionClassKind.SuspendFunction ||
-                                    kind == FunctionClassKind.KSuspendFunction
+                            kind == ConeFunctionalTypeKind.SuspendFunction ||
+                                    kind == ConeFunctionalTypeKind.KSuspendFunction
                     }
                     val typeArguments = typeParameters.map {
-                        buildResolvedTypeRef {
-                            type = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
-                        }
+                        ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false).toFirResolvedTypeRef()
                     }
 
-                    fun createSuperType(
-                        kind: FunctionClassKind,
-                    ): FirResolvedTypeRef {
-                        return buildResolvedTypeRef {
-                            type = kind.classId(arity).toLookupTag()
-                                .constructClassType(typeArguments.map { it.type }.toTypedArray(), isNullable = false)
-                        }
+                    fun createSuperType(kind: ConeFunctionalTypeKind): FirResolvedTypeRef {
+                        return kind.classId(arity).toLookupTag()
+                            .constructClassType(typeArguments.map { it.type }.toTypedArray(), isNullable = false)
+                            .toFirResolvedTypeRef()
                     }
 
-                    superTypeRefs += when (kind) {
-                        FunctionClassKind.Function -> listOf(
-                            buildResolvedTypeRef {
-                                type = StandardClassIds.Function.toLookupTag()
-                                    .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
-                            }
-                        )
-
-                        FunctionClassKind.SuspendFunction -> listOf(
-                            buildResolvedTypeRef {
-                                type = StandardClassIds.Function.toLookupTag()
-                                    .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
-                            }
-                        )
-
-                        FunctionClassKind.KFunction -> listOf(
-                            buildResolvedTypeRef {
-                                type = StandardClassIds.KFunction.toLookupTag()
-                                    .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
-                            },
-                            createSuperType(FunctionClassKind.Function)
-                        )
-
-                        FunctionClassKind.KSuspendFunction -> listOf(
-                            buildResolvedTypeRef {
-                                type = StandardClassIds.KFunction.toLookupTag()
-                                    .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
-                            },
-                            createSuperType(FunctionClassKind.SuspendFunction)
-                        )
+                    if (kind.isReflectType) {
+                        superTypeRefs += StandardClassIds.KFunction.toLookupTag()
+                            .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
+                            .toFirResolvedTypeRef()
+                        superTypeRefs += createSuperType(kind.nonReflectKind())
+                    } else {
+                        superTypeRefs += StandardClassIds.Function.toLookupTag()
+                            .constructClassType(arrayOf(typeArguments.last().type), isNullable = false)
+                            .toFirResolvedTypeRef()
                     }
+
                     addDeclaration(
                         buildSimpleFunction {
                             moduleData = this@SyntheticFunctionalInterfaceCache.moduleData
@@ -357,6 +334,14 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
                                 }
                             }
                             dispatchReceiverType = classId.defaultType(this@klass.typeParameters.map { it.symbol })
+                            kind.annotationOnInvokeClassId?.let { annotationClassId ->
+                                annotations += buildAnnotation {
+                                    annotationTypeRef = annotationClassId
+                                        .constructClassLikeType(emptyArray(), isNullable = false)
+                                        .toFirResolvedTypeRef()
+                                    argumentMapping = FirEmptyAnnotationArgumentMapping
+                                }
+                            }
                         }
                     )
                 }
@@ -364,6 +349,5 @@ private class SyntheticFunctionalInterfaceCache(private val moduleData: FirModul
         }
     }
 
-
-    private fun FunctionClassKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
+    private fun ConeFunctionalTypeKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
 }

@@ -742,7 +742,13 @@ class FirRenderer(
         }
 
         override fun visitResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef) {
-            typeRenderer.renderAsPossibleFunctionType(resolvedTypeRef.type)
+            typeRenderer.renderAsPossibleFunctionType(
+                resolvedTypeRef.type,
+                l@{
+                    val classId = it.classId ?: return@l null
+                    FirFunctionalTypeKindService.Default.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString())
+                }
+            )
         }
 
         override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {

@@ -561,7 +561,7 @@ class FirCallCompletionResultsWriterTransformer(
             // From the argument mapping, the expected type of this anonymous function would be:
             when {
                 // a built-in functional type, no-brainer
-                expectedArgumentType.isBuiltinFunctionalType(session) -> expectedArgumentType
+                expectedArgumentType.isSomeFunctionalType(session) -> expectedArgumentType
                 // fun interface (a.k.a. SAM), then unwrap it and build a functional type from that interface function
                 expectedArgumentType is ConeClassLikeType -> {
                     val firRegularClass =

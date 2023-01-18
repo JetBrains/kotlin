@@ -33,7 +33,14 @@ internal class KtFirTypeInfoProvider(
 
     override fun getFunctionClassKind(type: KtType): FunctionClassKind? {
         val coneType = (type as KtFirType).coneType
-        return coneType.functionClassKind(analysisSession.useSiteSession)
+        return when (coneType.functionalTypeKind(analysisSession.useSiteSession)) {
+            ConeFunctionalTypeKind.Function -> FunctionClassKind.Function
+            ConeFunctionalTypeKind.KFunction -> FunctionClassKind.KFunction
+            ConeFunctionalTypeKind.SuspendFunction -> FunctionClassKind.SuspendFunction
+            ConeFunctionalTypeKind.KSuspendFunction -> FunctionClassKind.KSuspendFunction
+            null -> null
+            else -> null // TODO: consider handling of custom functional type kinds from plugins
+        }
     }
 
     override fun canBeNull(type: KtType): Boolean = (type as KtFirType).coneType.canBeNull

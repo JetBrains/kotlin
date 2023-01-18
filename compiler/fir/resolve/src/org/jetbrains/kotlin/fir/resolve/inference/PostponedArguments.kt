@@ -109,7 +109,7 @@ private fun extractLambdaInfo(
 
     val isFunctionSupertype =
         expectedType != null && expectedType.lowerBoundIfFlexible()
-            .isBuiltinFunctionalType(session)//isNotNullOrNullableFunctionSupertype(expectedType)
+            .isSomeFunctionalType(session)//isNotNullOrNullableFunctionSupertype(expectedType)
 
     val typeVariable = ConeTypeVariableForLambdaReturnType(argument, "_L")
 

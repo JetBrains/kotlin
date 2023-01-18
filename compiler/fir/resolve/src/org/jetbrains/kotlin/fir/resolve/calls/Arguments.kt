@@ -293,9 +293,9 @@ private fun argumentTypeWithSuspendConversion(
     }
 
     // We want to check the argument type against non-suspend functional type.
-    val expectedFunctionalType = expectedType.suspendFunctionTypeToFunctionType(session)
+    val expectedFunctionalType = expectedType.customFunctionalTypeToSimpleFunctionalType(session)
 
-    val argumentTypeWithInvoke = argumentType.findSubtypeOfNonSuspendFunctionalType(session, expectedFunctionalType)
+    val argumentTypeWithInvoke = argumentType.findSubtypeOfSimpleFunctionalType(session, expectedFunctionalType)
 
     return argumentTypeWithInvoke?.findContributedInvokeSymbol(
         session,
@@ -308,7 +308,7 @@ private fun argumentTypeWithSuspendConversion(
             null,
             invokeSymbol.fir.returnTypeRef.coneType,
             isSuspend = true,
-            isKFunctionType = argumentType.isKFunctionType(session)
+            isKFunctionType = argumentType.isReflectFunctionalType(session)
         )
     }
 }
@@ -498,7 +498,7 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     candidateExpectedType: ConeKotlinType,
     context: ResolutionContext
 ): ConeKotlinType? {
-    if (candidateExpectedType.isBuiltinFunctionalType(session)) return null
+    if (candidateExpectedType.isSomeFunctionalType(session)) return null
 
     // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
@@ -521,7 +521,7 @@ fun FirExpression.isFunctional(
         else -> {
             // Either a functional type or a subtype of a class that has a contributed `invoke`.
             val coneType = typeRef.coneTypeSafe<ConeKotlinType>() ?: return false
-            if (coneType.isBuiltinFunctionalType(session)) {
+            if (coneType.isSomeFunctionalType(session)) {
                 return true
             }
             val classLikeExpectedFunctionType = expectedFunctionType?.lowerBoundIfFlexible() as? ConeClassLikeType

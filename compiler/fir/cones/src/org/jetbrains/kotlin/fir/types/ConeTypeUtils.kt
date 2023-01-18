@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
-import org.jetbrains.kotlin.fir.renderer.*
+import org.jetbrains.kotlin.fir.renderer.ConeIdRendererForDebugging
+import org.jetbrains.kotlin.fir.renderer.ConeIdShortRenderer
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugging
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererWithJavaFlexibleTypes
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
@@ -110,14 +112,6 @@ fun ConeClassLikeType.replaceArgumentsWithStarProjections(): ConeClassLikeType {
     val newArguments = Array(typeArguments.size) { ConeStarProjection }
     return withArguments(newArguments)
 }
-
-val ConeKotlinType?.functionTypeKind: FunctionClassKind?
-    get() {
-        val classId = (this as? ConeClassLikeType)?.lookupTag?.classId ?: return null
-        return FunctionClassKind.getFunctionalClassKind(
-            classId.shortClassName.asString(), classId.packageFqName
-        )
-    }
 
 fun ConeKotlinType.renderForDebugging(): String {
     val builder = StringBuilder()

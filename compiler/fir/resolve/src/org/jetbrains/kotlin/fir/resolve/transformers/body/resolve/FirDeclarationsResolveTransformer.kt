@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWri
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
-import org.jetbrains.kotlin.fir.types.constructStarProjectedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
@@ -859,7 +858,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         lambda: FirAnonymousFunction
     ): List<FirValueParameter> {
         if (expectedType == null) return lambda.valueParameters
-        if (!expectedType.isFunctionalOrSuspendFunctionalType(session)) return lambda.valueParameters
+        if (!expectedType.isNonReflectFunctionalType(session)) return lambda.valueParameters
         val parameterTypes = expectedType.typeArguments
             .mapTo(mutableListOf()) { it.type ?: session.builtinTypes.nullableAnyType.type }
             .also { it.removeLastOrNull() }

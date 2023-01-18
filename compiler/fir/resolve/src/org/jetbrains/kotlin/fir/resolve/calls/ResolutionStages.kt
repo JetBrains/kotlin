@@ -297,7 +297,7 @@ object CheckDslScopeViolation : ResolutionStage() {
         // ```
         // `useX()` is a call to `invoke` with `useX` as the dispatch receiver. In the FIR tree, extension receiver is represented as an
         // implicit `this` expression passed as the first argument.
-        if (candidate.dispatchReceiverValue?.type?.fullyExpandedType(context.session)?.isBuiltinFunctionalType(context.session) == true &&
+        if (candidate.dispatchReceiverValue?.type?.fullyExpandedType(context.session)?.isSomeFunctionalType(context.session) == true &&
             (candidate.symbol as? FirNamedFunctionSymbol)?.name == OperatorNameConventions.INVOKE
         ) {
             val firstArg = candidate.argumentMapping?.keys?.firstOrNull() as? FirThisReceiverExpression ?: return

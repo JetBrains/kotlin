@@ -172,8 +172,8 @@ class FirJvmTypeMapper(val session: FirSession) : FirSessionComponent {
             val parameters = classifier?.typeParameters.orEmpty().map { it.symbol }
             val arguments = type.arguments
 
-            if ((defaultType.isFunctionalType(session) && arguments.size > BuiltInFunctionArity.BIG_ARITY)
-                || defaultType.isKFunctionType(session)
+            if ((defaultType.isSimpleFunctionType(session) && arguments.size > BuiltInFunctionArity.BIG_ARITY)
+                || defaultType.isReflectFunctionalType(session)
             ) {
                 writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
                 return
@@ -264,7 +264,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
 
     override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
         require(this is ConeSimpleKotlinType)
-        return isSuspendOrKSuspendFunctionType(session)
+        return isSuspendFunctionType(session)
     }
 
     override fun SimpleTypeMarker.isKClass(): Boolean {
