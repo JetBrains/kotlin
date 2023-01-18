@@ -469,7 +469,7 @@ abstract class IncrementalCompilerRunner<
             val lookupTracker = LookupTrackerImpl(LookupTracker.DO_NOTHING)
             val expectActualTracker = ExpectActualTrackerImpl()
             //TODO(valtman) sourceToCompile calculate based on abiSnapshot
-            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition(File::exists)
+            val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
 
             val services = makeServices(
                 args, lookupTracker, expectActualTracker, caches,
