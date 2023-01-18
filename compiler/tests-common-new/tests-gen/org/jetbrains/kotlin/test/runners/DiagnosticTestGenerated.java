@@ -34585,6 +34585,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("javaInterfaceFieldDirectAccess.kt")
+            public void testJavaInterfaceFieldDirectAccess() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/javaInterfaceFieldDirectAccess.kt");
+            }
+
+            @Test
             @TestMetadata("lackOfInvisibleSetterOfJavaClassInSamePackage.kt")
             public void testLackOfInvisibleSetterOfJavaClassInSamePackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/lackOfInvisibleSetterOfJavaClassInSamePackage.kt");
@@ -34612,6 +34618,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestMetadata("packagePrivateStatic.kt")
             public void testPackagePrivateStatic() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/visibility/packagePrivateStatic.kt");
+            }
+
+            @Test
+            @TestMetadata("packagePrivateStaticInterfaceFieldViaKotlinClass.kt")
+            public void testPackagePrivateStaticInterfaceFieldViaKotlinClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/visibility/packagePrivateStaticInterfaceFieldViaKotlinClass.kt");
             }
 
             @Test

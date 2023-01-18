@@ -1,0 +1,22 @@
+FILE: KotlinParentClass.kt
+    package javapackage
+
+    public final class KotlinParentClass : R|javapackage/PackagePrivateGrandparentInterface| {
+        public constructor(): R|javapackage/KotlinParentClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+FILE: Child.kt
+    public final class Child : R|javapackage/PublicParentClass| {
+        public constructor(): R|Child| {
+            super<R|javapackage/PublicParentClass|>()
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+            lval x: R|kotlin/String| = R|javapackage/PackagePrivateGrandparentInterface.publicStaticField|
+            lval y: R|kotlin/String| = Q|javapackage/PublicParentClass|.R|javapackage/PackagePrivateGrandparentInterface.publicStaticField|
+            lval z: <ERROR TYPE REF: Unresolved name: publicStaticField> = Q|javapackage/KotlinParentClass|.<Unresolved name: publicStaticField>#
+        }
+
+    }
