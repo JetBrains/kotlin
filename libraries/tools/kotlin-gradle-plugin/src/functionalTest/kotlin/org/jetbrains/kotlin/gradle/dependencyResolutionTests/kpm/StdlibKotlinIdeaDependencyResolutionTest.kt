@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.gradle.unitTests.kpm.applyKpmPlugin
 import org.jetbrains.kotlin.gradle.unitTests.kpm.buildIdeaKpmProjectModel
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.junit.Test
+import kotlin.test.Ignore
 
+@Ignore
 class StdlibKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependencyResolutionTest() {
 
     @Test

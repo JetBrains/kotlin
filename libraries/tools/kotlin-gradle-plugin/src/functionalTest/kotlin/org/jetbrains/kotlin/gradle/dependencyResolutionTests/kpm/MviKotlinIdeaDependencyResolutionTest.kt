@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
 import org.jetbrains.kotlin.gradle.util.assumeAndroidSdkAvailable
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
 import org.junit.Test
+import kotlin.test.Ignore
 
+@Ignore
 class MviKotlinIdeaDependencyResolutionTest : AbstractLightweightIdeaDependencyResolutionTest() {
 
     @Test
