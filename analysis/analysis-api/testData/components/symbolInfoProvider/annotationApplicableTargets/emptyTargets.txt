@@ -1,0 +1,7 @@
+KtAnnotationEntry: @A
+
+Resolved annotation symbol:
+@kotlin.annotation.Target
+annotation class A
+
+Applicable targets: []

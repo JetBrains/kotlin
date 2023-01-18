@@ -22,6 +22,8 @@ public abstract class KtSymbolInfoProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getJavaGetterName(symbol: KtPropertySymbol): Name
     public abstract fun getJavaSetterName(symbol: KtPropertySymbol): Name?
+
+    public abstract fun getAnnotationApplicableTargets(symbol: KtClassOrObjectSymbol): Set<KotlinTarget>?
 }
 
 public interface KtSymbolInfoProviderMixIn : KtAnalysisSessionMixIn {
@@ -66,5 +68,5 @@ public interface KtSymbolInfoProviderMixIn : KtAnalysisSessionMixIn {
 
     /** Gets the set of applicable targets for an annotation class symbol. Returns `null` if the symbol is not an annotation class. */
     public val KtClassOrObjectSymbol.annotationApplicableTargets: Set<KotlinTarget>?
-        get() = withValidityAssertion { null /* TODO */ }
+        get() = withValidityAssertion { analysisSession.symbolInfoProvider.getAnnotationApplicableTargets(this) }
 }

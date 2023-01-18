@@ -22,7 +22,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  annotationApplicableTargets: [TYPE]
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -49,7 +49,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  annotationApplicableTargets: [TYPE]
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -76,7 +76,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  annotationApplicableTargets: [TYPE]
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -103,7 +103,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  annotationApplicableTargets: [TYPE]
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:

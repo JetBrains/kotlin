@@ -68,6 +68,7 @@ fun FirRegularClass.getAllowedAnnotationTargets(): Set<KotlinTarget> {
 }
 
 fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(): Set<KotlinTarget> {
+    lazyResolveToPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
     val targetAnnotation = getTargetAnnotation() ?: return defaultAnnotationTargets
     val arguments = targetAnnotation.findArgumentByName(ParameterNames.targetAllowedTargets)?.unfoldArrayOrVararg().orEmpty()
 
