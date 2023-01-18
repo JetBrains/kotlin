@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:Suppress("DEPRECATION")
@@ -20,11 +20,20 @@ import kotlin.LazyThreadSafetyMode.PUBLICATION
  *
  * To create an instance of [KotlinClassMetadata], first obtain an instance of [Metadata] annotation on a class file, and then call [KotlinClassMetadata.read].
  * [Metadata] annotation can be obtained either via reflection or created from data from a binary class file, using its constructor or helper function [kotlinx.metadata.jvm.Metadata].
+ *
+ * [KotlinClassMetadata] itself does not have any meaningful methods or properties; to work with it, it is required to do a `when` over subclasses.
+ * Different subclasses of [KotlinClassMetadata] represent different kinds of class files produced by Kotlin compiler.
+ * It is recommended to study documentation for each subclass and decide what subclasses one has to handle in the `when` expression,
+ * trying to cover as much as possible.
+ * Normally, one would need at least a [Class] and a [FileFacade], as these are two most common kinds.
  */
 sealed class KotlinClassMetadata(val annotationData: Metadata) {
 
     /**
      * Represents metadata of a class file containing a declaration of a Kotlin class.
+     *
+     * Anything that does not belong to a Kotlin class (top-level declarations) is not present in
+     * [Class] metadata, even if such declaration was in the same source file. See [FileFacade] for details.
      */
     class Class internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData) {
         private val classData by lazy(PUBLICATION) {
@@ -34,7 +43,7 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
         }
 
         /**
-         * Visits metadata of this class with a new [KmClass] instance and returns that instance.
+         * Returns a new [KmClass] instance created from this class metadata.
          */
         fun toKmClass(): KmClass =
             KmClass().apply(this::accept)
@@ -83,6 +92,11 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
 
     /**
      * Represents metadata of a class file containing a compiled Kotlin file facade.
+     *
+     * File facade is a JVM class that contains declarations which do not belong to any Kotlin class: top-level functions, properties and type aliases.
+     * For example, file Main.kt that contains only `fun main()` would produce a `MainKt.class` with FileFacade with this function metadata.
+     * If Kotlin source file contains both classes and top-level declarations, only top-level declarations would be available in the corresponding file facade.
+     * Classes would have their own JVM classfiles and their own metadata of [Class] kind.
      */
     class FileFacade internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData) {
         private val packageData by lazy(PUBLICATION) {
@@ -92,7 +106,7 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
         }
 
         /**
-         * Visits metadata of this file facade with a new [KmPackage] instance and returns that instance.
+         * Creates a new [KmPackage] instance from this file facade metadata.
          */
         fun toKmPackage(): KmPackage =
             KmPackage().apply(this::accept)
@@ -151,8 +165,7 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
         }
 
         /**
-         * Visits metadata of this synthetic class with a new [KmLambda] instance and returns that instance.
-         *
+         * Creates a new [KmLambda] instance from this synthetic class metadata.
          * Returns `null` if this synthetic class does not represent a lambda.
          */
         fun toKmLambda(): KmLambda? =
@@ -223,6 +236,32 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
     /**
      * Represents metadata of a class file containing a compiled multi-file class facade.
      *
+     * Multi-file class facade is a facade file produced from several Kotlin source files marked with [JvmMultifileClass] and same [JvmName].
+     * It does not have any declarations; it only contains [partClassNames] to indicate where individual parts are located.
+     *
+     * Consider the following example.
+     * Suppose we have two files, partOne.kt and partTwo.kt:
+     *
+     * ```
+     * // partOne.kt
+     * @file:JvmMultifileClass
+     * @file:JvmName("MultiFileClass")
+     *
+     * fun partOne(): String = "one"
+     *
+     * // partTwo.kt
+     * @file:JvmMultifileClass
+     * @file:JvmName("MultiFileClass")
+     *
+     * fun partTwo(): String = "two"
+     * ```
+     *
+     * In this case, there would be three classfiles produced by the compiler, each with its own metadata.
+     * Metadata for `MultiFileClass.class` would be of type [MultiFileClassFacade]
+     * and contain [partClassNames] that would indicate class file names for the parts: `[MultiFileClass__PartOneKt, MultiFileClass__PartTwoKt]`.
+     * Using these names, you can load metadata from those classes with type [MultiFileClassPart].
+     *
+     * @see MultiFileClassPart
      * @see JvmMultifileClass
      */
     class MultiFileClassFacade internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData) {
@@ -268,8 +307,13 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
 
     /**
      * Represents metadata of a class file containing a compiled multi-file class part, i.e. an internal class with method bodies
-     * and their metadata, accessed only from the corresponding facade.
+     * and their metadata, accessed only from the corresponding [facade][MultiFileClassFacade]. Just like [FileFacade], this metadata contains only top-level declarations,
+     * as classes have their own one.
      *
+     * It does not contain any references to other parts; to locate all the parts, one should construct a corresponding
+     * [facade][MultiFileClassFacade] beforehand.
+     *
+     * @see MultiFileClassFacade
      * @see JvmMultifileClass
      */
     class MultiFileClassPart internal constructor(annotationData: Metadata) : KotlinClassMetadata(annotationData) {
@@ -286,7 +330,7 @@ sealed class KotlinClassMetadata(val annotationData: Metadata) {
             get() = annotationData.extraString
 
         /**
-         * Visits metadata of this multi-file class part with a new [KmPackage] instance and returns that instance.
+         * Creates a new [KmPackage] instance from this multi-file class part metadata.
          */
         fun toKmPackage(): KmPackage =
             KmPackage().apply(this::accept)

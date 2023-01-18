@@ -12,7 +12,7 @@ package kotlinx.metadata
  * Therefore, it does not provide any compatibility guarantees.
  */
 @RequiresOptIn(
-    "The API uses experimental feature \"context receivers\" (see KEEP-259) and may be changed or removed in any future release.",
+    "The API is related to the experimental feature \"context receivers\" (see KEEP-259) and may be changed or removed in any future release.",
     RequiresOptIn.Level.ERROR
 )
 annotation class ExperimentalContextReceivers

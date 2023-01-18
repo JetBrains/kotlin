@@ -18,6 +18,7 @@ fun ClassName.toJvmInternalName(): String =
     if (this.isLocalClassName()) substring(1)
     else replace('.', '$')
 
+// Deprecated since 0.6.1, should be error in 0.7.0+
 @Deprecated(
     "Renamed to toJvmInternalName() to avoid confusion with String properties",
     ReplaceWith("toJvmInternalName()"),

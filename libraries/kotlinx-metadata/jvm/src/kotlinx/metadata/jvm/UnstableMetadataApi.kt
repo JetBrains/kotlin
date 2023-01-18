@@ -11,7 +11,7 @@ package kotlinx.metadata.jvm
  * It can be changed in future releases without migration aids or removed without replacement.
  */
 @RequiresOptIn(
-    "This part of API is not yet finished, does not provide compatibility guarantees and can be changed in the future without notice",
+    "This part of API is not yet finished, does not provide any compatibility guarantees and can be changed in the future without notice",
     level = RequiresOptIn.Level.WARNING
 )
 annotation class UnstableMetadataApi
