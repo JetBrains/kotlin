@@ -1,0 +1,5 @@
+warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
+compiler/testData/cli/jvm/firLightTree.kt:3:5: error: classifier 'class System : Any' does not have a companion object, and thus must be initialized here
+    java.lang.System = null
+    ^
+COMPILATION_ERROR

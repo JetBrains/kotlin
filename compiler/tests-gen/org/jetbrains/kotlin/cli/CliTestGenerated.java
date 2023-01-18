@@ -462,6 +462,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firHello20WithOldLV.args");
         }
 
+        @TestMetadata("firLightTreeOff.args")
+        public void testFirLightTreeOff() throws Exception {
+            runTest("compiler/testData/cli/jvm/firLightTreeOff.args");
+        }
+
+        @TestMetadata("firLightTreeOn.args")
+        public void testFirLightTreeOn() throws Exception {
+            runTest("compiler/testData/cli/jvm/firLightTreeOn.args");
+        }
+
         @TestMetadata("firMultiplatformCompilationWithError.args")
         public void testFirMultiplatformCompilationWithError() throws Exception {
             runTest("compiler/testData/cli/jvm/firMultiplatformCompilationWithError.args");

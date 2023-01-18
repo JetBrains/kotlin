@@ -46,7 +46,7 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
 
     val usesK2 = arguments.useK2 || languageVersionSettings.languageVersion.usesK2
     put(CommonConfigurationKeys.USE_FIR, usesK2)
-    put(CommonConfigurationKeys.USE_LIGHT_TREE, usesK2)
+    put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
 }
 
 fun <A : CommonCompilerArguments> CompilerConfiguration.setupLanguageVersionSettings(arguments: A) {
