@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
@@ -48,16 +47,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 object CompilerRequiredAnnotationsHelper {
     internal val REQUIRED_ANNOTATIONS_WITH_ARGUMENTS: Set<ClassId> = setOf(
         Deprecated,
-        Annotations.Retention,
-        Annotations.Target,
+//        Annotations.Retention,
+//        Annotations.Target,
     )
 
     val REQUIRED_ANNOTATIONS: Set<ClassId> = REQUIRED_ANNOTATIONS_WITH_ARGUMENTS + setOf(
         DeprecatedSinceKotlin,
         WasExperimental,
         JvmRecord,
-        Annotations.Repeatable,
-        Annotations.Java.Repeatable,
+//        Annotations.Repeatable,
+//        Annotations.Java.Repeatable,
     )
 }
 
