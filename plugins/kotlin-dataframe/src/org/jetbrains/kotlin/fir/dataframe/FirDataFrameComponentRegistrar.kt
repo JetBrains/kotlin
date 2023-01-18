@@ -28,15 +28,15 @@ val size = 500
 
 class GeneratedNames {
     val scopes = mutableSetOf<ClassId>()
-    val callables = List(size) {
-        CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("refined_$it"))
-    }
+    val callables = mutableSetOf<CallableId>()
 //    val tokens = List(size) {
 //        ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("Token$it"))
 //    }.toMutableSet()
 
     val tokens = mutableSetOf<ClassId>()
-    val callableNames = ArrayDeque(callables)
+//    val callableNames = ArrayDeque(List(size) {
+//        CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("refined_$it"))
+//    })
 
     val scopeState = mutableMapOf<ClassId, SchemaContext>()
     val tokenState = mutableMapOf<ClassId, SchemaContext>()
@@ -53,6 +53,16 @@ class GeneratedNames {
         scopes.add(newId)
         return newId
     }
+
+    fun nextFunction(s: String): CallableId {
+        val callableId = CallableId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier(s))
+        callables.add(callableId)
+        return callableId
+//        val callableId = callableNames.removeLast()
+//        callables.add(callableId)
+//        return callableId
+    }
+
 }
 val PATH: CompilerConfigurationKey<String> = CompilerConfigurationKey.create("annotation qualified name")
 
@@ -83,7 +93,7 @@ class FirDataFrameExtensionRegistrar(val path: String?) : FirExtensionRegistrar(
                 FirDataFrameReceiverInjector(it, scopeState, tokenState, path, this::nextName, this::nextScope)
             }
             +{ it: FirSession -> FirDataFrameAdditionalCheckers(it) }
-            +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, callableNames, callableState, this::nextName) }
+            +{ it: FirSession -> FirDataFrameCandidateInterceptor(it, ::nextFunction, callableState, this::nextName) }
             +{ it: FirSession -> FirDataFrameTokenGenerator(it, tokens, tokenState) }
         }
     }
