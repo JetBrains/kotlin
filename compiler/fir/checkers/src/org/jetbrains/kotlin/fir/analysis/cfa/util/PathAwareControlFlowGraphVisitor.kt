@@ -65,9 +65,4 @@ abstract class PathAwareControlFlowGraphVisitor<I : ControlFlowInfo<I, *, *>> :
         node: CFGNode<*>,
         data: PathAwareControlFlowInfo<I>
     ): PathAwareControlFlowInfo<I> = data
-
-    override fun <T> visitUnionNode(
-        node: T,
-        data: PathAwareControlFlowInfo<I>
-    ): PathAwareControlFlowInfo<I> where T : CFGNode<*>, T : UnionNodeMarker = data
 }

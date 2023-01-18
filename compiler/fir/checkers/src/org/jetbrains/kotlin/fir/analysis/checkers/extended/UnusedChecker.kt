@@ -50,8 +50,6 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
     ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
-        override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
-
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
             val variableSymbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
             val dataPerNode = data[node] ?: return
@@ -182,12 +180,6 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
         ): PathAwareVariableStatusInfo =
             super.visitNode(node, data).withAnnotationsFrom(node)
 
-        override fun <T> visitUnionNode(
-            node: T,
-            data: PathAwareVariableStatusInfo
-        ): PathAwareVariableStatusInfo where T : CFGNode<*>, T : UnionNodeMarker =
-            super.visitUnionNode(node, data).withAnnotationsFrom(node)
-
         override fun visitVariableDeclarationNode(
             node: VariableDeclarationNode,
             data: PathAwareVariableStatusInfo
@@ -289,7 +281,7 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
             node: FunctionCallNode,
             data: PathAwareVariableStatusInfo
         ): PathAwareVariableStatusInfo {
-            val dataForNode = visitUnionNode(node, data)
+            val dataForNode = visitNode(node, data)
             val reference = node.fir.calleeReference.resolved ?: return dataForNode
             val functionSymbol = reference.resolvedSymbol as? FirFunctionSymbol<*> ?: return dataForNode
             val symbol = if (functionSymbol.callableId.callableName.identifier == "invoke") {
