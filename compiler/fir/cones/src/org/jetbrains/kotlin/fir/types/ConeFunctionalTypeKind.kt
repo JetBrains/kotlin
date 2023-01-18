@@ -130,3 +130,12 @@ abstract class ConeFunctionalTypeKind internal constructor(
         override fun nonReflectKind(): ConeFunctionalTypeKind = SuspendFunction
     }
 }
+
+val ConeFunctionalTypeKind.isBuiltin: Boolean
+    get() = when (this) {
+        ConeFunctionalTypeKind.Function,
+        ConeFunctionalTypeKind.KFunction,
+        ConeFunctionalTypeKind.SuspendFunction,
+        ConeFunctionalTypeKind.KSuspendFunction -> true
+        else -> false
+    }

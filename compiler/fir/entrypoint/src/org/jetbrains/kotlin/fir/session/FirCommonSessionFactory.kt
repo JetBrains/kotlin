@@ -104,7 +104,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                 it.registerNativeCheckers()
             },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
-            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, dependencies ->
+            createProviders = { session, kotlinScopeProvider, symbolProvider, syntheticFunctionalInterfaceProvider, generatedSymbolsProvider, dependencies ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null
                 var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null
                 incrementalCompilationContext?.let {
@@ -140,6 +140,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                     *(incrementalCompilationContext?.previousFirSessionsSymbolProviders?.toTypedArray() ?: emptyArray()),
                     symbolProviderForBinariesFromIncrementalCompilation,
                     generatedSymbolsProvider,
+                    syntheticFunctionalInterfaceProvider,
                     javaSymbolProvider,
                     *dependencies.toTypedArray(),
                     optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation,

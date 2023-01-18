@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirLibrarySessionProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
@@ -79,6 +77,7 @@ abstract class FirAbstractSessionFactory {
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
+            FirExtensionSyntheticFunctionalInterfaceProvider,
             dependencies: List<FirSymbolProvider>,
         ) -> List<FirSymbolProvider>
     ): FirSession {
@@ -110,9 +109,14 @@ abstract class FirAbstractSessionFactory {
 
             val dependencyProviders = computeDependencyProviderList(moduleData)
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.create(this)
+            val syntheticFunctionalInterfaceProvider = FirExtensionSyntheticFunctionalInterfaceProvider(this, moduleData, kotlinScopeProvider)
 
             val providers = createProviders(
-                this, kotlinScopeProvider, firProvider.symbolProvider, generatedSymbolsProvider,
+                this,
+                kotlinScopeProvider,
+                firProvider.symbolProvider,
+                generatedSymbolsProvider,
+                syntheticFunctionalInterfaceProvider,
                 dependencyProviders,
             )
 

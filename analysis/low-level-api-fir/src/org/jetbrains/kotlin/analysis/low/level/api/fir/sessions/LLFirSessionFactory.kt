@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.*
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionalInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -148,6 +149,7 @@ internal object LLFirSessionFactory {
             }
 
             val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
+            val syntheticFunctionalInterfaceProvider = FirExtensionSyntheticFunctionalInterfaceProvider(this, moduleData, scopeProvider)
             register(
                 FirSymbolProvider::class,
                 LLFirModuleWithDependenciesSymbolProvider(
@@ -157,6 +159,7 @@ internal object LLFirSessionFactory {
                         provider.symbolProvider,
                         switchableExtensionDeclarationsSymbolProvider,
                         javaSymbolProvider,
+                        syntheticFunctionalInterfaceProvider,
                     ),
                 )
             )

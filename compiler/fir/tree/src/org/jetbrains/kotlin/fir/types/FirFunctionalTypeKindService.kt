@@ -12,11 +12,19 @@ import org.jetbrains.kotlin.name.FqName
 
 abstract class FirFunctionalTypeKindService : FirSessionComponent {
     abstract fun getKindByClassNamePrefix(packageFqName: FqName, className: String): ConeFunctionalTypeKind?
+    abstract fun hasKindWithSpecificPackage(packageFqName: FqName): Boolean
 
     /*
      * Should be used only in places where session is unavaliable by default (e.g. in default cone type render)
      */
     object Default : FirFunctionalTypeKindService() {
+        private val packages = listOf(
+            ConeFunctionalTypeKind.Function,
+            ConeFunctionalTypeKind.SuspendFunction,
+            ConeFunctionalTypeKind.KFunction,
+            ConeFunctionalTypeKind.KSuspendFunction,
+        ).map { it.packageFqName }.toSet()
+
         override fun getKindByClassNamePrefix(packageFqName: FqName, className: String): ConeFunctionalTypeKind? {
             return when (FunctionClassKind.parseClassName(className, packageFqName)?.kind) {
                 FunctionClassKind.Function -> ConeFunctionalTypeKind.Function
@@ -25,6 +33,10 @@ abstract class FirFunctionalTypeKindService : FirSessionComponent {
                 FunctionClassKind.KSuspendFunction -> ConeFunctionalTypeKind.KSuspendFunction
                 null -> null
             }
+        }
+
+        override fun hasKindWithSpecificPackage(packageFqName: FqName): Boolean {
+            return packageFqName in packages
         }
     }
 }

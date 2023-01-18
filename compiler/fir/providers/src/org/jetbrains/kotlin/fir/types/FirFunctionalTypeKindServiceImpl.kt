@@ -47,4 +47,8 @@ class FirFunctionalTypeKindServiceImpl(session: FirSession) : FirFunctionalTypeK
         }
         return null
     }
+
+    override fun hasKindWithSpecificPackage(packageFqName: FqName): Boolean {
+        return packageFqName in knownKindsByPackageFqName
+    }
 }
