@@ -103,10 +103,7 @@ internal class GradleKpmFragmentGranularMetadataResolver(
 
 
                     val metadataProvider = when (projectStructureMetadataExtractor) {
-                        is ProjectMppDependencyProjectStructureMetadataExtractor -> ProjectMetadataProvider(
-                            dependencyProject = project.project(projectStructureMetadataExtractor.projectPath),
-                            moduleIdentifier = projectStructureMetadataExtractor.moduleIdentifier
-                        )
+                        is ProjectMppDependencyProjectStructureMetadataExtractor -> TODO("Implement ProjectStructureMetadata for KPM")
 
                         is JarMppDependencyProjectStructureMetadataExtractor -> ArtifactMetadataProvider(
                             CompositeMetadataArtifactImpl(
