@@ -7,19 +7,13 @@ package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationClassIds
-import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithArguments
-import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithClassIds
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirAnnotationListForReceiverParameter private constructor(
@@ -31,9 +25,7 @@ internal class KtFirAnnotationListForReceiverParameter private constructor(
 
     override val annotations: List<KtAnnotationApplication>
         get() = withValidityAssertion {
-            receiverParameter.resolvedAnnotationsWithArguments(firCallableSymbol).map { annotation ->
-                annotation.toKtAnnotationApplication(useSiteSession)
-            }
+            annotations(firCallableSymbol, useSiteSession, receiverParameter)
         }
 
     override fun hasAnnotation(
@@ -41,26 +33,20 @@ internal class KtFirAnnotationListForReceiverParameter private constructor(
         useSiteTarget: AnnotationUseSiteTarget?,
         acceptAnnotationsWithoutUseSite: Boolean,
     ): Boolean = withValidityAssertion {
-        receiverParameter.resolvedAnnotationsWithClassIds(firCallableSymbol).any {
-            (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) &&
-                    it.toAnnotationClassId(useSiteSession) == classId
-        }
+        hasAnnotation(firCallableSymbol, classId, useSiteSession, useSiteTarget, acceptAnnotationsWithoutUseSite, receiverParameter)
     }
 
     override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
-        receiverParameter.resolvedAnnotationsWithClassIds(firCallableSymbol).hasAnnotation(classId, useSiteSession)
+        hasAnnotation(firCallableSymbol, classId, useSiteSession, receiverParameter)
     }
 
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
-        receiverParameter.resolvedAnnotationsWithArguments(firCallableSymbol).mapNotNull { annotation ->
-            if (annotation.toAnnotationClassId(useSiteSession) != classId) return@mapNotNull null
-            annotation.toKtAnnotationApplication(useSiteSession)
-        }
+        annotationsByClassId(firCallableSymbol, classId, useSiteSession, receiverParameter)
     }
 
     override val annotationClassIds: Collection<ClassId>
         get() = withValidityAssertion {
-            receiverParameter.resolvedAnnotationClassIds(firCallableSymbol)
+            annotationClassIds(firCallableSymbol, receiverParameter)
         }
 
     companion object {
