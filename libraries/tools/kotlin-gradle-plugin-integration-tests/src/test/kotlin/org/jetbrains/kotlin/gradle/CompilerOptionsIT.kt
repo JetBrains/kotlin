@@ -13,16 +13,24 @@ import kotlin.io.path.appendText
 
 internal class CompilerOptionsIT : KGPBaseTest() {
 
-    // In Gradle 7.3-7.5 'kotlin-dsl' plugin tries to set up freeCompilerArgs in doFirst task action
+    // In Gradle 7.3-8.0 'kotlin-dsl' plugin tries to set up freeCompilerArgs in doFirst task action
+    // Related issue: https://github.com/gradle/gradle/issues/22091
     @DisplayName("Allows to set kotlinOptions.freeCompilerArgs on task execution with warning")
     @JvmGradlePluginTests
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_3,
-        maxVersion = TestVersions.Gradle.G_7_5
+        minVersion = TestVersions.Gradle.G_7_3
     )
     @GradleTest
     internal fun compatibleWithKotlinDsl(gradleVersion: GradleVersion) {
         project("buildSrcWithKotlinDslAndKgp", gradleVersion) {
+            gradleProperties
+                .appendText(
+                """
+                |
+                |systemProp.org.gradle.kotlin.dsl.precompiled.accessors.strict=true
+                """.trimMargin()
+            )
+
             build("tasks") {
                 assertOutputContains("kotlinOptions.freeCompilerArgs were changed on task :compileKotlin execution phase:")
             }
