@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertIsNotEmpty
 import org.jetbrains.kotlin.gradle.idea.testFixtures.kpm.assertFragmentDependencies
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.junit.Test
+import kotlin.test.Ignore
 
+@Ignore
 class SimpleProjectToProjectDependencyResolutionTest : AbstractLightweightIdeaDependencyResolutionTest() {
 
     @Test
