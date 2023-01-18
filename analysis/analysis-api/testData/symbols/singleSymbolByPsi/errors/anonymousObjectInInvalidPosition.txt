@@ -10,4 +10,5 @@ KtAnonymousObjectSymbol:
   symbolKind: LOCAL
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
   deprecationStatus: null

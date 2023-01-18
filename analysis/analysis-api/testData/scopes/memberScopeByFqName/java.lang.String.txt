@@ -3145,6 +3145,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Private
   getContainingModule: KtSdkModule "SDK jdk"
+  annotationApplicableTargets: null
   deprecationStatus: null
 
 KtConstructorSymbol:

@@ -32,6 +32,7 @@ KtNamedClassOrObjectSymbol:
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
   deprecationStatus: null
 
 KtTypeAliasSymbol:
@@ -155,6 +156,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Local
   getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -206,6 +208,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Local
   getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
   deprecationStatus: null
 
 KtFunctionSymbol:
@@ -257,4 +260,5 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
   deprecationStatus: null
