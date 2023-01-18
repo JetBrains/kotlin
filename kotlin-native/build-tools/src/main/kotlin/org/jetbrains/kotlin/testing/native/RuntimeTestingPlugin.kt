@@ -59,8 +59,8 @@ open class RuntimeTestingPlugin : Plugin<Project> {
                     sourceSets {
                         testFixtures {
                             inputFiles.from(googleTestRoot.resolve("googletest/src"))
-                            inputFiles.include("*.cc")
-                            inputFiles.exclude("gtest-all.cc", "gtest_main.cc")
+                            // That's how googletest/CMakeLists.txt builds gtest library.
+                            inputFiles.include("gtest-all.cc")
                             headersDirs.setFrom(
                                     googleTestRoot.resolve("googletest/include"),
                                     googleTestRoot.resolve("googletest")
@@ -75,8 +75,8 @@ open class RuntimeTestingPlugin : Plugin<Project> {
                     sourceSets {
                         testFixtures {
                             inputFiles.from(googleTestRoot.resolve("googlemock/src"))
-                            inputFiles.include("*.cc")
-                            inputFiles.exclude("gmock-all.cc", "gmock_main.cc")
+                            // That's how googlemock/CMakeLists.txt builds gmock library.
+                            inputFiles.include("gmock-all.cc")
                             headersDirs.setFrom(
                                     googleTestRoot.resolve("googlemock"),
                                     googleTestRoot.resolve("googlemock/include"),

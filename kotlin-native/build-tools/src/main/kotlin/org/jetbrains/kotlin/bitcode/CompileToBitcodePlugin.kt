@@ -10,7 +10,10 @@ import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationVariant
 import org.gradle.api.attributes.Usage
-import org.gradle.api.file.*
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.ConfigurableFileTree
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -204,21 +207,25 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
         private val execClang = project.extensions.getByType<ExecClang>()
 
         /**
-         * Task that produces [outputFile].
+         * Compiles source files into bitcode files.
          */
-        val task = project.tasks.register<CompileToBitcode>("compileToBitcode${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}", _target).apply {
+        val compileTask = project.tasks.register<ClangFrontend>("clangFrontend${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}").apply {
             configure {
-                this.description = "Compiles '${module.name}' (${this@SourceSet.name} sources) to bitcode for ${_target}"
-                this.outputFile.set(this@SourceSet.outputFile)
+                this.description = "Compiles '${module.name}' (${this@SourceSet.name} sources) to bitcode for $_target"
                 this.outputDirectory.set(this@SourceSet.outputDirectory)
+                this.targetName.set(target.name)
                 this.compiler.set(module.compiler)
-                this.linkerArgs.set(module.linkerArgs)
-                this.compilerArgs.set(module.compilerArgs)
+                this.arguments.set(module.compilerArgs)
+                this.arguments.addAll(when (sanitizer) {
+                    null -> emptyList()
+                    SanitizerKind.ADDRESS -> listOf("-fsanitize=address")
+                    SanitizerKind.THREAD -> listOf("-fsanitize=thread")
+                })
                 this.headersDirs.from(this@SourceSet.headersDirs)
                 this.inputFiles.from(this@SourceSet.inputFiles.dir)
                 this.inputFiles.setIncludes(this@SourceSet.inputFiles.includes)
                 this.inputFiles.setExcludes(this@SourceSet.inputFiles.excludes)
-                this.compilerWorkingDirectory.set(module.compilerWorkingDirectory)
+                this.workingDirectory.set(module.compilerWorkingDirectory)
                 // TODO: Should depend only on the toolchain needed to build for the _target
                 dependsOn(":kotlin-native:dependencies:update")
                 dependsOn(this@SourceSet.dependencies)
@@ -230,11 +237,11 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 entry {
                     val compileTask = this@apply.get()
                     val args = listOf(execClang.resolveExecutable(compileTask.compiler.get())) + compileTask.compilerFlags.get() + execClang.clangArgsForCppRuntime(target.name)
-                    directory.set(compileTask.compilerWorkingDirectory)
+                    directory.set(compileTask.workingDirectory)
                     files.setFrom(compileTask.inputFiles)
                     arguments.set(args)
                     // Only the location of output file matters, compdb does not depend on the compilation result.
-                    output.set(compileTask.outputFile.locationOnly.map { it.asFile.absolutePath })
+                    output.set(compileTask.outputDirectory.locationOnly.map { it.asFile.absolutePath })
                 }
                 task.configure {
                     // Compile task depends on the toolchain (including headers) and on the source code (e.g. googletest).
@@ -243,6 +250,21 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                     // TODO: Should depend only on the toolchain needed to build for the _target
                     dependsOn(":kotlin-native:dependencies:update")
                     dependsOn(this@SourceSet.dependencies)
+                }
+            }
+        }
+
+        /**
+         * Links bitcode files together.
+         */
+        val task = project.tasks.register<LlvmLink>("llvmLink${module.name.capitalized}${name.capitalized}${_target.toString().capitalized}").apply {
+            configure {
+                this.description = "Link '${module.name}' bitcode files (${this@SourceSet.name} sources) into a single bitcode file for $_target"
+                this.inputFiles.from(compileTask)
+                this.outputFile.set(this@SourceSet.outputFile)
+                this.arguments.set(module.linkerArgs)
+                onlyIf {
+                    this@SourceSet.onlyIf.get().all { it.isSatisfiedBy(this@SourceSet) }
                 }
             }
             project.compileBitcodeElements(this@SourceSet.name).targetVariant(_target).artifact(this)
@@ -262,10 +284,7 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
          *
          * 3 source sets are well known: [main], [testFixtures] and [test].
          */
-        abstract class SourceSets @Inject constructor(
-                private val module: Module,
-                private val container: ExtensiblePolymorphicDomainObjectContainer<SourceSet>
-        ) : NamedDomainObjectContainer<SourceSet> by container {
+        abstract class SourceSets @Inject constructor(private val module: Module, private val container: ExtensiblePolymorphicDomainObjectContainer<SourceSet>) : NamedDomainObjectContainer<SourceSet> by container {
             private val project by module::project
 
             // googleTestExtension is only used if testFixtures or tests are used.
@@ -283,6 +302,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
             fun main(action: Action<in SourceSet>): SourceSet = create(MAIN_SOURCE_SET_NAME) {
                 this.inputFiles.include("**/*.cpp", "**/*.mm")
                 this.inputFiles.exclude("**/*Test.cpp", "**/*TestSupport.cpp", "**/*Test.mm", "**/*TestSupport.mm")
+                compileTask.configure {
+                    this.group = BUILD_TASK_GROUP
+                }
                 task.configure {
                     this.group = BUILD_TASK_GROUP
                 }
@@ -303,6 +325,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 this.headersDirs.from(googleTestExtension.headersDirs)
                 // TODO: Must generally depend on googletest module headers which must itself depend on sources being present.
                 dependencies.add(project.tasks.named("downloadGoogleTest"))
+                compileTask.configure {
+                    this.group = VERIFICATION_BUILD_TASK_GROUP
+                }
                 task.configure {
                     this.group = VERIFICATION_BUILD_TASK_GROUP
                 }
@@ -323,6 +348,9 @@ open class CompileToBitcodeExtension @Inject constructor(val project: Project) :
                 this.headersDirs.from(googleTestExtension.headersDirs)
                 // TODO: Must generally depend on googletest module headers which must itself depend on sources being present.
                 dependencies.add(project.tasks.named("downloadGoogleTest"))
+                compileTask.configure {
+                    this.group = VERIFICATION_BUILD_TASK_GROUP
+                }
                 task.configure {
                     this.group = VERIFICATION_BUILD_TASK_GROUP
                 }
