@@ -38,6 +38,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("diagnostics/testsWithJsStdLib", excludedPattern = excludedCustomTestdataPattern)
             }
 
+            testClass<AbstractDiagnosticsWasmTest> {
+                model("diagnostics/wasmTests", excludedPattern = excludedCustomTestdataPattern)
+            }
+
             testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
                 model(
                     "diagnostics/testsWithJvmBackend",
