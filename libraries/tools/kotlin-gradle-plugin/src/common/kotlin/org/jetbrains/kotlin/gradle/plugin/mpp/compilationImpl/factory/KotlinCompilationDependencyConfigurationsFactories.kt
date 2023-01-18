@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -13,6 +14,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
+import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.*
@@ -36,16 +39,39 @@ internal sealed class DefaultKotlinCompilationDependencyConfigurationsFactory :
 internal object NativeKotlinCompilationDependencyConfigurationsFactory :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
 
-    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
+    override fun create(target: KotlinTarget, compilationName: String): NativeCompilationDependencyConfigurationsContainer {
         val naming = ConfigurationNaming.Default(target, compilationName)
-        return KotlinCompilationDependencyConfigurationsContainer(
+        val baseContainer = KotlinCompilationDependencyConfigurationsContainer(
             target = target,
             compilationName = compilationName,
             naming = naming,
             withRuntime = false,
             compileClasspathConfigurationName = naming.name("compileKlibraries")
         )
+
+        val compilationCoordinates = "${target.disambiguationClassifier}/$compilationName"
+        val project = target.project
+        val hostSpecificMetadataConfiguration: Configuration = project
+            .configurations
+            .maybeCreate(naming.name(compilation, METADATA_CONFIGURATION_NAME_SUFFIX))
+            .apply {
+                markResolvable()
+                isVisible = false
+                description = "Host-specific Metadata dependencies for $compilationCoordinates"
+                extendsFrom(baseContainer.compileDependencyConfiguration)
+                copyAttributes(from = baseContainer.compileDependencyConfiguration.attributes, to = attributes)
+                attributes {
+                    it.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+                }
+            }
+
+        return NativeCompilationDependencyConfigurationsContainer(baseContainer, hostSpecificMetadataConfiguration)
     }
+
+    class NativeCompilationDependencyConfigurationsContainer(
+        baseContainer: KotlinCompilationConfigurationsContainer,
+        val hostSpecificMetadataConfiguration: Configuration?
+    ) : KotlinCompilationConfigurationsContainer by baseContainer
 }
 
 internal object JsKotlinCompilationDependencyConfigurationsFactory :
