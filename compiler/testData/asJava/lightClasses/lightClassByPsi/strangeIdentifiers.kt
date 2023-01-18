@@ -1,9 +1,6 @@
-// IGNORE_FIR
-// COMPILATION_ERRORS
-
-class `:)` {
-    lateinit val f: String
-}
+//class `:)` {
+//    lateinit var f: String
+//}
 
 // Commented declarations won't compile with the current Kotlin
 class Test {
@@ -15,8 +12,8 @@ class Test {
 
     fun simpleFun() {}
 
-    @Anno(name = "Woofwoof", size = StrangeEnum.`60x60`, `A B` = "S")
-    fun simpleFun2(a: String, b: String) {}
+//    @Anno(name = "Woofwoof", size = StrangeEnum.`60x60`, `A B` = "S")
+//    fun simpleFun2(a: String, b: String) {}
 
     fun `strange!Fun`() {}
     fun strangeFun2(a: String, b: `A()B()`) {}
@@ -26,10 +23,10 @@ class Test {
 }
 
 enum class StrangeEnum(val size: String) {
-    `60x60`("60x60"),
-    `70x70`("70x70"),
-    `80x80`("80x80"),
-    InvalidFieldName("0x0")
+//    `60x60`("60x60"),
+//    `70x70`("70x70"),
+//    `80x80`("80x80"),
+    InvalidFieldName("0x0"),
 }
 
 annotation class Anno(val size: StrangeEnum, val name: String, val `A B`: String)

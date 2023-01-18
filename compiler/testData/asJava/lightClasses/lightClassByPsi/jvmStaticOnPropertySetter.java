@@ -20,6 +20,8 @@ public final class MyClass /* MyClass*/ {
   @org.jetbrains.annotations.NotNull()
   public static final MyClass.Companion Companion;
 
+  private static int prop;
+
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getProp2();//  getProp2()
