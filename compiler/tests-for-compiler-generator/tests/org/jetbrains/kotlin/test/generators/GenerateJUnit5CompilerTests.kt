@@ -39,7 +39,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
 
             testClass<AbstractDiagnosticsWasmTest> {
-                model("diagnostics/wasmTests", excludedPattern = excludedFirTestdataPattern)
+                model("diagnostics/wasmTests", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractDiagnosticsTestWithOldJvmBackend> {
