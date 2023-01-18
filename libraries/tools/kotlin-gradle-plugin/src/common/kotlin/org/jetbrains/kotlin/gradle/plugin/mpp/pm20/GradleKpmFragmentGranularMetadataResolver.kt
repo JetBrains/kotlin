@@ -34,6 +34,7 @@ internal class GradleKpmFragmentGranularMetadataResolver(
     private val fragmentResolver = KpmDefaultFragmentsResolver(variantResolver)
     private val dependencyGraphResolver = GradleKpmDependencyGraphResolver(moduleResolver)
 
+    @Suppress("UNREACHABLE_CODE", "UNUSED_VARIABLE")
     private fun doResolveMetadataDependencies(): Iterable<MetadataDependencyResolution> {
         val configurationToResolve = configurationToResolveMetadataDependencies(requestingFragment.containingModule)
         val resolvedComponentsByModuleId =
@@ -91,12 +92,8 @@ internal class GradleKpmFragmentGranularMetadataResolver(
                     We can safely assume that a metadata extractor can be created, because the project structure metadata already
                     had to be read in order to create the Kotlin module and infer fragment visibility.
                     */
-                    val projectStructureMetadataExtractor = MppDependencyProjectStructureMetadataExtractor.create(
-                        project, resolvedComponentResult, configurationToResolve, true
-                    ) ?: error(
-                        "Failed to create 'MppDependencyProjectStructureMetadataExtractor' for ${resolvedComponentResult.id} despite " +
-                                "the presence of a proper Kotlin Module"
-                    )
+                    val projectStructureMetadataExtractor: MppDependencyProjectStructureMetadataExtractor =
+                        TODO("Implement for KPM. As it done for TCS")
 
                     val projectStructureMetadata = (dependencyModule as? GradleKpmExternalImportedModule)?.projectStructureMetadata
                         ?: checkNotNull(projectStructureMetadataExtractor.getProjectStructureMetadata())
@@ -160,14 +157,11 @@ internal class GradleKpmFragmentGranularMetadataResolver(
                 // find some of our variants that resolved a dependency's variant containing the fragment
                 .find { hostSpecificFragment in it.chosenVariant.withRefinesClosure }
             // resolve the dependencies of that variant getting the host-specific metadata artifact
+            @Suppress("UNREACHABLE_CODE", "UNUSED_VARIABLE")
             relevantVariantResolution?.let { resolution ->
                 val configurationResolvingPlatformVariant =
                     (resolution.requestingVariant as GradleKpmVariant).compileDependenciesConfiguration
-                val hostSpecificArtifact = ResolvedMppVariantsProvider.get(project)
-                    .getHostSpecificMetadataArtifactByRootModule(
-                        dependencyModule.moduleIdentifier,
-                        configurationResolvingPlatformVariant
-                    )
+                val hostSpecificArtifact: File? = TODO("Implement host-specific lookup for KPM as it done for TCS")
                 hostSpecificArtifact?.let { hostSpecificFragment.fragmentName to it }
             }
         }.toMap()

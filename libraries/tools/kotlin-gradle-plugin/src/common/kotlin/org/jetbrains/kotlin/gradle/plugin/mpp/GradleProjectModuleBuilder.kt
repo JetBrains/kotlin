@@ -269,6 +269,7 @@ class KpmCachingModuleVariantResolver(private val actualResolver: KpmModuleVaria
     }
 }
 
+@Suppress("UNREACHABLE_CODE", "UNUSED_VARIABLE")
 class KpmGradleModuleVariantResolver : KpmModuleVariantResolver {
     override fun getChosenVariant(requestingVariant: KpmVariant, dependencyModule: KpmModule): KpmVariantResolution {
         // TODO maybe improve this behavior? Currently it contradicts dependency resolution in that it may return a chosen variant for an
@@ -288,7 +289,6 @@ class KpmGradleModuleVariantResolver : KpmModuleVariantResolver {
 
         val module = requestingVariant.containingModule
         val project = module.project
-        val resolvedVariantProvider = ResolvedMppVariantsProvider.get(project)
 
         // This implementation can only resolve variants for the current project's KotlinModule
         require(module.representsProject(project))
@@ -296,8 +296,8 @@ class KpmGradleModuleVariantResolver : KpmModuleVariantResolver {
         val compileClasspath = getCompileDependenciesConfigurationForVariant(project, requestingVariant)
 
         val dependencyModuleId = dependencyModule.moduleIdentifier
-        // FIXME check composite builds, it's likely that resolvedVariantProvider fails on them?
-        val resolvedGradleVariantName = resolvedVariantProvider.getResolvedVariantName(dependencyModuleId, compileClasspath)
+        /** @see SourceSetVisibilityProvider.PlatformCompilationData */
+        val resolvedGradleVariantName: String = TODO("Implement Resolved Gradle Variant finder as it done in TCS")
         val kotlinVariantName = when (dependencyModule) {
             is GradleKpmModule -> {
                 dependencyModule.variants.singleOrNull { resolvedGradleVariantName in it.gradleVariantNames }?.name
