@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Assume.assumeFalse
 import org.junit.Assume.assumeTrue
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
@@ -26,6 +27,10 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         get() = GradleVersionRequired.FOR_MPP_SUPPORT
 
     @Test
+    @Ignore(
+        "This sample fails in a way that was not expected because kotlin/Experimental annotation that is still used in ktor 1.5.4" +
+                " was removed in stdlib in 1.8. We need to find another appropriate sample to replace this one."
+    )
     fun `ktor 1_5_4 and coroutines 1_5_0-RC-native-mt (KT-46697)`() {
         // Run this test only on macOS x64,
         // arm64 requires newer ktor (>=1.6.5) and coroutines (>=1.5.2-native-mt)
