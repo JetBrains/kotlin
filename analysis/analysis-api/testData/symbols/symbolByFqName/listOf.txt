@@ -19,4 +19,5 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"
+  annotationApplicableTargets: null
   deprecationStatus: null

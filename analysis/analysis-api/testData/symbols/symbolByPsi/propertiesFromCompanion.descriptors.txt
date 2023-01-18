@@ -580,6 +580,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
   deprecationStatus: null
 
 KtNamedClassOrObjectSymbol:
@@ -603,4 +604,5 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
   deprecationStatus: null

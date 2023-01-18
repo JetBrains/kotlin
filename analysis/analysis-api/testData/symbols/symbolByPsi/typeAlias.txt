@@ -32,6 +32,7 @@ KtNamedClassOrObjectSymbol:
   ]
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
+  annotationApplicableTargets: null
   deprecationStatus: null
 
 KtTypeParameterSymbol:

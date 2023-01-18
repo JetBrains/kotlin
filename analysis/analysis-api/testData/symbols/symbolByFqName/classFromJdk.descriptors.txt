@@ -23,4 +23,5 @@ KtNamedClassOrObjectSymbol:
   visibility: Public
   getContainingModule: Could not render due to java.util.NoSuchElementException: Collection contains no element matching the predicate.
 
+  annotationApplicableTargets: null
   deprecationStatus: null

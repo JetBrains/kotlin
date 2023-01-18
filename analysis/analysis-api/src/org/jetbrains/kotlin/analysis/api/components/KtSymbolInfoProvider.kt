@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.name.Name
 
 public abstract class KtSymbolInfoProvider : KtAnalysisSessionComponent() {
@@ -61,4 +63,8 @@ public interface KtSymbolInfoProviderMixIn : KtAnalysisSessionMixIn {
             this
         )
     }
+
+    /** Gets the set of applicable targets for an annotation class symbol. Returns `null` if the symbol is not an annotation class. */
+    public val KtClassOrObjectSymbol.annotationApplicableTargets: Set<KotlinTarget>?
+        get() = withValidityAssertion { null /* TODO */ }
 }
