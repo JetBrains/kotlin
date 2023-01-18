@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -95,7 +94,7 @@ class ConeOverloadConflictResolver(
         }
 
         if (discriminateSuspendConversions) {
-            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesSuspendConversion }
+            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesFunctionalConversion }
             when (filtered.size) {
                 1 -> return filtered
                 0, candidates.size -> {

@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
-import org.jetbrains.kotlin.resolve.calls.components.SuspendConversionStrategy
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
@@ -63,13 +62,13 @@ class Candidate(
     internal var callableReferenceAdaptation: CallableReferenceAdaptation? = null
         set(value) {
             field = value
-            usesSuspendConversion = value?.suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION
+            usesFunctionalConversion = value?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
             if (value != null) {
                 numDefaults = value.defaults
             }
         }
 
-    var usesSuspendConversion: Boolean = false
+    var usesFunctionalConversion: Boolean = false
 
     var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
     var numDefaults: Int = 0

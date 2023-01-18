@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -39,7 +40,7 @@ sealed class PostponedResolvedAtom : PostponedResolvedAtomMarker {
 class ResolvedLambdaAtom(
     override val atom: FirAnonymousFunction,
     expectedType: ConeKotlinType?,
-    val isSuspend: Boolean,
+    val expectedFunctionalTypeKind: FunctionalTypeKind?,
     val receiver: ConeKotlinType?,
     val contextReceivers: List<ConeKotlinType>,
     val parameters: List<ConeKotlinType>,

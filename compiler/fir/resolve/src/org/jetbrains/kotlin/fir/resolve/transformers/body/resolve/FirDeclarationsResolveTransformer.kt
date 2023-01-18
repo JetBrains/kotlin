@@ -805,7 +805,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             session.lookupTracker?.recordTypeResolveAsLookup(lambda.returnTypeRef, lambda.source, context.file.source)
         }
 
-        lambda.replaceTypeRef(lambda.constructFunctionalTypeRef(resolvedLambdaAtom?.isSuspend == true))
+        lambda.replaceTypeRef(lambda.constructFunctionalTypeRef(resolvedLambdaAtom?.expectedFunctionalTypeKind))
         session.lookupTracker?.recordTypeResolveAsLookup(lambda.typeRef, lambda.source, context.file.source)
         lambda.addReturnToLastStatementIfNeeded()
         return lambda

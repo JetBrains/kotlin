@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.samWithReceiver.k2
 
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.resolve.FirSamConversionTransformerExtension
 import org.jetbrains.kotlin.fir.resolve.createFunctionalType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.functionalTypeService
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FirSamWithReceiverConventionTransformer(
@@ -25,11 +26,12 @@ class FirSamWithReceiverConventionTransformer(
         return runIf(containingClassSymbol.resolvedAnnotationClassIds.any { it.asSingleFqName().asString() in annotations }) {
             val parameterTypes = function.valueParameters.map { it.returnTypeRef.coneType }
             if (parameterTypes.isEmpty()) return null
+            val kind = session.functionalTypeService.extractSingleSpecialKindForFunction(function.symbol) ?: FunctionalTypeKind.Function
             createFunctionalType(
+                kind,
                 parameters = parameterTypes.subList(1, parameterTypes.size),
                 receiverType = parameterTypes[0],
-                rawReturnType = function.returnTypeRef.coneType,
-                isSuspend = function.isSuspend
+                rawReturnType = function.returnTypeRef.coneType
             )
         }
     }

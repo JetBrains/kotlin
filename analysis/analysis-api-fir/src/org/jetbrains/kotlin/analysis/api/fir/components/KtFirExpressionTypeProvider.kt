@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -114,7 +113,7 @@ internal class KtFirExpressionTypeProvider(
             declaration.toFirAnonymousFunction()
         else
             declaration.getOrBuildFirOfType<FirFunction>(firResolveSession)
-        return firFunction.constructFunctionalType(firFunction.isSuspend).asKtType()
+        return firFunction.constructFunctionalType(firFunction.specialFunctionalTypeKind(firResolveSession.useSiteFirSession)).asKtType()
     }
 
     @OptIn(ExperimentalContracts::class)

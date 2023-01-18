@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
@@ -466,7 +467,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.isSomeFunctionalType(session)
     }
 
-    private fun ConeKotlinType.isTypeOrSubtypeOf(predicate: (ConeKotlinType) -> Boolean): Boolean {
+    fun ConeKotlinType.isTypeOrSubtypeOf(predicate: (ConeKotlinType) -> Boolean): Boolean {
         return predicate(this) || DFS.dfsFromNode(
             this,
             {
@@ -487,13 +488,6 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 override fun result() = result
             }
         )
-    }
-
-    override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
-        require(this is ConeKotlinType)
-        return isTypeOrSubtypeOf {
-            (it.lowerBoundIfFlexible() as ConeKotlinType).isSuspendOrKSuspendFunctionType(session)
-        }
     }
 
     override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
@@ -536,24 +530,17 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         }
     }
 
-    override fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        val classId = if (isSuspend) {
-            StandardClassIds.SuspendFunctionN(parametersNumber)
-        } else {
-            StandardClassIds.FunctionN(parametersNumber)
-        }
-        return session.symbolProvider.getClassLikeSymbolByClassId(classId)?.toLookupTag()
-            ?: error("Can't find Function type")
+    override fun KotlinTypeMarker.functionalTypeKind(): FunctionalTypeKind? {
+        require(this is ConeKotlinType)
+        return this.functionalTypeKind(session)
     }
 
-    override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        val classId = if (isSuspend) {
-            StandardClassIds.KSuspendFunctionN(parametersNumber)
-        } else {
-            StandardClassIds.KFunctionN(parametersNumber)
-        }
-        return session.symbolProvider.getClassLikeSymbolByClassId(classId)?.toLookupTag()
-            ?: error("Can't find KFunction type")
+    override fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionalTypeKind): TypeConstructorMarker {
+        return kind.nonReflectKind().numberedClassId(parametersNumber).toLookupTag()
+    }
+
+    override fun getReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionalTypeKind): TypeConstructorMarker {
+        return kind.reflectKind().numberedClassId(parametersNumber).toLookupTag()
     }
 
     override fun createTypeWithAlternativeForIntersectionResult(

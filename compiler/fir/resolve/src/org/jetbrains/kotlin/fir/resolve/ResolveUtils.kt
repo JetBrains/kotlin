@@ -60,14 +60,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-fun List<FirQualifierPart>.toTypeProjections(): Array<ConeTypeProjection> =
-    asReversed().flatMap { it.typeArgumentList.typeArguments.map { typeArgument -> typeArgument.toConeTypeProjection() } }.toTypedArray()
-
 fun FirAnonymousFunction.shouldReturnUnit(returnStatements: Collection<FirExpression>): Boolean =
     isLambda && returnStatements.any { it is FirUnitExpression }
-
-fun FirAnonymousFunction.isExplicitlySuspend(session: FirSession): Boolean =
-    typeRef.coneTypeSafe<ConeKotlinType>()?.isSuspendOrKSuspendFunctionType(session) == true
 
 fun FirAnonymousFunction.addReturnToLastStatementIfNeeded() {
     // If this lambda's resolved, expected return type is Unit, we don't need an explicit return statement.
@@ -96,7 +90,10 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded() {
     )
 }
 
-fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupTagBasedType {
+/**
+ * [kind] == null means that [FunctionalTypeKind.Function] will be used
+ */
+fun FirFunction.constructFunctionalType(kind: FunctionalTypeKind? = null): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {
         is FirSimpleFunction -> receiverParameter
         is FirAnonymousFunction -> receiverParameter
@@ -114,25 +111,27 @@ fun FirFunction.constructFunctionalType(isSuspend: Boolean = false): ConeLookupT
     val rawReturnType = (this as FirCallableDeclaration).returnTypeRef.coneType
 
     return createFunctionalType(
-        parameters, receiverTypeRef?.coneType, rawReturnType, isSuspend = isSuspend,
+        kind ?: FunctionalTypeKind.Function, parameters, receiverTypeRef?.coneType, rawReturnType,
         contextReceivers = contextReceivers.map { it.typeRef.coneType }
     )
 }
 
-fun FirFunction.constructFunctionalTypeRef(isSuspend: Boolean = false): FirResolvedTypeRef {
+/**
+ * [kind] == null means that [FunctionalTypeKind.Function] will be used
+ */
+fun FirFunction.constructFunctionalTypeRef(kind: FunctionalTypeKind? = null): FirResolvedTypeRef {
     return buildResolvedTypeRef {
         source = this@constructFunctionalTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
-        type = constructFunctionalType(isSuspend)
+        type = constructFunctionalType(kind)
     }
 }
 
 fun createFunctionalType(
+    kind: FunctionalTypeKind,
     parameters: List<ConeKotlinType>,
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
-    isSuspend: Boolean,
     contextReceivers: List<ConeKotlinType> = emptyList(),
-    isKFunctionType: Boolean = false
 ): ConeLookupTagBasedType {
     val receiverAndParameterTypes =
         buildList {
@@ -141,12 +140,6 @@ fun createFunctionalType(
             addAll(parameters)
             add(rawReturnType)
         }
-
-    val kind = if (isSuspend) {
-        if (isKFunctionType) FunctionalTypeKind.KSuspendFunction else FunctionalTypeKind.SuspendFunction
-    } else {
-        if (isKFunctionType) FunctionalTypeKind.KFunction else FunctionalTypeKind.Function
-    }
 
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
     val attributes = when {

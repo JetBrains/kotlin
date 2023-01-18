@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -849,11 +850,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.isFunctionOrKFunctionTypeWithAnySuspendability
     }
 
-    override fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean {
-        require(this is KotlinType, this::errorMessage)
-        return this.isSuspendFunctionTypeOrSubtype
-    }
-
     override fun KotlinTypeMarker.isExtensionFunctionType(): Boolean {
         require(this is KotlinType, this::errorMessage)
         return this.isBuiltinExtensionFunctionalType
@@ -869,12 +865,25 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.extractFunctionalTypeFromSupertypes()
     }
 
-    override fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        return getFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
+    override fun KotlinTypeMarker.functionalTypeKind(): FunctionalTypeKind? {
+        require(this is KotlinType)
+        return this.functionalTypeKind
     }
 
-    override fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker {
-        return getKFunctionDescriptor(builtIns, parametersNumber, isSuspend).typeConstructor
+    override fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionalTypeKind): TypeConstructorMarker {
+        return getFunctionDescriptor(
+            builtIns,
+            parametersNumber,
+            isSuspendFunction = kind.nonReflectKind() == FunctionalTypeKind.SuspendFunction
+        ).typeConstructor
+    }
+
+    override fun getReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionalTypeKind): TypeConstructorMarker {
+        return getKFunctionDescriptor(
+            builtIns,
+            parametersNumber,
+            isSuspendFunction = kind.reflectKind() == FunctionalTypeKind.KSuspendFunction
+        ).typeConstructor
     }
 
     override fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker? {

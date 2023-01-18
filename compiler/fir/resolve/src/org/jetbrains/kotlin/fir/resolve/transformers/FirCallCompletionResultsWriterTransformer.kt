@@ -570,12 +570,12 @@ class FirCallCompletionResultsWriterTransformer(
                     firRegularClass?.let answer@{
                         val functionType = samResolver.getFunctionTypeForPossibleSamType(firRegularClass.defaultType())
                             ?: return@answer null
+                        val kind = functionType.functionalTypeKind(session) ?: FunctionalTypeKind.Function
                         createFunctionalType(
+                            kind,
                             functionType.typeArguments.dropLast(1).map { it as ConeKotlinType },
                             null,
-                            functionType.typeArguments.last() as ConeKotlinType,
-                            functionType.classId?.relativeClassName?.asString()
-                                ?.startsWith(FunctionalTypeKind.SuspendFunction.classNamePrefix) == true
+                            functionType.typeArguments.last() as ConeKotlinType
                         )
                     }
                 }
@@ -617,8 +617,9 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (needUpdateLambdaType) {
-            val isSuspend = expectedType?.isSuspendOrKSuspendFunctionType(session) ?: result.isExplicitlySuspend(session)
-            result.replaceTypeRef(result.constructFunctionalTypeRef(isSuspend))
+            val kind = expectedType?.functionalTypeKind(session)
+                ?: result.typeRef.coneTypeSafe<ConeClassLikeType>()?.functionalTypeKind(session)
+            result.replaceTypeRef(result.constructFunctionalTypeRef(kind))
             session.lookupTracker?.recordTypeResolveAsLookup(result.typeRef, result.source, context.file.source)
         }
         // Have to delay this until the type is written to avoid adding a return if the type is Unit.

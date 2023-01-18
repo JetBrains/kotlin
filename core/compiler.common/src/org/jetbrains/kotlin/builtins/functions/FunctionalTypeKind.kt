@@ -85,6 +85,8 @@ abstract class FunctionalTypeKind internal constructor(
 
     fun numberedClassName(arity: Int): Name = Name.identifier("$classNamePrefix$arity")
 
+    fun numberedClassId(arity: Int): ClassId = ClassId(packageFqName, numberedClassName(arity))
+
     override fun toString(): String {
         return "$packageFqName.${classNamePrefix}N"
     }
@@ -141,5 +143,7 @@ val FunctionalTypeKind.isBuiltin: Boolean
     }
 
 val FunctionalTypeKind.isSuspendType: Boolean
-    get() = this == FunctionalTypeKind.SuspendFunction || this == FunctionalTypeKind.KSuspendFunction
+    get() = this.nonReflectKind() == FunctionalTypeKind.SuspendFunction
 
+val FunctionalTypeKind.isRegularFunction: Boolean
+    get() = this.nonReflectKind() == FunctionalTypeKind.Function

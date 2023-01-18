@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.isRegularFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
@@ -28,7 +30,7 @@ class PostponedArgumentInputTypesResolver(
         val parametersFromConstraints: Set<List<TypeWithKind>>?,
         val annotations: List<AnnotationMarker>?,
         val isExtensionFunction: Boolean,
-        val isSuspend: Boolean,
+        val functionalTypeKind: FunctionalTypeKind,
         val isNullable: Boolean
     )
 
@@ -94,14 +96,16 @@ class PostponedArgumentInputTypesResolver(
                 parameterTypesFromDeclaration,
             )
 
-        var isSuspend = false
+        var functionalTypeKind: FunctionalTypeKind? = null
         var isNullable = false
-        if (!functionalTypesFromConstraints.isNullOrEmpty()) {
+        if (functionalTypesFromConstraints.isNotEmpty()) {
             isNullable = true
             for (funType in functionalTypesFromConstraints) {
-                if (!isSuspend && funType.type.isSuspendFunctionTypeOrSubtype()) isSuspend = true
+                if (functionalTypeKind == null) {
+                    funType.type.functionalTypeKind()?.takeUnless { it.isRegularFunction }?.let { functionalTypeKind = it }
+                }
                 if (isNullable && !funType.type.isMarkedNullable()) isNullable = false
-                if (isSuspend && !isNullable) break
+                if ((functionalTypeKind != null) && !isNullable) break
             }
         }
 
@@ -122,7 +126,7 @@ class PostponedArgumentInputTypesResolver(
             parameterTypesFromConstraints,
             annotations = annotations,
             isExtensionFunction,
-            isSuspend = isSuspend,
+            functionalTypeKind ?: FunctionalTypeKind.Function,
             isNullable = isNullable
         )
     }
@@ -254,7 +258,7 @@ class PostponedArgumentInputTypesResolver(
     private fun Context.computeResultingFunctionalConstructor(
         argument: PostponedAtomWithRevisableExpectedType,
         parametersNumber: Int,
-        isSuspend: Boolean,
+        functionalTypeKind: FunctionalTypeKind,
         resultTypeResolver: ResultTypeResolver
     ): TypeConstructorMarker {
         val expectedType = argument.expectedType
@@ -264,7 +268,7 @@ class PostponedArgumentInputTypesResolver(
 
         return when (argument) {
             is LambdaWithTypeVariableAsExpectedTypeMarker ->
-                getFunctionTypeConstructor(parametersNumber, isSuspend)
+                getNonReflectFunctionTypeConstructor(parametersNumber, functionalTypeKind)
             is PostponedCallableReferenceMarker -> {
                 val computedResultType = resultTypeResolver.findResultType(
                     this@computeResultingFunctionalConstructor,
@@ -276,7 +280,7 @@ class PostponedArgumentInputTypesResolver(
                 if (computedResultType.isBuiltinFunctionalTypeOrSubtype() && computedResultType.argumentsCount() > 1) {
                     computedResultType.typeConstructor()
                 } else {
-                    getKFunctionTypeConstructor(parametersNumber, isSuspend)
+                    getReflectFunctionTypeConstructor(parametersNumber, functionalTypeKind)
                 }
             }
             else -> throw IllegalStateException("Unsupported postponed argument type of $argument")
@@ -378,7 +382,7 @@ class PostponedArgumentInputTypesResolver(
         val functionalConstructor = computeResultingFunctionalConstructor(
             argument,
             variablesForParameterTypes.size,
-            parameterTypesInfo.isSuspend,
+            parameterTypesInfo.functionalTypeKind,
             resultTypeResolver
         )
 

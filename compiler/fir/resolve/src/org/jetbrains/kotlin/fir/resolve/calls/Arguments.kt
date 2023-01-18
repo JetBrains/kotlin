@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.builtins.functions.isRegularFunction
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -265,12 +266,12 @@ fun Candidate.resolvePlainArgumentType(
 
     // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
     if (expectedType != null) {
-        argumentTypeWithSuspendConversion(
+        argumentTypeWithCustomConversion(
             session, context.bodyResolveComponents.scopeSession, expectedType, argumentTypeForApplicabilityCheck
         )?.let {
             argumentTypeForApplicabilityCheck = it
             substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck)
-            usesSuspendConversion = true
+            usesFunctionalConversion = true
         }
     }
 
@@ -279,18 +280,15 @@ fun Candidate.resolvePlainArgumentType(
     )
 }
 
-private fun argumentTypeWithSuspendConversion(
+private fun argumentTypeWithCustomConversion(
     session: FirSession,
     scopeSession: ScopeSession,
     expectedType: ConeKotlinType,
     argumentType: ConeKotlinType
 ): ConeKotlinType? {
-    // TODO: should refer to LanguageVersionSettings.SuspendConversion
-
-    // Expect the expected type to be a suspend functional type.
-    if (!expectedType.isSuspendOrKSuspendFunctionType(session)) {
-        return null
-    }
+    // Expect the expected type to be a not regular functional type (e.g. suspend or custom)
+    val expectedTypeKind = expectedType.functionalTypeKind(session) ?: return null
+    if (expectedTypeKind.isRegularFunction) return null
 
     // We want to check the argument type against non-suspend functional type.
     val expectedFunctionalType = expectedType.customFunctionalTypeToSimpleFunctionalType(session)
@@ -304,11 +302,10 @@ private fun argumentTypeWithSuspendConversion(
         shouldCalculateReturnTypesOfFakeOverrides = false
     )?.let { invokeSymbol ->
         createFunctionalType(
+            expectedTypeKind,
             invokeSymbol.fir.valueParameters.map { it.returnTypeRef.coneType },
             null,
             invokeSymbol.fir.returnTypeRef.coneType,
-            isSuspend = true,
-            isKFunctionType = argumentType.isReflectFunctionalType(session)
         )
     }
 }

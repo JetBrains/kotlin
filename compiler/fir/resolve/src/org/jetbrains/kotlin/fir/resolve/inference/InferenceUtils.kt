@@ -36,7 +36,7 @@ fun extractLambdaInfoFromFunctionalType(
             duringCompletion
         )
     }
-    if (!expectedType.isSomeFunctionalType(session)) return null
+    val expectedFunctionalKind = expectedType.functionalTypeKind(session) ?: return null
 
     val singleStatement = argument.body?.statements?.singleOrNull() as? FirReturnExpression
     if (argument.returnType == null && singleStatement != null &&
@@ -100,7 +100,7 @@ fun extractLambdaInfoFromFunctionalType(
     return ResolvedLambdaAtom(
         argument,
         expectedType,
-        expectedType.isSuspendOrKSuspendFunctionType(session),
+        expectedFunctionalKind,
         receiverType,
         contextReceivers,
         parameters,

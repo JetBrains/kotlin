@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.collectAllFunctions
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverrideFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.isSuspendFunctionType
 import org.jetbrains.kotlin.fir.types.typeContext
 
 object FirJsInheritanceClassChecker : FirClassChecker() {
@@ -52,7 +53,7 @@ object FirJsInheritanceClassChecker : FirClassChecker() {
     }
 
     private fun ConeClassLikeType.isSuspendFunctionTypeOrSubtype(session: FirSession): Boolean {
-        return with(session.typeContext) { isSuspendFunctionTypeOrSubtype() }
+        return with(session.typeContext) { isTypeOrSubtypeOf { it.isSuspendFunctionType(session) } }
     }
 
     private fun FirClass.findFakeMethodOverridingExternalWithOptionalParams(context: CheckerContext): FirNamedFunctionSymbol? {

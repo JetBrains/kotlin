@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types.model
 
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeChecker
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
 import org.jetbrains.kotlin.types.*
@@ -247,9 +248,11 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.isSignedOrUnsignedNumberType(): Boolean
 
+    // ------------- functional type utils -------------
+
     fun KotlinTypeMarker.isFunctionOrKFunctionWithAnySuspendability(): Boolean
 
-    fun KotlinTypeMarker.isSuspendFunctionTypeOrSubtype(): Boolean
+    fun KotlinTypeMarker.functionalTypeKind(): FunctionalTypeKind?
 
     fun KotlinTypeMarker.isExtensionFunctionType(): Boolean
 
@@ -257,11 +260,13 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
 
     fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker
 
+    fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionalTypeKind): TypeConstructorMarker
+
+    fun getReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionalTypeKind): TypeConstructorMarker
+
+    // -------------------------------------------------
+
     fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker
-
-    fun getFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker
-
-    fun getKFunctionTypeConstructor(parametersNumber: Int, isSuspend: Boolean): TypeConstructorMarker
 
     private fun <T> KotlinTypeMarker.extractTypeOf(to: MutableSet<T>, getIfApplicable: (TypeConstructorMarker) -> T?) {
         for (i in 0 until argumentsCount()) {
