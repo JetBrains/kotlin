@@ -38,7 +38,7 @@ import kotlin.math.abs
 
 class FirDataFrameCandidateInterceptor(
     session: FirSession,
-    val callableNames: ArrayDeque<CallableId>,
+    val nextFunction: (String) -> CallableId,
     val callableState: MutableMap<Name, FirSimpleFunction>,
     val nextName: (String) -> ClassId
 ) : FirCandidateFactoryInterceptor(session) {
@@ -55,8 +55,6 @@ class FirDataFrameCandidateInterceptor(
         }
         if (symbol !is FirNamedFunctionSymbol) return symbol
         val lookupTag = ConeClassLikeLookupTagImpl(Names.DF_CLASS_ID)
-        val generatedName = callableNames.removeLast()
-        val newSymbol = FirNamedFunctionSymbol(generatedName)
         var hash = callInfo.name.hashCode() + callInfo.arguments.sumOf {
             when (it) {
                 is FirConstExpression<*> -> it.value.hashCode()
@@ -64,6 +62,10 @@ class FirDataFrameCandidateInterceptor(
             }
         }
         hash = abs(hash)
+        val generatedName = nextFunction("${symbol.name.identifier}_${hash + 1}")
+
+        val newSymbol = FirNamedFunctionSymbol(generatedName)
+
         // possibly null if explicit receiver type is AnyFrame
         val argument = (callInfo.explicitReceiver?.typeRef as? FirResolvedTypeRef)?.type?.typeArguments?.singleOrNull()
         val suggestedName = if (argument == null) {

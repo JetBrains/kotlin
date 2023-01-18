@@ -49,7 +49,7 @@ class FirDataFrameExtensionsGenerator(
     session: FirSession,
     private val scopes: Set<ClassId>,
     private val scopeState: Map<ClassId, SchemaContext>,
-    val callables: List<CallableId>,
+    val callables: Set<CallableId>,
     val callableState: MutableMap<Name, FirSimpleFunction>
 ) :
     FirDeclarationGenerationExtension(session) {
