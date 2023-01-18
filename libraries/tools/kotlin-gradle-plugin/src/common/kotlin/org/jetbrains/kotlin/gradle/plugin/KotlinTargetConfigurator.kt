@@ -425,11 +425,13 @@ fun Configuration.usesPlatformOf(target: KotlinTarget): Configuration {
         else -> setJavaTargetEnvironmentAttributeIfSupported(target.project, "non-jvm")
     }
 
-    if (target is KotlinJsTarget) {
+    val publishJsCompilerAttribute = PropertiesProvider(target.project).publishJsCompilerAttribute
+
+    if (publishJsCompilerAttribute && target is KotlinJsTarget) {
         attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
     }
 
-    if (target is KotlinJsIrTarget && target.platformType == KotlinPlatformType.js) {
+    if (publishJsCompilerAttribute && target is KotlinJsIrTarget && target.platformType == KotlinPlatformType.js) {
         attributes.attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 
