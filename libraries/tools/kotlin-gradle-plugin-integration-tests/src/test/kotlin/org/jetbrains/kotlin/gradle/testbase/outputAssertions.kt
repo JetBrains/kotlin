@@ -5,18 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
-import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 
 /**
  * Asserts Gradle output contains [expectedSubString] string.
  */
 fun BuildResult.assertOutputContains(
-    expectedSubString: String
+    expectedSubString: String,
+    message: String = "Build output does not contain \"$expectedSubString\""
 ) {
     assert(output.contains(expectedSubString)) {
         printBuildOutput()
-        "Build output does not contain \"$expectedSubString\""
+        message
     }
 }
 
@@ -190,4 +191,24 @@ fun BuildResult.assertKotlinDaemonJvmOptions(
 
 fun BuildResult.assertBuildReportPathIsPrinted() {
     assertOutputContains("Kotlin build report is written to file://")
+}
+
+/**
+ * Asserts that the build produced some deprecation warnings.
+ *
+ * Expected to be executed only for the case when [BuildOptions.warningMode] is not set to [WarningMode.Fail]
+ */
+fun BuildResult.assertDeprecationWarningsArePresent(warningMode: WarningMode) {
+    assertOutputContains(
+        "[GradleWarningsDetectorPlugin] The plugin is being applied",
+        """
+            The build uses warning mode other than `${WarningMode.Fail}` and uses a non-default project settings file.
+            Please apply the `org.jetbrains.kotlin.test.gradle-warnings-detector` plugin to the settings.
+
+        """.trimIndent()
+    )
+    assertOutputContains(
+        "[GradleWarningsDetectorPlugin] Some deprecation warnings were found during this build.",
+        "Warning mode is set to `$warningMode`, but the build produced no deprecation warnings. Please set it to `${WarningMode.Fail}`"
+    )
 }

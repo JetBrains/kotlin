@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.tooling.GradleConnector
@@ -151,6 +152,7 @@ fun TestProject.build(
         val buildResult = gradleRunnerForBuild.build()
         if (enableBuildScan) buildResult.printBuildScanUrl()
         assertions(buildResult)
+        buildResult.additionalAssertions(buildOptions)
     }
 }
 
@@ -185,8 +187,15 @@ fun TestProject.buildAndFail(
         val buildResult = gradleRunnerForBuild.buildAndFail()
         if (enableBuildScan) buildResult.printBuildScanUrl()
         assertions(buildResult)
+        buildResult.additionalAssertions(buildOptions)
     }
 
+}
+
+private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
+    if (buildOptions.warningMode != WarningMode.Fail) {
+        assertDeprecationWarningsArePresent(buildOptions.warningMode)
+    }
 }
 
 internal inline fun <reified T> TestProject.getModels(
