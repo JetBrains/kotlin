@@ -21,4 +21,5 @@ KtNamedClassOrObjectSymbol:
   ]
   visibility: Public
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  annotationApplicableTargets: null
   deprecationStatus: null
