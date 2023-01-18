@@ -467,6 +467,14 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 typeArgs = listOf(kType)
             }
             contextSerializerId -> {
+                // don't create an instance if the serializer is being created for the cache
+                if (genericIndex == null && kType.genericIndex != null) {
+                    // if context serializer parametrized by generic type (kType.genericIndex != null)
+                    // and generic types are not allowed (always genericIndex == null for cache)
+                    // then serializer can't be cached
+                    return null
+                }
+
                 args = listOf(classReference(kType.classOrUpperBound()!!))
                 typeArgs = listOf(kType)
 
