@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
-import org.jetbrains.kotlin.gradle.utils.allResolvedDependencies
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -58,6 +57,12 @@ class LazyResolvedConfigurationTest {
             .internal.configurations.compileDependencyConfiguration
 
         val lazyCommonMainCompileDependencies = LazyResolvedConfiguration(commonMainCompileDependencies)
+
+        assertEquals(
+            commonMainCompileDependencies.incoming.resolutionResult.allDependencies,
+            lazyCommonMainCompileDependencies.allDependencies
+        )
+
         assertEquals(lazyCommonMainCompileDependencies.allDependencies, lazyCommonMainCompileDependencies.allResolvedDependencies)
         if (lazyCommonMainCompileDependencies.allResolvedDependencies.isEmpty()) fail("Expected some resolved dependencies")
 
