@@ -249,6 +249,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-gradle-plugin-integration-tests",
         ":kotlin-gradle-plugins-bom",
         ":gradle:android-test-fixes",
+        ":gradle:gradle-warnings-detector",
         ":gradle:regression-benchmark-templates",
         ":gradle:regression-benchmarks",
         ":kotlin-tooling-metadata",
@@ -755,6 +756,7 @@ project(':kotlin-gradle-plugin-test-utils-embeddable').projectDir = "$rootDir/li
 project(':kotlin-gradle-plugin-integration-tests').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugin-integration-tests" as File
 project(':kotlin-gradle-plugins-bom').projectDir = "$rootDir/libraries/tools/kotlin-gradle-plugins-bom" as File
 project(':gradle:android-test-fixes').projectDir = "$rootDir/libraries/tools/gradle/android-test-fixes" as File
+project(':gradle:gradle-warnings-detector').projectDir = "$rootDir/libraries/tools/gradle/gradle-warnings-detector" as File
 project(":gradle:regression-benchmark-templates").projectDir = "$rootDir/libraries/tools/gradle/regression-benchmark-templates" as File
 project(":gradle:regression-benchmarks").projectDir = "$rootDir/libraries/tools/gradle/regression-benchmarks" as File
 project(':kotlin-tooling-metadata').projectDir = "$rootDir/libraries/tools/kotlin-tooling-metadata" as File

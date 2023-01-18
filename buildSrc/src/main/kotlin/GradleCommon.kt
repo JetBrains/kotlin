@@ -124,7 +124,8 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
             compileOnlyConfigurationName(kotlinStdlib())
             "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:7.6")
             if (this@createGradleCommonSourceSet.name != "kotlin-gradle-plugin-api" &&
-                this@createGradleCommonSourceSet.name != "android-test-fixes"
+                this@createGradleCommonSourceSet.name != "android-test-fixes" &&
+                this@createGradleCommonSourceSet.name != "gradle-warnings-detector"
             ) {
                 compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
                     capabilities {
@@ -276,7 +277,8 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
             // gradle plugin variants
             "compileOnly"("dev.gradleplugins:gradle-api:${GradlePluginVariant.GRADLE_MIN.gradleApiVersion}")
             if (this@reconfigureMainSourcesSetForGradlePlugin.name != "kotlin-gradle-plugin-api" &&
-                this@reconfigureMainSourcesSetForGradlePlugin.name != "android-test-fixes"
+                this@reconfigureMainSourcesSetForGradlePlugin.name != "android-test-fixes" &&
+                this@reconfigureMainSourcesSetForGradlePlugin.name != "gradle-warnings-detector"
             ) {
                 "api"(project(":kotlin-gradle-plugin-api"))
             }
@@ -461,7 +463,8 @@ fun Project.createGradlePluginVariant(
         variantSourceSet.compileOnlyConfigurationName(kotlinStdlib())
         variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
         if (this@createGradlePluginVariant.name != "kotlin-gradle-plugin-api" &&
-            this@createGradlePluginVariant.name != "android-test-fixes"
+            this@createGradlePluginVariant.name != "android-test-fixes" &&
+            this@createGradlePluginVariant.name != "gradle-warnings-detector"
         ) {
             variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api")) {
                 capabilities {
@@ -559,6 +562,7 @@ fun Project.addBomCheckTask() {
         val bomBuildFile = project(":kotlin-gradle-plugins-bom").projectDir.resolve("build.gradle.kts")
         val exceptions = listOf(
             project(":gradle:android-test-fixes").path,
+            project(":gradle:gradle-warnings-detector").path,
             project(":kotlin-gradle-build-metrics").path,
             project(":kotlin-gradle-statistics").path,
         )
