@@ -41,11 +41,9 @@ private fun Project.collectAllPlatformCompilationData(): List<SourceSetVisibilit
 private fun KotlinCompilation<*>.toPlatformCompilationData() = SourceSetVisibilityProvider.PlatformCompilationData(
     allSourceSets = allKotlinSourceSets.map { it.name }.toSet(),
     resolvedDependenciesConfiguration = LazyResolvedConfiguration(project.configurations.getByName(compileDependencyConfigurationName)),
-    hostSpecificMetadataConfiguration = project
-        .configurations
-        .getByName(compileDependencyConfigurationName)
-        .copyRecursive().apply { attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA)) }
-        .let(::LazyResolvedConfiguration)
+    hostSpecificMetadataConfiguration = (this as? KotlinNativeCompilation)
+        ?.hostSpecificMetadataConfiguration
+        ?.let(::LazyResolvedConfiguration)
 )
 
 internal class SourceSetVisibilityProvider(
