@@ -513,6 +513,10 @@ standaloneTest("unreachable_statement_after_return") {
     useGoldenData = true
 }
 
+task backend_checker_unsupported_type_KT55776(type: KonanLocalTest) {
+    source = "codegen/function/kt55776.kt"
+}
+
 task codegen_controlflow_for_loops(type: KonanLocalTest) {
     source = "codegen/controlflow/for_loops.kt"
     useGoldenData = true
