@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
-import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
 import org.jetbrains.kotlin.project.model.KpmModuleIdentifier
 import java.io.File
 import java.io.Serializable
@@ -168,12 +167,12 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     }
 
     @get:OutputFile
-    val outputLibrariesFileIndex: RegularFileProperty = objectFactory
+    protected val outputLibrariesFileIndex: RegularFileProperty = objectFactory
         .fileProperty()
         .apply { set(outputDirectory.resolve("${sourceSet.name}.cinteropLibraries")) }
 
     @get:Internal
-    val outputLibraryFiles: FileCollection = project.filesProvider {
+    protected val outputLibraryFiles: FileCollection = project.filesProvider {
         outputLibrariesFileIndex.map { file ->
             KotlinMetadataLibrariesIndexFile(file.asFile).read()
         }
