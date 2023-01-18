@@ -75,6 +75,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANNOTATION_USED_A
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTION_PARAMETER_WITH_DEFAULT_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_FUNCTION_WITH_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ANONYMOUS_INITIALIZER_IN_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.API_NOT_AVAILABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARGUMENT_PASSED_TWICE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARGUMENT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_EQUALS
@@ -640,6 +641,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING)
         map.put(DEPRECATION, "''{0}'' is deprecated. {1}", SYMBOL, STRING)
         map.put(DEPRECATION_ERROR, "''{0}'' is deprecated. {1}", SYMBOL, STRING)
+        map.put(
+            API_NOT_AVAILABLE,
+            "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}",
+            TO_STRING,
+            TO_STRING,
+        )
         map.put(ASSIGNMENT_IN_EXPRESSION_CONTEXT, "Assignments are not expressions, and only expressions are allowed in this context")
         map.put(EXPRESSION_EXPECTED, "Only expressions are allowed here")
 

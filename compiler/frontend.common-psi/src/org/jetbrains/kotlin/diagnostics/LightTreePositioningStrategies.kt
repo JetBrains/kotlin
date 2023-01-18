@@ -619,6 +619,11 @@ object LightTreePositioningStrategies {
                 }
                 return super.mark(node, startOffset, endOffset, tree)
             }
+            if (node.tokenType == KtNodeTypes.IMPORT_DIRECTIVE) {
+                tree.collectDescendantsOfType(node, KtNodeTypes.REFERENCE_EXPRESSION).lastOrNull()?.let {
+                    return mark(it, it.startOffset, it.endOffset, tree)
+                }
+            }
             if (node.tokenType == KtNodeTypes.TYPE_REFERENCE) {
                 val typeElement = tree.findChildByType(node, KtTokenSets.TYPE_ELEMENT_TYPES)
                 if (typeElement != null) {

@@ -21,6 +21,6 @@ object FirDeprecatedTypeChecker : FirTypeRefChecker() {
         val resolved = typeRef.coneTypeSafe<ConeClassLikeType>() ?: return
         val symbol = resolved.lookupTag.toSymbol(context.session) ?: return
 
-        FirDeprecationChecker.reportDeprecationIfNeeded(source, symbol, null, context, reporter)
+        FirDeprecationChecker.reportApiAvailabilityIfNeeded(source, symbol, null, context, reporter)
     }
 }

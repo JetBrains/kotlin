@@ -58,13 +58,21 @@ sealed interface DeprecationAnnotationInfo {
     fun computeDeprecationInfo(apiVersion: ApiVersion): DeprecationInfo?
 }
 
+data class FutureApiDeprecationInfo(
+    override val deprecationLevel: DeprecationLevelValue,
+    override val propagatesToOverrides: Boolean,
+    val sinceVersion: ApiVersion,
+) : DeprecationInfo() {
+    override val message: String? get() = null
+}
+
 class SinceKotlinInfo(val sinceVersion: ApiVersion) : DeprecationAnnotationInfo {
     override fun computeDeprecationInfo(apiVersion: ApiVersion): DeprecationInfo? {
         return runUnless(sinceVersion <= apiVersion) {
-            SimpleDeprecationInfo(
+            FutureApiDeprecationInfo(
                 deprecationLevel = DeprecationLevelValue.HIDDEN,
                 propagatesToOverrides = true,
-                message = null
+                sinceVersion = sinceVersion,
             )
         }
     }

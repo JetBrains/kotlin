@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
@@ -254,6 +255,12 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = Deprecation::class
         abstract val reference: KtSymbol
         abstract val message: String
+    }
+
+    abstract class ApiNotAvailable : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ApiNotAvailable::class
+        abstract val sinceKotlinVersion: ApiVersion
+        abstract val currentVersion: ApiVersion
     }
 
     abstract class UnresolvedReferenceWrongReceiver : KtFirDiagnostic<PsiElement>() {
