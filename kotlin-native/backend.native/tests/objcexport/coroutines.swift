@@ -681,11 +681,9 @@ private func testSuspendFunction1SwiftImplStartInKotlin() throws {
 }
 
 private func testSuspendFunction2SwiftImplStartInKotlin() throws {
-    /*
     let resultHolder = AnyResultHolder()
     try CoroutinesKt.startCoroutineUninterceptedOrReturn(fn: SuspendFunction2SwiftImpl(), receiver: "receiver", param: "param", resultHolder: resultHolder)
     try assertEquals(actual: resultHolder.getSuccessfulResult() as? String, expected: "receiver param Swift")
-    */
 }
 
 private func testSuspendFunction0SwiftImplCreateInKotlin() throws {
