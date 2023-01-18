@@ -47,6 +47,28 @@ public class FirPluginDiagnosticTestGenerated extends AbstractFirPluginDiagnosti
     }
 
     @Nested
+    @TestMetadata("plugins/fir-plugin-prototype/testData/diagnostics/functionalTypes")
+    @TestDataPath("$PROJECT_ROOT")
+    public class FunctionalTypes {
+        @Test
+        public void testAllFilesPresentInFunctionalTypes() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/fir-plugin-prototype/testData/diagnostics/functionalTypes"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("ambigousKinds.kt")
+        public void testAmbigousKinds() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/functionalTypes/ambigousKinds.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/functionalTypes/simple.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("plugins/fir-plugin-prototype/testData/diagnostics/memberGen")
     @TestDataPath("$PROJECT_ROOT")
     public class MemberGen {

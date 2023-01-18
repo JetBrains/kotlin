@@ -1,0 +1,55 @@
+FILE: simple.kt
+    public final fun runUsual(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun runComposable(block: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>|): R|kotlin/Unit| {
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval l0: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+
+        lval l1: R|some/MyComposableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+
+        lval l2: R|@R|org/jetbrains/kotlin/fir/plugin/MyComposable|()  some/MyComposableFunction0<kotlin/Unit>| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+
+        lval l3: R|some/MyComposableFunction0<kotlin/Unit>| = @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^ Unit
+        }
+
+        R|/runUsual|(R|<local>/l0|)
+        R|/runUsual<Inapplicable(INAPPLICABLE): /runUsual>#|(R|<local>/l1|)
+        R|/runUsual<Inapplicable(INAPPLICABLE): /runUsual>#|(R|<local>/l2|)
+        R|/runUsual<Inapplicable(INAPPLICABLE): /runUsual>#|(R|<local>/l3|)
+        R|/runUsual|(<L> = runUsual@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@runUsual Unit
+        }
+        )
+        R|/runUsual<Inapplicable(INAPPLICABLE): /runUsual>#|(<L> = @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() runUsual@fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            ^@runUsual Unit
+        }
+        )
+        R|/runComposable|(R|<local>/l0|)
+        R|/runComposable|(R|<local>/l1|)
+        R|/runComposable|(R|<local>/l2|)
+        R|/runComposable|(R|<local>/l3|)
+        R|/runComposable|(<L> = runComposable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@runComposable Unit
+        }
+        )
+        R|/runComposable|(<L> = @R|org/jetbrains/kotlin/fir/plugin/MyComposable|() runComposable@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            ^@runComposable Unit
+        }
+        )
+    }
+    public final fun runComposable2(block: R|some/MyComposableFunction1<kotlin/String, kotlin/Int>|): R|kotlin/Unit| {
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        R|/runComposable2|(<L> = runComposable2@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Int| <inline=NoInline>  {
+            ^ R|<local>/it|.R|kotlin/String.length|
+        }
+        )
+    }

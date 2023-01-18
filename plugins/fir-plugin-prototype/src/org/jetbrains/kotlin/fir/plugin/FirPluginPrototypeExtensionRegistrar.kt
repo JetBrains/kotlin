@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.fir.plugin.generators.*
 import org.jetbrains.kotlin.fir.plugin.types.FirNumberSignAttributeExtension
+import org.jetbrains.kotlin.fir.plugin.types.ComposableLikeFunctionalTypeKindExtension
 import org.jetbrains.kotlin.ir.plugin.GeneratedDeclarationsIrBodyFiller
 
 class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
@@ -23,6 +24,7 @@ class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
         +::PluginAdditionalCheckers
         +::FirNumberSignAttributeExtension
         +::AlgebraReceiverInjector
+        +::ComposableLikeFunctionalTypeKindExtension
 
         // Declaration generators
         +::TopLevelDeclarationsGenerator
