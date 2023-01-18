@@ -50,6 +50,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("contextualFallback.kt")
+    public void testContextualFallback() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/contextualFallback.kt");
+    }
+
+    @Test
     @TestMetadata("enumsAreCached.kt")
     public void testEnumsAreCached() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/enumsAreCached.kt");
