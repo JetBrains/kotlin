@@ -100,7 +100,7 @@ open class MetadataDependencyTransformationTask
     }
 
     @get:OutputFile
-    internal val transformedLibrariesFileIndex: RegularFileProperty = objectFactory
+    internal val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
         .fileProperty()
         .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.libraries")) }
 
@@ -162,7 +162,7 @@ open class MetadataDependencyTransformationTask
     }
 
     private fun writeTransformedLibraries(files: List<File>) {
-        KotlinMetadataLibrariesIndexFile(transformedLibrariesFileIndex.get().asFile).write(files)
+        KotlinMetadataLibrariesIndexFile(transformedLibrariesIndexFile.get().asFile).write(files)
     }
 
     private fun writeVisibleSourceSets(visibleSourceSetsByComponentId: Map<ComponentIdentifier, Set<String>>) {
@@ -181,7 +181,7 @@ open class MetadataDependencyTransformationTask
 
     @get:Internal // Warning! ownTransformedLibraries is available only after Task Execution
     internal val ownTransformedLibraries: FileCollection = project.filesProvider {
-        transformedLibrariesFileIndex.map { regularFile ->
+        transformedLibrariesIndexFile.map { regularFile ->
             KotlinMetadataLibrariesIndexFile(regularFile.asFile).read()
         }
     }
