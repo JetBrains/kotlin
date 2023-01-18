@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.artifacts.component.ComponentIdentifier
+import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.file.RegularFileProperty
@@ -128,7 +131,12 @@ open class MetadataDependencyTransformationTask
     fun transformMetadata() {
         val transformation = GranularMetadataTransformation(
             params = transformationParameters,
-            visibleSourceSetsFromParentsProvider = { parentVisibleSourceSetFiles.map(::readVisibleSourceSetsFile) }
+            parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { identifier: ComponentIdentifier ->
+                val serializableKey = identifier.serializableUniqueKey
+                parentVisibleSourceSetFiles.flatMap { visibleSourceSetsFile ->
+                    readVisibleSourceSetsFile(visibleSourceSetsFile)[serializableKey].orEmpty()
+                }.toSet()
+            }
         )
 
         if (outputsDir.isDirectory) {
@@ -157,9 +165,9 @@ open class MetadataDependencyTransformationTask
         KotlinMetadataLibrariesIndexFile(transformedLibrariesFileIndex.get().asFile).write(files)
     }
 
-    private fun writeVisibleSourceSets(visibleSourceSetsByComponentId: Map<String, Set<String>>) {
+    private fun writeVisibleSourceSets(visibleSourceSetsByComponentId: Map<ComponentIdentifier, Set<String>>) {
         val content = visibleSourceSetsByComponentId.entries.joinToString("\n") { (id, visibleSourceSets) ->
-            "$id => ${visibleSourceSets.joinToString(",")}"
+            "${id.serializableUniqueKey} => ${visibleSourceSets.joinToString(",")}"
         }
         visibleSourceSetsFile.get().asFile.writeText(content)
     }
@@ -181,3 +189,16 @@ open class MetadataDependencyTransformationTask
     @get:Internal // Warning! allTransformedLibraries is available only after Task Execution
     val allTransformedLibraries: FileCollection get() = ownTransformedLibraries + parentTransformedLibraries
 }
+
+private typealias SerializableComponentIdentifierKey = String
+
+/**
+ * This unique key can be used to lookup various info for related Resolved Dependency
+ * that gets serialized
+ */
+private val ComponentIdentifier.serializableUniqueKey
+    get(): SerializableComponentIdentifierKey = when (this) {
+        is ProjectComponentIdentifier -> "project ${build.name}$projectPath"
+        is ModuleComponentIdentifier -> "module $group:$module:$version"
+        else -> error("Unexpected Component Identifier: '$this' of type ${this.javaClass}")
+    }

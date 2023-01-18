@@ -183,7 +183,12 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     protected fun transformDependencies() {
         cleaning.cleanOutputDirectory(outputDirectory)
         outputDirectory.mkdirs()
-        val transformation = GranularMetadataTransformation(parameters) { emptyList() }
+        /* Warning:
+        Passing an empty ParentSourceSetVisibilityProvider will create ChooseVisibleSourceSet instances
+        with bad 'visibleSourceSetNamesExcludingDependsOn'. This is okay, since cinterop transformations do not look
+        into this field
+         */
+        val transformation = GranularMetadataTransformation(parameters, ParentSourceSetVisibilityProvider.Empty)
         val chooseVisibleSourceSets = transformation.metadataDependencyResolutions.filterIsInstance<ChooseVisibleSourceSets>()
         val transformedLibraries = chooseVisibleSourceSets.flatMap(::materializeMetadata)
         KotlinMetadataLibrariesIndexFile(outputLibrariesFileIndex.get().asFile).write(transformedLibraries)
