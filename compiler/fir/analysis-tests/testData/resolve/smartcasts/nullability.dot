@@ -59,15 +59,15 @@ digraph nullability_kt {
         14 [label="Enter class QImpl" style="filled" fillcolor=red];
         subgraph cluster_8 {
             color=blue
-            15 [label="Enter function <init>" style="filled" fillcolor=red];
-            16 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            17 [label="Exit function <init>" style="filled" fillcolor=red];
+            15 [label="Enter property" style="filled" fillcolor=red];
+            16 [label="Access variable R|<local>/data|"];
+            17 [label="Exit property" style="filled" fillcolor=red];
         }
         subgraph cluster_9 {
             color=blue
-            18 [label="Enter property" style="filled" fillcolor=red];
-            19 [label="Access variable R|<local>/data|"];
-            20 [label="Exit property" style="filled" fillcolor=red];
+            18 [label="Enter function <init>" style="filled" fillcolor=red];
+            19 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            20 [label="Exit function <init>" style="filled" fillcolor=red];
         }
         21 [label="Exit class QImpl" style="filled" fillcolor=red];
     }
@@ -108,15 +108,15 @@ digraph nullability_kt {
         29 [label="Enter class QImplMutable" style="filled" fillcolor=red];
         subgraph cluster_13 {
             color=blue
-            30 [label="Enter function <init>" style="filled" fillcolor=red];
-            31 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            32 [label="Exit function <init>" style="filled" fillcolor=red];
+            30 [label="Enter property" style="filled" fillcolor=red];
+            31 [label="Access variable R|<local>/data|"];
+            32 [label="Exit property" style="filled" fillcolor=red];
         }
         subgraph cluster_14 {
             color=blue
-            33 [label="Enter property" style="filled" fillcolor=red];
-            34 [label="Access variable R|<local>/data|"];
-            35 [label="Exit property" style="filled" fillcolor=red];
+            33 [label="Enter function <init>" style="filled" fillcolor=red];
+            34 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            35 [label="Exit function <init>" style="filled" fillcolor=red];
         }
         36 [label="Exit class QImplMutable" style="filled" fillcolor=red];
     }

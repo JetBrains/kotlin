@@ -341,15 +341,15 @@ digraph boundSmartcasts_kt {
         125 [label="Enter class D" style="filled" fillcolor=red];
         subgraph cluster_28 {
             color=blue
-            126 [label="Enter function <init>" style="filled" fillcolor=red];
-            127 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            128 [label="Exit function <init>" style="filled" fillcolor=red];
+            126 [label="Enter property" style="filled" fillcolor=red];
+            127 [label="Access variable R|<local>/any|"];
+            128 [label="Exit property" style="filled" fillcolor=red];
         }
         subgraph cluster_29 {
             color=blue
-            129 [label="Enter property" style="filled" fillcolor=red];
-            130 [label="Access variable R|<local>/any|"];
-            131 [label="Exit property" style="filled" fillcolor=red];
+            129 [label="Enter function <init>" style="filled" fillcolor=red];
+            130 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            131 [label="Exit function <init>" style="filled" fillcolor=red];
         }
         132 [label="Exit class D" style="filled" fillcolor=red];
     }
