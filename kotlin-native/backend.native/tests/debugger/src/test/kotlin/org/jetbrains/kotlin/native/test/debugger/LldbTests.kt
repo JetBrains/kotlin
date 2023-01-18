@@ -495,4 +495,261 @@ class LldbTests {
         """.trimIndent().lldb(program)
     }
 
+    @Test
+    fun `inline function arguments as expressions are visible`() = lldbTest("""
+        inline fun foo(
+            p1: Int, p2: Int, p3: Int, p4: Int, p5: Int, p6: Int, p7: Int,
+            f: (Int, Int, Int, Int, Int, Int, Int) -> Unit
+        ) { 
+            println()
+            f(p1, p2, p3, p4, p5, p6, p7)
+        }
+
+        fun bar() = 3
+        inline fun baz() = 3
+        fun getCondition() = true
+        fun getNull(): Int? = null
+
+        const val X = 10
+
+        fun main() {
+            val tmp = bar()
+            foo(
+                1, 
+                tmp,
+                tmp + 2, 
+                bar(), 
+                X,
+                if (getCondition()) 1 else 2,
+                when {
+                    tmp >= 0 -> 1
+                    tmp < 0 -> 2
+                    else -> 0
+                }
+            ) { p1, p2, p3, p4, p5, p6, p7 ->
+               println(p1 + p2 + p3 + p4 + p5 + p6 + p7) 
+            }
+
+            foo(
+                { 2 + 2 }(),
+                baz(),
+                listOf(1, 2, 3).filter { it > 2 }.sum(), 
+                getNull()?.let { it + 1 } ?: 0,
+                try { bar() } finally { baz() },
+                "".length, 
+                object : Any() {
+                    override fun hashCode(): Int {
+                        return 1
+                    }
+                }.hashCode()
+            ) { p1, p2, p3, p4, p5, p6, p7 ->
+               println(p1 + p2 + p3 + p4 + p5 + p6 + p7) 
+            }
+        }    
+        """, """
+        > b main.kt:5
+        > b main.kt:31
+        > b main.kt:47
+        > ${lldbCommandRunOrContinue()}
+        > v
+        (int) p1 = 1
+        (int) p2 = 3
+        (int) p3 = 5
+        (int) p4 = 3
+        (int) p5 = 10
+        (int) p6 = 1
+        (int) p7 = 1
+        > c
+        > v
+        (int) p1 = 1
+        (int) p2 = 3
+        (int) p3 = 5
+        (int) p4 = 3
+        (int) p5 = 10
+        (int) p6 = 1
+        (int) p7 = 1
+        > c
+        > v
+        (int) p1 = 4
+        (int) p2 = 3
+        (int) p3 = 3
+        (int) p4 = 0
+        (int) p5 = 3
+        (int) p6 = 0
+        (int) p7 = 1
+        > c
+        > v
+        (int) p1 = 4
+        (int) p2 = 3
+        (int) p3 = 3
+        (int) p4 = 0
+        (int) p5 = 3
+        (int) p6 = 0
+        (int) p7 = 1
+        > q
+    """)
+
+    @Test
+    fun `inline lambda anonymous argument is visible`() = lldbTest("""
+        fun main() {
+            val list = listOf(1)
+            list.filter {
+                it > 2
+            }
+
+            list.map {
+                it * 2
+            }
+
+            list.find {
+                it == 1
+            }
+        }    
+        """, """
+        > b main.kt:4
+        > b main.kt:8
+        > b main.kt:12
+        > ${lldbCommandRunOrContinue()}
+        > v
+        (int) it = 1
+        > c
+        > v
+        (int) it = 1
+        > c
+        > v
+        (int) it = 1
+        > q
+    """)
+
+    @Test
+    fun `inline function arguments of various types are visible`() = lldbTest("""
+        class A
+        object B
+        data class C(val x: Int)
+        interface I
+
+        inline fun foo(a: A, b: B, c: C, i: I, f: (A, B, C, I) -> Unit) {
+            println()
+            f(a, b, c, i)
+        }
+
+        fun main() {
+            val a = A()
+            val b = B
+            val c = C(0)
+            val i = object : I {}
+            foo(a, b, c, i) { pa, pb, pc, pi ->
+                println(pa)
+                println(pb)
+                println(pc)
+                println(pi)
+            }
+
+            foo(A(), B, C(0), object : I {}) { pa, pb, pc, pi ->
+                println(pa)
+                println(pb)
+                println(pc)
+                println(pi)
+            }
+        }    
+        """, """
+        > b main.kt:7
+        > b main.kt:17
+        > b main.kt:24
+        > ${lldbCommandRunOrContinue()}
+        > v
+        (ObjHeader *) a = []
+        (ObjHeader *) b = []
+        (ObjHeader *) c = [x: ...]
+        (ObjHeader *) i = []
+        > c
+        > v
+        (ObjHeader *) pa = []
+        (ObjHeader *) pb = []
+        (ObjHeader *) pc = [x: ...]
+        (ObjHeader *) pi = []
+        > c
+        > v
+        (ObjHeader *) a = []
+        (ObjHeader *) b = []
+        (ObjHeader *) c = [x: ...]
+        (ObjHeader *) i = []
+        > c
+        > v
+        (ObjHeader *) pa = []
+        (ObjHeader *) pb = []
+        (ObjHeader *) pc = [x: ...]
+        (ObjHeader *) pi = []
+        > q
+    """)
+
+    @Test
+    fun `inline function default parameters are visible`() = lldbTest("""
+        inline fun foo(x: Int = 0, y: String = "STRING", z: Any? = null) {
+            println(x)
+            println(y)
+            println(z)
+        }
+
+        fun main() {
+            foo()
+            foo(1)
+            foo(1, "TEST_STRING")
+            foo(1, "TEST_STRING", Any())
+        }    
+        """, """
+        > b main.kt:2
+        > ${lldbCommandRunOrContinue()}
+        > v
+        (int) x = 0
+        (ObjHeader *) y = STRING
+        (ObjHeader *) z = NULL
+        > c
+        > v
+        (int) x = 1
+        (ObjHeader *) y = STRING
+        (ObjHeader *) z = NULL
+        > c
+        > v
+        (int) x = 1
+        (ObjHeader *) y = TEST_STRING
+        (ObjHeader *) z = NULL
+        > c
+        > v
+        (int) x = 1
+        (ObjHeader *) y = TEST_STRING
+        (ObjHeader *) z = []
+        > q
+    """)
+
+    @Test
+    fun `inline function extension receiver is visible`() = lldbTest("""
+        class A {
+            inline fun String.foo(f: String.() -> Unit) {
+                println()
+                f()
+            }
+            
+            fun bar() {
+                "TEST".foo {
+                    println()
+                }
+            }
+        }
+
+        fun main() {
+            A().bar()
+        }    
+        """, """
+        > b main.kt:3
+        > b main.kt:9
+        > ${lldbCommandRunOrContinue()}
+        > v
+        (ObjHeader *) _this = []
+        (ObjHeader *) __this = TEST
+        > c
+        > v
+        (ObjHeader *) ${"$"}this${"$"}foo = TEST
+        > q
+    """)
 }

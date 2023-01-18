@@ -83,7 +83,8 @@ class FunctionInlining(
     val context: CommonBackendContext,
     val inlineFunctionResolver: InlineFunctionResolver,
     val innerClassesSupport: InnerClassesSupport? = null,
-    val insertAdditionalImplicitCasts: Boolean = false
+    val insertAdditionalImplicitCasts: Boolean = false,
+    val alwaysCreateTemporaryVariablesForArguments: Boolean = false
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
 
     constructor(context: CommonBackendContext) : this(context, DefaultInlineFunctionResolver(context), null)
@@ -590,54 +591,62 @@ class FunctionInlining(
             val evaluationStatements = mutableListOf<IrStatement>()
             val substitutor = ParameterSubstitutor()
             arguments.forEach { argument ->
+                val parameter = argument.parameter
                 /*
                  * We need to create temporary variable for each argument except inlinable lambda arguments.
                  * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
                  * not only for those referring to inlinable lambdas.
                  */
                 if (argument.isInlinableLambdaArgument) {
-                    substituteMap[argument.parameter] = argument.argumentExpression
+                    substituteMap[parameter] = argument.argumentExpression
                     (argument.argumentExpression as? IrFunctionReference)?.let { evaluationStatements += evaluateArguments(it) }
 
                     return@forEach
                 }
 
-                if (argument.isImmutableVariableLoad) {
-                    substituteMap[argument.parameter] =
-                        argument.argumentExpression.transform( // Arguments may reference the previous ones - substitute them.
-                            substitutor,
-                            data = null
-                        )
-                    return@forEach
-                }
-
                 // Arguments may reference the previous ones - substitute them.
                 val variableInitializer = argument.argumentExpression.transform(substitutor, data = null)
-
-                val argumentExtracted = !argument.argumentExpression.isPure(false, context = context)
-
-                if (!argumentExtracted) {
-                    substituteMap[argument.parameter] = variableInitializer
-                } else {
-                    val newVariable =
-                        currentScope.scope.createTemporaryVariable(
-                            irExpression = IrBlockImpl(
-                                variableInitializer.startOffset,
-                                variableInitializer.endOffset,
-                                variableInitializer.type,
-                                InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)
-                            ).apply {
-                                statements.add(variableInitializer)
-                            },
-                            nameHint = callee.symbol.owner.name.toString(),
-                            isMutable = false
-                        )
-
+                val shouldCreateTemporaryVariable =
+                    (alwaysCreateTemporaryVariablesForArguments && !parameter.isInlineParameter()) ||
+                            argument.shouldBeSubstitutedViaTemporaryVariable()
+                if (shouldCreateTemporaryVariable) {
+                    val newVariable = createTemporaryVariable(parameter, variableInitializer, callee)
                     evaluationStatements.add(newVariable)
-                    substituteMap[argument.parameter] = IrGetValueWithoutLocation(newVariable.symbol)
+                    substituteMap[parameter] = IrGetValueWithoutLocation(newVariable.symbol)
+                } else {
+                    substituteMap[parameter] = variableInitializer
                 }
             }
             return evaluationStatements
+        }
+
+        private fun ParameterToArgument.shouldBeSubstitutedViaTemporaryVariable(): Boolean =
+            !isImmutableVariableLoad && !argumentExpression.isPure(false, context = context)
+
+        private fun createTemporaryVariable(parameter: IrValueParameter, variableInitializer: IrExpression, callee: IrFunction): IrVariable {
+            val variable = currentScope.scope.createTemporaryVariable(
+                irExpression = IrBlockImpl(
+                    variableInitializer.startOffset,
+                    variableInitializer.endOffset,
+                    variableInitializer.type,
+                    InlinerExpressionLocationHint((currentScope.irElement as IrSymbolOwner).symbol)
+                ).apply {
+                    statements.add(variableInitializer)
+                },
+                nameHint = callee.symbol.owner.name.toString(),
+                isMutable = false,
+                origin = if (parameter == callee.extensionReceiverParameter) {
+                    IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER
+                } else {
+                    IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER
+                }
+            )
+
+            if (alwaysCreateTemporaryVariablesForArguments) {
+                variable.name = parameter.name
+            }
+
+            return variable
         }
     }
 
