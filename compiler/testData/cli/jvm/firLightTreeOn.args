@@ -1,0 +1,6 @@
+$TESTDATA_DIR$/firLightTree.kt
+-language-version
+2.0
+-Xuse-fir-lt=true
+-d
+$TEMP_DIR$
