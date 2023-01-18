@@ -224,15 +224,14 @@ internal class GranularMetadataTransformation(
         logger.debug("Transform composite metadata artifact: '${compositeMetadataArtifact.file}'")
 
         val mppDependencyMetadataExtractor = params.projectStructureMetadataExtractorFactory.create(compositeMetadataArtifact)
-
-        val isResolvedToProject = moduleId is ProjectComponentIdentifier && moduleId.build.isCurrentBuild
-
         val projectStructureMetadata = mppDependencyMetadataExtractor.getProjectStructureMetadata()
             ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
 
         if (!projectStructureMetadata.isPublishedAsRoot) {
             error("Artifacts of dependency ${module.id.displayName} is built by old Kotlin Gradle Plugin and can't be consumed in this way")
         }
+
+        val isResolvedToProject = moduleId is ProjectComponentIdentifier && moduleId.build.isCurrentBuild
 
         val sourceSetVisibility =
             params.sourceSetVisibilityProvider.getVisibleSourceSets(
