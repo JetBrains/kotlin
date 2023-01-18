@@ -183,16 +183,12 @@ internal fun ComponentIdentifier.matchesModuleIdentifier(id: KpmModuleIdentifier
         else -> false
     }
 
+@Suppress("UNUSED_PARAMETER")
 private fun getProjectStructureMetadata(
     project: Project,
     module: ResolvedComponentResult,
     configuration: Configuration,
     moduleIdentifier: KpmModuleIdentifier? = null
 ): KotlinProjectStructureMetadata? {
-    val extractor = if (moduleIdentifier != null)
-        MppDependencyProjectStructureMetadataExtractor.create(project, module, moduleIdentifier, configuration)
-    else
-        MppDependencyProjectStructureMetadataExtractor.create(project, module, configuration, resolveViaAvailableAt = true)
-
-    return extractor?.getProjectStructureMetadata()
+    TODO("Implement project structure metadata extractor for KPM")
 }
