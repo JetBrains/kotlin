@@ -158,7 +158,7 @@ class IncrementalJsCompilerRunner(
         if (dirtyFiles.isEmpty() && changedFiles.removed.isNotEmpty()) {
             return CompilationMode.Rebuild(BuildAttribute.DEP_CHANGE_REMOVED_ENTRY)
         }
-        return CompilationMode.Incremental(dirtyFiles)
+        return CompilationMode.Incremental(dirtyFiles, changedFiles.removed)
     }
 
     override fun makeServices(
