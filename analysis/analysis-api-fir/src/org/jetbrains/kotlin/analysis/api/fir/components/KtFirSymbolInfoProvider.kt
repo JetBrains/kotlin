@@ -7,16 +7,20 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolInfoProvider
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
+import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirBackingFieldSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPackageSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSyntheticJavaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
+import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.getDeprecationForCallSite
 import org.jetbrains.kotlin.fir.declarations.getJvmNameFromAnnotation
@@ -92,6 +96,13 @@ internal class KtFirSymbolInfoProvider(
         if (firProperty.isVal) return null
 
         return getJvmName(firProperty, isSetter = true)
+    }
+
+    override fun getAnnotationApplicableTargets(symbol: KtClassOrObjectSymbol): Set<KotlinTarget>? {
+        requireIsInstance<KtFirSymbol<*>>(symbol)
+        if (symbol !is KtFirNamedClassOrObjectSymbol) return null
+        if (symbol.firSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
+        return symbol.firSymbol.getAllowedAnnotationTargets(analysisSession.useSiteSession)
     }
 
     private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
