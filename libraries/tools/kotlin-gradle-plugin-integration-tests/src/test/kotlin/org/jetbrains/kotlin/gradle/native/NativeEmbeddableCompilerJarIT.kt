@@ -12,7 +12,7 @@ import org.junit.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class NativeEmbeddableCompilerJarIT : BaseGradleIT() {
+class NativeEmbeddableCompilerJarIT : BaseGradleIT(requiresNative = true) {
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.FOR_MPP_SUPPORT

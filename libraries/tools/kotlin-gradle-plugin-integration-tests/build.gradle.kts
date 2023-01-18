@@ -328,6 +328,10 @@ tasks.withType<Test> {
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
 
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        addNativeTestProperties(project)
+    }
+
     val installCocoapods = project.findProperty("installCocoapods") as String?
     if (installCocoapods != null) {
         systemProperty("installCocoapods", installCocoapods)

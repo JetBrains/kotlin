@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.test.Test
 
-class NativeLibraryDslIT : BaseGradleIT() {
+class NativeLibraryDslIT : BaseGradleIT(requiresNative = true) {
     override val defaultGradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
     @Test

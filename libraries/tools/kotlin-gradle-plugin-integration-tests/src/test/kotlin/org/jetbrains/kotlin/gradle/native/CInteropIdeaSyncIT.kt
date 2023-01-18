@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.native
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import kotlin.test.Test
 
-class CInteropIdeaSyncIT : BaseGradleIT() {
+class CInteropIdeaSyncIT : BaseGradleIT(requiresNative = true) {
 
     private val ideaSyncBuildOptions = defaultBuildOptions().copy(
         freeCommandLineArgs = listOf("-Didea.sync.active=true")

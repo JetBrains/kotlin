@@ -17,7 +17,7 @@ import org.junit.Assume
 import org.junit.BeforeClass
 import kotlin.test.Test
 
-class AppleFrameworkIT : BaseGradleIT() {
+class AppleFrameworkIT : BaseGradleIT(requiresNative = true) {
     companion object {
         @BeforeClass
         @JvmStatic

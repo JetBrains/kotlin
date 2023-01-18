@@ -111,63 +111,8 @@ fun Project.nativeTest(
 
         // Compute test properties in advance. Make sure that the necessary dependencies are settled.
         // But do not resolve any configurations until the execution phase.
-        val computedTestProperties = ComputedTestProperties {
-            compute(KOTLIN_NATIVE_HOME) {
-                val testTarget = readFromGradle(TEST_TARGET)
-                if (testTarget != null) {
-                    dependsOn(":kotlin-native:${testTarget}CrossDist")
-                    if (requirePlatformLibs) dependsOn(":kotlin-native:${testTarget}PlatformLibs")
-                } else {
-                    dependsOn(":kotlin-native:dist")
-                    if (requirePlatformLibs) dependsOn(":kotlin-native:distPlatformLibs")
-                }
-                project(":kotlin-native").projectDir.resolve("dist").absolutePath
-            }
-
-            computeLazy(COMPILER_CLASSPATH) {
-                val customNativeHome = readFromGradle(KOTLIN_NATIVE_HOME)
-
-                val kotlinNativeCompilerEmbeddable = if (customNativeHome == null)
-                    configurations.detachedConfiguration(
-                        dependencies.project(":kotlin-native-compiler-embeddable"),
-                        dependencies.module(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-                    ).also { dependsOn(it) }
-                else
-                    null
-
-                customDependencies.forEach(::dependsOn)
-
-                lazyClassPath {
-                    if (customNativeHome == null) {
-                        addAll(kotlinNativeCompilerEmbeddable!!.files)
-                    } else {
-                        this += file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
-                        this += file(customNativeHome).resolve("konan/lib/trove4j.jar")
-                    }
-
-                    customDependencies.flatMapTo(this) { it.files }
-                }
-            }
-
-            computeLazy(CUSTOM_KLIBS) {
-                customKlibDependencies.forEach(::dependsOn)
-                lazyClassPath { customKlibDependencies.flatMapTo(this) { it.files } }
-            }
-
-            // Pass Gradle properties as JVM properties so test process can read them.
-            compute(TEST_TARGET)
-            compute(TEST_MODE)
-            compute(FORCE_STANDALONE)
-            compute(COMPILE_ONLY)
-            compute(OPTIMIZATION_MODE)
-            compute(MEMORY_MODEL)
-            compute(USE_THREAD_STATE_CHECKER)
-            compute(GC_TYPE)
-            compute(GC_SCHEDULER)
-            compute(CACHE_MODE)
-            compute(EXECUTION_TIMEOUT)
-            compute(SANITIZER)
-        }
+        val computedTestProperties =
+            computeNativeTestProperties(this@nativeTest, requirePlatformLibs, customDependencies, customKlibDependencies)
 
         // Pass the current Gradle task name so test can use it in logging.
         environment("GRADLE_TASK_NAME", path)
@@ -201,4 +146,79 @@ fun Project.nativeTest(
                 """.trimIndent()
             )
         }
+}
+
+private fun Test.computeNativeTestProperties(
+    project: Project,
+    requirePlatformLibs: Boolean,
+    customDependencies: List<Configuration> = emptyList(),
+    customKlibDependencies: List<Configuration> = emptyList(),
+): ComputedTestProperties {
+    val computedTestProperties = ComputedTestProperties {
+        project.compute(KOTLIN_NATIVE_HOME) {
+            val testTarget = project.readFromGradle(TEST_TARGET)
+            if (testTarget != null) {
+                dependsOn(":kotlin-native:${testTarget}CrossDist")
+                if (requirePlatformLibs) dependsOn(":kotlin-native:${testTarget}PlatformLibs")
+            } else {
+                dependsOn(":kotlin-native:dist")
+                if (requirePlatformLibs) dependsOn(":kotlin-native:distPlatformLibs")
+            }
+            project.project(":kotlin-native").projectDir.resolve("dist").absolutePath
+        }
+
+        project.computeLazy(COMPILER_CLASSPATH) {
+            val customNativeHome = project.readFromGradle(KOTLIN_NATIVE_HOME)
+
+            val kotlinNativeCompilerEmbeddable = if (customNativeHome == null)
+                project.configurations.detachedConfiguration(
+                    project.dependencies.project(":kotlin-native-compiler-embeddable"),
+                    project.dependencies.module(project.commonDependency("org.jetbrains.intellij.deps:trove4j"))
+                ).also { dependsOn(it) }
+            else
+                null
+
+            customDependencies.forEach(::dependsOn)
+
+            lazyClassPath {
+                if (customNativeHome == null) {
+                    addAll(kotlinNativeCompilerEmbeddable!!.files)
+                } else {
+                    this += project.file(customNativeHome).resolve("konan/lib/kotlin-native-compiler-embeddable.jar")
+                    this += project.file(customNativeHome).resolve("konan/lib/trove4j.jar")
+                }
+
+                customDependencies.flatMapTo(this) { it.files }
+            }
+        }
+
+        project.computeLazy(CUSTOM_KLIBS) {
+            customKlibDependencies.forEach(::dependsOn)
+            lazyClassPath { customKlibDependencies.flatMapTo(this) { it.files } }
+        }
+
+        // Pass Gradle properties as JVM properties so test process can read them.
+        project.compute(TEST_TARGET)
+        project.compute(TEST_MODE)
+        project.compute(FORCE_STANDALONE)
+        project.compute(COMPILE_ONLY)
+        project.compute(OPTIMIZATION_MODE)
+        project.compute(MEMORY_MODEL)
+        project.compute(USE_THREAD_STATE_CHECKER)
+        project.compute(GC_TYPE)
+        project.compute(GC_SCHEDULER)
+        project.compute(CACHE_MODE)
+        project.compute(EXECUTION_TIMEOUT)
+        project.compute(SANITIZER)
+    }
+    return computedTestProperties
+}
+
+fun Test.addNativeTestProperties(
+    project: Project,
+    requirePlatformLibs: Boolean = false,
+    customDependencies: List<Configuration> = emptyList(),
+    customKlibDependencies: List<Configuration> = emptyList(),
+) {
+    computeNativeTestProperties(project, requirePlatformLibs, customDependencies, customKlibDependencies).resolveAndApplyToTask()
 }

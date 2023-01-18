@@ -14,7 +14,7 @@ import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.fail
 
-class AppleSiliconIT : BaseGradleIT() {
+class AppleSiliconIT : BaseGradleIT(requiresNative = true) {
     override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
 
     private val host = HostManager.host

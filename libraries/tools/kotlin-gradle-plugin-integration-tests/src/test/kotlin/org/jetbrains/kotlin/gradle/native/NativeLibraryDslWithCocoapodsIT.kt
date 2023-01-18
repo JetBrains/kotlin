@@ -14,7 +14,7 @@ import org.junit.BeforeClass
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class NativeLibraryDslWithCocoapodsIT : BaseGradleIT() {
+class NativeLibraryDslWithCocoapodsIT : BaseGradleIT(requiresNative = true) {
 
     companion object {
         @BeforeClass

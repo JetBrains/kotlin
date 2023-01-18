@@ -28,7 +28,7 @@ import org.junit.Test
 import kotlin.test.assertTrue
 import kotlin.test.BeforeTest
 
-class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
+class NativeDownloadAndPlatformLibsIT : BaseGradleIT(requiresNative = true) {
 
     companion object {
         @BeforeClass

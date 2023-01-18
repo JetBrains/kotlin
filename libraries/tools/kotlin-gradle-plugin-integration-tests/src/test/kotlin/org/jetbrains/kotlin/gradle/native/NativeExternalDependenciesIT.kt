@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-class NativeExternalDependenciesIT : BaseGradleIT() {
+class NativeExternalDependenciesIT : BaseGradleIT(requiresNative = true) {
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.FOR_MPP_SUPPORT
 

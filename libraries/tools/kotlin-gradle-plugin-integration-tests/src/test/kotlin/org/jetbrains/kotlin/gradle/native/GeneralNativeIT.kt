@@ -102,7 +102,7 @@ private fun BaseGradleIT.Project.configureSingleNativeTarget(preset: String = Ho
 }
 
 @OptIn(InternalKotlinGradlePluginApi::class)
-class GeneralNativeIT : BaseGradleIT() {
+class GeneralNativeIT : BaseGradleIT(requiresNative = true) {
 
     val nativeHostTargetName = MPPNativeTargets.current
 

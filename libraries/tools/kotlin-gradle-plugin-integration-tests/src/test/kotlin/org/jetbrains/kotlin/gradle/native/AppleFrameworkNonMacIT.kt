@@ -14,7 +14,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 import kotlin.test.assertTrue
 
-class AppleFrameworkNonMacIT : BaseGradleIT() {
+class AppleFrameworkNonMacIT : BaseGradleIT(requiresNative = true) {
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.FOR_MPP_SUPPORT

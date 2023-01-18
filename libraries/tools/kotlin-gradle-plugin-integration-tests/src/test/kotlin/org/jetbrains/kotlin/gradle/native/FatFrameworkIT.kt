@@ -18,7 +18,7 @@ import java.io.File
 import java.util.*
 import kotlin.test.assertTrue
 
-class FatFrameworkIT : BaseGradleIT() {
+class FatFrameworkIT : BaseGradleIT(requiresNative = true) {
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.FOR_MPP_SUPPORT

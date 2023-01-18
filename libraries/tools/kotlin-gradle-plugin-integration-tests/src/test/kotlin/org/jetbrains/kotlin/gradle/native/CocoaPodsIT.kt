@@ -39,7 +39,7 @@ import kotlin.test.fail
 private val String.validFrameworkName: String
     get() = replace('-', '_')
 
-class CocoaPodsIT : BaseGradleIT() {
+class CocoaPodsIT : BaseGradleIT(requiresNative = true) {
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.FOR_MPP_SUPPORT

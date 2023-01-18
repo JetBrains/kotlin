@@ -21,7 +21,7 @@ import java.nio.file.Files
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class NativeIrLinkerIssuesIT : BaseGradleIT() {
+class NativeIrLinkerIssuesIT : BaseGradleIT(requiresNative = true) {
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.FOR_MPP_SUPPORT
 

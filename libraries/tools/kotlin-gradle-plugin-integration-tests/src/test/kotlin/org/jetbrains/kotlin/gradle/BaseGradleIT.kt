@@ -26,6 +26,7 @@ import org.junit.After
 import org.junit.AfterClass
 import org.junit.Assume
 import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.runner.RunWith
 import java.io.File
 import java.nio.file.Files
@@ -39,7 +40,7 @@ import kotlin.test.*
 val SYSTEM_LINE_SEPARATOR: String = System.getProperty("line.separator")
 
 @RunWith(value = RunnerWithMuteInDatabase::class)
-abstract class BaseGradleIT {
+abstract class BaseGradleIT(val requiresNative: Boolean = false) {
 
     protected var workingDir = File(".")
 
@@ -63,6 +64,13 @@ abstract class BaseGradleIT {
 
     @Before
     open fun setUp() {
+        if (requiresNative && kotlinNativeHome == null) {
+            error(
+                "The 'kotlin.internal.native.test.nativeHome' system property is not specified. " +
+                        "Make sure you've enabled building Kotlin/Native in your Gradle properties."
+            )
+        }
+
         // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
         workingDir = createTempDir(if (isWindows) "" else "BaseGradleIT")
         defaultBuildOptions().androidHome?.let { acceptAndroidSdkLicenses(it) }
@@ -144,6 +152,11 @@ abstract class BaseGradleIT {
         private fun getEnvJDK_18() = System.getenv()["JDK_18"]
 
         val resourcesRootFile = File("src/test/resources")
+
+        /**
+         * The path to the newly built Kotlin/Native distribution.
+         */
+        val kotlinNativeHome: String? = System.getProperty("kotlin.internal.native.test.nativeHome")
 
         @AfterClass
         @JvmStatic
@@ -282,6 +295,7 @@ abstract class BaseGradleIT {
         val enableCompatibilityMetadataVariant: Boolean? = null,
         val withReports: List<BuildReportType> = emptyList(),
         val enableKpmModelMapping: Boolean? = null,
+        val kotlinNativeHome: String? = BaseGradleIT.kotlinNativeHome,
     )
 
     enum class ConfigurationCacheProblems {
@@ -871,6 +885,9 @@ abstract class BaseGradleIT {
 
             add("-Pkotlin_version=" + options.kotlinVersion)
             add("-Ptest_fixes_version=$KOTLIN_VERSION")
+            options.kotlinNativeHome?.let {
+                add("-Pkotlin.native.home=$it")
+            }
             options.incremental?.let {
                 add("-Pkotlin.incremental=$it")
             }

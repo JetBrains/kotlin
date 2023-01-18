@@ -14,7 +14,7 @@ import org.junit.BeforeClass
 import org.junit.Test
 import java.util.*
 
-class CommonNativeIT : BaseGradleIT() {
+class CommonNativeIT : BaseGradleIT(requiresNative = true) {
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.FOR_MPP_SUPPORT
