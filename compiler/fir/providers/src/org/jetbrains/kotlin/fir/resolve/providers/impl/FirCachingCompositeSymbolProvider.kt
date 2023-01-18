@@ -34,7 +34,6 @@ class FirCachingCompositeSymbolProvider(
 ) : FirSymbolProvider(session) {
 
     private val classLikeCache = session.firCachesFactory.createCache(::computeClass)
-    private val topLevelCallableCache = session.firCachesFactory.createCache(::computeTopLevelCallables)
     private val topLevelFunctionCache = session.firCachesFactory.createCache(::computeTopLevelFunctions)
     private val topLevelPropertyCache = session.firCachesFactory.createCache(::computeTopLevelProperties)
     private val packageCache = session.firCachesFactory.createCache(::computePackage)
@@ -74,7 +73,14 @@ class FirCachingCompositeSymbolProvider(
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         if (!mayHaveTopLevelCallablesInPackage(packageFqName, name)) return emptyList()
-        return topLevelCallableCache.getValue(CallableId(packageFqName, name))
+        val callableId = CallableId(packageFqName, name)
+        val functions = topLevelFunctionCache.getValue(callableId)
+        val properties = topLevelPropertyCache.getValue(callableId)
+
+        if (properties.isEmpty()) return functions
+        if (functions.isEmpty()) return properties
+
+        return functions + properties
     }
 
     private fun mayHaveTopLevelCallablesInPackage(packageFqName: FqName, name: Name): Boolean {
