@@ -177,7 +177,11 @@ open class JvmGeneratorExtensionsImpl(
     }
 
     override fun registerDeclarations(symbolTable: SymbolTable) {
-        val signatureComputer = PublicIdSignatureComputer(JvmIrMangler)
+        val signatureComputer = PublicIdSignatureComputer(
+            JvmIrMangler,
+            configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, emptyList()),
+            configuration.getBoolean(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
+        )
         specialAnnotationConstructors.forEach { constructor ->
             symbolTable.declareConstructorWithSignature(signatureComputer.composePublicIdSignature(constructor, false), constructor.symbol)
         }

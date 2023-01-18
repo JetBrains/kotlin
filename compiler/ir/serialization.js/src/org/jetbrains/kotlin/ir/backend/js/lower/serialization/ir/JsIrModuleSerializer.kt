@@ -30,7 +30,9 @@ class JsIrModuleSerializer(
 
     private val globalDeclarationTable = JsGlobalDeclarationTable(
         irBuiltIns,
-        if (shouldCheckSignaturesOnUniqueness) JsUniqIdClashTracker() else IdSignatureClashTracker.DEFAULT_TRACKER
+        if (shouldCheckSignaturesOnUniqueness) JsUniqIdClashTracker() else IdSignatureClashTracker.DEFAULT_TRACKER,
+        sourceBaseDirs,
+        normalizeAbsolutePaths,
     )
 
     override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =

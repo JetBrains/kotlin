@@ -9,7 +9,11 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
-class KonanGlobalDeclarationTable(builtIns: IrBuiltIns) : GlobalDeclarationTable(KonanManglerIr) {
+class KonanGlobalDeclarationTable(
+        builtIns: IrBuiltIns,
+        sourceBaseDirs: Collection<String>,
+        normalizeAbsolutePaths: Boolean,
+) : GlobalDeclarationTable(KonanManglerIr, sourceBaseDirs, normalizeAbsolutePaths) {
     init {
         loadKnownBuiltins(builtIns)
     }

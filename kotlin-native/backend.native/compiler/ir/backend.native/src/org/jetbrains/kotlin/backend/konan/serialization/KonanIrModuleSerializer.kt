@@ -21,7 +21,7 @@ class KonanIrModuleSerializer(
     private val languageVersionSettings: LanguageVersionSettings,
 ) : IrModuleSerializer<KonanIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
 
-    private val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns)
+    private val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns, sourceBaseDirs, normalizeAbsolutePaths)
 
     // We skip files with IR for C structs and enums because they should be
     // generated anew.

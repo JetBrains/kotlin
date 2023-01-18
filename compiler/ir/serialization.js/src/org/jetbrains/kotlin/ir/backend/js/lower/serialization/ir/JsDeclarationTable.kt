@@ -34,8 +34,12 @@ class JsUniqIdClashTracker() : IdSignatureClashTracker {
     }
 }
 
-class JsGlobalDeclarationTable(builtIns: IrBuiltIns, tracker: IdSignatureClashTracker = JsUniqIdClashTracker()) :
-    GlobalDeclarationTable(JsManglerIr, tracker) {
+class JsGlobalDeclarationTable(
+    builtIns: IrBuiltIns,
+    tracker: IdSignatureClashTracker = JsUniqIdClashTracker(),
+    sourceBaseDirs: Collection<String>,
+    normalizeAbsolutePaths: Boolean,
+) : GlobalDeclarationTable(JsManglerIr, tracker, sourceBaseDirs, normalizeAbsolutePaths) {
     init {
         loadKnownBuiltins(builtIns)
     }

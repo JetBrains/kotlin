@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.signature
 
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.makeFileSignature
 import org.jetbrains.kotlin.backend.common.serialization.mangle.MangleConstant
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -18,7 +19,11 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignatureComputer {
+class PublicIdSignatureComputer(
+    val mangler: KotlinMangler.IrMangler,
+    val sourceBaseDirs: Collection<String>,
+    val normalizeAbsolutePaths: Boolean,
+) : IdSignatureComputer {
 
     private val publicSignatureBuilder = PublicIdSigBuilder()
 
@@ -41,7 +46,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 
     override fun <R> inFile(file: IrFileSymbol?, block: () -> R): R {
         val previousFileSignature = currentFileSignatureX
-        currentFileSignatureX = file?.let(IdSignature::FileSignature)
+        currentFileSignatureX = file?.makeFileSignature(sourceBaseDirs, normalizeAbsolutePaths)
 
         try {
             return block()

@@ -38,7 +38,11 @@ import org.jetbrains.kotlin.ir.util.*
 
 class FakeOverrideGlobalDeclarationTable(
     mangler: KotlinMangler.IrMangler
-) : GlobalDeclarationTable(mangler) {
+) : GlobalDeclarationTable(
+    mangler,
+    sourceBaseDirs = emptyList(),   // This property is only used in serialization
+    normalizeAbsolutePaths = false, // This property is only used in serialization
+) {
     fun clear() = table.clear()
 }
 

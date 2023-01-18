@@ -58,7 +58,7 @@ class IrBuiltInsOverFir(
     private val kotlinIrPackage = createPackage(kotlinPackage)
     private val kotlinInternalIrPackage = createPackage(kotlinInternalPackage)
 
-    private val irSignatureBuilder = PublicIdSignatureComputer(irMangler)
+    private val irSignatureBuilder = PublicIdSignatureComputer(irMangler, sourceBaseDirs = emptyList(), normalizeAbsolutePaths = false)
 
     override val booleanNotSymbol: IrSimpleFunctionSymbol by lazy {
         boolean.ensureLazyContentsCreated()

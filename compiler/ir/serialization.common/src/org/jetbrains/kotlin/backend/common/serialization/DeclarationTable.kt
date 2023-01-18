@@ -28,13 +28,19 @@ interface IdSignatureClashTracker {
 
 abstract class GlobalDeclarationTable(
     private val mangler: KotlinMangler.IrMangler,
-    private val clashTracker: IdSignatureClashTracker
+    private val clashTracker: IdSignatureClashTracker,
+    sourceBaseDirs: Collection<String>,
+    normalizeAbsolutePaths: Boolean,
 ) {
-    val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
+    val publicIdSignatureComputer = PublicIdSignatureComputer(mangler, sourceBaseDirs, normalizeAbsolutePaths)
 
     protected val table = mutableMapOf<IrDeclaration, IdSignature>()
 
-    constructor(mangler: KotlinMangler.IrMangler) : this(mangler, IdSignatureClashTracker.DEFAULT_TRACKER)
+    constructor(
+        mangler: KotlinMangler.IrMangler,
+        sourceBaseDirs: Collection<String>,
+        normalizeAbsolutePaths: Boolean,
+    ) : this(mangler, IdSignatureClashTracker.DEFAULT_TRACKER, sourceBaseDirs, normalizeAbsolutePaths)
 
     protected fun loadKnownBuiltins(builtIns: IrBuiltIns) {
         builtIns.knownBuiltins.forEach {

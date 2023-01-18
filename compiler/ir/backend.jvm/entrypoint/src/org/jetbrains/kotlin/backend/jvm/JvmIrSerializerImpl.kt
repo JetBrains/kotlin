@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.jvm.lower.getFileClassInfo
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmGlobalDeclarationTable
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIrSerializerSession
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmSerializeIrMode
@@ -20,7 +21,12 @@ import org.jetbrains.kotlin.name.FqName
 
 class JvmIrSerializerImpl(private val configuration: CompilerConfiguration) : JvmIrSerializer {
 
-    private val declarationTable = DeclarationTable(JvmGlobalDeclarationTable())
+    private val declarationTable = DeclarationTable(
+        JvmGlobalDeclarationTable(
+            configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, emptyList()),
+            configuration.get(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH, false)
+        )
+    )
 
     override fun serializeIrFile(irFile: IrFile): ByteArray? {
         val fileClassFqName = irFile.getFileClassInfo().fileClassFqName

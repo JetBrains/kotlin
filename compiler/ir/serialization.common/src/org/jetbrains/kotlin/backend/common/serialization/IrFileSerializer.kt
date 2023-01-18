@@ -353,7 +353,7 @@ open class IrFileSerializer(
         val symbolKind = protoSymbolKind(symbol)
 
         val signatureId = when {
-            symbol is IrFileSymbol -> protoIdSignature(IdSignature.FileSignature(symbol)) // TODO: special signature for files?
+            symbol is IrFileSymbol -> protoIdSignature(symbol.makeFileSignature(sourceBaseDirs, normalizeAbsolutePaths))
             else -> {
                 val declaration = symbol.owner as? IrDeclaration ?: error("Expected IrDeclaration: ${symbol.owner.render()}")
                 protoIdSignature(declaration)
@@ -1352,7 +1352,7 @@ open class IrFileSerializer(
 // ---------- Top level ------------------------------------------------------
 
     private fun serializeFileEntry(entry: IrFileEntry): ProtoFileEntry = ProtoFileEntry.newBuilder()
-        .setName(entry.matchAndNormalizeFilePath())
+        .setName(entry.matchAndNormalizeFilePath(sourceBaseDirs, normalizeAbsolutePaths))
         .addAllLineStartOffset(entry.lineStartOffsets.asIterable())
         .build()
 
@@ -1466,30 +1466,6 @@ open class IrFileSerializer(
         )
     }
 
-    private fun tryMatchPath(fileName: String): String? {
-        val file = File(fileName)
-        val path = file.toPath()
-
-        for (base in sourceBaseDirs) {
-            if (path.startsWith(base)) {
-                return file.toRelativeString(File(base))
-            }
-        }
-
-        return null
-    }
-
-    private fun IrFileEntry.matchAndNormalizeFilePath(): String {
-        tryMatchPath(name)?.let {
-            return it.replace(File.separatorChar, '/')
-        }
-
-        if (!normalizeAbsolutePaths) return name
-
-        return name.replace(File.separatorChar, '/')
-
-    }
-
     private fun serializeExpectActualSubstitutionTable(proto: ProtoFile.Builder) {
         if (skipExpects) return
 
@@ -1505,3 +1481,33 @@ open class IrFileSerializer(
         }
     }
 }
+
+private fun tryMatchPath(fileName: String, sourceBaseDirs: Collection<String>): String? {
+    val file = File(fileName)
+    val path = file.toPath()
+
+    for (base in sourceBaseDirs) {
+        if (path.startsWith(base)) {
+            return file.toRelativeString(File(base))
+        }
+    }
+
+    return null
+}
+
+internal fun IrFileEntry.matchAndNormalizeFilePath(sourceBaseDirs: Collection<String>, normalizeAbsolutePaths: Boolean): String {
+    tryMatchPath(name, sourceBaseDirs)?.let {
+        return it.replace(File.separatorChar, '/')
+    }
+
+    if (!normalizeAbsolutePaths) return name
+
+    return name.replace(File.separatorChar, '/')
+}
+
+internal fun IrFileSymbol.makeFileSignature(sourceBaseDirs: Collection<String>, normalizeAbsolutePaths: Boolean) =
+    IdSignature.FileSignature(
+        id = this,
+        fqName = owner.fqName,
+        fileName = owner.fileEntry.matchAndNormalizeFilePath(sourceBaseDirs, normalizeAbsolutePaths)
+    )

@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.backend.jvm.*
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmSerializeIrMode
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -25,7 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 class JvmFir2IrExtensions(
-    configuration: CompilerConfiguration,
+    private val configuration: CompilerConfiguration,
     private val irDeserializer: JvmIrDeserializer,
     private val mangler: KotlinMangler.IrMangler,
 ) : Fir2IrExtensions, JvmGeneratorExtensions {
@@ -58,7 +55,11 @@ class JvmFir2IrExtensions(
         }
 
     override fun registerDeclarations(symbolTable: SymbolTable) {
-        val signatureComputer = PublicIdSignatureComputer(mangler)
+        val signatureComputer = PublicIdSignatureComputer(
+            mangler,
+            configuration.get(CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES, emptyList()),
+            configuration.getBoolean(CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH),
+        )
         specialAnnotationConstructors.forEach { constructor ->
             symbolTable.declareConstructorWithSignature(signatureComputer.composePublicIdSignature(constructor, false), constructor.symbol)
         }
