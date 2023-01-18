@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -42,6 +43,12 @@ abstract class ExpectSymbolTransformer : IrElementTransformerVoid() {
 
     protected abstract fun getActualFunction(descriptor: FunctionDescriptor): IrSimpleFunctionSymbol?
 
+    /**
+     * [isTargetDeclaration] can be overridden to customize if an element referring to [declaration] should be transformed. This check
+     * precedes [getActualClass], [getActualProperty], and so on.
+     */
+    protected open fun isTargetDeclaration(declaration: IrDeclaration): Boolean = declaration.isExpect
+
     override fun visitElement(element: IrElement): IrElement {
         element.transformChildrenVoid()
         return element
@@ -49,7 +56,7 @@ abstract class ExpectSymbolTransformer : IrElementTransformerVoid() {
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
         val nExpression = super.visitConstructorCall(expression) as IrConstructorCall
-        if (!nExpression.symbol.owner.isExpect) return nExpression
+        if (!isTargetDeclaration(nExpression.symbol.owner)) return nExpression
 
         val newCallee = getActualConstructor(nExpression.symbol.descriptor) ?: return nExpression
         with(nExpression) {
@@ -64,7 +71,7 @@ abstract class ExpectSymbolTransformer : IrElementTransformerVoid() {
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
         val nExpression = super.visitDelegatingConstructorCall(expression) as IrDelegatingConstructorCall
-        if (!nExpression.symbol.owner.isExpect) return nExpression
+        if (!isTargetDeclaration(nExpression.symbol.owner)) return nExpression
 
         val newCallee = getActualConstructor(nExpression.symbol.descriptor) ?: return nExpression
         with(nExpression) {
@@ -79,7 +86,7 @@ abstract class ExpectSymbolTransformer : IrElementTransformerVoid() {
 
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall): IrExpression {
         val nExpression = super.visitEnumConstructorCall(expression) as IrEnumConstructorCall
-        if (!nExpression.symbol.owner.isExpect) return nExpression
+        if (!isTargetDeclaration(nExpression.symbol.owner)) return nExpression
 
         val newCallee = getActualConstructor(nExpression.symbol.descriptor) ?: return nExpression
         with(nExpression) {
@@ -94,7 +101,7 @@ abstract class ExpectSymbolTransformer : IrElementTransformerVoid() {
 
     override fun visitCall(expression: IrCall): IrExpression {
         val nExpression = super.visitCall(expression) as IrCall
-        if (!nExpression.symbol.owner.isExpect) return nExpression
+        if (!isTargetDeclaration(nExpression.symbol.owner)) return nExpression
 
         val newCallee = getActualFunction(nExpression.symbol.descriptor) ?: return nExpression
         return irCall(nExpression, newCallee).also {
@@ -104,7 +111,7 @@ abstract class ExpectSymbolTransformer : IrElementTransformerVoid() {
 
     override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
         val nExpression = super.visitPropertyReference(expression) as IrPropertyReference
-        if (!nExpression.symbol.owner.isExpect) return nExpression
+        if (!isTargetDeclaration(nExpression.symbol.owner)) return nExpression
 
         val (newSymbol, newGetter, newSetter) = getActualProperty(nExpression.symbol.descriptor) ?: return nExpression
         with(nExpression) {
@@ -124,7 +131,7 @@ abstract class ExpectSymbolTransformer : IrElementTransformerVoid() {
 
     override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
         val nExpression = super.visitFunctionReference(expression) as IrFunctionReference
-        if (!nExpression.symbol.owner.isExpect) return nExpression
+        if (!isTargetDeclaration(nExpression.symbol.owner)) return nExpression
 
         val newCallee = getActualFunction(nExpression.symbol.descriptor) ?: return nExpression
         with(nExpression) {
@@ -142,7 +149,7 @@ abstract class ExpectSymbolTransformer : IrElementTransformerVoid() {
     override fun visitClassReference(expression: IrClassReference): IrExpression {
         val nExpression = super.visitClassReference(expression) as IrClassReference
         val oldSymbol = nExpression.symbol as? IrClassSymbol ?: return nExpression
-        if (!oldSymbol.owner.isExpect) return nExpression
+        if (!isTargetDeclaration(oldSymbol.owner)) return nExpression
 
         val newSymbol = getActualClass(oldSymbol.descriptor) ?: return nExpression
         with(nExpression) {

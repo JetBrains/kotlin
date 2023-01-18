@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -76,6 +77,14 @@ private class StubOrphanedExpectSymbolTransformer(val stubGenerator: Declaration
                 .symbol
         }
     }
+
+    /**
+     * Property getters and setters are not marked as `isExpect` even if the corresponding property is. However, we still need to stub such
+     * getters and setters, so [isTargetDeclaration] allows it.
+     */
+    override fun isTargetDeclaration(declaration: IrDeclaration): Boolean =
+        super.isTargetDeclaration(declaration) ||
+                declaration is IrSimpleFunction && declaration.correspondingPropertySymbol?.owner?.isExpect == true
 
     /**
      * If an `actual` symbol exists, we shouldn't stub the `expect` symbol. This will be performed by
