@@ -651,7 +651,7 @@ fun Project.configureDokkaPublication(
 
             project.dependencies {
                 // Version is required due to https://github.com/Kotlin/dokka/issues/2812
-                "dokkaPlugin"("org.jetbrains.dokka:versioning-plugin:1.7.20")
+                "dokkaPlugin"("org.jetbrains.dokka:versioning-plugin:1.8.0-dev-189")
             }
 
             tasks.register<DokkaTask>("dokkaKotlinlangDocumentation") {
