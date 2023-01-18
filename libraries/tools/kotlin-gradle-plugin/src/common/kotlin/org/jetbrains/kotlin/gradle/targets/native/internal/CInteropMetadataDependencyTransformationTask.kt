@@ -12,7 +12,6 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
@@ -197,12 +196,12 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @get:OutputFile
     val outputLibrariesFileIndex: RegularFileProperty = objectFactory
         .fileProperty()
-        .apply { set(outputDirectory.resolve("${sourceSet.name}.transformedCinteropLibraries")) }
+        .apply { set(outputDirectory.resolve("${sourceSet.name}.cinteropLibraries")) }
 
     @get:Internal
     val outputLibraryFiles: FileCollection = project.filesProvider {
         outputLibrariesFileIndex.map { file ->
-            TransformedCinteropLibrariesFile(file.asFile).read()
+            KotlinMetadataLibrariesIndexFile(file.asFile).read()
         }
     }
 
@@ -215,7 +214,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         outputLibraryFilesDiscovery.resolveOutputLibraryFiles(outputDirectory, chooseVisibleSourceSets)
         chooseVisibleSourceSets.forEach(::materializeMetadata)
         val transformedLibraries = outputLibraryFilesDiscovery.resolveOutputLibraryFiles(outputDirectory, chooseVisibleSourceSets)
-        TransformedCinteropLibrariesFile(outputLibrariesFileIndex.get().asFile).write(transformedLibraries)
+        KotlinMetadataLibrariesIndexFile(outputLibrariesFileIndex.get().asFile).write(transformedLibraries)
     }
 
     private fun materializeMetadata(
@@ -242,13 +241,3 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     }
 }
 
-private class TransformedCinteropLibrariesFile(
-    private val indexFile: File
-) {
-    fun read(): Set<File> = indexFile.readLines().mapTo(mutableSetOf()) { File(it) }
-
-    fun write(files: Iterable<File>) {
-        val content = files.joinToString(System.lineSeparator())
-        indexFile.writeText(content)
-    }
-}
