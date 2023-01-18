@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -36,7 +36,7 @@ private fun FirAnnotation.toAnnotationLookupTagSafe(session: FirSession): ConeCl
 fun FirAnnotation.toAnnotationClassId(session: FirSession): ClassId? =
     toAnnotationLookupTag(session)?.classId
 
-private fun FirAnnotation.toAnnotationClassIdSafe(session: FirSession): ClassId? =
+fun FirAnnotation.toAnnotationClassIdSafe(session: FirSession): ClassId? =
     toAnnotationLookupTagSafe(session)?.classId
 
 fun FirAnnotation.toAnnotationClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? =

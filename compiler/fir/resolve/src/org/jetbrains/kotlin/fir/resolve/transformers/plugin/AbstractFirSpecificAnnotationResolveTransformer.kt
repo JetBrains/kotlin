@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.DesignationState
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSpecificTypeResolverTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS_WITH_ARGUMENTS
 import org.jetbrains.kotlin.fir.resolve.transformers.withClassDeclarationCleanup
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.createImportingScopes
@@ -43,6 +45,22 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
+object CompilerRequiredAnnotationsHelper {
+    internal val REQUIRED_ANNOTATIONS_WITH_ARGUMENTS: Set<ClassId> = setOf(
+        Deprecated,
+        Annotations.Retention,
+        Annotations.Target,
+    )
+
+    val REQUIRED_ANNOTATIONS: Set<ClassId> = REQUIRED_ANNOTATIONS_WITH_ARGUMENTS + setOf(
+        DeprecatedSinceKotlin,
+        WasExperimental,
+        JvmRecord,
+        Annotations.Repeatable,
+        Annotations.Java.Repeatable,
+    )
+}
+
 internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     protected val session: FirSession,
     protected val scopeSession: ScopeSession,
@@ -50,20 +68,6 @@ internal abstract class AbstractFirSpecificAnnotationResolveTransformer(
     containingDeclarations: List<FirDeclaration> = emptyList()
 ) : FirDefaultTransformer<Nothing?>() {
     companion object {
-        private val REQUIRED_ANNOTATIONS_WITH_ARGUMENTS: Set<ClassId> = setOf(
-            Deprecated,
-            Annotations.Retention,
-            Annotations.Target,
-        )
-
-        private val REQUIRED_ANNOTATIONS: Set<ClassId> = REQUIRED_ANNOTATIONS_WITH_ARGUMENTS + setOf(
-            DeprecatedSinceKotlin,
-            WasExperimental,
-            JvmRecord,
-            Annotations.Repeatable,
-            Annotations.Java.Repeatable,
-        )
-
         private val REQUIRED_ANNOTATION_NAMES: Set<Name> = REQUIRED_ANNOTATIONS.mapTo(mutableSetOf()) { it.shortClassName }
     }
 
