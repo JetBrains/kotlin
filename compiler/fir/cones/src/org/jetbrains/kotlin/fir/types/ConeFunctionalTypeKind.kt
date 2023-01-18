@@ -85,6 +85,10 @@ abstract class ConeFunctionalTypeKind internal constructor(
 
     fun numberedClassName(arity: Int): Name = Name.identifier("$classNamePrefix$arity")
 
+    override fun toString(): String {
+        return "$packageFqName.${classNamePrefix}N"
+    }
+
     // ------------------------------------------- Builtin functional kinds -------------------------------------------
 
     object Function : ConeFunctionalTypeKind(

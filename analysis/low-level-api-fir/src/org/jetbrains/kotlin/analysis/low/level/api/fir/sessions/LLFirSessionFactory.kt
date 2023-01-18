@@ -108,6 +108,7 @@ internal object LLFirSessionFactory {
 
             registerCompilerPluginServices(contentScope, project, module)
             registerCompilerPluginExtensions(project, module)
+            registerCommonComponentsAfterExtensionsAreConfigured()
 
             val switchableExtensionDeclarationsSymbolProvider = FirSwitchableExtensionDeclarationsSymbolProvider.create(session)?.also {
                 register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it)
@@ -206,6 +207,7 @@ internal object LLFirSessionFactory {
 
             registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
+            registerCommonComponentsAfterExtensionsAreConfigured()
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerResolveComponents()
             registerJavaSpecificResolveComponents()
@@ -288,6 +290,7 @@ internal object LLFirSessionFactory {
 
             registerIdeComponents(project)
             registerCommonComponents(languageVersionSettings)
+            registerCommonComponentsAfterExtensionsAreConfigured()
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerResolveComponents()
             registerJavaSpecificResolveComponents()

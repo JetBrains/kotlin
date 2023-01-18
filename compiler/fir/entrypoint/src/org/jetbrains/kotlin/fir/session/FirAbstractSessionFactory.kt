@@ -44,6 +44,7 @@ abstract class FirAbstractSessionFactory {
 
             registerCliCompilerOnlyComponents()
             registerCommonComponents(languageVersionSettings)
+            registerCommonComponentsAfterExtensionsAreConfigured()
             registerExtraComponents(this)
 
             val kotlinScopeProvider = createKotlinScopeProvider.invoke()
@@ -105,6 +106,7 @@ abstract class FirAbstractSessionFactory {
                 }
                 init()
             }.configure()
+            registerCommonComponentsAfterExtensionsAreConfigured()
 
             val dependencyProviders = computeDependencyProviderList(moduleData)
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.create(this)

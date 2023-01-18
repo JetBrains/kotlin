@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import java.util.concurrent.ConcurrentHashMap
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.session.registerCommonComponentsAfterExtensionsAreConfigured
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
@@ -54,6 +55,7 @@ class LLFirBuiltinsSessionFactory(
             registerIdeComponents(project)
             register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
             registerCommonComponents(LanguageVersionSettingsImpl.DEFAULT/*TODO*/)
+            registerCommonComponentsAfterExtensionsAreConfigured()
             registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
             registerModuleData(moduleData)
 

@@ -43,6 +43,10 @@ enum class FunctionClassKind(
         fun getFunctionalClassKind(className: String, packageFqName: FqName) =
             parseClassName(className, packageFqName)?.kind
 
+        fun hasArityAtTheEnd(prefix: String, className: String): Boolean {
+            return toInt(className.substring(prefix.length)) != null
+        }
+
         private fun toInt(s: String): Int? {
             if (s.isEmpty()) return null
 
