@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate.BuilderContext.annotated
 import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.constructType
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -98,7 +97,7 @@ class FirDataFrameExtensionsGenerator(
 
                 val columnGroupProjection: ConeTypeProjection? = if (resolvedReturnTypeRef.coneType.classId?.equals(Names.DATA_ROW_CLASS_ID) == true) {
                     resolvedReturnTypeRef.coneType.typeArguments[0]
-                } else if (resolvedReturnTypeRef.toClassLikeSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID) == true) {
+                } else if (resolvedReturnTypeRef.toClassLikeSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session) == true) {
                     resolvedReturnTypeRef.coneType
                 } else {
                     null
@@ -106,7 +105,7 @@ class FirDataFrameExtensionsGenerator(
 
                 if (
                     resolvedReturnTypeRef.type.classId?.equals(Names.LIST) == true &&
-                    (resolvedReturnTypeRef.type.typeArguments[0] as? ConeClassLikeType)?.toSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID) == true
+                    (resolvedReturnTypeRef.type.typeArguments[0] as? ConeClassLikeType)?.toSymbol(session)?.hasAnnotation(Names.DATA_SCHEMA_CLASS_ID, session) == true
                 ) {
                     require(columnGroupProjection == null)
                     resolvedReturnTypeRef = ConeClassLikeTypeImpl(
@@ -265,7 +264,7 @@ class FirDataFrameExtensionsGenerator(
         return scopes
     }
 
-    override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
+    override fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
         if (classId !in scopes) return null
         val klass = buildRegularClass {
             moduleData = session.moduleData
