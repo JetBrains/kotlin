@@ -20,27 +20,27 @@ digraph inAnonymousObject_kt {
                 5 [label="Enter class <anonymous object>" style="filled" fillcolor=red];
                 subgraph cluster_4 {
                     color=blue
-                    6 [label="Enter function <init>" style="filled" fillcolor=red];
-                    7 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-                    8 [label="Exit function <init>" style="filled" fillcolor=red];
+                    6 [label="Enter property" style="filled" fillcolor=red];
+                    7 [label="Access variable R|<local>/a|"];
+                    8 [label="Exit property" style="filled" fillcolor=red];
                 }
                 subgraph cluster_5 {
                     color=blue
-                    9 [label="Enter property" style="filled" fillcolor=red];
-                    10 [label="Access variable R|<local>/a|"];
-                    11 [label="Exit property" style="filled" fillcolor=red];
-                }
-                subgraph cluster_6 {
-                    color=blue
-                    12 [label="Enter init block" style="filled" fillcolor=red];
-                    subgraph cluster_7 {
+                    9 [label="Enter init block" style="filled" fillcolor=red];
+                    subgraph cluster_6 {
                         color=blue
-                        13 [label="Enter block"];
-                        14 [label="Access variable R|<local>/b|"];
-                        15 [label="Assignment: R|/<anonymous>.leaked|"];
-                        16 [label="Exit block"];
+                        10 [label="Enter block"];
+                        11 [label="Access variable R|<local>/b|"];
+                        12 [label="Assignment: R|/<anonymous>.leaked|"];
+                        13 [label="Exit block"];
                     }
-                    17 [label="Exit init block" style="filled" fillcolor=red];
+                    14 [label="Exit init block" style="filled" fillcolor=red];
+                }
+                subgraph cluster_7 {
+                    color=blue
+                    15 [label="Enter function <init>" style="filled" fillcolor=red];
+                    16 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+                    17 [label="Exit function <init>" style="filled" fillcolor=red];
                 }
                 18 [label="Exit class <anonymous object>" style="filled" fillcolor=red];
             }
@@ -72,20 +72,20 @@ digraph inAnonymousObject_kt {
     4 -> {19} [style=dotted];
     4 -> {5} [style=dashed];
     5 -> {6};
-    5 -> {9 12 26} [color=red];
+    5 -> {9 15 26} [color=red];
     5 -> {18} [style=dotted];
-    5 -> {6 9 12} [style=dashed];
+    5 -> {6 9 15} [style=dashed];
     6 -> {7};
     7 -> {8};
     8 -> {9} [color=green];
     8 -> {18} [color=red];
     9 -> {10};
     10 -> {11};
-    11 -> {12} [color=green];
-    11 -> {18} [color=red];
+    11 -> {12};
     12 -> {13};
     13 -> {14};
-    14 -> {15};
+    14 -> {15} [color=green];
+    14 -> {18} [color=red];
     15 -> {16};
     16 -> {17};
     17 -> {18};

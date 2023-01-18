@@ -119,21 +119,21 @@ digraph smartcastToNothing_kt {
         39 [label="Enter class A" style="filled" fillcolor=red];
         subgraph cluster_11 {
             color=blue
-            40 [label="Enter function <init>" style="filled" fillcolor=red];
-            41 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
-            42 [label="Exit function <init>" style="filled" fillcolor=red];
+            40 [label="Enter property" style="filled" fillcolor=red];
+            41 [label="Const: Int(1)"];
+            42 [label="Exit property" style="filled" fillcolor=red];
         }
         subgraph cluster_12 {
             color=blue
             43 [label="Enter property" style="filled" fillcolor=red];
-            44 [label="Const: Int(1)"];
+            44 [label="Const: Boolean(true)"];
             45 [label="Exit property" style="filled" fillcolor=red];
         }
         subgraph cluster_13 {
             color=blue
-            46 [label="Enter property" style="filled" fillcolor=red];
-            47 [label="Const: Boolean(true)"];
-            48 [label="Exit property" style="filled" fillcolor=red];
+            46 [label="Enter function <init>" style="filled" fillcolor=red];
+            47 [label="Delegated constructor call: super<R|kotlin/Any|>()" style="filled" fillcolor=yellow];
+            48 [label="Exit function <init>" style="filled" fillcolor=red];
         }
         49 [label="Exit class A" style="filled" fillcolor=red];
     }
