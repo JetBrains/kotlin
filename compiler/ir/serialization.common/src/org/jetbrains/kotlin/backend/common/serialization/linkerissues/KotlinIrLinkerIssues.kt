@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization.linkerissues
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.serialization.InvalidIdSignatureException
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.PotentialConflictKind.*
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.PotentialConflictKind.Companion.mostSignificantConflictKind
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.ResolvedDependency
 import org.jetbrains.kotlin.utils.ResolvedDependencyId
 import org.jetbrains.kotlin.utils.ResolvedDependencyVersion
-import kotlin.Comparator
 
 /**
  * TODO: Currently, [KotlinIrLinkerInternalException] is only needed to show the stacktrace to the user.
@@ -26,12 +26,20 @@ import kotlin.Comparator
  *  But, probably, we don't even need to show the stacktrace, so we could probably get rid of [KotlinIrLinkerInternalException] at all.
  */
 abstract class KotlinIrLinkerIssue(private val needStacktrace: Boolean) {
-    protected abstract val errorMessage: String
+    abstract val errorMessage: String
 
     fun raiseIssue(messageLogger: IrMessageLogger): Nothing {
         messageLogger.report(IrMessageLogger.Severity.ERROR, errorMessage, null)
         throw if (needStacktrace) KotlinIrLinkerInternalException() else CompilationErrorException()
     }
+}
+
+fun List<KotlinIrLinkerIssue>.raiseIssues(messageLogger: IrMessageLogger, needStacktrace: Boolean): Nothing {
+    require(isNotEmpty())
+    for (issue in this) {
+        messageLogger.report(IrMessageLogger.Severity.ERROR, issue.errorMessage, null)
+    }
+    throw if (needStacktrace) KotlinIrLinkerInternalException() else CompilationErrorException()
 }
 
 class UnexpectedUnboundIrSymbols(unboundSymbols: Set<IrSymbol>, whenDetected: String) : KotlinIrLinkerIssue(needStacktrace = false) {
@@ -192,6 +200,39 @@ class SymbolTypeMismatch(
             } that is the cause of the conflict",
             sourceCodeModuleId = userVisibleIrModulesSupport.sourceCodeModuleId,
             moduleIdComparator = userVisibleIrModulesSupport.moduleIdComparator
+        )
+    }
+}
+
+class InvalidSignature(
+    private val cause: InvalidIdSignatureException,
+    private val problemModuleDeserializer: IrModuleDeserializer,
+    private val allModuleDeserializers: Collection<IrModuleDeserializer>,
+    private val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
+) : KotlinIrLinkerIssue(needStacktrace = false) {
+    override val errorMessage: String = try {
+        computeErrorMessage()
+    } catch (e: Throwable) {
+        // Don't suppress the real cause if computation of error message failed.
+        throw if (e === cause) e else e.apply { addSuppressed(cause) }
+    }
+
+    private fun computeErrorMessage() = buildString {
+        val renderedSignature = cause.erroneousSignature.render()
+        append("While deserializing the signature ")
+        append(renderedSignature)
+        appendLine(":")
+        append(cause.message!!)
+
+        val allModules = userVisibleIrModulesSupport.getUserVisibleModules(allModuleDeserializers)
+        val problemModuleId = userVisibleIrModulesSupport.getProblemModuleId(problemModuleDeserializer, allModules)
+
+        appendProjectDependencies(
+            allModules = allModules,
+            problemModuleIds = setOf(problemModuleId),
+            problemCause = "This module contains an ill-formed signature $renderedSignature",
+            sourceCodeModuleId = userVisibleIrModulesSupport.sourceCodeModuleId,
+            moduleIdComparator = userVisibleIrModulesSupport.moduleIdComparator,
         )
     }
 }
