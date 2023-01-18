@@ -851,6 +851,10 @@ object PositioningStrategies {
                     is KtElement -> return mark(selectorExpression)
                 }
             }
+            if (element is KtImportDirective) {
+                element.alias?.nameIdentifier?.let { return mark(it) }
+                element.importedReference?.let { return mark(it) }
+            }
             if (element is KtTypeReference) {
                 element.typeElement?.getReferencedTypeExpression()?.let { return mark(it) }
             }

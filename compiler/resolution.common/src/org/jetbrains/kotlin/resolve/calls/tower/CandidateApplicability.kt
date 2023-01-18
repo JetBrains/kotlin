@@ -14,6 +14,8 @@ enum class CandidateApplicability {
 
     /**
      * Candidate is removed from resolve due to SinceKotlin with later version or Deprecation with hidden level.
+     * Note that SinceKotlin does not filter out classifier symbols and property accessors. Those
+     * should lead to API_NOT_AVAILABLE.
      * Provokes UNRESOLVED_REFERENCE.
      */
     HIDDEN,

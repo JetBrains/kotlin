@@ -38,7 +38,7 @@ object FirImportsChecker : FirFileChecker() {
                     checkOperatorRename(import, context, reporter)
                 }
             }
-            checkDeprecatedImport(import, context, reporter)
+            checkImportApiStatus(import, context, reporter)
         }
         checkConflictingImports(declaration.imports, context, reporter)
     }
@@ -241,11 +241,11 @@ object FirImportsChecker : FirFileChecker() {
         else ImportStatus.UNRESOLVED
     }
 
-    private fun checkDeprecatedImport(import: FirImport, context: CheckerContext, reporter: DiagnosticReporter) {
+    private fun checkImportApiStatus(import: FirImport, context: CheckerContext, reporter: DiagnosticReporter) {
         val importedFqName = import.importedFqName ?: return
         if (importedFqName.isRoot || importedFqName.shortName().asString().isEmpty()) return
         val classId = (import as? FirResolvedImport)?.resolvedParentClassId ?: ClassId.topLevel(importedFqName)
         val classLike: FirRegularClassSymbol = classId.resolveToClass(context) ?: return
-        FirDeprecationChecker.reportDeprecationIfNeeded(import.source, classLike, null, context, reporter)
+        FirDeprecationChecker.reportApiStatusIfNeeded(import.source, classLike, null, context, reporter)
     }
 }
