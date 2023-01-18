@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
-import org.jetbrains.kotlin.gradle.utils.allResolvedDependencies
 import org.jetbrains.kotlin.gradle.utils.mergeWith
 import java.util.*
 

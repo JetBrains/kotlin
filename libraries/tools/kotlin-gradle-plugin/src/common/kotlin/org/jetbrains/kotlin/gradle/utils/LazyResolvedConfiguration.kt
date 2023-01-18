@@ -50,6 +50,10 @@ internal class LazyResolvedConfiguration private constructor(
         }
     }
 
+    internal val allResolvedDependencies: Set<ResolvedDependencyResult> by TransientLazy {
+        allDependencies.filterIsInstance<ResolvedDependencyResult>().toSet()
+    }
+
     fun getArtifacts(dependency: ResolvedDependencyResult): List<ResolvedArtifactResult> {
         val componentId = dependency.resolvedVariant.lastExternalVariantOrSelf().owner
         return artifactsByComponentId[componentId] ?: emptyList()
@@ -67,10 +71,6 @@ internal class LazyResolvedConfiguration private constructor(
     override fun toString(): String = "LazyResolvedConfiguration(configuration='$configurationName')"
 }
 
-internal val LazyResolvedConfiguration.allResolvedDependencies: Set<ResolvedDependencyResult>
-    get() = allDependencies
-        .filterIsInstance<ResolvedDependencyResult>()
-        .toSet()
 
 /**
  * Same as [LazyResolvedConfiguration.getArtifacts] except it returns null for cases when dependency is resolved
