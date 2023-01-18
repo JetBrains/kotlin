@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.kapt3.test.integration
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.kapt3.test.JvmCompilerWithKaptFacade
 import org.jetbrains.kotlin.kapt3.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt3.test.KaptEnvironmentConfigurator
@@ -45,8 +46,8 @@ class AbstractKotlinKapt3IntegrationTestRunner(
 
         defaultDirectives {
             +KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
-            if (targetBackend.isIR) {
-                +KaptTestDirectives.USE_JVM_IR
+            if (!targetBackend.isIR) {
+                KaptTestDirectives.DISABLED_FLAGS with KaptFlag.USE_JVM_IR
             }
         }
 
