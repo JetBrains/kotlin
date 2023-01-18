@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
+import org.jetbrains.kotlin.fir.expressions.FirErrorResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.getOwnerLookupTag
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeVisibilityError
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -38,7 +40,10 @@ object FirVisibilityQualifierChecker : FirResolvedQualifierChecker() {
                 firClassLikeDeclaration, context.session, firFile, context.containingDeclarations,
             )
         ) {
-            reporter.reportOn(expression.source, FirErrors.INVISIBLE_REFERENCE, symbol, context)
+            if (expression !is FirErrorResolvedQualifier || expression.diagnostic !is ConeVisibilityError) {
+                reporter.reportOn(expression.source, FirErrors.INVISIBLE_REFERENCE, symbol, context)
+            }
+
             return
         }
 

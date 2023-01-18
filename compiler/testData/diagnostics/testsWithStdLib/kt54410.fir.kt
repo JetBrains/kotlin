@@ -3,6 +3,6 @@
 import kotlin.io.path.<!API_NOT_AVAILABLE!>OnErrorResult<!>
 
 fun fun0 (): Unit {
-    val something1 = <!NO_COMPANION_OBJECT!>OnErrorResult<!>.<!OPT_IN_USAGE_ERROR!>TERMINATE<!>
+    val something1 = <!API_NOT_AVAILABLE, NO_COMPANION_OBJECT, OPT_IN_USAGE_ERROR!>OnErrorResult<!>.<!OPT_IN_USAGE_ERROR!>TERMINATE<!>
     val something2 = kotlin.io.path.<!API_NOT_AVAILABLE, OPT_IN_USAGE_ERROR!>OnErrorResult<!>.<!OPT_IN_USAGE_ERROR!>TERMINATE<!>
 }
