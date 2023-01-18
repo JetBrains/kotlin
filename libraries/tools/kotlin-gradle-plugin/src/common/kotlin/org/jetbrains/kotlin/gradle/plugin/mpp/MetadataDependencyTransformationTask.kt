@@ -102,7 +102,7 @@ open class MetadataDependencyTransformationTask
         .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.visibleSourceSets")) }
 
     @get:InputFiles
-    val parentVisibleSourceSetFiles: FileCollection = project.filesProvider {
+    internal val parentVisibleSourceSetFiles: FileCollection = project.filesProvider {
         parentTransformationTasks.map { taskProvider ->
             taskProvider.flatMap { task ->
                 task.visibleSourceSetsFile.map { it.asFile }
@@ -111,7 +111,7 @@ open class MetadataDependencyTransformationTask
     }
 
     @get:InputFiles
-    val parentTransformedLibraries: FileCollection = project.filesProvider {
+    internal val parentTransformedLibraries: FileCollection = project.filesProvider {
         parentTransformationTasks.map { taskProvider ->
             taskProvider.map { task -> task.ownTransformedLibraries }
         }
@@ -168,7 +168,7 @@ open class MetadataDependencyTransformationTask
         }
 
     @get:Internal // Warning! ownTransformedLibraries is available only after Task Execution
-    val ownTransformedLibraries: FileCollection = project.filesProvider {
+    internal val ownTransformedLibraries: FileCollection = project.filesProvider {
         transformedLibrariesFileIndex.map { regularFile ->
             regularFile.asFile.readLines().map { File(it) }
         }
