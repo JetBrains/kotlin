@@ -51,10 +51,8 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
         val reporter: DiagnosticReporter,
         val context: CheckerContext
     ) : ControlFlowGraphVisitorVoid() {
-        override fun visitNode(node: CFGNode<*>) {}
-
-        override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {
-            // TODO: f({ x = 1 }, { x = 2 }) - which to report?
+        override fun visitNode(node: CFGNode<*>) {
+            // TODO: `node.isUnion` - f({ x = 1 }, { x = 2 }) - which to report?
             //  Also this is currently indistinguishable from x = 1; f({}, {}).
         }
 

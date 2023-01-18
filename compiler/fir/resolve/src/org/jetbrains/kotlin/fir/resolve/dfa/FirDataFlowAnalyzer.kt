@@ -1119,7 +1119,7 @@ abstract class FirDataFlowAnalyzer(
             // data flow for any of them until reaching a completed call.
             if (it is MergePostponedLambdaExitsNode) it.mergeIncomingFlow() else it.flow
         }
-        val result = logicSystem.joinFlow(previousFlows, union = this is UnionNodeMarker)
+        val result = logicSystem.joinFlow(previousFlows, isUnion)
         if (graphBuilder.lastNodeOrNull == this) {
             // Here it is, the new `lastNode`. If the previous state is the only predecessor, then there is actually
             // nothing to update; `addTypeStatement` has already ensured we have the correct information.

@@ -273,7 +273,7 @@ class ControlFlowGraphBuilder {
         postponedLambdaExits.push(mutableListOf())
     }
 
-    private fun <T> unifyDataFlowFromPostponedLambdas(node: T, callCompleted: Boolean) where T : CFGNode<*>, T : UnionNodeMarker {
+    private fun unifyDataFlowFromPostponedLambdas(node: CFGNode<*>, callCompleted: Boolean) {
         val currentLevelExits = postponedLambdaExits.pop()
         if (currentLevelExits.isEmpty()) return
 
@@ -449,10 +449,6 @@ class ControlFlowGraphBuilder {
             }
         }
 
-        // Classes are not initialized in place so no point in merging data flow - it will not be used.
-        val mergeDataFlow = klass is FirAnonymousObject && klass.classKind != ClassKind.ENUM_ENTRY
-        val exitKind = if (mergeDataFlow) EdgeKind.Forward else EdgeKind.CfgForward
-
         val lastInPlaceExit = calledInPlace.fold<_, CFGNode<*>>(enterNode) { lastNode, graph ->
             // In local classes, we already have control flow (+ data flow) edge from `enterNode`
             // to first in-place initializer.
@@ -461,10 +457,9 @@ class ControlFlowGraphBuilder {
             }
             graph.exitNode
         }
-        if (mergeDataFlow) {
-            // TODO: this is wrong. Not sure if it's possible to describe the correct data flow graph here. Things
-            //  would be much easier if it was guaranteed that constructors are analyzed after all other members:
-            //  they have no implicit return type anyway, and we could then pass correct data flow to them.
+        if (exitNode.isUnion) {
+            // => this is an anonymous object => there's only one constructor => can use `exitNode`
+            // to unify data flow from all in-place-called members, including said constructor.
             for (graph in calledInPlace) {
                 addEdge(graph.exitNode, exitNode, preferredKind = EdgeKind.DfgForward)
             }
@@ -486,7 +481,7 @@ class ControlFlowGraphBuilder {
             if (delegatedConstructorExit !== enterNode || delegatedConstructorExit.previousNodes.isEmpty()) {
                 addEdgeToSubGraph(delegatedConstructorExit, graph.enterNode)
             }
-            addEdge(graph.exitNode, exitNode, preferredKind = exitKind)
+            addEdge(graph.exitNode, exitNode, preferredKind = if (exitNode.isUnion) EdgeKind.Forward else EdgeKind.CfgForward)
         }
 
         if (constructors.isEmpty()) {
@@ -511,7 +506,7 @@ class ControlFlowGraphBuilder {
 
         enterNode.subGraphs = calledInPlace + constructors.values
         exitNode.subGraphs = calledLater
-        return exitNode.takeIf { mergeDataFlow } to popGraph()
+        return exitNode.takeIf { it.isUnion } to popGraph()
     }
 
     fun exitAnonymousObjectExpression(anonymousObjectExpression: FirAnonymousObjectExpression): AnonymousObjectExpressionExitNode? {

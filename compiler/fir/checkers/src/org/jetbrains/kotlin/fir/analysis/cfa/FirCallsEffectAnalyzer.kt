@@ -158,8 +158,6 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
 
         override fun visitNode(node: CFGNode<*>, data: IllegalScopeContext) {}
 
-        override fun <T> visitUnionNode(node: T, data: IllegalScopeContext) where T : CFGNode<*>, T : UnionNodeMarker {}
-
         override fun visitFunctionEnterNode(node: FunctionEnterNode, data: IllegalScopeContext) {
             // TODO: this is not how CFG works, this should be done by FIR tree traversal. Especially considering that
             //  none of these methods use anything from the CFG other than `node.fir`, which should've been a hint.
@@ -237,7 +235,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker() {
             node: FunctionCallNode,
             data: PathAwareLambdaInvocationInfo
         ): PathAwareLambdaInvocationInfo {
-            var dataForNode = visitUnionNode(node, data)
+            var dataForNode = visitNode(node, data)
 
             val functionSymbol = node.fir.toResolvedCallableSymbol() as? FirFunctionSymbol<*>?
             val contractDescription = functionSymbol?.resolvedContractDescription

@@ -82,8 +82,6 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
     ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
-        override fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker {}
-
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
             val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
             if (symbol !in localProperties) return

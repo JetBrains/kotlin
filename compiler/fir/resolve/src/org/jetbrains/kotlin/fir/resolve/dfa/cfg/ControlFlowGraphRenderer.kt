@@ -70,7 +70,7 @@ class FirControlFlowGraphRenderVisitor(
             when {
                 node.isDead -> "gray"
                 node == node.owner.enterNode || node == node.owner.exitNode -> "red"
-                node is UnionNodeMarker -> "yellow"
+                node.isUnion -> "yellow"
                 else -> null
             }?.let {
                 attributes += "style=\"filled\""

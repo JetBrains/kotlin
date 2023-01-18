@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -30,6 +31,12 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
     val id = owner.nodeCount++
 
     open val canThrow: Boolean get() = false
+
+    //   a ---> b ---> d
+    //      \-> c -/
+    // Normal CFG semantics: a, then either b or c, then d
+    // If d is a union node: a, then *both* b and c in some unknown order, then d
+    open val isUnion: Boolean get() = false
 
     companion object {
         @CfgInternals
@@ -107,7 +114,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
 
     @CfgInternals
     fun updateDeadStatus() {
-        isDead = if (this is UnionNodeMarker)
+        isDead = if (isUnion)
             _incomingEdges?.let { map -> map.values.any { it.kind.isDead } } == true
         else
             _incomingEdges?.let { map -> map.size == previousNodes.size && map.values.all { it.kind.isDead || !it.kind.usedInCfa } } == true
@@ -127,12 +134,6 @@ interface EnterNodeMarker
 interface ExitNodeMarker
 interface GraphEnterNodeMarker : EnterNodeMarker
 interface GraphExitNodeMarker : ExitNodeMarker
-
-//   a ---> b ---> d
-//      \-> c -/
-// Normal CFG semantics: a, then either b or c, then d
-// If d is an instance of this interface: a, then *both* b and c in some unknown order, then d
-interface UnionNodeMarker
 
 // ----------------------------------- EnterNode for declaration with CFG -----------------------------------
 
@@ -245,7 +246,10 @@ class ClassEnterNode(owner: ControlFlowGraph, override val fir: FirClass, level:
 }
 
 class ClassExitNode(owner: ControlFlowGraph, override val fir: FirClass, level: Int) : CFGNodeWithSubgraphs<FirClass>(owner, level),
-    GraphExitNodeMarker, UnionNodeMarker {
+    GraphExitNodeMarker {
+
+    override val isUnion: Boolean
+        get() = fir is FirAnonymousObject && fir.classKind != ClassKind.ENUM_ENTRY
 
     @set:CfgInternals
     override lateinit var subGraphs: List<ControlFlowGraph>
@@ -305,7 +309,10 @@ class PropertyInitializerExitNode(owner: ControlFlowGraph, override val fir: Fir
 
 
 class DelegateExpressionExitNode(owner: ControlFlowGraph, override val fir: FirExpression, level: Int)
-    : CFGNode<FirExpression>(owner, level), UnionNodeMarker {
+    : CFGNode<FirExpression>(owner, level) {
+
+    override val isUnion: Boolean get() = true
+
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitDelegateExpressionExitNode(this, data)
     }
@@ -610,7 +617,10 @@ class ConstExpressionNode(owner: ControlFlowGraph, override val fir: FirConstExp
 // ----------------------------------- Check not null call -----------------------------------
 
 class CheckNotNullCallNode(owner: ControlFlowGraph, override val fir: FirCheckNotNullCall, level: Int)
-    : CFGNode<FirCheckNotNullCall>(owner, level), UnionNodeMarker {
+    : CFGNode<FirCheckNotNullCall>(owner, level) {
+    override val isUnion: Boolean
+        get() = true
+
     override val canThrow: Boolean
         get() = true
 
@@ -645,7 +655,10 @@ class ResolvedQualifierNode(
 }
 
 class FunctionCallNode(owner: ControlFlowGraph, override val fir: FirFunctionCall, level: Int)
-    : CFGNode<FirFunctionCall>(owner, level), UnionNodeMarker {
+    : CFGNode<FirFunctionCall>(owner, level) {
+    override val isUnion: Boolean
+        get() = true
+
     override val canThrow: Boolean
         get() = true
 
@@ -671,7 +684,10 @@ class GetClassCallNode(owner: ControlFlowGraph, override val fir: FirGetClassCal
 }
 
 class DelegatedConstructorCallNode(owner: ControlFlowGraph, override val fir: FirDelegatedConstructorCall, level: Int)
-    : CFGNode<FirDelegatedConstructorCall>(owner, level), UnionNodeMarker {
+    : CFGNode<FirDelegatedConstructorCall>(owner, level) {
+    override val isUnion: Boolean
+        get() = true
+
     override val canThrow: Boolean
         get() = true // shouldn't matter since delegated constructor calls aren't wrapped in try-finally, but still
 
@@ -681,7 +697,11 @@ class DelegatedConstructorCallNode(owner: ControlFlowGraph, override val fir: Fi
 }
 
 class StringConcatenationCallNode(owner: ControlFlowGraph, override val fir: FirStringConcatenationCall, level: Int)
-    : CFGNode<FirStringConcatenationCall>(owner, level), UnionNodeMarker {
+    : CFGNode<FirStringConcatenationCall>(owner, level) {
+
+    override val isUnion: Boolean
+        get() = true
+
     override fun <R, D> accept(visitor: ControlFlowGraphVisitor<R, D>, data: D): R {
         return visitor.visitStringConcatenationCallNode(this, data)
     }

@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothing?>() {
     abstract fun visitNode(node: CFGNode<*>)
 
-    abstract fun <T> visitUnionNode(node: T) where T : CFGNode<*>, T : UnionNodeMarker
-
     // ----------------------------------- Simple function -----------------------------------
 
     open fun visitFunctionEnterNode(node: FunctionEnterNode) {
@@ -53,7 +51,7 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
     }
 
     open fun visitDelegateExpressionExitNode(node: DelegateExpressionExitNode) {
-        visitUnionNode(node)
+        visitNode(node)
     }
 
     // ----------------------------------- Init -----------------------------------
@@ -236,7 +234,7 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
     // ----------------------------------- Check not null call -----------------------------------
 
     open fun visitCheckNotNullCallNode(node: CheckNotNullCallNode) {
-        visitUnionNode(node)
+        visitNode(node)
     }
 
     // ----------------------------------- Resolvable call -----------------------------------
@@ -250,15 +248,15 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
     }
 
     open fun visitFunctionCallNode(node: FunctionCallNode) {
-        visitUnionNode(node)
+        visitNode(node)
     }
 
     open fun visitDelegatedConstructorCallNode(node: DelegatedConstructorCallNode) {
-        visitUnionNode(node)
+        visitNode(node)
     }
 
     open fun visitStringConcatenationCallNode(node: StringConcatenationCallNode) {
-        visitUnionNode(node)
+        visitNode(node)
     }
 
     open fun visitThrowExceptionNode(node: ThrowExceptionNode) {
@@ -289,10 +287,6 @@ abstract class ControlFlowGraphVisitorVoid : ControlFlowGraphVisitor<Unit, Nothi
 
     final override fun visitNode(node: CFGNode<*>, data: Nothing?) {
         visitNode(node)
-    }
-
-    final override fun <T> visitUnionNode(node: T, data: Nothing?) where T : CFGNode<*>, T : UnionNodeMarker {
-        visitUnionNode(node)
     }
 
     // ----------------------------------- Simple function -----------------------------------

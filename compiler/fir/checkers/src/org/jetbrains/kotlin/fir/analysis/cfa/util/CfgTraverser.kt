@@ -45,7 +45,7 @@ private fun <I : ControlFlowInfo<I, *, *>> ControlFlowGraph.collectDataForNodeIn
             TraverseDirection.Backward -> node.followingCfgNodes
         }
         // TODO: if data for previousNodes hasn't changed, then should be no need to recompute data for this one
-        val union = node is UnionNodeMarker
+        val union = node.isUnion
         val previousData =
             previousNodes.mapNotNull {
                 val k = when (direction) {
