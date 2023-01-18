@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.checkedReplace
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.nio.file.Path
@@ -197,6 +198,24 @@ open class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilationM
                 project.getExpectedKotlinSourcesForDefaultProject(libSources = listOf("bar/A.kt")),
                 result.output
             )
+        }
+    }
+
+    //KT-55905
+    @DisplayName("Imncremental compilation with source set update")
+    @GradleTest
+    open fun testSourceSetAdjustment(gradleVersion: GradleVersion) {
+        val setUpExternalSource = "sourceSets[\"main\"].kotlin.srcDir(\"../external/src\")"
+        defaultProject(gradleVersion) {
+            subProject("lib").buildGradle.appendText("\n$setUpExternalSource")
+            subProject("lib")
+                .projectPath
+                .resolve("src/main/kotlin/bar/A.kt").modify {
+                    it.replace("fun a() {}","fun a() {}\nfun c() = ExternalClass()" )
+                }
+            build("assemble")
+            subProject("lib").buildGradle.replaceText(setUpExternalSource, "")
+            buildAndFail("assemble")
         }
     }
 
