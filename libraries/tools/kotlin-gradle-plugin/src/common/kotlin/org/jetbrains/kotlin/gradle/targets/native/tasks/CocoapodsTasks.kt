@@ -236,30 +236,27 @@ open class PodspecTask : DefaultTask() {
  * So we create a dummy static framework to allow CocoaPods install our pod correctly
  * and then replace it with the real one during a real build process.
  */
-open class DummyFrameworkTask : DefaultTask() {
+abstract class DummyFrameworkTask : DefaultTask() {
 
-    @OutputDirectory
-    val destinationDir = project.cocoapodsBuildDirs.framework
+    @get:Input
+    abstract val frameworkName: Property<String>
 
-    @Input
-    lateinit var frameworkName: Provider<String>
+    @get:Input
+    abstract val useStaticFramework: Property<Boolean>
 
-    @Input
-    lateinit var useDynamicFramework: Provider<Boolean>
+    @get:OutputDirectory
+    val outputFramework: Provider<File> = project.provider { project.cocoapodsBuildDirs.dummyFramework }
 
-    private val frameworkDir: File
-        get() = destinationDir.resolve("${frameworkName.get()}.framework")
-
-    private val dummyFrameworkPath: String
+    private val dummyFrameworkResource: String
         get() {
-            val staticOrDynamic = if (useDynamicFramework.get()) "dynamic" else "static"
+            val staticOrDynamic = if (!useStaticFramework.get()) "dynamic" else "static"
             return "/cocoapods/$staticOrDynamic/dummy.framework/"
         }
 
     private fun copyResource(from: String, to: File) {
         to.parentFile.mkdirs()
         to.outputStream().use { file ->
-            javaClass.getResourceAsStream(from).use { resource ->
+            javaClass.getResourceAsStream(from)!!.use { resource ->
                 resource.copyTo(file)
             }
         }
@@ -268,7 +265,7 @@ open class DummyFrameworkTask : DefaultTask() {
     private fun copyTextResource(from: String, to: File, transform: (String) -> String = { it }) {
         to.parentFile.mkdirs()
         to.printWriter().use { file ->
-            javaClass.getResourceAsStream(from).use {
+            javaClass.getResourceAsStream(from)!!.use {
                 it.reader().forEachLine { str ->
                     file.println(transform(str))
                 }
@@ -278,8 +275,8 @@ open class DummyFrameworkTask : DefaultTask() {
 
     private fun copyFrameworkFile(relativeFrom: String, relativeTo: String = relativeFrom) =
         copyResource(
-            "$dummyFrameworkPath$relativeFrom",
-            frameworkDir.resolve(relativeTo)
+            "$dummyFrameworkResource$relativeFrom",
+            outputFramework.get().resolve(relativeTo)
         )
 
     private fun copyFrameworkTextFile(
@@ -287,15 +284,15 @@ open class DummyFrameworkTask : DefaultTask() {
         relativeTo: String = relativeFrom,
         transform: (String) -> String = { it }
     ) = copyTextResource(
-        "$dummyFrameworkPath$relativeFrom",
-        frameworkDir.resolve(relativeTo),
+        "$dummyFrameworkResource$relativeFrom",
+        outputFramework.get().resolve(relativeTo),
         transform
     )
 
     @TaskAction
     fun create() {
         // Reset the destination directory
-        with(destinationDir) {
+        with(outputFramework.get()) {
             deleteRecursively()
             mkdirs()
         }

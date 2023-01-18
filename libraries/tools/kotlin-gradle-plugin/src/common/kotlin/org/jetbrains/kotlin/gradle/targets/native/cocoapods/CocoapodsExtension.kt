@@ -121,7 +121,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         anyFramework
     }
 
-    internal val podFrameworkName = anyPodFramework.map { it.baseName }
+    internal val podFrameworkName = anyPodFramework.map { it.baseName.asValidFrameworkName() }
     internal val podFrameworkIsStatic = anyPodFramework.map { it.isStatic }
 
     /**

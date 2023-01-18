@@ -398,6 +398,75 @@ class CocoaPodsIT : BaseGradleIT() {
     }
 
     @Test
+    fun testImportUTDAfterLinkingFramework() {
+        val linkTaskName = ":linkPodDebugFrameworkIOS"
+        project.gradleBuildScript().appendToCocoapodsBlock("""
+            framework {
+                baseName = "kotlin-library"
+            }
+            name = "kotlin-library"
+            podfile = project.file("ios-app/Podfile")
+        """.trimIndent())
+
+
+        hooks.addHook {
+            assertTasksExecuted(dummyTaskName)
+            assertTasksExecuted(podInstallTaskName)
+        }
+        project.testImport()
+
+        hooks.rewriteHooks {
+            assertTasksExecuted(linkTaskName)
+        }
+        project.testWithWrapper(linkTaskName)
+
+        hooks.rewriteHooks {
+            assertTasksUpToDate(dummyTaskName)
+            assertTasksUpToDate(podInstallTaskName)
+        }
+        project.testImport()
+    }
+
+    @Test
+    fun testChangeFrameworkTypeUTD() {
+        project.gradleBuildScript().appendToCocoapodsBlock("""
+            framework {
+                baseName = "kotlin-library"
+            }
+            name = "kotlin-library"
+            podfile = project.file("ios-app/Podfile")
+        """.trimIndent())
+
+        hooks.addHook {
+            assertTasksExecuted(dummyTaskName)
+            assertTasksExecuted(podInstallTaskName)
+        }
+        project.testImport()
+
+        hooks.rewriteHooks {
+            assertTasksUpToDate(dummyTaskName)
+            assertTasksUpToDate(podInstallTaskName)
+        }
+        project.testImport()
+
+        project.gradleBuildScript().appendToFrameworkBlock("isStatic = true")
+
+        hooks.rewriteHooks {
+            assertTasksExecuted(dummyTaskName)
+            assertTasksExecuted(podInstallTaskName)
+        }
+        project.testImport()
+
+        hooks.rewriteHooks {
+            assertTasksUpToDate(dummyTaskName)
+            assertTasksUpToDate(podInstallTaskName)
+        }
+        project.testImport()
+    }
+
+
+
+    @Test
     fun basicUTDTest() {
         val tasks = listOf(
             podspecTaskName,
@@ -771,13 +840,34 @@ class CocoaPodsIT : BaseGradleIT() {
     fun testUseDynamicFramework() {
         with(project) {
             gradleBuildScript().addPod(defaultPodName, produceGitBlock(defaultPodRepo))
-            gradleBuildScript().appendToFrameworkBlock("isStatic=false")
+            gradleBuildScript().appendToFrameworkBlock("isStatic = false")
             hooks.addHook {
                 // Check that an output framework is a dynamic framework
-                val framework = fileInWorkingDir("build/cocoapods/framework/cocoapods.framework/cocoapods")
+                val framework = fileInWorkingDir("build/bin/iOS/podDebugFramework/cocoapods.framework/cocoapods")
                 with(runProcess(listOf("file", framework.absolutePath), projectDir, environmentVariables = getEnvs())) {
                     assertTrue(isSuccessful)
                     assertTrue(output.contains("dynamically linked shared library"))
+                }
+            }
+
+            test(
+                "linkPodDebugFrameworkIOS",
+                "-Pkotlin.native.cocoapods.generate.wrapper=true"
+            )
+        }
+    }
+
+    @Test
+    fun testUseStaticFramework() {
+        with(project) {
+            gradleBuildScript().addPod(defaultPodName, produceGitBlock(defaultPodRepo))
+            gradleBuildScript().appendToFrameworkBlock("isStatic = true")
+            hooks.addHook {
+                // Check that an output framework is a static framework
+                val framework = fileInWorkingDir("build/bin/iOS/podDebugFramework/cocoapods.framework/cocoapods")
+                with(runProcess(listOf("file", framework.absolutePath), projectDir, environmentVariables = getEnvs())) {
+                    assertTrue(isSuccessful)
+                    assertTrue(output.contains("current ar archive random library"))
                 }
             }
 

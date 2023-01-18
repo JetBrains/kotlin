@@ -53,6 +53,9 @@ internal class CocoapodsBuildDirs(val project: Project) {
     val framework: File
         get() = root.resolve("framework")
 
+    val dummyFramework: File
+        get() = root.resolve("dummy.framework")
+
     val defs: File
         get() = root.resolve("defs")
 
@@ -365,9 +368,9 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         cocoapodsExtension: CocoapodsExtension
     ) {
-        project.tasks.register(DUMMY_FRAMEWORK_TASK_NAME, DummyFrameworkTask::class.java) {
-            it.frameworkName = cocoapodsExtension.podFrameworkName
-            it.useDynamicFramework = cocoapodsExtension.podFrameworkIsStatic.map { isStatic -> !isStatic }
+        project.registerTask<DummyFrameworkTask>(DUMMY_FRAMEWORK_TASK_NAME) { task ->
+            task.frameworkName.set(cocoapodsExtension.podFrameworkName)
+            task.useStaticFramework.set(cocoapodsExtension.podFrameworkIsStatic)
         }
     }
 
@@ -375,8 +378,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         project: Project,
         cocoapodsExtension: CocoapodsExtension
     ) {
-        val dummyFrameworkTaskProvider = project.tasks.named(DUMMY_FRAMEWORK_TASK_NAME)
-
         project.tasks.register(POD_SPEC_TASK_NAME, PodspecTask::class.java) {
             it.group = TASK_GROUP
             it.description = "Generates a podspec file for CocoaPods import"
@@ -396,7 +397,6 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             it.osx = project.provider { cocoapodsExtension.osx }
             it.tvos = project.provider { cocoapodsExtension.tvos }
             it.watchos = project.provider { cocoapodsExtension.watchos }
-            it.dependsOn(dummyFrameworkTaskProvider)
             val generateWrapper = project.findProperty(GENERATE_WRAPPER_PROPERTY)?.toString()?.toBoolean() ?: false
             if (generateWrapper) {
                 it.dependsOn(":wrapper")
@@ -461,6 +461,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         cocoapodsExtension: CocoapodsExtension
     ) {
         val podspecTaskProvider = project.tasks.named<PodspecTask>(POD_SPEC_TASK_NAME)
+        val dummyFrameworkTaskProvider = project.tasks.named<DummyFrameworkTask>(DUMMY_FRAMEWORK_TASK_NAME)
         project.registerTask<PodInstallTask>(POD_INSTALL_TASK_NAME) { task ->
             task.group = TASK_GROUP
             task.description = "Invokes `pod install` call within Podfile location directory"
@@ -469,6 +470,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             task.frameworkName.set(cocoapodsExtension.podFrameworkName)
             task.specRepos.set(project.provider { cocoapodsExtension.specRepos })
             task.pods.set(cocoapodsExtension.pods)
+            task.dummyFramework.set(dummyFrameworkTaskProvider.map { it.outputFramework.get() })
             task.dependsOn(podspecTaskProvider)
         }
     }
@@ -496,12 +498,12 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
 
             val podGenTask = project.registerTask<PodGenTask>(family.toPodGenTaskName) { task ->
                 task.description = "Сreates a synthetic Xcode project to retrieve CocoaPods dependencies"
-                task.podspec = podspecTaskProvider.map { it.outputFile }
-                task.podName = project.provider { cocoapodsExtension.name }
-                task.useLibraries = project.provider { cocoapodsExtension.useLibraries }
-                task.specRepos = project.provider { cocoapodsExtension.specRepos }
-                task.family = family
-                task.platformSettings = platformSettings
+                task.podspec.set(podspecTaskProvider.map { it.outputFile })
+                task.podName.set(project.provider { cocoapodsExtension.name })
+                task.useLibraries.set(project.provider { cocoapodsExtension.useLibraries })
+                task.specRepos.set(project.provider { cocoapodsExtension.specRepos })
+                task.family.set(family)
+                task.platformSettings.set(platformSettings)
                 task.pods.set(cocoapodsExtension.pods)
             }
 
