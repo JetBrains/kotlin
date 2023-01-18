@@ -45,12 +45,14 @@ import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.util.prefixIfNot
 import java.io.File
 import java.util.*
 
+@OptIn(UnsafeApi::class)
 internal class PropertiesProvider private constructor(private val project: Project) {
     private val localProperties: Properties by lazy {
         Properties().apply {
@@ -520,7 +522,11 @@ internal class PropertiesProvider private constructor(private val project: Proje
      * Looks up the property in the following sources with decreasing priority:
      * 1. Project properties (-P, gradle.properties, etc...)
      * 2. `local.properties`
+     *
+     * Please prefer using dedicated properties for proper defaults handling.
+     * Use this API only if you specifically need declared project properties disregarding defaults.
      */
+    @UnsafeApi
     internal fun property(propName: String): String? =
         if (project.hasProperty(propName)) {
             project.property(propName) as? String

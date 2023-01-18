@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.hasSyncErrors
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.tooling.core.UnsafeApi
 
 internal fun checkAndReportDeprecatedNativeTargets(project: Project) {
     project.runProjectConfigurationHealthCheckWhenEvaluated {
@@ -41,6 +42,7 @@ internal fun checkAndReportDeprecatedMppProperties(project: Project) {
     if (projectProperties.ignoreHmppDeprecationWarnings == true) return
 
     val warnings = deprecatedMppProperties.mapNotNull { propertyName ->
+        @OptIn(UnsafeApi::class)
         projectProperties.property(propertyName)?.let { getMppDeprecationWarningMessageForProperty(propertyName) }
     }
 
