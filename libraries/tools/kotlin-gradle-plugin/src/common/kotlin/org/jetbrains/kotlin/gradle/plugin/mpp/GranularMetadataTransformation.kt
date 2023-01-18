@@ -93,16 +93,18 @@ internal sealed class MetadataDependencyResolution(
 }
 
 private typealias ComponentIdentifierKey = String
+
 /**
  * This unique key can be used to lookup various info for related Resolved Dependency
  * that gets serialized
  */
-private val ComponentIdentifier.uniqueKey get(): ComponentIdentifierKey =
-    when (this) {
-        is ProjectComponentIdentifier -> "project ${build.name}$projectPath"
-        is ModuleComponentIdentifier -> "module $group:$module:$version"
-        else -> error("Unexpected Component Identifier: '$this' of type $javaClass")
-    }
+private val ComponentIdentifier.uniqueKey
+    get(): ComponentIdentifierKey =
+        when (this) {
+            is ProjectComponentIdentifier -> "project ${build.name}$projectPath"
+            is ModuleComponentIdentifier -> "module $group:$module:$version"
+            else -> error("Unexpected Component Identifier: '$this' of type $javaClass")
+        }
 
 internal class GranularMetadataTransformation(
     val params: Params,
@@ -118,7 +120,7 @@ internal class GranularMetadataTransformation(
         val projectData: Map<String, ProjectData>,
         val platformCompilationSourceSets: Set<String>,
     ) {
-        constructor(project: Project, kotlinSourceSet: KotlinSourceSet): this(
+        constructor(project: Project, kotlinSourceSet: KotlinSourceSet) : this(
             sourceSetName = kotlinSourceSet.name,
             resolvedMetadataConfiguration = LazyResolvedConfiguration(kotlinSourceSet.internal.resolvableMetadataConfiguration),
             sourceSetVisibilityProvider = SourceSetVisibilityProvider(project),
@@ -235,8 +237,8 @@ internal class GranularMetadataTransformation(
             .singleOrNull()
             // Make sure that resolved metadata artifact is actually Multiplatform one
             ?.takeIf { it.variant.attributes.containsMultiplatformAttributes }
-            // expected only ony Composite Metadata Klib, but if dependency got resolved into platform variant
-            // when source set is a leaf then we might get multiple artifacts in such case we must return KeepOriginal
+        // expected only ony Composite Metadata Klib, but if dependency got resolved into platform variant
+        // when source set is a leaf then we might get multiple artifacts in such case we must return KeepOriginal
             ?: return MetadataDependencyResolution.KeepOriginalDependency(module)
 
         logger.debug("Transform composite metadata artifact: '${compositeMetadataArtifact.file}'")
@@ -315,14 +317,17 @@ internal class GranularMetadataTransformation(
      */
     private fun ResolvedDependencyResult.toModuleDependencyIdentifier(): ModuleDependencyIdentifier {
         val component = selected
-        return when(val componentId = component.id) {
+        return when (val componentId = component.id) {
             is ModuleComponentIdentifier -> ModuleDependencyIdentifier(componentId.group, componentId.module)
             is ProjectComponentIdentifier -> {
                 if (componentId.build.isCurrentBuild) {
                     params.projectData[componentId.projectPath]?.moduleId?.get()
                         ?: error("Cant find project Module ID by ${componentId.projectPath}")
                 } else {
-                    ModuleDependencyIdentifier(component.moduleVersion?.group ?: "unspecified", component.moduleVersion?.name ?: "unspecified")
+                    ModuleDependencyIdentifier(
+                        component.moduleVersion?.group ?: "unspecified",
+                        component.moduleVersion?.name ?: "unspecified"
+                    )
                 }
             }
 
@@ -332,13 +337,14 @@ internal class GranularMetadataTransformation(
 
 }
 
-internal val ResolvedComponentResult.currentBuildProjectIdOrNull get(): ProjectComponentIdentifier? {
-    val identifier = id
-    return when {
-        identifier is ProjectComponentIdentifier && identifier.build.isCurrentBuild -> identifier
-        else -> null
+internal val ResolvedComponentResult.currentBuildProjectIdOrNull
+    get(): ProjectComponentIdentifier? {
+        val identifier = id
+        return when {
+            identifier is ProjectComponentIdentifier && identifier.build.isCurrentBuild -> identifier
+            else -> null
+        }
     }
-}
 
 private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransformation.ProjectData> {
     return rootProject.allprojects.associateBy { it.path }.mapValues { (path, subProject) ->
@@ -368,5 +374,5 @@ private val KotlinMultiplatformExtension.platformCompilationSourceSets: Set<Stri
 
 internal val GranularMetadataTransformation?.metadataDependencyResolutionsOrEmpty get() = this?.metadataDependencyResolutions ?: emptyList()
 
-internal val AttributeContainer.containsMultiplatformAttributes: Boolean get() =
-    keySet().any { it.name == KotlinPlatformType.attribute.name }
+internal val AttributeContainer.containsMultiplatformAttributes: Boolean
+    get() = keySet().any { it.name == KotlinPlatformType.attribute.name }
