@@ -35,7 +35,7 @@ class FirDataFrameTokenGenerator(session: FirSession, val tokens: Set<ClassId>, 
         return tokens.sortedBy { it.asString() }.toSet()
     }
 
-    override fun generateClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
+    override fun generateTopLevelClassLikeDeclaration(classId: ClassId): FirClassLikeSymbol<*>? {
         if (classId !in tokens) return null
         val klass = buildRegularClass {
             moduleData = session.moduleData
