@@ -84,7 +84,7 @@ open class MetadataDependencyTransformationTask
 
     @Suppress("unused") // Gradle input
     @get:Input
-    internal val inputSourceSetsAndCompilations: Map<String, Iterable<String>> by lazy {
+    protected val inputSourceSetsAndCompilations: Map<String, Iterable<String>> by lazy {
         participatingSourceSets.associate { sourceSet ->
             sourceSet.name to sourceSet.internal.compilations.map { it.name }.sorted()
         }
@@ -92,7 +92,7 @@ open class MetadataDependencyTransformationTask
 
     @Suppress("unused") // Gradle input
     @get:Input
-    internal val inputCompilationDependencies: Map<String, Set<List<String?>>> by lazy {
+    protected val inputCompilationDependencies: Map<String, Set<List<String?>>> by lazy {
         participatingSourceSets.flatMap { it.internal.compilations }.associate {
             it.name to project.configurations.getByName(it.compileDependencyConfigurationName)
                 .allDependencies.map { listOf(it.group, it.name, it.version) }.toSet()
@@ -100,17 +100,17 @@ open class MetadataDependencyTransformationTask
     }
 
     @get:OutputFile
-    internal val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
+    protected val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
         .fileProperty()
         .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.libraries")) }
 
     @get:OutputFile
-    internal val visibleSourceSetsFile: RegularFileProperty = objectFactory
+    protected val visibleSourceSetsFile: RegularFileProperty = objectFactory
         .fileProperty()
         .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.visibleSourceSets")) }
 
     @get:InputFiles
-    internal val parentVisibleSourceSetFiles: FileCollection = project.filesProvider {
+    protected val parentVisibleSourceSetFiles: FileCollection = project.filesProvider {
         parentTransformationTasks.map { taskProvider ->
             taskProvider.flatMap { task ->
                 task.visibleSourceSetsFile.map { it.asFile }
@@ -119,7 +119,7 @@ open class MetadataDependencyTransformationTask
     }
 
     @get:InputFiles
-    internal val parentTransformedLibraries: FileCollection = project.filesProvider {
+    protected val parentTransformedLibraries: FileCollection = project.filesProvider {
         parentTransformationTasks.map { taskProvider ->
             taskProvider.map { task -> task.ownTransformedLibraries }
         }
