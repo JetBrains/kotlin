@@ -1435,7 +1435,7 @@ open class RawFirBuilder(
                 FirSimpleFunctionBuilder().apply {
                     receiverParameter = receiverType?.convertToReceiverParameter()
                     name = function.nameAsSafeName
-                    labelName = runIf(!name.isSpecial) { name.identifier }
+                    labelName = context.getLastLabel(function)?.name ?: runIf(!name.isSpecial) { name.identifier }
                     symbol = FirNamedFunctionSymbol(callableIdForName(function.nameAsSafeName)).also { functionSymbol = it }
                     dispatchReceiverType = currentDispatchReceiverType()
                     status = FirDeclarationStatusImpl(

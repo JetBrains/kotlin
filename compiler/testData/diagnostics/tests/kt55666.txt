@@ -1,0 +1,5 @@
+package
+
+public inline fun l2f1(/*0*/ p: () -> kotlin.Unit): kotlin.Unit
+public fun label2simple1(): kotlin.Unit
+public fun main(): kotlin.Unit

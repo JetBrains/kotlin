@@ -1676,7 +1676,7 @@ class DeclarationsConverter(
             }
         } else {
             val functionName = identifier.nameAsSafeName()
-            val labelName = runIf(!functionName.isSpecial) { functionName.identifier }
+            val labelName = context.getLastLabel(functionDeclaration)?.name ?: runIf(!functionName.isSpecial) { functionName.identifier }
             target = FirFunctionTarget(labelName, isLambda = false)
             functionSymbol = FirNamedFunctionSymbol(callableIdForName(functionName))
             FirSimpleFunctionBuilder().apply {
