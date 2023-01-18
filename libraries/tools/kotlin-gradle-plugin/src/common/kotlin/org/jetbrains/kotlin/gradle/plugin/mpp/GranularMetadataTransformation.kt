@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
-import org.jetbrains.kotlin.gradle.utils.mergeWith
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -91,23 +90,9 @@ internal sealed class MetadataDependencyResolution(
     }
 }
 
-private typealias ComponentIdentifierKey = String
-
-/**
- * This unique key can be used to lookup various info for related Resolved Dependency
- * that gets serialized
- */
-private val ComponentIdentifier.uniqueKey
-    get(): ComponentIdentifierKey =
-        when (this) {
-            is ProjectComponentIdentifier -> "project ${build.name}$projectPath"
-            is ModuleComponentIdentifier -> "module $group:$module:$version"
-            else -> error("Unexpected Component Identifier: '$this' of type $javaClass")
-        }
-
 internal class GranularMetadataTransformation(
     val params: Params,
-    visibleSourceSetsFromParentsProvider: () -> Iterable<Map<ComponentIdentifierKey, Set<String>>>
+    val parentSourceSetVisibilityProvider: ParentSourceSetVisibilityProvider
 ) {
     private val logger = Logging.getLogger("GranularMetadataTransformation[${params.sourceSetName}]")
 
@@ -136,16 +121,13 @@ internal class GranularMetadataTransformation(
         val moduleId: Provider<ModuleDependencyIdentifier>
     )
 
-    private val visibleSourceSetsFromParents: Map<ComponentIdentifierKey, Set<String>> by lazy {
-        visibleSourceSetsFromParentsProvider().reduceOrNull { acc, map -> acc mergeWith map }.orEmpty()
-    }
 
     val metadataDependencyResolutions: Iterable<MetadataDependencyResolution> by lazy { doTransform() }
 
-    val visibleSourceSetsByComponentId: Map<ComponentIdentifierKey, Set<String>> by lazy {
+    val visibleSourceSetsByComponentId: Map<ComponentIdentifier, Set<String>> by lazy {
         metadataDependencyResolutions
             .filterIsInstance<MetadataDependencyResolution.ChooseVisibleSourceSets>()
-            .groupBy { it.dependency.id.uniqueKey }
+            .groupBy { it.dependency.id }
             .mapValues { (_, visibleSourceSets) -> visibleSourceSets.flatMap { it.allVisibleSourceSetNames }.toSet() }
     }
 
@@ -175,8 +157,7 @@ internal class GranularMetadataTransformation(
 
             logger.debug("Transform dependency: $resolvedDependency")
             val dependencyResult = processDependency(
-                resolvedDependency,
-                visibleSourceSetsFromParents[componentId.uniqueKey].orEmpty()
+                resolvedDependency, parentSourceSetVisibilityProvider.getSourceSetsVisibleInParents(componentId)
             )
             logger.debug("Transformation result of dependency $resolvedDependency: $dependencyResult")
 

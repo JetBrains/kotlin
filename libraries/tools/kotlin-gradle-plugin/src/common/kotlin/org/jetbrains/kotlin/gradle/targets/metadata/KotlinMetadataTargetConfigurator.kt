@@ -368,26 +368,27 @@ class KotlinMetadataTargetConfigurator :
 
     private val ResolvedArtifactResult.isMpp: Boolean get() = variant.attributes.containsMultiplatformAttributes
 
-    private val KotlinSourceSet.dependsOnClassesDirs: FileCollection get() = project.filesProvider {
-        internal.dependsOnClosure.mapNotNull { hierarchySourceSet ->
-            val compilation =
-                project.getMetadataCompilationForSourceSet(
-                    hierarchySourceSet
-                ) ?: return@mapNotNull null
-            compilation.output.classesDirs
+    private val KotlinSourceSet.dependsOnClassesDirs: FileCollection
+        get() = project.filesProvider {
+            internal.dependsOnClosure.mapNotNull { hierarchySourceSet ->
+                val compilation = project.getMetadataCompilationForSourceSet(hierarchySourceSet) ?: return@mapNotNull null
+                compilation.output.classesDirs
+            }
         }
-    }
 
     private fun setupDependencyTransformationForSourceSet(
         project: Project,
         sourceSet: KotlinSourceSet
     ) {
+        val parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { componentIdentifier ->
+            dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
+                .flatMap { it.compileDependenciesTransformationOrFail.visibleSourceSetsByComponentId[componentIdentifier].orEmpty() }
+                .toSet()
+        }
+
         val granularMetadataTransformation = GranularMetadataTransformation(
             params = GranularMetadataTransformation.Params(project, sourceSet),
-            visibleSourceSetsFromParentsProvider = {
-                dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
-                    .map { it.compileDependenciesTransformationOrFail.visibleSourceSetsByComponentId }
-            }
+            parentSourceSetVisibilityProvider = parentSourceSetVisibilityProvider
         )
 
         @Suppress("DEPRECATION")
