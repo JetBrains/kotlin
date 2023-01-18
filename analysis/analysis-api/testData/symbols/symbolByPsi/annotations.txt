@@ -180,7 +180,7 @@ KtNamedClassOrObjectSymbol:
   typeParameters: []
   visibility: Public
   getContainingModule: KtSourceModule "Sources of main"
-  annotationApplicableTargets: null
+  annotationApplicableTargets: [CLASS, ANNOTATION_CLASS, PROPERTY, FIELD, LOCAL_VARIABLE, VALUE_PARAMETER, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, BACKING_FIELD]
   deprecationStatus: null
 
 KtFunctionSymbol:

@@ -1,0 +1,7 @@
+KtAnnotationEntry: @A
+
+Resolved annotation symbol:
+@kotlin.annotation.Target(allowedTargets = [kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY])
+annotation class A
+
+Applicable targets: [CLASS, PROPERTY]
