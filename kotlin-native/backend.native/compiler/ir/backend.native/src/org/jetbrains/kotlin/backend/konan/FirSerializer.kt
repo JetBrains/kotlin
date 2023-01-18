@@ -135,7 +135,10 @@ class FirNativeKLibSerializerExtension(
         function.annotations.forEach {
             proto.addExtension(KlibMetadataProtoBuf.functionAnnotation, annotationSerializer.serializeAnnotation(it))
         }
-        // TODO serialize KDocString, functionExtensionReceiverAnnotation
+        function.receiverParameter?.annotations?.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        // TODO serialize KDocString
         super.serializeFunction(function, proto, versionRequirementTable, childSerializer)
     }
 
@@ -145,7 +148,6 @@ class FirNativeKLibSerializerExtension(
         }
         super.serializeValueParameter(parameter, proto)
     }
-
 
     override fun serializeProperty(
             property: FirProperty,
