@@ -78,17 +78,6 @@ val ideaSandboxDir = "$commonLocalDataDir/ideaSandbox"
 val artifactsDir = "$distDir/artifacts"
 val ideaPluginDir = "$artifactsDir/ideaPlugin/Kotlin"
 
-extra["ktorExcludesForDaemon"] = listOf(
-    "org.jetbrains.kotlin" to "kotlin-reflect",
-    "org.jetbrains.kotlin" to "kotlin-stdlib",
-    "org.jetbrains.kotlin" to "kotlin-stdlib-common",
-    "org.jetbrains.kotlin" to "kotlin-stdlib-jdk8",
-    "org.jetbrains.kotlin" to "kotlin-stdlib-jdk7",
-    "org.jetbrains.kotlinx" to "kotlinx-coroutines-jdk8",
-    "org.jetbrains.kotlinx" to "kotlinx-coroutines-core",
-    "org.jetbrains.kotlinx" to "kotlinx-coroutines-core-common"
-)
-
 // TODO: use "by extra()" syntax where possible
 extra["distLibDir"] = project.file(distLibDir)
 extra["commonLocalDataDir"] = project.file(commonLocalDataDir)

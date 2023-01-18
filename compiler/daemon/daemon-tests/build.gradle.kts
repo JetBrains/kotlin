@@ -1,4 +1,3 @@
-
 description = "Kotlin Daemon Tests"
 
 plugins {
@@ -6,24 +5,13 @@ plugins {
     id("jps-compatible")
 }
 
-val ktorExcludesForDaemon: List<Pair<String, String>> by rootProject.extra
-
 dependencies {
-    testApi(project(":kotlin-test:kotlin-test-jvm"))
-    testApi(kotlinStdlib())
-    testApi(commonDependency("junit:junit"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
-    testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
-    testApi(project(":kotlin-daemon-client"))
-    testCompileOnly(project(":kotlin-daemon"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    testApi(commonDependency("io.ktor", "ktor-network")) {
-        ktorExcludesForDaemon.forEach { (group, module) ->
-            exclude(group = group, module = module)
-        }
-    }
+    testImplementation(kotlinStdlib())
+    testImplementation(project(":kotlin-test:kotlin-test-jvm"))
     testImplementation(project(":kotlin-daemon"))
+    testImplementation(project(":kotlin-daemon-client"))
+    testImplementation(commonDependency("junit:junit"))
+    testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(intellijCore())
 }
 
@@ -35,5 +23,9 @@ sourceSets {
 projectTest(parallel = true) {
     dependsOn(":dist")
     workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+
+    val testClassesDirs = testSourceSet.output.classesDirs
+    doFirst {
+        systemProperty("kotlin.test.script.classpath", testClassesDirs.joinToString(File.pathSeparator))
+    }
 }

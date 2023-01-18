@@ -7,7 +7,6 @@ plugins {
 
 dependencies {
     implementation(project(":kotlin-daemon-client"))
-    implementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-preloader"))

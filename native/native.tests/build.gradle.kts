@@ -19,6 +19,7 @@ dependencies {
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":generators:test-generator"))
     testApiJUnit5()
+    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
