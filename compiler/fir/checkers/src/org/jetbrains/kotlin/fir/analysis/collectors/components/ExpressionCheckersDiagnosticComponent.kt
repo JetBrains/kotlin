@@ -68,6 +68,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allResolvedQualifierCheckers.check(resolvedQualifier, data)
     }
 
+    override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: CheckerContext) {
+        checkers.allResolvedQualifierCheckers.check(errorResolvedQualifier, data)
+    }
+
     override fun visitWhenExpression(whenExpression: FirWhenExpression, data: CheckerContext) {
         checkers.allWhenExpressionCheckers.check(whenExpression, data)
     }
