@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
-import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
-import org.jetbrains.kotlin.gradle.utils.allResolvedDependencies
 import org.jetbrains.kotlin.gradle.utils.dependencyArtifactsOrNull
 import java.io.File
 

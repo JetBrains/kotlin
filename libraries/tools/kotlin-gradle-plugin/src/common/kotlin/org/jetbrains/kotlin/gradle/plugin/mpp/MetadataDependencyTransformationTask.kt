@@ -65,14 +65,19 @@ open class MetadataDependencyTransformationTask
         }
     }
 
-    private val participatingSourceSets: Set<KotlinSourceSet> get() = participatingSourceSetsLazy?.value
-        ?: error("`participatingSourceSets` is null. " +
-                 "Probably it is accessed it during Task Execution with state loaded from Configuration Cache")
+    private val participatingSourceSets: Set<KotlinSourceSet>
+        get() = participatingSourceSetsLazy?.value
+            ?: error(
+                "`participatingSourceSets` is null. " +
+                        "Probably it is accessed it during Task Execution with state loaded from Configuration Cache"
+            )
 
-    private val parentTransformationTasks: List<TaskProvider<MetadataDependencyTransformationTask>> get() =
-        parentTransformationTasksLazy?.value
-            ?: error("`parentTransformationTasks` is null. " +
-                     "Probably it is accessed it during Task Execution with state loaded from Configuration Cache")
+    private val parentTransformationTasks: List<TaskProvider<MetadataDependencyTransformationTask>>
+        get() = parentTransformationTasksLazy?.value
+            ?: error(
+                "`parentTransformationTasks` is null. " +
+                        "Probably it is accessed it during Task Execution with state loaded from Configuration Cache"
+            )
 
     @Suppress("unused") // Gradle input
     @get:Input
