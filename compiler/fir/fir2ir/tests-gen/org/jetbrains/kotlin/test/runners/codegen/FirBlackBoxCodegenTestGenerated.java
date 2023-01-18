@@ -28472,6 +28472,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("javaInterfaceFieldDirectAccess.kt")
+        public void testJavaInterfaceFieldDirectAccess() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/javaInterfaceFieldDirectAccess.kt");
+        }
+
+        @Test
         @TestMetadata("javaOuterClassDependsOnInner.kt")
         public void testJavaOuterClassDependsOnInner() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/javaOuterClassDependsOnInner.kt");

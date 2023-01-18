@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM_IR
+// DUMP_IR
 // FILE: javapackage/PackagePrivateGrandparentAbstractClass.java
 
 package javapackage;

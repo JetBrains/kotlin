@@ -1,0 +1,38 @@
+package
+
+public final class Child : javapackage.PublicParentClass {
+    public constructor Child()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final fun foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+package javapackage {
+
+    public final class KotlinParentClass : javapackage.PackagePrivateGrandparentInterface {
+        public constructor KotlinParentClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+
+    public/*package*/ interface PackagePrivateGrandparentInterface {
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public const final val publicStaticField: kotlin.String = "OK"
+    }
+
+    public open class PublicParentClass : javapackage.KotlinParentClass {
+        public constructor PublicParentClass()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+        // Static members
+        public const final override /*1*/ /*fake_override*/ val publicStaticField: kotlin.String = "OK"
+    }
+}
