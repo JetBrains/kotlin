@@ -17,6 +17,7 @@ import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
+import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
@@ -360,7 +361,7 @@ class KotlinMetadataTargetConfigurator :
         // Transformed Multiplatform Libraries based on source set visibility
         compilation.compileDependencyFiles += project.files(transformationTask.map { it.allTransformedLibraries })
 
-        if (compilation is KotlinSharedNativeCompilation && sourceSet is DefaultKotlinSourceSet) {
+        if (sourceSet is DefaultKotlinSourceSet && getCommonizerTarget(sourceSet) is SharedCommonizerTarget) {
             compilation.compileDependencyFiles += project.createCInteropMetadataDependencyClasspath(sourceSet)
         }
     }
