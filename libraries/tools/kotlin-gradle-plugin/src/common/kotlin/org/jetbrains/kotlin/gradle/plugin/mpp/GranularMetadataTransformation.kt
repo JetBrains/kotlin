@@ -108,7 +108,7 @@ internal class GranularMetadataTransformation(
             sourceSetName = kotlinSourceSet.name,
             resolvedMetadataConfiguration = LazyResolvedConfiguration(kotlinSourceSet.internal.resolvableMetadataConfiguration),
             sourceSetVisibilityProvider = SourceSetVisibilityProvider(project),
-            projectStructureMetadataExtractorFactory = MppDependencyProjectStructureMetadataExtractorFactory.getOrCreate(project),
+            projectStructureMetadataExtractorFactory = project.kotlinMppDependencyProjectStructureMetadataExtractorFactory,
             projectData = project.collectAllProjectsData(),
             platformCompilationSourceSets = project.multiplatformExtension.platformCompilationSourceSets
         )
