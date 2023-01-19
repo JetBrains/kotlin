@@ -1,4 +1,5 @@
 // !LANGUAGE: -EnumEntries
+// WITH_STDLIB
 
 package pckg
 
@@ -8,7 +9,7 @@ enum class E {
     ;
 
     fun foo() {
-        entries
+        <!OPT_IN_USAGE_ERROR!>entries<!>
         pckg.entries
     }
 }
@@ -19,7 +20,7 @@ class A {
 
         class B {
             fun foo() {
-                entries
+                <!OPT_IN_USAGE_ERROR!>entries<!>
                 pckg.entries
             }
         }

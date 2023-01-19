@@ -1,4 +1,5 @@
 // !LANGUAGE: -EnumEntries
+// WITH_STDLIB
 
 enum class A {
     ;
@@ -9,7 +10,7 @@ enum class A {
 }
 
 fun test() {
-    A.entries
+    A.<!OPT_IN_USAGE_ERROR!>entries<!>
     A.Companion.entries
 
     <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>with<!>(A) {

@@ -1,4 +1,5 @@
 // !LANGUAGE: -EnumEntries
+// WITH_STDLIB
 
 enum class E {
     ;
@@ -7,8 +8,8 @@ enum class E {
 }
 
 fun test() {
-    E::entries
-    val ref = E::entries
+    E::<!OPT_IN_USAGE_ERROR!>entries<!>
+    val ref = E::<!OPT_IN_USAGE_ERROR!>entries<!>
     val refType: (E) -> Int = E::entries
-    val refTypeWithAnyExpectedType: Any = E::entries
+    val refTypeWithAnyExpectedType: Any = E::<!OPT_IN_USAGE_ERROR!>entries<!>
 }

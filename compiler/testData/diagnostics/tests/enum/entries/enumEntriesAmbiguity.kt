@@ -1,4 +1,5 @@
 // !LANGUAGE: +EnumEntries
+// WITH_STDLIB
 // FIR_DUMP
 
 enum class Ambiguous {

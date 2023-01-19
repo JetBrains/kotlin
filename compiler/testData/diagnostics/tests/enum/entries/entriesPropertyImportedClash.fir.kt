@@ -1,4 +1,5 @@
 // !LANGUAGE: -EnumEntries
+// WITH_STDLIB
 
 package foo
 
@@ -13,7 +14,7 @@ enum class A {
 }
 
 fun test() {
-    A.entries
+    A.<!OPT_IN_USAGE_ERROR!>entries<!>
 
     with(A) {
         entries
