@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
@@ -120,22 +121,18 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 
         val module = createDescriptorOptionalBuiltsIns(FORWARD_DECLARATIONS_MODULE_NAME, storageManager, builtIns, SyntheticModulesOrigin)
 
-        fun createPackage(fqName: FqName, supertypeName: String, classKind: ClassKind) =
+        fun createPackage(forwardDeclarationKind: ForwardDeclarationKind) =
             ForwardDeclarationsPackageFragmentDescriptor(
                 storageManager,
                 module,
-                fqName,
-                Name.identifier(supertypeName),
-                classKind,
+                forwardDeclarationKind.packageFqName,
+                Name.identifier(forwardDeclarationKind.superClassName),
+                forwardDeclarationKind.classKind,
                 isExpect
             )
 
         val packageFragmentProvider = PackageFragmentProviderImpl(
-            listOf(
-                createPackage(ForwardDeclarationsFqNames.cNamesStructs, "COpaque", ClassKind.CLASS),
-                createPackage(ForwardDeclarationsFqNames.objCNamesClasses, "ObjCObjectBase", ClassKind.CLASS),
-                createPackage(ForwardDeclarationsFqNames.objCNamesProtocols, "ObjCObject", ClassKind.INTERFACE)
-            )
+            ForwardDeclarationKind.values().map { createPackage(it) }
         )
 
         module.initialize(packageFragmentProvider)
@@ -234,4 +231,18 @@ object ForwardDeclarationsFqNames {
     internal val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
 
     val syntheticPackages = setOf(cNames, objCNames)
+}
+
+enum class ForwardDeclarationKind(val packageFqName: FqName, val superClassName: String, val classKind: ClassKind) {
+    CNAMES_STRUCTS(ForwardDeclarationsFqNames.cNamesStructs, "COpaque", ClassKind.CLASS),
+    OBJCNAMES_CLASSES(ForwardDeclarationsFqNames.objCNamesClasses, "ObjCObjectBase", ClassKind.CLASS),
+    OBJCNAMES_PROTOCOLS(ForwardDeclarationsFqNames.objCNamesProtocols, "ObjCObject", ClassKind.INTERFACE)
+
+    ;
+
+    val superClassId = ClassId.topLevel(ForwardDeclarationsFqNames.cInterop.child(Name.identifier(superClassName)))
+
+    companion object {
+        val packageFqNameToKind: Map<FqName, ForwardDeclarationKind> = ForwardDeclarationKind.values().associateBy { it.packageFqName }
+    }
 }
