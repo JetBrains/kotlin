@@ -74,7 +74,7 @@ class InvalidContentModuleAndPackageDocumentationReaderTest : AbstractContextMod
             runCatching { readerA[dModule(name = "moduleA", sourceSets = setOf(sourceSetA))] }.exceptionOrNull()
         assertEquals(
             "Unexpected classifier: \"Invalid\", expected either \"Module\" or \"Package\". \n" +
-                    "For more information consult the specification: https://kotlinlang.org/docs/reference/kotlin-doc.html#module-and-package-documentation",
+                    "For more information consult the specification: https://kotlinlang.org/docs/reference/dokka-module-and-package-docs.html",
             exception?.message
         )
     }
