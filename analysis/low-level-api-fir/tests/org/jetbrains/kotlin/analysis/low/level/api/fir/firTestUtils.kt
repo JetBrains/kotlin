@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -43,3 +45,11 @@ internal inline fun <R> resolveWithClearCaches(
     val firResolveSession = createFirResolveSessionForNoCaching(context.getKtModule(project), project, configureSession)
     return action(firResolveSession)
 }
+
+internal val LLFirResolveSession.isSourceSession: Boolean
+    get() {
+        return when (this) {
+            is LLFirSourceResolveSession, is LLFirNotUnderContentRootResolveSession -> true
+            else -> false
+        }
+    }
