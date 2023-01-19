@@ -11,7 +11,7 @@ class A(val w: Char) {
     constructor(): this('a') {
         y = 1
 
-        overinitialized = 2
+        <!VAL_REASSIGNMENT!>overinitialized<!> = 2
         uninitialized = 3
     }
 

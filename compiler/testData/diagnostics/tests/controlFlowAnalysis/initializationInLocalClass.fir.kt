@@ -27,7 +27,7 @@ fun gav() {
     class B {
         init {
             // Error! See KT-10445
-            x = ""
+            <!CAPTURED_VAL_INITIALIZATION!>x<!> = ""
         }
     }
     // Error! See KT-10042
@@ -36,7 +36,7 @@ fun gav() {
     class C(val s: String) {
         constructor(): this("") {
             // Error!
-            y = s
+            <!CAPTURED_VAL_INITIALIZATION!>y<!> = s
         }
     }
     <!UNINITIALIZED_VARIABLE!>y<!>.length
@@ -77,7 +77,7 @@ class My {
         class Your {
             init {
                 // Error! See KT-10445
-                x = ""
+                <!CAPTURED_VAL_INITIALIZATION!>x<!> = ""
             }
         }
     }

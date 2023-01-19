@@ -19,7 +19,7 @@ fun test2() {
         }
 
         fun localFunc() {
-            y = 0
+            <!CAPTURED_VAL_INITIALIZATION!>y<!> = 0
         }
     }
 
@@ -33,11 +33,11 @@ fun test3() {
 
     class A {
         init {
-            x = 0
+            <!CAPTURED_VAL_INITIALIZATION!>x<!> = 0
         }
 
         fun localFunc() {
-            y = 0
+            <!CAPTURED_VAL_INITIALIZATION!>y<!> = 0
         }
     }
 

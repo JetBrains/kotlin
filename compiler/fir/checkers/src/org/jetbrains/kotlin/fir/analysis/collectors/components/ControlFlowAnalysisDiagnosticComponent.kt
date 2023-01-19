@@ -30,7 +30,7 @@ class ControlFlowAnalysisDiagnosticComponent(
 
         val (properties, capturedWrites) = LocalPropertyAndCapturedWriteCollector.collect(graph)
         if (properties.isNotEmpty()) {
-            val data = PropertyInitializationInfoData(properties, graph)
+            val data = PropertyInitializationInfoData(properties, receiver = null, graph)
             variableAssignmentCheckers.forEach { it.analyze(graph, reporter, data, properties, capturedWrites, context) }
         }
     }

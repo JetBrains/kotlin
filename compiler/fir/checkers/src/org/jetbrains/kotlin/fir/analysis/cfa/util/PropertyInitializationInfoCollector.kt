@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
-class PropertyInitializationInfoData(properties: Set<FirPropertySymbol>, graph: ControlFlowGraph) {
+class PropertyInitializationInfoData(properties: Set<FirPropertySymbol>, receiver: FirBasedSymbol<*>?, graph: ControlFlowGraph) {
     private val data by lazy(LazyThreadSafetyMode.NONE) {
-        PropertyInitializationInfoCollector(properties).getData(graph)
+        graph.collectDataForNode(TraverseDirection.Forward, PropertyInitializationInfoCollector(properties, receiver))
     }
 
     fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo {
@@ -28,9 +28,6 @@ class PropertyInitializationInfoCollector(
     private val expectedReceiver: FirBasedSymbol<*>? = null,
     private val declaredVariableCollector: DeclaredVariableCollector = DeclaredVariableCollector(),
 ) : PathAwareControlFlowGraphVisitor<PropertyInitializationInfo>() {
-    fun getData(graph: ControlFlowGraph) =
-        graph.collectDataForNode(TraverseDirection.Forward, this)
-
     companion object {
         private val EMPTY_INFO: PathAwarePropertyInitializationInfo = persistentMapOf(NormalPath to PropertyInitializationInfo.EMPTY)
     }

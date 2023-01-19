@@ -87,7 +87,7 @@ class DefiniteInitializationInInitSection {
 
     init {
         myRun { x = 42 }
-        unknownRun { y = 239 }
+        unknownRun { <!CAPTURED_MEMBER_VAL_INITIALIZATION!>y<!> = 239 }
     }
 }
 
