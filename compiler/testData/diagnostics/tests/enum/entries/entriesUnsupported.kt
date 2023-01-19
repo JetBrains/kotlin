@@ -7,5 +7,5 @@ enum class Foo {
 }
 
 fun main() {
-    Foo.<!UNRESOLVED_REFERENCE!>entries<!>
+    Foo.<!OPT_IN_USAGE_ERROR, UNSUPPORTED_FEATURE!>entries<!>
 }

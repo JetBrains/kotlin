@@ -1,4 +1,13 @@
-compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.kt:4:49: error: unresolved reference: entries
+warning: ATTENTION!
+This build uses unsafe internal compiler arguments:
+
+-XXLanguage:-EnumEntries
+
+This mode is not recommended for production use,
+as no stability/compatibility guarantees are given on
+compiler or generated code. Use it at your own risk!
+
+compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.kt:4:49: error: the feature "enum entries" is only available since language version 1.9
     val entries = java.util.concurrent.TimeUnit.entries
                                                 ^
 COMPILATION_ERROR
