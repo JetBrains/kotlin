@@ -474,6 +474,10 @@ open class KonanInteropTest : KonanStandaloneTest() {
 
     @Input
     @Optional
+    var interop2: String? = null
+
+    @Input
+    @Optional
     var lib: String? = null
 }
 
