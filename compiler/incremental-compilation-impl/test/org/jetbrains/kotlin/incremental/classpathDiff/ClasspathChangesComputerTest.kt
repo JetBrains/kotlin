@@ -256,6 +256,19 @@ class KotlinOnlyClasspathChangesComputerTest : ClasspathChangesComputerTest() {
         ).assertEquals(changes)
     }
 
+    /** Regression test for KT-55021. */
+    @Test
+    fun testRenameFileFacade() {
+        val changes = computeClasspathChanges(File(testDataDir, "KotlinOnly/testRenameFileFacade/src"), tmpDir)
+        Changes(
+            lookupSymbols = setOf(
+                LookupSymbol(name = "someFunction", scope = "com.example"),
+                LookupSymbol(name = "someProperty", scope = "com.example"),
+            ),
+            fqNames = setOf("com.example")
+        ).assertEquals(changes)
+    }
+
     /** Tests [SupertypesInheritorsImpact]. */
     @Test
     override fun testImpactComputation_SupertypesInheritors() {
