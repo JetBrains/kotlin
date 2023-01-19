@@ -172,7 +172,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         .apply { set(outputDirectory.resolve("${sourceSet.name}.cinteropLibraries")) }
 
     @get:Internal
-    protected val outputLibraryFiles: FileCollection = project.filesProvider {
+    internal val outputLibraryFiles: FileCollection = project.filesProvider {
         outputLibrariesFileIndex.map { file ->
             KotlinMetadataLibrariesIndexFile(file.asFile).read()
         }
