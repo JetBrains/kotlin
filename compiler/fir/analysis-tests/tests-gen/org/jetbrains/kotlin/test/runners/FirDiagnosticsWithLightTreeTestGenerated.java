@@ -6274,6 +6274,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("falseSamConversion.kt")
+            public void testFalseSamConversion() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/falseSamConversion.kt");
+            }
+
+            @Test
             @TestMetadata("immutableName.kt")
             public void testImmutableName() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/immutableName.kt");
