@@ -4372,6 +4372,10 @@ createInterop("workerSignals") {
     it.extraOpts "-Xcompile-source", "$projectDir/interop/workerSignals/workerSignals.cpp"
 }
 
+createInterop("cForwardDeclarations") {
+    it.defFile "interop/forwardDeclarations/cForwardDeclarations.def"
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -4903,6 +4907,12 @@ interopTest("interop_workerSignals") {
         (project.testTarget == 'mingw_x86' || project.testTarget == 'mingw_x64') // cross-thread signalling does not work on Windows
     source = "interop/workerSignals/workerSignals.kt"
     interop = "workerSignals"
+}
+
+interopTest("interop_forwardDeclarations") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/forwardDeclarations/forwardDeclarations.kt"
+    interop = "cForwardDeclarations"
 }
 
 /*
