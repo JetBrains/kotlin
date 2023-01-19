@@ -86,6 +86,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractOutOfContentRootGetOrBuildFirTest> {
             model("getOrBuildFir")
         }
+
+        testClass<AbstractFileBasedKotlinDeclarationProviderTest> {
+            model("fileBasedDeclarationProvider")
+        }
     }
 
     testGroup(
