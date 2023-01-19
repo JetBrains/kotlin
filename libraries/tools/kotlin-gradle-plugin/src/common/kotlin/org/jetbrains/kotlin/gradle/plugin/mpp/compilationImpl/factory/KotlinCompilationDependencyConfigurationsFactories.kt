@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -124,7 +123,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     runtimeOnlyConfigurationName: String = naming.name(compilation, RUNTIME_ONLY),
     compileClasspathConfigurationName: String = naming.name(compileClasspath),
     runtimeClasspathConfigurationName: String = naming.name(runtimeClasspath),
-    withHostSpecificMetadataConfigurationName: String = naming.name(compilation, METADATA_CONFIGURATION_NAME_SUFFIX),
+    hostSpecificMetadataConfigurationName: String = naming.name(compilation, METADATA_CONFIGURATION_NAME_SUFFIX),
     pluginConfigurationName: String = lowerCamelCaseName(
         PLUGIN_CLASSPATH_CONFIGURATION_NAME,
         target.disambiguationClassifier,
@@ -220,7 +219,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         } else null
 
     val hostSpecificMetadataConfiguration =
-        if (withHostSpecificMetadata) target.project.configurations.maybeCreate(withHostSpecificMetadataConfigurationName).apply {
+        if (withHostSpecificMetadata) target.project.configurations.maybeCreate(hostSpecificMetadataConfigurationName).apply {
             markResolvable()
             isVisible = false
             description = "Host-specific Metadata dependencies for $compilationCoordinates"
