@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
-import java.util.WeakHashMap
 
 internal interface SyntheticFirClassProvider {
     fun getFirClassifierContainerFileIfAny(classId: ClassId): FirFile?
@@ -20,31 +19,36 @@ internal interface SyntheticFirClassProvider {
 
     companion object {
         fun getInstance(session: FirSession): SyntheticFirClassProvider {
-            return providersForThread.get()[session] ?: EmptySyntheticFirClassProvider
+            return onAirProviderForThread.get()?.takeIf { it.session == session } ?: EmptySyntheticFirClassProvider
         }
     }
 }
 
-internal fun withSyntheticClasses(designation: FirDesignationWithFile, block: () -> Unit) {
-    val firSession = designation.firFile.moduleData.session
-
-    val compoundProvider = providersForThread.get()
-        .getOrPut(firSession) { CompoundSyntheticFirClassProvider() }
-
-    val provider = StaticSyntheticFirClassProvider.create(designation)
+/**
+ * Injects a designation-based class file provider to 'LLFirProvider'.
+ * Used for on-air analysis.
+ */
+internal fun withOnAirDesignation(designation: FirDesignationWithFile, block: () -> Unit) {
+    check(onAirProviderForThread.get() == null) { "Nested on-air analysis is not allowed" }
 
     try {
-        compoundProvider.push(provider)
+        // Make additional classes available only inside a given `block`.
+        // The provider is stored inside a `ThreadLocal` value to avoid parallel analysis modification.
+        val provider = OnAirSyntheticFirClassProvider.create(designation)
+        onAirProviderForThread.set(provider)
         block()
     } finally {
-        compoundProvider.pop(provider)
+        onAirProviderForThread.remove()
     }
 }
 
-private class StaticSyntheticFirClassProvider private constructor(
+private class OnAirSyntheticFirClassProvider private constructor(
     private val firFile: FirFile,
     private val classes: Map<ClassId, FirClassLikeDeclaration>
 ) : SyntheticFirClassProvider {
+    val session: FirSession
+        get() = firFile.moduleData.session
+
     override fun getFirClassifierContainerFileIfAny(classId: ClassId): FirFile? {
         return if (classId in classes) firFile else null
     }
@@ -54,7 +58,7 @@ private class StaticSyntheticFirClassProvider private constructor(
     }
 
     companion object {
-        fun create(designation: FirDesignationWithFile): SyntheticFirClassProvider {
+        fun create(designation: FirDesignationWithFile): OnAirSyntheticFirClassProvider {
             val firFile = designation.firFile
             val firElement = designation.target
 
@@ -69,30 +73,8 @@ private class StaticSyntheticFirClassProvider private constructor(
             }
 
             nodeInfoCollector.visitElement(firElement)
-            return StaticSyntheticFirClassProvider(firFile, nodeInfoCollector.classes)
+            return OnAirSyntheticFirClassProvider(firFile, nodeInfoCollector.classes)
         }
-    }
-}
-
-private class CompoundSyntheticFirClassProvider : SyntheticFirClassProvider {
-    private val providers = ArrayDeque<SyntheticFirClassProvider>()
-
-    fun push(provider: SyntheticFirClassProvider) {
-        providers.addFirst(provider)
-    }
-
-    fun pop(provider: SyntheticFirClassProvider) {
-        assert(providers.removeFirst() === provider)
-    }
-
-    override fun getFirClassifierContainerFileIfAny(classId: ClassId): FirFile? {
-        return providers.asReversed()
-            .firstNotNullOfOrNull { it.getFirClassifierContainerFileIfAny(classId) }
-    }
-
-    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
-        return providers.asReversed()
-            .firstNotNullOfOrNull { it.getFirClassifierByFqName(classId) }
     }
 }
 
@@ -101,5 +83,4 @@ private object EmptySyntheticFirClassProvider : SyntheticFirClassProvider {
     override fun getFirClassifierByFqName(classId: ClassId) = null
 }
 
-private val providersForThread: ThreadLocal<WeakHashMap<FirSession, CompoundSyntheticFirClassProvider>> =
-    ThreadLocal.withInitial { WeakHashMap() }
+private val onAirProviderForThread: ThreadLocal<OnAirSyntheticFirClassProvider?> = ThreadLocal()

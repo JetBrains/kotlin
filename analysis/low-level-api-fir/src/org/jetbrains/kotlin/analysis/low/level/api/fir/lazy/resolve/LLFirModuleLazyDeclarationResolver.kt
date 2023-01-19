@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirMo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformerExecutor
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.withSyntheticClasses
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.withOnAirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
@@ -195,7 +195,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         }
 
         if (onAirCreatedDeclaration) {
-            withSyntheticClasses(designation, ::runTransformation)
+            withOnAirDesignation(designation, ::runTransformation)
         } else {
             runTransformation()
         }
