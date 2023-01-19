@@ -470,7 +470,7 @@ class PSICallResolver(
             dispatchReceiver: ReceiverValueWithSmartCastInfo?,
             extensionReceiver: ReceiverValueWithSmartCastInfo?
         ): Collection<VariableDescriptor> {
-            val result = candidateInterceptor.interceptVariableCandidates(
+            return candidateInterceptor.interceptVariableCandidates(
                 initialResults,
                 this,
                 context,
@@ -481,14 +481,6 @@ class PSICallResolver(
                 dispatchReceiver,
                 extensionReceiver
             )
-            if (name != StandardNames.ENUM_ENTRIES || languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)) {
-                return result
-            }
-            return result.filterNot {
-                it is PropertyDescriptor && it.isSynthesized &&
-                        it.dispatchReceiverParameter == null && it.extensionReceiverParameter == null &&
-                        (it.containingDeclaration as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
-            }
         }
     }
 

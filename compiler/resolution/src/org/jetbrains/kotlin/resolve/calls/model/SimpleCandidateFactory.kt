@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.resolve.calls.model
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.components.NewConstraintSystemImpl
@@ -13,13 +16,14 @@ import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleErrorResolu
 import org.jetbrains.kotlin.resolve.calls.components.candidate.SimpleResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.addSubsystemFromArgument
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.LowerPriorityToPreserveCompatibility
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasDynamicExtensionAnnotation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
-import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.error.ErrorScopeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.isDynamic
 
 class SimpleCandidateFactory(
@@ -97,10 +101,15 @@ class SimpleCandidateFactory(
         )
         val extensionArgumentReceiver =
             createReceiverArgument(kotlinCall.getExplicitExtensionReceiver(explicitReceiverKind), extensionReceiver)
+        val descriptor = towerCandidate.descriptor
+        var diagnostics: List<KotlinCallDiagnostic> = towerCandidate.diagnostics
+        if (descriptor is PropertyDescriptor && descriptor.isSyntheticEnumEntries()) {
+            diagnostics = diagnostics + LowerPriorityToPreserveCompatibility(needToReportWarning = false).asDiagnostic()
+        }
 
         return createCandidate(
-            towerCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver,
-            extensionArgumentReceiver, null, towerCandidate.diagnostics, knownSubstitutor = null
+            descriptor, explicitReceiverKind, dispatchArgumentReceiver,
+            extensionArgumentReceiver, extensionArgumentReceiverCandidates = null, diagnostics, knownSubstitutor = null
         )
     }
 
@@ -180,4 +189,9 @@ class SimpleCandidateFactory(
             extensionArgumentReceiverCandidates = null, initialDiagnostics = listOf(), knownSubstitutor = null
         )
     }
+}
+
+fun PropertyDescriptor.isSyntheticEnumEntries(): Boolean {
+    return isSynthesized && dispatchReceiverParameter == null && extensionReceiverParameter == null &&
+            (containingDeclaration as? ClassDescriptor)?.kind == ClassKind.ENUM_CLASS
 }
