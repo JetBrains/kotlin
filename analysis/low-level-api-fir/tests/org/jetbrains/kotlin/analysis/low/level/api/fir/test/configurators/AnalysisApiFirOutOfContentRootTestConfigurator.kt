@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirSourceLikeTestConfigurator(false) {
     override val testPrefix: String
-        get() = "outside"
+        get() = "out_of_src_roots"
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         super.configureTest(builder, disposable)
