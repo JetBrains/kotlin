@@ -1039,6 +1039,9 @@ open class RawFirBuilder(
                     for (annotationEntry in file.annotationEntries) {
                         annotations += annotationEntry.convert<FirAnnotation>()
                     }
+                    if (annotations.isEmpty()) {
+                        resolveState = FirResolvePhase.BODY_RESOLVE.asResolveState()
+                    }
                 }
 
                 for (importDirective in file.importDirectives) {
