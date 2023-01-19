@@ -434,6 +434,8 @@ public interface Errors {
     DiagnosticFactory1<KtAnnotationEntry, String> ANNOTATION_ON_ILLEGAL_MULTI_FIELD_VALUE_CLASS_TYPED_TARGET =
             DiagnosticFactory1.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> VARRAY_PARAMETRIZED_BY_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
+
     // Result class
 
     DiagnosticFactory0<PsiElement> RESULT_CLASS_IN_RETURN_TYPE = DiagnosticFactory0.create(ERROR);

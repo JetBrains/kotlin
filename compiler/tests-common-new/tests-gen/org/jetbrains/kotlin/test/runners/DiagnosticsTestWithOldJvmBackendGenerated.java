@@ -684,6 +684,22 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     }
 
     @Nested
+    @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/vArrays")
+    @TestDataPath("$PROJECT_ROOT")
+    public class VArrays {
+        @Test
+        public void testAllFilesPresentInVArrays() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/vArrays"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JVM_OLD, true);
+        }
+
+        @Test
+        @TestMetadata("vArrayMFVC.kt")
+        public void testVArrayMFVC() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJvmBackend/vArrays/vArrayMFVC.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class ValueClasses {

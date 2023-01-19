@@ -1,11 +1,18 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
+// LANGUAGE: +ValueClasses
 
 @JvmInline
 value class IcInt(val x: Int)
 
 @JvmInline
 value class Point(val x: Int, val y: Int)
+
+@JvmInline
+value class IcPoint(val x: Point)
+
+@JvmInline
+value class IcIcPoint(val x: IcPoint)
 
 inline fun <reified T> singletonVArray(x: T) {
     val x = Array(1) { x }
@@ -27,16 +34,21 @@ inline fun <reified T : Number> fooReifiedTNumberN(a: Array<T?>) {}
 
 // Error:
 
-fun <T> barT(a: VArray<T>) {}
+fun <T> barT(a: VArray<<!TYPE_PARAMETER_AS_REIFIED!>T<!>>) {}
 
-fun barStar(a: VArray<*>) {}
+fun barStar(a: VArray<<!ILLEGAL_PROJECTION_USAGE!>*<!>>) {}
 
-class A<T>(val x: VArray<T>)
+class A<T>(val x: VArray<<!TYPE_PARAMETER_AS_REIFIED!>T<!>>)
 
 fun barMFVC(a: VArray<Point>) {}
 
 fun barMFVCInferred() {
     val x = Point(1, 2)
+    singletonVArray(x)
+}
+
+fun barIcIcMFVCInferred() {
+    val x = IcIcPoint(IcPoint(Point(0, 1)))
     singletonVArray(x)
 }
 
