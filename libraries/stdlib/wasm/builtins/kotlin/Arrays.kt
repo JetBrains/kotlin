@@ -10,7 +10,7 @@ import kotlin.wasm.internal.*
 public class ByteArray(size: Int) {
     internal val storage = WasmByteArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED")
+    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmByteArray) : this(check(false) as Int)
 
@@ -44,7 +44,7 @@ internal fun byteArrayIterator(array: ByteArray) = object : ByteIterator() {
 public class CharArray(size: Int) {
     internal val storage = WasmCharArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED")
+    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmCharArray) : this(check(false) as Int)
 
@@ -79,7 +79,7 @@ internal fun charArrayIterator(array: CharArray) = object : CharIterator() {
 public class ShortArray(size: Int) {
     internal val storage = WasmShortArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED")
+    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmShortArray) : this(check(false) as Int)
 
@@ -114,7 +114,7 @@ internal fun shortArrayIterator(array: ShortArray) = object : ShortIterator() {
 public class IntArray(size: Int) {
     internal val storage = WasmIntArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED")
+    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmIntArray) : this(check(false) as Int)
 
@@ -149,7 +149,7 @@ internal fun intArrayIterator(array: IntArray) = object : IntIterator() {
 public class LongArray(size: Int) {
     internal val storage = WasmLongArray (size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED")
+    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmLongArray) : this(check(false) as Int)
 
@@ -183,7 +183,7 @@ internal fun longArrayIterator(array: LongArray) = object : LongIterator() {
 public class FloatArray(size: Int) {
     internal val storage = WasmFloatArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED")
+    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmFloatArray) : this(check(false) as Int)
 
@@ -217,7 +217,7 @@ internal fun floatArrayIterator(array: FloatArray) = object : FloatIterator() {
 public class DoubleArray(size: Int) {
     internal val storage = WasmDoubleArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED")
+    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmDoubleArray) : this(check(false) as Int)
 
@@ -251,7 +251,7 @@ internal fun doubleArrayIterator(array: DoubleArray) = object : DoubleIterator()
 public class BooleanArray(size: Int) {
     internal val storage = WasmByteArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED")
+    @Suppress("TYPE_PARAMETER_AS_REIFIED", "CAST_NEVER_SUCCEEDS", "UNUSED_PARAMETER")
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmByteArray) : this(check(false) as Int)
 

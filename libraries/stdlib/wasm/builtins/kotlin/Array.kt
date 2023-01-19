@@ -17,7 +17,7 @@ import kotlin.wasm.internal.*
 public class Array<T> constructor(size: Int) {
     internal val storage: WasmAnyArray = WasmAnyArray(size)
 
-    @Suppress("TYPE_PARAMETER_AS_REIFIED")
+    @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
     @WasmPrimitiveConstructor
     internal constructor(storage: WasmAnyArray) : this(check(false) as Int)
 
