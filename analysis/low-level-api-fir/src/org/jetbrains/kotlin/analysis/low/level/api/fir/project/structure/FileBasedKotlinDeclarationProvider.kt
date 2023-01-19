@@ -9,36 +9,59 @@ import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.yieldIfNotNull
 
 internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile) : KotlinDeclarationProvider() {
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
-        if (classId.isLocal) {
-            return null
-        }
-
-        if (kotlinFile.packageFqName != classId.packageFqName) {
-            return null
-        }
-
-        var current: KtElement = kotlinFile
-
-        nextSegment@ for (segment in classId.relativeClassName.pathSegments()) {
-            val container = current as? KtDeclarationContainer ?: return null
-            for (child in container.declarations) {
-                if (child is KtClassLikeDeclaration && child.nameAsName == segment) {
-                    current = child
-                    continue@nextSegment
-                }
-            }
-
-            return null
-        }
-
-        return current as? KtClassLikeDeclaration
+        return getClassLikeDeclarationsByClassId(classId).firstOrNull()
     }
 
     override fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject> {
-        return listOfNotNull(getClassLikeDeclarationByClassId(classId) as? KtClassOrObject)
+        return getClassLikeDeclarationsByClassId(classId).filterIsInstance<KtClassOrObject>().toList()
+    }
+
+    private fun getClassLikeDeclarationsByClassId(classId: ClassId): Sequence<KtClassLikeDeclaration> {
+        if (classId.isLocal) {
+            return emptySequence()
+        }
+
+        if (kotlinFile.packageFqName != classId.packageFqName) {
+            return emptySequence()
+        }
+
+        data class Task(val chunks: List<Name>, val element: KtElement)
+
+        return sequence {
+            val tasks = ArrayDeque<Task>()
+
+            val startingChunks = classId.relativeClassName.pathSegments()
+            for (declaration in kotlinFile.declarations) {
+                tasks.addLast(Task(startingChunks, declaration))
+            }
+
+            tasks += Task(startingChunks, kotlinFile)
+
+            while (!tasks.isEmpty()) {
+                val (chunks, element) = tasks.removeFirst()
+                assert(chunks.isNotEmpty())
+
+                if (element !is KtNamedDeclaration || element.nameAsName != chunks[0]) {
+                    continue
+                }
+
+                if (chunks.size == 1) {
+                    yieldIfNotNull(element as? KtClassLikeDeclaration)
+                    continue
+                }
+
+                if (element is KtDeclarationContainer) {
+                    val newChunks = chunks.subList(1, chunks.size)
+                    for (child in element.declarations) {
+                        tasks.addLast(Task(newChunks, child))
+                    }
+                }
+            }
+        }
     }
 
     override fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> {
