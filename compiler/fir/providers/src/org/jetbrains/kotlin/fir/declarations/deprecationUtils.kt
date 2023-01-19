@@ -91,6 +91,14 @@ fun FirBasedSymbol<*>.getDeprecation(apiVersion: ApiVersion, callSite: FirElemen
     }
 }
 
+fun FirBasedSymbol<*>.getDeprecationForResolutionFiltering(session: FirSession): DeprecationInfo? {
+    val apiVersion = session.languageVersionSettings.apiVersion
+    return when (this) {
+        is FirPropertySymbol -> getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY)
+        else -> getDeprecationForCallSite(apiVersion)
+    }
+}
+
 fun FirAnnotationContainer.getDeprecationsProvider(session: FirSession): DeprecationsProvider {
     return extractDeprecationInfoPerUseSite(session).toDeprecationsProvider(session.firCachesFactory)
 }

@@ -649,7 +649,7 @@ internal object CheckCallModifiers : CheckerStage() {
 internal object CheckDeprecatedSinceKotlin : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val symbol = candidate.symbol as? FirCallableSymbol<*> ?: return
-        val deprecation = symbol.getDeprecation(context.session, callInfo.callSite)
+        val deprecation = symbol.getDeprecationForResolutionFiltering(context.session)
         if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
             sink.yieldDiagnostic(HiddenCandidate)
         }
