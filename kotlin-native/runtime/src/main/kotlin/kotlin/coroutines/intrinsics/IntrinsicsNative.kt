@@ -27,10 +27,13 @@ public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrRetu
         completion: Continuation<T>
 ): Any? {
     val function = this as? Function1<Continuation<T>, Any?>
-    return if (function != null)
-        function.invoke(completion)
-    else
+    return if (function == null)
         startCoroutineUninterceptedOrReturnFallback(this, completion)
+    else {
+        function.invoke(
+                completion.takeIf { this is BaseContinuationImpl } ?: wrapWithContinuationImpl(completion)
+        )
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -64,10 +67,13 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
         completion: Continuation<T>
 ): Any? {
     val function = this as? Function2<R, Continuation<T>, Any?>
-    return if (function != null)
-        function.invoke(receiver, completion)
-    else
+    return if (function == null)
         startCoroutineUninterceptedOrReturnFallback(this, receiver, completion)
+    else {
+        function.invoke(receiver,
+                completion.takeIf { this is BaseContinuationImpl } ?: wrapWithContinuationImpl(completion)
+        )
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -91,10 +97,13 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
         completion: Continuation<T>
 ): Any? {
     val function = this as? Function3<R, P, Continuation<T>, Any?>
-    return if (function != null)
-        function.invoke(receiver, param, completion)
-    else
+    return if (function == null)
         startCoroutineUninterceptedOrReturnFallback(this, receiver, param, completion)
+    else {
+        function.invoke(receiver, param,
+                completion.takeIf { this is BaseContinuationImpl } ?: wrapWithContinuationImpl(completion)
+        )
+    }
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -288,4 +297,34 @@ internal inline fun createContinuationArgumentFromCallback(
 
         return Unit // Not suspended.
     }
+}
+
+@PublishedApi
+internal fun <T> wrapWithContinuationImpl(completion: Continuation<T>) =
+        createSimpleCoroutineForSuspendFunction(probeCoroutineCreated(completion))
+
+/**
+ * This function is used when [startCoroutineUninterceptedOrReturn] encounters suspending lambda that does not extend BaseContinuationImpl.
+ *
+ * It happens in two cases: callable reference to suspending function or tail-call lambdas.
+ *
+ * This function is the same as above, but does not run lambda itself - the caller is expected to call [invoke] manually.
+ */
+@Suppress("UNCHECKED_CAST")
+private fun <T> createSimpleCoroutineForSuspendFunction(
+        completion: Continuation<T>
+): Continuation<T> {
+    val context = completion.context
+    return if (context === EmptyCoroutineContext)
+        object : RestrictedContinuationImpl(completion as Continuation<Any?>) {
+            override fun invokeSuspend(result: Result<Any?>): Any? {
+                return result.getOrThrow()
+            }
+        }
+    else
+        object : ContinuationImpl(completion as Continuation<Any?>, context) {
+            override fun invokeSuspend(result: Result<Any?>): Any? {
+                return result.getOrThrow()
+            }
+        }
 }
