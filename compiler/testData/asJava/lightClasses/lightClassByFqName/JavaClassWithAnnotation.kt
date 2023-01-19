@@ -1,4 +1,5 @@
 // one.KotlinFacadeKt
+// SKIP_IDE_TEST
 
 // FILE: KotlinFacade.kt
 package one
