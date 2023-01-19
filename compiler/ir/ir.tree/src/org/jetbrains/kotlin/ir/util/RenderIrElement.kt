@@ -593,7 +593,6 @@ fun IrTypeArgument.render() =
     when (this) {
         is IrStarProjection -> "*"
         is IrTypeProjection -> "$variance ${type.render()}"
-        else -> throw AssertionError("Unexpected IrTypeArgument: $this")
     }
 
 internal inline fun <T, Buffer : Appendable> Buffer.appendIterableWith(
@@ -785,8 +784,6 @@ private fun IrTypeArgument.renderTypeArgument(renderer: RenderIrElementVisitor?,
             if (variance != Variance.INVARIANT) append(' ')
             append(type.renderTypeWithRenderer(renderer, verboseErrorTypes))
         }
-
-        else -> "IrTypeArgument[$this]"
     }
 
 private fun renderTypeAnnotations(annotations: List<IrConstructorCall>, renderer: RenderIrElementVisitor?, verboseErrorTypes: Boolean) =

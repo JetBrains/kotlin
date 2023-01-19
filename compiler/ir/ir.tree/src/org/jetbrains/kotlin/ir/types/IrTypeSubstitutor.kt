@@ -31,7 +31,6 @@ abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : T
             when (val typeArgument = getSubstitutionArgument(it)) {
                 is IrStarProjection -> irBuiltIns.anyNType // TODO upper bound for T
                 is IrTypeProjection -> typeArgument.type.run { if (type.isMarkedNullable()) makeNullable() else this }
-                else -> error("unknown type argument")
             }
         } ?: substituteType(type)
     }
@@ -52,21 +51,22 @@ abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : T
     }
 
     private fun substituteTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument {
-        if (typeArgument is IrStarProjection) return typeArgument
-
-        require(typeArgument is IrTypeProjection)
-
-        val type = typeArgument.type
-        if (type is IrSimpleType) {
-            val classifier = type.classifier
-            if (classifier is IrTypeParameterSymbol) {
-                val newArgument = getSubstitutionArgument(classifier)
-                return if (newArgument is IrTypeProjection) {
-                    makeTypeProjection(newArgument.type, typeArgument.variance)
-                } else newArgument
+        when (typeArgument) {
+            is IrStarProjection -> return typeArgument
+            is IrTypeProjection -> {
+                val type = typeArgument.type
+                if (type is IrSimpleType) {
+                    val classifier = type.classifier
+                    if (classifier is IrTypeParameterSymbol) {
+                        val newArgument = getSubstitutionArgument(classifier)
+                        return if (newArgument is IrTypeProjection) {
+                            makeTypeProjection(newArgument.type, typeArgument.variance)
+                        } else newArgument
+                    }
+                }
+                return makeTypeProjection(substituteType(typeArgument.type), typeArgument.variance)
             }
         }
-        return makeTypeProjection(substituteType(typeArgument.type), typeArgument.variance)
     }
 }
 

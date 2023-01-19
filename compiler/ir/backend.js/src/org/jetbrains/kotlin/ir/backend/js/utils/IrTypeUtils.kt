@@ -39,7 +39,6 @@ fun IrType.asString(): String = when (this) {
 private fun IrTypeArgument.asString(): String = when (this) {
     is IrStarProjection -> "*"
     is IrTypeProjection -> variance.label + (if (variance != Variance.INVARIANT) " " else "") + type.asString()
-    else -> error("Unexpected kind of IrTypeArgument: " + javaClass.simpleName)
 }
 
 private fun IrClassifierSymbol.asString() = when (this) {

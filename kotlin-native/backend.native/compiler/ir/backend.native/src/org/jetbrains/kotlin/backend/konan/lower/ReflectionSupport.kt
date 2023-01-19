@@ -154,7 +154,6 @@ internal class KTypeGenerator(
                     when (argument) {
                         is IrStarProjection -> irConstantInt(-1)
                         is IrTypeProjection -> irConstantInt(mapVariance(argument.variance))
-                        else -> error("Unexpected IrTypeArgument: $argument (${argument::class})")
                     }
                 })
         val type = irConstantArray(
@@ -163,7 +162,6 @@ internal class KTypeGenerator(
                     when (argument) {
                         is IrStarProjection -> irConstantPrimitive(irNull())
                         is IrTypeProjection -> irKType(argument.type, leaveReifiedForLater, seenTypeParameters)
-                        else -> error("Unexpected IrTypeArgument: $argument (${argument::class})")
                     }
                 })
         return irConstantObject(

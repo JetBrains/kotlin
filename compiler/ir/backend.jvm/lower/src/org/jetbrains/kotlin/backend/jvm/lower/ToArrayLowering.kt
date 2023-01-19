@@ -150,7 +150,6 @@ private fun IrType.isArrayOrNullableArrayOf(context: JvmBackendContext, element:
     this is IrSimpleType && (isArray() || isNullableArray()) && arguments.size == 1 && element == when (val it = arguments[0]) {
         is IrStarProjection -> context.irBuiltIns.anyClass
         is IrTypeProjection -> if (it.variance == Variance.IN_VARIANCE) context.irBuiltIns.anyClass else it.type.classifierOrNull
-        else -> null
     }
 
 // Match `fun <T> toArray(prototype: Array<T>): Array<T>`

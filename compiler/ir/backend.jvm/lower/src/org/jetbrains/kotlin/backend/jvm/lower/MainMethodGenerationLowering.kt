@@ -111,7 +111,7 @@ private class MainMethodGenerationLowering(private val context: JvmBackendContex
             is IrTypeProjection -> {
                 (argType.variance != Variance.IN_VARIANCE) && argType.type.isStringClassType()
             }
-            else -> false
+            is IrStarProjection -> false
         }
     }
 

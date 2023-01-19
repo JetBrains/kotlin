@@ -442,7 +442,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map {
             when (it) {
                 is IrTypeProjection -> it.type
-                else -> context.irBuiltIns.anyNType
+                is IrStarProjection -> context.irBuiltIns.anyNType
             }
         }
         private val argumentTypes = parameterTypes.dropLast(1)

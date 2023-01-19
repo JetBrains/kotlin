@@ -987,7 +987,7 @@ fun IrType.remapTypeParameters(
                                     it.type.remapTypeParameters(source, target, srcToDstParameterMap),
                                     it.variance
                                 )
-                                else -> it
+                                is IrStarProjection -> it
                             }
                         },
                         annotations

@@ -92,7 +92,10 @@ abstract class IrSimpleType(kotlinType: KotlinType?) : IrTypeBase(kotlinType), S
         get() = nullability == SimpleTypeNullability.MARKED_NULLABLE
 }
 
-interface IrTypeArgument : TypeArgumentMarker {
+/**
+ * An argument for a generic parameter. Can be either [IrTypeProjection], or [IrStarProjection].
+ */
+sealed interface IrTypeArgument : TypeArgumentMarker {
     override fun equals(other: Any?): Boolean
     override fun hashCode(): Int
 }

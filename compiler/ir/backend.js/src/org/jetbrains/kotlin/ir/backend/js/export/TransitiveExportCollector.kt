@@ -66,7 +66,6 @@ class TransitiveExportCollector(val context: JsIrBackendContext) {
             is IrType -> substitute(typeSubstitutionMap)
             is IrTypeProjection -> type.substitute(typeSubstitutionMap)
             is IrStarProjection -> context.irBuiltIns.anyNType
-            else -> error("Unexpected ir type argument")
         }
     }
 

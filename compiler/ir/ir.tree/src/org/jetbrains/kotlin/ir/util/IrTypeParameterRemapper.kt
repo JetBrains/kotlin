@@ -43,10 +43,10 @@ class IrTypeParameterRemapper(
             ?: this
 
     private fun IrTypeArgument.remap() =
-        if (this is IrTypeProjection)
-            makeTypeProjection(remapType(type), variance)
-        else
-            this
+        when (this) {
+            is IrTypeProjection -> makeTypeProjection(remapType(type), variance)
+            is IrStarProjection -> this
+        }
 
     private fun IrTypeAbbreviation.remap() =
         IrTypeAbbreviationImpl(

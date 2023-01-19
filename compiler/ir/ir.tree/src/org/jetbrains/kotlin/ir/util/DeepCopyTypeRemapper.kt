@@ -41,10 +41,10 @@ class DeepCopyTypeRemapper(
     }
 
     private fun remapTypeArgument(typeArgument: IrTypeArgument): IrTypeArgument =
-        if (typeArgument is IrTypeProjection)
-            makeTypeProjection(this.remapType(typeArgument.type), typeArgument.variance)
-        else
-            typeArgument
+        when (typeArgument) {
+            is IrTypeProjection -> makeTypeProjection(this.remapType(typeArgument.type), typeArgument.variance)
+            is IrStarProjection -> typeArgument
+        }
 
     private fun IrTypeAbbreviation.remapTypeAbbreviation() =
         IrTypeAbbreviationImpl(

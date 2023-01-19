@@ -100,10 +100,9 @@ fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrTy
     }
 
     val newArguments = arguments.map {
-        if (it is IrTypeProjection) {
-            makeTypeProjection(it.type.substitute(substitutionMap), it.variance)
-        } else {
-            it
+        when (it) {
+            is IrTypeProjection -> makeTypeProjection(it.type.substitute(substitutionMap), it.variance)
+            is IrStarProjection -> it
         }
     }
 

@@ -1174,7 +1174,6 @@ private fun makeKotlinType(
                 when (it) {
                     is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType())
                     is IrStarProjection -> StarProjectionImpl(classDescriptor.typeConstructor.parameters[index])
-                    else -> error(it)
                 }
             }
 

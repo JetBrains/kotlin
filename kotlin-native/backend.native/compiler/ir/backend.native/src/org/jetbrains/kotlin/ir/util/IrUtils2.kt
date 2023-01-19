@@ -183,7 +183,6 @@ fun IrType.substitute(map: Map<IrTypeParameterSymbol, IrType>): IrType {
                 when (it) {
                     is IrTypeProjection -> makeTypeProjection(it.type.substitute(map), it.variance)
                     is IrStarProjection -> it
-                    else -> error(it)
                 }
             }
             IrSimpleTypeImpl(classifier, nullability, newArguments, annotations)

@@ -101,7 +101,7 @@ internal class AddFunctionSupertypeToSuspendFunctionLowering(val context: Contex
                             require(type.classOrNull == continuationClassSymbol)
                             when (val typeArgument = (type as IrSimpleType).arguments.single()) {
                                 is IrTypeProjection -> typeArgument.type
-                                else -> context.irBuiltIns.anyNType
+                                is IrStarProjection -> context.irBuiltIns.anyNType
                             }
                         } else {
                             type

@@ -194,7 +194,6 @@ fun IrTypeArgument.upperBound(builtIns: IrBuiltIns): IrType =
             else
                 builtIns.anyNType
         }
-        else -> error("Unknown type argument: ${render()}")
     }
 
 private fun IrClass.getSimpleFunction(name: String): IrSimpleFunctionSymbol? =

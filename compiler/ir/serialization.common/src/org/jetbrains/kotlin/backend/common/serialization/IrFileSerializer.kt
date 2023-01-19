@@ -374,7 +374,6 @@ open class IrFileSerializer(
         return when (argument) {
             is IrStarProjection -> serializeIrStarProjection()
             is IrTypeProjection -> serializeIrTypeProjection(argument)
-            else -> TODO("Unexpected type argument kind: $argument")
         }
     }
 
@@ -484,7 +483,6 @@ open class IrFileSerializer(
             kind = when (this) {
                 is IrStarProjection -> IrTypeArgumentKind.STAR
                 is IrTypeProjection -> IrTypeArgumentKind.PROJECTION
-                else -> error("Unexpected type argument kind: $this")
             },
             variance = (this as? IrTypeProjection)?.variance,
             type = (this as? IrTypeProjection)?.type?.toIrTypeKey

@@ -62,7 +62,6 @@ fun IrType.eraseTypeParameters(): IrType = when (this) {
 private fun IrTypeArgument.eraseTypeParameters(): IrTypeArgument = when (this) {
     is IrStarProjection -> this
     is IrTypeProjection -> makeTypeProjection(type.eraseTypeParameters(), variance)
-    else -> error("Unknown IrTypeArgument kind: $this")
 }
 
 /**
@@ -147,7 +146,6 @@ fun IrType.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrType {
 private fun IrTypeArgument.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrTypeArgument = when (this) {
     is IrStarProjection -> this
     is IrTypeProjection -> makeTypeProjection(type.eraseToScope(visibleTypeParameters), variance)
-    else -> error("unknown type projection kind: ${render()}")
 }
 
 fun collectVisibleTypeParameters(scopeOwner: IrTypeParametersContainer): Set<IrTypeParameter> =

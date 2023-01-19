@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrStarProjection
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
@@ -37,20 +38,21 @@ internal class SamSuperTypesChecker(private val context: Context,
             this.nullability = this@eraseProjections.nullability
             this.annotations = this@eraseProjections.annotations
             this.arguments = this@eraseProjections.arguments.mapIndexed { index, argument ->
-                if (argument !is IrTypeProjection)
-                    argument
-                else {
-                    if (mode == Mode.THROW && argument.variance != Variance.INVARIANT) {
-                        context.reportCompilationError(
-                                "Unexpected variance in super type argument: ${argument.variance} @$index", irFile, owner)
+                when (argument) {
+                    is IrStarProjection -> argument
+                    is IrTypeProjection -> {
+                        if (mode == Mode.THROW && argument.variance != Variance.INVARIANT) {
+                            context.reportCompilationError(
+                                    "Unexpected variance in super type argument: ${argument.variance} @$index", irFile, owner)
+                        }
+                        val newArgumentType = if (recurse) {
+                            argument.type.eraseProjections(owner)
+                        } else {
+                            // See the explanation at the SamSuperTypesChecker constructor call sites.
+                            argument.type
+                        }
+                        makeTypeProjection(newArgumentType, Variance.INVARIANT)
                     }
-                    val newArgumentType = if (recurse) {
-                        argument.type.eraseProjections(owner)
-                    } else {
-                        // See the explanation at the SamSuperTypesChecker constructor call sites.
-                        argument.type
-                    }
-                    makeTypeProjection(newArgumentType, Variance.INVARIANT)
                 }
             }
         }

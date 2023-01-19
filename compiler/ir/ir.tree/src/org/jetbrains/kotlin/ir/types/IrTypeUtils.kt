@@ -61,8 +61,8 @@ fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
                 argument.type
             is IrStarProjection ->
                 irBuiltIns.anyNType
-            else ->
-                error("Unexpected array argument type: $argument")
+            null ->
+                error("Unexpected array argument type: null")
         }
     } else {
         val classifier = this.classOrNull!!
