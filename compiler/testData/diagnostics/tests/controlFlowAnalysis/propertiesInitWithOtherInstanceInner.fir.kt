@@ -15,7 +15,7 @@ class Outer {
             innerProp = "6" // do not repeat the same diagnostic with this receiver
             this@Inner.innerProp = "7"
 
-            inner.innerProp = "8"
+            inner.<!VAL_REASSIGNMENT!>innerProp<!> = "8"
         }
     }
 }

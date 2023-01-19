@@ -22,10 +22,19 @@ FILE: reassignOfNonMemberProperty_lateInitialization.kt
 
         public final val a: R|kotlin/String| = this@R|/Some|.R|kotlin/run|<R|Some|, R|kotlin/String|>(<L> = run@fun R|Some|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|/Some.x| = String(error)
-            this@R|special/anonymous|.R|/Some.y| = String(ok)
             this@R|special/anonymous|.R|/Some.y| = String(error)
             this@R|special/anonymous|.R|/z| = String(error)
             ^ String(hello)
+        }
+        )
+            public get(): R|kotlin/String|
+
+        public final val b: R|kotlin/String| = Int(123).R|kotlin/run|<R|kotlin/Int|, R|kotlin/String|>(<L> = run@fun R|kotlin/Int|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|/Some|.R|/Some.x| = String(error)
+            this@R|/Some|.R|/Some.y| = String(ok)
+            this@R|/Some|.R|/Some.y| = String(error)
+            this@R|/Some|.R|/z| = String(error)
+            ^ String(there)
         }
         )
             public get(): R|kotlin/String|

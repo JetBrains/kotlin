@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReference
@@ -29,10 +30,10 @@ import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.references.toResolvedValueParameterSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visibilityChecker
 
@@ -133,23 +134,22 @@ object FirReassignmentAndInvisibleSetterChecker : FirVariableAssignmentChecker()
     ) {
         val property = expression.lValue.toResolvedPropertySymbol() ?: return
         if (property.isLocal || property.isVar) return
-        val assignIsIllegal = when (val dispatchReceiverType = property.dispatchReceiverType) {
-            null -> true
-            else -> when {
-                property is FirSyntheticPropertySymbol -> true
-                property.hasDelegate || !property.hasBackingField -> true
-                property.hasInitializer -> true
-                else -> !isInsideInitializationOfClass(dispatchReceiverType, context)
+        val isLegal = when {
+            property is FirSyntheticPropertySymbol -> false
+            property.hasDelegate || !property.hasBackingField -> false
+            property.hasInitializer -> false
+            else -> {
+                val thisReceiverSymbol = (expression.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol
+                thisReceiverSymbol != null && isInsideInitializationOfClass(thisReceiverSymbol, context)
             }
         }
-        if (assignIsIllegal) {
+        if (!isLegal) {
             reporter.reportOn(expression.lValue.source, FirErrors.VAL_REASSIGNMENT, property, context)
         }
     }
 
-    private fun isInsideInitializationOfClass(classType: ConeSimpleKotlinType, context: CheckerContext): Boolean {
+    private fun isInsideInitializationOfClass(classSymbol: FirBasedSymbol<*>, context: CheckerContext): Boolean {
         val session = context.session
-        val classSymbol = classType.toSymbol(session) ?: return false
         for (containingDeclaration in context.containingDeclarations) {
             val containingClassSymbol = when (containingDeclaration) {
                 is FirProperty -> containingDeclaration.containingClassLookupTag()?.toSymbol(session)

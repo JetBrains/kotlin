@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 class PropertyInitializationInfoData(properties: Set<FirPropertySymbol>, graph: ControlFlowGraph) {
@@ -23,8 +25,12 @@ class PropertyInitializationInfoData(properties: Set<FirPropertySymbol>, graph: 
 
 class PropertyInitializationInfoCollector(
     private val localProperties: Set<FirPropertySymbol>,
+    private val expectedReceiver: FirBasedSymbol<*>? = null,
     private val declaredVariableCollector: DeclaredVariableCollector = DeclaredVariableCollector(),
 ) : PathAwareControlFlowGraphVisitor<PropertyInitializationInfo>() {
+    fun getData(graph: ControlFlowGraph) =
+        graph.collectDataForNode(TraverseDirection.Forward, this)
+
     companion object {
         private val EMPTY_INFO: PathAwarePropertyInitializationInfo = persistentMapOf(NormalPath to PropertyInitializationInfo.EMPTY)
     }
@@ -37,12 +43,11 @@ class PropertyInitializationInfoCollector(
         data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
+        val receiver = (node.fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol
+        if (receiver != expectedReceiver) return dataForNode
         val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return dataForNode
-        return if (symbol !in localProperties) {
-            dataForNode
-        } else {
-            processVariableWithAssignment(dataForNode, symbol)
-        }
+        if (symbol !in localProperties) return dataForNode
+        return addRange(dataForNode, symbol, EventOccurrencesRange.EXACTLY_ONCE)
     }
 
     override fun visitVariableDeclarationNode(
@@ -50,26 +55,14 @@ class PropertyInitializationInfoCollector(
         data: PathAwarePropertyInitializationInfo
     ): PathAwarePropertyInitializationInfo {
         val dataForNode = visitNode(node, data)
-        return processVariableWithAssignment(
-            dataForNode,
-            node.fir.symbol,
-            overwriteRange = node.fir.initializer == null && node.fir.delegate == null
-        )
-    }
-
-    fun getData(graph: ControlFlowGraph) =
-        graph.collectDataForNode(TraverseDirection.Forward, this)
-
-    private fun processVariableWithAssignment(
-        dataForNode: PathAwarePropertyInitializationInfo,
-        symbol: FirPropertySymbol,
-        overwriteRange: Boolean = false,
-    ): PathAwarePropertyInitializationInfo {
-        assert(dataForNode.keys.isNotEmpty())
-        return if (overwriteRange)
-            overwriteRange(dataForNode, symbol, EventOccurrencesRange.ZERO)
-        else
-            addRange(dataForNode, symbol, EventOccurrencesRange.EXACTLY_ONCE)
+        return when {
+            expectedReceiver != null ->
+                dataForNode
+            node.fir.initializer == null && node.fir.delegate == null ->
+                overwriteRange(dataForNode, node.fir.symbol, EventOccurrencesRange.ZERO)
+            else ->
+                overwriteRange(dataForNode, node.fir.symbol, EventOccurrencesRange.EXACTLY_ONCE)
+        }
     }
 
     // --------------------------------------------------

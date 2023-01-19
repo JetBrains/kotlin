@@ -1,7 +1,7 @@
 class A(val next: A? = null) {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: String<!>
     init {
-        next?.x = "a"
+        next?.<!VAL_REASSIGNMENT!>x<!> = "a"
     }
 }
 
