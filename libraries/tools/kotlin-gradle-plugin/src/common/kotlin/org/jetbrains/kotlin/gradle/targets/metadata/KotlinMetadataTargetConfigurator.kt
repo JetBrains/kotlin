@@ -58,10 +58,6 @@ class KotlinMetadataTargetConfigurator :
     KotlinOnlyTargetConfigurator<KotlinCompilation<*>, KotlinMetadataTarget>(createTestCompilation = false) {
     companion object {
         internal const val ALL_METADATA_JAR_NAME = "allMetadataJar"
-        internal const val TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA = "transformDependenciesMetadata"
-
-        internal fun transformGranularMetadataTaskName(sourceSetName: String) =
-            lowerCamelCaseName("transform", sourceSetName, "DependenciesMetadata")
     }
 
     override fun configureTarget(target: KotlinMetadataTarget) {
@@ -338,15 +334,7 @@ class KotlinMetadataTargetConfigurator :
         val project = compilation.target.project
         val sourceSet = compilation.defaultSourceSet
 
-        val transformationTask = project.locateOrRegisterTask<MetadataDependencyTransformationTask>(
-            transformGranularMetadataTaskName(sourceSet.name),
-            listOf(sourceSet)
-        ) {
-            description =
-                "Generates serialized dependencies metadata for compilation '${compilation.name}' of target '${compilation.target.name}' (for tooling)"
-        }
-
-        project.locateOrRegisterTask<Task>(TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA).dependsOn(transformationTask)
+        val transformationTask = project.locateOrRegisterMetadataDependencyTransformationTask(sourceSet)
 
         val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts
 

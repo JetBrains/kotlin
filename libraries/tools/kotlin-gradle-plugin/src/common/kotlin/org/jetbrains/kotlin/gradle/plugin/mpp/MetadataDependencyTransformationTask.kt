@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
@@ -21,6 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.*
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
+import org.jetbrains.kotlin.gradle.tasks.dependsOn
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
@@ -30,6 +34,26 @@ import javax.inject.Inject
 @Suppress("unused")
 @Deprecated("Task was renamed to MetadataDependencyTransformationTask", replaceWith = ReplaceWith("MetadataDependencyTransformationTask"))
 typealias TransformKotlinGranularMetadata = MetadataDependencyTransformationTask
+
+internal const val TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA = "transformDependenciesMetadata"
+private fun transformGranularMetadataTaskName(sourceSetName: String) =
+    lowerCamelCaseName("transform", sourceSetName, "DependenciesMetadata")
+
+internal fun Project.locateOrRegisterMetadataDependencyTransformationTask(
+    sourceSet: KotlinSourceSet
+): TaskProvider<MetadataDependencyTransformationTask> {
+    val transformationTask = project.locateOrRegisterTask<MetadataDependencyTransformationTask>(
+        transformGranularMetadataTaskName(sourceSet.name),
+        listOf(sourceSet)
+    ) {
+        description =
+            "Generates serialized dependencies metadata for compilation '${sourceSet.name}' (for tooling)"
+    }
+
+    project.locateOrRegisterTask<Task>(TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA).dependsOn(transformationTask)
+
+    return transformationTask
+}
 
 open class MetadataDependencyTransformationTask
 @Inject constructor(
@@ -64,7 +88,7 @@ open class MetadataDependencyTransformationTask
         dependsOnClosureWithInterCompilationDependencies(kotlinSourceSet).mapNotNull {
             project
                 .tasks
-                .locateTask(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it.name))
+                .locateTask(transformGranularMetadataTaskName(it.name))
         }
     }
 
