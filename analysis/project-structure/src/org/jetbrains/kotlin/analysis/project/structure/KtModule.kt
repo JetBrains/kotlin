@@ -172,6 +172,10 @@ public class KtBuiltinsModule(
  * A set of sources which lives outside project content root. E.g, testdata files or source files of some other project.
  */
 public interface KtNotUnderContentRootModule : KtModule {
+    /**
+     * Module owner file.
+     * A separate module is created for each file outside a content root.
+     */
     public val file: PsiFile?
         get() = null
 }
