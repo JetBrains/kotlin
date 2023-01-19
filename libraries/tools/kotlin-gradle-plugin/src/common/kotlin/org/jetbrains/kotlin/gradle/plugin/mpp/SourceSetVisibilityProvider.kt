@@ -38,9 +38,10 @@ private fun Project.collectAllPlatformCompilationData(): List<SourceSetVisibilit
 
 private fun KotlinCompilation<*>.toPlatformCompilationData() = SourceSetVisibilityProvider.PlatformCompilationData(
     allSourceSets = allKotlinSourceSets.map { it.name }.toSet(),
-    resolvedDependenciesConfiguration = LazyResolvedConfiguration(project.configurations.getByName(compileDependencyConfigurationName)),
-    hostSpecificMetadataConfiguration = (this as? KotlinNativeCompilation)
-        ?.hostSpecificMetadataConfiguration
+    resolvedDependenciesConfiguration = LazyResolvedConfiguration(internal.configurations.compileDependencyConfiguration),
+    hostSpecificMetadataConfiguration = internal
+        .configurations
+        .hostSpecificMetadataConfiguration
         ?.let(::LazyResolvedConfiguration)
 )
 
