@@ -128,10 +128,6 @@ public final class kotlinx/metadata/InconsistentKotlinMetadataException : java/l
 
 public final class kotlinx/metadata/KmAnnotation {
 	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/Map;
-	public final fun copy (Ljava/lang/String;Ljava/util/Map;)Lkotlinx/metadata/KmAnnotation;
-	public static synthetic fun copy$default (Lkotlinx/metadata/KmAnnotation;Ljava/lang/String;Ljava/util/Map;ILjava/lang/Object;)Lkotlinx/metadata/KmAnnotation;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getArguments ()Ljava/util/Map;
 	public final fun getClassName ()Ljava/lang/String;
@@ -149,6 +145,19 @@ public final class kotlinx/metadata/KmAnnotationArgument$AnnotationValue : kotli
 	public static synthetic fun copy$default (Lkotlinx/metadata/KmAnnotationArgument$AnnotationValue;Lkotlinx/metadata/KmAnnotation;ILjava/lang/Object;)Lkotlinx/metadata/KmAnnotationArgument$AnnotationValue;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAnnotation ()Lkotlinx/metadata/KmAnnotation;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlinx/metadata/KmAnnotationArgument$ArrayKClassValue : kotlinx/metadata/KmAnnotationArgument {
+	public fun <init> (Ljava/lang/String;I)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()I
+	public final fun copy (Ljava/lang/String;I)Lkotlinx/metadata/KmAnnotationArgument$ArrayKClassValue;
+	public static synthetic fun copy$default (Lkotlinx/metadata/KmAnnotationArgument$ArrayKClassValue;Ljava/lang/String;IILjava/lang/Object;)Lkotlinx/metadata/KmAnnotationArgument$ArrayKClassValue;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getArrayDimensionCount ()I
+	public final fun getClassName ()Ljava/lang/String;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
@@ -250,6 +259,7 @@ public final class kotlinx/metadata/KmAnnotationArgument$IntValue : kotlinx/meta
 }
 
 public final class kotlinx/metadata/KmAnnotationArgument$KClassValue : kotlinx/metadata/KmAnnotationArgument {
+	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;I)V
 	public final fun component1 ()Ljava/lang/String;
 	public final fun component2 ()I
