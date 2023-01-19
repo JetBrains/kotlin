@@ -9,7 +9,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -68,7 +67,6 @@ open class KotlinNativeCompilation @Inject internal constructor(
 
     val binariesTaskName: String
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilation.compilationName, "binaries")
-
 }
 
 open class KotlinSharedNativeCompilation @Inject internal constructor(
