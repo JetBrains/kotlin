@@ -11,9 +11,9 @@ class Outer {
             outer.<!VAL_REASSIGNMENT!>outerProp<!> = "3"
 
             innerProp = "4" + inner.innerProp
-            this@Inner.innerProp = "5"
-            innerProp = "6" // do not repeat the same diagnostic with this receiver
-            this@Inner.innerProp = "7"
+            this@Inner.<!VAL_REASSIGNMENT!>innerProp<!> = "5"
+            <!VAL_REASSIGNMENT!>innerProp<!> = "6" // do not repeat the same diagnostic with this receiver
+            this@Inner.<!VAL_REASSIGNMENT!>innerProp<!> = "7"
 
             inner.<!VAL_REASSIGNMENT!>innerProp<!> = "8"
         }

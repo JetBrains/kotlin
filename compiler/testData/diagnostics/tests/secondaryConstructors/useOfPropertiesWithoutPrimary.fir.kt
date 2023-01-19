@@ -1,8 +1,8 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 class A {
     val x: Int
-    val useUnitialized = x + // reported on each secondary constructor
-                         y +
+    val useUnitialized = <!UNINITIALIZED_VARIABLE!>x<!> + // reported on each secondary constructor
+                         <!UNINITIALIZED_VARIABLE!>y<!> +
                          v
     var y: Int
     val v = -1
@@ -19,7 +19,7 @@ class A {
         x = 1
         y = 2
 
-        x + y + v + uninitialized
+        x + y + v + <!UNINITIALIZED_VARIABLE!>uninitialized<!>
 
         uninitialized = 3
 
@@ -27,16 +27,16 @@ class A {
     }
 
     constructor(a: Int): super() {
-        x + y + v + uninitialized
+        <!UNINITIALIZED_VARIABLE!>x<!> + y + v + <!UNINITIALIZED_VARIABLE!>uninitialized<!>
         x = 4
         y = 5
 
-        x + y + v + uninitialized
+        x + y + v + <!UNINITIALIZED_VARIABLE!>uninitialized<!>
     }
 
     //anonymous
     init {
-        y
+        <!UNINITIALIZED_VARIABLE!>y<!>
     }
 
     // anonymous

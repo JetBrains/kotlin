@@ -10,7 +10,7 @@ class Some {
 
     init {
         x = "ok"
-        x = "error"
+        <!VAL_REASSIGNMENT!>x<!> = "error"
         <!VAL_REASSIGNMENT!>z<!> = "error"
     }
 
@@ -24,17 +24,16 @@ class Some {
 
     val b: String = 123.run {
         // now this@run is an Int, so these are on this@Some
-        x = "error"
+        <!VAL_REASSIGNMENT!>x<!> = "error"
         y = "ok"
-        y = "error"
+        <!VAL_REASSIGNMENT!>y<!> = "error"
         <!VAL_REASSIGNMENT!>z<!> = "error"
         "there"
     }
 
     init {
-        x = "error"
-        y = "error"
+        <!VAL_REASSIGNMENT!>x<!> = "error"
+        <!VAL_REASSIGNMENT!>y<!> = "error"
         <!VAL_REASSIGNMENT!>z<!> = "error"
     }
 }
-

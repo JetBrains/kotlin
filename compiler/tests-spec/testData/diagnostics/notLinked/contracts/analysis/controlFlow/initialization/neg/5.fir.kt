@@ -35,7 +35,7 @@ fun case_4() {
 fun case_5() {
     val value_1: Int
     val o = object {
-        fun l() { value_1 = 10 }
+        fun l() { <!CAPTURED_VAL_INITIALIZATION!>value_1<!> = 10 }
     }
     funWithExactlyOnceCallsInPlace(o::l)
     <!UNINITIALIZED_VARIABLE!>value_1<!>.inc()

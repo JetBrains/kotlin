@@ -134,7 +134,7 @@ class AnonymousInitializers(var a: String, val b: String) {
     get() = 20
 
     init {
-        i = 13
+        <!VAL_REASSIGNMENT!>i<!> = 13
         <!VAL_REASSIGNMENT!>j<!> = 34
     }
 
@@ -174,7 +174,7 @@ class AnonymousInitializers(var a: String, val b: String) {
     val n: Int
 
     init {
-        while (n == 0) {
+        while (<!UNINITIALIZED_VARIABLE!>n<!> == 0) {
         }
         n = 10
         while (n == 0) {
