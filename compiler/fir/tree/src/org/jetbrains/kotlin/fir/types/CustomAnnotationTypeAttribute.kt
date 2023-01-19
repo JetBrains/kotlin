@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -13,9 +12,9 @@ import kotlin.reflect.KClass
 
 class CustomAnnotationTypeAttribute(
     val annotations: List<FirAnnotation>,
-    val containerSymbols: List<FirBasedSymbol<out FirDeclaration>> = emptyList(),
+    val containerSymbols: List<FirBasedSymbol<*>> = emptyList(),
 ) : ConeAttribute<CustomAnnotationTypeAttribute>() {
-    constructor(annotations: List<FirAnnotation>, containerSymbol: FirBasedSymbol<out FirDeclaration>?) : this(
+    constructor(annotations: List<FirAnnotation>, containerSymbol: FirBasedSymbol<*>?) : this(
         annotations,
         listOfNotNull(containerSymbol),
     )
