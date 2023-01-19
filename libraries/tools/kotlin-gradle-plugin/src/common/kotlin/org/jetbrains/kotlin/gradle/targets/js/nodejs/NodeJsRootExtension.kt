@@ -75,26 +75,41 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
     val nodeJsSetupTaskProvider: TaskProvider<out NodeJsSetupTask>
         get() = rootProject.tasks.withType(NodeJsSetupTask::class.java).named(NodeJsSetupTask.NAME)
 
-    @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY") // TODO: investigate this warning; fixing it breaks integration tests.
+    @Suppress(
+        "UNNECESSARY_SAFE_CALL",
+        "SAFE_CALL_WILL_CHANGE_NULLABILITY"
+    ) // TODO: investigate this warning; fixing it breaks integration tests.
     val npmInstallTaskProvider: TaskProvider<out KotlinNpmInstallTask>?
         get() = rootProject?.tasks?.withType(KotlinNpmInstallTask::class.java)?.named(KotlinNpmInstallTask.NAME)
 
     val packageJsonUmbrellaTaskProvider: TaskProvider<Task>
         get() = rootProject.tasks.named(PACKAGE_JSON_UMBRELLA_TASK_NAME)
 
-    @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY") // TODO: investigate this warning; fixing it breaks integration tests.
+    @Suppress(
+        "UNNECESSARY_SAFE_CALL",
+        "SAFE_CALL_WILL_CHANGE_NULLABILITY"
+    ) // TODO: investigate this warning; fixing it breaks integration tests.
     val rootPackageJsonTaskProvider: TaskProvider<RootPackageJsonTask>?
         get() = rootProject?.tasks?.withType(RootPackageJsonTask::class.java)?.named(RootPackageJsonTask.NAME)
 
-    @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY") // TODO: investigate this warning; fixing it breaks integration tests.
+    @Suppress(
+        "UNNECESSARY_SAFE_CALL",
+        "SAFE_CALL_WILL_CHANGE_NULLABILITY"
+    ) // TODO: investigate this warning; fixing it breaks integration tests.
     val npmCachesSetupTaskProvider: TaskProvider<out KotlinNpmCachesSetup>?
         get() = rootProject?.tasks?.withType(KotlinNpmCachesSetup::class.java)?.named(KotlinNpmCachesSetup.NAME)
 
-    @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY") // TODO: investigate this warning; fixing it breaks integration tests.
+    @Suppress(
+        "UNNECESSARY_SAFE_CALL",
+        "SAFE_CALL_WILL_CHANGE_NULLABILITY"
+    ) // TODO: investigate this warning; fixing it breaks integration tests.
     val storeYarnLockTaskProvider: TaskProvider<out YarnLockCopyTask>?
         get() = rootProject?.tasks?.withType(YarnLockCopyTask::class.java)?.named(STORE_YARN_LOCK_NAME)
 
-    @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY") // TODO: investigate this warning; fixing it breaks integration tests.
+    @Suppress(
+        "UNNECESSARY_SAFE_CALL",
+        "SAFE_CALL_WILL_CHANGE_NULLABILITY"
+    ) // TODO: investigate this warning; fixing it breaks integration tests.
     val restoreYarnLockTaskProvider: TaskProvider<out YarnLockCopyTask>?
         get() = rootProject?.tasks?.withType(YarnLockCopyTask::class.java)?.named(RESTORE_YARN_LOCK_NAME)
 
@@ -109,13 +124,14 @@ open class NodeJsRootExtension(@Transient val rootProject: Project) : Configurat
         get() = rootPackageDir.resolve("packages_imported")
 
     override fun finalizeConfiguration(): NodeJsEnv {
-        val platform = NodeJsPlatform.name
-        val architecture = NodeJsPlatform.architecture
+        val platformHelper = PlatformHelper
+        val platform = platformHelper.osName
+        val architecture = platformHelper.osArch
 
         val nodeDirName = "node-v$nodeVersion-$platform-$architecture"
         val cleanableStore = CleanableStore[installationDir.absolutePath]
         val nodeDir = cleanableStore[nodeDirName].use()
-        val isWindows = NodeJsPlatform.name == NodeJsPlatform.WIN
+        val isWindows = platformHelper.isWindows
         val nodeBinDir = if (isWindows) nodeDir else nodeDir.resolve("bin")
 
         fun getExecutable(command: String, customCommand: String, windowsExtension: String): String {

@@ -7,11 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.internal.hash.FileHasher
 import org.gradle.internal.hash.Hashing.defaultFunction
-import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.isConfigurationCacheAvailable
 import java.io.File
-import org.gradle.api.Project
+import java.nio.file.Files
 
 fun Appendable.appendConfigsFromDir(confDir: File) {
     val files = confDir.listFiles() ?: return
@@ -39,6 +37,42 @@ fun ByteArray.toHex(): String {
     return String(result)
 }
 
+fun extractWithUpToDate(
+    destination: File,
+    destinationHashFile: File,
+    dist: File,
+    fileHasher: FileHasher,
+    extract: (File, File) -> Unit
+) {
+    var distHash: String? = null
+    val upToDate = destinationHashFile.let { file ->
+        if (file.exists()) {
+            file.useLines { seq ->
+                val list = seq.first().split(" ")
+                list.size == 2 &&
+                        list[0] == fileHasher.calculateDirHash(destination) &&
+                        list[1] == fileHasher.hash(dist).toByteArray().toHex().also { distHash = it }
+            }
+        } else false
+    }
+
+    if (upToDate) {
+        return
+    }
+
+    if (destination.isDirectory) {
+        destination.deleteRecursively()
+    }
+
+    extract(dist, destination.parentFile)
+
+    destinationHashFile.writeText(
+        fileHasher.calculateDirHash(destination)!! +
+                " " +
+                (distHash ?: fileHasher.hash(dist).toByteArray().toHex())
+    )
+}
+
 fun FileHasher.calculateDirHash(
     dir: File
 ): String? {
@@ -48,14 +82,18 @@ fun FileHasher.calculateDirHash(
     dir.walk()
         .forEach { file ->
             hasher.putString(file.toRelativeString(dir))
-            if (file.isFile) {
-                hasher.putHash(hash(file))
+            if (file.isFile && !Files.isSymbolicLink(file.toPath())) {
+                if (!Files.isSymbolicLink(file.toPath())) {
+                    hasher.putHash(hash(file))
+                } else {
+                    val canonicalFile = file.canonicalFile
+                    hasher.putHash(hash(canonicalFile))
+                    hasher.putString(canonicalFile.toRelativeString(dir))
+                }
             }
         }
 
-    val digest = hasher.hash().toByteArray()
-
-    return digest.toHex()
+    return hasher.hash().toByteArray().toHex()
 }
 
 const val JS = "js"

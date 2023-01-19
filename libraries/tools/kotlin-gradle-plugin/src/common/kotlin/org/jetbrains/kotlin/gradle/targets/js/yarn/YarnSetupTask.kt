@@ -13,7 +13,7 @@ import org.gradle.api.tasks.*
 import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
-import org.jetbrains.kotlin.gradle.targets.js.calculateDirHash
+import org.jetbrains.kotlin.gradle.targets.js.extractWithUpToDate
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
@@ -97,36 +97,12 @@ open class YarnSetupTask : DefaultTask() {
         if (!shouldDownload) return
         logger.kotlinInfo("Using yarn distribution from '$yarnDist'")
 
-        var dirHash: String? = null
-        val upToDate = destinationHashFile.let { file ->
-            if (file.exists()) {
-                file.useLines {
-                    it.single() == (fileHasher.calculateDirHash(destination).also { dirHash = it })
-                }
-            } else false
-        }
-
-        val tmpDir = temporaryDir
-        extract(yarnDist!!, tmpDir) // parent because archive contains name already
-
-        if (upToDate && fileHasher.calculateDirHash(tmpDir.resolve(destination.name))!! == dirHash) {
-            tmpDir.deleteRecursively()
-            return
-        }
-
-        if (destination.isDirectory) {
-            destination.deleteRecursively()
-        }
-
-        fs.copy {
-            it.from(tmpDir)
-            it.into(destination.parentFile)
-        }
-
-        tmpDir.deleteRecursively()
-
-        destinationHashFile.writeText(
-            fileHasher.calculateDirHash(destination)!!
+        extractWithUpToDate(
+            destination,
+            destinationHashFile,
+            yarnDist!!,
+            fileHasher,
+            ::extract
         )
     }
 

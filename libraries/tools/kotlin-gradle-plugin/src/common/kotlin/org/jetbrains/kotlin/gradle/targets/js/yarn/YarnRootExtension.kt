@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.PlatformHelper
 import org.gradle.api.Action
 import org.gradle.api.Incubating
 import org.gradle.api.Project
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.internal.ConfigurationPhaseAware
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlatform
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.implementing
@@ -93,7 +93,7 @@ open class YarnRootExtension(
     override fun finalizeConfiguration(): YarnEnv {
         val cleanableStore = CleanableStore[installationDir.path]
 
-        val isWindows = NodeJsPlatform.name == NodeJsPlatform.WIN
+        val isWindows = PlatformHelper.isWindows
 
         val home = cleanableStore["yarn-v$version"].use()
 
