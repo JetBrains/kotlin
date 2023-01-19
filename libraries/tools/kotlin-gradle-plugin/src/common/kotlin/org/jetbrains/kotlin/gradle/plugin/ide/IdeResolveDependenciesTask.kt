@@ -8,13 +8,10 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import com.google.gson.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.Task
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
-import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
-import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.notCompatibleWithConfigurationCacheCompat
@@ -35,11 +32,7 @@ internal fun Project.locateOrRegisterIdeResolveDependenciesTask(): TaskProvider<
  * This will invoke the [IdeMultiplatformImport] to resolve all dependencies (like the IDE would).
  * Outputs are written as json and protobufs
  */
-internal open class IdeResolveDependenciesTask : DefaultTask(), IdeDependencyResolver.WithBuildDependencies {
-
-    override fun dependencies(project: Project): Iterable<Any> = listOf(
-        project.locateOrRegisterTask<Task>(KotlinMetadataTargetConfigurator.TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA)
-    )
+internal open class IdeResolveDependenciesTask : DefaultTask() {
 
     @TaskAction
     fun resolveDependencies() {
