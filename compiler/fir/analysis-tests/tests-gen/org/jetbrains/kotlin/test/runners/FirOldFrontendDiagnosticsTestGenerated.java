@@ -10410,6 +10410,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
+                @TestMetadata("entriesUnsupported.kt")
+                public void testEntriesUnsupported() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesUnsupported.kt");
+                }
+
+                @Test
                 @TestMetadata("enumEntriesAmbiguity.kt")
                 public void testEnumEntriesAmbiguity() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/enumEntriesAmbiguity.kt");
