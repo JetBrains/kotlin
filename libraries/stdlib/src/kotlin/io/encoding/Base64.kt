@@ -7,6 +7,8 @@ package kotlin.io.encoding
 
 import kotlin.native.concurrent.SharedImmutable
 
+// Benchmarks repository: https://github.com/qurbonzoda/KotlinBase64Benchmarks
+
 /**
  * Provides Base64 encoding and decoding functionality.
  *
@@ -542,7 +544,7 @@ public open class Base64 private constructor(
          * The "base64url" encoding specified by [`RFC 4648 section 5`](https://www.rfc-editor.org/rfc/rfc4648#section-5),
          * Base 64 Encoding with URL and Filename Safe Alphabet.
          *
-         * Uses "The URL and Filename safe Base 64 Alphabet" as specified in Table 1 of RFC 4648 for encoding and decoding.
+         * Uses "The URL and Filename safe Base 64 Alphabet" as specified in Table 2 of RFC 4648 for encoding and decoding.
          * Encode operation does not add any line separator character.
          * Decode operation throws if it encounters a character outside the base64url alphabet.
          *
