@@ -32,14 +32,14 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 
 class LazyTypeAliasDescriptor(
-    override val storageManager: StorageManager,
+    storageManager: StorageManager,
     private val trace: BindingTrace,
     containingDeclaration: DeclarationDescriptor,
     annotations: Annotations,
     name: Name,
     sourceElement: SourceElement,
     visibility: DescriptorVisibility
-) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, sourceElement, visibility),
+) : AbstractTypeAliasDescriptor(storageManager, containingDeclaration, annotations, name, sourceElement, visibility),
     TypeAliasDescriptor {
     override val constructors: Collection<TypeAliasConstructorDescriptor> by storageManager.createLazyValue {
         getTypeAliasConstructors()

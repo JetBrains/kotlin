@@ -23,11 +23,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
-import org.jetbrains.kotlin.types.TypeRefinement
 
 abstract class AbstractTypeAliasDescriptor(
+    protected val storageManager: StorageManager,
     containingDeclaration: DeclarationDescriptor,
     annotations: Annotations,
     name: Name,
@@ -35,8 +36,9 @@ abstract class AbstractTypeAliasDescriptor(
     private val visibilityImpl: DescriptorVisibility
 ) : DeclarationDescriptorNonRootImpl(containingDeclaration, annotations, name, sourceElement),
     TypeAliasDescriptor {
-
-    protected abstract val storageManager: StorageManager
+    override val constructors: Collection<TypeAliasConstructorDescriptor> by storageManager.createLazyValue {
+        getTypeAliasConstructors()
+    }
 
     // TODO kotlinize some interfaces
     private lateinit var declaredTypeParametersImpl: List<TypeParameterDescriptor>

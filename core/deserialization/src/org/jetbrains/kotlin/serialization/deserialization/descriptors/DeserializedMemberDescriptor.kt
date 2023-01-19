@@ -155,19 +155,18 @@ class DeserializedClassConstructorDescriptor(
 }
 
 class DeserializedTypeAliasDescriptor(
-        override val storageManager: StorageManager,
-        containingDeclaration: DeclarationDescriptor,
-        annotations: Annotations,
-        name: Name,
-        visibility: DescriptorVisibility,
-        override val proto: ProtoBuf.TypeAlias,
-        override val nameResolver: NameResolver,
-        override val typeTable: TypeTable,
-        override val versionRequirementTable: VersionRequirementTable,
-        override val containerSource: DeserializedContainerSource?
-) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
+    storageManager: StorageManager,
+    containingDeclaration: DeclarationDescriptor,
+    annotations: Annotations,
+    name: Name,
+    visibility: DescriptorVisibility,
+    override val proto: ProtoBuf.TypeAlias,
+    override val nameResolver: NameResolver,
+    override val typeTable: TypeTable,
+    override val versionRequirementTable: VersionRequirementTable,
+    override val containerSource: DeserializedContainerSource?
+) : AbstractTypeAliasDescriptor(storageManager, containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
     DeserializedMemberDescriptor {
-    override lateinit var constructors: Collection<TypeAliasConstructorDescriptor> private set
 
     override lateinit var underlyingType: SimpleType private set
     override lateinit var expandedType: SimpleType private set
@@ -184,7 +183,6 @@ class DeserializedTypeAliasDescriptor(
         this.expandedType = expandedType
         typeConstructorParameters = computeConstructorTypeParameters()
         defaultTypeImpl = computeDefaultType()
-        constructors = getTypeAliasConstructors()
     }
 
     override val classDescriptor: ClassDescriptor?
