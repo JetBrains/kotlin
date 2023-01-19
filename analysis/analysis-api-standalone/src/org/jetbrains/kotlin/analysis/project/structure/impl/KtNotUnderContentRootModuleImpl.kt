@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
 internal class KtNotUnderContentRootModuleImpl(
+    override val name: String,
     override val directRegularDependencies: List<KtModule> = emptyList(),
     override val directRefinementDependencies: List<KtModule> = emptyList(),
     override val directFriendDependencies: List<KtModule> = emptyList(),
