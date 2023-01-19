@@ -1,0 +1,6 @@
+-Xuse-fir-lt=true
+-language-version
+2.0
+$TESTDATA_DIR$/twoDiagnosticsOnSingleElement.kt
+-d
+$TEMP_DIR$

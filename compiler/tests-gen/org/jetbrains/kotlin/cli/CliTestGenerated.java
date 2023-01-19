@@ -1067,6 +1067,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/syntheticAccessorSignatureClash.args");
         }
 
+        @TestMetadata("twoDiagnosticsOnSingleElement.args")
+        public void testTwoDiagnosticsOnSingleElement() throws Exception {
+            runTest("compiler/testData/cli/jvm/twoDiagnosticsOnSingleElement.args");
+        }
+
         @TestMetadata("unknownExtraFlags.args")
         public void testUnknownExtraFlags() throws Exception {
             runTest("compiler/testData/cli/jvm/unknownExtraFlags.args");
