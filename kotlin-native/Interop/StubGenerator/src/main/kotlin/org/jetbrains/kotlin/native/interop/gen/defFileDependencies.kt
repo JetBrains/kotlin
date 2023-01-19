@@ -1,7 +1,6 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
-import org.jetbrains.kotlin.konan.util.DefFile
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.gen.jvm.buildNativeLibrary

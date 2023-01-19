@@ -1,34 +1,26 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.konan.util
+package org.jetbrains.kotlin.native.interop.gen
 
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 import java.io.File
 import java.io.StringReader
 import java.util.*
+import org.jetbrains.kotlin.konan.util.substitute
+import org.jetbrains.kotlin.konan.util.defaultTargetSubstitutions
 
-class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProperties:Properties, val defHeaderLines:List<String>) {
-    private constructor(file0:File?, triple: Triple<Properties, Properties, List<String>>): this(file0, DefFileConfig(triple.first), triple.second, triple.third)
-    constructor(file:File?, substitutions: Map<String, String>) : this(file, parseDefFile(file, substitutions))
+class DefFile(val file: File?, val config: DefFileConfig, val manifestAddendProperties: Properties, val defHeaderLines: List<String>) {
+    private constructor(file0: File?, triple: Triple<Properties, Properties, List<String>>) : this(file0, DefFileConfig(triple.first), triple.second, triple.third)
+    constructor(file: File?, substitutions: Map<String, String>) : this(file, parseDefFile(file, substitutions))
 
     val name by lazy {
         file?.nameWithoutExtension ?: ""
     }
+
     class DefFileConfig(private val properties: Properties) {
         val headers by lazy {
             properties.getSpaceSeparated("headers")
@@ -142,50 +134,50 @@ private fun Properties.getSpaceSeparated(name: String): List<String> =
         this.getProperty(name)?.let { parseSpaceSeparatedArgs(it) } ?: emptyList()
 
 private fun parseDefFile(file: File?, substitutions: Map<String, String>): Triple<Properties, Properties, List<String>> {
-     val properties = Properties()
+    val properties = Properties()
 
-     if (file == null) {
-         return Triple(properties, Properties(), emptyList())
-     }
+    if (file == null) {
+        return Triple(properties, Properties(), emptyList())
+    }
 
-     val lines = file.readLines()
+    val lines = file.readLines()
 
-     val separator = "---"
-     val separatorIndex = lines.indexOf(separator)
+    val separator = "---"
+    val separatorIndex = lines.indexOf(separator)
 
-     val propertyLines: List<String>
-     val headerLines: List<String>
+    val propertyLines: List<String>
+    val headerLines: List<String>
 
-     if (separatorIndex != -1) {
-         propertyLines = lines.subList(0, separatorIndex)
-         headerLines = lines.subList(separatorIndex + 1, lines.size)
-     } else {
-         propertyLines = lines
-         headerLines = emptyList()
-     }
+    if (separatorIndex != -1) {
+        propertyLines = lines.subList(0, separatorIndex)
+        headerLines = lines.subList(separatorIndex + 1, lines.size)
+    } else {
+        propertyLines = lines
+        headerLines = emptyList()
+    }
 
-     // \ isn't escaping character in quotes, so replace them with \\.
-     val joinedLines = propertyLines.joinToString(System.lineSeparator())
-     val escapedTokens = joinedLines.split('"')
-     val postprocessProperties = escapedTokens.mapIndexed { index, token ->
-         if (index % 2 != 0) {
-             token.replace("""\\(?=.)""".toRegex(), Regex.escapeReplacement("""\\"""))
-         } else {
-             token
-         }
-     }.joinToString("\"")
-     val propertiesReader = StringReader(postprocessProperties)
-     properties.load(propertiesReader)
+    // \ isn't escaping character in quotes, so replace them with \\.
+    val joinedLines = propertyLines.joinToString(System.lineSeparator())
+    val escapedTokens = joinedLines.split('"')
+    val postprocessProperties = escapedTokens.mapIndexed { index, token ->
+        if (index % 2 != 0) {
+            token.replace("""\\(?=.)""".toRegex(), Regex.escapeReplacement("""\\"""))
+        } else {
+            token
+        }
+    }.joinToString("\"")
+    val propertiesReader = StringReader(postprocessProperties)
+    properties.load(propertiesReader)
 
-     // Pass unsubstituted copy of properties we have obtained from `.def`
-     // to compiler `-manifest`.
-     val manifestAddendProperties = properties.duplicate()
+    // Pass unsubstituted copy of properties we have obtained from `.def`
+    // to compiler `-manifest`.
+    val manifestAddendProperties = properties.duplicate()
 
-     substitute(properties, substitutions)
+    substitute(properties, substitutions)
 
-     return Triple(properties, manifestAddendProperties, headerLines)
+    return Triple(properties, manifestAddendProperties, headerLines)
 }
 
 private fun Properties.duplicate() = Properties().apply { putAll(this@duplicate) }
 
-fun DefFile(file: File?, target: KonanTarget) = DefFile(file, defaultTargetSubstitutions(target))
+fun DefFile(file: File?, target: KonanTarget): DefFile = DefFile(file, defaultTargetSubstitutions(target))
