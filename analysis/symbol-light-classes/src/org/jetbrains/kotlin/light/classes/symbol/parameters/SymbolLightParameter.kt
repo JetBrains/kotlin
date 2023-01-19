@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.allowedTargets
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -40,9 +42,15 @@ internal class SymbolLightParameter(
                 parameterSymbol.computeAnnotations(
                     modifierList = modifierList,
                     nullability = nullability,
-                    annotationUseSiteTarget = annotationSite,
-                    includeAnnotationsWithoutSite = true,
-                )
+                ) {
+                    val targets = it.allowedTargets
+
+                    if (targets != null) {
+                        if (AnnotationTarget.VALUE_PARAMETER !in targets) return@computeAnnotations false
+                    }
+
+                    return@computeAnnotations it.useSiteTarget == null || it.useSiteTarget == annotationSite
+                }
             }
         }
     }

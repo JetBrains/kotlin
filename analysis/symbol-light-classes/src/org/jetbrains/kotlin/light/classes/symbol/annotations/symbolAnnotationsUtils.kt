@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import java.lang.IllegalArgumentException
 import java.lang.annotation.ElementType
 
 internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(
@@ -99,12 +100,26 @@ internal fun NullabilityType.computeNullabilityAnnotation(parent: PsiModifierLis
     SymbolLightSimpleAnnotation(it.name, parent)
 }
 
+
 context(KtAnalysisSession)
 internal fun KtAnnotatedSymbol.computeAnnotations(
     modifierList: PsiModifierList,
     nullability: NullabilityType,
     annotationUseSiteTarget: AnnotationUseSiteTarget?,
     includeAnnotationsWithoutSite: Boolean = true,
+): List<PsiAnnotation> = computeAnnotations(
+    modifierList,
+    nullability
+) {
+    val siteTarget = it.useSiteTarget
+    includeAnnotationsWithoutSite && siteTarget == null || siteTarget == annotationUseSiteTarget
+}
+
+context(KtAnalysisSession)
+internal fun KtAnnotatedSymbol.computeAnnotations(
+    modifierList: PsiModifierList,
+    nullability: NullabilityType,
+    filter: (KtAnnotationApplication) -> Boolean
 ): List<PsiAnnotation> {
     val parent = modifierList.parent
     val nullabilityAnnotation = nullability.computeNullabilityAnnotation(modifierList)
@@ -121,9 +136,7 @@ internal fun KtAnnotatedSymbol.computeAnnotations(
     val foundAnnotations = hashSetOf<String>()
     for (annotation in annotations) {
         annotation.classId?.asFqNameString()?.let(foundAnnotations::add)
-
-        val siteTarget = annotation.useSiteTarget
-        if (includeAnnotationsWithoutSite && siteTarget == null || siteTarget == annotationUseSiteTarget) {
+        if (filter(annotation)) {
             result.add(SymbolLightAnnotationForAnnotationCall(annotation, modifierList))
         }
     }
@@ -322,3 +335,26 @@ internal fun KtAnnotatedSymbol.computeThrowsList(
 
     annoApp.arguments.forEach { handleAnnotationValue(it.expression) }
 }
+
+context(KtAnalysisSession)
+val KtAnnotationApplication.allowedTargets: Set<AnnotationTarget>?
+    get() {
+        val annotationClass = classId?.let(::getClassOrObjectSymbolByClassId) ?: return null
+        val targetAnnotation =
+            annotationClass.annotations.firstOrNull { it.classId?.asFqNameString() == "kotlin.annotation.Target" } ?: return null
+        val argument = targetAnnotation.arguments.firstOrNull { it.name.identifier == "allowedTargets" } ?: return null
+        return (argument.expression as? KtArrayAnnotationValue)
+            ?.values
+            ?.mapNotNull { it as? KtEnumEntryAnnotationValue }
+            ?.filter { it.callableId?.classId?.asFqNameString() == AnnotationTarget::class.qualifiedName }
+            ?.mapNotNull {
+                it.callableId?.callableName?.identifier?.let { name ->
+                    try {
+                        AnnotationTarget.valueOf(name)
+                    } catch (_: IllegalArgumentException) {
+                        null
+                    }
+                }
+            }
+            ?.toSet()
+    }

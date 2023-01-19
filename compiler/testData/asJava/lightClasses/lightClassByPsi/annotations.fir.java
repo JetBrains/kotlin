@@ -66,7 +66,6 @@ public static final class Companion /* AnnoWithCompanion.Companion*/ {
 }
 
 public final class CtorAnnotations /* CtorAnnotations*/ {
-  @Anno()
   @org.jetbrains.annotations.NotNull()
   private final java.lang.String x;
 
@@ -121,7 +120,6 @@ public final class Example /* Example*/ {
 
 @Anno()
 public final class F /* F*/ implements java.lang.Runnable {
-  @Anno(p = "p")
   @org.jetbrains.annotations.NotNull()
   private java.lang.String prop = "x" /* initializer type: java.lang.String */;
 

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.allowedTargets
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
@@ -157,9 +158,17 @@ internal class SymbolLightFieldForProperty private constructor(
 
                 propertySymbol.computeAnnotations(
                     modifierList = modifierList,
-                    nullability = nullability,
-                    annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
-                )
+                    nullability = nullability
+                ){
+                    val targets = it.allowedTargets
+
+                    if (targets != null) {
+                        if (AnnotationTarget.FIELD !in targets) return@computeAnnotations false
+                        if (it.useSiteTarget == null && AnnotationTarget.PROPERTY !in targets) return@computeAnnotations true
+                    }
+
+                    return@computeAnnotations it.useSiteTarget == AnnotationUseSiteTarget.FIELD
+                }
             }
         }
     }
