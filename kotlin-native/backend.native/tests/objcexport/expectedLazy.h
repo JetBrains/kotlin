@@ -121,6 +121,24 @@ __attribute__((swift_name("KotlinBoolean")))
 @end
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("CoroKt")))
+@interface KtCoroKt : KtBase
+
+/**
+ * @note This method converts instances of CancellationException to errors.
+ * Other uncaught Kotlin exceptions are fatal.
+*/
++ (void)fooWithCompletionHandler:(void (^)(NSString * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("foo(completionHandler:)")));
++ (id<KtKotlinKSuspendFunction0>)fooref __attribute__((swift_name("fooref()")));
+
+/**
+ * @note This method converts instances of CancellationException to errors.
+ * Other uncaught Kotlin exceptions are fatal.
+*/
++ (void)boxWithCompletionHandler:(void (^)(NSString * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("box(completionHandler:)")));
+@end
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("CoroutineException")))
 @interface KtCoroutineException : KtKotlinThrowable
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
@@ -1396,7 +1414,7 @@ __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("ObjCAvoidPreprocessorName")))
 @interface KtObjCAvoidPreprocessorName : KtBase
 - (instancetype)initWithTime:(int32_t)time __attribute__((swift_name("init(time:)"))) __attribute__((objc_designated_initializer));
-@property (readonly) int32_t time __attribute__((swift_name("time")));
+@property (readonly) int32_t __TIME_ __attribute__((swift_name("__TIME_")));
 @end
 
 __attribute__((objc_subclassing_restricted))
