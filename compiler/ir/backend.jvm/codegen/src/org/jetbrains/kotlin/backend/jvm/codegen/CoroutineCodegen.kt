@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.jvm.InlineClassAbi
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
@@ -15,16 +17,17 @@ import org.jetbrains.kotlin.codegen.coroutines.CoroutineTransformerMethodVisitor
 import org.jetbrains.kotlin.codegen.coroutines.reportSuspensionPointInsideMonitor
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrBlockBody
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.allOverridden
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Type
@@ -66,7 +69,7 @@ internal fun MethodNode.acceptWithStateMachine(
         obtainClassBuilderForCoroutineState = obtainContinuationClassBuilder,
         isForNamedFunction = irFunction.isSuspend,
         disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
-            it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
+            it.returnType.isUnit() && (it.anyOfOverriddenFunctionsReturnsNonUnit() || !it.allCallsAreTailCall())
         },
         reportSuspensionPointInsideMonitor = { reportSuspensionPointInsideMonitor(element as KtElement, state, it) },
         lineNumber = lineNumber,
@@ -79,6 +82,44 @@ internal fun MethodNode.acceptWithStateMachine(
         shouldOptimiseUnusedVariables = !context.configuration.getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
     )
     accept(visitor)
+}
+
+private fun IrFunction.allCallsAreTailCall(): Boolean {
+    var tailCall = true
+
+    acceptChildrenVoid(object : IrElementVisitorVoid {
+        val tailCalls = arrayListOf<IrCall>()
+
+        override fun visitElement(element: IrElement) {
+            if (!tailCall) return
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitReturn(expression: IrReturn) {
+            val call = expression.value as? IrCall
+            call?.let { tailCalls.push(call) }
+            super.visitReturn(expression)
+            call?.let { tailCalls.pop() }
+        }
+
+        override fun visitCall(expression: IrCall) {
+            if (expression.isSuspend && expression !in tailCalls) {
+                tailCall = false
+            } else {
+                super.visitCall(expression)
+            }
+        }
+
+        override fun visitClass(declaration: IrClass) {
+            // do not cross class boundaries
+        }
+
+        override fun visitFunction(declaration: IrFunction) {
+            // do not cross function boundaries
+        }
+    })
+
+    return tailCall
 }
 
 private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean =

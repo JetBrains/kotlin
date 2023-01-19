@@ -10383,6 +10383,16 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class TailCallOptimizations extends AbstractLightAnalysisModeTest {
+            @TestMetadata("tailSuspendUnitFun.kt")
+            public void ignoreTailSuspendUnitFun() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tailSuspendUnitFun.kt");
+            }
+
+            @TestMetadata("unreachable.kt")
+            public void ignoreUnreachable() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unreachable.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
@@ -10461,11 +10471,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tailCallIntrinsics.kt");
             }
 
-            @TestMetadata("tailSuspendUnitFun.kt")
-            public void testTailSuspendUnitFun() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tailSuspendUnitFun.kt");
-            }
-
             @TestMetadata("tryCatch.kt")
             public void testTryCatch() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tryCatch.kt");
@@ -10474,11 +10479,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("tryCatchTailCall.kt")
             public void testTryCatchTailCall() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/tryCatchTailCall.kt");
-            }
-
-            @TestMetadata("unreachable.kt")
-            public void testUnreachable() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unreachable.kt");
             }
 
             @TestMetadata("whenUnit.kt")
@@ -10490,6 +10490,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Unit extends AbstractLightAnalysisModeTest {
+                @TestMetadata("kt55559.kt")
+                public void ignoreKt55559() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/kt55559.kt");
+                }
+
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
                 }

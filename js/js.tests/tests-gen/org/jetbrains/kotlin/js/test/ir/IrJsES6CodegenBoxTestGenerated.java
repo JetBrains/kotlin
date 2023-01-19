@@ -9772,6 +9772,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
                 public void testAllFilesPresentInUnit() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
                 }
+
+                @Test
+                @TestMetadata("kt55559.kt")
+                public void testKt55559() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/kt55559.kt");
+                }
             }
         }
 

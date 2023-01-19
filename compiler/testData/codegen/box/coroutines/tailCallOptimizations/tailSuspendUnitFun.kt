@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// IGNORE_BACKEND: JVM
 // FULL_JDK
 // WITH_STDLIB
 // WITH_COROUTINES
@@ -95,13 +96,13 @@ fun box(): String {
         TailCallOptimizationChecker.checkNoStateMachineIn("lambdaAsParameterReturn")
 
         callsIntTailCall()
-        TailCallOptimizationChecker.checkNoStateMachineIn("callsIntTailCall")
+        TailCallOptimizationChecker.checkStateMachineIn("callsIntTailCall")
 
         multipleExitPoints(false)
         TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPoints")
 
         multipleExitPointsTailCall(false)
-        TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPointsTailCall")
+        TailCallOptimizationChecker.checkStateMachineIn("multipleExitPointsTailCall")
 
         multipleExitPointsWithOrdinaryInline(true)
         TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPointsWithOrdinaryInline")
@@ -119,7 +120,7 @@ fun box(): String {
         TailCallOptimizationChecker.checkNoStateMachineIn("useGenericInferType")
 
         useNullableUnit()
-        TailCallOptimizationChecker.checkNoStateMachineIn("useNullableUnit")
+        TailCallOptimizationChecker.checkStateMachineIn("useNullableUnit")
 
         useRunRunRunRunRun()
         TailCallOptimizationChecker.checkNoStateMachineIn("useRunRunRunRunRun")

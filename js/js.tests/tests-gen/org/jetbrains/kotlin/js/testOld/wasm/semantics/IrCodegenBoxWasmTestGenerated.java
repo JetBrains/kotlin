@@ -8627,6 +8627,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 public void testAllFilesPresentInUnit() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
                 }
+
+                @TestMetadata("kt55559.kt")
+                public void testKt55559() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/kt55559.kt");
+                }
             }
         }
 

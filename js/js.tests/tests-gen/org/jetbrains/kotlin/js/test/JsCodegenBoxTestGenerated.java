@@ -9676,6 +9676,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
                 public void testAllFilesPresentInUnit() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
                 }
+
+                @Test
+                @TestMetadata("kt55559.kt")
+                public void testKt55559() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/kt55559.kt");
+                }
             }
         }
 

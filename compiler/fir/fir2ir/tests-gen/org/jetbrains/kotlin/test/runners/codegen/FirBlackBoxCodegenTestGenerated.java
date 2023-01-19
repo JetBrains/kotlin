@@ -13234,6 +13234,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
                 }
 
                 @Test
+                @TestMetadata("kt55559.kt")
+                public void testKt55559() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/kt55559.kt");
+                }
+
+                @Test
                 @TestMetadata("override.kt")
                 public void testOverride() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit/override.kt");

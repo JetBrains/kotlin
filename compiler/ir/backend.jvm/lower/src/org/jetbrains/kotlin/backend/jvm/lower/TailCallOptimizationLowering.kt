@@ -39,16 +39,11 @@ private class TailCallOptimizationLowering(private val context: JvmBackendContex
             override fun visitCall(expression: IrCall, data: TailCallOptimizationData?): IrExpression {
                 val transformed = super.visitCall(expression, data) as IrExpression
                 return if (data == null || expression !in data.tailCalls) transformed else IrReturnImpl(
-                    data.function.endOffset, data.function.endOffset, context.irBuiltIns.nothingType, data.function.symbol,
-                    if (data.returnsUnit) transformed.coerceToUnit() else transformed
+                    data.function.endOffset, data.function.endOffset, context.irBuiltIns.nothingType, data.function.symbol, transformed
                 )
             }
         }, null)
     }
-
-    private fun IrExpression.coerceToUnit() = if (type == context.irBuiltIns.unitType) this else IrTypeOperatorCallImpl(
-        startOffset, endOffset, context.irBuiltIns.unitType, IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.irBuiltIns.unitType, this
-    )
 }
 
 private class TailCallOptimizationData(val function: IrSimpleFunction) {
@@ -58,7 +53,7 @@ private class TailCallOptimizationData(val function: IrSimpleFunction) {
     // Collect all tail calls, including those nested in `when`s, which are not arguments to `return`s.
     private fun IrStatement.findCallsOnTailPositionWithoutImmediateReturn(immediateReturn: Boolean = false) {
         when {
-            this is IrCall && isSuspend && !immediateReturn && (returnsUnit || type == function.returnType) ->
+            this is IrCall && isSuspend && !immediateReturn && type == function.returnType ->
                 tailCalls += this
             this is IrBlock ->
                 statements.findTailCall(returnsUnit)?.findCallsOnTailPositionWithoutImmediateReturn()
