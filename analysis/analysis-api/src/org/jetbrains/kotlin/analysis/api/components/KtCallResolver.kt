@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtUnaryExpression
 public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun resolveCall(psi: KtElement): KtCallInfo?
 
-    public abstract fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo>
+    public abstract fun collectCallCandidates(psi: KtElement): Sequence<KtCallCandidateInfo>
 
     public open fun unresolvedKtCallError(psi: KtElement): Nothing {
         buildErrorWithAttachment("${psi::class.simpleName}(${psi::class.simpleName}) should always resolve to a KtCallInfo") {
@@ -55,6 +55,6 @@ public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
      * [resolveCall] only returns the final result of overload resolution, i.e., the selected callable after considering candidate
      * applicability and choosing the most specific candidate.
      */
-    public fun KtElement.collectCallCandidates(): List<KtCallCandidateInfo> =
+    public fun KtElement.collectCallCandidates(): Sequence<KtCallCandidateInfo> =
         withValidityAssertion { analysisSession.callResolver.collectCallCandidates(this) }
 }

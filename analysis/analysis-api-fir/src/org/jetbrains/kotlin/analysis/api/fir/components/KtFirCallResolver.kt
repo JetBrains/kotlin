@@ -87,15 +87,17 @@ internal class KtFirCallResolver(
         result
     }
 
+    private fun <T> sequenceOfNotNull(elt: T) = if (elt != null) sequenceOf(elt) else emptySequence()
+
     override fun resolveCall(psi: KtElement): KtCallInfo? {
         return wrapError(psi) {
             val ktCallInfos = getCallInfo(
                 psi,
                 getErrorCallInfo = { psiToResolve ->
-                    listOf(KtErrorCallInfo(emptyList(), createKtDiagnostic(psiToResolve), token))
+                    sequenceOf(KtErrorCallInfo(emptyList(), createKtDiagnostic(psiToResolve), token))
                 },
                 getCallInfo = { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
-                    listOfNotNull(
+                    sequenceOfNotNull(
                         toKtCallInfo(
                             psiToResolve,
                             resolveCalleeExpressionOfFunctionCall,
@@ -103,7 +105,7 @@ internal class KtFirCallResolver(
                         )
                     )
                 }
-            )
+            ).toList()
             check(ktCallInfos.size <= 1) { "Should only return 1 KtCallInfo" }
             ktCallInfos.singleOrNull()
         }
@@ -111,14 +113,14 @@ internal class KtFirCallResolver(
 
     private inline fun <T> getCallInfo(
         psi: KtElement,
-        getErrorCallInfo: FirDiagnosticHolder.(psiToResolve: KtElement) -> List<T>,
+        getErrorCallInfo: FirDiagnosticHolder.(psiToResolve: KtElement) -> Sequence<T>,
         getCallInfo: FirElement.(
             psiToResolve: KtElement,
             resolveCalleeExpressionOfFunctionCall: Boolean,
             resolveFragmentOfCall: Boolean
-        ) -> List<T>
-    ): List<T> {
-        if (!canBeResolvedAsCall(psi)) return emptyList()
+        ) -> Sequence<T>
+    ): Sequence<T> {
+        if (!canBeResolvedAsCall(psi)) return emptySequence()
 
         val containingCallExpressionForCalleeExpression = psi.getContainingCallExpressionForCalleeExpression()
         val containingBinaryExpressionForLhs = psi.getContainingBinaryExpressionForIncompleteLhs()
@@ -128,7 +130,7 @@ internal class KtFirCallResolver(
             ?: containingBinaryExpressionForLhs
             ?: containingUnaryExpressionForIncOrDec
             ?: psi
-        val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptyList()
+        val fir = psiToResolve.getOrBuildFir(analysisSession.firResolveSession) ?: return emptySequence()
         if (fir is FirDiagnosticHolder) {
             return fir.getErrorCallInfo(psiToResolve)
         }
@@ -151,7 +153,7 @@ internal class KtFirCallResolver(
 
         if (this is FirResolvedQualifier && psi is KtCallExpression) {
             val constructors = findQualifierConstructors()
-            val calls = toKtCalls(constructors)
+            val calls = toKtCalls(constructors).toList()
             return when (calls.size) {
                 0 -> KtErrorCallInfo(listOf(KtQualifierCall(token, psi)), inapplicableCandidateDiagnostic(), token)
                 else -> KtErrorCallInfo(calls, inapplicableCandidateDiagnostic(), token)
@@ -243,10 +245,12 @@ internal class KtFirCallResolver(
         }
     }
 
-    private fun inapplicableCandidateDiagnostic() = KtNonBoundToPsiErrorDiagnostic(null, "Inapplicable candidate", token)
+    private fun inapplicableCandidateDiagnostic() =
+        KtNonBoundToPsiErrorDiagnostic(null, "Inapplicable candidate", token)
 
     /**
-     * Resolves call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo`, `test.Foo<Bar>::foo` and class literals like `Foo<Bar>`::class.java.
+     * Resolves call expressions like `Foo<Bar>` or `test.Foo<Bar>` in calls like `Foo<Bar>::foo`, `test.Foo<Bar>::foo` and
+     * class literals like `Foo<Bar>`::class.java.
      *
      * We have a separate [KtGenericTypeQualifier] type of [KtCall].
      */
@@ -282,7 +286,7 @@ internal class KtFirCallResolver(
     }
 
     /**
-     * For `=` and compound access like `+=`, `-=`, `*=`, `/=`, `%=`, the LHS of the binary expression is not a complete call. Hence we
+     * For `=` and compound access like `+=`, `-=`, `*=`, `/=`, `%=`, the LHS of the binary expression is not a complete call. Hence, we
      * find the containing binary expression and resolve that instead.
      *
      * However, if, say, `+=` resolves to `plusAssign`, then the LHS is self-contained. In this case we do not return the containing binary
@@ -378,15 +382,17 @@ internal class KtFirCallResolver(
             val dispatchReceiverValue: KtReceiverValue?
             val extensionReceiverValue: KtReceiverValue?
             if (explicitReceiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER) {
-                dispatchReceiverValue = KtExplicitReceiverValue(explicitReceiverPsi, dispatchReceiver.typeRef.coneType.asKtType(), false, token)
-                if (firstArgIsExtensionReceiver) {
-                    extensionReceiverValue = (fir as FirFunctionCall).arguments.first().toKtReceiverValue()
+                dispatchReceiverValue =
+                    KtExplicitReceiverValue(explicitReceiverPsi, dispatchReceiver.typeRef.coneType.asKtType(), false, token)
+                extensionReceiverValue = if (firstArgIsExtensionReceiver) {
+                    (fir as FirFunctionCall).arguments.first().toKtReceiverValue()
                 } else {
-                    extensionReceiverValue = extensionReceiver.toKtReceiverValue()
+                    extensionReceiver.toKtReceiverValue()
                 }
             } else {
                 dispatchReceiverValue = dispatchReceiver.toKtReceiverValue()
-                extensionReceiverValue = KtExplicitReceiverValue(explicitReceiverPsi, extensionReceiver.typeRef.coneType.asKtType(), false, token)
+                extensionReceiverValue =
+                    KtExplicitReceiverValue(explicitReceiverPsi, extensionReceiver.typeRef.coneType.asKtType(), false, token)
             }
             return KtPartiallyAppliedSymbol(
                 with(analysisSession) { unsubstitutedKtSignature.substitute(substitutor) },
@@ -469,7 +475,7 @@ internal class KtFirCallResolver(
                             KtSimpleVariableAccess.Read
                         )
                     }
-                    // if errorsness call without ()
+                    // if erroneous call without ()
                     is KtFunctionLikeSymbol -> {
                         @Suppress("UNCHECKED_CAST") // safe because of the above check on targetKtSymbol
                         KtSimpleFunctionCall(
@@ -504,7 +510,8 @@ internal class KtFirCallResolver(
                     isImplicitInvoke
                 )
             }
-            is FirSmartCastExpression -> (fir.originalExpression as? FirResolvable)?.let { createKtCall(psi, it, candidate, resolveFragmentOfCall) }
+            is FirSmartCastExpression ->
+                (fir.originalExpression as? FirResolvable)?.let { createKtCall(psi, it, candidate, resolveFragmentOfCall) }
             else -> null
         }
     }
@@ -516,7 +523,10 @@ internal class KtFirCallResolver(
             val compoundAssignKind = psi.getCompoundAssignKind()
 
             // handle compound assignment with array access convention
-            if (fir is FirFunctionCall && fir.calleeReference.name == OperatorNameConventions.SET && leftOperandPsi is KtArrayAccessExpression) {
+            if (fir is FirFunctionCall &&
+                fir.calleeReference.name == OperatorNameConventions.SET &&
+                leftOperandPsi is KtArrayAccessExpression
+            ) {
                 val (operationPartiallyAppliedSymbol, getPartiallyAppliedSymbol, setPartiallyAppliedSymbol) =
                     getOperationPartiallyAppliedSymbolsForCompoundArrayAssignment(fir, leftOperandPsi) ?: return null
 
@@ -542,8 +552,8 @@ internal class KtFirCallResolver(
             }
 
             // handle compound assignment with variable
-            if (fir is FirVariableAssignment && (leftOperandPsi is KtDotQualifiedExpression ||
-                        leftOperandPsi is KtNameReferenceExpression)
+            if (fir is FirVariableAssignment &&
+                (leftOperandPsi is KtDotQualifiedExpression || leftOperandPsi is KtNameReferenceExpression)
             ) {
                 val variablePartiallyAppliedSymbol = fir.toPartiallyAppliedSymbol() ?: return null
                 val operationPartiallyAppliedSymbol =
@@ -834,10 +844,10 @@ internal class KtFirCallResolver(
         return mapOf(typeParameter to elementType)
     }
 
-    override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> = wrapError(psi) {
+    override fun collectCallCandidates(psi: KtElement): Sequence<KtCallCandidateInfo> = wrapError(psi) {
         getCallInfo(
             psi,
-            getErrorCallInfo = { emptyList() },
+            getErrorCallInfo = { emptySequence() },
             getCallInfo = { psiToResolve, resolveCalleeExpressionOfFunctionCall, resolveFragmentOfCall ->
                 collectCallCandidates(
                     psiToResolve,
@@ -848,14 +858,14 @@ internal class KtFirCallResolver(
         )
     }
 
-    // TODO: Refactor common code with FirElement.toKtCallInfo() when other FirResolvables are handled
+    // TODO: Refactor common code with FirElement.toKtCallInfo() when other [FirResolvable]s are handled
     private fun FirElement.collectCallCandidates(
         psi: KtElement,
         resolveCalleeExpressionOfFunctionCall: Boolean,
         resolveFragmentOfCall: Boolean,
-    ): List<KtCallCandidateInfo> {
+    ): Sequence<KtCallCandidateInfo> {
         if (this is FirCheckNotNullCall)
-            return listOf(
+            return sequenceOf(
                 KtApplicableCallCandidateInfo(
                     KtCheckNotNullCall(token, argumentList.arguments.first().psi as KtExpression),
                     isInBestCandidates = true
@@ -874,7 +884,7 @@ internal class KtFirCallResolver(
                 psi,
                 resolveCalleeExpressionOfFunctionCall = false,
                 resolveFragmentOfCall = resolveFragmentOfCall
-            ) ?: emptyList()
+            ) ?: emptySequence()
         }
         return when (this) {
             is FirFunctionCall -> collectCallCandidates(psi, resolveFragmentOfCall)
@@ -897,7 +907,7 @@ internal class KtFirCallResolver(
         }
     }
 
-    private fun FirResolvedQualifier.toKtCallCandidateInfos(): List<KtCallCandidateInfo> {
+    private fun FirResolvedQualifier.toKtCallCandidateInfos(): Sequence<KtCallCandidateInfo> {
         return toKtCalls(findQualifierConstructors()).map {
             KtInapplicableCallCandidateInfo(
                 it,
@@ -907,18 +917,17 @@ internal class KtFirCallResolver(
         }
     }
 
-    private fun FirResolvedQualifier.findQualifierConstructors(): List<KtConstructorSymbol> {
-        val classSymbol = this.symbol?.fullyExpandedClass(analysisSession.useSiteSession) ?: return emptyList()
+    private fun FirResolvedQualifier.findQualifierConstructors(): Sequence<KtConstructorSymbol> {
+        val classSymbol = this.symbol?.fullyExpandedClass(analysisSession.useSiteSession) ?: return emptySequence()
         return classSymbol.unsubstitutedScope(
             analysisSession.useSiteSession,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
             withForcedTypeCalculator = true
         )
             .getConstructors(analysisSession.firSymbolBuilder)
-            .toList()
     }
 
-    private fun FirResolvedQualifier.toKtCalls(constructors: List<KtConstructorSymbol>): List<KtCall> {
+    private fun FirResolvedQualifier.toKtCalls(constructors: Sequence<KtConstructorSymbol>): Sequence<KtCall> {
         analysisSession.apply {
             return constructors.map { constructor ->
                 val partiallyAppliedSymbol = KtPartiallyAppliedFunctionSymbol(constructor.asSignature(), null, null)
@@ -930,14 +939,14 @@ internal class KtFirCallResolver(
     private fun FirFunctionCall.collectCallCandidates(
         psi: KtElement,
         resolveFragmentOfCall: Boolean
-    ): List<KtCallCandidateInfo> {
+    ): Sequence<KtCallCandidateInfo> {
         // If a function call is resolved to an implicit invoke call, the FirImplicitInvokeCall will have the `invoke()` function as the
         // callee and the variable as the explicit receiver. To correctly get all candidates, we need to get the original function
         // call's explicit receiver (if there is any) and callee (i.e., the variable).
         val unwrappedExplicitReceiver = explicitReceiver?.unwrapSmartcastExpression()
         val originalFunctionCall =
             if (this is FirImplicitInvokeCall && unwrappedExplicitReceiver is FirPropertyAccessExpression) {
-                val originalCallee = unwrappedExplicitReceiver.calleeReference.safeAs<FirNamedReference>() ?: return emptyList()
+                val originalCallee = unwrappedExplicitReceiver.calleeReference.safeAs<FirNamedReference>() ?: return emptySequence()
                 buildFunctionCall {
                     // NOTE: We only need to copy the explicit receiver and not the dispatch and extension receivers as only the explicit
                     // receiver is needed by the resolver. The dispatch and extension receivers are only assigned after resolution when a
@@ -953,28 +962,30 @@ internal class KtFirCallResolver(
                 this
             }
 
-        val calleeName = originalFunctionCall.calleeOrCandidateName ?: return emptyList()
+        val calleeName = originalFunctionCall.calleeOrCandidateName ?: return emptySequence()
         val candidates = AllCandidatesResolver(analysisSession.useSiteSession).getAllCandidates(
             analysisSession.firResolveSession,
             originalFunctionCall,
             calleeName,
             psi
         )
-        return candidates.mapNotNull {
-            convertToKtCallCandidateInfo(
-                originalFunctionCall,
-                psi,
-                it.candidate,
-                it.isInBestCandidates,
-                resolveFragmentOfCall
-            )
+        return sequence {
+            candidates.forEach { candidate ->
+                convertToKtCallCandidateInfo(
+                    originalFunctionCall,
+                    psi,
+                    candidate.candidate,
+                    candidate.isInBestCandidates,
+                    resolveFragmentOfCall
+                )?.let { yield(it) }
+            }
         }
     }
 
     private fun FirDelegatedConstructorCall.collectCallCandidatesForDelegatedConstructorCall(
         psi: KtElement,
         resolveFragmentOfCall: Boolean
-    ): List<KtCallCandidateInfo> {
+    ): Sequence<KtCallCandidateInfo> {
         fun findDerivedClass(psi: KtElement): KtClassOrObject? {
             val parent = psi.parent
             return when (psi) {
@@ -987,27 +998,39 @@ internal class KtFirCallResolver(
 
         val derivedClass = findDerivedClass(psi)
             ?.getOrBuildFirSafe<FirClass>(firResolveSession)
-            ?: return emptyList()
+            ?: return emptySequence()
 
         val candidates = AllCandidatesResolver(analysisSession.useSiteSession)
-            .getAllCandidatesForDelegatedConstructor(analysisSession.firResolveSession, this, derivedClass.symbol.toLookupTag(), psi)
-
-        return candidates.mapNotNull {
-            convertToKtCallCandidateInfo(
+            .getAllCandidatesForDelegatedConstructor(
+                analysisSession.firResolveSession,
                 this,
-                psi,
-                it.candidate,
-                it.isInBestCandidates,
-                resolveFragmentOfCall
+                derivedClass.symbol.toLookupTag(),
+                psi
             )
+
+        return sequence {
+            candidates.forEach { candidate ->
+                convertToKtCallCandidateInfo(
+                    this@collectCallCandidatesForDelegatedConstructorCall,
+                    psi,
+                    candidate.candidate,
+                    candidate.isInBestCandidates,
+                    resolveFragmentOfCall
+                )?.let { yield(it) }
+            }
         }
     }
 
-    private fun KtCallInfo?.toKtCallCandidateInfos(): List<KtCallCandidateInfo> {
+    private fun KtCallInfo?.toKtCallCandidateInfos(): Sequence<KtCallCandidateInfo> {
         return when (this) {
-            is KtSuccessCallInfo -> listOf(KtApplicableCallCandidateInfo(call, isInBestCandidates = true))
-            is KtErrorCallInfo -> candidateCalls.map { KtInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic) }
-            null -> emptyList()
+            is KtSuccessCallInfo ->
+                sequenceOf(KtApplicableCallCandidateInfo(call, isInBestCandidates = true))
+            is KtErrorCallInfo -> sequence {
+                candidateCalls.forEach {
+                    yield(KtInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic))
+                }
+            }
+            null -> emptySequence()
         }
     }
 

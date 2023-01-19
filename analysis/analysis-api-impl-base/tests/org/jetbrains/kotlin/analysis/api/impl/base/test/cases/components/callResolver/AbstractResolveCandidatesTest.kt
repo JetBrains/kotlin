@@ -25,7 +25,7 @@ abstract class AbstractResolveCandidatesTest : AbstractAnalysisApiBasedSingleMod
 
         val actual = executeOnPooledThreadInReadAction {
             analyseForTest(expression) {
-                val candidates = collectCallCandidates(expression)
+                val candidates = collectCallCandidates(expression).toList()
                 if (candidates.isEmpty()) {
                     "NO_CANDIDATES"
                 } else {
@@ -39,7 +39,7 @@ abstract class AbstractResolveCandidatesTest : AbstractAnalysisApiBasedSingleMod
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
-    private fun KtAnalysisSession.collectCallCandidates(element: PsiElement): List<KtCallCandidateInfo> = when (element) {
+    private fun KtAnalysisSession.collectCallCandidates(element: PsiElement): Sequence<KtCallCandidateInfo> = when (element) {
         is KtValueArgument -> this@collectCallCandidates.collectCallCandidates(element.getArgumentExpression()!!)
         is KtDeclarationModifierList -> {
             val annotationEntry = element.annotationEntries.singleOrNull()

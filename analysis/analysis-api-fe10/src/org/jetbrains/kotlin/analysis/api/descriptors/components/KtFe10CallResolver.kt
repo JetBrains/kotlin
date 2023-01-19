@@ -179,9 +179,9 @@ internal class KtFe10CallResolver(
         } ?: handleResolveErrors(this, psi)
     }
 
-    override fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo> =
+    override fun collectCallCandidates(psi: KtElement): Sequence<KtCallCandidateInfo> =
         with(analysisContext.analyze(psi, AnalysisMode.PARTIAL_WITH_DIAGNOSTICS)) {
-            if (!canBeResolvedAsCall(psi)) return emptyList()
+            if (!canBeResolvedAsCall(psi)) return emptySequence()
 
             val resolvedKtCallInfo = resolveCall(psi)
             val bestCandidateDescriptors =
@@ -203,10 +203,10 @@ internal class KtFe10CallResolver(
                 handleAsFunctionCall(this, unwrappedPsi)?.toKtCallCandidateInfos()?.let { return@with it }
             }
 
-            val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptyList()
+            val resolutionScope = unwrappedPsi.getResolutionScope(this) ?: return emptySequence()
             val call = unwrappedPsi.getCall(this)?.let {
                 if (it is CallTransformer.CallForImplicitInvoke) it.outerCall else it
-            } ?: return emptyList()
+            } ?: return emptySequence()
             val dataFlowInfo = getDataFlowInfoBefore(unwrappedPsi)
             val bindingTrace = DelegatingBindingTrace(this, "Trace for all candidates", withParentDiagnostics = false)
             val dataFlowValueFactory = DataFlowValueFactoryImpl(analysisContext.languageVersionSettings)
@@ -222,26 +222,29 @@ internal class KtFe10CallResolver(
             val candidates = result.allCandidates?.let { analysisContext.overloadingConflictResolver.filterOutEquivalentCalls(it) }
                 ?: error("allCandidates is null even when collectAllCandidates = true")
 
-            candidates.flatMap { candidate ->
-                // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.
-                // If there are multiple candidates, we can get each one's diagnostics by reporting it to a new BindingTrace.
-                val candidateTrace = DelegatingBindingTrace(this, "Trace for candidate", withParentDiagnostics = false)
-                if (candidate is NewAbstractResolvedCall<*>) {
-                    analysisContext.kotlinToResolvedCallTransformer.reportDiagnostics(
-                        callResolutionContext,
-                        candidateTrace,
-                        candidate,
-                        candidate.diagnostics
-                    )
-                }
+            sequence {
+                candidates.forEach { candidate ->
+                    // The current BindingContext does not have the diagnostics for each individual candidate, only for the resolved call.
+                    // If there are multiple candidates, we can get each one's diagnostics by reporting it to a new BindingTrace.
+                    val candidateTrace =
+                        DelegatingBindingTrace(this@with, "Trace for candidate", withParentDiagnostics = false)
+                    if (candidate is NewAbstractResolvedCall<*>) {
+                        analysisContext.kotlinToResolvedCallTransformer.reportDiagnostics(
+                            callResolutionContext,
+                            candidateTrace,
+                            candidate,
+                            candidate.diagnostics
+                        )
+                    }
 
-                val candidateKtCallInfo = handleAsFunctionCall(
-                    candidateTrace.bindingContext,
-                    unwrappedPsi,
-                    candidate,
-                    candidateTrace.bindingContext.diagnostics
-                )
-                candidateKtCallInfo.toKtCallCandidateInfos(bestCandidateDescriptors)
+                    val candidateKtCallInfo = handleAsFunctionCall(
+                        candidateTrace.bindingContext,
+                        unwrappedPsi,
+                        candidate,
+                        candidateTrace.bindingContext.diagnostics
+                    )
+                    yieldAll(candidateKtCallInfo.toKtCallCandidateInfos(bestCandidateDescriptors))
+                }
             }
         }
 
@@ -252,15 +255,20 @@ internal class KtFe10CallResolver(
             else -> null
         }
 
-    private fun KtCallInfo?.toKtCallCandidateInfos(): List<KtCallCandidateInfo> {
+    private fun KtCallInfo?.toKtCallCandidateInfos(): Sequence<KtCallCandidateInfo> {
         return when (this) {
-            is KtSuccessCallInfo -> listOf(KtApplicableCallCandidateInfo(call, isInBestCandidates = true))
-            is KtErrorCallInfo -> candidateCalls.map { KtInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic) }
-            null -> emptyList()
+            is KtSuccessCallInfo ->
+                sequenceOf(KtApplicableCallCandidateInfo(call, isInBestCandidates = true))
+            is KtErrorCallInfo -> sequence {
+                candidateCalls.forEach {
+                    yield(KtInapplicableCallCandidateInfo(it, isInBestCandidates = true, diagnostic))
+                }
+            }
+            null -> emptySequence()
         }
     }
 
-    private fun KtCallInfo?.toKtCallCandidateInfos(bestCandidateDescriptors: Set<CallableDescriptor>): List<KtCallCandidateInfo> {
+    private fun KtCallInfo?.toKtCallCandidateInfos(bestCandidateDescriptors: Set<CallableDescriptor>): Sequence<KtCallCandidateInfo> {
         // TODO: We should prefer to compare symbols instead of descriptors, but we can't do so while symbols are not cached.
         fun KtCall.isInBestCandidates(): Boolean {
             val descriptor = this.safeAs<KtFunctionCall<*>>()?.descriptor as? CallableDescriptor
@@ -275,13 +283,14 @@ internal class KtFe10CallResolver(
         }
 
         return when (this) {
-            is KtSuccessCallInfo -> {
-                listOf(KtApplicableCallCandidateInfo(call, call.isInBestCandidates()))
+            is KtSuccessCallInfo ->
+                sequenceOf(KtApplicableCallCandidateInfo(call, call.isInBestCandidates()))
+            is KtErrorCallInfo -> sequence {
+                candidateCalls.forEach {
+                    yield(KtInapplicableCallCandidateInfo(it, it.isInBestCandidates(), diagnostic))
+                }
             }
-            is KtErrorCallInfo -> candidateCalls.map {
-                KtInapplicableCallCandidateInfo(it, it.isInBestCandidates(), diagnostic)
-            }
-            null -> emptyList()
+            null -> emptySequence()
         }
     }
 
