@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.metadata
 
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
@@ -271,7 +272,7 @@ class KotlinMetadataTargetConfigurator :
         }
     }
 
-    private fun createAllCompileMetadataConfiguration(target: KotlinMetadataTarget): Unit {
+    private fun createAllCompileMetadataConfiguration(target: KotlinMetadataTarget) {
         val project = target.project
         project.configurations.create(ALL_COMPILE_METADATA_CONFIGURATION_NAME).apply {
             isCanBeConsumed = false
@@ -410,6 +411,44 @@ class KotlinMetadataTargetConfigurator :
                 val configuration = project.configurations.getByName(configurationName)
                 configuration.extendsFrom(sourceSet.resolvableMetadataConfiguration)
                 configuration.shouldResolveConsistentlyWith(sourceSet.resolvableMetadataConfiguration)
+                project.applyTransformationToLegacyDependenciesMetadataConfiguration(configuration, granularMetadataTransformation)
+            }
+        }
+    }
+
+    /**
+     *
+     * This method is only intended to be called on deprecated DependenciesMetadata configurations to ensure
+     * correct behaviour in import.
+     *
+     * KGP based dependency resolution is therefore unaffected.
+     *
+     * Ensure that the [configuration] excludes the dependencies that are classified by this [GranularMetadataTransformation] as
+     * [MetadataDependencyResolution.Exclude], and uses exactly the same versions as were resolved for the requested
+     * dependencies during the transformation.
+     */
+    private fun Project.applyTransformationToLegacyDependenciesMetadataConfiguration(
+        configuration: Configuration,
+        transformation: GranularMetadataTransformation
+    ) {
+        // Run this action immediately before the configuration first takes part in dependency resolution:
+        configuration.withDependencies {
+            val (unrequested, requested) = transformation.metadataDependencyResolutions
+                .partition { it is MetadataDependencyResolution.Exclude }
+
+            unrequested.forEach {
+                val (group, name) = it.projectDependency(this)?.run {
+                    /** Note: the project dependency notation here should be exactly this, group:name,
+                     * not from [ModuleIds.fromProjectPathDependency], as `exclude` checks it against the project's group:name  */
+                    ModuleDependencyIdentifier(group.toString(), name)
+                } ?: ModuleIds.fromComponent(project, it.dependency)
+                configuration.exclude(mapOf("group" to group, "module" to name))
+            }
+
+            requested.filter { it.dependency.currentBuildProjectIdOrNull == null }.forEach {
+                val (group, name) = ModuleIds.fromComponent(project, it.dependency)
+                val notation = listOfNotNull(group.orEmpty(), name, it.dependency.moduleVersion?.version).joinToString(":")
+                configuration.resolutionStrategy.force(notation)
             }
         }
     }
