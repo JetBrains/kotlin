@@ -162,10 +162,10 @@ private class SequentialFilePositionFinder(file: File) : Closeable {
 
     // assuming that if called multiple times, calls should be sorted by ascending offset
     fun findNextPosition(offset: Int, withLineContents: Boolean = true): KtSourceFilePos {
-        assert(offset >= charsRead - (currentLineContent?.length ?: 0))
 
         fun posInCurrentLine(): KtSourceFilePos? {
             val col = offset - (charsRead - currentLineContent!!.length - 1)/* beginning of line offset */ + 1 /* col is 1-based */
+            assert(col > 0)
             return if (col <= currentLineContent!!.length)
                 KtSourceFilePos(currentLine, col, if (withLineContents) currentLineContent else null)
             else null
