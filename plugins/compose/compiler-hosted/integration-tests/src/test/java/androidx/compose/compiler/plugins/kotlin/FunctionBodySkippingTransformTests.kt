@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
 abstract class FunctionBodySkippingTransformTestsBase : AbstractIrTransformTest() {
@@ -47,7 +48,6 @@ abstract class FunctionBodySkippingTransformTestsBase : AbstractIrTransformTest(
 }
 
 class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBase() {
-
     @Test
     fun testIfInLambda(): Unit = comparisonPropagation(
         """
@@ -3943,7 +3943,9 @@ class FunctionBodySkippingTransformTests : FunctionBodySkippingTransformTestsBas
 }
 
 class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransformTestsBase() {
-    override val sourceInformationEnabled: Boolean get() = false
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, false)
+    }
 
     @Test
     fun testGrouplessProperty(): Unit = comparisonPropagation(

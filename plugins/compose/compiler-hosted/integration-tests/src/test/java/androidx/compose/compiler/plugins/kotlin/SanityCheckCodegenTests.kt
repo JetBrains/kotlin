@@ -16,9 +16,11 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-class SanityCheckCodegenTests : AbstractCodegenTest() {
+import org.junit.Test
 
-    fun testCallAbstractSuperWithTypeParameters() = ensureSetup {
+class SanityCheckCodegenTests : AbstractCodegenTest() {
+    @Test
+    fun testCallAbstractSuperWithTypeParameters() {
         testCompile(
             """
                 abstract class AbstractB<Type>(d: Type) : AbstractA<Int, Type>(d) {
@@ -35,7 +37,8 @@ class SanityCheckCodegenTests : AbstractCodegenTest() {
 
     // Regression test, because we didn't have a test to catch a breakage introduced by
     // https://github.com/JetBrains/kotlin/commit/ae608ea67fc589c4472657dc0317e97cb67dd158
-    fun testNothings() = ensureSetup {
+    @Test
+    fun testNothings() {
         testCompile(
             """
                 import androidx.compose.runtime.Composable
@@ -59,7 +62,8 @@ class SanityCheckCodegenTests : AbstractCodegenTest() {
     }
 
     // Regression test for b/222979253
-    fun testLabeledLambda() = ensureSetup {
+    @Test
+    fun testLabeledLambda() {
         testCompile(
             """
                 import androidx.compose.runtime.Composable
@@ -76,7 +80,8 @@ class SanityCheckCodegenTests : AbstractCodegenTest() {
     }
 
     // Regression test for b/180168881
-    fun testFunctionReferenceWithinInferredComposableLambda() = ensureSetup {
+    @Test
+    fun testFunctionReferenceWithinInferredComposableLambda() {
         testCompile(
             """
                 import androidx.compose.runtime.Composable
@@ -92,7 +97,8 @@ class SanityCheckCodegenTests : AbstractCodegenTest() {
     }
 
     // Regression test for KT-52843
-    fun testParameterInlineCaptureLambda() = ensureSetup {
+    @Test
+    fun testParameterInlineCaptureLambda() {
         testCompile(
             """
             import androidx.compose.runtime.Composable
@@ -117,6 +123,7 @@ class SanityCheckCodegenTests : AbstractCodegenTest() {
     }
 
     // Regression validating b/237863365
+    @Test
     fun testComposableAsLastStatementInUnitReturningLambda() {
         testCompile(
             """

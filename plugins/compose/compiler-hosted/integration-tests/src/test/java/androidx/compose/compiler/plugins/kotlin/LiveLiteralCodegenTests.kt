@@ -20,6 +20,7 @@ import android.widget.TextView
 import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.internal.updateLiveLiteralValue
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.junit.Assert.assertEquals
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -33,15 +34,13 @@ import org.robolectric.annotation.Config
     maxSdk = 23
 )
 class LiveLiteralCodegenTests : AbstractLoweringTests() {
-
-    override fun updateConfiguration(configuration: CompilerConfiguration) {
-        super.updateConfiguration(configuration)
-        configuration.put(ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY, true)
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY, true)
     }
 
     @Ignore("Live literals are currently disabled by default")
     @Test
-    fun testBasicFunctionality(): Unit = ensureSetup {
+    fun testBasicFunctionality() {
         compose(
             """
             @Composable
@@ -63,7 +62,7 @@ class LiveLiteralCodegenTests : AbstractLoweringTests() {
 
     @Ignore("Live literals are currently disabled by default")
     @Test
-    fun testObjectFieldsLoweredToStaticFields(): Unit = ensureSetup {
+    fun testObjectFieldsLoweredToStaticFields() {
         validateBytecode(
             """
             fun Test(): Int {

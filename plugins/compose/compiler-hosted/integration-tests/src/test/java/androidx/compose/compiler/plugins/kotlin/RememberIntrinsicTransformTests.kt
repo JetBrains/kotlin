@@ -20,9 +20,6 @@ import org.intellij.lang.annotations.Language
 import org.junit.Test
 
 class RememberIntrinsicTransformTests : AbstractIrTransformTest() {
-    override val intrinsicRememberEnabled: Boolean
-        get() = true
-
     private fun comparisonPropagation(
         @Language("kotlin")
         unchecked: String,
