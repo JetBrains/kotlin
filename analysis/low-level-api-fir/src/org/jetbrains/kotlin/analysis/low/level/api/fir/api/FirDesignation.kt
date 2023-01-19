@@ -5,21 +5,16 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirElementBuilder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.FileBasedKotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingKtFileIfAny
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -27,8 +22,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLe
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtFile
 
 class FirDesignationWithFile(
     path: List<FirRegularClass>,
@@ -120,7 +113,7 @@ private fun collectDesignationPathWithContainingClass(target: FirDeclaration, co
     fun resolveChunk(classId: ClassId): FirRegularClass {
         val declaration = useSiteSession.firProvider.getFirClassifierByFqName(classId)
             ?: useSiteSession.nullableJavaSymbolProvider?.getClassLikeSymbolByClassId(classId)?.fir
-            ?: findNearClass(classId, target)
+            ?: findKotlinStdlibClass(classId, target)
 
         check(declaration != null)
 
@@ -151,7 +144,11 @@ private fun getTargetSession(target: FirDeclaration): FirSession {
     return target.moduleData.session
 }
 
-private fun findNearClass(classId: ClassId, target: FirDeclaration): FirRegularClass? {
+private fun findKotlinStdlibClass(classId: ClassId, target: FirDeclaration): FirRegularClass? {
+    if (!classId.packageFqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) {
+        return null
+    }
+
     val firFile = target.getContainingFile() ?: return null
     return FirElementFinder.findClassifierWithClassId(firFile, classId) as? FirRegularClass
 }
