@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.inference.LambdaWithTypeVariableAsExpectedTypeAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystem
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.TypeSystemCommonSuperTypesContext
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 val SAM_LOOKUP_NAME = Name.special("<SAM-CONSTRUCTOR>")
@@ -525,6 +527,16 @@ fun FirExpression.isFunctional(
             if (classLikeExpectedFunctionType == null || coneType is ConeIntegerLiteralType) {
                 return false
             }
+
+            val namedReferenceWithCandidate = namedReferenceWithCandidate()
+            if (namedReferenceWithCandidate?.candidate?.postponedAtoms?.any {
+                    it is LambdaWithTypeVariableAsExpectedTypeAtom &&
+                            it.expectedType.typeConstructor(session.typeContext) == coneType.typeConstructor(session.typeContext)
+                } == true
+            ) {
+                return true
+            }
+
             val invokeSymbol =
                 coneType.findContributedInvokeSymbol(
                     session, scopeSession, classLikeExpectedFunctionType, shouldCalculateReturnTypesOfFakeOverrides = false
@@ -566,6 +578,13 @@ fun FirExpression.isFunctional(
         }
     }
 }
+
+private fun FirExpression.namedReferenceWithCandidate(): FirNamedReferenceWithCandidate? =
+    when (this) {
+        is FirResolvable -> calleeReference as? FirNamedReferenceWithCandidate
+        is FirSafeCallExpression -> (selector as? FirExpression)?.namedReferenceWithCandidate()
+        else -> null
+    }
 
 fun FirExpression.getExpectedType(
     parameter: FirValueParameter/*, languageVersionSettings: LanguageVersionSettings*/
