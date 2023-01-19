@@ -408,28 +408,44 @@ internal fun <ParsingContext> parseKotlinSourceSetMetadata(
     )
 }
 
-object GlobalProjectStructureMetadataStorage {
+internal object GlobalProjectStructureMetadataStorage {
+    private const val propertyPrefix = "kotlin.projectStructureMetadata.build"
 
-    fun propertyName(buildName: String, projectPath: String) = "kotlin.projectStructureMetadata.build.$buildName.path.$projectPath"
+    fun propertyName(buildName: String, projectPath: String) = "$propertyPrefix.$buildName.path.$projectPath"
 
     fun registerProjectStructureMetadata(project: Project, metadataProvider: () -> KotlinProjectStructureMetadata) {
-        val compositeBuildRoot = generateSequence(project.gradle) { it.parent }.last().rootProject
-        compositeBuildRoot.extensions.extraProperties.set(
+        project.compositeBuildRoot.extensions.extraProperties.set(
             propertyName(project.rootProject.name, project.path),
             { metadataProvider().toJson() }
         )
     }
 
-    fun getProjectStructureMetadata(project: Project, otherBuildName: String, otherProjectPath: String): KotlinProjectStructureMetadata? {
-        val compositeBuildRoot = generateSequence(project.gradle) { it.parent }.last().rootProject
-        val property = propertyName(otherBuildName, otherProjectPath)
-        return with(compositeBuildRoot.extensions.extraProperties) {
-            if (has(property)) {
-                val jsonStringProvider = get(property) as? Function0<*> ?: return null
-                val jsonString = jsonStringProvider.invoke() as? String ?: return null
-                parseKotlinSourceSetMetadataFromJson(jsonString)
-            } else null
-        }
+    fun getAllProjectStructureMetadata(project: Project): Map<ProjectPathWithBuildName, Lazy<KotlinProjectStructureMetadata?>> {
+        return project.compositeBuildRoot.extensions.extraProperties.properties
+            .filterKeys { it.startsWith(propertyPrefix) }
+            .entries
+            .associate { (propertyName, propertyValue) ->
+                Pair(
+                    propertyName.toProjectPathWithBuildName(),
+                    lazy { propertyValue?.getProjectStructureMetadataOrNull() }
+                )
+            }
+    }
+
+    private val Project.compositeBuildRoot: Project get() = generateSequence(project.gradle) { it.parent }.last().rootProject
+
+    private fun Any.getProjectStructureMetadataOrNull(): KotlinProjectStructureMetadata? {
+        val jsonStringProvider = this as? Function0<*> ?: return null
+        val jsonString = jsonStringProvider.invoke() as? String ?: return null
+        return parseKotlinSourceSetMetadataFromJson(jsonString)
+    }
+
+    private fun String.toProjectPathWithBuildName(): ProjectPathWithBuildName {
+        val (buildName, projectPath) = removePrefix("$propertyPrefix.").split(".path.")
+        return ProjectPathWithBuildName(
+            projectPath = projectPath,
+            buildName = buildName
+        )
     }
 }
 
