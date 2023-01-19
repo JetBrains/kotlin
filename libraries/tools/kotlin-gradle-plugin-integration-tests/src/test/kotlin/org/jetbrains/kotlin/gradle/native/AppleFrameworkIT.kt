@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.gradle.api.logging.configuration.WarningMode
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
-import org.jetbrains.kotlin.gradle.suppressDeprecationWarningsOnAgpLessThan
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -35,6 +34,7 @@ class AppleFrameworkIT : BaseGradleIT() {
     @Test
     fun `assemble AppleFrameworkForXcode tasks for IosArm64`() {
         with(Project("sharedAppleFramework")) {
+            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "debug",
@@ -43,8 +43,10 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use"
                 ),
-                // Workaround for KT-55751
-                warningMode = WarningMode.None,
+            ).suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_7_4,
+                currentGradleVersion,
+                "Workaround for KT-55751"
             )
             build("assembleDebugAppleFrameworkForXcodeIosArm64", options = options) {
                 assertSuccessful()
@@ -65,6 +67,7 @@ class AppleFrameworkIT : BaseGradleIT() {
     @Test
     fun `assemble fat AppleFrameworkForXcode tasks for Arm64 and X64 simulators`() {
         with(Project("sharedAppleFramework")) {
+            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "Release",
@@ -73,8 +76,10 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use"
                 ),
-                // Workaround for KT-55751
-                warningMode = WarningMode.None,
+            ).suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_7_4,
+                currentGradleVersion,
+                "Workaround for KT-55751"
             )
             build("assembleReleaseAppleFrameworkForXcode", options = options) {
                 assertSuccessful()
@@ -90,6 +95,7 @@ class AppleFrameworkIT : BaseGradleIT() {
     @Test
     fun `check that macOS framework has symlinks`() {
         with(Project("sharedAppleFramework")) {
+            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "debug",
@@ -98,9 +104,11 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "EXPANDED_CODE_SIGN_IDENTITY" to "-",
                     "TARGET_BUILD_DIR" to workingDir.absolutePath,
                     "FRAMEWORKS_FOLDER_PATH" to "${projectName}/build/xcode-derived"
-                ),
-                // Workaround for KT-55751
-                warningMode = WarningMode.None,
+                )
+            ).suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_7_4,
+                currentGradleVersion,
+                "Workaround for KT-55751"
             )
             build(":shared:embedAndSignAppleFrameworkForXcode", options = options) {
                 assertSuccessful()
@@ -128,6 +136,7 @@ class AppleFrameworkIT : BaseGradleIT() {
     @Test
     fun `check all registered tasks with Xcode environment for Debug IosArm64 configuration`() {
         with(Project("sharedAppleFramework")) {
+            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "Debug",
@@ -137,10 +146,11 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "TARGET_BUILD_DIR" to "testBuildDir",
                     "FRAMEWORKS_FOLDER_PATH" to "testFrameworksDir"
                 )
-            ).suppressDeprecationWarningsOnAgpLessThan(
-                AGPVersion.v7_3_0,
-                "uses deprecated IncrementalTaskInputs"
-            )
+            ).suppressDeprecationWarningsOn(
+                "AGP uses deprecated IncrementalTaskInputs (Gradle 7.5)"
+            ) { options ->
+                GradleVersion.version(currentGradleVersion) >= GradleVersion.version(TestVersions.Gradle.G_7_5) && options.safeAndroidGradlePluginVersion < AGPVersion.v7_3_0
+            }
             build("tasks", options = options) {
                 assertSuccessful()
                 assertTasksRegistered(
@@ -162,16 +172,18 @@ class AppleFrameworkIT : BaseGradleIT() {
     @Test
     fun `check embedAndSignAppleFrameworkForXcode was registered without required Xcode environments`() {
         with(Project("sharedAppleFramework")) {
+            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "Debug",
                     "SDK_NAME" to "iphoneos",
                     "ARCHS" to "arm64"
                 )
-            ).suppressDeprecationWarningsOnAgpLessThan(
-                AGPVersion.v7_3_0,
-                "uses deprecated IncrementalTaskInputs"
-            )
+            ).suppressDeprecationWarningsOn(
+                "AGP uses deprecated IncrementalTaskInputs (Gradle 7.5)"
+            ) { options ->
+                GradleVersion.version(currentGradleVersion) >= GradleVersion.version(TestVersions.Gradle.G_7_5) && options.safeAndroidGradlePluginVersion < AGPVersion.v7_3_0
+            }
             build("tasks", options = options) {
                 assertSuccessful()
                 assertTasksRegistered(
@@ -199,6 +211,7 @@ class AppleFrameworkIT : BaseGradleIT() {
     @Test
     fun `check that static framework for Arm64 is built but is not embedded`() {
         with(Project("sharedAppleFramework")) {
+            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "debug",
@@ -207,8 +220,10 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use"
                 ),
-                // Workaround for KT-55751
-                warningMode = WarningMode.None,
+            ).suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_7_4,
+                currentGradleVersion,
+                "Workaround for KT-55751"
             )
             setupWorkingDir()
             projectDir.resolve("shared/build.gradle.kts").modify {

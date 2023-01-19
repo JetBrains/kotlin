@@ -854,12 +854,12 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             project(
                 "new-mpp-android-agp-compatibility",
                 consumerGradleVersion,
-                buildOptions = defaultBuildOptions.copy(
-                    androidVersion = consumerAgpVersion,
-                    // Workaround for a deprecation warning from AGP
-                    // Relying on FileTrees for ignoring empty directories when using @SkipWhenEmpty has been deprecated.
-                    warningMode = if (AGPVersion.fromString(consumerAgpVersion) <= AGPVersion.v7_1_0) WarningMode.None else WarningMode.Fail,
-                ),
+                buildOptions = defaultBuildOptions.copy(androidVersion = consumerAgpVersion)
+                    .suppressDeprecationWarningsOn(
+                        "AGP relies on FileTrees for ignoring empty directories when using @SkipWhenEmpty which has been deprecated."
+                    ) { options ->
+                        consumerGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_7_4) && AGPVersion.fromString(options.safeAndroidVersion) < AGPVersion.v7_1_0
+                    },
                 buildJdk = jdkVersion.location,
                 localRepoDir = tempDir
             ) {

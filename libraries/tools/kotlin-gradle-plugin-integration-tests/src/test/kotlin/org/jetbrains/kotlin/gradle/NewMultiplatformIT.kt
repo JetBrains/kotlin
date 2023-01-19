@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.withNativeCommandLineArguments
 import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.containsSequentially
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.native.*
 import org.jetbrains.kotlin.gradle.native.MPPNativeTargets
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_SHORT_NAME
 import org.jetbrains.kotlin.library.KLIB_PROPERTY_UNIQUE_NAME
 import org.junit.Assert
-import org.junit.Ignore
 import org.junit.Test
 import java.util.*
 import java.util.jar.JarFile
@@ -1572,15 +1570,17 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testUnusedSourceSetsReportAndroid() = with(Project("new-mpp-android", gradleVersion)) {
         setupWorkingDir()
 
+        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
         build(
             "assembleDebug",
             // https://issuetracker.google.com/issues/152187160
             options = defaultBuildOptions().copy(
                 androidGradlePluginVersion = AGPVersion.v4_2_0,
-            ).suppressDeprecationWarningsOnAgpLessThan(
-                AGPVersion.v7_3_0,
-                "uses deprecated IncrementalTaskInputs; relies on FileTrees for ignoring empty directories when using @SkipWhenEmpty"
-            )
+            ).suppressDeprecationWarningsOn(
+                "AGP uses deprecated IncrementalTaskInputs (Gradle 7.5); relies on FileTrees for ignoring empty directories when using @SkipWhenEmpty (Gradle 7.4)"
+            ) { options ->
+                GradleVersion.version(currentGradleVersion) >= GradleVersion.version(TestVersions.Gradle.G_7_5) && options.safeAndroidGradlePluginVersion < AGPVersion.v7_3_0
+            }
         ) {
             assertSuccessful()
             assertNotContains(

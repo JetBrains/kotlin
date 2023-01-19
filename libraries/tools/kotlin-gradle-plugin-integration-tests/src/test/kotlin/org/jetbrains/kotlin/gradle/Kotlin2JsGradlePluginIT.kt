@@ -1604,9 +1604,10 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
         project(
             "cleanTask",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(
-                // bug in Gradle: https://github.com/gradle/gradle/issues/15796
-                warningMode = if (gradleVersion < GradleVersion.version("7.0")) WarningMode.None else defaultBuildOptions.warningMode
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsUntilGradleVersion(
+                TestVersions.Gradle.G_7_0,
+                gradleVersion,
+                "bug in Gradle: https://github.com/gradle/gradle/issues/15796"
             )
         ) {
             build("checkDownloadedFolder")

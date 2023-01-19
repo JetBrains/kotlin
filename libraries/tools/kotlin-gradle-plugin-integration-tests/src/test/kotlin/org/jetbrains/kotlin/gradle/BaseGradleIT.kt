@@ -282,7 +282,10 @@ abstract class BaseGradleIT {
         val enableCompatibilityMetadataVariant: Boolean? = null,
         val withReports: List<BuildReportType> = emptyList(),
         val enableKpmModelMapping: Boolean? = null,
-    )
+    ) {
+        val safeAndroidGradlePluginVersion: AGPVersion
+            get() = androidGradlePluginVersion ?: error("AGP version is expected to be set")
+    }
 
     enum class ConfigurationCacheProblems {
         FAIL, WARN
@@ -1018,15 +1021,23 @@ fun BaseGradleIT.BuildOptions.withFreeCommandLineArgument(argument: String) = co
     freeCommandLineArgs = freeCommandLineArgs + argument
 )
 
-fun BaseGradleIT.BuildOptions.suppressDeprecationWarningsOnAgpLessThan(
-    agpVersion: AGPVersion,
-    @Suppress("UNUSED_PARAMETER") reason: String // just to require specifying a reason for suppressing
+fun BaseGradleIT.BuildOptions.suppressDeprecationWarningsOn(
+    @Suppress("UNUSED_PARAMETER") reason: String, // just to require specifying a reason for suppressing
+    predicate: (BaseGradleIT.BuildOptions) -> Boolean
 ) =
-    if ((androidGradlePluginVersion ?: error("AGP version expected to be configured")) >= agpVersion) {
-        this
+    if (predicate(this)) {
+        copy(warningMode = WarningMode.Summary)
     } else {
-        copy(warningMode = WarningMode.All)
+        this
     }
+
+fun BaseGradleIT.BuildOptions.suppressDeprecationWarningsSinceGradleVersion(
+    gradleVersion: String,
+    currentGradleVersion: String,
+    reason: String
+) = suppressDeprecationWarningsOn(reason) {
+    GradleVersion.version(currentGradleVersion) >= GradleVersion.version(gradleVersion)
+}
 
 private const val MAVEN_LOCAL_URL_PLACEHOLDER = "<mavenLocalUrl>"
 internal const val PLUGIN_MARKER_VERSION_PLACEHOLDER = "<pluginMarkerVersion>"

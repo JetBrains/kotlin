@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import com.intellij.testFramework.TestDataPath
 import org.gradle.api.logging.LogLevel
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.KOTLIN_12X_MPP_DEPRECATION_WARNING
 import org.jetbrains.kotlin.gradle.plugin.EXPECTED_BY_CONFIG_NAME
 import org.jetbrains.kotlin.gradle.plugin.IMPLEMENT_CONFIG_NAME
@@ -350,15 +351,17 @@ class MultiplatformGradleIT : BaseGradleIT() {
             projectName = "kt-35942-android"
         )
     ) {
+        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
         build(
             ":lib1:compileDebugUnitTestKotlin",
             options = defaultBuildOptions().copy(
                 androidGradlePluginVersion = AGPVersion.v4_2_0,
                 androidHome = KtTestUtil.findAndroidSdk().also { acceptAndroidSdkLicenses(it) },
-            ).suppressDeprecationWarningsOnAgpLessThan(
-                AGPVersion.v7_3_0,
-                "uses deprecated IncrementalTaskInputs; relies on FileTrees for ignoring empty directories when using @SkipWhenEmpty"
-            )
+            ).suppressDeprecationWarningsOn(
+                "AGP uses deprecated IncrementalTaskInputs (Gradle 7.5); relies on FileTrees for ignoring empty directories when using @SkipWhenEmpty (Gradle 7.4)"
+            ) { options ->
+                GradleVersion.version(currentGradleVersion) >= GradleVersion.version(TestVersions.Gradle.G_7_5) && options.safeAndroidGradlePluginVersion < AGPVersion.v7_3_0
+            }
         ) {
             assertSuccessful()
             assertTasksExecuted(":lib1:compileDebugKotlin")

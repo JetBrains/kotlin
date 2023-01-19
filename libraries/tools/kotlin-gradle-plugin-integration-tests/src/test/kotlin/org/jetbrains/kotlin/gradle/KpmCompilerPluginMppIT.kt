@@ -5,23 +5,24 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.junit.Test
 import kotlin.test.Ignore
 import kotlin.test.assertTrue
 
 class KpmCompilerPluginMppIT : BaseGradleIT() {
-    override fun defaultBuildOptions() = super.defaultBuildOptions().copy(
-        // Workaround for KT-55751
-        warningMode = WarningMode.None,
-    )
-
     @Test
     @Ignore
-    fun testTransientPluginOptions() {
-        val project = transformProjectWithPluginsDsl("kpmTransientPluginOptions")
+    fun testTransientPluginOptions() = with(transformProjectWithPluginsDsl("kpmTransientPluginOptions")) {
+        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
+        val options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
+            TestVersions.Gradle.G_7_4,
+            currentGradleVersion,
+            "Workaround for KT-55751"
+        )
+
         fun updatePluginOptions(regularOptionValue: String, transientOptionValue: String) {
-            project.gradleProperties().writeText(
+            gradleProperties().writeText(
                 """
                     test-plugin.regular=$regularOptionValue
                     test-plugin.transient=$transientOptionValue
@@ -30,7 +31,7 @@ class KpmCompilerPluginMppIT : BaseGradleIT() {
         }
 
         updatePluginOptions("XXX", "YYY")
-        project.build("compileKotlin") {
+        build("compileKotlin", options = options) {
             assertSuccessful()
             assertTasksExecuted(":compileKotlinJvm")
             compilerArgs(":compileKotlinJvm").also { args ->
@@ -47,14 +48,14 @@ class KpmCompilerPluginMppIT : BaseGradleIT() {
 
         // When transient plugin option change
         updatePluginOptions("XXX", "ZZZ")
-        project.build("compileKotlin") {
+        build("compileKotlin", options = options) {
             assertSuccessful()
             assertTasksUpToDate(":compileKotlinJvm")
         }
 
         // When regular plugin option change
         updatePluginOptions("ZZZ", "ZZZ")
-        project.build("compileKotlin") {
+        build("compileKotlin", options = options) {
             assertSuccessful()
             assertTasksExecuted(":compileKotlinJvm")
             compilerArgs(":compileKotlinJvm").also { args ->

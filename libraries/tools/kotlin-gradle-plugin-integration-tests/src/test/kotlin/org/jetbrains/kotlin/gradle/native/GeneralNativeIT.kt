@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.*
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WA
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_WARNING
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -312,12 +312,15 @@ class GeneralNativeIT : BaseGradleIT() {
         transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")
     ) {
         fun assemble(check: CompiledProject.() -> Unit) {
+            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             build(
                 "assemble",
-                options = defaultBuildOptions().copy(
-                    // Workaround for KT-55751
-                    warningMode = WarningMode.None,
-                ),
+                options = defaultBuildOptions()
+                    .suppressDeprecationWarningsSinceGradleVersion(
+                        TestVersions.Gradle.G_7_4,
+                        currentGradleVersion,
+                        "Workaround for KT-55751"
+                    ),
                 check = check
             )
         }

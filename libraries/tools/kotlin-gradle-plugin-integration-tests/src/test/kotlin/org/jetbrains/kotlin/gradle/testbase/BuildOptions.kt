@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMEN
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.suppressDeprecationWarningsOn
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.junit.jupiter.api.condition.OS
 import java.util.*
 
@@ -40,6 +42,9 @@ data class BuildOptions(
     val statisticsForceValidation: Boolean = true,
     val usePreciseOutputsBackup: Boolean? = null,
 ) {
+    val safeAndroidVersion: String
+        get() = androidVersion ?: error("AGP version is expected to be set")
+
     data class KaptOptions(
         val verbose: Boolean = false,
         val incrementalKapt: Boolean = false,
@@ -154,3 +159,21 @@ data class BuildOptions(
         return arguments.toList()
     }
 }
+
+fun BuildOptions.suppressDeprecationWarningsOn(
+    @Suppress("UNUSED_PARAMETER") reason: String, // just to require specifying a reason for suppressing
+    predicate: (BuildOptions) -> Boolean
+) = if (predicate(this)) {
+    copy(warningMode = WarningMode.Summary)
+} else {
+    this
+}
+
+fun BuildOptions.suppressDeprecationWarningsSinceGradleVersion(
+    gradleVersion: String,
+    currentGradleVersion: GradleVersion,
+    reason: String
+) = suppressDeprecationWarningsOn(reason) {
+    currentGradleVersion >= GradleVersion.version(gradleVersion)
+}
+

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
@@ -328,8 +327,12 @@ class HierarchicalMppIT : KGPBaseTest() {
     @DisplayName("KT-48370: Multiplatform Gradle build fails for Native targets with \"we cannot choose between the following variants of project\"")
     fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project(
-            "hierarchical-mpp-multi-modules", gradleVersion, buildOptions = defaultBuildOptions.copy(
-                warningMode = WarningMode.All // Workaround for KT-55751
+            "hierarchical-mpp-multi-modules",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_7_4,
+                gradleVersion,
+                "Workaround for KT-55751"
             )
         ) {
             build("assemble")

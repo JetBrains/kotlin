@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import kotlin.test.assertTrue
@@ -358,11 +358,13 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
             """
         )
 
+        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
         build(
             resolveConfigurationTaskName,
-            options = defaultBuildOptions().copy(
-                // Workaround for KT-55751
-                warningMode = WarningMode.None,
+            options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_7_4,
+                currentGradleVersion,
+                "Workaround for KT-55751"
             )
         ) {
             assertSuccessful()

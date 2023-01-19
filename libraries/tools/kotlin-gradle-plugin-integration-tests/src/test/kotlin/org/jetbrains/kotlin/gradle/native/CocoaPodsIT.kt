@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.gradle.api.logging.configuration.WarningMode
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_GEN_TASK_NAME
@@ -1249,11 +1247,15 @@ class CocoaPodsIT : BaseGradleIT() {
         taskName: String,
         vararg args: String
     ) {
+        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
         // check that test executable
-        build(taskName, *args, options = defaultBuildOptions().copy(
-            // Workaround for KT-55751
-            warningMode = WarningMode.None,
-        )) {
+        build(
+            taskName, *args, options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_7_4,
+                currentGradleVersion,
+                "Workaround for KT-55751"
+            )
+        ) {
             //base checks
             assertSuccessful()
             hooks.trigger(this)

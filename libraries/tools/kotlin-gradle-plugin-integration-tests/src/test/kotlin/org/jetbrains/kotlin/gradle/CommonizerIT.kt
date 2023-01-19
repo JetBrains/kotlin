@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle
 
 import groovy.json.StringEscapeUtils
 import org.gradle.api.logging.LogLevel.INFO
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.commonizer.CommonizerTarget
+import org.jetbrains.kotlin.gradle.testbase.TestVersions
 import org.jetbrains.kotlin.gradle.util.reportSourceSetCommonizerDependencies
 import org.jetbrains.kotlin.incremental.testingUtils.assertEqualDirectories
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -415,12 +415,15 @@ class CommonizerIT : BaseGradleIT() {
     @Test
     fun `test KT-49735 two kotlin targets with same konanTarget`() {
         with(Project("commonize-kt-49735-twoKotlinTargets-oneKonanTarget")) {
+            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             build(
                 ":assemble",
-                options = defaultBuildOptions().copy(
-                    // Workaround for KT-55751
-                    warningMode = WarningMode.None,
-                )
+                options = defaultBuildOptions()
+                    .suppressDeprecationWarningsSinceGradleVersion(
+                        TestVersions.Gradle.G_7_4,
+                        currentGradleVersion,
+                        "Workaround for KT-55751"
+                    )
             ) {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
                 assertSuccessful()
