@@ -21,7 +21,10 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
@@ -486,10 +489,13 @@ class IrBuiltInsOverDescriptors(
         ) as? ClassDescriptor)?.let { symbolTable.referenceClass(it) }
 
     override fun findClass(name: Name, packageFqName: FqName): IrClassSymbol? =
-        (builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedClassifier(
+        findClassDescriptor(name, packageFqName)?.let { symbolTable.referenceClass(it) }
+
+    fun findClassDescriptor(name: Name, packageFqName: FqName): ClassDescriptor? =
+        builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedClassifier(
             name,
             NoLookupLocation.FROM_BACKEND
-        ) as? ClassDescriptor)?.let { symbolTable.referenceClass(it) }
+        ) as? ClassDescriptor
 
     override fun findBuiltInClassMemberFunctions(builtInClass: IrClassSymbol, name: Name): Iterable<IrSimpleFunctionSymbol> =
         builtInClass.descriptor.unsubstitutedMemberScope
