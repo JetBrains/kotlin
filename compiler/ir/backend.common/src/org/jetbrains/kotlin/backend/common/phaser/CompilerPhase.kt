@@ -94,7 +94,7 @@ abstract class AbstractNamedCompilerPhase<in Context : LoggingContext, Input, Ou
                 phaseBody(phaseConfig, phaserState, context, input)
             }
         }
-        runAfter(phaseConfig, changePhaserStateType(phaserState), context, output)
+        runAfter(phaseConfig, changePhaserStateType(phaserState), context, input, output)
 
         phaserState.alreadyDone.add(this)
         phaserState.phaseCount++
@@ -110,7 +110,7 @@ abstract class AbstractNamedCompilerPhase<in Context : LoggingContext, Input, Ou
 
     abstract fun runBefore(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input)
 
-    abstract fun runAfter(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Output>, context: Context, output: Output)
+    abstract fun runAfter(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Output>, context: Context, input: Input, output: Output)
 
     private fun runAndProfile(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, source: Input): Output {
         var result: Output? = null
@@ -161,7 +161,7 @@ class NamedCompilerPhase<in Context : LoggingContext, Data>(
         }
     }
 
-    override fun runAfter(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Data>, context: Context, output: Data) {
+    override fun runAfter(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Data>, context: Context, input: Data, output: Data) {
         val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.AFTER)
         for (action in actions) action(state, output, context)
 
@@ -193,7 +193,7 @@ abstract class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Outp
     preconditions: Set<Checker<Input>> = emptySet(),
     postconditions: Set<Checker<Output>> = emptySet(),
     private val preactions: Set<Action<Input, Context>> = emptySet(),
-    private val postactions: Set<Action<Output, Context>> = emptySet(),
+    private val postactions: Set<Action<Pair<Input, Output>, Context>> = emptySet(),
     nlevels: Int = 0,
 ) : AbstractNamedCompilerPhase<Context, Input, Output>(
     name,
@@ -220,9 +220,9 @@ abstract class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Outp
         }
     }
 
-    override fun runAfter(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Output>, context: Context, output: Output) {
+    override fun runAfter(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Output>, context: Context, input: Input, output: Output) {
         val state = ActionState(phaseConfig, this, phaserState.phaseCount, BeforeOrAfter.AFTER)
-        for (action in postactions) action(state, output, context)
+        for (action in postactions) action(state, input to output, context)
 
         if (phaseConfig.checkConditions) {
             for (post in postconditions) post(output)
