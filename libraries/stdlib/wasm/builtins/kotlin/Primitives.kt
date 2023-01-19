@@ -359,29 +359,6 @@ public class Byte private constructor(public val value: Byte) : Number(), Compar
      */
     public override fun toDouble(): Double = wasm_f64_convert_i32_s(this.toInt())
 
-    /** Performs a bitwise AND operation between the two values. */
-    @SinceKotlin("1.1")
-    @WasmOp(WasmOp.I32_AND)
-    public infix fun and(other: Byte): Byte =
-        implementedAsIntrinsic
-
-    /** Performs a bitwise OR operation between the two values. */
-    @SinceKotlin("1.1")
-    @WasmOp(WasmOp.I32_OR)
-    public infix fun or(other: Byte): Byte =
-        implementedAsIntrinsic
-
-    /** Performs a bitwise XOR operation between the two values. */
-    @SinceKotlin("1.1")
-    @WasmOp(WasmOp.I32_XOR)
-    public infix fun xor(other: Byte): Byte =
-        implementedAsIntrinsic
-
-    /** Inverts the bits in this value/ */
-    @SinceKotlin("1.1")
-    public inline fun inv(): Byte = this.xor(-1)
-
-
     public override fun equals(other: Any?): Boolean =
         other is Byte && wasm_i32_eq(this.toInt(), other.toInt())
 
@@ -701,29 +678,6 @@ public class Short private constructor(public val value: Short) : Number(), Comp
     @SinceKotlin("1.7")
     @ExperimentalStdlibApi
     public operator fun rangeUntil(other: Long): LongRange = this until other
-
-    /** Performs a bitwise AND operation between the two values. */
-    @SinceKotlin("1.1")
-    @WasmOp(WasmOp.I32_AND)
-    public infix fun and(other: Short): Short =
-        implementedAsIntrinsic
-
-    /** Performs a bitwise OR operation between the two values. */
-    @SinceKotlin("1.1")
-    @WasmOp(WasmOp.I32_OR)
-    public infix fun or(other: Short): Short =
-        implementedAsIntrinsic
-
-    /** Performs a bitwise XOR operation between the two values. */
-    @SinceKotlin("1.1")
-    @WasmOp(WasmOp.I32_XOR)
-    public infix fun xor(other: Short): Short =
-        implementedAsIntrinsic
-
-    /** Inverts the bits in this value */
-    @SinceKotlin("1.1")
-    public fun inv(): Short =
-        this.xor(-1)
 
     /**
      * Converts this [Short] value to [Byte].
