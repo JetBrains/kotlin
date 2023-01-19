@@ -425,7 +425,9 @@ abstract class BaseGradleIT {
         var result: ProcessRunResult? = null
         try {
             result = runProcess(cmd, projectDir, env, buildOptions)
-            CompiledProject(this, result.output, result.exitCode).check()
+            val compiledProject = CompiledProject(this, result.output, result.exitCode)
+            compiledProject.check()
+            compiledProject.additionalAssertions(buildOptions)
         } catch (t: Throwable) {
             println("<=== Test build: $projectName $cmd ===>")
 
@@ -439,6 +441,23 @@ abstract class BaseGradleIT {
 
             throw t
         }
+    }
+
+    private fun CompiledProject.additionalAssertions(options: BuildOptions) {
+        if (options.warningMode != WarningMode.Fail) {
+            assertDeprecationWarningsArePresent(options.warningMode)
+        }
+    }
+
+    private fun CompiledProject.assertDeprecationWarningsArePresent(warningMode: WarningMode) {
+        assertContains(
+            "[GradleWarningsDetectorPlugin] The plugin is being applied",
+            errorMessage = NO_GRADLE_WARNINGS_DETECTOR_PLUGIN_ERROR_MESSAGE
+        )
+        assertContains(
+            "[GradleWarningsDetectorPlugin] Some deprecation warnings were found during this build.",
+            errorMessage = getWarningModeChangeAdvice(warningMode)
+        )
     }
 
     fun <T> Project.getModels(modelType: Class<T>): ModelContainer<T> {
@@ -484,9 +503,9 @@ abstract class BaseGradleIT {
         return this
     }
 
-    fun CompiledProject.assertContains(vararg expected: String, ignoreCase: Boolean = false): CompiledProject {
+    fun CompiledProject.assertContains(vararg expected: String, ignoreCase: Boolean = false, errorMessage: String? = null): CompiledProject {
         for (str in expected) {
-            assertTrue(output.contains(str.normalize(), ignoreCase), "Output should contain '$str'")
+            assertTrue(output.contains(str.normalize(), ignoreCase), errorMessage ?: "Output should contain '$str'")
         }
         return this
     }

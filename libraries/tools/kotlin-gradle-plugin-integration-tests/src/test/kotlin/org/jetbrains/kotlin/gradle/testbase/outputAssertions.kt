@@ -193,22 +193,25 @@ fun BuildResult.assertBuildReportPathIsPrinted() {
     assertOutputContains("Kotlin build report is written to file://")
 }
 
+val NO_GRADLE_WARNINGS_DETECTOR_PLUGIN_ERROR_MESSAGE =
+    """
+    The build uses warning mode other than `${WarningMode.Fail}` and uses a non-default project settings file.
+    Please apply the `org.jetbrains.kotlin.test.gradle-warnings-detector` plugin to the settings.
+
+    """.trimIndent()
+
+fun getWarningModeChangeAdvice(warningMode: WarningMode) =
+    "Warning mode is set to `$warningMode`, but the build produced no deprecation warnings. Please set it to `${WarningMode.Fail}`"
+
 /**
  * Asserts that the build produced some deprecation warnings.
  *
  * Expected to be executed only for the case when [BuildOptions.warningMode] is not set to [WarningMode.Fail]
  */
 fun BuildResult.assertDeprecationWarningsArePresent(warningMode: WarningMode) {
-    assertOutputContains(
-        "[GradleWarningsDetectorPlugin] The plugin is being applied",
-        """
-            The build uses warning mode other than `${WarningMode.Fail}` and uses a non-default project settings file.
-            Please apply the `org.jetbrains.kotlin.test.gradle-warnings-detector` plugin to the settings.
-
-        """.trimIndent()
-    )
+    assertOutputContains("[GradleWarningsDetectorPlugin] The plugin is being applied", NO_GRADLE_WARNINGS_DETECTOR_PLUGIN_ERROR_MESSAGE)
     assertOutputContains(
         "[GradleWarningsDetectorPlugin] Some deprecation warnings were found during this build.",
-        "Warning mode is set to `$warningMode`, but the build produced no deprecation warnings. Please set it to `${WarningMode.Fail}`"
+        getWarningModeChangeAdvice(warningMode)
     )
 }
