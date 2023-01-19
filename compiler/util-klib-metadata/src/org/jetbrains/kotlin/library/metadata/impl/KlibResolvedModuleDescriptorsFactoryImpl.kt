@@ -227,11 +227,11 @@ object ForwardDeclarationsFqNames {
     internal val cInterop = FqName("kotlinx.cinterop")
 
     private val cNames = FqName("cnames")
-    internal val cNamesStructs = cNames.child(Name.identifier("structs"))
+    val cNamesStructs = cNames.child(Name.identifier("structs"))
 
     private val objCNames = FqName("objcnames")
-    internal val objCNamesClasses = objCNames.child(Name.identifier("classes"))
-    internal val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
+    val objCNamesClasses = objCNames.child(Name.identifier("classes"))
+    val objCNamesProtocols = objCNames.child(Name.identifier("protocols"))
 
     val syntheticPackages = setOf(cNames, objCNames)
 }

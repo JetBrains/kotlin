@@ -132,7 +132,7 @@ class ExportedForwardDeclarationsPackageFragmentDescriptor(
 }
 
 /**
- * The package fragment that redirects all requests for classifier lookup to its targets.
+ * The package fragment that redirects all requests for classifier lookup to its targets: cnames.* -> proper package.
  */
 class ClassifierAliasingPackageFragmentDescriptor(
     targets: List<KlibMetadataPackageFragment>,
