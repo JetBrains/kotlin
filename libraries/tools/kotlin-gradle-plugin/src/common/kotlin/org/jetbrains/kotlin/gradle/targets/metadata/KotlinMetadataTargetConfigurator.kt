@@ -348,9 +348,6 @@ class KotlinMetadataTargetConfigurator :
 
         project.locateOrRegisterTask<Task>(TRANSFORM_ALL_SOURCESETS_DEPENDENCIES_METADATA).dependsOn(transformationTask)
 
-        @OptIn(Idea222Api::class)
-        project.ideaImportDependsOn(transformationTask)
-
         val artifacts = sourceSet.internal.resolvableMetadataConfiguration.incoming.artifacts
 
         // Metadata from visible source sets within dependsOn closure

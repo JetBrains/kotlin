@@ -17,42 +17,53 @@ import org.jetbrains.kotlin.gradle.utils.getOrPut
 internal val Project.kotlinMppDependencyProjectStructureMetadataExtractorFactory: MppDependencyProjectStructureMetadataExtractorFactory
     get() = MppDependencyProjectStructureMetadataExtractorFactory.getOrCreate(this)
 
-internal class MppDependencyProjectStructureMetadataExtractorFactory(
-    private val projectStructureMetadataByProjectPath: Map<String, Provider<KotlinProjectStructureMetadata?>>
+internal data class ProjectPathWithBuildName(
+    val projectPath: String,
+    val buildName: String
+)
+
+internal class MppDependencyProjectStructureMetadataExtractorFactory
+private constructor(
+    private val allProjectStructureMetadataProviders: Lazy<Map<ProjectPathWithBuildName, Lazy<KotlinProjectStructureMetadata?>>>
 ) {
     fun create(
         metadataArtifact: ResolvedArtifactResult
     ): MppDependencyProjectStructureMetadataExtractor {
         val moduleId = metadataArtifact.variant.owner
 
-        if (moduleId is ProjectComponentIdentifier && moduleId.build.isCurrentBuild) {
-            val psm = projectStructureMetadataByProjectPath[moduleId.projectPath]
-                ?: error("Project structure metadata not found for project ${moduleId.projectPath}")
-            return ProjectMppDependencyProjectStructureMetadataExtractor(
-                moduleIdentifier = metadataArtifact.variant.toSingleKpmModuleIdentifier(),
-                projectPath = moduleId.projectPath,
-                projectStructureMetadataProvider = psm::get
-            )
-        }
+        return if (moduleId is ProjectComponentIdentifier) {
+            val key = ProjectPathWithBuildName(moduleId.projectPath, moduleId.build.name)
+            val projectStructureMetadataProvider = allProjectStructureMetadataProviders.value[key]
+                ?: error("Project structure metadata not found for project $key")
 
-        return JarMppDependencyProjectStructureMetadataExtractor(metadataArtifact.file)
+            if (moduleId.build.isCurrentBuild) {
+                ProjectMppDependencyProjectStructureMetadataExtractor(
+                    moduleIdentifier = metadataArtifact.variant.toSingleKpmModuleIdentifier(),
+                    projectPath = moduleId.projectPath,
+                    projectStructureMetadataProvider = projectStructureMetadataProvider::value
+                )
+            } else {
+                IncludedBuildMppDependencyProjectStructureMetadataExtractor(
+                    componentId = moduleId,
+                    primaryArtifact = metadataArtifact.file,
+                    projectStructureMetadataProvider = projectStructureMetadataProvider::value
+                )
+            }
+        } else {
+            JarMppDependencyProjectStructureMetadataExtractor(metadataArtifact.file)
+        }
     }
 
     companion object {
         private val extensionName = MppDependencyProjectStructureMetadataExtractorFactory::class.java.simpleName
         fun getOrCreate(project: Project): MppDependencyProjectStructureMetadataExtractorFactory =
             project.extraProperties.getOrPut(extensionName) {
-                val projectStructureMetadataByProjectPath = collectProjectStructureMetadataFromAllProjects(project)
-                MppDependencyProjectStructureMetadataExtractorFactory(projectStructureMetadataByProjectPath)
-            }
+                val allProjectStructureMetadataProviders = lazy {
+                    GlobalProjectStructureMetadataStorage
+                        .getAllProjectStructureMetadata(project)
+                }
 
-        /**
-         * Collect Kotlin Project StructureMetadata.
-         */
-        private fun collectProjectStructureMetadataFromAllProjects(project: Project): Map<String, Provider<KotlinProjectStructureMetadata?>> {
-            return project.rootProject.allprojects.associateBy { it.path }.mapValues { (_, subProject) ->
-                project.provider { subProject.multiplatformExtensionOrNull?.kotlinProjectStructureMetadata }
+                MppDependencyProjectStructureMetadataExtractorFactory(allProjectStructureMetadataProviders)
             }
-        }
     }
 }
