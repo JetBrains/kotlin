@@ -173,6 +173,11 @@ public class KtBuiltinsModule(
  */
 public interface KtNotUnderContentRootModule : KtModule {
     /**
+     * Human-readable module name.
+     */
+    public val name: String
+
+    /**
      * Module owner file.
      * A separate module is created for each file outside a content root.
      */

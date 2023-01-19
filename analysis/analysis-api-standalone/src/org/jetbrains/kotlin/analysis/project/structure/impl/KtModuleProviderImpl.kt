@@ -24,6 +24,7 @@ internal class KtModuleProviderImpl(
 ) : ProjectStructureProvider() {
     private val ktNotUnderContentRootModuleWithoutPsiFile by lazy {
         KtNotUnderContentRootModuleImpl(
+            name = "unnamed-outside-content-root",
             moduleDescription = "Standalone-not-under-content-root-module-without-psi-file",
             project = project,
         )
@@ -44,6 +45,7 @@ internal class KtModuleProviderImpl(
         val containingFileAsVirtualFile = containingFileAsPsiFile.virtualFile
             ?: return notUnderContentRootModuleCache.getOrPut(containingFileAsPsiFile) {
                 KtNotUnderContentRootModuleImpl(
+                    name = containingFileAsPsiFile.name,
                     moduleDescription = "Standalone-not-under-content-root-module-for-$containingFileAsPsiFile",
                     file = containingFileAsPsiFile,
                     project = project,
