@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
-import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
@@ -24,7 +23,8 @@ internal data class ProjectPathWithBuildName(
 
 internal class MppDependencyProjectStructureMetadataExtractorFactory
 private constructor(
-    private val allProjectStructureMetadataProviders: Lazy<Map<ProjectPathWithBuildName, Lazy<KotlinProjectStructureMetadata?>>>
+    private val includedBuildsProjectStructureMetadataProviders: Lazy<Map<ProjectPathWithBuildName, Lazy<KotlinProjectStructureMetadata?>>>,
+    private val currentBuildProjectStructureMetadataProviders: Map<String, Lazy<KotlinProjectStructureMetadata?>>
 ) {
     fun create(
         metadataArtifact: ResolvedArtifactResult
@@ -32,17 +32,20 @@ private constructor(
         val moduleId = metadataArtifact.variant.owner
 
         return if (moduleId is ProjectComponentIdentifier) {
-            val key = ProjectPathWithBuildName(moduleId.projectPath, moduleId.build.name)
-            val projectStructureMetadataProvider = allProjectStructureMetadataProviders.value[key]
-                ?: error("Project structure metadata not found for project $key")
-
             if (moduleId.build.isCurrentBuild) {
+                val projectStructureMetadataProvider = currentBuildProjectStructureMetadataProviders[moduleId.projectPath]
+                    ?: error("Project structure metadata not found for project '${moduleId.projectPath}'")
+
                 ProjectMppDependencyProjectStructureMetadataExtractor(
                     moduleIdentifier = metadataArtifact.variant.toSingleKpmModuleIdentifier(),
                     projectPath = moduleId.projectPath,
                     projectStructureMetadataProvider = projectStructureMetadataProvider::value
                 )
             } else {
+                val key = ProjectPathWithBuildName(moduleId.projectPath, moduleId.build.name)
+                val projectStructureMetadataProvider = includedBuildsProjectStructureMetadataProviders.value[key]
+                    ?: error("Project structure metadata not found for project $key")
+
                 IncludedBuildMppDependencyProjectStructureMetadataExtractor(
                     componentId = moduleId,
                     primaryArtifact = metadataArtifact.file,
@@ -58,12 +61,18 @@ private constructor(
         private val extensionName = MppDependencyProjectStructureMetadataExtractorFactory::class.java.simpleName
         fun getOrCreate(project: Project): MppDependencyProjectStructureMetadataExtractorFactory =
             project.extraProperties.getOrPut(extensionName) {
-                val allProjectStructureMetadataProviders = lazy {
-                    GlobalProjectStructureMetadataStorage
-                        .getAllProjectStructureMetadata(project)
-                }
-
-                MppDependencyProjectStructureMetadataExtractorFactory(allProjectStructureMetadataProviders)
+                MppDependencyProjectStructureMetadataExtractorFactory(
+                    lazy { GlobalProjectStructureMetadataStorage.getProjectStructureMetadataProvidersFromAllGradleBuilds(project) },
+                    collectAllProjectStructureMetadataInCurrentBuild(project)
+                )
             }
+
+        private fun collectAllProjectStructureMetadataInCurrentBuild(project: Project): Map<String, Lazy<KotlinProjectStructureMetadata?>> {
+            return project
+                .rootProject
+                .allprojects
+                .associateBy { it.path }
+                .mapValues { (_, subProject) -> lazy { subProject.multiplatformExtensionOrNull?.kotlinProjectStructureMetadata } }
+        }
     }
 }

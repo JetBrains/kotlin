@@ -420,7 +420,7 @@ internal object GlobalProjectStructureMetadataStorage {
         )
     }
 
-    fun getAllProjectStructureMetadata(project: Project): Map<ProjectPathWithBuildName, Lazy<KotlinProjectStructureMetadata?>> {
+    fun getProjectStructureMetadataProvidersFromAllGradleBuilds(project: Project): Map<ProjectPathWithBuildName, Lazy<KotlinProjectStructureMetadata?>> {
         return project.compositeBuildRoot.extensions.extraProperties.properties
             .filterKeys { it.startsWith(propertyPrefix) }
             .entries
