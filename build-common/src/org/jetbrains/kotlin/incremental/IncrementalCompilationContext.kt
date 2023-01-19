@@ -18,7 +18,16 @@ class IncrementalCompilationContext(
     val storeFullFqNamesInLookupCache: Boolean = false,
     val transaction: CompilationTransaction = DummyCompilationTransaction(),
     val reporter: ICReporter = DoNothingICReporter,
+    /**
+     * Controls whether changes in lookup cache should be tracked. Required for the classpath snapshots based IC approach
+     */
     val trackChangesInLookupCache: Boolean = false,
+    /**
+     * Controls whether any changes should be propagated to FS until we decide that the compilation is successful or not
+     *
+     * Required for optimizing Gradle side outputs backup
+     */
+    val keepIncrementalCompilationCachesInMemory: Boolean = false,
 ) {
     constructor(
         rootProjectDir: File?,

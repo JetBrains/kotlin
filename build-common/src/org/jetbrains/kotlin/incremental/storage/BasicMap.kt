@@ -30,7 +30,13 @@ abstract class BasicMap<K : Comparable<K>, V>(
     valueExternalizer: DataExternalizer<V>,
     protected val icContext: IncrementalCompilationContext,
 ) {
-    protected val storage: LazyStorage<K, V> = CachingLazyStorage(storageFile, keyDescriptor, valueExternalizer)
+    protected val storage: LazyStorage<K, V> = CachingLazyStorage(storageFile, keyDescriptor, valueExternalizer).let {
+        if (icContext.keepIncrementalCompilationCachesInMemory) {
+            InMemoryStorageWrapper(it)
+        } else {
+            it
+        }
+    }
 
     protected val pathConverter
         get() = icContext.pathConverter
