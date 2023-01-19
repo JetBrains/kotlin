@@ -104,6 +104,8 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                 return null // Place initializers in the primary constructor.
 
             val allInitializers = constInitializers + initializers
+            if (allInitializers.isEmpty())
+                return null
             val startOffset = irClass.startOffset
             val endOffset = irClass.endOffset
             val initializeFun =
@@ -170,7 +172,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                             it is IrInstanceInitializerCall -> {
                                 if (initializeMethodSymbol == null) {
                                     val allInitializers = constInitializers + initializers
-                                    assert(declaration.isPrimary)
+                                    require(declaration.isPrimary || allInitializers.isEmpty())
                                     for (initializer in allInitializers)
                                         initializer.setDeclarationsParent(declaration)
                                     allInitializers
