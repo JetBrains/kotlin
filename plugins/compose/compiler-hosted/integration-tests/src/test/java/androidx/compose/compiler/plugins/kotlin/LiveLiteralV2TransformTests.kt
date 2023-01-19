@@ -16,12 +16,15 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
 class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
-    override val liveLiteralsV2Enabled: Boolean
-        get() = true
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY, true)
+    }
 
+    @Test
     fun testSiblingCallArgs() = assertNoDuplicateKeys(
         """
         fun Test() {
@@ -31,6 +34,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     )
 
+    @Test
     fun testFunctionCallWithConstArg() = assertKeys(
         "Int%arg-0%call-print%fun-Test",
         "Int%arg-0%call-print-1%fun-Test"
@@ -43,6 +47,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testDispatchReceiver() = assertKeys(
         "Int%%this%call-toString%arg-0%call-print%fun-Test",
         "Int%arg-0%call-print-1%fun-Test"
@@ -55,6 +60,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testInsidePropertyGetter() = assertKeys(
         "Int%fun-%get-foo%%get%val-foo"
     ) {
@@ -64,12 +70,14 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
     }
 
     // NOTE(lmr): For static initializer expressions we can/should do more.
+    @Test
     fun testInsidePropertyInitializer() = assertKeys {
         """
         val foo: Int = 1
         """
     }
 
+    @Test
     fun testValueParameter() = assertKeys(
         "Int%param-x%fun-Foo"
     ) {
@@ -78,6 +86,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testAnnotation() = assertKeys {
         """
         annotation class Foo(val value: Int = 1)
@@ -87,6 +96,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
     }
 
     // NOTE(lmr): In the future we should try and get this to work
+    @Test
     fun testForLoop() = assertKeys {
         """
         fun Foo() {
@@ -97,6 +107,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testWhileTrue() = assertKeys(
         "Double%arg-1%call-greater%cond%if%body%loop%fun-Foo",
         "Int%arg-0%call-print%body%loop%fun-Foo"
@@ -111,6 +122,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testWhileCondition() = assertKeys(
         "Int%arg-0%call-print%body%loop%fun-Foo"
     ) {
@@ -123,6 +135,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testForInCollection() = assertKeys(
         "Int%arg-0%call-print-1%body%loop%fun-Foo"
     ) {
@@ -137,12 +150,14 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
     }
 
     // NOTE(lmr): we should deal with this in some cases, but leaving untouched for now
+    @Test
     fun testConstantProperty() = assertKeys {
         """
         const val foo = 1
         """
     }
 
+    @Test
     fun testSafeCall() = assertKeys(
         "Boolean%arg-1%call-EQEQ%fun-Foo",
         "String%arg-0%call-contains%else%when%arg-0%call-EQEQ%fun-Foo"
@@ -154,6 +169,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testElvis() = assertKeys(
         "String%branch%when%fun-Foo"
     ) {
@@ -164,6 +180,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testTryCatch() = assertKeys(
         "Int%arg-0%call-invoke%catch%fun-Foo",
         "Int%arg-0%call-invoke%finally%fun-Foo",
@@ -182,6 +199,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testWhen() = assertKeys(
         "Double%arg-1%call-greater%cond%when%fun-Foo",
         "Double%arg-1%call-greater%cond-1%when%fun-Foo",
@@ -200,6 +218,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testWhenWithSubject() = assertKeys(
         "Double%%%this%call-rangeTo%%this%call-contains%cond%when%fun-Foo",
         "Double%%%this%call-rangeTo%%this%call-contains%cond-1%when%fun-Foo",
@@ -220,6 +239,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testWhenWithSubject2() = assertKeys(
         "Int%arg-0%call-print%branch-1%when%fun-Foo",
         "Int%arg-0%call-print%else%when%fun-Foo",
@@ -236,6 +256,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testDelegatingCtor() = assertKeys(
         "Int%arg-0%call-%init%%class-Bar"
     ) {
@@ -245,6 +266,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testLocalVal() = assertKeys(
         "Int%arg-0%call-plus%set-y%fun-Foo",
         "Int%val-x%fun-Foo",
@@ -259,6 +281,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testCapturedVar() = assertKeys(
         "Int%val-a%fun-Example",
         "String%0%str%fun-Example",
@@ -304,6 +327,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """
     }
 
+    @Test
     fun testCommentsAbove() = assertDurableChange(
         """
             fun Test() {
@@ -318,6 +342,7 @@ class LiveLiteralV2TransformTests : AbstractLiveLiteralTransformTests() {
         """.trimIndent()
     )
 
+    @Test
     fun testValsAndStructureAbove() = assertDurableChange(
         """
             fun Test() {

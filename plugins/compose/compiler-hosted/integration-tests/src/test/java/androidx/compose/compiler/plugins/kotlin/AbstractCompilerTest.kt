@@ -16,313 +16,137 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import com.intellij.openapi.Disposable
+import androidx.compose.compiler.plugins.kotlin.facade.AnalysisResult
+import androidx.compose.compiler.plugins.kotlin.facade.KotlinCompilerFacade
+import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.util.text.StringUtil
 import java.io.File
-import java.net.MalformedURLException
-import java.net.URL
 import java.net.URLClassLoader
-import junit.framework.TestCase
-import org.jetbrains.annotations.Contract
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.IrMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.codegen.ClassFileFactory
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.utils.rethrow
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.junit.After
+import org.junit.BeforeClass
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
-private const val KOTLIN_RUNTIME_VERSION = "1.3.11"
+@RunWith(JUnit4::class)
+abstract class AbstractCompilerTest {
+    companion object {
+        private fun File.applyExistenceCheck(): File = apply {
+            if (!exists()) throw NoSuchFileException(this)
+        }
 
-@Suppress("MemberVisibilityCanBePrivate")
-abstract class AbstractCompilerTest : TestCase() {
-    protected var myEnvironment: KotlinCoreEnvironment? = null
-    protected var myFiles: CodegenTestFiles? = null
-    protected var classFileFactory: ClassFileFactory? = null
-    protected var javaClassesOutputDirectory: File? = null
-    protected var additionalDependencies: List<File>? = null
+        private val homeDir: String = run {
+            val userDir = System.getProperty("user.dir")
+            val dir = File(userDir ?: ".")
+            val path = FileUtil.toCanonicalPath(dir.absolutePath)
+            File(path).applyExistenceCheck().absolutePath
+        }
 
-    override fun setUp() {
-        // Setup the environment for the analysis
-        System.setProperty(
-            "user.dir",
-            homeDir
-        )
-        myEnvironment = createEnvironment()
-        setupEnvironment(myEnvironment!!)
-        super.setUp()
+        private val projectRoot: String by lazy {
+            File(homeDir, "../../../../../..").applyExistenceCheck().absolutePath
+        }
+
+        val kotlinHome: File by lazy {
+            File(projectRoot, "prebuilts/androidx/external/org/jetbrains/kotlin/")
+                .applyExistenceCheck()
+        }
+
+        private val outDir: File by lazy {
+            File(System.getenv("OUT_DIR") ?: File(projectRoot, "out").absolutePath)
+                .applyExistenceCheck()
+        }
+
+        val composePluginJar: File by lazy {
+            File(outDir, "androidx/compose/compiler/compiler/build/repackaged/embedded.jar")
+                .applyExistenceCheck()
+        }
+
+        @JvmStatic
+        @BeforeClass
+        fun setSystemProperties() {
+            System.setProperty("idea.home", homeDir)
+            System.setProperty("user.dir", homeDir)
+            System.setProperty("idea.ignore.disabled.plugins", "true")
+        }
+
+        val defaultClassPath by lazy {
+            System.getProperty("java.class.path")!!.split(
+                System.getProperty("path.separator")!!
+            ).map { File(it) }
+        }
+
+        val defaultClassPathRoots by lazy {
+            defaultClassPath.filter {
+                !it.path.contains("robolectric") && it.extension != "xml"
+            }.toList()
+        }
     }
 
-    override fun tearDown() {
-        myFiles = null
-        myEnvironment = null
-        javaClassesOutputDirectory = null
-        additionalDependencies = null
-        classFileFactory = null
-        Disposer.dispose(myTestRootDisposable)
-        super.tearDown()
-    }
-
-    fun ensureSetup(block: () -> Unit) {
-        setUp()
-        block()
-    }
+    private val testRootDisposable = Disposer.newDisposable()
 
     @After
-    fun after() {
-        tearDown()
+    fun disposeTestRootDisposable() {
+        Disposer.dispose(testRootDisposable)
     }
 
-    protected val defaultClassPath by lazy { systemClassLoaderJars() }
+    protected open fun CompilerConfiguration.updateConfiguration() {}
 
-    protected fun createClasspath() = defaultClassPath.filter {
-        !it.path.contains("robolectric") && it.extension != "xml"
-    }.toList()
+    private fun createCompilerFacade(
+        additionalPaths: List<File> = listOf(),
+        registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null
+    ) = KotlinCompilerFacade.create(
+        testRootDisposable,
+        updateConfiguration = {
+            updateConfiguration()
+            addJvmClasspathRoots(additionalPaths)
+            addJvmClasspathRoots(defaultClassPathRoots)
+            if (!getBoolean(JVMConfigurationKeys.NO_JDK) &&
+                get(JVMConfigurationKeys.JDK_HOME) == null) {
+                // We need to set `JDK_HOME` explicitly to use JDK 17
+                put(JVMConfigurationKeys.JDK_HOME, File(System.getProperty("java.home")!!))
+            }
+            configureJdkClasspathRoots()
+        },
+        registerExtensions = registerExtensions ?: { configuration ->
+            ComposeComponentRegistrar.registerCommonExtensions(this)
+            IrGenerationExtension.registerExtension(
+                this,
+                ComposeComponentRegistrar.createComposeIrExtension(configuration)
+            )
+        }
+    )
 
-    val myTestRootDisposable = TestDisposable()
+    protected fun analyze(sourceFiles: List<SourceFile>): AnalysisResult =
+        createCompilerFacade().analyze(sourceFiles)
 
-    protected fun createEnvironment(): KotlinCoreEnvironment {
-        val classPath = createClasspath()
+    protected fun compileToIr(
+        sourceFiles: List<SourceFile>,
+        additionalPaths: List<File> = listOf(),
+        registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null
+    ): IrModuleFragment =
+        createCompilerFacade(additionalPaths, registerExtensions).compileToIr(sourceFiles)
 
-        val configuration = newConfiguration()
-        configuration.addJvmClasspathRoots(classPath)
-        configuration.configureJdkClasspathRoots()
-
-        System.setProperty("idea.ignore.disabled.plugins", "true")
-        return KotlinCoreEnvironment.createForTests(
-            myTestRootDisposable,
-            configuration,
-            EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
-    }
-
-    protected open fun setupEnvironment(environment: KotlinCoreEnvironment) {
-        ComposeComponentRegistrar.registerCommonExtensions(environment.project)
-        ComposeComponentRegistrar.registerIrExtension(
-            environment.project,
-            environment.configuration
-        )
-    }
-
-    protected fun createClassLoader(): GeneratedClassLoader {
+    protected fun createClassLoader(
+        sourceFiles: List<SourceFile>,
+        additionalPaths: List<File> = listOf()
+    ): GeneratedClassLoader {
         val classLoader = URLClassLoader(
-            defaultClassPath.map {
+            (additionalPaths + defaultClassPath).map {
                 it.toURI().toURL()
             }.toTypedArray(),
             null
         )
         return GeneratedClassLoader(
-            generateClassesInFile(),
-            classLoader,
-            *getClassPathURLs()
+            createCompilerFacade(additionalPaths).compile(sourceFiles).factory,
+            classLoader
         )
     }
-
-    protected fun getClassPathURLs(): Array<URL> {
-        val files = mutableListOf<File>()
-        javaClassesOutputDirectory?.let { files.add(it) }
-        additionalDependencies?.let { files.addAll(it) }
-
-        try {
-            return files.map { it.toURI().toURL() }.toTypedArray()
-        } catch (e: MalformedURLException) {
-            throw rethrow(e)
-        }
-    }
-
-    private fun reportProblem(e: Throwable) {
-        e.printStackTrace()
-        System.err.println("Generating instructions as text...")
-        try {
-            System.err.println(
-                classFileFactory?.createText()
-                    ?: "Cannot generate text: exception was thrown during generation"
-            )
-        } catch (e1: Throwable) {
-            System.err.println(
-                "Exception thrown while trying to generate text, " +
-                    "the actual exception follows:"
-            )
-            e1.printStackTrace()
-            System.err.println(
-                "------------------------------------------------------------------" +
-                    "-----------"
-            )
-        }
-
-        System.err.println("See exceptions above")
-    }
-
-    protected fun generateClassesInFile(reportProblems: Boolean = true): ClassFileFactory {
-        return classFileFactory ?: run {
-            try {
-                val environment = myEnvironment ?: error("Environment not initialized")
-                val files = myFiles ?: error("Files not initialized")
-                val generationState = GenerationUtils.compileFiles(environment, files.psiFiles)
-                generationState.factory.also { classFileFactory = it }
-            } catch (e: TestsCompilerError) {
-                if (reportProblems) {
-                    reportProblem(e.original)
-                } else {
-                    System.err.println("Compilation failure")
-                }
-                throw e
-            } catch (e: Throwable) {
-                if (reportProblems) reportProblem(e)
-                throw TestsCompilerError(e)
-            }
-        }
-    }
-
-    protected fun getTestName(lowercaseFirstLetter: Boolean): String =
-        getTestName(this.name ?: "", lowercaseFirstLetter)
-    protected fun getTestName(name: String, lowercaseFirstLetter: Boolean): String {
-        val trimmedName = trimStart(name, "test")
-        return if (StringUtil.isEmpty(trimmedName)) "" else lowercaseFirstLetter(
-            trimmedName,
-            lowercaseFirstLetter
-        )
-    }
-
-    protected fun lowercaseFirstLetter(name: String, lowercaseFirstLetter: Boolean): String =
-        if (lowercaseFirstLetter && !isMostlyUppercase(name))
-            Character.toLowerCase(name[0]) + name.substring(1)
-        else name
-
-    protected fun isMostlyUppercase(name: String): Boolean {
-        var uppercaseChars = 0
-        for (i in 0 until name.length) {
-            if (Character.isLowerCase(name[i])) {
-                return false
-            }
-            if (Character.isUpperCase(name[i])) {
-                uppercaseChars++
-                if (uppercaseChars >= 3) return true
-            }
-        }
-        return false
-    }
-
-    inner class TestDisposable : Disposable {
-
-        override fun dispose() {}
-
-        override fun toString(): String {
-            val testName = this@AbstractCompilerTest.getTestName(false)
-            return this@AbstractCompilerTest.javaClass.name +
-                if (StringUtil.isEmpty(testName)) "" else ".test$testName"
-        }
-    }
-
-    companion object {
-
-        private fun File.applyExistenceCheck(): File = this.apply {
-            if (!exists()) throw NoSuchFileException(this)
-        }
-
-        val homeDir by lazy { File(computeHomeDirectory()).applyExistenceCheck().absolutePath }
-        val projectRoot by lazy {
-            File(homeDir, "../../../../../..").applyExistenceCheck().absolutePath
-        }
-        val kotlinHome by lazy {
-            File(projectRoot, "prebuilts/androidx/external/org/jetbrains/kotlin/")
-                .applyExistenceCheck()
-        }
-        val outDir by lazy {
-            File(System.getenv("OUT_DIR") ?: File(projectRoot, "out").absolutePath)
-                .applyExistenceCheck()
-        }
-        val composePluginJar by lazy {
-            File(outDir, "androidx/compose/compiler/compiler/build/repackaged/embedded.jar")
-                .applyExistenceCheck()
-        }
-
-        fun kotlinRuntimeJar(module: String) = File(
-            kotlinHome, "$module/$KOTLIN_RUNTIME_VERSION/$module-$KOTLIN_RUNTIME_VERSION.jar"
-        ).applyExistenceCheck()
-
-        init {
-            System.setProperty(
-                "idea.home",
-                homeDir
-            )
-        }
-    }
-}
-
-private fun systemClassLoaderJars(): List<File> {
-    val classpath = System.getProperty("java.class.path")!!.split(
-        System.getProperty("path.separator")!!
-    )
-    val urls = classpath.map { URL("file://$it") }
-    val result = URLClassLoader(urls.toTypedArray()).urLs?.filter {
-        it.protocol == "file"
-    }?.map {
-        File(it.path)
-    }?.toList() ?: emptyList()
-    return result
-}
-
-private fun computeHomeDirectory(): String {
-    val userDir = System.getProperty("user.dir")
-    val dir = File(userDir ?: ".")
-    return FileUtil.toCanonicalPath(dir.absolutePath)
-}
-
-const val TEST_MODULE_NAME = "test-module"
-
-fun newConfiguration(): CompilerConfiguration {
-    val configuration = CompilerConfiguration()
-    configuration.put(
-        CommonConfigurationKeys.MODULE_NAME,
-        TEST_MODULE_NAME
-    )
-
-    configuration.put(JVMConfigurationKeys.VALIDATE_IR, true)
-
-    val messageCollector = object : MessageCollector {
-        override fun clear() {}
-
-        override fun report(
-            severity: CompilerMessageSeverity,
-            message: String,
-            location: CompilerMessageSourceLocation?
-        ) {
-            if (severity === CompilerMessageSeverity.ERROR) {
-                val prefix = if (location == null)
-                    ""
-                else
-                    "(" + location.path + ":" + location.line + ":" + location.column + ") "
-                throw AssertionError(prefix + message)
-            }
-        }
-
-        override fun hasErrors(): Boolean {
-            return false
-        }
-    }
-
-    configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
-    configuration.put(IrMessageLogger.IR_MESSAGE_LOGGER, IrMessageCollector(messageCollector))
-
-    return configuration
-}
-
-@Contract(pure = true)
-fun trimStart(s: String, prefix: String): String {
-    return if (s.startsWith(prefix)) {
-        s.substring(prefix.length)
-    } else s
 }

@@ -22,8 +22,11 @@ import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import java.net.URLClassLoader
 import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.junit.Assert.assertEquals
 import org.junit.Ignore
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
@@ -35,9 +38,8 @@ import org.robolectric.annotation.Config
     maxSdk = 23
 )
 class KtxCrossModuleTests : AbstractCodegenTest() {
-
     @Test
-    fun testInlineFunctionDefaultArgument(): Unit = ensureSetup {
+    fun testInlineFunctionDefaultArgument() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -72,7 +74,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineFunctionDefaultArgument2(): Unit = ensureSetup {
+    fun testInlineFunctionDefaultArgument2() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -105,7 +107,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testAccessibilityBridgeGeneration(): Unit = ensureSetup {
+    fun testAccessibilityBridgeGeneration() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -152,7 +154,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineClassCrossModule(): Unit = ensureSetup {
+    fun testInlineClassCrossModule() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -188,7 +190,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test // see: b/255983530
-    fun testNonComposableWithComposableReturnTypeCrossModule(): Unit = ensureSetup {
+    fun testNonComposableWithComposableReturnTypeCrossModule() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -233,7 +235,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test // see: b/255983530
-    fun testNonComposableWithNestedComposableReturnTypeCrossModule(): Unit = ensureSetup {
+    fun testNonComposableWithNestedComposableReturnTypeCrossModule() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -270,7 +272,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineClassOverloading(): Unit = ensureSetup {
+    fun testInlineClassOverloading() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -319,7 +321,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testFunInterfaceWithInlineClass(): Unit = ensureSetup {
+    fun testFunInterfaceWithInlineClass() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -350,7 +352,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testParentNotInitializedBug(): Unit = ensureSetup {
+    fun testParentNotInitializedBug() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -386,7 +388,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testConstCrossModule(): Unit = ensureSetup {
+    fun testConstCrossModule() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -415,7 +417,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testNonCrossinlineComposable(): Unit = ensureSetup {
+    fun testNonCrossinlineComposable() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -447,7 +449,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testNonCrossinlineComposableNoGenerics(): Unit = ensureSetup {
+    fun testNonCrossinlineComposableNoGenerics() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -481,7 +483,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testRemappedTypes(): Unit = ensureSetup {
+    fun testRemappedTypes() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -517,7 +519,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineIssue(): Unit = ensureSetup {
+    fun testInlineIssue() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -546,7 +548,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInlineComposableProperty(): Unit = ensureSetup {
+    fun testInlineComposableProperty() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -579,7 +581,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testNestedInlineIssue(): Unit = ensureSetup {
+    fun testNestedInlineIssue() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -616,7 +618,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testComposerIntrinsicInline(): Unit = ensureSetup {
+    fun testComposerIntrinsicInline() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -657,7 +659,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testComposableOrderIssue(): Unit = ensureSetup {
+    fun testComposableOrderIssue() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -696,7 +698,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testSimpleXModuleCall(): Unit = ensureSetup {
+    fun testSimpleXModuleCall() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -727,7 +729,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testJvmFieldIssue(): Unit = ensureSetup {
+    fun testJvmFieldIssue() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -756,7 +758,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testInstanceXModuleCall(): Unit = ensureSetup {
+    fun testInstanceXModuleCall() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -787,7 +789,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testXModuleProperty(): Unit = ensureSetup {
+    fun testXModuleProperty() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -815,7 +817,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testXModuleInterface(): Unit = ensureSetup {
+    fun testXModuleInterface() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -849,7 +851,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testXModuleComposableProperty(): Unit = ensureSetup {
+    fun testXModuleComposableProperty() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -878,7 +880,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testXModuleCtorComposableParam(): Unit = ensureSetup {
+    fun testXModuleCtorComposableParam() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -906,7 +908,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
 
     @Ignore("b/171801506")
     @Test
-    fun testCrossModule_SimpleComposition(): Unit = ensureSetup {
+    fun testCrossModule_SimpleComposition() {
         val tvId = 29
 
         compose(
@@ -973,7 +975,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
      * Test for b/169071070
      */
     @Test
-    fun testCrossModule_ComposableInterfaceFunctionWithInlineClasses(): Unit = ensureSetup {
+    fun testCrossModule_ComposableInterfaceFunctionWithInlineClasses() {
         compile(
             mapOf(
                 "library module" to mapOf(
@@ -1009,7 +1011,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
     }
 
     @Test
-    fun testAnnotationInferenceAcrossModules() = ensureSetup {
+    fun testAnnotationInferenceAcrossModules() {
         compile(
             mapOf(
                 "Base" to mapOf(
@@ -1068,7 +1070,7 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
      * Test for b/221280935
      */
     @Test
-    fun testOverriddenSymbolParentsInDefaultParameters() = ensureSetup {
+    fun testOverriddenSymbolParentsInDefaultParameters() {
         compile(
             mapOf(
                 "Base" to mapOf(
@@ -1103,30 +1105,23 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         dumpClasses: Boolean = false,
         validate: ((String) -> Unit)? = null
     ): List<OutputFile> {
-        val libraryClasses = (
-            modules.filter { it.key != "Main" }.map {
-                // Setup for compile
-                this.classFileFactory = null
-                this.myEnvironment = null
-                setUp()
-
-                classLoader(it.value, dumpClasses).allGeneratedFiles.also { outputFiles ->
-                    // Write the files to the class directory so they can be used by the next module
-                    // and the application
-                    outputFiles.writeToDir(classesDirectory)
-                }
-            } + emptyList()
-            ).reduce { acc, mutableList -> acc + mutableList }
-
-        // Setup for compile
-        this.classFileFactory = null
-        this.myEnvironment = null
-        setUp()
+        val libraryClasses = modules.filter { it.key != "Main" }.flatMap {
+            classLoader(
+                it.value,
+                listOf(classesDirectory.root),
+                dumpClasses
+            ).allGeneratedFiles.also { outputFiles ->
+                // Write the files to the class directory so they can be used by the next module
+                // and the application
+                outputFiles.writeToDir(classesDirectory.root)
+            }
+        }
 
         // compile the next one
         val appClasses = classLoader(
             modules["Main"]
                 ?: error("No Main module specified"),
+            listOf(classesDirectory.root),
             dumpClasses
         ).allGeneratedFiles
 
@@ -1177,12 +1172,9 @@ class KtxCrossModuleTests : AbstractCodegenTest() {
         }
     }
 
-    private var testLocalUnique = 0
-    private var classesDirectory = tmpDir(
-        "kotlin-${testLocalUnique++}-classes"
-    )
-
-    override val additionalPaths: List<File> = listOf(classesDirectory)
+    @JvmField
+    @Rule
+    val classesDirectory = TemporaryFolder()
 }
 
 fun OutputFile.writeToDir(directory: File) =

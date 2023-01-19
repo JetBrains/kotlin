@@ -33,7 +33,6 @@ import org.robolectric.annotation.Config
     maxSdk = 23
 )
 class LambdaMemoizationTests : AbstractLoweringTests() {
-
     @Test
     @Ignore("b/179279455")
     fun nonCapturingEventLambda() = skipping(
@@ -937,92 +936,91 @@ class LambdaMemoizationTests : AbstractLoweringTests() {
         """
     )
 
-    private fun skipping(@Language("kotlin") text: String, dumpClasses: Boolean = false) =
-        ensureSetup {
-            compose(
-                """
-                var avoidedWorkCount = 0
-                var repeatedWorkCount = 0
-                var expectedAvoidedWorkCount = 0
-                var expectedRepeatedWorkCount = 0
+    private fun skipping(@Language("kotlin") text: String, dumpClasses: Boolean = false) {
+        compose(
+            """
+            var avoidedWorkCount = 0
+            var repeatedWorkCount = 0
+            var expectedAvoidedWorkCount = 0
+            var expectedRepeatedWorkCount = 0
 
-                fun workToBeAvoided(msg: String = "") {
-                   avoidedWorkCount++
-                   // println("Work to be avoided ${'$'}avoidedWorkCount ${'$'}msg")
-                }
-                fun workToBeRepeated(msg: String = "") {
-                   repeatedWorkCount++
-                   // println("Work to be repeated ${'$'}repeatedWorkCount ${'$'}msg")
-                }
-
-                $text
-
-                @Composable
-                fun Display(text: String) {}
-
-                fun validateModel(text: String) {
-                  require(text == "Iteration ${'$'}iterations")
-                }
-
-                @Composable
-                fun ValidateModel(text: String) {
-                  validateModel(text)
-                }
-
-                @Composable
-                fun TestHost() {
-                   // println("START: Iteration - ${'$'}iterations")
-                   val scope = currentRecomposeScope
-                   emitView(::Button) {
-                     it.id=42
-                     it.setOnClickListener(View.OnClickListener { scope.invalidate() })
-                   }
-                   Example("Iteration ${'$'}iterations")
-                   // println("END  : Iteration - ${'$'}iterations")
-                   validate()
-                }
-
-                var iterations = 0
-
-                fun validate() {
-                  if (iterations++ == 0) {
-                    expectedAvoidedWorkCount = avoidedWorkCount
-                    expectedRepeatedWorkCount = repeatedWorkCount
-                    repeatedWorkCount = 0
-                  } else {
-                    if (expectedAvoidedWorkCount != avoidedWorkCount) {
-                      println("Executed avoided work")
-                    }
-                    require(expectedAvoidedWorkCount == avoidedWorkCount) {
-                      "Executed avoided work unexpectedly, expected " +
-                      "${'$'}expectedAvoidedWorkCount" +
-                      ", received ${'$'}avoidedWorkCount"
-                    }
-                    if (expectedRepeatedWorkCount != repeatedWorkCount) {
-                      println("Will throw Executed more work")
-                    }
-                    require(expectedRepeatedWorkCount == repeatedWorkCount) {
-                      "Expected more repeated work, expected ${'$'}expectedRepeatedWorkCount" +
-                      ", received ${'$'}repeatedWorkCount"
-                    }
-                    repeatedWorkCount = 0
-                  }
-                }
-
-            """,
-                """
-                TestHost()
-            """,
-                dumpClasses = dumpClasses
-            ).then { activity ->
-                val button = activity.findViewById(42) as Button
-                button.performClick()
-            }.then { activity ->
-                val button = activity.findViewById(42) as Button
-                button.performClick()
-            }.then {
-                // Wait for test to complete
-                shadowOf(getMainLooper()).idle()
+            fun workToBeAvoided(msg: String = "") {
+               avoidedWorkCount++
+               // println("Work to be avoided ${'$'}avoidedWorkCount ${'$'}msg")
             }
+            fun workToBeRepeated(msg: String = "") {
+               repeatedWorkCount++
+               // println("Work to be repeated ${'$'}repeatedWorkCount ${'$'}msg")
+            }
+
+            $text
+
+            @Composable
+            fun Display(text: String) {}
+
+            fun validateModel(text: String) {
+              require(text == "Iteration ${'$'}iterations")
+            }
+
+            @Composable
+            fun ValidateModel(text: String) {
+              validateModel(text)
+            }
+
+            @Composable
+            fun TestHost() {
+               // println("START: Iteration - ${'$'}iterations")
+               val scope = currentRecomposeScope
+               emitView(::Button) {
+                 it.id=42
+                 it.setOnClickListener(View.OnClickListener { scope.invalidate() })
+               }
+               Example("Iteration ${'$'}iterations")
+               // println("END  : Iteration - ${'$'}iterations")
+               validate()
+            }
+
+            var iterations = 0
+
+            fun validate() {
+              if (iterations++ == 0) {
+                expectedAvoidedWorkCount = avoidedWorkCount
+                expectedRepeatedWorkCount = repeatedWorkCount
+                repeatedWorkCount = 0
+              } else {
+                if (expectedAvoidedWorkCount != avoidedWorkCount) {
+                  println("Executed avoided work")
+                }
+                require(expectedAvoidedWorkCount == avoidedWorkCount) {
+                  "Executed avoided work unexpectedly, expected " +
+                  "${'$'}expectedAvoidedWorkCount" +
+                  ", received ${'$'}avoidedWorkCount"
+                }
+                if (expectedRepeatedWorkCount != repeatedWorkCount) {
+                  println("Will throw Executed more work")
+                }
+                require(expectedRepeatedWorkCount == repeatedWorkCount) {
+                  "Expected more repeated work, expected ${'$'}expectedRepeatedWorkCount" +
+                  ", received ${'$'}repeatedWorkCount"
+                }
+                repeatedWorkCount = 0
+              }
+            }
+
+        """,
+            """
+            TestHost()
+        """,
+            dumpClasses = dumpClasses
+        ).then { activity ->
+            val button = activity.findViewById(42) as Button
+            button.performClick()
+        }.then { activity ->
+            val button = activity.findViewById(42) as Button
+            button.performClick()
+        }.then {
+            // Wait for test to complete
+            shadowOf(getMainLooper()).idle()
         }
+    }
 }

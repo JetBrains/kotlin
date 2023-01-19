@@ -20,7 +20,6 @@ import org.intellij.lang.annotations.Language
 import org.junit.Test
 
 class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
-
     @Test
     fun testIfNonComposable(): Unit = controlFlow(
         """
@@ -1261,7 +1260,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
     )
 
     @Test
-    fun testEnsureRuntimeTestWillCompile_CL() = ensureSetup {
+    fun testEnsureRuntimeTestWillCompile_CL() {
         classLoader(
             """
             import androidx.compose.runtime.Composable

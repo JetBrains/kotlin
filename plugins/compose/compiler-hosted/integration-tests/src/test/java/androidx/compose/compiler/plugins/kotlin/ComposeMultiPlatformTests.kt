@@ -20,9 +20,8 @@ import org.junit.Test
 
 @Suppress("unused")
 class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
-
     @Test
-    fun testBasicMpp() = ensureSetup {
+    fun testBasicMpp() {
         multiplatform(
             """
             expect val foo: String
@@ -41,7 +40,7 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
     }
 
     @Test
-    fun testBasicComposable() = ensureSetup {
+    fun testBasicComposable() {
         multiplatform(
             """
             import androidx.compose.runtime.Composable
@@ -71,7 +70,7 @@ class ComposeMultiPlatformTests : AbstractMultiPlatformIntegrationTest() {
     }
 
     @Test
-    fun testComposableExpectDefaultParameter() = ensureSetup {
+    fun testComposableExpectDefaultParameter() {
         multiplatform(
             """
                 import androidx.compose.runtime.Composable

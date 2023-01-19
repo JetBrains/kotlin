@@ -16,52 +16,25 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import java.io.File
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.CodegenFactory
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.psi.KtFile
+import org.junit.Assert.assertEquals
+import org.junit.Rule
+import org.junit.rules.TemporaryFolder
 
 abstract class AbstractIrTransformTest : AbstractCodegenTest() {
-    open val liveLiteralsEnabled get() = false
-    open val liveLiteralsV2Enabled get() = false
-    open val generateFunctionKeyMetaClasses get() = false
-    open val sourceInformationEnabled get() = true
-    open val intrinsicRememberEnabled get() = true
-    open val decoysEnabled get() = false
-    open val metricsDestination: String? get() = null
-    open val reportsDestination: String? get() = null
-    open val validateIr: Boolean get() = true
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
+    }
 
-    protected fun createComposeIrGenerationExtension(): ComposeIrGenerationExtension =
-        ComposeIrGenerationExtension(
-            liveLiteralsEnabled,
-            liveLiteralsV2Enabled,
-            generateFunctionKeyMetaClasses,
-            sourceInformationEnabled,
-            intrinsicRememberEnabled,
-            decoysEnabled,
-            metricsDestination,
-            reportsDestination,
-            validateIr,
-        )
+    @JvmField
+    @Rule
+    val classesDirectory = TemporaryFolder()
 
     fun verifyCrossModuleComposeIrTransform(
         @Language("kotlin")
@@ -72,33 +45,22 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         dumpTree: Boolean = false,
         dumpClasses: Boolean = false,
     ) {
-        // Setup for compile
-        this.classFileFactory = null
-        this.myEnvironment = null
-        setUp()
-
         val dependencyFileName = "Test_REPLACEME_${uniqueNumber++}"
-        val classesDirectory = tmpDir("kotlin-classes")
 
         classLoader(dependencySource, dependencyFileName, dumpClasses)
             .allGeneratedFiles
             .also {
                 // Write the files to the class directory so they can be used by the next module
                 // and the application
-                it.writeToDir(classesDirectory)
+                it.writeToDir(classesDirectory.root)
             }
-
-        // Setup for compile
-        this.classFileFactory = null
-        this.myEnvironment = null
-        setUp()
 
         verifyComposeIrTransform(
             source,
             expectedTransformed,
             "",
             dumpTree = dumpTree,
-            additionalPaths = listOf(classesDirectory)
+            additionalPaths = listOf(classesDirectory.root)
         )
     }
 
@@ -112,13 +74,9 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         dumpTree: Boolean = false,
         truncateTracingInfoMode: TruncateTracingInfoMode = TruncateTracingInfoMode.TRUNCATE_KEY,
         additionalPaths: List<File> = listOf(),
-        applyExtraConfiguration: CompilerConfiguration.() -> Unit = {}
     ) {
-        val files = listOf(
-            sourceFile("Test.kt", source.replace('%', '$')),
-            sourceFile("Extra.kt", extra.replace('%', '$'))
-        )
-        val irModule = compileToIr(files, additionalPaths, applyExtraConfiguration)
+        val files = listOf(SourceFile("Test.kt", source), SourceFile("Extra.kt", extra))
+        val irModule = compileToIr(files, additionalPaths)
         val keySet = mutableListOf<Int>()
         fun IrElement.validate(): IrElement = this.also { validator(it) }
         val actualTransformed = irModule
@@ -311,60 +269,6 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         if (current != sourceInfo.length)
             return "invalid source info at $current: '$sourceInfo'"
         return result
-    }
-
-    fun compileToIr(
-        files: List<KtFile>,
-        additionalPaths: List<File> = listOf(),
-        applyExtraConfiguration: CompilerConfiguration.() -> Unit = {}
-    ): IrModuleFragment = compileToIrWithExtension(
-        files, createComposeIrGenerationExtension(), additionalPaths, applyExtraConfiguration
-    )
-
-    fun compileToIrWithExtension(
-        files: List<KtFile>,
-        extension: IrGenerationExtension,
-        additionalPaths: List<File> = listOf(),
-        applyExtraConfiguration: CompilerConfiguration.() -> Unit = {}
-    ): IrModuleFragment {
-        val classPath = createClasspath() + additionalPaths
-        val configuration = newConfiguration()
-        configuration.addJvmClasspathRoots(classPath)
-        configuration.put(JVMConfigurationKeys.IR, true)
-        configuration.put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
-        configuration.applyExtraConfiguration()
-
-        configuration.configureJdkClasspathRoots()
-
-        val environment = KotlinCoreEnvironment.createForTests(
-            myTestRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
-
-        ComposeComponentRegistrar.registerCommonExtensions(environment.project)
-        IrGenerationExtension.registerExtension(environment.project, extension)
-
-        val analysisResult = JvmResolveUtil.analyzeAndCheckForErrors(environment, files)
-        val codegenFactory = JvmIrCodegenFactory(
-            configuration,
-            configuration.get(CLIConfigurationKeys.PHASE_CONFIG) ?: PhaseConfig(jvmPhases)
-        )
-
-        val state = GenerationState.Builder(
-            environment.project,
-            ClassBuilderFactories.TEST,
-            analysisResult.moduleDescriptor,
-            analysisResult.bindingContext,
-            files,
-            configuration
-        ).isIrBackend(true).codegenFactory(codegenFactory).build()
-
-        state.beforeCompile()
-
-        val psi2irInput = CodegenFactory.IrConversionInput.fromGenerationStateAndFiles(
-            state,
-            files
-        )
-        return codegenFactory.convertToIr(psi2irInput).irModuleFragment
     }
 
     enum class TruncateTracingInfoMode {
