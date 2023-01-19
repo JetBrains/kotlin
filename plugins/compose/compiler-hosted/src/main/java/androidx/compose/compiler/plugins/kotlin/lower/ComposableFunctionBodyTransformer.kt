@@ -958,14 +958,24 @@ class ComposableFunctionBodyTransformer(
         val sourceInformationPreamble = mutableStatementContainer()
         val skipPreamble = mutableStatementContainer()
         val bodyPreamble = mutableStatementContainer()
+        val bodyEpilogue = mutableStatementContainer()
 
         // First generate the source information call
-        if (collectSourceInformation && !scope.isInlinedLambda) {
-            sourceInformationPreamble.statements.add(irSourceInformation(scope))
+        val isInlineLambda = scope.isInlinedLambda
+        if (collectSourceInformation) {
+            if (isInlineLambda) {
+                sourceInformationPreamble.statements.add(
+                    irSourceInformationMarkerStart(body, scope)
+                )
+                bodyEpilogue.statements.add(irSourceInformationMarkerEnd(body))
+            } else {
+                sourceInformationPreamble.statements.add(irSourceInformation(scope))
+            }
         }
 
         // we start off assuming that we *can* skip execution of the function
         var canSkipExecution = declaration.returnType.isUnit() &&
+            !isInlineLambda &&
             scope.allTrackedParams.none { stabilityOf(it.type).knownUnstable() }
 
         // if the function can never skip, or there are no parameters to test, then we
@@ -1001,7 +1011,6 @@ class ComposableFunctionBodyTransformer(
                 wrapWithTraceEvents(irFunctionSourceKey(), scope)
             }
         }
-
         canSkipExecution = buildPreambleStatementsAndReturnIfSkippingPossible(
             body,
             skipPreamble,
@@ -1073,6 +1082,7 @@ class ComposableFunctionBodyTransformer(
                     *skipPreamble.statements.toTypedArray(),
                     *bodyPreamble.statements.toTypedArray(),
                     transformed,
+                    *bodyEpilogue.statements.toTypedArray(),
                     returnVar?.let { irReturn(declaration.symbol, irGet(it)) }
                 )
             )

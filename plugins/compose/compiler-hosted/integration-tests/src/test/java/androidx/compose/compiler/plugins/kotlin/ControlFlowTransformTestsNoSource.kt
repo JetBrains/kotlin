@@ -155,13 +155,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
                   traceEventStart(<>, %changed, -1, <>)
                 }
                 IW({ %composer: Composer?, %changed: Int ->
-                  %composer.startReplaceableGroup(<>)
-                  if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                    A(%composer, 0)
-                  } else {
-                    %composer.skipToGroupEnd()
-                  }
-                  %composer.endReplaceableGroup()
+                  A(%composer, 0)
                 }, %composer, 0)
                 if (isTraceInProgress()) {
                   traceEventEnd()
