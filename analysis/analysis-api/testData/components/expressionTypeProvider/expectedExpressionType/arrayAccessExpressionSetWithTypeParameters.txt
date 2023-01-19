@@ -1,4 +1,4 @@
-expression: ab
+expression: av
 expected type: KtUsualClassType:
   annotationsList: []
   ownTypeArguments: []

@@ -1,4 +1,2 @@
 expression: av
-expected type: KtClassErrorType:
-  annotationsList: []
-  type: ERROR_TYPE
+expected type: null
