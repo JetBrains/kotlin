@@ -1,4 +1,5 @@
 // !LANGUAGE: -EnumEntries
+// WITH_STDLIB
 
 // FILE: JEnumEntry.java
 

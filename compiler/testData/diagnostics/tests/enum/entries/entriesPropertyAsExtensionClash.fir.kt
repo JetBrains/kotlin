@@ -1,4 +1,5 @@
 // !LANGUAGE: -EnumEntries
+// WITH_STDLIB
 
 package pckg
 
@@ -11,7 +12,7 @@ enum class A {
 val A.Companion.entries: Int get() = 0
 
 fun test() {
-    A.entries
+    A.<!OPT_IN_USAGE_ERROR!>entries<!>
     A.Companion.entries
 
     with(A) {

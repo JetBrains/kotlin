@@ -1,4 +1,5 @@
 // !LANGUAGE: -EnumEntries
+// WITH_STDLIB
 
 // FILE: JEnumEntry.java
 
@@ -28,5 +29,5 @@ fun test() {
     JEnumEntry.entries
     JEnumStaticField.entries
 
-    JEnumField::entries
+    JEnumField::<!OPT_IN_USAGE_ERROR!>entries<!>
 }

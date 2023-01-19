@@ -17,6 +17,7 @@ public final enum class JEnumEntry : kotlin.Enum<JEnumEntry!> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<JEnumEntry>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): JEnumEntry
     public final /*synthesized*/ fun values(): kotlin.Array<JEnumEntry>
 }
@@ -35,6 +36,7 @@ public final enum class JEnumField : kotlin.Enum<JEnumField!> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<JEnumField>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): JEnumField
     public final /*synthesized*/ fun values(): kotlin.Array<JEnumField>
 }
@@ -53,6 +55,7 @@ public final enum class JEnumStaticField : kotlin.Enum<JEnumStaticField!> {
 
     // Static members
     public const final val entries: kotlin.Int = 0
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<JEnumStaticField>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): JEnumStaticField
     public final /*synthesized*/ fun values(): kotlin.Array<JEnumStaticField>
 }

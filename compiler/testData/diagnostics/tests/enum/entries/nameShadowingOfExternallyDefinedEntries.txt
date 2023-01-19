@@ -39,6 +39,7 @@ package pckg {
             }
 
             // Static members
+            public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<pckg.A.E>
             public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): pckg.A.E
             public final /*synthesized*/ fun values(): kotlin.Array<pckg.A.E>
         }
@@ -58,6 +59,7 @@ package pckg {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<pckg.E>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): pckg.E
         public final /*synthesized*/ fun values(): kotlin.Array<pckg.E>
     }
