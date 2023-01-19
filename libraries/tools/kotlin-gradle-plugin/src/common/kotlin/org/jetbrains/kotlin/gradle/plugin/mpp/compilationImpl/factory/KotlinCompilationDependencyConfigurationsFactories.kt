@@ -39,39 +39,17 @@ internal sealed class DefaultKotlinCompilationDependencyConfigurationsFactory :
 internal object NativeKotlinCompilationDependencyConfigurationsFactory :
     KotlinCompilationImplFactory.KotlinCompilationDependencyConfigurationsFactory {
 
-    override fun create(target: KotlinTarget, compilationName: String): NativeCompilationDependencyConfigurationsContainer {
+    override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationConfigurationsContainer {
         val naming = ConfigurationNaming.Default(target, compilationName)
-        val baseContainer = KotlinCompilationDependencyConfigurationsContainer(
+        return KotlinCompilationDependencyConfigurationsContainer(
             target = target,
             compilationName = compilationName,
             naming = naming,
             withRuntime = false,
+            withHostSpecificMetadata = true,
             compileClasspathConfigurationName = naming.name("compileKlibraries")
         )
-
-        val compilationCoordinates = "${target.disambiguationClassifier}/$compilationName"
-        val project = target.project
-        val hostSpecificMetadataConfiguration: Configuration = project
-            .configurations
-            .maybeCreate(naming.name(compilation, METADATA_CONFIGURATION_NAME_SUFFIX))
-            .apply {
-                markResolvable()
-                isVisible = false
-                description = "Host-specific Metadata dependencies for $compilationCoordinates"
-                extendsFrom(baseContainer.compileDependencyConfiguration)
-                copyAttributes(from = baseContainer.compileDependencyConfiguration.attributes, to = attributes)
-                attributes {
-                    it.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-                }
-            }
-
-        return NativeCompilationDependencyConfigurationsContainer(baseContainer, hostSpecificMetadataConfiguration)
     }
-
-    class NativeCompilationDependencyConfigurationsContainer(
-        baseContainer: KotlinCompilationConfigurationsContainer,
-        val hostSpecificMetadataConfiguration: Configuration?
-    ) : KotlinCompilationConfigurationsContainer by baseContainer
 }
 
 internal object JsKotlinCompilationDependencyConfigurationsFactory :
@@ -138,7 +116,7 @@ private const val compileClasspath = "compileClasspath"
 private const val runtimeClasspath = "runtimeClasspath"
 
 private fun KotlinCompilationDependencyConfigurationsContainer(
-    target: KotlinTarget, compilationName: String, withRuntime: Boolean,
+    target: KotlinTarget, compilationName: String, withRuntime: Boolean, withHostSpecificMetadata: Boolean = false,
     naming: ConfigurationNaming = ConfigurationNaming.Default(target, compilationName),
     apiConfigurationName: String = naming.name(compilation, API),
     implementationConfigurationName: String = naming.name(compilation, IMPLEMENTATION),
@@ -146,6 +124,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     runtimeOnlyConfigurationName: String = naming.name(compilation, RUNTIME_ONLY),
     compileClasspathConfigurationName: String = naming.name(compileClasspath),
     runtimeClasspathConfigurationName: String = naming.name(runtimeClasspath),
+    withHostSpecificMetadataConfigurationName: String = naming.name(compilation, METADATA_CONFIGURATION_NAME_SUFFIX),
     pluginConfigurationName: String = lowerCamelCaseName(
         PLUGIN_CLASSPATH_CONFIGURATION_NAME,
         target.disambiguationClassifier,
@@ -240,6 +219,18 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             description = "Runtime classpath of $compilationCoordinates."
         } else null
 
+    val hostSpecificMetadataConfiguration =
+        if (withHostSpecificMetadata) target.project.configurations.maybeCreate(withHostSpecificMetadataConfigurationName).apply {
+            markResolvable()
+            isVisible = false
+            description = "Host-specific Metadata dependencies for $compilationCoordinates"
+            extendsFrom(compileDependencyConfiguration)
+            copyAttributes(from = compileDependencyConfiguration.attributes, to = attributes)
+            attributes {
+                it.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            }
+        } else null
+
     val pluginConfiguration = target.project.configurations.maybeCreate(pluginConfigurationName).apply {
         addGradlePluginMetadataAttributes(target.project)
 
@@ -263,6 +254,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         runtimeOnlyConfiguration = runtimeOnlyConfiguration,
         compileDependencyConfiguration = compileDependencyConfiguration,
         runtimeDependencyConfiguration = runtimeDependencyConfiguration,
+        hostSpecificMetadataConfiguration = hostSpecificMetadataConfiguration,
         pluginConfiguration = pluginConfiguration
     )
 }

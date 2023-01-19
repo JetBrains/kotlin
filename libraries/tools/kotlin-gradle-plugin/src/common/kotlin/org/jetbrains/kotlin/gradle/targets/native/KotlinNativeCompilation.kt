@@ -14,7 +14,6 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.NativeKotlinCompilationDependencyConfigurationsFactory.NativeCompilationDependencyConfigurationsContainer
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -70,10 +69,6 @@ open class KotlinNativeCompilation @Inject internal constructor(
     val binariesTaskName: String
         get() = lowerCamelCaseName(target.disambiguationClassifier, compilation.compilationName, "binaries")
 
-    internal val hostSpecificMetadataConfiguration: Configuration? get() {
-        val container = compilation.configurations as? NativeCompilationDependencyConfigurationsContainer
-        return container?.hostSpecificMetadataConfiguration
-    }
 }
 
 open class KotlinSharedNativeCompilation @Inject internal constructor(
