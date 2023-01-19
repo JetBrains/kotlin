@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.psi.KtFile
@@ -22,7 +22,7 @@ fun prepareAnalyzedSourceModule(
     friendDependencies: List<String>,
     analyzer: AbstractAnalyzerWithCompilerReport,
     errorPolicy: ErrorTolerancePolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT,
-    analyzerFacade: AbstractTopDownAnalyzerFacadeForJS = TopDownAnalyzerFacadeForJSIR,
+    analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb = TopDownAnalyzerFacadeForJSIR,
 ): ModulesStructure {
     val mainModule = MainModule.SourceFiles(files)
     val sourceModule = ModulesStructure(project, mainModule, configuration, dependencies, friendDependencies)

@@ -6,9 +6,6 @@
 package org.jetbrains.kotlin.js.analyze
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.search.DelegatingGlobalSearchScope
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
@@ -46,9 +43,8 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 import org.jetbrains.kotlin.utils.JsMetadataVersion
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-abstract class AbstractTopDownAnalyzerFacadeForJS {
+abstract class AbstractTopDownAnalyzerFacadeForWeb {
     abstract val analyzerServices: PlatformDependentAnalyzerServices
     abstract val platform: TargetPlatform
 
@@ -198,7 +194,7 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
     }
 }
 
-object TopDownAnalyzerFacadeForJS : AbstractTopDownAnalyzerFacadeForJS() {
+object TopDownAnalyzerFacadeForJS : AbstractTopDownAnalyzerFacadeForWeb() {
 
     override val analyzerServices: PlatformDependentAnalyzerServices = JsPlatformAnalyzerServices
     override val platform: TargetPlatform = JsPlatforms.defaultJsPlatform

@@ -11,14 +11,14 @@ import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.js.WasmPlatforms
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 
-object TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForJS() {
+object TopDownAnalyzerFacadeForWasm : AbstractTopDownAnalyzerFacadeForWeb() {
 
     override val analyzerServices: PlatformDependentAnalyzerServices = WasmPlatformAnalyzerServices
     override val platform: TargetPlatform = WasmPlatforms.Default
