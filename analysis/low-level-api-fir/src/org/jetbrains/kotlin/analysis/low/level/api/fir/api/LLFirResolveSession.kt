@@ -31,8 +31,6 @@ abstract class LLFirResolveSession {
 
     abstract val useSiteKtModule: KtModule
 
-    abstract val isLibrarySession: Boolean
-
     abstract fun getSessionFor(module: KtModule): LLFirSession
 
     abstract fun getScopeSessionFor(firSession: FirSession): ScopeSession

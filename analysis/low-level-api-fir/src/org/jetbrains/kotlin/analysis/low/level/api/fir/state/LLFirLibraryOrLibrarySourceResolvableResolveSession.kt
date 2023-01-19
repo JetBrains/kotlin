@@ -22,9 +22,6 @@ internal class LLFirLibraryOrLibrarySourceResolvableResolveSession(
     override val useSiteKtModule: KtModule,
     sessionProvider: LLFirSessionProvider,
 ) : LLFirResolvableResolveSession(sessionProvider) {
-    override val isLibrarySession: Boolean
-        get() = true
-
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> =
         emptyList()
 

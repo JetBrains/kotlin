@@ -65,7 +65,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             errorExpressionRenderer = FirErrorExpressionExtendedRenderer(),
         )
         resolveWithClearCaches(ktFile) { firResolveSession ->
-            check(!firResolveSession.isLibrarySession)
+            check(firResolveSession.isSourceSession)
             val declarationToResolve = firResolveSession
                 .getOrBuildFirFile(ktFile)
                 .findResolveMe()
@@ -79,7 +79,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
         }
 
         resolveWithClearCaches(ktFile) { llSession ->
-            check(!llSession.isLibrarySession)
+            check(llSession.isSourceSession)
             val firFile = llSession.getOrBuildFirFile(ktFile)
             firFile.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
             resultBuilder.append("\nFILE RAW TO BODY:\n")

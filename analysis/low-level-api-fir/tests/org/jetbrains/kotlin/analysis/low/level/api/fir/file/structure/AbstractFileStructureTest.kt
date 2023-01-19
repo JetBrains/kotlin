@@ -11,8 +11,8 @@ import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.isSourceSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
@@ -100,7 +100,7 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
 
     private fun KtFile.getFileStructure(): FileStructure {
         val moduleFirResolveSession = getFirResolveSession()
-        check(!moduleFirResolveSession.isLibrarySession)
+        check(moduleFirResolveSession.isSourceSession)
         val session = moduleFirResolveSession.getSessionFor(getKtModule()) as LLFirResolvableModuleSession
         return session.moduleComponents.fileStructureCache.getFileStructure(this)
     }

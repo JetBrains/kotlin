@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
-import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStruct
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.NonReanalyzableDeclarationStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.ReanalyzableStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.RootStructureElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.isSourceSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.name
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
@@ -46,7 +46,7 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
                 register(BeforeElementDiagnosticCollectionHandler::class, handler)
             }
         ) { firResolveSession ->
-            check(!firResolveSession.isLibrarySession)
+            check(firResolveSession.isSourceSession)
 
             val session = firResolveSession.getSessionFor(ktFile.getKtModule()) as LLFirResolvableModuleSession
             val fileStructureCache = session.moduleComponents.fileStructureCache
