@@ -48,7 +48,8 @@ object FirMemberPropertiesChecker : FirClassChecker() {
         }
         if (memberPropertySymbols.isEmpty()) return null
         // TODO: this also visits non-constructor member functions...
-        return PropertyInitializationInfoCollector(memberPropertySymbols).getData(graph)[graph.exitNode]?.get(NormalPath)
+        // TODO: also use FirPropertyInitializationAnalyzer.PropertyReporter to report reassignments or use-before-initialization
+        return PropertyInitializationInfoCollector(memberPropertySymbols, symbol).getData(graph)[graph.exitNode]?.get(NormalPath)
     }
 
     private fun checkProperty(
