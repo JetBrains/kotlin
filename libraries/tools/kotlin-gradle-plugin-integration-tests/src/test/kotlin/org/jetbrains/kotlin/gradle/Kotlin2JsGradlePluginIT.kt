@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle
 
 import com.google.gson.Gson
+import com.google.gson.JsonNull
+import com.google.gson.JsonObject
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
@@ -1108,6 +1110,30 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 )
 
                 assertFileInProjectExists("app/build/distributions/index.html")
+            }
+        }
+    }
+
+    @DisplayName("package.json custom fields")
+    @GradleTest
+    fun testPackageJsonCustomField(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("rootPackageJson") {
+                assertTasksExecuted(":app:packageJson")
+
+                val jso = projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let {
+                        Gson().fromJson(it.readText(), JsonObject::class.java)
+                    }
+
+                assertEquals(1, jso.get("customField1").asJsonObject.get("one").asInt)
+                assertEquals(2, jso.get("customField1").asJsonObject.get("two").asInt)
+                assertEquals(JsonNull.INSTANCE, jso.get("customField2").asJsonNull)
+                assertEquals(JsonNull.INSTANCE, jso.get("customField3").asJsonNull)
+                assertEquals(JsonNull.INSTANCE, jso.get("customField4").asJsonObject.get("foo").asJsonNull)
             }
         }
     }

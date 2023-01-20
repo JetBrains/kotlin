@@ -47,7 +47,10 @@ kotlin {
 
         compilations.named("main") {
             packageJson {
-                customField("customField", mapOf("one" to 1, "two" to 2))
+                customField("customField1", mapOf("one" to 1, "two" to 2))
+                customField("customField2", null)
+                customField("customField3" to null)
+                customField("customField4", mapOf("foo" to null))
             }
         }
     }

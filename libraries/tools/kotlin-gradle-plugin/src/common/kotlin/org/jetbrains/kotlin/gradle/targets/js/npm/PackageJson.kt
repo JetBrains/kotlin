@@ -58,11 +58,11 @@ class PackageJson(
     val bundledDependencies = mutableListOf<String>()
         get() = field ?: mutableListOf()
 
-    fun customField(pair: Pair<String, Any>) {
+    fun customField(pair: Pair<String, Any?>) {
         customFields[pair.first] = pair.second
     }
 
-    fun customField(key: String, value: Any) {
+    fun customField(key: String, value: Any?) {
         customFields[key] = value
     }
 
@@ -92,6 +92,7 @@ class PackageJson(
         val gson = GsonBuilder()
             .setPrettyPrinting()
             .disableHtmlEscaping()
+            .serializeNulls()
             .addSerializationExclusionStrategy(
                 object : ExclusionStrategy {
                     override fun shouldSkipField(f: FieldAttributes?): Boolean =
