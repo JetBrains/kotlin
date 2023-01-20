@@ -151,6 +151,7 @@ internal fun wasmMemorySize(): Int =
  * Grow memory by a given delta (in pages).
  * Return the previous size, or -1 if enough memory cannot be allocated.
  */
+@Suppress("UNUSED_PARAMETER")
 @WasmOp(WasmOp.MEMORY_GROW)
 internal fun wasmMemoryGrow(delta: Int): Int =
     implementedAsIntrinsic

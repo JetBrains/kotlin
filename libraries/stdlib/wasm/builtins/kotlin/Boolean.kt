@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UNUSED_PARAMETER")
+
 package kotlin
 
 import kotlin.wasm.internal.*
@@ -56,7 +58,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
         return if (other !is Boolean) {
             false
         } else {
-            this === (other as Boolean)
+            wasm_i32_eq(this.toInt(), other.toInt())
         }
     }
 

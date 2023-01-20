@@ -299,9 +299,10 @@ public actual fun CharSequence.repeat(n: Int): String {
         0 -> ""
         1 -> this.toString()
         else -> {
+            val sequence = this
             buildString(n * length) {
                 repeat(n) {
-                    append(this@repeat)
+                    append(sequence)
                 }
             }
         }

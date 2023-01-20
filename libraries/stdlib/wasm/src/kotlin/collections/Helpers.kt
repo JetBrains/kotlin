@@ -10,6 +10,7 @@ package kotlin.collections
  * Attempts to read _uninitialized_ values from this array work in implementation-dependent manner,
  * either throwing exception or returning some kind of implementation-specific default value.
  */
+@Suppress("NOTHING_TO_INLINE")
 @PublishedApi
 internal inline fun <E> arrayOfUninitializedElements(size: Int): Array<E> {
     require(size >= 0) { "capacity must be non-negative." }

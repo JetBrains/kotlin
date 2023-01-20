@@ -75,6 +75,7 @@ public actual fun Int.rotateRight(bitCount: Int): Int =
 /**
  * Counts the number of set bits in the binary representation of this [Long] number.
  */
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun Long.countOneBits(): Int =
     wasm_i64_popcnt(this).toInt()
 
@@ -87,6 +88,7 @@ public actual fun Long.countLeadingZeroBits(): Int = wasm_i64_clz(this).toInt()
 /**
  * Counts the number of consecutive least significant bits that are zero in the binary representation of this [Long] number.
  */
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun Long.countTrailingZeroBits(): Int =
     wasm_i64_ctz(this).toInt()
 

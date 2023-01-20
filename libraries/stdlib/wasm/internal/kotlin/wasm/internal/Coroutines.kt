@@ -16,7 +16,7 @@ internal fun <T> getContinuation(): Continuation<T> =
 
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
-internal suspend fun <T> returnIfSuspended(@Suppress("UNUSED_PARAMETER") argument: Any?): T =
+internal suspend fun <T> returnIfSuspended(argument: Any?): T =
     argument as T
 
 @PublishedApi
@@ -33,6 +33,7 @@ internal suspend fun getCoroutineContext(): CoroutineContext = getContinuation<A
 internal suspend fun <T> suspendCoroutineUninterceptedOrReturn(block: (Continuation<T>) -> Any?): T =
     returnIfSuspended<T>(block(getContinuation<T>()))
 
+@Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
 internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0(
@@ -42,6 +43,7 @@ internal fun <T> startCoroutineUninterceptedOrReturnIntrinsic0(
     implementedAsIntrinsic
 }
 
+@Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
 internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1(
@@ -52,6 +54,7 @@ internal fun <R, T> startCoroutineUninterceptedOrReturnIntrinsic1(
     implementedAsIntrinsic
 }
 
+@Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 @PublishedApi
 internal fun <R, P, T> startCoroutineUninterceptedOrReturnIntrinsic2(
