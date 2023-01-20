@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 
 val Gradle.projectCacheDir
     get() = startParameter.projectCacheDir ?: this.rootProject.projectDir.resolve(".gradle")
+
+internal val Project.compositeBuildRootProject: Project get() = generateSequence(project.gradle) { it.parent }.last().rootProject

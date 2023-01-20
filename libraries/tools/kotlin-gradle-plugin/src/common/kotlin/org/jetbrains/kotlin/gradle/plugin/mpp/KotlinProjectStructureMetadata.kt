@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCom
 import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilations
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerCompositeMetadataJarBundling.cinteropMetadataDirectoryPath
+import org.jetbrains.kotlin.gradle.utils.compositeBuildRootProject
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -415,14 +416,14 @@ internal object GlobalProjectStructureMetadataStorage {
     fun propertyName(buildName: String, projectPath: String) = "$propertyPrefix.$buildName.path.$projectPath"
 
     fun registerProjectStructureMetadata(project: Project, metadataProvider: () -> KotlinProjectStructureMetadata) {
-        project.compositeBuildRoot.extensions.extraProperties.set(
+        project.compositeBuildRootProject.extensions.extraProperties.set(
             propertyName(project.rootProject.name, project.path),
             { metadataProvider().toJson() }
         )
     }
 
     fun getProjectStructureMetadataProvidersFromAllGradleBuilds(project: Project): Map<ProjectPathWithBuildName, Lazy<KotlinProjectStructureMetadata?>> {
-        return project.compositeBuildRoot.extensions.extraProperties.properties
+        return project.compositeBuildRootProject.extensions.extraProperties.properties
             .filterKeys { it.startsWith(propertyPrefix) }
             .entries
             .associate { (propertyName, propertyValue) ->
@@ -432,8 +433,6 @@ internal object GlobalProjectStructureMetadataStorage {
                 )
             }
     }
-
-    private val Project.compositeBuildRoot: Project get() = generateSequence(project.gradle) { it.parent }.last().rootProject
 
     private fun Any.getProjectStructureMetadataOrNull(): KotlinProjectStructureMetadata? {
         val jsonStringProvider = this as? Function0<*> ?: return null
