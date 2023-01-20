@@ -7,22 +7,14 @@ package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.toPersistentHashMap
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
-import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
 import org.jetbrains.kotlin.psi.KtModifierList
 import org.jetbrains.kotlin.psi.KtModifierListOwner
-import org.jetbrains.kotlin.utils.keysToMap
-import java.util.concurrent.atomic.AtomicReference
 
 internal sealed class SymbolLightModifierList<out T : KtLightElement<KtModifierListOwner, PsiModifierListOwner>> :
     KtLightElementBase, PsiModifierList, KtLightElement<KtModifierList, PsiModifierListOwner> {
@@ -87,64 +79,4 @@ internal sealed class SymbolLightModifierList<out T : KtLightElement<KtModifierL
     override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
     override fun hasModifierProperty(name: String): Boolean =
         staticModifiers?.contains(name) == true || lazyModifiersBox?.hasModifier(name) == true
-}
-
-internal typealias LazyModifiersComputer = (modifier: String) -> Map<String, Boolean>?
-
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun PersistentMap<String, Boolean>.with(modifier: String?): PersistentMap<String, Boolean> {
-    return modifier?.let { put(modifier, true) } ?: this
-}
-
-internal class LazyModifiersBox(
-    initialValue: Map<String, Boolean>,
-    private val computer: LazyModifiersComputer,
-) {
-    private val modifiersMapReference: AtomicReference<PersistentMap<String, Boolean>> = AtomicReference(initialValue.toPersistentHashMap())
-
-    fun hasModifier(modifier: String): Boolean {
-        modifiersMapReference.get()[modifier]?.let { return it }
-        val newValues = computer(modifier) ?: mapOf(modifier to false)
-        modifiersMapReference.updateAndGet {
-            it.putAll(newValues)
-        }
-
-        return newValues[modifier] ?: error("Inconsistent state: $modifier")
-    }
-
-    companion object {
-        internal val VISIBILITY_MODIFIERS = setOf(PsiModifier.PUBLIC, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PRIVATE)
-        internal val VISIBILITY_MODIFIERS_MAP: PersistentMap<String, Boolean> =
-            VISIBILITY_MODIFIERS.keysToMap {
-                false
-            }.toPersistentHashMap()
-
-        internal val MODALITY_MODIFIERS = setOf(PsiModifier.FINAL, PsiModifier.ABSTRACT)
-        internal val MODALITY_MODIFIERS_MAP: PersistentMap<String, Boolean> =
-            MODALITY_MODIFIERS.keysToMap {
-                false
-            }.toPersistentHashMap()
-
-        internal fun computeVisibilityForMember(
-            ktModule: KtModule,
-            declarationPointer: KtSymbolPointer<KtSymbolWithVisibility>,
-        ): PersistentMap<String, Boolean> {
-            val visibility = analyzeForLightClasses(ktModule) {
-                declarationPointer.restoreSymbolOrThrowIfDisposed().toPsiVisibilityForMember()
-            }
-
-            return VISIBILITY_MODIFIERS_MAP.with(visibility)
-        }
-
-        internal fun computeSimpleModality(
-            ktModule: KtModule,
-            declarationPointer: KtSymbolPointer<KtSymbolWithModality>,
-        ): PersistentMap<String, Boolean> {
-            val modality = analyzeForLightClasses(ktModule) {
-                declarationPointer.restoreSymbolOrThrowIfDisposed().computeSimpleModality()
-            }
-
-            return MODALITY_MODIFIERS_MAP.with(modality)
-        }
-    }
 }
