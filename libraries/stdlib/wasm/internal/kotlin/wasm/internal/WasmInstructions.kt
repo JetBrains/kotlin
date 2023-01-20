@@ -4,7 +4,7 @@
  */
 
 @file:ExcludedFromCodegen
-@file:Suppress("unused", "NON_ABSTRACT_FUNCTION_WITH_NO_BODY", "INLINE_CLASS_IN_EXTERNAL_DECLARATION")
+@file:Suppress("unused", "NON_ABSTRACT_FUNCTION_WITH_NO_BODY", "INLINE_CLASS_IN_EXTERNAL_DECLARATION", "UNUSED_PARAMETER")
 
 
 package kotlin.wasm.internal

@@ -52,21 +52,25 @@ public value class Pointer public constructor(public val address: UInt) {
         implementedAsIntrinsic
 
     /** Store a Byte (8 bit) [value] */
+    @Suppress("UNUSED_PARAMETER")
     @WasmOp(WasmOp.I32_STORE8)
     public fun storeByte(value: Byte): Unit =
         implementedAsIntrinsic
 
     /** Store a Short (16 bit) [value] */
+    @Suppress("UNUSED_PARAMETER")
     @WasmOp(WasmOp.I32_STORE16)
     public fun storeShort(value: Short): Unit =
         implementedAsIntrinsic
 
     /** Store an Int (32 bit) [value] */
+    @Suppress("UNUSED_PARAMETER")
     @WasmOp(WasmOp.I32_STORE)
     public fun storeInt(value: Int): Unit =
         implementedAsIntrinsic
 
     /** Store a Long (64 bit) [value] */
+    @Suppress("UNUSED_PARAMETER")
     @WasmOp(WasmOp.I64_STORE)
     public fun storeLong(value: Long): Unit =
         implementedAsIntrinsic

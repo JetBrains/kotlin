@@ -112,6 +112,7 @@ internal fun Dynamic.getDouble(index: String): Double = dynamicGetDouble(this, i
 @PublishedApi
 internal fun Dynamic.getString(index: String): String? = dynamicGetString(this, index)
 
+@Suppress("UNCHECKED_CAST")
 @PublishedApi
 internal fun <T> Dynamic.getAny(index: String): T? = dynamicGetAny(this, index) as T?
 
@@ -142,6 +143,7 @@ internal fun Dynamic.getDouble(index: Int): Double = dynamicGetDouble(this, inde
 @PublishedApi
 internal fun Dynamic.getString(index: Int): String? = dynamicGetString(this, index.toString())
 
+@Suppress("UNCHECKED_CAST")
 @PublishedApi
 internal fun <T> Dynamic.getAny(index: Int): T? = dynamicGetAny(this, index.toString()) as T?
 
@@ -153,6 +155,7 @@ external interface Dynamic
 /**
  * Reinterprets this value as a value of the Dynamic type.
  */
+@Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
 @kotlin.internal.InlineOnly
 fun Any.asDynamic(): Dynamic = this as Dynamic
 
@@ -183,6 +186,8 @@ operator fun Dynamic.set(index: Int, value: Any?) {
 
 @JsFun("(x) => x")
 private external fun <T> unsafeCastJs(x: String): Dynamic
+
+@Suppress("UNCHECKED_CAST")
 fun <T> String.unsafeCast(): T = unsafeCastJs<T>(this) as T
 
 @JsFun("(x) => x")
@@ -191,6 +196,7 @@ private external fun <T> unsafeCastJs(x: Boolean): Dynamic
 /**
  * Reinterprets boolean value as a value of the specified type [T] without any actual type checking.
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Boolean.unsafeCast(): T = unsafeCastJs<T>(this) as T
 
 /**
@@ -201,6 +207,7 @@ fun <T> Nothing?.unsafeCast(): Dynamic? = null
 /**
  * Reinterprets Dynamic type value as a value of the specified type [T] without any actual type checking.
  */
+@Suppress("UNCHECKED_CAST")
 fun <T> Dynamic.unsafeCast(): T = this as T
 
 @JsFun("e => { throw e; }")

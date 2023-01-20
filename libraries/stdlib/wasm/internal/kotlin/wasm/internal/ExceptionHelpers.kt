@@ -14,11 +14,10 @@ package kotlin.wasm.internal
         throw error;
    }"""
 )
-private external fun throwJsError(message: String?, wasmTypeName: String?, stack: String)
+private external fun throwJsError(message: String?, wasmTypeName: String?, stack: String): Nothing
 
 internal fun throwAsJsException(t: Throwable): Nothing {
     throwJsError(t.message, t::class.simpleName, t.stackTraceToString())
-    return error("Unreachable")
 }
 
 internal var isNotFirstWasmExportCall: Boolean = false

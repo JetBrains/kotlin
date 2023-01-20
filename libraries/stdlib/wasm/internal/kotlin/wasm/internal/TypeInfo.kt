@@ -51,6 +51,7 @@ internal fun isInterfaceById(obj: Any, interfaceId: Int): Boolean {
     return false
 }
 
+@Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 internal fun <T> wasmIsInterface(obj: Any): Boolean =
     implementedAsIntrinsic

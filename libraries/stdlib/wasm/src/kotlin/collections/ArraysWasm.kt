@@ -15,6 +15,7 @@ package kotlin.collections
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Collection<T>.toTypedArray(): Array<T> = copyToArray(this)
 
+@Suppress("UNCHECKED_CAST")
 @PublishedApi
 internal fun <T> copyToArray(collection: Collection<T>): Array<T> =
     if (collection is AbstractCollection<T>)

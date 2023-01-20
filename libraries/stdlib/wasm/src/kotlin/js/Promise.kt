@@ -9,10 +9,10 @@ package kotlin.js
  * Exposes the JavaScript [Promise object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) to Kotlin.
  */
 public external class Promise<out T>(executor: (resolve: (Dynamic?) -> Unit, reject: (Dynamic) -> Unit) -> Unit) {
-    public open fun then(onFulfilled: (Dynamic?) -> Dynamic?): Promise<Dynamic?>
-    public open fun then(onFulfilled: (Dynamic?) -> Dynamic?, onRejected: (Dynamic) -> Dynamic?): Promise<Dynamic?>
-    public open fun catch(onRejected: (Dynamic) -> Dynamic?): Promise<Dynamic?>
-    public open fun finally(onFinally: () -> Unit): Promise<Dynamic?>
+    public fun then(onFulfilled: (Dynamic?) -> Dynamic?): Promise<Dynamic?>
+    public fun then(onFulfilled: (Dynamic?) -> Dynamic?, onRejected: (Dynamic) -> Dynamic?): Promise<Dynamic?>
+    public fun catch(onRejected: (Dynamic) -> Dynamic?): Promise<Dynamic?>
+    public fun finally(onFinally: () -> Unit): Promise<Dynamic?>
 
     public companion object {
         public fun reject(e: Dynamic): Promise<Dynamic?>

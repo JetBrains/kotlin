@@ -10,6 +10,7 @@ package kotlin.native.concurrent
 internal val Any?.isFrozen
     inline get() = false
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun <T> T.freeze(): T = this
 
 internal class AtomicReference<T>(public var value: T) {

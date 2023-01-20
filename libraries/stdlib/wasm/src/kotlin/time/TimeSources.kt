@@ -27,13 +27,13 @@ internal actual object MonotonicTimeSource : TimeSource.WithComparableMarks {
         if (performance != null) getPerformanceNow(performance) else dateNow()
 
     actual override fun markNow(): ValueTimeMark = ValueTimeMark(read())
-    actual fun elapsedFrom(timeMark: ValueTimeMark): Duration = (read() - timeMark.reading as Double).milliseconds
+    actual fun elapsedFrom(timeMark: ValueTimeMark): Duration = (read() - timeMark.reading).milliseconds
     actual fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
-        ValueTimeMark(sumCheckNaN(timeMark.reading as Double + duration.toDouble(DurationUnit.MILLISECONDS)))
+        ValueTimeMark(sumCheckNaN(timeMark.reading + duration.toDouble(DurationUnit.MILLISECONDS)))
 
     actual fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration {
-        val ms1 = one.reading as Double
-        val ms2 = another.reading as Double
+        val ms1 = one.reading
+        val ms2 = another.reading
         return if (ms1 == ms2) Duration.ZERO else (ms1 - ms2).milliseconds
     }
 
