@@ -31,15 +31,9 @@ import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isFunctionalType
 
 object UnusedChecker : AbstractFirPropertyInitializationChecker() {
-    override fun analyze(
-        graph: ControlFlowGraph,
-        reporter: DiagnosticReporter,
-        data: PropertyInitializationInfoData,
-        properties: Set<FirPropertySymbol>,
-        context: CheckerContext
-    ) {
-        val ownData = ValueWritesWithoutReading(context.session, properties).getData(graph)
-        graph.traverse(CfaVisitor(ownData, reporter, context))
+    override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
+        val ownData = ValueWritesWithoutReading(context.session, data.properties).getData(data.graph)
+        data.graph.traverse(CfaVisitor(ownData, reporter, context))
     }
 
     class CfaVisitor(

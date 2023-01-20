@@ -13,7 +13,11 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
-class PropertyInitializationInfoData(properties: Set<FirPropertySymbol>, receiver: FirBasedSymbol<*>?, graph: ControlFlowGraph) {
+class PropertyInitializationInfoData(
+    val properties: Set<FirPropertySymbol>,
+    val receiver: FirBasedSymbol<*>?,
+    val graph: ControlFlowGraph,
+) {
     private val data by lazy(LazyThreadSafetyMode.NONE) {
         graph.collectDataForNode(TraverseDirection.Forward, PropertyInitializationInfoCollector(properties, receiver))
     }

@@ -21,18 +21,12 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
-    override fun analyze(
-        graph: ControlFlowGraph,
-        reporter: DiagnosticReporter,
-        data: PropertyInitializationInfoData,
-        properties: Set<FirPropertySymbol>,
-        context: CheckerContext
-    ) {
+    override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
         val unprocessedProperties = mutableSetOf<FirPropertySymbol>()
         val propertiesCharacteristics = mutableMapOf<FirPropertySymbol, EventOccurrencesRange>()
 
-        val reporterVisitor = UninitializedPropertyReporter(data, properties, unprocessedProperties, propertiesCharacteristics)
-        graph.traverse(reporterVisitor)
+        val reporterVisitor = UninitializedPropertyReporter(data, unprocessedProperties, propertiesCharacteristics)
+        data.graph.traverse(reporterVisitor)
 
         for (property in unprocessedProperties) {
             val source = property.source
@@ -74,7 +68,6 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
 
     private class UninitializedPropertyReporter(
         val data: PropertyInitializationInfoData,
-        val localProperties: Set<FirPropertySymbol>,
         val unprocessedProperties: MutableSet<FirPropertySymbol>,
         val propertiesCharacteristics: MutableMap<FirPropertySymbol, EventOccurrencesRange>
     ) : ControlFlowGraphVisitorVoid() {
@@ -82,7 +75,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
             val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
-            if (symbol !in localProperties) return
+            if (symbol !in data.properties) return
             unprocessedProperties.remove(symbol)
 
             val currentCharacteristic = propertiesCharacteristics.getOrDefault(symbol, EventOccurrencesRange.ZERO)
