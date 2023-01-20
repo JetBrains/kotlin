@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.checkPropertyAccesses
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.requiresInitialization
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
@@ -20,7 +19,6 @@ object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChec
         reporter: DiagnosticReporter,
         data: PropertyInitializationInfoData,
         properties: Set<FirPropertySymbol>,
-        capturedWrites: Set<FirVariableAssignment>,
         context: CheckerContext
     ) = graph.checkPropertyAccesses(properties.filterTo(mutableSetOf()) { it.requiresInitialization }, null, context, reporter, data)
 }

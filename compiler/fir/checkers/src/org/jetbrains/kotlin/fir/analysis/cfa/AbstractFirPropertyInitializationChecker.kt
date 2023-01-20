@@ -18,7 +18,6 @@ abstract class AbstractFirPropertyInitializationChecker {
         reporter: DiagnosticReporter,
         data: PropertyInitializationInfoData,
         properties: Set<FirPropertySymbol>,
-        capturedWrites: Set<FirVariableAssignment>,
         context: CheckerContext
     )
 }
