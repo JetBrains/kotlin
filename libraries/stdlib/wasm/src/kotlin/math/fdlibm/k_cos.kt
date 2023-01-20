@@ -57,12 +57,12 @@ private const val C5 = 2.08757232129817482790e-09 /* 0x3E21EE9E, 0xBDB4B1C4 */
 private const val C6 = -1.13596475577881948265e-11 /* 0xBDA8FAE9, 0xBE8838D4 */
 
 internal fun __kernel_cos(x: Double, y: Double): Double {
-    var a: Double = 0.0
-    var hz: Double = 0.0
-    var z: Double = 0.0
-    var r: Double = 0.0
+    var a: Double
+    var hz: Double
+    var z: Double
+    var r: Double
     var qx: Double = 0.0
-    var ix: Int = 0
+    var ix: Int
     ix = __HI(x) and 0x7fffffff    /* ix = |x|'s high word*/
     if (ix < 0x3e400000) {            /* if x < 2**27 */
         if ((x.toInt()) == 0) return one        /* generate inexact */

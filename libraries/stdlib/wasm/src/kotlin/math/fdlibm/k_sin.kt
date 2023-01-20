@@ -50,10 +50,10 @@ private const val S5 = -2.50507602534068634195e-08 /* 0xBE5AE5E6, 0x8A2B9CEB */
 private const val S6 = 1.58969099521155010221e-10 /* 0x3DE5D93A, 0x5ACFD57C */
 
 internal fun __kernel_sin(x: Double, y: Double, iy: Int): Double {
-    var z: Double = 0.0
-    var r: Double = 0.0
-    var v: Double = 0.0
-    var ix: Int = 0
+    var z: Double
+    var r: Double
+    var v: Double
+    var ix: Int
     ix = __HI(x) and 0x7fffffff    /* high word of x */
     if (ix < 0x3e400000)            /* |x| < 2**-27 */ {
         if (x.toInt() == 0) return x

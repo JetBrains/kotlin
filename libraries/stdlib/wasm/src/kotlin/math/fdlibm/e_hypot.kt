@@ -47,17 +47,17 @@ package kotlin.math.fdlibm
 import kotlin.wasm.internal.wasm_f64_sqrt as sqrt
 
 internal fun __ieee754_hypot(x: Double, y: Double): Double {
-    var a = x
-    var b = y
-    var t1: Double = 0.0
-    var t2: Double = 0.0
-    var y1: Double = 0.0
-    var y2: Double = 0.0
-    var w: Double = 0.0
-    var j: Int = 0
-    var k: Int = 0
-    var ha: Int = 0
-    var hb: Int = 0
+    var a: Double
+    var b: Double
+    var t1: Double
+    var t2: Double
+    var y1: Double
+    var y2: Double
+    var w: Double
+    var j: Int
+    var k: Int
+    var ha: Int
+    var hb: Int
 
     ha = __HI(x) and 0x7fffffff    /* high word of  x */
     hb = __HI(y) and 0x7fffffff    /* high word of  y */

@@ -54,16 +54,16 @@ private const val qS3 = -6.88283971605453293030e-01 /* 0xBFE6066C, 0x1B8D0159 */
 private const val qS4 = 7.70381505559019352791e-02 /* 0x3FB3B8C5, 0xB12E9282 */
 
 internal fun __ieee754_acos(x: Double): Double {
-    var z: Double = 0.0
-    var p: Double = 0.0
-    var q: Double = 0.0
-    var r: Double = 0.0
-    var w: Double = 0.0
-    var s: Double = 0.0
-    var c: Double = 0.0
-    var df: Double = 0.0
-    var hx: Int = 0
-    var ix: Int = 0
+    var z: Double
+    var p: Double
+    var q: Double
+    var r: Double
+    var w: Double
+    var s: Double
+    var c: Double
+    var df: Double
+    var hx: Int
+    var ix: Int
     hx = __HI(x)
     ix = hx and 0x7fffffff
     if (ix >= 0x3ff00000) {    /* |x| >= 1 */

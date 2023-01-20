@@ -37,10 +37,10 @@ private const val zero = 0.0
 
 internal fun __ieee754_atanh(x: Double): Double {
     var x: Double = x
-    var t: Double = 0.0
-    var hx: Int = 0
-    var ix: Int = 0
-    var lx: UInt = 0U
+    var t: Double
+    var hx: Int
+    var ix: Int
+    var lx: UInt
     hx = __HI(x)        /* high word */
     lx = __LOu(x)        /* low word */
     ix = hx and 0x7fffffff

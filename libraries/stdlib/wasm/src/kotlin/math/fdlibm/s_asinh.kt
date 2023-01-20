@@ -30,10 +30,10 @@ private const val ln2 = 6.93147180559945286227e-01 /* 0x3FE62E42, 0xFEFA39EF */
 private const val huge = 1.00000000000000000000e+300
 
 internal fun asinh(x: Double): Double {
-    var t: Double = 0.0
-    var w: Double = 0.0
-    var hx: Int = 0
-    var ix: Int = 0
+    var t: Double
+    var w: Double
+    var hx: Int
+    var ix: Int
     hx = __HI(x)
     ix = hx and 0x7fffffff
     if (ix >= 0x7ff00000) return x + x    /* x is inf or NaN */
