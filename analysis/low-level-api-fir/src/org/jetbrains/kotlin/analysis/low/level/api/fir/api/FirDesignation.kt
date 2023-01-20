@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
@@ -21,7 +25,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.ConeDestructuringDeclarationsOnTopLevel
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class FirDesignationWithFile(
     path: List<FirRegularClass>,
@@ -124,8 +131,52 @@ private fun collectDesignationPathWithContainingClass(target: FirDeclaration, co
         return declaration
     }
 
-    val chain = generateSequence(containingClassId) { it.outerClassId }.map { resolveChunk(it) }
-    return chain.toMutableList().also { it.reverse() }
+    val chunks = generateSequence(containingClassId) { it.outerClassId }.toList()
+
+    if (chunks.any { it.shortClassName.isSpecial }) {
+        val fallbackResult = collectDesignationPathWithTreeTraversal(target)
+        if (fallbackResult != null) {
+            return fallbackResult
+        }
+    }
+
+    return chunks
+        .dropWhile { it.shortClassName.isSpecial }
+        .map { resolveChunk(it) }
+        .asReversed()
+}
+
+/*
+    This implementation is certainly inefficient, however there seem to be no better way to implement designation collection for
+    anonymous outer classes unless FIR tree gets a way to get an element parent.
+ */
+private fun collectDesignationPathWithTreeTraversal(target: FirDeclaration): List<FirRegularClass>? {
+    val containingFile = target.getContainingFile() ?: return null
+
+    val path = ArrayDeque<FirElement>()
+    path.addLast(containingFile)
+
+    var result: List<FirRegularClass>? = null
+
+    val visitor = object : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            if (result != null) {
+                return
+            } else if (element === target) {
+                result = path.filterIsInstance<FirRegularClass>()
+            } else {
+                try {
+                    path.addLast(element)
+                    element.acceptChildren(this)
+                } finally {
+                    path.removeLast()
+                }
+            }
+        }
+    }
+
+    containingFile.accept(visitor)
+    return result
 }
 
 private fun getTargetSession(target: FirDeclaration): FirSession {
