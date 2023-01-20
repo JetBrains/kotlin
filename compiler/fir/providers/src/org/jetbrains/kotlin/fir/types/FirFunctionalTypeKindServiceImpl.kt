@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.extensions.FirFunctionalTypeKindExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.functionalTypeKindExtensions
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 class FirFunctionalTypeKindServiceImpl(private val session: FirSession) : FirFunctionalTypeKindService() {
@@ -49,15 +50,25 @@ class FirFunctionalTypeKindServiceImpl(private val session: FirSession) : FirFun
         FunctionalTypeKindExtractor(kinds)
     }
 
-    override fun extractSingleSpecialKindForFunction(functionSymbol: FirNamedFunctionSymbol): FunctionalTypeKind? {
+    override fun extractSingleSpecialKindForFunction(functionSymbol: FirFunctionSymbol<*>): FunctionalTypeKind? {
         if (nonReflectKindsFromExtensions.isEmpty()) {
             return FunctionalTypeKind.SuspendFunction.takeIf { functionSymbol.isSuspend }
         }
+
         return extractAllSpecialKindsForFunction(functionSymbol).singleOrNull()
     }
 
-    override fun extractAllSpecialKindsForFunction(functionSymbol: FirNamedFunctionSymbol): List<FunctionalTypeKind> {
-        return extractSpecialKindsImpl(functionSymbol, { isSuspend }, { resolvedAnnotationClassIds })
+    override fun extractAllSpecialKindsForFunction(functionSymbol: FirFunctionSymbol<*>): List<FunctionalTypeKind> {
+        return extractSpecialKindsImpl(
+            functionSymbol,
+            { isSuspend },
+            {
+                when (functionSymbol) {
+                    is FirAnonymousFunctionSymbol -> functionSymbol.annotations.mapNotNull { it.toAnnotationClassId(session) }
+                    else -> resolvedAnnotationClassIds
+                }
+            }
+        )
     }
 
     override fun extractAllSpecialKindsForFunctionalTypeRef(typeRef: FirFunctionTypeRef): List<FunctionalTypeKind> {

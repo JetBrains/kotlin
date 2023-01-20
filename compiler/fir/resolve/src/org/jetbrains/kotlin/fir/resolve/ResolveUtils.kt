@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeStubDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
@@ -119,10 +116,30 @@ fun FirFunction.constructFunctionalType(kind: FunctionalTypeKind? = null): ConeL
 /**
  * [kind] == null means that [FunctionalTypeKind.Function] will be used
  */
-fun FirFunction.constructFunctionalTypeRef(kind: FunctionalTypeKind? = null): FirResolvedTypeRef {
-    return buildResolvedTypeRef {
-        source = this@constructFunctionalTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
-        type = constructFunctionalType(kind)
+fun FirAnonymousFunction.constructFunctionalTypeRef(session: FirSession, kind: FunctionalTypeKind? = null): FirResolvedTypeRef {
+    var diagnostic: ConeDiagnostic? = null
+    val kinds = session.functionalTypeService.extractAllSpecialKindsForFunction(symbol)
+    val kindFromDeclaration = when(kinds.size) {
+        0 -> null
+        1 -> kinds.single()
+        else -> {
+            diagnostic = ConeAmbiguousFunctionalTypeKinds(kinds)
+            FunctionalTypeKind.Function
+        }
+    }
+    val type = constructFunctionalType(kindFromDeclaration ?: kind)
+    val source = this@constructFunctionalTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
+    return if (diagnostic == null) {
+        buildResolvedTypeRef {
+            this.source = source
+            this.type = type
+        }
+    } else {
+        buildErrorTypeRef {
+            this.source = source
+            this.type = type
+            this.diagnostic = diagnostic
+        }
     }
 }
 

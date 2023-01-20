@@ -619,7 +619,7 @@ class FirCallCompletionResultsWriterTransformer(
         if (needUpdateLambdaType) {
             val kind = expectedType?.functionalTypeKind(session)
                 ?: result.typeRef.coneTypeSafe<ConeClassLikeType>()?.functionalTypeKind(session)
-            result.replaceTypeRef(result.constructFunctionalTypeRef(kind))
+            result.replaceTypeRef(result.constructFunctionalTypeRef(session, kind))
             session.lookupTracker?.recordTypeResolveAsLookup(result.typeRef, result.source, context.file.source)
         }
         // Have to delay this until the type is written to avoid adding a return if the type is Unit.

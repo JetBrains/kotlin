@@ -714,6 +714,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         data: ResolutionMode
     ): FirStatement = whileAnalysing(session, anonymousFunction) {
         // Either ContextDependent, ContextIndependent or WithExpectedType could be here
+        anonymousFunction.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
         if (data !is ResolutionMode.LambdaResolution) {
             anonymousFunction.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent)
             anonymousFunction.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
@@ -805,7 +806,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             session.lookupTracker?.recordTypeResolveAsLookup(lambda.returnTypeRef, lambda.source, context.file.source)
         }
 
-        lambda.replaceTypeRef(lambda.constructFunctionalTypeRef(resolvedLambdaAtom?.expectedFunctionalTypeKind))
+        lambda.replaceTypeRef(lambda.constructFunctionalTypeRef(session, resolvedLambdaAtom?.expectedFunctionalTypeKind))
         session.lookupTracker?.recordTypeResolveAsLookup(lambda.typeRef, lambda.source, context.file.source)
         lambda.addReturnToLastStatementIfNeeded()
         return lambda
