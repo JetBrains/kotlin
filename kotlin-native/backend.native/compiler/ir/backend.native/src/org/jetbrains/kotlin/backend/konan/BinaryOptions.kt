@@ -31,6 +31,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val objcExportDisableSwiftMemberNameMangling by booleanOption()
 
+    val objcExportIgnoreInterfaceMethodCollisions by booleanOption()
+
     val gcSchedulerType by option<GCSchedulerType>()
 
     val gcMarkSingleThreaded by booleanOption()

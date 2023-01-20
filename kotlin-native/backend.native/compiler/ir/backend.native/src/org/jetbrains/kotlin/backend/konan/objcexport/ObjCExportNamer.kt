@@ -57,6 +57,8 @@ interface ObjCExportNamer {
 
         val disableSwiftMemberNameMangling: Boolean
             get() = false
+        val ignoreInterfaceMethodCollisions: Boolean
+            get() = false
     }
 
     val topLevelNamePrefix: String
@@ -283,6 +285,7 @@ internal class ObjCExportNamerImpl(
             local: Boolean,
             objcGenerics: Boolean = false,
             disableSwiftMemberNameMangling: Boolean = false,
+            ignoreInterfaceMethodCollisions: Boolean = false,
     ) : this(
             object : ObjCExportNamer.Configuration {
                 override val topLevelNamePrefix: String
@@ -297,6 +300,8 @@ internal class ObjCExportNamerImpl(
                 override val disableSwiftMemberNameMangling: Boolean
                     get() = disableSwiftMemberNameMangling
 
+                override val ignoreInterfaceMethodCollisions: Boolean
+                    get() = ignoreInterfaceMethodCollisions
             },
             builtIns,
             mapper,
@@ -335,13 +340,13 @@ internal class ObjCExportNamerImpl(
         override fun reserved(name: String) = name in reserved
 
         override fun conflict(first: FunctionDescriptor, second: FunctionDescriptor): Boolean =
-                !mapper.canHaveSameSelector(first, second)
+                !mapper.canHaveSameSelector(first, second, configuration.ignoreInterfaceMethodCollisions)
     }
 
     private val methodSwiftNames = object : Mapping<FunctionDescriptor, String>() {
         override fun conflict(first: FunctionDescriptor, second: FunctionDescriptor): Boolean {
             if (configuration.disableSwiftMemberNameMangling) return false // Ignore all conflicts.
-            return !mapper.canHaveSameSelector(first, second)
+            return !mapper.canHaveSameSelector(first, second, configuration.ignoreInterfaceMethodCollisions)
         }
         // Note: this condition is correct but can be too strict.
     }
@@ -351,7 +356,7 @@ internal class ObjCExportNamerImpl(
 
         override fun conflict(first: PropertyDescriptor, second: PropertyDescriptor): Boolean {
             if (forSwift && configuration.disableSwiftMemberNameMangling) return false // Ignore all conflicts.
-            return !mapper.canHaveSameName(first, second)
+            return !mapper.canHaveSameName(first, second, configuration.ignoreInterfaceMethodCollisions)
         }
     }
 
@@ -873,7 +878,7 @@ private inline fun StringBuilder.mangledSequence(crossinline mangle: StringBuild
 
 private fun StringBuilder.mangledBySuffixUnderscores() = this.mangledSequence { append("_") }
 
-private fun ObjCExportMapper.canHaveCommonSubtype(first: ClassDescriptor, second: ClassDescriptor): Boolean {
+private fun ObjCExportMapper.canHaveCommonSubtype(first: ClassDescriptor, second: ClassDescriptor, ignoreInterfaceMethodCollisions: Boolean): Boolean {
     if (first.isSubclassOf(second) || second.isSubclassOf(first)) {
         return true
     }
@@ -882,12 +887,13 @@ private fun ObjCExportMapper.canHaveCommonSubtype(first: ClassDescriptor, second
         return false
     }
 
-    return first.isInterface || second.isInterface
+    return (first.isInterface || second.isInterface) && !ignoreInterfaceMethodCollisions
 }
 
 private fun ObjCExportMapper.canBeInheritedBySameClass(
         first: CallableMemberDescriptor,
-        second: CallableMemberDescriptor
+        second: CallableMemberDescriptor,
+        ignoreInterfaceMethodCollisions: Boolean
 ): Boolean {
     if (this.isTopLevel(first) || this.isTopLevel(second)) {
         return this.isTopLevel(first) && this.isTopLevel(second) &&
@@ -905,14 +911,14 @@ private fun ObjCExportMapper.canBeInheritedBySameClass(
         return secondClass == firstClass || first !is ConstructorDescriptor && secondClass.isSubclassOf(firstClass)
     }
 
-    return canHaveCommonSubtype(firstClass, secondClass)
+    return canHaveCommonSubtype(firstClass, secondClass, ignoreInterfaceMethodCollisions)
 }
 
-private fun ObjCExportMapper.canHaveSameSelector(first: FunctionDescriptor, second: FunctionDescriptor): Boolean {
+private fun ObjCExportMapper.canHaveSameSelector(first: FunctionDescriptor, second: FunctionDescriptor, ignoreInterfaceMethodCollisions: Boolean): Boolean {
     assert(isBaseMethod(first))
     assert(isBaseMethod(second))
 
-    if (!canBeInheritedBySameClass(first, second)) {
+    if (!canBeInheritedBySameClass(first, second, ignoreInterfaceMethodCollisions)) {
         return true
     }
 
@@ -940,13 +946,13 @@ private fun ObjCExportMapper.canHaveSameSelector(first: FunctionDescriptor, seco
     return bridgeMethod(first) == bridgeMethod(second)
 }
 
-private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: PropertyDescriptor): Boolean {
+private fun ObjCExportMapper.canHaveSameName(first: PropertyDescriptor, second: PropertyDescriptor, ignoreInterfaceMethodCollisions: Boolean): Boolean {
     assert(isBaseProperty(first))
     assert(isObjCProperty(first))
     assert(isBaseProperty(second))
     assert(isObjCProperty(second))
 
-    if (!canBeInheritedBySameClass(first, second)) {
+    if (!canBeInheritedBySameClass(first, second, ignoreInterfaceMethodCollisions)) {
         return true
     }
 

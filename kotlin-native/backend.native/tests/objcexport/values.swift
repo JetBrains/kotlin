@@ -727,7 +727,7 @@ func testClashes() throws {
 
     try assertEquals(actual: 1, expected: test1.clashingProperty)
 
-#if !DISABLE_MEMBER_NAME_MANGLING
+#if !DISABLE_MEMBER_NAME_MANGLING && !DISABLE_INTERFACE_METHOD_NAME_MANGLING
     try assertEquals(actual: 1, expected: test2.clashingProperty_ as! Int32)
     try assertEquals(actual: 2, expected: test2.clashingProperty__ as! Int32)
 #endif

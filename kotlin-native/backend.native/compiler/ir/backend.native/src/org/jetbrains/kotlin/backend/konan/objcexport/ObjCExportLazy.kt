@@ -49,6 +49,8 @@ interface ObjCExportLazy {
             get() = false
 
         val unitSuspendFunctionExport: UnitSuspendFunctionObjCExport
+        val ignoreInterfaceMethodCollisions: Boolean
+            get() = false
     }
 
     fun generateBase(): List<ObjCTopLevel<*>>
@@ -452,6 +454,8 @@ internal fun createNamerConfiguration(configuration: ObjCExportLazy.Configuratio
 
         override val objcGenerics = configuration.objcGenerics
         override val disableSwiftMemberNameMangling = configuration.disableSwiftMemberNameMangling
+
+        override val ignoreInterfaceMethodCollisions: Boolean = configuration.ignoreInterfaceMethodCollisions
     }
 }
 

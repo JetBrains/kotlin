@@ -657,6 +657,53 @@ __attribute__((swift_name("TestGH3992.B")))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
+__attribute__((swift_name("InterfaceNameManglingI1")))
+@protocol KtInterfaceNameManglingI1
+@required
+- (int32_t)clashingMethod __attribute__((swift_name("clashingMethod()")));
+- (int32_t)interfaceClashingMethodWithObjCNameInI1 __attribute__((swift_name("interfaceClashingMethodWithObjCNameInI1()")));
+- (int32_t)interfaceClashingMethodWithObjCNameInI2 __attribute__((swift_name("interfaceClashingMethodWithObjCNameInI2()")));
+- (int32_t)interfaceClashingMethodWithObjCNameInBoth __attribute__((swift_name("interfaceClashingMethodWithObjCNameInBoth()")));
+@property (readonly) int32_t clashingProperty __attribute__((swift_name("clashingProperty")));
+@end
+
+__attribute__((swift_name("InterfaceNameManglingI2")))
+@protocol KtInterfaceNameManglingI2
+@required
+- (id)clashingMethod __attribute__((swift_name("clashingMethod()")));
+- (id)interfaceClashingMethodWithObjCNameInI1 __attribute__((swift_name("interfaceClashingMethodWithObjCNameInI1()")));
+- (id)interfaceClashingMethodWithObjCNameInI2 __attribute__((swift_name("interfaceClashingMethodWithObjCNameInI2()")));
+- (id)interfaceClashingMethodWithObjCNameInBoth __attribute__((swift_name("interfaceClashingMethodWithObjCNameInBoth()")));
+@property (readonly) id clashingProperty __attribute__((swift_name("clashingProperty")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("InterfaceNameManglingC1")))
+@interface KtInterfaceNameManglingC1 : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (NSString *)clashingMethod __attribute__((swift_name("clashingMethod()")));
+@property (readonly) NSString *clashingProperty __attribute__((swift_name("clashingProperty")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("InterfaceNameManglingC2")))
+@interface KtInterfaceNameManglingC2 : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (int32_t)clashingMethod __attribute__((swift_name("clashingMethod()")));
+@property (readonly) int32_t clashingProperty __attribute__((swift_name("clashingProperty")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("InterfaceMethodNameManglingKt")))
+@interface KtInterfaceMethodNameManglingKt : KtBase
++ (id<KtInterfaceNameManglingI1>)i1 __attribute__((swift_name("i1()")));
++ (id<KtInterfaceNameManglingI2>)i2 __attribute__((swift_name("i2()")));
++ (KtInterfaceNameManglingC1 *)o1 __attribute__((swift_name("o1()")));
++ (KtInterfaceNameManglingC2 *)o2 __attribute__((swift_name("o2()")));
+@end
+
 
 /**
  * Summary class [KDocExport].

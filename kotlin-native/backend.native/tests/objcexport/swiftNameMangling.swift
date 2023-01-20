@@ -4,7 +4,7 @@ private func test1() throws {
     let i1 = SwiftNameManglingKt.i1()
     let i2 = SwiftNameManglingKt.i2()
 
-#if DISABLE_MEMBER_NAME_MANGLING
+#if DISABLE_MEMBER_NAME_MANGLING || DISABLE_INTERFACE_METHOD_NAME_MANGLING
     try assertEquals(actual: i1.clashingProperty, expected: 1)
     try assertEquals(actual: i1.clashingMethod(), expected: 2)
     try assertEquals(actual: i1.swiftClashingMethodWithObjCNameInI1(), expected: 3)
