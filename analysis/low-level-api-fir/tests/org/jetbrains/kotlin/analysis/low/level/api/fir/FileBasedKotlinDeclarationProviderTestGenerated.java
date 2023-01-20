@@ -37,6 +37,12 @@ public class FileBasedKotlinDeclarationProviderTestGenerated extends AbstractFil
     }
 
     @Test
+    @TestMetadata("nestedTypeAlias.kt")
+    public void testNestedTypeAlias() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileBasedDeclarationProvider/nestedTypeAlias.kt");
+    }
+
+    @Test
     @TestMetadata("sameNames.kt")
     public void testSameNames() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileBasedDeclarationProvider/sameNames.kt");

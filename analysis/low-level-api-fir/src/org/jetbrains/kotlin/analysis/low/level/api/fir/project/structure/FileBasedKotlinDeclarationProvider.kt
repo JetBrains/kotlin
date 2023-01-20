@@ -65,8 +65,7 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
     }
 
     override fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> {
-        val name = classId.relativeClassName.pathSegments().singleOrNull() ?: return emptyList()
-        return getTopLevelDeclarations(classId.packageFqName, name)
+        return getClassLikeDeclarationsByClassId(classId).filterIsInstance<KtTypeAlias>().toList()
     }
 
     override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> {
