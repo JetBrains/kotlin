@@ -70,9 +70,9 @@ private val pio4lo = xxx[15]
 private val T = xxx
 /* INDENT ON */
 
-internal fun __kernel_tan(x: Double, y: Double, iy: Int): Double {
-    var x: Double = x
-    var y: Double = y
+internal fun __kernel_tan(_x: Double, _y: Double, iy: Int): Double {
+    var x: Double = _x
+    var y: Double = _y
     var z: Double
     var r: Double
     var v: Double

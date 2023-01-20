@@ -122,8 +122,8 @@ private const val Q3 = -7.93650757867487942473e-05 /* BF14CE19 9EAADBB7 */
 private const val Q4 = 4.00821782732936239552e-06 /* 3ED0CFCA 86E65239 */
 private const val Q5 = -2.01099218183624371326e-07 /* BE8AFDB7 6E09C32D */
 
-internal fun expm1(x: Double): Double {
-    var x: Double = x
+internal fun expm1(_x: Double): Double {
+    var x: Double = _x
     var y: Double
     var hi: Double
     var lo: Double

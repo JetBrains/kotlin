@@ -52,8 +52,8 @@ private const val log10_2lo = 3.69423907715893078616e-13 /* 0x3D59FEF3, 0x11F12B
 
 private const val zero = 0.0
 
-internal fun __ieee754_log10(x: Double): Double {
-    var x: Double = x
+internal fun __ieee754_log10(_x: Double): Double {
+    var x: Double = _x
     var y: Double
     var z: Double
     var i: Int
