@@ -92,6 +92,7 @@ fun wasmArrayForType(
         else -> ""
     }
     return """
+            @Suppress("UNUSED_PARAMETER")
             @WasmArrayOf($klass::class, isNullable = $isNullable)
             internal class $name(size: Int) {
                 @WasmOp(WasmOp.ARRAY_GET${getSuffix})
@@ -107,6 +108,7 @@ fun wasmArrayForType(
                     implementedAsIntrinsic
             }
             
+            @Suppress("NOTHING_TO_INLINE")
             internal inline fun copyWasmArray(source: $name, destination: $name, sourceIndex: Int, destinationIndex: Int, length: Int) {
                 wasm_array_copy<$name>(destination, destinationIndex, source, sourceIndex, length)
             }
@@ -117,7 +119,8 @@ fun wasmArrayForType(
                     set(i, init(i))
                     i++
                 }
-            }            
+            }
+            
             """.trimIndent()
 }
 
