@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin.Companion.isUse
 import org.jetbrains.kotlin.gradle.model.builder.KaptModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.configuration.*
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
@@ -283,15 +284,12 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         )
 
         val kaptGenerateStubsTaskProvider: TaskProvider<KaptGenerateStubsTask> = context.createKaptGenerateStubsTask()
-        val kaptTaskProvider: TaskProvider<out KaptTask> = context.createKaptKotlinTask()
+        val kaptTaskProvider: TaskProvider<out KaptTask> = context.createKaptKotlinTask(
+            kaptGenerateStubsTaskProvider
+        )
 
         kaptGenerateStubsTaskProvider.configure { kaptGenerateStubsTask ->
             kaptGenerateStubsTask.dependsOn(*buildDependencies.toTypedArray())
-            kaptGenerateStubsTask.dependsOn(
-                project.provider {
-                    kotlinCompilation.compileKotlinTask.dependsOn.filter { it !is TaskProvider<*> || it.name != kaptTaskProvider.name }
-                }
-            )
 
             if (androidVariantData != null) {
                 kaptGenerateStubsTask.additionalSources.from(
@@ -305,9 +303,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             }
         }
 
-        kaptTaskProvider.configure { kaptTask ->
-            kaptTask.dependsOn(kaptGenerateStubsTaskProvider)
-        }
         context.kotlinCompile.configure { it.dependsOn(kaptTaskProvider) }
 
         /** Plugin options are applied to kapt*Compile inside [createKaptKotlinTask] */
@@ -357,9 +352,16 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         ).get()
     }
 
-    private fun Kapt3SubpluginContext.createKaptKotlinTask(): TaskProvider<out KaptTask> {
+    private fun Kapt3SubpluginContext.createKaptKotlinTask(
+        generateStubsTask: TaskProvider<KaptGenerateStubsTask>
+    ): TaskProvider<out KaptTask> {
         val taskName = getKaptTaskName("kapt")
-        val taskConfigAction = KaptWithoutKotlincConfig(kotlinCompilation.compileKotlinTaskProvider.get() as KotlinCompile, kaptExtension)
+        @Suppress("UNCHECKED_CAST")
+        val taskConfigAction = KaptWithoutKotlincConfig(
+            kotlinCompilation.project,
+            generateStubsTask,
+            kaptExtension
+        )
 
         val kaptClasspathConfiguration = project.configurations.create("kaptClasspath_$taskName")
             .setExtendsFrom(kaptClasspathConfigurations).also {
@@ -367,6 +369,8 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 it.isCanBeConsumed = false
             }
         taskConfigAction.configureTaskProvider { taskProvider ->
+            taskProvider.dependsOn(generateStubsTask)
+
             if (javaCompile != null) {
                 val androidVariantData = KaptWithAndroid.androidVariantData(this)
                 if (androidVariantData != null) {
@@ -379,7 +383,14 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
                 disableAnnotationProcessingInJavaTask()
             }
 
-            kotlinCompilation.output.classesDirs.from(taskProvider.flatMap { it.classesDir })
+            // Workaround for changes in Gradle 7.3 causing eager task realization
+            // For details check `KotlinSourceSetProcessor.prepareKotlinCompileTask()`
+            if (kotlinCompilation is KotlinWithJavaCompilation<*, *>) {
+                val kotlinSourceDirectorySet = kotlinCompilation.defaultSourceSet.kotlin
+                kotlinSourceDirectorySet.compiledBy(taskProvider, KaptTask::classesDir)
+            } else {
+                kotlinCompilation.output.classesDirs.from(taskProvider.flatMap { it.classesDir })
+            }
 
             kotlinCompilation.compileTaskProvider.configure { task ->
                 with(task as AbstractKotlinCompile<*>) {
