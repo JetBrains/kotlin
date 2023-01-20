@@ -34,7 +34,7 @@ class ControlFlowAnalysisDiagnosticComponent(
         val properties = mutableSetOf<FirPropertySymbol>().apply { graph.traverse(LocalPropertyCollector(this)) }
         if (properties.isNotEmpty()) {
             val data = PropertyInitializationInfoData(properties, receiver = null, graph)
-            variableAssignmentCheckers.forEach { it.analyze(graph, reporter, data, properties, context) }
+            variableAssignmentCheckers.forEach { it.analyze(data, reporter, context) }
         }
     }
 
