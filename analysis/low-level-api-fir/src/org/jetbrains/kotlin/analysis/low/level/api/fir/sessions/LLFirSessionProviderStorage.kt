@@ -191,7 +191,7 @@ private class FirSessionWithModificationTracker(
 
         val outOfBlockTracker = when (ktModule) {
             is KtSourceModule -> trackerFactory.createModuleWithoutDependenciesOutOfBlockModificationTracker(ktModule)
-            is KtNotUnderContentRootModule -> trackerFactory.createProjectWideOutOfBlockModificationTracker()
+            is KtNotUnderContentRootModule -> ModificationTracker { ktModule.file?.modificationStamp ?: 0 }
             else -> null
         }
         modificationTracker = CompositeModificationTracker.create(
