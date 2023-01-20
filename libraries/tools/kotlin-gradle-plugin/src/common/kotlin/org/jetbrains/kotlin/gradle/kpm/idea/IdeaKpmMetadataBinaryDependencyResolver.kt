@@ -44,7 +44,7 @@ internal class IdeaKpmMetadataBinaryDependencyResolver(
                 val sourceSetContent = artifactContent.findSourceSet(visibleFragmentName) ?: return@mapNotNull null
                 val metadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
 
-                val libraryFile = fragment.project.layout.kotlinTransformedMetadataLibraryDirectoryForIde
+                val libraryFile = fragment.project.kotlinTransformedMetadataLibraryDirectoryForIde
                     .resolve(metadataBinary.relativeFile)
                     .apply { if (!isFile) metadataBinary.copyTo(this) }
 

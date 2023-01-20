@@ -79,7 +79,7 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
         args = listOf(
             sourceSet,
             /* outputDirectory = */
-            project.layout.kotlinTransformedCInteropMetadataLibraryDirectoryForIde,
+            project.kotlinTransformedCInteropMetadataLibraryDirectoryForIde,
             /* cleaning = */
             CInteropMetadataDependencyTransformationTask.Cleaning.None
         ),
