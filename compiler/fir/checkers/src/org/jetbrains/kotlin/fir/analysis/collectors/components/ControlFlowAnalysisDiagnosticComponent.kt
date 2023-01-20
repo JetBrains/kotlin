@@ -10,10 +10,13 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.DeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.fir.analysis.cfa.util.LocalPropertyAndCapturedWriteCollector
 import org.jetbrains.kotlin.fir.analysis.cfa.util.PropertyInitializationInfoData
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraphVisitorVoid
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.VariableDeclarationNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 class ControlFlowAnalysisDiagnosticComponent(
     session: FirSession,
@@ -28,10 +31,10 @@ class ControlFlowAnalysisDiagnosticComponent(
         if (graph.isSubGraph) return
         cfaCheckers.forEach { it.analyze(graph, reporter, context) }
 
-        val (properties, capturedWrites) = LocalPropertyAndCapturedWriteCollector.collect(graph)
+        val properties = mutableSetOf<FirPropertySymbol>().apply { graph.traverse(LocalPropertyCollector(this)) }
         if (properties.isNotEmpty()) {
             val data = PropertyInitializationInfoData(properties, receiver = null, graph)
-            variableAssignmentCheckers.forEach { it.analyze(graph, reporter, data, properties, capturedWrites, context) }
+            variableAssignmentCheckers.forEach { it.analyze(graph, reporter, data, properties, context) }
         }
     }
 
@@ -67,5 +70,13 @@ class ControlFlowAnalysisDiagnosticComponent(
 
     override fun visitConstructor(constructor: FirConstructor, data: CheckerContext) {
         analyze(constructor, data)
+    }
+
+    private class LocalPropertyCollector(private val result: MutableSet<FirPropertySymbol>) : ControlFlowGraphVisitorVoid() {
+        override fun visitNode(node: CFGNode<*>) {}
+
+        override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
+            result.add(node.fir.symbol)
+        }
     }
 }

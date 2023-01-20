@@ -36,7 +36,6 @@ object UnusedChecker : AbstractFirPropertyInitializationChecker() {
         reporter: DiagnosticReporter,
         data: PropertyInitializationInfoData,
         properties: Set<FirPropertySymbol>,
-        capturedWrites: Set<FirVariableAssignment>,
         context: CheckerContext
     ) {
         val ownData = ValueWritesWithoutReading(context.session, properties).getData(graph)
