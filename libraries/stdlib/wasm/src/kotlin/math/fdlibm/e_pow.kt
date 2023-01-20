@@ -110,8 +110,6 @@ internal fun __ieee754_pow(x: Double, y: Double): Double {
     var u: Double
     var v: Double
     var w: Double
-    var i0: Int
-    var i1: Int = 0
     var i: Int
     var j: Int
     var k: Int
@@ -124,9 +122,6 @@ internal fun __ieee754_pow(x: Double, y: Double): Double {
     var lx: UInt
     var ly: UInt
 
-    //i0 = ((*(int*)&one)>>29)^1
-    i0 = 1
-    i1 = 1 - i0
     hx = __HI(x); lx = __LO(x).toUInt()
     hy = __HI(y); ly = __LO(y).toUInt()
     ix = hx and 0x7fffffff; iy = hy and 0x7fffffff
