@@ -58,6 +58,9 @@ inline val FirClass.isEnumClass: Boolean
 inline val FirClass.isAnnotationClass: Boolean
     get() = classKind.isAnnotationClass
 
+inline val FirClass.isObject: Boolean
+    get() = classKind.isObject
+
 inline val FirRegularClass.isSealed: Boolean get() = status.modality == Modality.SEALED
 
 inline val FirRegularClass.canHaveAbstractDeclaration: Boolean

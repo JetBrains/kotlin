@@ -1,0 +1,16 @@
+FILE: forEnumClass.kt
+    @R|kotlin/Self|() public final enum class EnumClass<out <Self> : R|EnumClass<<Self>>|> : R|kotlin/Enum<EnumClass>| {
+        private constructor<out <Self> : R|EnumClass<<Self>>|>(): R|EnumClass<<Self>>| {
+            super<R|kotlin/Enum<EnumClass>|>()
+        }
+
+        public final static fun values(): R|kotlin/Array<EnumClass>| {
+        }
+
+        public final static fun valueOf(value: R|kotlin/String|): R|EnumClass| {
+        }
+
+        public final static val entries: R|kotlin/enums/EnumEntries<EnumClass>|
+            public get(): R|kotlin/enums/EnumEntries<EnumClass>|
+
+    }

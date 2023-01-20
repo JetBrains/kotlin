@@ -1,0 +1,7 @@
+FILE: forObject.kt
+    @R|kotlin/Self|() public final object CustomObject<out <Self> : R|CustomObject<<Self>>|> : R|kotlin/Any| {
+        private constructor<out <Self> : R|CustomObject<<Self>>|>(): R|CustomObject<<Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

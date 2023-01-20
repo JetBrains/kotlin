@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.context.findClosest
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.isAnnotationClass
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.packageFqName
@@ -30,7 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 
 object FirAnnotationChecker : FirBasicDeclarationChecker() {
     private val deprecatedClassId = FqName("kotlin.Deprecated")
@@ -74,12 +71,8 @@ object FirAnnotationChecker : FirBasicDeclarationChecker() {
 
         if (self != null) {
             if (declaration is FirClass) {
-                if (declaration.isEnumClass) {
-                    reporter.reportOn(self.source, FirErrors.SELF_TYPE_INAPPLICABLE_TARGET, "", context)
-                }
-
-                if (declaration.isAnnotationClass) {
-                    reporter.reportOn(self.source, FirErrors.SELF_TYPE_INAPPLICABLE_TARGET, "", context)
+                if (declaration.isEnumClass || declaration.isAnnotationClass || declaration.isObject) {
+                    reporter.reportOn(self.source, FirErrors.SELF_TYPE_INAPPLICABLE_TARGET, declaration.classKind.name, context)
                 }
             }
         }

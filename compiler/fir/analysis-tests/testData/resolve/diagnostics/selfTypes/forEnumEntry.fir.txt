@@ -1,7 +1,14 @@
-FILE: selfTypeForEnumClass.kt
-    @R|kotlin/Self|() public final enum class EnumClass<out <Self> : R|EnumClass<<Self>>|> : R|kotlin/Enum<EnumClass>| {
-        private constructor<out <Self> : R|EnumClass<<Self>>|>(): R|EnumClass<<Self>>| {
+FILE: forEnumEntry.kt
+    public final enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        private constructor(): R|EnumClass| {
             super<R|kotlin/Enum<EnumClass>|>()
+        }
+
+        @R|kotlin/Self|() public final static enum entry Entry: R|EnumClass| = object : R|EnumClass| {
+            private constructor(): R|<anonymous>| {
+                super<R|EnumClass|>()
+            }
+
         }
 
         public final static fun values(): R|kotlin/Array<EnumClass>| {
