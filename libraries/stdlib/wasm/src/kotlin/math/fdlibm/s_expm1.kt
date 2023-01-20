@@ -139,7 +139,6 @@ internal fun expm1(_x: Double): Double {
 
     hx = __HIu(x)    /* high word of x */
     xsb = (hx and Int.MIN_VALUE.toUInt()).toInt()        /* sign bit of x */
-    if (xsb == 0) y = x; else y = -x    /* y = |x| */
     hx = (hx and 0x7fffffffU)        /* high word of |x| */
 
     /* filter out huge and non-finite argument */
