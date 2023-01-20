@@ -24,12 +24,18 @@
 #ifdef CUSTOM_ALLOCATOR
 #include "CustomAllocator.hpp"
 #include "Heap.hpp"
+
+namespace kotlin::alloc {
+class CustomFinalizerProcessor;
+}
 #endif
 
 namespace kotlin {
 namespace gc {
 
+#ifndef CUSTOM_ALLOCATOR
 class FinalizerProcessor;
+#endif
 
 // Stop-the-world parallel mark + concurrent sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
 // TODO: Also make marking run concurrently with Kotlin threads.
@@ -130,7 +136,11 @@ private:
 
     GCStateHolder state_;
     ScopedThread gcThread_;
+#ifndef CUSTOM_ALLOCATOR
     std_support::unique_ptr<FinalizerProcessor> finalizerProcessor_;
+#else
+    std_support::unique_ptr<alloc::CustomFinalizerProcessor> finalizerProcessor_;
+#endif
 
     MarkQueue markQueue_;
     MarkingBehavior markingBehavior_;

@@ -260,6 +260,18 @@ bitcode {
             }
         }
 
+        module("experimental_memory_manager_custom") {
+            srcRoot.set(layout.projectDirectory.dir("src/mm"))
+            headersDirs.from(files("src/gc/common/cpp", "src/main/cpp", "src/custom_alloc/cpp"))
+            sourceSets {
+                main {}
+                testFixtures {}
+                test {}
+            }
+            
+            compilerArgs.add("-DCUSTOM_ALLOCATOR")
+        }
+
         module("common_gc") {
             srcRoot.set(layout.projectDirectory.dir("src/gc/common"))
             headersDirs.from(files("src/mm/cpp", "src/main/cpp"))

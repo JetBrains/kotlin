@@ -11,6 +11,7 @@
 
 #include "SmallPage.hpp"
 #include "MediumPage.hpp"
+#include "ExtraObjectPage.hpp"
 
 inline constexpr const size_t KiB = 1024;
 
@@ -24,5 +25,9 @@ inline constexpr const size_t MEDIUM_PAGE_CELL_COUNT =
         ((MEDIUM_PAGE_SIZE - sizeof(kotlin::alloc::MediumPage)) / sizeof(kotlin::alloc::Cell));
 
 inline constexpr const size_t LARGE_PAGE_SIZE_THRESHOLD = (MEDIUM_PAGE_CELL_COUNT - 1);
+
+inline constexpr const size_t EXTRA_OBJECT_PAGE_SIZE = 64 * KiB;
+inline constexpr const int EXTRA_OBJECT_COUNT =
+        (EXTRA_OBJECT_PAGE_SIZE - sizeof(kotlin::alloc::ExtraObjectPage)) / sizeof(kotlin::alloc::ExtraObjectCell);
 
 #endif

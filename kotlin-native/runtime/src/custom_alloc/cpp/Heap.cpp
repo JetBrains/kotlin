@@ -12,14 +12,19 @@
 #include <new>
 
 #include "CustomAllocConstants.hpp"
+#include "AtomicStack.hpp"
 #include "CustomLogging.hpp"
-#include "LargePage.hpp"
-#include "MediumPage.hpp"
-#include "SmallPage.hpp"
+#include "ExtraObjectPage.hpp"
 #include "ThreadRegistry.hpp"
 #include "GCImpl.hpp"
 
 namespace kotlin::alloc {
+
+Heap::~Heap() noexcept {
+    ExtraObjectPage* page;
+    while ((page = extraObjectPages_.Pop())) page->Destroy();
+    while ((page = usedExtraObjectPages_.Pop())) page->Destroy();
+}
 
 void Heap::PrepareForGC() noexcept {
     CustomAllocDebug("Heap::PrepareForGC()");
@@ -29,18 +34,33 @@ void Heap::PrepareForGC() noexcept {
 
     mediumPages_.PrepareForGC();
     largePages_.PrepareForGC();
-    for (size_t blockSize = 0; blockSize <= SMALL_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+    for (int blockSize = 0; blockSize <= SMALL_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
         smallPages_[blockSize].PrepareForGC();
     }
 }
 
 void Heap::Sweep() noexcept {
     CustomAllocDebug("Heap::Sweep()");
-    for (size_t blockSize = 0; blockSize <= SMALL_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+    for (int blockSize = 0; blockSize <= SMALL_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
         smallPages_[blockSize].Sweep();
     }
     mediumPages_.Sweep();
     largePages_.SweepAndFree();
+}
+
+AtomicStack<ExtraObjectCell> Heap::SweepExtraObjects(gc::GCHandle gcHandle) noexcept {
+    CustomAllocDebug("Heap::SweepExtraObjects()");
+    AtomicStack<ExtraObjectCell> finalizerQueue;
+    ExtraObjectPage* page;
+    while ((page = usedExtraObjectPages_.Pop())) {
+        if (!page->Sweep(finalizerQueue)) {
+            CustomAllocInfo("SweepExtraObjects free(%p)", page);
+            free(page);
+        } else {
+            extraObjectPages_.Push(page);
+        }
+    }
+    return finalizerQueue;
 }
 
 MediumPage* Heap::GetMediumPage(uint32_t cellCount) noexcept {
@@ -56,6 +76,16 @@ SmallPage* Heap::GetSmallPage(uint32_t cellCount) noexcept {
 LargePage* Heap::GetLargePage(uint64_t cellCount) noexcept {
     CustomAllocInfo("CustomAllocator::AllocateInLargePage(%" PRIu64 ")", cellCount);
     return largePages_.NewPage(cellCount);
+}
+
+ExtraObjectPage* Heap::GetExtraObjectPage() noexcept {
+    CustomAllocInfo("CustomAllocator::GetExtraObjectPage()");
+    ExtraObjectPage* page = extraObjectPages_.Pop();
+    if (page == nullptr) {
+        page = ExtraObjectPage::Create();
+    }
+    usedExtraObjectPages_.Push(page);
+    return page;
 }
 
 } // namespace kotlin::alloc

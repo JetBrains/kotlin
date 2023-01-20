@@ -13,7 +13,6 @@
 #include "Memory.h"
 #include "TypeInfo.h"
 #include "Utils.hpp"
-#include "MultiSourceQueue.hpp"
 #include "Weak.h"
 
 namespace kotlin {
@@ -27,6 +26,7 @@ public:
         FLAGS_FROZEN = 0,
         FLAGS_NEVER_FROZEN = 1,
         FLAGS_IN_FINALIZER_QUEUE = 2,
+        FLAGS_FINALIZED = 3,
     };
 
     static constexpr unsigned WEAK_REF_TAG = 1;
@@ -83,7 +83,6 @@ public:
     }
     ~ExtraObjectData();
 private:
-
     // Must be first to match `TypeInfo` layout.
     const TypeInfo* typeInfo_;
 

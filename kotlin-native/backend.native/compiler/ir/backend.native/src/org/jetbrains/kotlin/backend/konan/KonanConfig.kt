@@ -269,11 +269,13 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 }
             }
             AllocationMode.CUSTOM -> {
-                if (gc != GC.CONCURRENT_MARK_AND_SWEEP) {
+                if (gc == GC.CONCURRENT_MARK_AND_SWEEP) {
+                    AllocationMode.CUSTOM
+                } else {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "Custom allocator is currently only integrated with concurrent mark and sweep gc. Performance will not be ideal with selected gc.")
+                            "Custom allocator is currently only integrated with concurrent mark and sweep gc. Using default mode.")
+                    defaultAllocationMode
                 }
-                AllocationMode.CUSTOM
             }
         }
     }
@@ -291,18 +293,19 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
             MemoryModel.EXPERIMENTAL -> {
                 add("common_gc.bc")
-                add("experimental_memory_manager.bc")
-                when (gc) {
-                    GC.SAME_THREAD_MARK_AND_SWEEP -> {
-                        add("same_thread_ms_gc.bc")
-                    }
-                    GC.NOOP -> {
-                        add("noop_gc.bc")
-                    }
-                    GC.CONCURRENT_MARK_AND_SWEEP -> {
-                        if (allocationMode == AllocationMode.CUSTOM) {
-                            add("concurrent_ms_gc_custom.bc")
-                        } else {
+                if (allocationMode == AllocationMode.CUSTOM) {
+                    add("experimental_memory_manager_custom.bc")
+                    add("concurrent_ms_gc_custom.bc")
+                } else {
+                    add("experimental_memory_manager.bc")
+                    when (gc) {
+                        GC.SAME_THREAD_MARK_AND_SWEEP -> {
+                            add("same_thread_ms_gc.bc")
+                        }
+                        GC.NOOP -> {
+                            add("noop_gc.bc")
+                        }
+                        GC.CONCURRENT_MARK_AND_SWEEP -> {
                             add("concurrent_ms_gc.bc")
                         }
                     }

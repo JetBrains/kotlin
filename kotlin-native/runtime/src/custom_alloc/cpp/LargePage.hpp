@@ -10,6 +10,7 @@
 #include <cstdint>
 
 #include "AtomicStack.hpp"
+#include "MediumPage.hpp"
 
 namespace kotlin::alloc {
 
@@ -19,9 +20,9 @@ public:
 
     void Destroy() noexcept;
 
-    uint8_t* TryAllocate() noexcept;
-
     uint8_t* Data() noexcept;
+
+    uint8_t* TryAllocate() noexcept;
 
     bool Sweep() noexcept;
 

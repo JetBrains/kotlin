@@ -64,6 +64,7 @@ bool SmallPage::Sweep() noexcept {
             alive = true;
             continue;
         }
+        CustomAllocInfo("SmallPage(%p)::Sweep: reclaim %p", this, cell);
         // Free the current block and insert it into the free list.
         cell->nextFree = *nextFree;
         *nextFree = cell;

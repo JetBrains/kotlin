@@ -41,6 +41,7 @@ private:
     Cell* curBlock_;
     Cell cells_[]; // cells_[0] is reserved for an empty block
 };
+
 } // namespace kotlin::alloc
 
 #endif

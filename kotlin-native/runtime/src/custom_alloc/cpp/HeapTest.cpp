@@ -19,7 +19,7 @@ using SmallPage = typename kotlin::alloc::SmallPage;
 using MediumPage = typename kotlin::alloc::MediumPage;
 using LargePage = typename kotlin::alloc::LargePage;
 
-#define MIN_BLOCK_SIZE 2
+inline constexpr int MIN_BLOCK_SIZE = 2;
 
 void mark(void* obj) {
     reinterpret_cast<uint64_t*>(obj)[0] = 1;

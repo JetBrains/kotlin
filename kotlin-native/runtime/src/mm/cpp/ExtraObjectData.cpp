@@ -5,13 +5,16 @@
 
 #include "ExtraObjectData.hpp"
 
-#include "ObjectOps.hpp"
 #include "PointerBits.h"
+#include "ThreadData.hpp"
 #include "Weak.h"
-#include "ExtraObjectDataFactory.hpp"
 
 #ifdef KONAN_OBJC_INTEROP
 #include "ObjCMMAPI.h"
+#endif
+
+#ifdef CUSTOM_ALLOCATOR
+#include "CustomAllocator.hpp"
 #endif
 
 using namespace kotlin;
@@ -30,11 +33,19 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
     RuntimeCheck(!hasPointerBits(typeInfo, OBJECT_TAG_MASK), "Object must not be tagged");
 
     auto *threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
+#ifdef CUSTOM_ALLOCATOR
+    auto& data = alloc::CustomAllocator::CreateExtraObjectDataForObject(threadData, object, typeInfo);
+
+    if (!compareExchange(object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
+        // Somebody else created `mm::ExtraObjectData` for this object.
+        data.setFlag(mm::ExtraObjectData::FLAGS_FINALIZED);
+#else
     auto& data = mm::ExtraObjectDataFactory::Instance().CreateExtraObjectDataForObject(threadData, object, typeInfo);
 
     if (!compareExchange(object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
         // Somebody else created `mm::ExtraObjectData` for this object
         mm::ExtraObjectDataFactory::Instance().DestroyExtraObjectData(threadData, data);
+#endif
         return *reinterpret_cast<mm::ExtraObjectData*>(typeInfo);
     }
 

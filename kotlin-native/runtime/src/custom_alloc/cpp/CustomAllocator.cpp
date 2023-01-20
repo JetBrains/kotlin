@@ -13,10 +13,16 @@
 
 #include "ConcurrentMarkAndSweep.hpp"
 #include "CustomLogging.hpp"
+#include "ExtraObjectData.hpp"
+#include "ExtraObjectPage.hpp"
 #include "GCScheduler.hpp"
 #include "LargePage.hpp"
 #include "MediumPage.hpp"
+#include "Memory.h"
 #include "SmallPage.hpp"
+#include "GCImpl.hpp"
+#include "TypeInfo.h"
+#include "Types.h"
 
 namespace kotlin::alloc {
 
@@ -48,7 +54,7 @@ uint64_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexce
 }
 
 CustomAllocator::CustomAllocator(Heap& heap, gc::GCSchedulerThreadData& gcScheduler) noexcept :
-    heap_(heap), gcScheduler_(gcScheduler), mediumPage_(nullptr) {
+    heap_(heap), gcScheduler_(gcScheduler), mediumPage_(nullptr), extraObjectPage_(nullptr) {
     CustomAllocInfo("CustomAllocator::CustomAllocator(heap)");
     memset(smallPages_, 0, sizeof(smallPages_));
 }
@@ -58,7 +64,12 @@ ObjHeader* CustomAllocator::CreateObject(const TypeInfo* typeInfo) noexcept {
     size_t allocSize = ObjectAllocatedDataSize(typeInfo);
     auto* heapObject = new (Allocate(allocSize)) HeapObjHeader();
     auto* object = &heapObject->object;
-    object->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
+    if (typeInfo->flags_ & TF_HAS_FINALIZER) {
+        auto* extraObject = CreateExtraObject();
+        object->typeInfoOrMeta_ = reinterpret_cast<TypeInfo*>(new (extraObject) mm::ExtraObjectData(object, typeInfo));
+    } else {
+        object->typeInfoOrMeta_ = const_cast<TypeInfo*>(typeInfo);
+    }
     return object;
 }
 
@@ -72,10 +83,40 @@ ArrayHeader* CustomAllocator::CreateArray(const TypeInfo* typeInfo, uint32_t cou
     return array;
 }
 
+mm::ExtraObjectData* CustomAllocator::CreateExtraObject() noexcept {
+    CustomAllocDebug("CustomAllocator::CreateExtraObject()");
+    ExtraObjectPage* page = extraObjectPage_;
+    if (page) {
+        mm::ExtraObjectData* block = page->TryAllocate();
+        if (block) {
+            memset(block, 0, sizeof(mm::ExtraObjectData));
+            return block;
+        }
+    }
+    CustomAllocDebug("Failed to allocate in current ExtraObjectPage");
+    while ((page = heap_.GetExtraObjectPage())) {
+        mm::ExtraObjectData* block = page->TryAllocate();
+        if (block) {
+            extraObjectPage_ = page;
+            memset(block, 0, sizeof(mm::ExtraObjectData));
+            return block;
+        }
+    }
+    return nullptr;
+}
+
+// static
+mm::ExtraObjectData& CustomAllocator::CreateExtraObjectDataForObject(
+        mm::ThreadData* threadData, ObjHeader* baseObject, const TypeInfo* info) noexcept {
+    mm::ExtraObjectData* extraObject = threadData->gc().impl().alloc().CreateExtraObject();
+    return *new (extraObject) mm::ExtraObjectData(baseObject, info);
+}
+
 void CustomAllocator::PrepareForGC() noexcept {
     CustomAllocInfo("CustomAllocator@%p::PrepareForGC()", this);
     mediumPage_ = nullptr;
     memset(smallPages_, 0, sizeof(smallPages_));
+    extraObjectPage_ = nullptr;
 }
 
 uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {

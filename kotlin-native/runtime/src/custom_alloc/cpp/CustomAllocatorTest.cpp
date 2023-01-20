@@ -11,7 +11,6 @@
 #include "Memory.h"
 #include "gtest/gtest.h"
 #include "Heap.hpp"
-#include "SmallPage.hpp"
 #include "TypeInfo.h"
 
 namespace {
@@ -19,7 +18,7 @@ namespace {
 using Heap = typename kotlin::alloc::Heap;
 using CustomAllocator = typename kotlin::alloc::CustomAllocator;
 
-#define MIN_BLOCK_SIZE 2
+inline constexpr int MIN_BLOCK_SIZE = 2;
 
 TEST(CustomAllocTest, SmallAllocNonNull) {
     const int N = 200;
@@ -59,7 +58,6 @@ TEST(CustomAllocTest, SmallAllocSameSmallPage) {
 TEST(CustomAllocTest, TwoAllocatorsDifferentPages) {
     for (int blocks = MIN_BLOCK_SIZE; blocks < 2000; ++blocks) {
         Heap heap;
-        kotlin::gc::GCScheduler scheduler;
         kotlin::gc::GCSchedulerConfig config;
         kotlin::gc::GCSchedulerThreadData schedulerData1(config, [](auto&) {});
         kotlin::gc::GCSchedulerThreadData schedulerData2(config, [](auto&) {});
@@ -70,6 +68,22 @@ TEST(CustomAllocTest, TwoAllocatorsDifferentPages) {
         uint8_t* obj2 = reinterpret_cast<uint8_t*>(ca2.CreateObject(&fakeType));
         uint64_t dist = abs(obj2 - obj1);
         EXPECT_TRUE(dist >= SMALL_PAGE_SIZE);
+    }
+}
+
+using Data = typename kotlin::mm::ExtraObjectData;
+
+TEST(CustomAllocTest, AllocExtraObjectNonNullZeroed) {
+    Heap heap;
+    kotlin::gc::GCSchedulerConfig config;
+    kotlin::gc::GCSchedulerThreadData schedulerData(config, [](auto&) {});
+    CustomAllocator ca(heap, schedulerData);
+    for (int i = 1; i < 10; ++i) {
+        uint8_t* obj = reinterpret_cast<uint8_t*>(ca.CreateExtraObject());
+        EXPECT_TRUE(obj);
+        for (size_t j = 0; j < sizeof(Data); ++j) {
+            EXPECT_FALSE(obj[j]);
+        }
     }
 }
 

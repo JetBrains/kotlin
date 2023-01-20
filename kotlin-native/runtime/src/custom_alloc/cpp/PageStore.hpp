@@ -16,8 +16,8 @@ template <class T>
 class PageStore {
 public:
     void PrepareForGC() noexcept {
-        unswept_.TransferAllFrom(used_);
-        unswept_.TransferAllFrom(ready_);
+        unswept_.TransferAllFrom(std::move(ready_));
+        unswept_.TransferAllFrom(std::move(used_));
         T* page;
         while ((page = empty_.Pop())) page->Destroy();
     }

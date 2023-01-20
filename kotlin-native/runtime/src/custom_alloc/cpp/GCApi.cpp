@@ -9,6 +9,8 @@
 
 #include "ConcurrentMarkAndSweep.hpp"
 #include "CustomLogging.hpp"
+#include "FinalizerHooks.hpp"
+#include "KAssert.h"
 #include "ObjectFactory.hpp"
 
 namespace kotlin::alloc {
@@ -19,14 +21,60 @@ bool TryResetMark(void* ptr) noexcept {
     Node& node = Node::FromData(ptr);
     NodeRef ref = NodeRef(node);
     auto& objectData = ref.ObjectData();
-    if (!objectData.tryResetMark()) {
-        auto* objHeader = ref.GetObjHeader();
-        if (HasFinalizers(objHeader)) {
-            CustomAllocWarning("FINALIZER IGNORED");
-        }
+    bool reset = objectData.tryResetMark();
+    CustomAllocDebug("TryResetMark(%p) = %d", ptr, reset);
+    return reset;
+}
+
+using ObjectFactory = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>;
+using ExtraObjectsFactory = mm::ExtraObjectDataFactory;
+
+static void KeepAlive(ObjHeader* baseObject) noexcept {
+    auto& objectData = ObjectFactory::NodeRef::From(baseObject).ObjectData();
+    objectData.tryMark();
+}
+
+static bool IsAlive(ObjHeader* baseObject) noexcept {
+    auto& objectData = ObjectFactory::NodeRef::From(baseObject).ObjectData();
+    return objectData.marked();
+}
+
+bool SweepExtraObject(ExtraObjectCell* extraObjectCell, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept {
+    auto* extraObject = extraObjectCell->Data();
+    if (extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
+        CustomAllocDebug("SweepIsCollectable(%p): already finalized", extraObject);
+        return true;
+    }
+    auto* baseObject = extraObject->GetBaseObject();
+    RuntimeAssert(baseObject->heap(), "SweepIsCollectable on a non-heap object");
+    if (extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
+        CustomAllocDebug("SweepIsCollectable(%p): already in finalizer queue, keep base object (%p) alive", extraObject, baseObject);
+        KeepAlive(baseObject);
         return false;
     }
-    return true;
+    if (IsAlive(baseObject)) {
+        return false;
+    }
+    extraObject->ClearWeakReferenceCounter();
+    if (extraObject->HasAssociatedObject()) {
+        extraObject->DetachAssociatedObject();
+        extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
+        finalizerQueue.Push(extraObjectCell);
+        KeepAlive(baseObject);
+        CustomAllocDebug("SweepIsCollectable(%p): add to finalizerQueue", extraObject);
+        return false;
+    } else {
+        if (HasFinalizers(baseObject)) {
+            extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
+            finalizerQueue.Push(extraObjectCell);
+            KeepAlive(baseObject);
+            CustomAllocDebug("SweepIsCollectable(%p): addings to finalizerQueue, keep base object (%p) alive", extraObject, baseObject);
+            return false;
+        }
+        extraObject->Uninstall();
+        CustomAllocDebug("SweepIsCollectable(%p): uninstalled extraObject", extraObject);
+        return true;
+    }
 }
 
 void* SafeAlloc(uint64_t size) noexcept {

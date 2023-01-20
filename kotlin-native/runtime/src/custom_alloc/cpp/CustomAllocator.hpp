@@ -9,6 +9,8 @@
 #include <atomic>
 #include <cstring>
 
+#include "ExtraObjectData.hpp"
+#include "ExtraObjectPage.hpp"
 #include "GCScheduler.hpp"
 #include "Heap.hpp"
 #include "MediumPage.hpp"
@@ -25,6 +27,11 @@ public:
 
     ArrayHeader* CreateArray(const TypeInfo* typeInfo, uint32_t count) noexcept;
 
+    mm::ExtraObjectData* CreateExtraObject() noexcept;
+
+    static mm::ExtraObjectData& CreateExtraObjectDataForObject(
+            mm::ThreadData* threadData, ObjHeader* baseObject, const TypeInfo* info) noexcept;
+
     void PrepareForGC() noexcept;
 
 private:
@@ -37,6 +44,7 @@ private:
     gc::GCSchedulerThreadData& gcScheduler_;
     MediumPage* mediumPage_;
     SmallPage* smallPages_[SMALL_PAGE_MAX_BLOCK_SIZE + 1];
+    ExtraObjectPage* extraObjectPage_;
 };
 
 } // namespace kotlin::alloc

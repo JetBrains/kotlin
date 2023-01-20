@@ -19,7 +19,7 @@ using Cell = typename kotlin::alloc::Cell;
 
 TypeInfo fakeType = {.flags_ = 0}; // a type without a finalizer
 
-#define MIN_BLOCK_SIZE (SMALL_PAGE_MAX_BLOCK_SIZE + 1)
+inline constexpr const size_t MIN_BLOCK_SIZE = SMALL_PAGE_MAX_BLOCK_SIZE + 1;
 
 void mark(void* obj) {
     reinterpret_cast<uint64_t*>(obj)[0] = 1;
