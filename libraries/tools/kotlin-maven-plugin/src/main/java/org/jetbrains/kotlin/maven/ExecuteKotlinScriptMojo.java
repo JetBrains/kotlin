@@ -169,6 +169,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             CompilerConfiguration configuration = new CompilerConfiguration();
 
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
+            configuration.put(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS, true);
 
             configuration.add(ComponentRegistrar.Companion.getPLUGIN_COMPONENT_REGISTRARS(),
                               new ScriptingCompilerConfigurationComponentRegistrar());
