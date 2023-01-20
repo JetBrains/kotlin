@@ -44,7 +44,7 @@ open class MetadataDependencyTransformationTask
 
     @get:OutputDirectory
     val outputsDir: File by project.provider {
-        project.kotlinTransformedMetadataLibraryDirectoryForBuild(kotlinSourceSet.name)
+        project.layout.kotlinTransformedMetadataLibraryDirectoryForBuild(kotlinSourceSet.name)
     }
 
     @Suppress("unused") // Gradle input

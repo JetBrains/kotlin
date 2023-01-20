@@ -52,7 +52,7 @@ internal fun Project.locateOrRegisterCInteropMetadataDependencyTransformationTas
         args = listOf(
             sourceSet,
             /* outputDirectory = */
-            project.kotlinTransformedCInteropMetadataLibraryDirectoryForBuild(sourceSet.name),
+            project.layout.kotlinTransformedCInteropMetadataLibraryDirectoryForBuild(sourceSet.name),
             /* outputLibraryFilesDiscovery = */
             CInteropMetadataDependencyTransformationTask.OutputLibraryFilesDiscovery.ScanOutputDirectory,
             /* cleaning = */
