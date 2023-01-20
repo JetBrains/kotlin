@@ -7,12 +7,18 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.Project
 import org.gradle.api.internal.TaskInternal
-import org.jetbrains.kotlin.gradle.util.MultiplatformExtensionTest
-import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
+import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrRegisterCInteropMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde
+import org.jetbrains.kotlin.gradle.util.MultiplatformExtensionTest
+import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.enableCInteropCommonization
+import org.jetbrains.kotlin.gradle.util.kotlin
+import java.io.File
 import kotlin.test.*
 
 class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionTest() {
@@ -109,5 +115,64 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
             linuxMainTask.get().onlyIf.isSatisfiedBy(linuxMainTask.get() as TaskInternal),
             "Expected task ${linuxMainTask.name} to be enabled"
         )
+    }
+
+    @Test
+    fun `test IDE task outputs doesnt conflict`() {
+        fun projectWithCinterops(name: String, parent: Project? = null) = buildProjectWithMPP(
+            projectBuilder = { withName(name); if (parent != null) withParent(parent) }
+        ) {
+            enableCInteropCommonization(true)
+            kotlin {
+                targetHierarchy.default()
+                linuxX64()
+                linuxArm64()
+            }
+        }
+
+        fun Project.transformationTaskOutputs(): Set<File> {
+            val kotlin = multiplatformExtension
+            val nativeMain = kotlin.sourceSets.findByName("nativeMain") ?: fail("Expected source set 'nativeMain")
+            val cinteropTransformationTaskProvider = locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(
+                nativeMain as DefaultKotlinSourceSet
+            ) ?: fail("Expected transformation task registered for '$nativeMain'")
+            val cinteropTransformationTask = cinteropTransformationTaskProvider.get()
+            val projectRootDir = rootDir
+            return cinteropTransformationTask
+                .outputs
+                .files
+                .map { it.relativeTo(projectRootDir) }
+                .toSet()
+                // common root directory where all transformations stored
+                .minus(File(".gradle/kotlin/kotlinTransformedCInteropMetadataLibraries"))
+        }
+
+        fun assertTasksOutputsDoesntIntersect(a: Project, b: Project) {
+            val outputsA = a.transformationTaskOutputs()
+            val outputsB = b.transformationTaskOutputs()
+
+            val intersection = outputsA intersect outputsB
+
+            assertTrue(
+                actual = intersection.isEmpty(),
+                message = """CInteropMetadataDependencyTransformationTaskForIde outputs conflicts for projects $a and $b :
+                    |Same output files: ${intersection.toList()}
+                """.trimMargin()
+            )
+        }
+
+        val rootProject = ProjectBuilder.builder().build()
+        val projectFoo = projectWithCinterops("foo", rootProject)
+        val projectFooBar = projectWithCinterops("bar", projectFoo)
+        val projectFooFoo = projectWithCinterops("foo", projectFoo)
+        val projectBar = projectWithCinterops("bar", rootProject)
+
+        assertTasksOutputsDoesntIntersect(projectFoo, projectBar)
+        assertTasksOutputsDoesntIntersect(projectFoo, projectFooBar)
+        assertTasksOutputsDoesntIntersect(projectFoo, projectFooFoo)
+
+        // KT-56087
+        // val projectFooDotBar = projectWithCinterops("foo.bar", rootProject)
+        // assertTasksOutputsDoesntIntersect(projectFooBar, projectFooDotBar)
     }
 }
