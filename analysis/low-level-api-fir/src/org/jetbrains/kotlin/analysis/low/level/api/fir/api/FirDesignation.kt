@@ -124,8 +124,11 @@ private fun collectDesignationPathWithContainingClass(target: FirDeclaration, co
         return declaration
     }
 
-    val chain = generateSequence(containingClassId) { it.outerClassId }.map { resolveChunk(it) }
-    return chain.toMutableList().also { it.reverse() }
+    return generateSequence(containingClassId) { it.outerClassId }
+        .dropWhile { it.shortClassName.isSpecial }
+        .map { resolveChunk(it) }
+        .toList()
+        .asReversed()
 }
 
 private fun getTargetSession(target: FirDeclaration): FirSession {

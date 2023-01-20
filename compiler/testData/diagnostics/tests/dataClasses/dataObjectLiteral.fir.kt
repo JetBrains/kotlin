@@ -6,5 +6,5 @@ interface I {
 }
 
 val o = <!UNRESOLVED_REFERENCE!>data<!><!SYNTAX!><!> object<!SYNTAX!><!>: I {
-    override fun foo() {}
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>override<!> fun foo() {}
 }
