@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
 import org.jetbrains.kotlin.gradle.utils.getOrPut
@@ -66,13 +65,5 @@ private constructor(
                     collectAllProjectStructureMetadataInCurrentBuild(project)
                 )
             }
-
-        private fun collectAllProjectStructureMetadataInCurrentBuild(project: Project): Map<String, Lazy<KotlinProjectStructureMetadata?>> {
-            return project
-                .rootProject
-                .allprojects
-                .associateBy { it.path }
-                .mapValues { (_, subProject) -> lazy { subProject.multiplatformExtensionOrNull?.kotlinProjectStructureMetadata } }
-        }
     }
 }
