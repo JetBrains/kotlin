@@ -86,6 +86,15 @@ open class JvmIrCodegenFactory(
         IdeCodegenSettings(shouldStubAndNotLinkUnboundSymbols = shouldStubAndNotLinkUnboundSymbols),
     )
 
+    init {
+        if (ideCodegenSettings.shouldDeduplicateBuiltInSymbols && !ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
+            throw IllegalStateException(
+                "`shouldDeduplicateBuiltInSymbols` depends on `shouldStubAndNotLinkUnboundSymbols` being enabled. Deduplication of" +
+                        " built-in symbols hasn't been tested without stubbing and there is currently no use case for it without stubbing."
+            )
+        }
+    }
+
     /**
      * @param shouldStubOrphanedExpectSymbols See [stubOrphanedExpectSymbols].
      * @param shouldDeduplicateBuiltInSymbols See [SymbolTableWithBuiltInsDeduplication].
