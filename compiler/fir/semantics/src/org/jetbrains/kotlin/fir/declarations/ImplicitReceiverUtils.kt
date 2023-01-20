@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstitutionForSuperType
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.Name
@@ -78,7 +79,7 @@ fun SessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType:
 
         superClass.staticScope(this)
             ?.wrapNestedClassifierScopeWithSubstitutionForSuperType(expandedType, session)
-            ?.asTowerDataElement(isLocal = false)
+            ?.asTowerDataElementForStaticScope(staticScopeOwnerSymbol = superClass.symbol)
             ?.let(superClassesStaticsAndCompanionReceivers::add)
 
         (superClass as? FirRegularClass)?.companionObjectSymbol?.let {
@@ -223,6 +224,7 @@ class FirTowerDataElement(
     val implicitReceiver: ImplicitReceiverValue<*>?,
     val contextReceiverGroup: ContextReceiverGroup? = null,
     val isLocal: Boolean,
+    val staticScopeOwnerSymbol: FirRegularClassSymbol? = null
 ) {
     fun createSnapshot(): FirTowerDataElement =
         FirTowerDataElement(
@@ -230,6 +232,7 @@ class FirTowerDataElement(
             implicitReceiver?.createSnapshot(),
             contextReceiverGroup?.map { it.createSnapshot() },
             isLocal,
+            staticScopeOwnerSymbol
         )
 }
 
@@ -241,6 +244,9 @@ fun ContextReceiverGroup.asTowerDataElement(): FirTowerDataElement =
 
 fun FirScope.asTowerDataElement(isLocal: Boolean): FirTowerDataElement =
     FirTowerDataElement(scope = this, implicitReceiver = null, isLocal = isLocal)
+
+fun FirScope.asTowerDataElementForStaticScope(staticScopeOwnerSymbol: FirRegularClassSymbol?): FirTowerDataElement =
+    FirTowerDataElement(scope = this, implicitReceiver = null, isLocal = false, staticScopeOwnerSymbol = staticScopeOwnerSymbol)
 
 fun FirClass.staticScope(sessionHolder: SessionHolder): FirContainingNamesAwareScope? =
     staticScope(sessionHolder.session, sessionHolder.scopeSession)
