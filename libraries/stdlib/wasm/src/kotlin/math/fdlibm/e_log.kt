@@ -78,7 +78,7 @@ private const val Lg7 = 1.479819860511658591e-01  /* 3FC2F112 DF3E5244 */
 private const val zero = 0.0
 
 internal fun __ieee754_log(x: Double): Double {
-    var x: Double = x
+    @Suppress("NAME_SHADOWING") var x: Double = x
     var hfsq: Double
     var f: Double
     var s: Double

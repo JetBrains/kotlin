@@ -28,7 +28,7 @@ private val TWO52 = doubleArrayOf(
 )
 
 internal fun rint(x: Double): Double {
-    var x: Double = x
+    @Suppress("NAME_SHADOWING") var x: Double = x
     var i0: Int
     var j0: Int
     var sx: Int

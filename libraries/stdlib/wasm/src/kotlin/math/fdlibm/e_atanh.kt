@@ -36,7 +36,7 @@ private const val huge = 1e300
 private const val zero = 0.0
 
 internal fun __ieee754_atanh(x: Double): Double {
-    var x: Double = x
+    @Suppress("NAME_SHADOWING") var x: Double = x
     var t: Double
     var hx: Int
     var ix: Int

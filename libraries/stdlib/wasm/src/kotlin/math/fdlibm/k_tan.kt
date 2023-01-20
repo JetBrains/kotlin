@@ -71,8 +71,8 @@ private val T = xxx
 /* INDENT ON */
 
 internal fun __kernel_tan(x: Double, y: Double, iy: Int): Double {
-    var x: Double = x
-    var y: Double = y
+    @Suppress("NAME_SHADOWING") var x: Double = x
+    @Suppress("NAME_SHADOWING") var y: Double = y
     var z: Double
     var r: Double
     var v: Double

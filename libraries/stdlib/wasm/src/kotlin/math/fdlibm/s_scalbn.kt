@@ -27,7 +27,7 @@ private const val huge = 1.0e+300
 private const val tiny = 1.0e-300
 
 internal fun scalbn(x: Double, n: Int): Double {
-    var x: Double = x
+    @Suppress("NAME_SHADOWING") var x: Double = x
     var k: Int
     var hx: Int
     var lx: Int

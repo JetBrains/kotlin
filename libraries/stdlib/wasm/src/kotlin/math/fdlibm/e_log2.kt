@@ -42,7 +42,7 @@ private const val ivln2 = 0.14426950408889634073e+01 /* 0x3ff71547, 0x652b82fe *
 private const val zero = 0.0
 
 internal fun __ieee754_log2(x: Double): Double {
-    var x: Double = x
+    @Suppress("NAME_SHADOWING") var x: Double = x
     var y: Double
     var z: Double
     var i: Int

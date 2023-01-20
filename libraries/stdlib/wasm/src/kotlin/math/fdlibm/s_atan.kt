@@ -66,7 +66,7 @@ private const val one = 1.0
 private const val huge = 1.0e300
 
 internal fun atan(x: Double): Double {
-    var x: Double = x
+    @Suppress("NAME_SHADOWING") var x: Double = x
     var w: Double
     var s1: Double
     var s2: Double

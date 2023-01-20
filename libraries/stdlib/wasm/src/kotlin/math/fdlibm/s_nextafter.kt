@@ -20,8 +20,8 @@
 package kotlin.math.fdlibm
 
 internal fun nextafter(x: Double, y: Double): Double {
-    var x: Double = x
-    var y: Double = y
+    @Suppress("NAME_SHADOWING") var x: Double = x
+    @Suppress("NAME_SHADOWING") var y: Double = y
     var hx: Int
     var hy: Int
     var ix: Int
