@@ -25,6 +25,7 @@ import java.lang.ref.SoftReference
 class LLFirSessionProviderStorage(val project: Project) {
     private val sourceAsUseSiteSessionCache = LLFirSessionsCache()
     private val libraryAsUseSiteSessionCache = LLFirSessionsCache()
+    private val scriptUseSiteSessionCache = LLFirSessionsCache()
 
     private val librariesSessionFactory = LLFirLibrarySessionFactory.getInstance(project)
     private val builtInsSessionFactory = LLFirBuiltinsSessionFactory.getInstance(project)
@@ -49,8 +50,33 @@ class LLFirSessionProviderStorage(val project: Project) {
             LLFirSessionProvider(project, session, KtModuleToSessionMappingByMapImpl(mapOf(useSiteKtModule to session)))
         }
 
+        is KtScriptModule -> {
+            createSessionProviderForScriptSession(useSiteKtModule, configureSession)
+        }
+
         else -> error("Unexpected ${useSiteKtModule::class.simpleName}")
     }
+
+    private fun createSessionProviderForScriptSession(
+        useSiteKtModule: KtScriptModule,
+        configureSession: (LLFirSession.() -> Unit)?
+    ): LLFirSessionProvider {
+        val (sessions, session) = scriptUseSiteSessionCache.withMappings(project) { mappings ->
+            val sessions = mutableMapOf<KtModule, LLFirSession>().apply { putAll(mappings) }
+            val session = LLFirSessionFactory.createScriptSession(
+                project,
+                useSiteKtModule,
+                globalComponents,
+                libraryAsUseSiteSessionCache.sessionInvalidator,
+                sessions,
+                librariesSessionFactory,
+                configureSession = configureSession,
+            )
+            sessions to session
+        }
+        return LLFirSessionProvider(project, session, KtModuleToSessionMappingByMapImpl(sessions))
+    }
+
 
 
     private fun createSessionProviderForSourceSession(

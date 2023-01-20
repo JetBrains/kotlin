@@ -128,6 +128,9 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
             is FirBackingField -> declarationDesignationsToResolve(target.propertySymbol.fir)
             is FirTypeParameter -> declarationDesignationsToResolve(target.containingDeclarationSymbol.fir)
             is FirValueParameter -> declarationDesignationsToResolve(target.containingFunctionSymbol.fir)
+            is FirScript -> listOf(
+                FirDesignationWithFile(emptyList(), target, target.getContainingFile()!!)
+            )
             is FirFile -> {
                 val validForResolveDeclarations = buildList {
                     add(target.annotationsContainer)

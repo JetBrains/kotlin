@@ -18,6 +18,14 @@ fun FirElementWithResolvePhase.getContainingFile(): FirFile? {
     return when (this) {
         is FirFile -> this
         is FirFileAnnotationsContainer -> containingFileSymbol.fir
+        is FirScript -> {
+            val ktFile = psi?.containingFile as? KtFile
+                ?: error("File for dangling modifier list cannot be null")
+            val moduleComponents = llFirResolvableSession?.moduleComponents
+                ?: error("LLFirResolvableModuleSession for dangling modifier list cannot be null")
+            moduleComponents.cache.getCachedFirFile(ktFile)
+                ?: error("Fir file for dandling modifier list cannot be null")
+        }
         is FirTypeParameter -> containingDeclarationSymbol.fir.getContainingFile()
         is FirPropertyAccessor -> propertySymbol.fir.getContainingFile()
         is FirValueParameter -> containingFunctionSymbol.fir.getContainingFile()

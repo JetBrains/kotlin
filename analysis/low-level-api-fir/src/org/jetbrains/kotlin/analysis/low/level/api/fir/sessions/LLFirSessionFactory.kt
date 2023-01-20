@@ -30,7 +30,10 @@ import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.*
+import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -42,6 +45,115 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal object LLFirSessionFactory {
+    fun createScriptSession(
+        project: Project,
+        module: KtScriptModule,
+        globalResolveComponents: LLFirGlobalResolveComponents,
+        sessionInvalidator: LLFirSessionInvalidator,
+        sessionsCache: MutableMap<KtModule, LLFirSession>,
+        librariesSessionFactory: LLFirLibrarySessionFactory,
+        configureSession: (LLFirSession.() -> Unit)? = null
+    ): LLFirScriptSession {
+        sessionsCache[module]?.let { return it as LLFirScriptSession }
+        checkCanceled()
+
+        val platform = module.platform
+        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform)
+
+        val languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
+
+        val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+
+        val components = LLFirModuleResolveComponents(module, globalResolveComponents, scopeProvider, sessionInvalidator)
+
+        val contentScope = module.contentScope
+        val session = LLFirScriptSession(
+            module,
+            project,
+            components,
+            builtinsSession.builtinTypes
+        )
+        sessionsCache[module] = session
+        components.session = session
+
+        return session.apply session@{
+            val moduleData = LLFirModuleData(module).apply { bindSession(this@session) }
+            registerModuleData(moduleData)
+            register(FirKotlinScopeProvider::class, scopeProvider)
+
+            registerIdeComponents(project)
+            registerCommonComponents(languageVersionSettings)
+            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
+            registerResolveComponents()
+            registerJavaSpecificResolveComponents()
+
+            val provider = LLFirProvider(
+                this,
+                components,
+                project.createDeclarationProvider(contentScope),
+                project.createPackageProvider(contentScope),
+                /* Source modules can contain `kotlin` package only if `-Xallow-kotlin-package` is specified, this is handled in LLFirProvider */
+                canContainKotlinPackage = false,
+            )
+
+            register(FirProvider::class, provider)
+            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
+
+            registerCompilerPluginServices(contentScope, project, module)
+            registerCompilerPluginExtensions(project, module)
+
+            val switchableExtensionDeclarationsSymbolProvider = FirSwitchableExtensionDeclarationsSymbolProvider.create(session)?.also {
+                register(FirSwitchableExtensionDeclarationsSymbolProvider::class, it)
+            }
+
+            val dependencyProvider = LLFirDependentModuleProvidersBySessions(this) {
+                module.directRegularDependencies.mapNotNullTo(this) { dependency ->
+                    when (dependency) {
+                        is KtBuiltinsModule -> null //  build in is already added
+                        is KtBinaryModule -> LLFirLibrarySessionFactory.getInstance(project).getLibrarySession(dependency, sessionsCache)
+                        is KtSourceModule -> {
+                            createSourcesSession(
+                                project,
+                                dependency,
+                                globalResolveComponents,
+                                sessionInvalidator,
+                                sessionsCache,
+                                librariesSessionFactory = librariesSessionFactory,
+                                configureSession = configureSession,
+                            )
+                        }
+                        is KtNotUnderContentRootModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
+                        is KtLibrarySourceModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
+                        is KtScriptModule -> TODO()
+                    }
+                }
+                add(builtinsSession)
+            }
+
+            val javaSymbolProvider = createJavaSymbolProvider(this, moduleData, project, contentScope)
+            register(
+                FirSymbolProvider::class,
+                LLFirModuleWithDependenciesSymbolProvider(
+                    this,
+                    dependencyProvider,
+                    providers = listOfNotNull(
+                        provider.symbolProvider,
+                        switchableExtensionDeclarationsSymbolProvider,
+                        javaSymbolProvider,
+                    ),
+                )
+            )
+            register(JavaSymbolProvider::class, javaSymbolProvider)
+
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
+            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+            register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
+
+            configureSession?.invoke(this)
+            extensionService.additionalCheckers.forEach(session.checkersComponent::register)
+        }
+    }
+
     fun createSourcesSession(
         project: Project,
         module: KtSourceModule,
@@ -130,6 +242,7 @@ internal object LLFirSessionFactory {
                         }
                         is KtNotUnderContentRootModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
                         is KtLibrarySourceModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
+                        is KtScriptModule -> TODO()
                     }
                 }
                 add(builtinsSession)

@@ -24,7 +24,6 @@ internal class LLFirLazyTransformerExecutor {
             towerDataContextCollector: FirTowerDataContextCollector?,
             firProviderInterceptor: FirProviderInterceptor?,
         ) {
-
             val lazyTransformer = LazyTransformerFactory.createLazyTransformer(
                 phase,
                 designation,

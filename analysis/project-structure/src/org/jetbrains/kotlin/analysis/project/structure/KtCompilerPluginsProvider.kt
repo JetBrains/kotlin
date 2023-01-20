@@ -14,5 +14,5 @@ public abstract class KtCompilerPluginsProvider {
     /**
      * Returns a list of extensions of a base [extensionType] which are registered for [module]
      */
-    public abstract fun <T : Any> getRegisteredExtensions(module: KtSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
+    public abstract fun <T : Any> getRegisteredExtensions(module: KtModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
 }

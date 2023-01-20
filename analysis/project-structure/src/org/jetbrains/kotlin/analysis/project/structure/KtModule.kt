@@ -146,6 +146,12 @@ public interface KtLibrarySourceModule : KtModule {
         get() = "Library sourced of $libraryName"
 }
 
+public interface KtScriptModule : KtModule {
+
+    override val moduleDescription: String
+        get() = "Script"
+}
+
 /**
  * Module which contains kotlin [builtins](https://kotlinlang.org/spec/built-in-types-and-their-semantics.html) for specific platform
  * Kotlin builtins are usually reside in the compiler, so [contentScope] and [getBinaryRoots] are empty

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -53,6 +52,15 @@ internal class LLFirResolveSessionService(project: Project) {
             val useSiteSession = sessionProvider.rootModuleSession
             return when (useSiteKtModule) {
                 is KtSourceModule -> {
+                    LLFirSourceResolveSession(
+                        useSiteSession.moduleComponents.globalResolveComponents,
+                        sessionProviderStorage.project,
+                        useSiteKtModule,
+                        sessionProvider,
+                    )
+                }
+
+                is KtScriptModule -> {
                     LLFirSourceResolveSession(
                         useSiteSession.moduleComponents.globalResolveComponents,
                         sessionProviderStorage.project,
