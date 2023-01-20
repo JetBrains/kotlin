@@ -5,6 +5,7 @@
 
 package kotlin.wasm.internal
 
+import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.wasm.internal.*
 
@@ -34,8 +35,8 @@ internal object PrimitiveClasses {
     val floatArrayClass = wasmGetKClass<FloatArray>()
     val doubleArrayClass = wasmGetKClass<DoubleArray>()
 
-    fun functionClass(arity: Int): KClassImpl<Any> {
+    fun functionClass(arity: Int): KClass<*> {
         //TODO FunctionN
-        return (if (arity == 0) wasmGetKClass<KFunction<*>>() else ErrorKClass) as KClassImpl<Any>
+        return (if (arity == 0) wasmGetKClass<KFunction<*>>() else ErrorKClass)
     }
 }
