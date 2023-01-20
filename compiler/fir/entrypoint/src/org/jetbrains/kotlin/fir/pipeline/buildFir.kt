@@ -32,7 +32,7 @@ fun FirSession.buildFirViaLightTree(
             it.readSourceFileWithMapping()
         }
         if (shouldCountLines) {
-            linesCount += linesMapping.lastOffset
+            linesCount += linesMapping.linesCount
         }
         builder.buildFirFile(code, file, linesMapping).also { firFile ->
             firProvider.recordFile(firFile)
