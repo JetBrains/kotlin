@@ -27,6 +27,10 @@ import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 
 class Candidate(
     override val symbol: FirBasedSymbol<*>,
+    // Here we may have an ExpressionReceiverValue
+    // - in case a use-site receiver is explicit
+    // - in some cases with static entities, no matter is a use-site receiver explicit or not
+    // OR we may have here a kind of ImplicitReceiverValue (non-statics only)
     override var dispatchReceiverValue: ReceiverValue?,
     // In most cases, it contains zero or single element
     // More than one, only in case of context receiver group

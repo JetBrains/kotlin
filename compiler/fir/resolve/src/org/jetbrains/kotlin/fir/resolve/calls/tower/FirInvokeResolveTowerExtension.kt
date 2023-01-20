@@ -382,7 +382,7 @@ private class InvokeFunctionResolveTask(
         )
 
         enumerateTowerLevels(
-            onScope = { scope, group ->
+            onScope = { scope, _, group ->
                 processLevelForRegularInvoke(
                     scope.toScopeTowerLevel(extensionReceiver = invokeReceiverValue),
                     info, group,

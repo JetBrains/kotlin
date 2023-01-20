@@ -150,7 +150,9 @@ fun FirRegularClassBuilder.generateEntriesGetter(
             moduleData, FirDeclarationOrigin.Source, returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),
             Visibilities.Public, symbol
         ).apply {
-            (status as FirDeclarationStatusImpl).isStatic = true
+            this.status = createStatus(this@generateEntriesGetter.status).apply {
+                isStatic = true
+            }
         }
     }.apply {
         containingClassForStaticMemberAttr = this@generateEntriesGetter.symbol.toLookupTag()
