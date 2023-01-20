@@ -27,5 +27,11 @@ public interface KtKeywordRenderer {
             printer.append(keyword.value)
         }
     }
+
+    public object NONE : KtKeywordRenderer {
+        context(KtAnalysisSession)
+        override fun renderKeyword(keyword: KtKeywordToken, owner: KtAnnotated, printer: PrettyPrinter) {
+        }
+    }
 }
 
