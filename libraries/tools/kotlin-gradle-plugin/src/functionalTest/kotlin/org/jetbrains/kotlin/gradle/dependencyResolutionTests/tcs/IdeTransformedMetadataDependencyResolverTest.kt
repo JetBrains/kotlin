@@ -7,15 +7,15 @@
 
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
-import org.jetbrains.kotlin.gradle.dependencyResolutionTests.kpm.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeTransformedMetadataDependencyResolver
+import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
 import org.jetbrains.kotlin.gradle.util.enableDependencyVerification
-import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.junit.Test
 
 class IdeTransformedMetadataDependencyResolverTest {
