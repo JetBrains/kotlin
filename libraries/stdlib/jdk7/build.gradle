@@ -15,12 +15,6 @@ sourceSets {
     }
     test {
         kotlin {
-            srcDir 'test'
-            if(!BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
-                srcDir '../jvm/test'
-                srcDir '../common/test'
-                srcDir '../test'
-            }
         }
     }
     noJdk7Test {
@@ -94,20 +88,6 @@ configureFrontendIr(project)
 
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk7')
 
-task testJdk6Tests(type: Test) {
-    dependsOn(':kotlin-stdlib:testClasses')
-    group = "verification"
-    def kotlinStdLibTestOutput = project(':kotlin-stdlib').sourceSets.test.output
-    def objectFactory = project.objects
-    doFirst {
-        testClassesDirs = kotlinStdLibTestOutput
-        classpath = objectFactory.fileCollection().from(
-                testClassesDirs,
-                sourceSets.test.compileClasspath
-        )
-    }
-}
-
 task testNoJdk7(type: Test, dependsOn: noJdk7TestClasses) {
     group = "verification"
 
@@ -115,5 +95,5 @@ task testNoJdk7(type: Test, dependsOn: noJdk7TestClasses) {
     classpath = sourceSets.noJdk7Test.runtimeClasspath
 }
 
-check.dependsOn testJdk6Tests, testNoJdk7
+check.dependsOn testNoJdk7
 

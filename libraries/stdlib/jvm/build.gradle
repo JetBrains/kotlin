@@ -35,6 +35,8 @@ sourceSets {
     test {
         kotlin {
             srcDir 'test'
+            srcDir '../jdk7/test'
+            srcDir '../jdk8/test'
         }
     }
     longRunningTest {
@@ -77,6 +79,10 @@ dependencies {
     mainJdk8Api sourceSets.mainJdk7.output
 
     testApi project(':kotlin-test:kotlin-test-junit')
+    if (BuildPropertiesKt.getKotlinBuildProperties(project).inIdeaSync) {
+        testCompileOnly sourceSets.mainJdk7.output
+        testCompileOnly sourceSets.mainJdk8.output
+    }
 
     builtins project(':core:builtins')
 }
@@ -176,8 +182,10 @@ compileTestKotlin {
                 "-opt-in=kotlin.RequiresOptIn",
                 "-opt-in=kotlin.ExperimentalUnsignedTypes",
                 "-opt-in=kotlin.ExperimentalStdlibApi",
+                "-opt-in=kotlin.io.path.ExperimentalPathApi",
                 "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
                 "-XXLanguage:+RangeUntilOperator",
+                "-Xallow-kotlin-package", // TODO: maybe rename test packages
         ]
         // This is needed for JavaTypeTest; typeOf for non-reified type parameters doesn't work otherwise, for implementation reasons.
         def args = new ArrayList(freeCompilerArgs)
@@ -186,8 +194,11 @@ compileTestKotlin {
     }
 }
 
-test {
-    systemProperty("supportsNamedCapturingGroup", false)
+[JdkMajorVersion.JDK_9_0, JdkMajorVersion.JDK_10_0, JdkMajorVersion.JDK_11_0].forEach { jvmVersion ->
+    check.dependsOn(tasks.register("jdk${jvmVersion.majorVersion}Test", Test) { thisTask ->
+        group = "verification"
+        thisTask.javaLauncher.set(JvmToolchain.getToolchainLauncherFor(project, jvmVersion))
+    })
 }
 
 compileLongRunningTestKotlin {
