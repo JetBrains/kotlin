@@ -56,26 +56,10 @@ artifacts {
 }
 
 compileKotlin {
-    kotlinOptions.freeCompilerArgs = [
-            "-Xallow-kotlin-package",
-            "-Xmultifile-parts-inherit",
-            "-Xno-new-java-annotation-targets",
-    ]
     kotlinOptions.moduleName = project.name
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = [
-            "-Xallow-kotlin-package",
-            "-Xmulti-platform",
-            "-opt-in=kotlin.RequiresOptIn",
-            "-opt-in=kotlin.ExperimentalUnsignedTypes",
-            "-opt-in=kotlin.ExperimentalStdlibApi",
-            "-opt-in=kotlin.io.path.ExperimentalPathApi",
-            "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
-            "-Xcommon-sources=${fileTree('../test').join(',')}",
-            "-XXLanguage:+RangeUntilOperator",
-    ]
 }
 
 configureFrontendIr(project)

@@ -47,28 +47,10 @@ artifacts {
 compileKotlin {
     kotlinJavaToolchain.toolchain.use(JvmToolchain.getToolchainLauncherFor(project, JdkMajorVersion.JDK_1_7))
     kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs = [
-            "-Xallow-kotlin-package",
-            "-Xmultifile-parts-inherit",
-            "-opt-in=kotlin.RequiresOptIn",
-            "-opt-in=kotlin.contracts.ExperimentalContracts",
-            "-Xno-new-java-annotation-targets",
-    ]
     kotlinOptions.moduleName = project.name
 }
 
 compileTestKotlin {
-    kotlinOptions.freeCompilerArgs = [
-            "-Xallow-kotlin-package",
-            "-Xmulti-platform",
-            "-opt-in=kotlin.RequiresOptIn",
-            "-opt-in=kotlin.ExperimentalUnsignedTypes",
-            "-opt-in=kotlin.ExperimentalStdlibApi",
-            "-opt-in=kotlin.io.path.ExperimentalPathApi",
-            "-opt-in=kotlin.io.encoding.ExperimentalEncodingApi",
-            "-Xcommon-sources=${fileTree('../test').join(',')}",
-            "-XXLanguage:+RangeUntilOperator",
-    ]
 }
 
 tasks.withType(Test) {
