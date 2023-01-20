@@ -110,8 +110,8 @@ internal fun log1p(x: Double): Double {
     k = 1
     if (hx < 0x3FDA827A) {            /* x < 0.41422  */
         if (ax >= 0x3ff00000) {        /* x <= -1.0 */
-            if (x == -1.0) return -two54 / zero /* log1p(-1)=+inf */
-            else return (x - x) / (x - x)    /* log1p(x<-1)=NaN */
+            if (x == -1.0) return Double.NEGATIVE_INFINITY /* log1p(-1)=-inf */
+            else return Double.NaN    /* log1p(x<-1)=NaN */
         }
         if (ax < 0x3e200000) {            /* |x| < 2**-29 */
             if (two54 + x > zero            /* raise inexact */
