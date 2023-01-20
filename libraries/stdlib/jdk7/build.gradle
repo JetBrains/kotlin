@@ -17,20 +17,11 @@ sourceSets {
         kotlin {
         }
     }
-    noJdk7Test {
-        kotlin {
-            srcDir 'testNoJdk7'
-        }
-    }
     java9 {
         java {
             srcDir 'java9'
         }
     }
-}
-
-configurations {
-    noJdk7TestApi.extendsFrom(testApi)
 }
 
 dependencies {
@@ -88,12 +79,4 @@ configureFrontendIr(project)
 
 LibrariesCommon.configureJava9Compilation(project, 'kotlin.stdlib.jdk7')
 
-task testNoJdk7(type: Test, dependsOn: noJdk7TestClasses) {
-    group = "verification"
-
-    testClassesDirs = sourceSets.noJdk7Test.output.classesDirs
-    classpath = sourceSets.noJdk7Test.runtimeClasspath
-}
-
-check.dependsOn testNoJdk7
 

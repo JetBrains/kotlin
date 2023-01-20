@@ -85,7 +85,19 @@ class ExceptionJVMTest {
     @Test
     fun addSuppressedSelfDoesNotThrow() {
         val e1 = Throwable()
-        e1.addSuppressed(e1) // should not throw
+        e1.addSuppressed(e1) // should not throw, extension hides member
+    }
+
+    @Test
+    fun addSuppressedWorksThroughExtension() {
+        val e1 = Throwable()
+        val e2 = Exception("Suppressed")
+
+        assertTrue(e1.suppressedExceptions.isEmpty())
+        e1.addSuppressed(e2)
+
+        assertSame(e2, e1.suppressed.singleOrNull())
+        assertSame(e2, e1.suppressedExceptions.singleOrNull())
     }
 
     @Test
