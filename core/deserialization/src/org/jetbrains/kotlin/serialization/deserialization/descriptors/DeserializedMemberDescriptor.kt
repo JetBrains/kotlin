@@ -74,36 +74,36 @@ class DeserializedSimpleFunctionDescriptor(
 }
 
 class DeserializedPropertyDescriptor(
-        containingDeclaration: DeclarationDescriptor,
-        original: PropertyDescriptor?,
-        annotations: Annotations,
-        modality: Modality,
-        visibility: DescriptorVisibility,
-        isVar: Boolean,
-        name: Name,
-        kind: CallableMemberDescriptor.Kind,
-        isLateInit: Boolean,
-        isConst: Boolean,
-        isExternal: Boolean,
-        isDelegated: Boolean,
-        isExpect: Boolean,
-        override val proto: ProtoBuf.Property,
-        override val nameResolver: NameResolver,
-        override val typeTable: TypeTable,
-        override val versionRequirementTable: VersionRequirementTable,
-        override val containerSource: DeserializedContainerSource?
+    containingDeclaration: DeclarationDescriptor,
+    original: PropertyDescriptor?,
+    annotations: Annotations,
+    modality: Modality,
+    visibility: DescriptorVisibility,
+    isVar: Boolean,
+    name: Name,
+    kind: CallableMemberDescriptor.Kind,
+    isLateInit: Boolean,
+    isConst: Boolean,
+    isExternal: Boolean,
+    isDelegated: Boolean,
+    isExpect: Boolean,
+    override val proto: ProtoBuf.Property,
+    override val nameResolver: NameResolver,
+    override val typeTable: TypeTable,
+    override val versionRequirementTable: VersionRequirementTable,
+    override val containerSource: DeserializedContainerSource?
 ) : DeserializedCallableMemberDescriptor, PropertyDescriptorImpl(
     containingDeclaration, original, annotations, modality, visibility, isVar, name, kind, SourceElement.NO_SOURCE,
     isLateInit, isConst, isExpect, false, isExternal, isDelegated
 ) {
     override fun createSubstitutedCopy(
-            newOwner: DeclarationDescriptor,
-            newModality: Modality,
-            newVisibility: DescriptorVisibility,
-            original: PropertyDescriptor?,
-            kind: CallableMemberDescriptor.Kind,
-            newName: Name,
-            source: SourceElement
+        newOwner: DeclarationDescriptor,
+        newModality: Modality,
+        newVisibility: DescriptorVisibility,
+        original: PropertyDescriptor?,
+        kind: CallableMemberDescriptor.Kind,
+        newName: Name,
+        source: SourceElement
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
             newOwner, original, annotations, newModality, newVisibility, isVar, newName, kind, isLateInit, isConst, isExternal,
@@ -155,19 +155,18 @@ class DeserializedClassConstructorDescriptor(
 }
 
 class DeserializedTypeAliasDescriptor(
-        override val storageManager: StorageManager,
-        containingDeclaration: DeclarationDescriptor,
-        annotations: Annotations,
-        name: Name,
-        visibility: DescriptorVisibility,
-        override val proto: ProtoBuf.TypeAlias,
-        override val nameResolver: NameResolver,
-        override val typeTable: TypeTable,
-        override val versionRequirementTable: VersionRequirementTable,
-        override val containerSource: DeserializedContainerSource?
-) : AbstractTypeAliasDescriptor(containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
+    storageManager: StorageManager,
+    containingDeclaration: DeclarationDescriptor,
+    annotations: Annotations,
+    name: Name,
+    visibility: DescriptorVisibility,
+    override val proto: ProtoBuf.TypeAlias,
+    override val nameResolver: NameResolver,
+    override val typeTable: TypeTable,
+    override val versionRequirementTable: VersionRequirementTable,
+    override val containerSource: DeserializedContainerSource?
+) : AbstractTypeAliasDescriptor(storageManager, containingDeclaration, annotations, name, SourceElement.NO_SOURCE, visibility),
     DeserializedMemberDescriptor {
-    override lateinit var constructors: Collection<TypeAliasConstructorDescriptor> private set
 
     override lateinit var underlyingType: SimpleType private set
     override lateinit var expandedType: SimpleType private set
@@ -184,7 +183,6 @@ class DeserializedTypeAliasDescriptor(
         this.expandedType = expandedType
         typeConstructorParameters = computeConstructorTypeParameters()
         defaultTypeImpl = computeDefaultType()
-        constructors = getTypeAliasConstructors()
     }
 
     override val classDescriptor: ClassDescriptor?
