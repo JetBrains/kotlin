@@ -304,7 +304,7 @@ class IrParcelSerializerFactory(private val symbols: AndroidSymbols) {
     private val shortSerializer = IrWrappedIntParcelSerializer(irBuiltIns.shortType)
     private val charSerializer = IrWrappedIntParcelSerializer(irBuiltIns.charType)
     private val shortArraySerializer = IrArrayParcelSerializer(
-        irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.shortType).defaultType,
+        irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.shortType)),
         irBuiltIns.shortType,
         shortSerializer
     )

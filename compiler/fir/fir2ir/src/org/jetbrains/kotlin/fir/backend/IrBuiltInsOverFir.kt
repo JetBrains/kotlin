@@ -163,8 +163,22 @@ class IrBuiltInsOverFir(
     ) {
         configureSuperTypes()
         createProperty("length", intType, modality = Modality.ABSTRACT)
-        createMemberFunction(OperatorNameConventions.GET, charType, "index" to intType, modality = Modality.ABSTRACT, isOperator = true, isIntrinsicConst = false)
-        createMemberFunction("subSequence", defaultType, "startIndex" to intType, "endIndex" to intType, modality = Modality.ABSTRACT, isIntrinsicConst = false)
+        createMemberFunction(
+            OperatorNameConventions.GET,
+            charType,
+            "index" to intType,
+            modality = Modality.ABSTRACT,
+            isOperator = true,
+            isIntrinsicConst = false
+        )
+        createMemberFunction(
+            "subSequence",
+            defaultType,
+            "startIndex" to intType,
+            "endIndex" to intType,
+            modality = Modality.ABSTRACT,
+            isIntrinsicConst = false
+        )
         finalizeClassDefinition()
     }
     override val charSequenceClass: IrClassSymbol get() = charSequence.klass
@@ -332,41 +346,6 @@ class IrBuiltInsOverFir(
             else -> intType
         }
 
-    private val _booleanArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.BOOLEAN)
-    private val _charArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.CHAR)
-    private val _byteArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.BYTE)
-    private val _shortArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.SHORT)
-    private val _intArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.INT)
-    private val _longArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.LONG)
-    private val _floatArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.FLOAT)
-    private val _doubleArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.DOUBLE)
-
-    override val booleanArray: IrClassSymbol get() = _booleanArray.klass
-    override val charArray: IrClassSymbol get() = _charArray.klass
-    override val byteArray: IrClassSymbol get() = _byteArray.klass
-    override val shortArray: IrClassSymbol get() = _shortArray.klass
-    override val intArray: IrClassSymbol get() = _intArray.klass
-    override val longArray: IrClassSymbol get() = _longArray.klass
-    override val floatArray: IrClassSymbol get() = _floatArray.klass
-    override val doubleArray: IrClassSymbol get() = _doubleArray.klass
-
-    override val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType> by lazy {
-        mapOf(
-            booleanArray to PrimitiveType.BOOLEAN,
-            charArray to PrimitiveType.CHAR,
-            byteArray to PrimitiveType.BYTE,
-            shortArray to PrimitiveType.SHORT,
-            intArray to PrimitiveType.INT,
-            longArray to PrimitiveType.LONG,
-            floatArray to PrimitiveType.FLOAT,
-            doubleArray to PrimitiveType.DOUBLE
-        )
-    }
-
-    override val primitiveTypesToPrimitiveArrays get() = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
-    override val primitiveArrayElementTypes get() = primitiveArraysToPrimitiveTypes.mapValues { primitiveTypeToIrType[it.value] }
-    override val primitiveArrayForType get() = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
-
     private val _ieee754equalsFunByOperandType = mutableMapOf<IrClassifierSymbol, IrSimpleFunctionSymbol>()
     override val ieee754equalsFunByOperandType: MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>
         get() = _ieee754equalsFunByOperandType
@@ -394,6 +373,12 @@ class IrBuiltInsOverFir(
         findFunctions(kotlinPackage, Name.identifier("vArrayOfNulls")).first {
             it.owner.dispatchReceiverParameter == null && it.owner.valueParameters.size == 1 &&
                     it.owner.valueParameters[0].type == intType
+        }
+    }
+
+    override val intArrayFactory: IrSimpleFunctionSymbol by lazy {
+        findFunctions(kotlinPackage, Name.identifier("IntArray")).first {
+            it.owner.dispatchReceiverParameter == null && it.owner.valueParameters.size == 1 && it.owner.valueParameters[0].type == intType
         }
     }
 
@@ -434,9 +419,21 @@ class IrBuiltInsOverFir(
             throwCceSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_CCE, nothingType)
             throwIseSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_ISE, nothingType)
             andandSymbol =
-                addBuiltinOperatorSymbol(BuiltInOperatorNames.ANDAND, booleanType, "" to booleanType, "" to booleanType, isIntrinsicConst = true)
+                addBuiltinOperatorSymbol(
+                    BuiltInOperatorNames.ANDAND,
+                    booleanType,
+                    "" to booleanType,
+                    "" to booleanType,
+                    isIntrinsicConst = true
+                )
             ororSymbol =
-                addBuiltinOperatorSymbol(BuiltInOperatorNames.OROR, booleanType, "" to booleanType, "" to booleanType, isIntrinsicConst = true)
+                addBuiltinOperatorSymbol(
+                    BuiltInOperatorNames.OROR,
+                    booleanType,
+                    "" to booleanType,
+                    "" to booleanType,
+                    isIntrinsicConst = true
+                )
             noWhenBranchMatchedExceptionSymbol =
                 addBuiltinOperatorSymbol(BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothingType)
             illegalArgumentExceptionSymbol =
@@ -464,7 +461,15 @@ class IrBuiltInsOverFir(
             }
 
             fun List<IrType>.defineComparisonOperatorForEachIrType(name: String) =
-                associate { it.classifierOrFail to addBuiltinOperatorSymbol(name, booleanType, "" to it, "" to it, isIntrinsicConst = true) }
+                associate {
+                    it.classifierOrFail to addBuiltinOperatorSymbol(
+                        name,
+                        booleanType,
+                        "" to it,
+                        "" to it,
+                        isIntrinsicConst = true
+                    )
+                }
 
             lessFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS)
             lessOrEqualFunByOperandType =
@@ -929,7 +934,11 @@ class IrBuiltInsOverFir(
 
         val irFun4SignatureCalculation = makeWithSymbol(IrSimpleFunctionSymbolImpl())
         val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
-        return components.symbolTable.declareSimpleFunction(signature, { IrSimpleFunctionPublicSymbolImpl(signature, null) }, ::makeWithSymbol)
+        return components.symbolTable.declareSimpleFunction(
+            signature,
+            { IrSimpleFunctionPublicSymbolImpl(signature, null) },
+            ::makeWithSymbol
+        )
     }
 
     private fun IrClass.addArrayMembers(elementType: IrType) {
@@ -941,7 +950,14 @@ class IrBuiltInsOverFir(
             it.addValueParameter("size", intType, object : IrDeclarationOriginImpl("BUILTIN_CLASS_CONSTRUCTOR") {})
         }
         createMemberFunction(OperatorNameConventions.GET, elementType, "index" to intType, isOperator = true, isIntrinsicConst = false)
-        createMemberFunction(OperatorNameConventions.SET, unitType, "index" to intType, "value" to elementType, isOperator = true, isIntrinsicConst = false)
+        createMemberFunction(
+            OperatorNameConventions.SET,
+            unitType,
+            "index" to intType,
+            "value" to elementType,
+            isOperator = true,
+            isIntrinsicConst = false
+        )
         createProperty("size", intType)
     }
 

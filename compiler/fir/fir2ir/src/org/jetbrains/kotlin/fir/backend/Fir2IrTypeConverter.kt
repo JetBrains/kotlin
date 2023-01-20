@@ -275,14 +275,8 @@ class Fir2IrTypeConverter(
             else -> false
         }
 
-    private fun getArrayClassSymbol(classId: ClassId?): IrClassSymbol? {
-        val primitiveId = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: return null
-        val irType = classIdToTypeMap[primitiveId]
-        return irBuiltIns.primitiveArrayForType[irType] ?: error("Strange primitiveId $primitiveId from array: $classId")
-    }
-
     private fun getBuiltInClassSymbol(classId: ClassId?): IrClassSymbol? {
-        return classIdToSymbolMap[classId] ?: getArrayClassSymbol(classId)
+        return classIdToSymbolMap[classId]
     }
 
     private fun approximateType(type: ConeSimpleKotlinType): ConeKotlinType {

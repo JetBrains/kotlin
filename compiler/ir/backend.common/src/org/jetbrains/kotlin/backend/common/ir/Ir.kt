@@ -111,6 +111,7 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
     val long get() = irBuiltIns.longClass
     val float get() = irBuiltIns.floatClass
     val double get() = irBuiltIns.doubleClass
+    val boolean get() = irBuiltIns.booleanClass
 
     val integerClasses = listOf(byte, short, int, long)
 
@@ -125,29 +126,18 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
     val array get() = irBuiltIns.arrayClass
     val vArray get() = irBuiltIns.vArrayClass
 
-    val byteArray get() = irBuiltIns.byteArray
-    val charArray get() = irBuiltIns.charArray
-    val shortArray get() = irBuiltIns.shortArray
-    val intArray get() = irBuiltIns.intArray
-    val longArray get() = irBuiltIns.longArray
-    val floatArray get() = irBuiltIns.floatArray
-    val doubleArray get() = irBuiltIns.doubleArray
-    val booleanArray get() = irBuiltIns.booleanArray
+    val byteArrayType get() = irBuiltIns.vArrayClass.typeWith(listOf(byte.defaultType))
+    val charArrayType get() = irBuiltIns.vArrayClass.typeWith(listOf(char.defaultType))
+    val shortArrayType get() = irBuiltIns.vArrayClass.typeWith(listOf(short.defaultType))
+    val intArrayType get() = irBuiltIns.vArrayClass.typeWith(listOf(int.defaultType))
+    val longArrayType get() = irBuiltIns.vArrayClass.typeWith(listOf(long.defaultType))
+    val floatArrayType get() = irBuiltIns.vArrayClass.typeWith(listOf(float.defaultType))
+    val doubleArrayType get() = irBuiltIns.vArrayClass.typeWith(listOf(double.defaultType))
+    val booleanArrayType get() = irBuiltIns.vArrayClass.typeWith(listOf(boolean.defaultType))
 
-    val byteArrayType get() = byteArray.owner.defaultType
-    val charArrayType get() = charArray.owner.defaultType
-    val shortArrayType get() = shortArray.owner.defaultType
-    val intArrayType get() = intArray.owner.defaultType
-    val longArrayType get() = longArray.owner.defaultType
-    val floatArrayType get() = floatArray.owner.defaultType
-    val doubleArrayType get() = doubleArray.owner.defaultType
-    val booleanArrayType get() = booleanArray.owner.defaultType
-
-    val primitiveTypesToPrimitiveArrays get() = irBuiltIns.primitiveTypesToPrimitiveArrays
-    val primitiveArraysToPrimitiveTypes get() = irBuiltIns.primitiveArraysToPrimitiveTypes
     val unsignedTypesToUnsignedArrays get() = irBuiltIns.unsignedTypesToUnsignedArrays
 
-    val arrays get() = primitiveTypesToPrimitiveArrays.values + unsignedTypesToUnsignedArrays.values + array
+    val arrays get() = unsignedTypesToUnsignedArrays.values + array + vArray
 
     val collection get() = irBuiltIns.collectionClass
     val set get() = irBuiltIns.setClass

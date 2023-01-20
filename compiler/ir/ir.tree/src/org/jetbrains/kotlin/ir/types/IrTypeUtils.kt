@@ -57,26 +57,21 @@ val IrType.isBoxedArray: Boolean
 val IrType.isVArray: Boolean
     get() = classOrNull?.owner?.fqNameWhenAvailable == StandardNames.FqNames.vArray.toSafe()
 
-fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
-    if (isBoxedArray || isVArray) {
-        when (val argument = (this as IrSimpleType).arguments.singleOrNull()) {
-            is IrTypeProjection ->
-                argument.type
-            is IrStarProjection ->
-                irBuiltIns.anyNType
-            else ->
-                error("Unexpected array argument type: $argument")
-        }
-    } else {
-        val classifier = this.classOrNull!!
-        irBuiltIns.primitiveArrayElementTypes[classifier]
-            ?: throw AssertionError("Primitive array expected: $classifier")
+fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType {
+    require(isBoxedArray || isVArray) { "Array of VArray expected" }
+    return when (val argument = (this as IrSimpleType).arguments.singleOrNull()) {
+        is IrTypeProjection ->
+            argument.type
+        is IrStarProjection ->
+            irBuiltIns.anyNType
+        else ->
+            error("Unexpected array argument type: $argument")
     }
+}
 
 fun IrType.toArrayOrPrimitiveArrayType(irBuiltIns: IrBuiltIns): IrType =
     if (isPrimitiveType()) {
-        irBuiltIns.primitiveArrayForType[this]?.defaultType
-            ?: throw AssertionError("$this not in primitiveArrayForType")
+        irBuiltIns.vArrayClass.typeWith(this)
     } else {
         irBuiltIns.arrayClass.typeWith(this)
     }

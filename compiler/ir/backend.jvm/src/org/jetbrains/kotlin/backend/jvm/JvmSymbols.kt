@@ -890,7 +890,7 @@ class JvmSymbols(
                 addValueParameter("element", irType)
             }
 
-            klass.addFunction("toArray", irBuiltIns.primitiveArrayForType.getValue(irType).defaultType)
+            klass.addFunction("toArray", irBuiltIns.vArrayClass.typeWith(listOf(irType)))
         }
     }
 

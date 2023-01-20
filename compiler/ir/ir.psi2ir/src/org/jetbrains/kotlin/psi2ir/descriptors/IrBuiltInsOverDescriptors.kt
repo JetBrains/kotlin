@@ -75,7 +75,8 @@ class IrBuiltInsOverDescriptors(
     private val builtInsModule = builtIns.builtInsModule
 
     private val kotlinInternalPackage = StandardClassIds.BASE_INTERNAL_PACKAGE
-    private val kotlinInternalIrPackage = IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(builtInsModule, kotlinInternalPackage)
+    private val kotlinInternalIrPackage =
+        IrExternalPackageFragmentImpl.createEmptyExternalPackageFragment(builtInsModule, kotlinInternalPackage)
 
     private val packageFragmentDescriptor = IrBuiltinsPackageFragmentDescriptorImpl(builtInsModule, KOTLIN_INTERNAL_IR_FQN)
     override val operatorsPackageFragment: IrExternalPackageFragment =
@@ -375,21 +376,6 @@ class IrBuiltInsOverDescriptors(
     override val primitiveIrTypesWithComparisons = listOf(charType, byteType, shortType, intType, floatType, longType, doubleType)
     override val primitiveFloatingPointIrTypes = listOf(floatType, doubleType)
 
-    override val byteArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BYTE).toIrSymbol()
-    override val charArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.CHAR).toIrSymbol()
-    override val shortArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.SHORT).toIrSymbol()
-    override val intArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.INT).toIrSymbol()
-    override val longArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.LONG).toIrSymbol()
-    override val floatArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.FLOAT).toIrSymbol()
-    override val doubleArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.DOUBLE).toIrSymbol()
-    override val booleanArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BOOLEAN).toIrSymbol()
-
-    override val primitiveArraysToPrimitiveTypes =
-        PrimitiveType.values().associate { builtIns.getPrimitiveArrayClassDescriptor(it).toIrSymbol() to it }
-    override val primitiveTypesToPrimitiveArrays = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
-    override val primitiveArrayElementTypes = primitiveArraysToPrimitiveTypes.mapValues { primitiveTypeToIrType[it.value] }
-    override val primitiveArrayForType = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }
-
     override val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol> =
         UnsignedType.values().mapNotNull { unsignedType ->
             val array = builtIns.builtInsModule.findClassAcrossModuleDependencies(unsignedType.arrayClassId)?.toIrSymbol()
@@ -422,8 +408,10 @@ class IrBuiltInsOverDescriptors(
     override val eqeqSymbol = defineOperator(BuiltInOperatorNames.EQEQ, booleanType, listOf(anyNType, anyNType), isIntrinsicConst = true)
     override val throwCceSymbol = defineOperator(BuiltInOperatorNames.THROW_CCE, nothingType, listOf())
     override val throwIseSymbol = defineOperator(BuiltInOperatorNames.THROW_ISE, nothingType, listOf())
-    override val andandSymbol = defineOperator(BuiltInOperatorNames.ANDAND, booleanType, listOf(booleanType, booleanType), isIntrinsicConst = true)
-    override val ororSymbol = defineOperator(BuiltInOperatorNames.OROR, booleanType, listOf(booleanType, booleanType), isIntrinsicConst = true)
+    override val andandSymbol =
+        defineOperator(BuiltInOperatorNames.ANDAND, booleanType, listOf(booleanType, booleanType), isIntrinsicConst = true)
+    override val ororSymbol =
+        defineOperator(BuiltInOperatorNames.OROR, booleanType, listOf(booleanType, booleanType), isIntrinsicConst = true)
     override val noWhenBranchMatchedExceptionSymbol =
         defineOperator(BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothingType, listOf())
     override val illegalArgumentExceptionSymbol =
@@ -464,6 +452,11 @@ class IrBuiltInsOverDescriptors(
     }
 
     override val vArrayOfNulls = findFunctions(Name.identifier("vArrayOfNulls")).first {
+        it.descriptor.extensionReceiverParameter == null && it.descriptor.dispatchReceiverParameter == null &&
+                it.descriptor.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.descriptor.valueParameters[0].type)
+    }
+
+    override val intArrayFactory = findFunctions(Name.identifier("IntArray")).first {
         it.descriptor.extensionReceiverParameter == null && it.descriptor.dispatchReceiverParameter == null &&
                 it.descriptor.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.descriptor.valueParameters[0].type)
     }

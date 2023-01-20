@@ -101,20 +101,6 @@ abstract class IrBuiltIns {
     abstract val primitiveIrTypesWithComparisons: List<IrType>
     abstract val primitiveFloatingPointIrTypes: List<IrType>
 
-    abstract val byteArray: IrClassSymbol
-    abstract val charArray: IrClassSymbol
-    abstract val shortArray: IrClassSymbol
-    abstract val intArray: IrClassSymbol
-    abstract val longArray: IrClassSymbol
-    abstract val floatArray: IrClassSymbol
-    abstract val doubleArray: IrClassSymbol
-    abstract val booleanArray: IrClassSymbol
-
-    abstract val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType>
-    abstract val primitiveTypesToPrimitiveArrays: Map<PrimitiveType, IrClassSymbol>
-    abstract val primitiveArrayElementTypes: Map<IrClassSymbol, IrType?>
-    abstract val primitiveArrayForType: Map<IrType?, IrClassSymbol>
-
     abstract val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol>
 
     abstract val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
@@ -150,6 +136,8 @@ abstract class IrBuiltIns {
     abstract val arrayOfNulls: IrSimpleFunctionSymbol
 
     abstract val vArrayOfNulls: IrSimpleFunctionSymbol
+
+    abstract val intArrayFactory : IrSimpleFunctionSymbol
 
     abstract val linkageErrorSymbol: IrSimpleFunctionSymbol
 

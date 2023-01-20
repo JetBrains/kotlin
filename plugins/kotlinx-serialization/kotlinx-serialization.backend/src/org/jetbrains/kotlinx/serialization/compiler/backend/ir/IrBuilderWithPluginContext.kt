@@ -219,7 +219,7 @@ interface IrBuilderWithPluginContext {
         elementPrimitiveType: IrType,
         arrayElements: List<IrExpression>
     ): IrExpression {
-        val arrayType = compilerContext.irBuiltIns.primitiveArrayForType.getValue(elementPrimitiveType).defaultType
+        val arrayType = compilerContext.irBuiltIns.vArrayClass.typeWith(listOf(elementPrimitiveType))
         val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementPrimitiveType, arrayElements)
         val typeArguments = listOf(elementPrimitiveType)
 

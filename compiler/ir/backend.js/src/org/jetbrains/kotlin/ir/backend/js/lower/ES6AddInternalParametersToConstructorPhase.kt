@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
@@ -210,7 +211,10 @@ class ES6AddInternalParametersToConstructorPhase(val context: JsIrBackendContext
     }
 
     private fun IrConstructor.hasStrictSignature(): Boolean {
-        val primitives = with(context.irBuiltIns) { primitiveTypesToPrimitiveArrays.values + stringClass }
+        TODO()
+        /*
+        val primitives = with(context.irBuiltIns) { emptyList<IrClassSymbol>() + stringClass }
         return with(parentAsClass) { isExternal || context.inlineClassesUtils.isClassInlineLike(this) || symbol in primitives }
+         */
     }
 }

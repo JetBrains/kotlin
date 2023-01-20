@@ -150,43 +150,43 @@ class AndroidSymbols(
     val parcelCreateBooleanArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction(
             "createBooleanArray",
-            irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.booleanType).defaultType
+            irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.booleanType))
         ).symbol
 
     val parcelCreateByteArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction(
             "createByteArray",
-            irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.byteType).defaultType
+            irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.byteType))
         ).symbol
 
     val parcelCreateCharArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction(
             "createCharArray",
-            irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.charType).defaultType
+            irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.charType))
         ).symbol
 
     val parcelCreateDoubleArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction(
             "createDoubleArray",
-            irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.doubleType).defaultType
+            irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.doubleType))
         ).symbol
 
     val parcelCreateFloatArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction(
             "createFloatArray",
-            irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.floatType).defaultType
+            irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.floatType))
         ).symbol
 
     val parcelCreateIntArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction(
             "createIntArray",
-            irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.intType).defaultType
+            irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.intType))
         ).symbol
 
     val parcelCreateLongArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction(
             "createLongArray",
-            irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.longType).defaultType
+            irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.longType))
         ).symbol
 
     val parcelCreateStringArray: IrSimpleFunctionSymbol =
@@ -259,7 +259,7 @@ class AndroidSymbols(
 
     val parcelWriteBooleanArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction("writeBooleanArray", irBuiltIns.unitType).apply {
-            addValueParameter("val", irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.booleanType).defaultType)
+            addValueParameter("val", irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.booleanType)))
         }.symbol
 
     val parcelWriteBundle: IrSimpleFunctionSymbol =
@@ -274,12 +274,12 @@ class AndroidSymbols(
 
     val parcelWriteByteArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction("writeByteArray", irBuiltIns.unitType).apply {
-            addValueParameter("b", irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.byteType).defaultType)
+            addValueParameter("b", irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.byteType)))
         }.symbol
 
     val parcelWriteCharArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction("writeCharArray", irBuiltIns.unitType).apply {
-            addValueParameter("val", irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.charType).defaultType)
+            addValueParameter("val", irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.charType)))
         }.symbol
 
     val parcelWriteDouble: IrSimpleFunctionSymbol =
@@ -289,7 +289,7 @@ class AndroidSymbols(
 
     val parcelWriteDoubleArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction("writeDoubleArray", irBuiltIns.unitType).apply {
-            addValueParameter("val", irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.doubleType).defaultType)
+            addValueParameter("val", irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.doubleType)))
         }.symbol
 
     val parcelWriteFileDescriptor: IrSimpleFunctionSymbol =
@@ -304,7 +304,7 @@ class AndroidSymbols(
 
     val parcelWriteFloatArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction("writeFloatArray", irBuiltIns.unitType).apply {
-            addValueParameter("val", irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.floatType).defaultType)
+            addValueParameter("val", irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.floatType)))
         }.symbol
 
     val parcelWriteInt: IrSimpleFunctionSymbol =
@@ -314,7 +314,7 @@ class AndroidSymbols(
 
     val parcelWriteIntArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction("writeIntArray", irBuiltIns.unitType).apply {
-            addValueParameter("val", irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.intType).defaultType)
+            addValueParameter("val", irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.intType)))
         }.symbol
 
     val parcelWriteLong: IrSimpleFunctionSymbol =
@@ -324,7 +324,7 @@ class AndroidSymbols(
 
     val parcelWriteLongArray: IrSimpleFunctionSymbol =
         androidOsParcel.owner.addFunction("writeLongArray", irBuiltIns.unitType).apply {
-            addValueParameter("val", irBuiltIns.primitiveArrayForType.getValue(irBuiltIns.longType).defaultType)
+            addValueParameter("val", irBuiltIns.vArrayClass.typeWith(listOf(irBuiltIns.longType)))
         }.symbol
 
     val parcelWriteParcelable: IrSimpleFunctionSymbol =

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
@@ -60,10 +61,9 @@ internal val enumWhenPhase = makeIrFilePhase(
 // at the negligible cost of an additional initializer per run + one array read per call.
 //
 private class MappedEnumWhenLowering(override val context: JvmBackendContext) : EnumWhenLowering(context) {
-    private val intArray = context.irBuiltIns.primitiveArrayForType.getValue(context.irBuiltIns.intType)
-    private val intArrayConstructor = intArray.constructors.single { it.owner.valueParameters.size == 1 }
-    private val intArrayGet = intArray.functions.single { it.owner.name == OperatorNameConventions.GET }
-    private val intArraySet = intArray.functions.single { it.owner.name == OperatorNameConventions.SET }
+    private val intArrayConstructor = context.irBuiltIns.intArrayFactory
+    private val intArrayGet = context.irBuiltIns.vArrayClass.functions.single { it.owner.name == OperatorNameConventions.GET }
+    private val intArraySet = context.irBuiltIns.vArrayClass.functions.single { it.owner.name == OperatorNameConventions.SET }
     private val refArraySize = context.irBuiltIns.arrayClass.owner.properties.single { it.name.toString() == "size" }.getter!!
 
     // To avoid visibility-related issues, classes containing the mappings are direct children
@@ -91,7 +91,7 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
             mappings.getOrPut(enumClass) {
                 EnumMappingClass(mappingsClass.addField {
                     name = Name.identifier("\$EnumSwitchMapping\$${mappings.size}")
-                    type = intArray.defaultType
+                    type = context.irBuiltIns.vArrayClass.typeWith(listOf(context.irBuiltIns.intType))
                     origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_WHEN
                     isFinal = true
                     isStatic = true

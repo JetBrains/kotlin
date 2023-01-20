@@ -44,7 +44,6 @@ private class ArrayConstructorTransformer(
                 irConstructor.valueParameters.size != 2 -> null
                 clazz == context.irBuiltIns.arrayClass -> context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
                 clazz == context.irBuiltIns.vArrayClass -> context.ir.symbols.vArrayOfNulls
-                context.irBuiltIns.primitiveArraysToPrimitiveTypes.contains(clazz) -> clazz.constructors.single { it.owner.valueParameters.size == 1 }
                 else -> null
             }
         }

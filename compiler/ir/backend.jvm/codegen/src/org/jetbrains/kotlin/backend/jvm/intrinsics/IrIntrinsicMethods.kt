@@ -117,7 +117,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     symbols.primitiveIteratorsByType.values.map { iteratorClass ->
                         createKeyMapping(PrimitiveArrayIteratorNext, iteratorClass, "next")
                     } +
-                    arrayMethods() +
                     vArrayMethods() +
                     primitiveComparisonIntrinsics(irBuiltIns.lessFunByOperandType, KtTokens.LT) +
                     primitiveComparisonIntrinsics(irBuiltIns.lessOrEqualFunByOperandType, KtTokens.LTEQ) +
@@ -128,16 +127,16 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             ).toMap()
 
     private fun intrinsicsThatShouldHaveBeenLowered() =
-        (symbols.primitiveTypesToPrimitiveArrays.map { (_, primitiveClassSymbol) ->
-            val name = primitiveClassSymbol.owner.name.asString()
+        (PrimitiveType.values().map { primitiveType ->
+            val name = primitiveType.arrayTypeName.identifier
             // IntArray -> intArrayOf
             val arrayOfFunName = name.decapitalizeAsciiOnly() + "Of"
-            Key(kotlinFqn, null, arrayOfFunName, listOf(primitiveClassSymbol.owner.fqNameWhenAvailable))
+            Key(kotlinFqn, null, arrayOfFunName, listOf(StandardClassIds.VArray.asSingleFqName()))
         } + listOf(
             Key(kotlinFqn, anyFqn, "toString", emptyList()),
             Key(kotlinFqn, null, "arrayOf", listOf(arrayFqn)),
             Key(stringFqn, null, "plus", listOf(anyFqn)),
-        )).map { it to IntrinsicShouldHaveBeenLowered }
+        )).map { it to IntrinsicShouldHaveBeenLowered}
 
     private val PrimitiveType.symbol
         get() = irBuiltIns.primitiveTypeToIrType[this]!!.classOrNull!!
@@ -171,14 +170,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 numberConversionMethods(irBuiltIns.numberClass)
 
     private fun vArrayMethods() = arrayMethods(irBuiltIns.vArrayClass.owner.typeParameters.single().symbol, irBuiltIns.vArrayClass)
-
-    private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
-        symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) ->
-            arrayMethods(
-                primitiveType.symbol,
-                array
-            )
-        } + arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
 
     private fun arrayMethods(
         elementClass: IrClassifierSymbol,

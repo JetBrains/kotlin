@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.isAny
@@ -379,8 +380,11 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : BodyLoweringPass
 
     //util
     private fun IrConstructor.hasStrictSignature(): Boolean {
-        val primitives = with(context.irBuiltIns) { primitiveTypesToPrimitiveArrays.values + stringClass }
+        TODO()
+        /*
+        val primitives = with(context.irBuiltIns) { emptyList<IrClassSymbol>() + stringClass }
         return with(parentAsClass) { isExternal || context.inlineClassesUtils.isClassInlineLike(this) || symbol in primitives }
+         */
     }
 }
 

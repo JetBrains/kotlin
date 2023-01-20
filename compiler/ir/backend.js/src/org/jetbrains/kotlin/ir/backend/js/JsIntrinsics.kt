@@ -115,6 +115,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
 
     val isInterfaceSymbol = getInternalFunction("isInterface")
     val isArraySymbol = getInternalFunction("isArray")
+
     //    val isCharSymbol = getInternalFunction("isChar")
     val isObjectSymbol = getInternalFunction("isObject")
     val isSuspendFunctionSymbol = getInternalFunction("isSuspendFunction")
@@ -243,7 +244,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     // Arrays:
     val array get() = irBuiltIns.arrayClass
 
-    val primitiveArrays get() = irBuiltIns.primitiveArraysToPrimitiveTypes
+    val primitiveArrays: Map<IrClassSymbol, PrimitiveType> get() = TODO()
 
     val jsArray = getInternalFunction("arrayWithFun")
     val jsFillArray = getInternalFunction("fillArrayFun")
@@ -324,7 +325,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsNameAnnotationSymbol = context.symbolTable.referenceClass(context.getJsInternalClass("JsName"))
 
     val jsExportAnnotationSymbol by lazy {
-      context.symbolTable.referenceClass(context.getJsInternalClass("JsExport"))
+        context.symbolTable.referenceClass(context.getJsInternalClass("JsExport"))
     }
 
     val jsExportIgnoreAnnotationSymbol by lazy {
@@ -339,8 +340,8 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val charSequenceClassSymbol = context.symbolTable.referenceClass(context.getClass(FqName("kotlin.CharSequence")))
     val charSequenceLengthPropertyGetterSymbol by context.lazy2 {
         with(charSequenceClassSymbol.owner.declarations) {
-            filterIsInstance<IrProperty>().firstOrNull { it.name.asString() == "length" }?.getter ?:
-            filterIsInstance<IrFunction>().first { it.name.asString() == "<get-length>" }
+            filterIsInstance<IrProperty>().firstOrNull { it.name.asString() == "length" }?.getter
+                ?: filterIsInstance<IrFunction>().first { it.name.asString() == "<get-length>" }
         }.symbol
     }
     val charSequenceGetFunctionSymbol by context.lazy2 {

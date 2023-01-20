@@ -74,7 +74,7 @@ fun IrFunction.isInlineFunctionCall(context: JvmBackendContext): Boolean =
 // Constructors can't be marked as inline in metadata, hence this hack.
 private fun IrFunction.isInlineArrayConstructor(context: JvmBackendContext): Boolean =
     this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol.let {
-        it == context.irBuiltIns.arrayClass || it in context.irBuiltIns.primitiveArraysToPrimitiveTypes
+        it == context.irBuiltIns.arrayClass || it == context.irBuiltIns.vArrayClass
     }
 
 private fun IrFunction.isInlineVArrayConstructor(context: JvmBackendContext): Boolean =
