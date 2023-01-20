@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.load.java.lazy.types
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.load.java.isPrimitiveArrayTypeAlias
 import org.jetbrains.kotlin.types.TypeUsage
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.*
@@ -22,10 +24,11 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
     override fun get(key: KotlinType) = TypeProjectionImpl(eraseType(key))
 
     private fun eraseType(type: KotlinType, attr: JavaTypeAttributes = JavaTypeAttributes(TypeUsage.COMMON)): KotlinType {
-        return when (val declaration = type.constructor.declarationDescriptor) {
-            is TypeParameterDescriptor ->
+        val declaration = type.constructor.declarationDescriptor
+        return when {
+            declaration is TypeParameterDescriptor ->
                 eraseType(typeParameterUpperBoundEraser.getErasedUpperBound(declaration, attr.markIsRaw(true)), attr)
-            is ClassDescriptor -> {
+            declaration is ClassDescriptor -> {
                 val declarationForUpper =
                     type.upperIfFlexible().constructor.declarationDescriptor
 
@@ -43,6 +46,9 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
                     KotlinTypeFactory.flexibleType(lower, upper)
                 }
             }
+            declaration is TypeAliasDescriptor && declaration.isPrimitiveArrayTypeAlias -> {
+                eraseType(declaration.expandedType, attr)
+            }
             else -> error("Unexpected declaration kind: $declaration")
         }
     }
@@ -53,7 +59,7 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
     ): Pair<SimpleType, Boolean> {
         if (type.constructor.parameters.isEmpty()) return type to false
 
-        if (KotlinBuiltIns.isArray(type)) {
+        if (KotlinBuiltIns.isArray(type) || KotlinBuiltIns.isVArray(type)) {
             val componentTypeProjection = type.arguments[0]
             val arguments = listOf(
                 TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type, attr))

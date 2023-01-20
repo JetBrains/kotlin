@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -25,6 +27,8 @@ import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 class DeprecationCausedByFunctionNInfo(override val target: DeclarationDescriptor) : DescriptorBasedDeprecationInfo() {
     override val deprecationLevel: DeprecationLevelValue
@@ -46,3 +50,5 @@ fun extractNullabilityAnnotationOnBoundedWildcard(c: LazyJavaResolverContext, wi
     require(wildcardType.bound != null) { "Nullability annotations on unbounded wildcards aren't supported" }
     return LazyJavaAnnotations(c, wildcardType).find { annotation -> RXJAVA3_ANNOTATIONS.any { annotation.fqName == it } }
 }
+
+val TypeAliasDescriptor.isPrimitiveArrayTypeAlias get() = PrimitiveType.values().any { it.arrayTypeFqName == fqNameSafe }

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.load.java.isPrimitiveArrayTypeAlias
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.*
@@ -85,7 +86,7 @@ fun <T : Any> mapType(
             return jvmType
         }
 
-        descriptor is ClassDescriptor && KotlinBuiltIns.isArray(kotlinType) -> {
+        descriptor is ClassDescriptor && (KotlinBuiltIns.isArray(kotlinType) || KotlinBuiltIns.isVArray(kotlinType)) -> {
             if (kotlinType.arguments.size != 1) {
                 throw UnsupportedOperationException("arrays must have one type argument")
             }
@@ -103,8 +104,12 @@ fun <T : Any> mapType(
             } else {
                 descriptorTypeWriter?.writeArrayType()
 
+                var elementTypeMappingMode = mode.toGenericArgumentMode(memberProjection.projectionKind, ofArray = true)
+                if (KotlinBuiltIns.isVArray(kotlinType)) {
+                    elementTypeMappingMode = elementTypeMappingMode.dontBoxPrimitivesMode().dontWrapInlineClassesMode()
+                }
                 arrayElementType = mapType(
-                    memberType, factory, mode.toGenericArgumentMode(memberProjection.projectionKind, ofArray = true),
+                    memberType, factory, elementTypeMappingMode,
                     typeMappingConfiguration, descriptorTypeWriter, writeGenericType
                 )
 
@@ -113,6 +118,7 @@ fun <T : Any> mapType(
 
             return factory.createFromString("[" + factory.toString(arrayElementType))
         }
+
 
         descriptor is ClassDescriptor -> {
             // NB if inline class is recursive, it's ok to map it as wrapped
@@ -159,6 +165,10 @@ fun <T : Any> mapType(
         }
 
         descriptor is TypeAliasDescriptor && mode.mapTypeAliases -> {
+            return mapType(descriptor.expandedType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
+        }
+
+        descriptor is TypeAliasDescriptor && descriptor.isPrimitiveArrayTypeAlias -> {
             return mapType(descriptor.expandedType, factory, mode, typeMappingConfiguration, descriptorTypeWriter, writeGenericType)
         }
 

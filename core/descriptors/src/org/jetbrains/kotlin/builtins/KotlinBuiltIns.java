@@ -45,6 +45,8 @@ public abstract class KotlinBuiltIns {
     private final NotNullLazyValue<Collection<PackageViewDescriptor>> builtInPackagesImportedByDefault;
 
     private final MemoizedFunctionToNotNull<Name, ClassDescriptor> builtInClassesByName;
+    private final MemoizedFunctionToNotNull<Name, TypeAliasDescriptor> builtInTypeAliasesByName;
+
 
     private final StorageManager storageManager;
 
@@ -73,7 +75,7 @@ public abstract class KotlinBuiltIns {
                 Map<SimpleType, SimpleType> kotlinArrayTypeToPrimitiveKotlinType = new HashMap<SimpleType, SimpleType>();
                 for (PrimitiveType primitive : PrimitiveType.values()) {
                     SimpleType type = getBuiltInTypeByClassName(primitive.getTypeName().asString());
-                    SimpleType arrayType = getBuiltInTypeByClassName(primitive.getArrayTypeName().asString());
+                    SimpleType arrayType = getBuiltInTypeByTypeAliasName(primitive.getArrayTypeName().asString());
 
                     primitiveTypeToArrayKotlinType.put(primitive, arrayType);
                     primitiveKotlinTypeToKotlinArrayType.put(type, arrayType);
@@ -96,6 +98,20 @@ public abstract class KotlinBuiltIns {
                     throw new AssertionError("Must be a class descriptor " + name + ", but was " + classifier);
                 }
                 return (ClassDescriptor) classifier;
+            }
+        });
+
+        this.builtInTypeAliasesByName = storageManager.createMemoizedFunction(new Function1<Name, TypeAliasDescriptor>() {
+            @Override
+            public TypeAliasDescriptor invoke(Name name) {
+                ClassifierDescriptor classifier = getBuiltInsPackageScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
+                if (classifier == null) {
+                    throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(name) + " is not found");
+                }
+                if (!(classifier instanceof TypeAliasDescriptor)) {
+                    throw new AssertionError("Must be a class descriptor " + name + ", but was " + classifier);
+                }
+                return (TypeAliasDescriptor) classifier;
             }
         });
     }
@@ -221,6 +237,11 @@ public abstract class KotlinBuiltIns {
     @NotNull
     private ClassDescriptor getBuiltInClassByName(@NotNull String simpleName) {
         return builtInClassesByName.invoke(Name.identifier(simpleName));
+    }
+
+    @NotNull
+    private TypeAliasDescriptor getBuiltInTypeAliasByName(@NotNull String typeAliasName) {
+        return builtInTypeAliasesByName.invoke(Name.identifier(typeAliasName));
     }
 
     @NotNull
@@ -486,6 +507,11 @@ public abstract class KotlinBuiltIns {
     @NotNull
     private SimpleType getBuiltInTypeByClassName(@NotNull String classSimpleName) {
         return getBuiltInClassByName(classSimpleName).getDefaultType();
+    }
+
+    @NotNull
+    private SimpleType getBuiltInTypeByTypeAliasName(@NotNull String typeAliasName) {
+        return getBuiltInTypeAliasByName(typeAliasName).getDefaultType();
     }
 
     @NotNull
