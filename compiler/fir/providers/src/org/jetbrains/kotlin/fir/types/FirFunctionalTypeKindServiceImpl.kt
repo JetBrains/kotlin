@@ -8,13 +8,15 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKindExtractor
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.extensions.FirFunctionalTypeKindExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.functionalTypeKindExtensions
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.name.ClassId
 
-class FirFunctionalTypeKindServiceImpl(session: FirSession) : FirFunctionalTypeKindService() {
+class FirFunctionalTypeKindServiceImpl(private val session: FirSession) : FirFunctionalTypeKindService() {
     private val nonReflectKindsFromExtensions = mutableListOf<FunctionalTypeKind>()
 
     override val extractor: FunctionalTypeKindExtractor = run {
@@ -55,12 +57,24 @@ class FirFunctionalTypeKindServiceImpl(session: FirSession) : FirFunctionalTypeK
     }
 
     override fun extractAllSpecialKindsForFunction(functionSymbol: FirNamedFunctionSymbol): List<FunctionalTypeKind> {
+        return extractSpecialKindsImpl(functionSymbol, { isSuspend }, { resolvedAnnotationClassIds })
+    }
+
+    override fun extractAllSpecialKindsForFunctionalTypeRef(typeRef: FirFunctionTypeRef): List<FunctionalTypeKind> {
+        return extractSpecialKindsImpl(typeRef, { isSuspend }, { annotations.mapNotNull { it.toAnnotationClassId(session) } })
+    }
+
+    private inline fun <T> extractSpecialKindsImpl(
+        source: T,
+        isSuspend: T.() -> Boolean,
+        annotations: T.() -> List<ClassId>
+    ): List<FunctionalTypeKind> {
         return buildList {
-            if (functionSymbol.isSuspend) {
+            if (source.isSuspend()) {
                 add(FunctionalTypeKind.SuspendFunction)
             }
             if (nonReflectKindsFromExtensions.isNotEmpty()) {
-                for (annotationClassId in functionSymbol.resolvedAnnotationClassIds) {
+                for (annotationClassId in source.annotations()) {
                     for (kind in nonReflectKindsFromExtensions) {
                         if (kind.annotationOnInvokeClassId == annotationClassId) {
                             add(kind)

@@ -1814,6 +1814,15 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.AMBIGUOUS_FUNCTIONAL_TYPE_KIND) { firDiagnostic ->
+        AmbiguousFunctionalTypeKindImpl(
+            firDiagnostic.a.map { functionalTypeKind ->
+                functionalTypeKind
+            },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NO_CONTEXT_RECEIVER) { firDiagnostic ->
         NoContextReceiverImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

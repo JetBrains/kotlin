@@ -6,15 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeUnexpectedTypeArgumentsError
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
@@ -41,23 +39,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 @ThreadSafeMutableState
 class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
-
-    private val symbolProvider by lazy {
-        session.symbolProvider
-    }
-
-    private data class ClassIdInSession(val session: FirSession, val id: ClassId)
-
-    private val implicitBuiltinTypeSymbols = mutableMapOf<ClassIdInSession, FirClassLikeSymbol<*>>()
-
-    // TODO: get rid of session used here, and may be also of the cache above (see KT-30275)
-    private fun resolveBuiltInQualified(id: ClassId, session: FirSession): FirClassLikeSymbol<*> {
-        val nameInSession = ClassIdInSession(session, id)
-        return implicitBuiltinTypeSymbols.getOrPut(nameInSession) {
-            symbolProvider.getClassLikeSymbolByClassId(id)!!
-        }
-    }
-
     private fun resolveSymbol(
         symbol: FirBasedSymbol<*>,
         qualifier: List<FirQualifierPart>,
@@ -464,17 +445,24 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
     }
 
-    private fun createFunctionalType(typeRef: FirFunctionTypeRef): ConeClassLikeType {
+    private fun createFunctionalType(typeRef: FirFunctionTypeRef): Pair<ConeClassLikeTypeImpl, ConeDiagnostic?> {
         val parameters =
             typeRef.contextReceiverTypeRefs.map { it.coneType } +
                     listOfNotNull(typeRef.receiverTypeRef?.coneType) +
                     typeRef.parameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it, session) } +
                     listOf(typeRef.returnTypeRef.coneType)
-        val classId = if (typeRef.isSuspend) {
-            StandardClassIds.SuspendFunctionN(typeRef.parametersCount)
-        } else {
-            StandardClassIds.FunctionN(typeRef.parametersCount)
+        val functionalKinds = session.functionalTypeService.extractAllSpecialKindsForFunctionalTypeRef(typeRef)
+        var diagnostic: ConeDiagnostic? = null
+        val kind = when (functionalKinds.size) {
+            0 -> FunctionalTypeKind.Function
+            1 -> functionalKinds.single()
+            else -> {
+                diagnostic = ConeAmbiguousFunctionalTypeKinds(functionalKinds)
+                FunctionalTypeKind.Function
+            }
         }
+
+        val classId = kind.numberedClassId(typeRef.parametersCount)
 
         val attributes = typeRef.annotations.computeTypeAttributes(
             session,
@@ -488,17 +476,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 }
             }
         )
-        val symbol = resolveBuiltInQualified(classId, session)
         return ConeClassLikeTypeImpl(
-            symbol.toLookupTag().also {
-                if (it is ConeClassLikeLookupTagImpl) {
-                    it.bindSymbolToLookupTag(session, symbol)
-                }
-            },
+            classId.toLookupTag(),
             parameters.toTypedArray(),
             typeRef.isMarkedNullable,
             attributes
-        )
+        ) to diagnostic
     }
 
     override fun resolveType(
@@ -522,7 +505,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     isOperandOfIsOperator,
                 ) to (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic
             }
-            is FirFunctionTypeRef -> createFunctionalType(typeRef) to null
+            is FirFunctionTypeRef -> createFunctionalType(typeRef)
             is FirDynamicTypeRef -> ConeDynamicType.create(session) to null
             is FirIntersectionTypeRef -> {
                 val leftType = typeRef.leftType.coneType

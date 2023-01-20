@@ -26,6 +26,8 @@ abstract class FirFunctionalTypeKindService : FirSessionComponent {
 
     abstract fun extractSingleSpecialKindForFunction(functionSymbol: FirNamedFunctionSymbol): FunctionalTypeKind?
     abstract fun extractAllSpecialKindsForFunction(functionSymbol: FirNamedFunctionSymbol): List<FunctionalTypeKind>
+
+    abstract fun extractAllSpecialKindsForFunctionalTypeRef(typeRef: FirFunctionTypeRef): List<FunctionalTypeKind>
 }
 
 val FirSession.functionalTypeService: FirFunctionalTypeKindService by FirSession.sessionComponentAccessor()
