@@ -52,7 +52,9 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) : FirPartialBodyResolveTransformer(transformer) {
+open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
+    FirPartialBodyResolveTransformer(transformer) {
+
     private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
     var enableArrayOfCallTransformation = false
@@ -376,60 +378,61 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return checkedSafeCallSubject
     }
 
-    override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement = whileAnalysing(session, functionCall) {
-        val calleeReference = functionCall.calleeReference
-        if (
-            (calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference) &&
-            functionCall.resultType is FirImplicitTypeRef
-        ) {
-            storeTypeFromCallee(functionCall)
-        }
-        if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
-        if (calleeReference !is FirSimpleNamedReference) {
-            // The callee reference can be resolved as an error very early, e.g., `super` as a callee during raw FIR creation.
-            // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there.
-            if (calleeReference !is FirResolvedNamedReference) {
-                functionCall.transformChildren(transformer, data)
+    override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement =
+        whileAnalysing(session, functionCall) {
+            val calleeReference = functionCall.calleeReference
+            if (
+                (calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference) &&
+                functionCall.resultType is FirImplicitTypeRef
+            ) {
+                storeTypeFromCallee(functionCall)
             }
-            return functionCall
-        }
-        functionCall.transformAnnotations(transformer, data)
-        functionCall.replaceLambdaArgumentInvocationKinds(session)
-        functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
-        val (completeInference, callCompleted) =
-            run {
-                val initialExplicitReceiver = functionCall.explicitReceiver
-                val withTransformedArguments = if (!resolvingAugmentedAssignment) {
-                    dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
-                    transformExplicitReceiver(functionCall).also {
-                        it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
-                        dataFlowAnalyzer.exitCallArguments()
+            if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
+            if (calleeReference !is FirSimpleNamedReference) {
+                // The callee reference can be resolved as an error very early, e.g., `super` as a callee during raw FIR creation.
+                // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there.
+                if (calleeReference !is FirResolvedNamedReference) {
+                    functionCall.transformChildren(transformer, data)
+                }
+                return functionCall
+            }
+            functionCall.transformAnnotations(transformer, data)
+            functionCall.replaceLambdaArgumentInvocationKinds(session)
+            functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
+            val (completeInference, callCompleted) =
+                run {
+                    val initialExplicitReceiver = functionCall.explicitReceiver
+                    val withTransformedArguments = if (!resolvingAugmentedAssignment) {
+                        dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
+                        transformExplicitReceiver(functionCall).also {
+                            it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
+                            dataFlowAnalyzer.exitCallArguments()
+                        }
+                    } else {
+                        functionCall
                     }
-                } else {
-                    functionCall
+                    val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
+                    val resultExplicitReceiver = resultExpression.explicitReceiver?.unwrapSmartcastExpression()
+                    if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccess) {
+                        // name.invoke() case
+                        callCompleter.completeCall(resultExplicitReceiver, noExpectedType)
+                    }
+                    callCompleter.completeCall(resultExpression, data)
                 }
-                val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments)
-                val resultExplicitReceiver = resultExpression.explicitReceiver?.unwrapSmartcastExpression()
-                if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccess) {
-                    // name.invoke() case
-                    callCompleter.completeCall(resultExplicitReceiver, noExpectedType)
+            val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
+            if (!resolvingAugmentedAssignment) {
+                dataFlowAnalyzer.exitFunctionCall(result, callCompleted)
+            }
+
+            addReceiversFromExtensions(result)
+
+            if (callCompleted) {
+                if (enableArrayOfCallTransformation) {
+                    return arrayOfCallTransformer.transformFunctionCall(result, null)
                 }
-                callCompleter.completeCall(resultExpression, data)
             }
-        val result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
-        if (!resolvingAugmentedAssignment) {
-            dataFlowAnalyzer.exitFunctionCall(result, callCompleted)
+            return result
         }
-
-        addReceiversFromExtensions(result)
-
-        if (callCompleted) {
-            if (enableArrayOfCallTransformation) {
-                return arrayOfCallTransformer.transformFunctionCall(result, null)
-            }
-        }
-        return result
-    }
 
     @OptIn(PrivateForInline::class)
     private fun addReceiversFromExtensions(functionCall: FirFunctionCall) {
@@ -468,7 +471,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             ConeNullability.NOT_NULL
         )
 
-        val approximationIsNeeded = resolutionMode !is ResolutionMode.ReceiverResolution && resolutionMode !is ResolutionMode.ContextDependent
+        val approximationIsNeeded =
+            resolutionMode !is ResolutionMode.ReceiverResolution && resolutionMode !is ResolutionMode.ContextDependent
 
         val integerOperatorCall = buildIntegerLiteralOperatorCall {
             source = originalCall.source
@@ -1057,7 +1061,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     expectedTypeRef != null -> {
                         require(expressionType is ConeIntegerLiteralConstantTypeImpl)
                         val coneType = expectedTypeRef.coneTypeSafe<ConeKotlinType>()?.fullyExpandedType(session)
-                        val approximatedType= expressionType.getApproximatedType(coneType)
+                        val approximatedType = expressionType.getApproximatedType(coneType)
                         constExpression.replaceKind(approximatedType.toConstKind() as ConstantValueKind<T>)
                         approximatedType
                     }
@@ -1203,7 +1207,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             ): FirFunctionCall = buildFunctionCall {
                 this.source = source
                 explicitReceiver = receiver
-                argumentList = when(arguments.size) {
+                argumentList = when (arguments.size) {
                     0 -> FirEmptyArgumentList
                     1 -> buildUnaryArgumentList(arguments.first())
                     else -> buildArgumentList {
@@ -1466,16 +1470,17 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         )
     }
 
-    override fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: ResolutionMode): FirStatement = whileAnalysing(session, arrayOfCall) {
-        if (data is ResolutionMode.ContextDependent) {
-            arrayOfCall.transformChildren(transformer, data)
+    override fun transformArrayOfCall(arrayOfCall: FirArrayOfCall, data: ResolutionMode): FirStatement =
+        whileAnalysing(session, arrayOfCall) {
+            if (data is ResolutionMode.ContextDependent) {
+                arrayOfCall.transformChildren(transformer, data)
+                return arrayOfCall
+            }
+            val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticCallForArrayOfCall(arrayOfCall, resolutionContext)
+            arrayOfCall.transformChildren(transformer, ResolutionMode.ContextDependent)
+            callCompleter.completeCall(syntheticIdCall, data.expectedType ?: components.noExpectedType)
             return arrayOfCall
         }
-        val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticCallForArrayOfCall(arrayOfCall, resolutionContext)
-        arrayOfCall.transformChildren(transformer, ResolutionMode.ContextDependent)
-        callCompleter.completeCall(syntheticIdCall, data.expectedType ?: components.noExpectedType)
-        return arrayOfCall
-    }
 
     override fun transformStringConcatenationCall(
         stringConcatenationCall: FirStringConcatenationCall,
