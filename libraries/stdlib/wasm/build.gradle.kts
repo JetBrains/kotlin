@@ -110,10 +110,17 @@ kotlin {
     }
 }
 
-tasks.withType<KotlinCompile<*>>().configureEach {
-    // TODO: fix all warnings, enable explicit API mode and -Werror
-    kotlinOptions.suppressWarnings = true
+tasks.named("compileKotlinWasm", KotlinCompile::class) {
+    // TODO: enable explicit API mode
+    kotlinOptions.allWarningsAsErrors = true
+}
 
+tasks.named("compileTestKotlinWasm", KotlinCompile::class) {
+    // TODO: fix all warnings, enable and -Werror
+    kotlinOptions.suppressWarnings = true
+}
+
+tasks.withType<KotlinCompile<*>>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-opt-in=kotlin.ExperimentalMultiplatform",
