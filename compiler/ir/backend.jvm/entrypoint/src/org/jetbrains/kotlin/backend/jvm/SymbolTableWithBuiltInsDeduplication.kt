@@ -31,8 +31,8 @@ class SymbolTableWithBuiltInsDeduplication(
     irFactory: IrFactory,
 ) : SymbolTable(signaturer, irFactory) {
     /**
-     * As long as [IrBuiltIns] aren't bound, the symbol table will operate like [SymbolTable], as it must be assumed that built-ins are
-     * still being created.
+     * As long as [IrBuiltIns] aren't bound, the symbol table will operate like [SymbolTable], as the initialization of built-ins requires
+     * a symbol table.
      */
     private var irBuiltIns: IrBuiltInsOverDescriptors? = null
 
@@ -44,6 +44,14 @@ class SymbolTableWithBuiltInsDeduplication(
         }
     }
 
+    /**
+     * Gets or creates the [IrClassSymbol] for [descriptor], or for the built-in descriptor with the same name if [descriptor] is a
+     * duplicate built-in.
+     *
+     * Note that not all built-in symbols may have been bound or created by the time [irBuiltIns] has been bound. However, [referenceClass]
+     * will create a symbol in such a case (via `super.referenceClass`) and [org.jetbrains.kotlin.ir.util.DeclarationStubGenerator] will
+     * create a stub for the symbol if [referenceClass] was invoked from the stub generator.
+     */
     @ObsoleteDescriptorBasedAPI
     override fun referenceClass(descriptor: ClassDescriptor): IrClassSymbol {
         val irBuiltIns = this.irBuiltIns ?: return super.referenceClass(descriptor)
