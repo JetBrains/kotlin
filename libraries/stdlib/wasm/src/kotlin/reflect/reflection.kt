@@ -12,6 +12,7 @@ import kotlin.reflect.wasm.internal.*
 internal fun <T : Any> getKClass(typeInfoData: TypeInfoData): KClass<T> =
     KClassImpl(typeInfoData)
 
+@Suppress("UNCHECKED_CAST")
 internal fun <T : Any> getKClassFromExpression(e: T): KClass<T> =
     when (e) {
         is String -> PrimitiveClasses.stringClass

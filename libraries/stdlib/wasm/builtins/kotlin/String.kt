@@ -127,6 +127,7 @@ public class String internal @WasmPrimitiveConstructor constructor(
     }
 }
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun WasmCharArray.createString(): String =
     String(null, this.len(), this)
 

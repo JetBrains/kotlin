@@ -5,7 +5,7 @@
 @file:Suppress(
     "OVERRIDE_BY_INLINE",
     "NOTHING_TO_INLINE",
-    "unused"
+    "unused", "UNUSED_PARAMETER"
 )
 
 package kotlin

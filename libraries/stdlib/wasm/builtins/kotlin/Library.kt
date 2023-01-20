@@ -87,5 +87,5 @@ public inline fun <reified T : Enum<T>> enumValues(): Array<T>
  * Returns an enum entry with specified name.
  */
 @SinceKotlin("1.1")
-@Suppress("NON_MEMBER_FUNCTION_NO_BODY")
+@Suppress("NON_MEMBER_FUNCTION_NO_BODY", "UNUSED_PARAMETER")
 public inline fun <reified T : Enum<T>> enumValueOf(name: String): T

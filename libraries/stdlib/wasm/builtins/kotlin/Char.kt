@@ -27,7 +27,7 @@ public class Char private constructor(public val value: Char) : Comparable<Char>
 
     public override fun equals(other: Any?): Boolean {
         if (other is Char)
-            return this === (other as Char)
+            return wasm_i32_eq(this.toInt(), other.toInt())
         return false
     }
 

@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UNUSED_PARAMETER")  // File contains many intrinsics
+
 package kotlin.wasm.internal
 
 internal const val CHAR_SIZE_BYTES = 2
@@ -115,5 +117,6 @@ internal fun stringGetPoolSize(): Int =
     implementedAsIntrinsic
 
 // This initializer is a special case in FieldInitializersLowering
+@Suppress("DEPRECATION")
 @EagerInitialization
 internal val stringPool: Array<String?> = arrayOfNulls(stringGetPoolSize())
