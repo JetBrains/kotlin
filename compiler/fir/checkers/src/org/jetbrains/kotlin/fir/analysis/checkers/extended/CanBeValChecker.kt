@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.canBeRevisited
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.cfa.AbstractFirPropertyInitializationChecker
+import org.jetbrains.kotlin.fir.analysis.cfa.requiresInitialization
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -22,87 +22,41 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 
 object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
     override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        val unprocessedProperties = mutableSetOf<FirPropertySymbol>()
-        val propertiesCharacteristics = mutableMapOf<FirPropertySymbol, EventOccurrencesRange>()
-
-        val reporterVisitor = UninitializedPropertyReporter(data, unprocessedProperties, propertiesCharacteristics)
-        data.graph.traverse(reporterVisitor)
-
-        for (property in unprocessedProperties) {
-            val source = property.source
-            if (source?.kind is KtFakeSourceElementKind) continue
-            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) continue
-            propertiesCharacteristics[property] = EventOccurrencesRange.ZERO
-        }
-
-        var lastDestructuringSource: KtSourceElement? = null
-        var destructuringCanBeVal = false
-        var lastDestructuredVariables = 0
-
-        for ((symbol, value) in propertiesCharacteristics) {
-            val source = symbol.source
-            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
-                lastDestructuringSource = source
-                lastDestructuredVariables = symbol.getDestructuringChildrenCount() ?: continue
-                destructuringCanBeVal = true
-                continue
-            }
-
-            if (lastDestructuringSource != null) {
-                // if this is the last variable in destructuring declaration and destructuringCanBeVal == true and it can be val
-                if (lastDestructuredVariables == 1 && destructuringCanBeVal && canBeVal(symbol, value)) {
-                    reporter.reportOn(lastDestructuringSource, FirErrors.CAN_BE_VAL, context)
-                    lastDestructuringSource = null
-                } else if (!canBeVal(symbol, value)) {
-                    destructuringCanBeVal = false
+        val collector = ReassignedVariableCollector(data).apply { data.graph.traverse(this) }
+        val iterator = data.properties.iterator()
+        for (symbol in iterator) {
+            val source = symbol.source ?: continue
+            val canBeVal = if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
+                // var (a, b) -> { val _tmp; var a; var b }
+                val count = source.lighterASTNode.getChildren(source.treeStructure).count {
+                    it.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
                 }
-                lastDestructuredVariables--
-            } else if (canBeVal(symbol, value) && !symbol.hasDelegate) {
+                // Weird way of writing `and { ... }` that will always call `next()` N times.
+                (0 until count).fold(true) { acc, _ -> iterator.hasNext() && collector.canBeVal(iterator.next()) && acc }
+            } else {
+                collector.canBeVal(symbol)
+            }
+            if (canBeVal) {
                 reporter.reportOn(source, FirErrors.CAN_BE_VAL, context)
             }
         }
     }
 
-    private fun canBeVal(symbol: FirPropertySymbol, value: EventOccurrencesRange) =
-        value in canBeValOccurrenceRanges && symbol.isVar
+    private class ReassignedVariableCollector(val data: PropertyInitializationInfoData, ) : ControlFlowGraphVisitorVoid() {
+        private val reassigned = mutableSetOf<FirPropertySymbol>()
 
-    private class UninitializedPropertyReporter(
-        val data: PropertyInitializationInfoData,
-        val unprocessedProperties: MutableSet<FirPropertySymbol>,
-        val propertiesCharacteristics: MutableMap<FirPropertySymbol, EventOccurrencesRange>
-    ) : ControlFlowGraphVisitorVoid() {
         override fun visitNode(node: CFGNode<*>) {}
 
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
             val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: return
-            if (symbol !in data.properties) return
-            unprocessedProperties.remove(symbol)
-
-            val currentCharacteristic = propertiesCharacteristics.getOrDefault(symbol, EventOccurrencesRange.ZERO)
-            val info = data.getValue(node)
-            propertiesCharacteristics[symbol] = info.values.fold(currentCharacteristic) { a, b -> b[symbol]?.let(a::or) ?: a }
-        }
-
-        override fun visitVariableDeclarationNode(node: VariableDeclarationNode) {
-            val symbol = node.fir.symbol
-            if (node.fir.initializer == null && node.fir.delegate == null) {
-                unprocessedProperties.add(symbol)
-            } else {
-                propertiesCharacteristics[symbol] = EventOccurrencesRange.AT_MOST_ONCE
+            if (symbol.isVar && symbol.source?.kind !is KtFakeSourceElementKind && symbol in data.properties &&
+                (!symbol.requiresInitialization || data.getValue(node).values.any { it[symbol]?.canBeRevisited() == true })
+            ) {
+                reassigned.add(symbol)
             }
         }
-    }
 
-    private fun FirPropertySymbol.getDestructuringChildrenCount(): Int? {
-        val source = source ?: return null
-        return source.lighterASTNode.getChildren(source.treeStructure).count {
-            it.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
-        }
+        fun canBeVal(symbol: FirPropertySymbol): Boolean =
+            symbol.isVar && !symbol.hasDelegate && symbol.source?.kind !is KtFakeSourceElementKind? && symbol !in reassigned
     }
-
-    private val canBeValOccurrenceRanges = setOf(
-        EventOccurrencesRange.EXACTLY_ONCE,
-        EventOccurrencesRange.AT_MOST_ONCE,
-        EventOccurrencesRange.ZERO
-    )
 }
