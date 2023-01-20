@@ -6,27 +6,35 @@
 package org.jetbrains.kotlin.cli.common
 
 import org.jetbrains.kotlin.backend.common.phaser.FlexiblePhaseConfig
+import org.jetbrains.kotlin.backend.common.phaser.PhaseSet
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 fun createFlexiblePhaseConfig(
     arguments: CommonCompilerArguments,
 ): FlexiblePhaseConfig {
     fun Array<String>?.asNonNullSet(): Set<String> = this?.toSet() ?: emptySet()
 
-    val toDumpBoth = arguments.phasesToDump.asNonNullSet()
-    val toValidateBoth = arguments.phasesToValidate.asNonNullSet()
+    val toDumpBoth = createPhaseSetFromArguments(arguments.phasesToDump)
+    val toValidateBoth = createPhaseSetFromArguments(arguments.phasesToValidate)
 
     return FlexiblePhaseConfig(
         disabled = arguments.disablePhases.asNonNullSet(),
         verbose = arguments.verbosePhases.asNonNullSet(),
-        toDumpStateBefore = arguments.phasesToDumpBefore.asNonNullSet() + toDumpBoth,
-        toDumpStateAfter = arguments.phasesToDumpAfter.asNonNullSet() + toDumpBoth,
-        toValidateStateBefore = arguments.phasesToValidateBefore.asNonNullSet() + toValidateBoth,
-        toValidateStateAfter = arguments.phasesToValidateAfter.asNonNullSet() + toValidateBoth,
+        toDumpStateBefore = createPhaseSetFromArguments(arguments.phasesToDumpBefore) + toDumpBoth,
+        toDumpStateAfter = createPhaseSetFromArguments(arguments.phasesToDumpAfter) + toDumpBoth,
+        toValidateStateBefore = createPhaseSetFromArguments(arguments.phasesToValidateBefore) + toValidateBoth,
+        toValidateStateAfter = createPhaseSetFromArguments(arguments.phasesToValidateAfter) + toValidateBoth,
         dumpOnlyFqName = arguments.dumpOnlyFqName,
         dumpToDirectory = arguments.dumpDirectory,
         needProfiling = arguments.profilePhases,
         checkConditions = arguments.checkPhaseConditions,
         checkStickyConditions = arguments.checkStickyPhaseConditions,
     )
+}
+
+private fun createPhaseSetFromArguments(names: Array<String>?): PhaseSet = when {
+    names == null -> PhaseSet.Enum(emptySet())
+    "all" in names.map { it.toLowerCaseAsciiOnly() } -> PhaseSet.ALL
+    else -> PhaseSet.Enum(names.map { it.toLowerCaseAsciiOnly() }.toSet())
 }

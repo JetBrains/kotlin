@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.phaser
 
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+
 /**
  * Phase configuration that does not know anything
  * about actual compiler pipeline upfront.
@@ -12,10 +14,10 @@ package org.jetbrains.kotlin.backend.common.phaser
 class FlexiblePhaseConfig(
     disabled: Set<String>,
     private val verbose: Set<String>,
-    private val toDumpStateBefore: Set<String>,
-    private val toDumpStateAfter: Set<String>,
-    private val toValidateStateBefore: Set<String>,
-    private val toValidateStateAfter: Set<String>,
+    private val toDumpStateBefore: PhaseSet,
+    private val toDumpStateAfter: PhaseSet,
+    private val toValidateStateBefore: PhaseSet,
+    private val toValidateStateAfter: PhaseSet,
     override val dumpToDirectory: String? = null,
     override val dumpOnlyFqName: String? = null,
     override val needProfiling: Boolean = false,
@@ -35,14 +37,37 @@ class FlexiblePhaseConfig(
     }
 
     override fun shouldDumpStateBefore(phase: AnyNamedPhase): Boolean =
-        phase.name in toDumpStateBefore
+        phase in toDumpStateBefore
 
     override fun shouldDumpStateAfter(phase: AnyNamedPhase): Boolean =
-        phase.name in toDumpStateAfter
+        phase in toDumpStateAfter
 
     override fun shouldValidateStateBefore(phase: AnyNamedPhase): Boolean =
-        phase.name in toValidateStateBefore
+        phase in toValidateStateBefore
 
     override fun shouldValidateStateAfter(phase: AnyNamedPhase): Boolean =
-        phase.name in toValidateStateAfter
+        phase in toValidateStateAfter
+}
+
+sealed class PhaseSet {
+    abstract operator fun contains(phase: AnyNamedPhase): Boolean
+
+    abstract operator fun plus(phaseSet: PhaseSet): PhaseSet
+
+    class Enum(val phases: Set<String>) : PhaseSet() {
+        override fun contains(phase: AnyNamedPhase): Boolean =
+            phase.name.toLowerCaseAsciiOnly() in phases
+
+        override fun plus(phaseSet: PhaseSet): PhaseSet = when (phaseSet) {
+            ALL -> ALL
+            is Enum -> Enum(phases + phaseSet.phases)
+        }
+    }
+    object ALL : PhaseSet() {
+        override fun contains(phase: AnyNamedPhase): Boolean =
+            true
+
+        override fun plus(phaseSet: PhaseSet): PhaseSet = ALL
+    }
+
 }
