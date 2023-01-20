@@ -5,50 +5,39 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKindExtractor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirFunctionalTypeKindExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.functionalTypeKindExtensions
-import org.jetbrains.kotlin.name.FqName
 
 class FirFunctionalTypeKindServiceImpl(session: FirSession) : FirFunctionalTypeKindService() {
-    private val knownKindsByPackageFqName = buildList {
-        add(ConeFunctionalTypeKind.Function)
-        add(ConeFunctionalTypeKind.SuspendFunction)
-        add(ConeFunctionalTypeKind.KFunction)
-        add(ConeFunctionalTypeKind.KSuspendFunction)
+    override val extractor: FunctionalTypeKindExtractor = run {
+        val kinds = buildList {
+            add(FunctionalTypeKind.Function)
+            add(FunctionalTypeKind.SuspendFunction)
+            add(FunctionalTypeKind.KFunction)
+            add(FunctionalTypeKind.KSuspendFunction)
 
-        val registrar = object : FirFunctionalTypeKindExtension.FunctionalTypeKindRegistrar {
-            override fun registerKind(nonReflectKind: ConeFunctionalTypeKind, reflectKind: ConeFunctionalTypeKind) {
-                require(nonReflectKind.reflectKind() == reflectKind)
-                require(reflectKind.nonReflectKind() == nonReflectKind)
-                add(nonReflectKind)
-                add(reflectKind)
+            val registrar = object : FirFunctionalTypeKindExtension.FunctionalTypeKindRegistrar {
+                override fun registerKind(nonReflectKind: FunctionalTypeKind, reflectKind: FunctionalTypeKind) {
+                    require(nonReflectKind.reflectKind() == reflectKind)
+                    require(reflectKind.nonReflectKind() == nonReflectKind)
+                    add(nonReflectKind)
+                    add(reflectKind)
+                }
+            }
+
+            for (extension in session.extensionService.functionalTypeKindExtensions) {
+                with(extension) { registrar.registerKinds() }
+            }
+        }.also { kinds ->
+            val allNames = kinds.map { "${it.packageFqName}.${it.classNamePrefix}" }
+            require(allNames.distinct() == allNames) {
+                "There are clashing functional type kinds: $allNames"
             }
         }
-
-        for (extension in session.extensionService.functionalTypeKindExtensions) {
-            with(extension) { registrar.registerKinds() }
-        }
-    }.also { kinds ->
-        val allNames = kinds.map { "${it.packageFqName}.${it.classNamePrefix}" }
-        require(allNames.distinct() == allNames) {
-            "There are clashing functional type kinds: $allNames"
-        }
-    }.groupBy { it.packageFqName }
-
-    override fun getKindByClassNamePrefix(packageFqName: FqName, className: String): ConeFunctionalTypeKind? {
-        val kinds = knownKindsByPackageFqName[packageFqName] ?: return null
-        for (kind in kinds) {
-            if (!className.startsWith(kind.classNamePrefix)) continue
-            if (!FunctionClassKind.hasArityAtTheEnd(kind.classNamePrefix, className)) continue
-            return kind
-        }
-        return null
-    }
-
-    override fun hasKindWithSpecificPackage(packageFqName: FqName): Boolean {
-        return packageFqName in knownKindsByPackageFqName
+        FunctionalTypeKindExtractor(kinds)
     }
 }

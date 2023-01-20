@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -143,9 +143,9 @@ fun createFunctionalType(
         }
 
     val kind = if (isSuspend) {
-        if (isKFunctionType) FunctionClassKind.KSuspendFunction else FunctionClassKind.SuspendFunction
+        if (isKFunctionType) FunctionalTypeKind.KSuspendFunction else FunctionalTypeKind.SuspendFunction
     } else {
-        if (isKFunctionType) FunctionClassKind.KFunction else FunctionClassKind.Function
+        if (isKFunctionType) FunctionalTypeKind.KFunction else FunctionalTypeKind.Function
     }
 
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))

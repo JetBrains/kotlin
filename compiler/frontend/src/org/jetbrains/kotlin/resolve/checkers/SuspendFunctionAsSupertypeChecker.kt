@@ -5,7 +5,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -22,14 +22,14 @@ object SuspendFunctionAsSupertypeChecker : DeclarationChecker {
         val functionalSupertypes = descriptor.getAllSuperClassifiers().filterIsInstance<FunctionClassDescriptor>().toList()
 
         if (functionalSupertypes.none {
-                it.functionKind == FunctionClassKind.SuspendFunction ||
-                        it.functionKind == FunctionClassKind.KSuspendFunction
+                it.functionKind == FunctionalTypeKind.SuspendFunction ||
+                        it.functionKind == FunctionalTypeKind.KSuspendFunction
             }
         ) return
 
         if (functionalSupertypes.any {
-                it.functionKind == FunctionClassKind.Function ||
-                        it.functionKind == FunctionClassKind.KFunction
+                it.functionKind == FunctionalTypeKind.Function ||
+                        it.functionKind == FunctionalTypeKind.KFunction
             }
         ) {
             val reportOn = (declaration as? KtClassOrObject)?.getSuperTypeList() ?: declaration

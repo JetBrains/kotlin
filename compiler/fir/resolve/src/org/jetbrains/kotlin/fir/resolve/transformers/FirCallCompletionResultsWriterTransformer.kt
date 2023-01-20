@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -575,7 +575,7 @@ class FirCallCompletionResultsWriterTransformer(
                             null,
                             functionType.typeArguments.last() as ConeKotlinType,
                             functionType.classId?.relativeClassName?.asString()
-                                ?.startsWith(FunctionClassKind.SuspendFunction.classNamePrefix) == true
+                                ?.startsWith(FunctionalTypeKind.SuspendFunction.classNamePrefix) == true
                         )
                     }
                 }

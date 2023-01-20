@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.isBuiltin
+import org.jetbrains.kotlin.builtins.functions.isSuspendType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -43,7 +46,7 @@ class FirExtensionSyntheticFunctionalInterfaceProvider(
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSyntheticFunctionalInterfaceProviderBase(session, moduleData, kotlinScopeProvider) {
-    override fun ConeFunctionalTypeKind.isAcceptable(): Boolean {
+    override fun FunctionalTypeKind.isAcceptable(): Boolean {
         return !this.isBuiltin
     }
 }
@@ -56,7 +59,7 @@ class FirBuiltinSyntheticFunctionalInterfaceProvider(
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSyntheticFunctionalInterfaceProviderBase(session, moduleData, kotlinScopeProvider) {
-    override fun ConeFunctionalTypeKind.isAcceptable(): Boolean {
+    override fun FunctionalTypeKind.isAcceptable(): Boolean {
         return this.isBuiltin
     }
 }
@@ -100,7 +103,7 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
 
     private val cache = moduleData.session.firCachesFactory.createCache(::createSyntheticFunctionalInterface)
 
-    protected abstract fun ConeFunctionalTypeKind.isAcceptable(): Boolean
+    protected abstract fun FunctionalTypeKind.isAcceptable(): Boolean
 
     private fun createSyntheticFunctionalInterface(classId: ClassId): FirRegularClassSymbol? {
         return with(classId) {
@@ -172,15 +175,13 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
                         isInline = false
                         isTailRec = false
                         isExternal = false
-                        isSuspend =
-                            kind == ConeFunctionalTypeKind.SuspendFunction ||
-                                    kind == ConeFunctionalTypeKind.KSuspendFunction
+                        isSuspend = kind.isSuspendType
                     }
                     val typeArguments = typeParameters.map {
                         ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false).toFirResolvedTypeRef()
                     }
 
-                    fun createSuperType(kind: ConeFunctionalTypeKind): FirResolvedTypeRef {
+                    fun createSuperType(kind: FunctionalTypeKind): FirResolvedTypeRef {
                         return kind.classId(arity).toLookupTag()
                             .constructClassType(typeArguments.map { it.type }.toTypedArray(), isNullable = false)
                             .toFirResolvedTypeRef()
@@ -241,5 +242,5 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
         }
     }
 
-    private fun ConeFunctionalTypeKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
+    private fun FunctionalTypeKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
 }

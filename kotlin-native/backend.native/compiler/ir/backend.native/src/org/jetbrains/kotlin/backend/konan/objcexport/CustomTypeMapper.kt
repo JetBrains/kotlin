@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.name.ClassId
@@ -18,7 +16,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 
 internal fun ClassDescriptor.isMappedFunctionClass() =
-        this.getFunctionalClassKind() == FunctionClassKind.Function &&
+        this.getFunctionalClassKind() == FunctionalTypeKind.Function &&
                 // Type parameters include return type.
                 declaredTypeParameters.size - 1 < CustomTypeMappers.functionTypeMappersArityLimit
 

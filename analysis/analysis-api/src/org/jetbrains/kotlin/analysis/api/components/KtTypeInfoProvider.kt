@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.name.ClassId
 
 public abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
     public abstract fun isFunctionalInterfaceType(type: KtType): Boolean
-    public abstract fun getFunctionClassKind(type: KtType): FunctionClassKind?
+    public abstract fun getFunctionClassKind(type: KtType): FunctionalTypeKind?
     public abstract fun canBeNull(type: KtType): Boolean
     public abstract fun isDenotable(type: KtType): Boolean
     public abstract fun isArrayOrPrimitiveArray(type: KtType): Boolean
@@ -41,22 +41,22 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
         get() = withValidityAssertion { analysisSession.typeInfoProvider.isFunctionalInterfaceType(this) }
 
     /**
-     * Returns [FunctionClassKind] of the given [KtType]
+     * Returns [FunctionalTypeKind] of the given [KtType]
      */
-    public val KtType.functionClassKind: FunctionClassKind?
+    public val KtType.functionalTypeKind: FunctionalTypeKind?
         get() = withValidityAssertion { analysisSession.typeInfoProvider.getFunctionClassKind(this) }
 
     public val KtType.isFunctionType: Boolean
-        get() = withValidityAssertion { functionClassKind == FunctionClassKind.Function }
+        get() = withValidityAssertion { functionalTypeKind == FunctionalTypeKind.Function }
 
     public val KtType.isKFunctionType: Boolean
-        get() = withValidityAssertion { functionClassKind == FunctionClassKind.KFunction }
+        get() = withValidityAssertion { functionalTypeKind == FunctionalTypeKind.KFunction }
 
     public val KtType.isSuspendFunctionType: Boolean
-        get() = withValidityAssertion { functionClassKind == FunctionClassKind.SuspendFunction }
+        get() = withValidityAssertion { functionalTypeKind == FunctionalTypeKind.SuspendFunction }
 
     public val KtType.isKSuspendFunctionType: Boolean
-        get() = withValidityAssertion { functionClassKind == FunctionClassKind.KSuspendFunction }
+        get() = withValidityAssertion { functionalTypeKind == FunctionalTypeKind.KSuspendFunction }
 
     /**
      * Returns true if a public value of this type can potentially be null. This means this type is not a subtype of [Any]. However, it does not

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.fir.resolve.FirSamResolver
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.*
@@ -31,18 +31,9 @@ internal class KtFirTypeInfoProvider(
         return samResolver.isSamType(coneType)
     }
 
-    override fun getFunctionClassKind(type: KtType): FunctionClassKind? {
-        val coneType = (type as KtFirType).coneType
-        return when (coneType.functionalTypeKind(analysisSession.useSiteSession)) {
-            ConeFunctionalTypeKind.Function -> FunctionClassKind.Function
-            ConeFunctionalTypeKind.KFunction -> FunctionClassKind.KFunction
-            ConeFunctionalTypeKind.SuspendFunction -> FunctionClassKind.SuspendFunction
-            ConeFunctionalTypeKind.KSuspendFunction -> FunctionClassKind.KSuspendFunction
-            null -> null
-            else -> null // TODO: consider handling of custom functional type kinds from plugins
-        }
+    override fun getFunctionClassKind(type: KtType): FunctionalTypeKind? {
+        return (type as KtFirType).coneType.functionalTypeKind(analysisSession.useSiteSession)
     }
-
     override fun canBeNull(type: KtType): Boolean = (type as KtFirType).coneType.canBeNull
 
     override fun isDenotable(type: KtType): Boolean {

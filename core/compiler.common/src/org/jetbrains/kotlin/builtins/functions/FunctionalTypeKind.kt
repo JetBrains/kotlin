@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.types
+package org.jetbrains.kotlin.builtins.functions
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * [ConeFunctionalTypeKind] describes a family of various similar functional types (like kotlin.FunctionN)
+ * [FunctionalTypeKind] describes a family of various similar functional types (like kotlin.FunctionN)
  *   All types in the same family have corresponding shape of classId: [packageFqName].[classNamePrefix]N,
  *   where `N` is an arity of function
  *
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.name.Name
  * Note that if you provide some new functional type kind it's your responsibility to handle all references to it in backend
  *   with [IrGenerationExtension] implementation
  */
-abstract class ConeFunctionalTypeKind internal constructor(
+abstract class FunctionalTypeKind internal constructor(
     val packageFqName: FqName,
     val classNamePrefix: String,
     val isReflectType: Boolean,
@@ -69,7 +69,7 @@ abstract class ConeFunctionalTypeKind internal constructor(
      *
      * Should be overridden for reflect kinds
      */
-    open fun nonReflectKind(): ConeFunctionalTypeKind {
+    open fun nonReflectKind(): FunctionalTypeKind {
         return if (isReflectType) error("Should be overridden explicitly") else this
     }
 
@@ -79,7 +79,7 @@ abstract class ConeFunctionalTypeKind internal constructor(
      *
      * Should be overridden for non reflect kinds
      */
-    open fun reflectKind(): ConeFunctionalTypeKind {
+    open fun reflectKind(): FunctionalTypeKind {
         return if (isReflectType) this else error("Should be overridden explicitly")
     }
 
@@ -91,16 +91,16 @@ abstract class ConeFunctionalTypeKind internal constructor(
 
     // ------------------------------------------- Builtin functional kinds -------------------------------------------
 
-    object Function : ConeFunctionalTypeKind(
+    object Function : FunctionalTypeKind(
         StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
         "Function",
         isReflectType = false,
         annotationOnInvokeClassId = null
     ) {
-        override fun reflectKind(): ConeFunctionalTypeKind = KFunction
+        override fun reflectKind(): FunctionalTypeKind = KFunction
     }
 
-    object SuspendFunction : ConeFunctionalTypeKind(
+    object SuspendFunction : FunctionalTypeKind(
         StandardNames.COROUTINES_PACKAGE_FQ_NAME,
         "SuspendFunction",
         isReflectType = false,
@@ -109,33 +109,37 @@ abstract class ConeFunctionalTypeKind internal constructor(
         override val prefixForTypeRender: String
             get() = "suspend"
 
-        override fun reflectKind(): ConeFunctionalTypeKind = KSuspendFunction
+        override fun reflectKind(): FunctionalTypeKind = KSuspendFunction
     }
 
-    object KFunction : ConeFunctionalTypeKind(
+    object KFunction : FunctionalTypeKind(
         StandardNames.KOTLIN_REFLECT_FQ_NAME,
         "KFunction",
         isReflectType = true,
         annotationOnInvokeClassId = null
     ) {
-        override fun nonReflectKind(): ConeFunctionalTypeKind = Function
+        override fun nonReflectKind(): FunctionalTypeKind = Function
     }
 
-    object KSuspendFunction : ConeFunctionalTypeKind(
+    object KSuspendFunction : FunctionalTypeKind(
         StandardNames.KOTLIN_REFLECT_FQ_NAME,
         "KSuspendFunction",
         isReflectType = true,
         annotationOnInvokeClassId = null
     ) {
-        override fun nonReflectKind(): ConeFunctionalTypeKind = SuspendFunction
+        override fun nonReflectKind(): FunctionalTypeKind = SuspendFunction
     }
 }
 
-val ConeFunctionalTypeKind.isBuiltin: Boolean
+val FunctionalTypeKind.isBuiltin: Boolean
     get() = when (this) {
-        ConeFunctionalTypeKind.Function,
-        ConeFunctionalTypeKind.KFunction,
-        ConeFunctionalTypeKind.SuspendFunction,
-        ConeFunctionalTypeKind.KSuspendFunction -> true
+        FunctionalTypeKind.Function,
+        FunctionalTypeKind.SuspendFunction,
+        FunctionalTypeKind.KFunction,
+        FunctionalTypeKind.KSuspendFunction -> true
         else -> false
     }
+
+val FunctionalTypeKind.isSuspendType: Boolean
+    get() = this == FunctionalTypeKind.SuspendFunction || this == FunctionalTypeKind.KSuspendFunction
+

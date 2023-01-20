@@ -5,39 +5,21 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKindExtractor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.name.FqName
 
 abstract class FirFunctionalTypeKindService : FirSessionComponent {
-    abstract fun getKindByClassNamePrefix(packageFqName: FqName, className: String): ConeFunctionalTypeKind?
-    abstract fun hasKindWithSpecificPackage(packageFqName: FqName): Boolean
+    protected abstract val extractor: FunctionalTypeKindExtractor
 
-    /*
-     * Should be used only in places where session is unavaliable by default (e.g. in default cone type render)
-     */
-    object Default : FirFunctionalTypeKindService() {
-        private val packages = listOf(
-            ConeFunctionalTypeKind.Function,
-            ConeFunctionalTypeKind.SuspendFunction,
-            ConeFunctionalTypeKind.KFunction,
-            ConeFunctionalTypeKind.KSuspendFunction,
-        ).map { it.packageFqName }.toSet()
+    fun getKindByClassNamePrefix(packageFqName: FqName, className: String): FunctionalTypeKind? {
+        return extractor.getFunctionalClassKindWithArity(packageFqName, className)?.kind
+    }
 
-        override fun getKindByClassNamePrefix(packageFqName: FqName, className: String): ConeFunctionalTypeKind? {
-            return when (FunctionClassKind.parseClassName(className, packageFqName)?.kind) {
-                FunctionClassKind.Function -> ConeFunctionalTypeKind.Function
-                FunctionClassKind.SuspendFunction -> ConeFunctionalTypeKind.SuspendFunction
-                FunctionClassKind.KFunction -> ConeFunctionalTypeKind.KFunction
-                FunctionClassKind.KSuspendFunction -> ConeFunctionalTypeKind.KSuspendFunction
-                null -> null
-            }
-        }
-
-        override fun hasKindWithSpecificPackage(packageFqName: FqName): Boolean {
-            return packageFqName in packages
-        }
+    fun hasKindWithSpecificPackage(packageFqName: FqName): Boolean {
+        return extractor.hasKindWithSpecificPackage(packageFqName)
     }
 }
 

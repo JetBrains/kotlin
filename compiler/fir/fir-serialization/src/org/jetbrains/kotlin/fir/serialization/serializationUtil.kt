@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassKind
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -27,8 +27,8 @@ class TypeApproximatorForMetadataSerializer(session: FirSession) :
 fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: FirSession, continuationClassId: ClassId): ConeClassLikeType {
     require(this.isSuspendFunctionType(session))
     val kind =
-        if (isReflectFunctionalType(session)) FunctionClassKind.KFunction
-        else FunctionClassKind.Function
+        if (isReflectFunctionalType(session)) FunctionalTypeKind.KFunction
+        else FunctionalTypeKind.Function
     val fullyExpandedType = type.fullyExpandedType(session)
     val typeArguments = fullyExpandedType.typeArguments
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size))

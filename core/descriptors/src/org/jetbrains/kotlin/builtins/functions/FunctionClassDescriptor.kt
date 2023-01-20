@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
  * A [ClassDescriptor] representing the fictitious class for a function type, such as kotlin.Function1 or kotlin.reflect.KFunction2.
@@ -30,7 +31,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 class FunctionClassDescriptor(
         private val storageManager: StorageManager,
         private val containingDeclaration: PackageFragmentDescriptor,
-        val functionKind: FunctionClassKind,
+        val functionKind: FunctionalTypeKind,
         val arity: Int
 ) : AbstractClassDescriptor(storageManager, functionKind.numberedClassName(arity)) {
 
@@ -95,14 +96,15 @@ class FunctionClassDescriptor(
         override fun computeSupertypes(): Collection<KotlinType> {
             // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for K{Suspend}Function2
             val supertypes = when (functionKind) {
-                FunctionClassKind.Function -> // Function$N <: Function
+                FunctionalTypeKind.Function -> // Function$N <: Function
                     listOf(functionClassId)
-                FunctionClassKind.KFunction -> // KFunction$N <: KFunction
-                    listOf(kFunctionClassId, ClassId(BUILT_INS_PACKAGE_FQ_NAME, FunctionClassKind.Function.numberedClassName(arity)))
-                FunctionClassKind.SuspendFunction -> // SuspendFunction$N<...> <: Function
+                FunctionalTypeKind.KFunction -> // KFunction$N <: KFunction
+                    listOf(kFunctionClassId, ClassId(BUILT_INS_PACKAGE_FQ_NAME, FunctionalTypeKind.Function.numberedClassName(arity)))
+                FunctionalTypeKind.SuspendFunction -> // SuspendFunction$N<...> <: Function
                     listOf(functionClassId)
-                FunctionClassKind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
-                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME, FunctionClassKind.SuspendFunction.numberedClassName(arity)))
+                FunctionalTypeKind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
+                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME, FunctionalTypeKind.SuspendFunction.numberedClassName(arity)))
+                else -> shouldNotBeCalled()
             }
 
             val moduleDescriptor = containingDeclaration.containingDeclaration

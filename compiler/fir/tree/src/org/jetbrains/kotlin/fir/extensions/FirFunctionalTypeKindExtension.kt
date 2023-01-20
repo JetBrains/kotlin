@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.fir.extensions
 
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.types.ConeFunctionalTypeKind
 import kotlin.reflect.KClass
 
 abstract class FirFunctionalTypeKindExtension(session: FirSession) : FirExtension(session) {
@@ -21,7 +21,7 @@ abstract class FirFunctionalTypeKindExtension(session: FirSession) : FirExtensio
         get() = FirFunctionalTypeKindExtension::class
 
     interface FunctionalTypeKindRegistrar {
-        fun registerKind(nonReflectKind: ConeFunctionalTypeKind, reflectKind: ConeFunctionalTypeKind)
+        fun registerKind(nonReflectKind: FunctionalTypeKind, reflectKind: FunctionalTypeKind)
     }
 
     abstract fun FunctionalTypeKindRegistrar.registerKinds()

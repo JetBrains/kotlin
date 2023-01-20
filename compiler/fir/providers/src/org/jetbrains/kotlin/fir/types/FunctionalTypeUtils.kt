@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -27,12 +28,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 // ---------------------------------------------- is type is a functional type ----------------------------------------------
 
-fun ConeKotlinType.functionalTypeKind(session: FirSession): ConeFunctionalTypeKind? {
+fun ConeKotlinType.functionalTypeKind(session: FirSession): FunctionalTypeKind? {
     if (this !is ConeClassLikeType) return null
     return fullyExpandedType(session).lookupTag.functionalTypeKind(session)
 }
 
-private fun ConeClassLikeLookupTag.functionalTypeKind(session: FirSession): ConeFunctionalTypeKind? {
+private fun ConeClassLikeLookupTag.functionalTypeKind(session: FirSession): FunctionalTypeKind? {
     val classId = classId
     return session.functionalTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString())
 }
@@ -40,7 +41,7 @@ private fun ConeClassLikeLookupTag.functionalTypeKind(session: FirSession): Cone
 private inline fun ConeKotlinType.isFunctionalTypeWithPredicate(
     session: FirSession,
     errorOnNotFunctionalType: Boolean = false,
-    predicate: (ConeFunctionalTypeKind) -> Boolean
+    predicate: (FunctionalTypeKind) -> Boolean
 ): Boolean {
     val kind = functionalTypeKind(session)
         ?: if (errorOnNotFunctionalType) error("$this is not a functional type") else return false
@@ -49,7 +50,7 @@ private inline fun ConeKotlinType.isFunctionalTypeWithPredicate(
 
 // Function
 fun ConeKotlinType.isSimpleFunctionType(session: FirSession): Boolean {
-    return isFunctionalTypeWithPredicate(session) { it == ConeFunctionalTypeKind.Function }
+    return isFunctionalTypeWithPredicate(session) { it == FunctionalTypeKind.Function }
 }
 
 // Function, SuspendFunction, [Custom]Function
@@ -60,7 +61,7 @@ fun ConeKotlinType.isNonReflectFunctionalType(session: FirSession): Boolean {
 // SuspendFunction, KSuspendFunction
 fun ConeKotlinType.isSuspendFunctionType(session: FirSession): Boolean {
     return isFunctionalTypeWithPredicate(session) {
-        it == ConeFunctionalTypeKind.SuspendFunction || it == ConeFunctionalTypeKind.KSuspendFunction
+        it == FunctionalTypeKind.SuspendFunction || it == FunctionalTypeKind.KSuspendFunction
     }
 }
 
@@ -82,7 +83,7 @@ fun ConeClassLikeLookupTag.isSomeFunctionalType(session: FirSession): Boolean {
 // Function, KFunction
 private fun ConeKotlinType.isSimpleFunctionalType(session: FirSession, errorOnNotFunctionalType: Boolean): Boolean {
     return isFunctionalTypeWithPredicate(session, errorOnNotFunctionalType) {
-        it == ConeFunctionalTypeKind.Function || it == ConeFunctionalTypeKind.KFunction
+        it == FunctionalTypeKind.Function || it == FunctionalTypeKind.KFunction
     }
 }
 
@@ -99,11 +100,11 @@ private fun ConeKotlinType.isNotSimpleFunctionalType(session: FirSession): Boole
  */
 fun ConeKotlinType.customFunctionalTypeToSimpleFunctionalType(session: FirSession): ConeClassLikeType {
     val kind = functionalTypeKind(session)
-    require(kind != null && kind != ConeFunctionalTypeKind.Function && kind != ConeFunctionalTypeKind.KFunction)
+    require(kind != null && kind != FunctionalTypeKind.Function && kind != FunctionalTypeKind.KFunction)
     val newKind = if (kind.isReflectType) {
-        ConeFunctionalTypeKind.KFunction
+        FunctionalTypeKind.KFunction
     } else {
-        ConeFunctionalTypeKind.Function
+        FunctionalTypeKind.Function
     }
     return createFunctionalTypeWithNewKind(newKind)
 }
@@ -119,7 +120,7 @@ fun ConeKotlinType.reflectFunctionalTypeToNonReflectFunctionalType(session: FirS
     return createFunctionalTypeWithNewKind(kind.nonReflectKind())
 }
 
-private fun ConeKotlinType.createFunctionalTypeWithNewKind(kind: ConeFunctionalTypeKind): ConeClassLikeType {
+private fun ConeKotlinType.createFunctionalTypeWithNewKind(kind: FunctionalTypeKind): ConeClassLikeType {
     val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(typeArguments.size - 1))
     return functionalTypeId.toLookupTag().constructClassType(typeArguments, isNullable = false, attributes = attributes)
 }
