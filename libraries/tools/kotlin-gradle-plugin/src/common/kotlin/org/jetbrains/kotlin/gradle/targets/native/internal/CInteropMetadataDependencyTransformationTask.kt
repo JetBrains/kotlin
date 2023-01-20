@@ -169,7 +169,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @get:OutputFile
     protected val outputLibrariesFileIndex: RegularFileProperty = objectFactory
         .fileProperty()
-        .apply { set(outputDirectory.resolve("${sourceSet.name}.cinteropLibraries")) }
+        .apply { set(outputDirectory.resolve("${project.path.replace(":", ".")}-${sourceSet.name}.cinteropLibraries")) }
 
     @get:Internal
     internal val outputLibraryFiles: FileCollection = project.filesProvider {
