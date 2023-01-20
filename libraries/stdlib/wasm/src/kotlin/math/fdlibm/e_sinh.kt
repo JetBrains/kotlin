@@ -33,12 +33,12 @@ package kotlin.math.fdlibm
 private const val one = 1.0
 private const val shuge = 1.0e307
 internal fun __ieee754_sinh(x: Double): Double {
-    var t: Double = 0.0
-    var w: Double = 0.0
-    var h: Double = 0.0
-    var ix: Int = 0
-    var jx: Int = 0
-    var lx: UInt = 0U
+    var t: Double
+    var w: Double
+    var h: Double
+    var ix: Int
+    var jx: Int
+    var lx: UInt
 
     /* High word of |x|. */
     jx = __HI(x)

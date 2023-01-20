@@ -38,10 +38,10 @@ private const val half = 0.5
 private const val huge = 1.0e300
 
 internal fun __ieee754_cosh(x: Double): Double {
-    var t: Double = 0.0
-    var w: Double = 0.0
-    var ix: Int = 0
-    var lx: UInt = 0U
+    var t: Double
+    var w: Double
+    var ix: Int
+    var lx: UInt
 
     /* High word of |x|. */
     ix = __HI(x)

@@ -28,9 +28,9 @@ private const val tiny = 1.0e-300
 
 internal fun scalbn(x: Double, n: Int): Double {
     var x: Double = x
-    var k: Int = 0
-    var hx: Int = 0
-    var lx: Int = 0
+    var k: Int
+    var hx: Int
+    var lx: Int
     hx = __HI(x)
     lx = __LO(x)
     k = ((hx and 0x7ff00000) shr 20)        /* extract exponent */

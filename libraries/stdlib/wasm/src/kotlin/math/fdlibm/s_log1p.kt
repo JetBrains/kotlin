@@ -92,17 +92,17 @@ private const val Lp7 = 1.479819860511658591e-01  /* 3FC2F112 DF3E5244 */
 private const val zero = 0.0
 
 internal fun log1p(x: Double): Double {
-    var hfsq: Double = 0.0
+    var hfsq: Double
     var f: Double = 0.0
     var c: Double = 0.0
-    var s: Double = 0.0
-    var z: Double = 0.0
-    var R: Double = 0.0
-    var u: Double = 0.0
-    var k: Int = 0
-    var hx: Int = 0
+    var s: Double
+    var z: Double
+    var R: Double
+    var u: Double
+    var k: Int
+    var hx: Int
     var hu: Int = 0
-    var ax: Int = 0
+    var ax: Int
 
     hx = __HI(x)        /* high word of x */
     ax = hx and 0x7fffffff

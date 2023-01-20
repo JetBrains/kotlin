@@ -54,12 +54,12 @@ private const val zero = 0.0
 
 internal fun __ieee754_log10(x: Double): Double {
     var x: Double = x
-    var y: Double = 0.0
-    var z: Double = 0.0
-    var i: Int = 0
-    var k: Int = 0
-    var hx: Int = 0
-    var lx: UInt = 0U
+    var y: Double
+    var z: Double
+    var i: Int
+    var k: Int
+    var hx: Int
+    var lx: UInt
 
     hx = __HI(x)    /* high word of x */
     lx = __LOu(x)    /* low word of x */

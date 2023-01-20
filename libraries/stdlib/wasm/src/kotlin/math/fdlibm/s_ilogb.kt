@@ -19,9 +19,9 @@
 package kotlin.math.fdlibm
 
 internal fun ilogb(x: Double): Int {
-    var hx: Int = 0
-    var lx: Int = 0
-    var ix: Int = 0;
+    var hx: Int
+    var lx: Int
+    var ix: Int
 
     hx = (__HI(x)) and 0x7fffffff    /* high word of x */
     if (hx < 0x00100000) {

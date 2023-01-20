@@ -124,18 +124,18 @@ private const val Q5 = -2.01099218183624371326e-07 /* BE8AFDB7 6E09C32D */
 
 internal fun expm1(x: Double): Double {
     var x: Double = x
-    var y: Double = 0.0
-    var hi: Double = 0.0
-    var lo: Double = 0.0
+    var y: Double
+    var hi: Double
+    var lo: Double
     var c: Double = 0.0
-    var t: Double = 0.0
-    var e: Double = 0.0
-    var hxs: Double = 0.0
-    var hfx: Double = 0.0
-    var r1: Double = 0.0
-    var k: Int = 0
-    var xsb: Int = 0
-    var hx: UInt = 0U
+    var t: Double
+    var e: Double
+    var hxs: Double
+    var hfx: Double
+    var r1: Double
+    var k: Int
+    var xsb: Int
+    var hx: UInt
 
     hx = __HIu(x)    /* high word of x */
     xsb = (hx and Int.MIN_VALUE.toUInt()).toInt()        /* sign bit of x */

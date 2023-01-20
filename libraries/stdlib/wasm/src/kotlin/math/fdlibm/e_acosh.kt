@@ -33,8 +33,8 @@ private const val one = 1.0
 private const val ln2 = 6.93147180559945286227e-01  /* 0x3FE62E42, 0xFEFA39EF */
 
 internal fun __ieee754_acosh(x: Double): Double {
-    var t: Double = 0.0
-    var hx: Int = 0
+    var t: Double
+    var hx: Int
     hx = __HI(x)
     if (hx < 0x3ff00000) {        /* x < 1 */
         return (x - x) / (x - x)

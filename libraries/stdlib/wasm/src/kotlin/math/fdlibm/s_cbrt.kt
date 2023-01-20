@@ -26,12 +26,12 @@ private const val F =  1.60714285714285720630e+00 /* 45/28     = 0x3FF9B6DB, 0x6
 private const val G =  3.57142857142857150787e-01 /* 5/14      = 0x3FD6DB6D, 0xB6DB6DB7 */
 
 internal fun __ieee754_cbrt(v: Double): Double {
-    var hx: Int = 0
-    var r: Double = 0.0
-    var s: Double = 0.0
+    var hx: Int
+    var r: Double
+    var s: Double
     var t: Double = 0.0
-    var w: Double = 0.0
-    var sign: Int = 0
+    var w: Double
+    var sign: Int
 
     var x = v
 

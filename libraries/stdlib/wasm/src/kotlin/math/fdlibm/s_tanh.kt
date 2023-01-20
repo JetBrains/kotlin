@@ -41,10 +41,10 @@ private const val two = 2.0
 private const val tiny = 1.0e-300
 
 internal fun tanh(x: Double): Double {
-    var t: Double = 0.0
-    var z: Double = 0.0
-    var jx: Int = 0
-    var ix: Int = 0
+    var t: Double
+    var z: Double
+    var jx: Int
+    var ix: Int
 
     /* High word of |x|. */
     jx = __HI(x)
