@@ -72,6 +72,7 @@ class Fir2IrClassifierStorage(
             processClassHeader(firClass, irClass)
             declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
         }
+        /*
         for ((primitiveClassId, primitiveArrayId) in StandardClassIds.primitiveArrayTypeByElementType) {
             val firClass = ConeClassLikeLookupTagImpl(primitiveArrayId).toSymbol(session)!!.fir as FirRegularClass
             val irType = typeConverter.classIdToTypeMap[primitiveClassId]
@@ -80,6 +81,7 @@ class Fir2IrClassifierStorage(
             processClassHeader(firClass, irClass)
             declarationStorage.preCacheBuiltinClassMembers(firClass, irClass)
         }
+         */
     }
 
     private fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
