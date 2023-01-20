@@ -1660,19 +1660,19 @@ public class Float private constructor(public val value: Float) : Number(), Comp
          * A constant holding the positive infinity value of Float.
          */
         @Suppress("DIVISION_BY_ZERO")
-        public val POSITIVE_INFINITY: Float = 1.0f / 0.0f
+        public const val POSITIVE_INFINITY: Float = 1.0f / 0.0f
 
         /**
          * A constant holding the negative infinity value of Float.
          */
         @Suppress("DIVISION_BY_ZERO")
-        public val NEGATIVE_INFINITY: Float = -1.0f / 0.0f
+        public const val NEGATIVE_INFINITY: Float = -1.0f / 0.0f
 
         /**
          * A constant holding the "not a number" value of Float.
          */
         @Suppress("DIVISION_BY_ZERO")
-        public val NaN: Float = 0.0f / 0.0f
+        public const val NaN: Float = 0.0f / 0.0f
 
         /**
          * The number of bytes used to represent an instance of Float in a binary form.
@@ -2000,19 +2000,19 @@ public class Double private constructor(public val value: Double) : Number(), Co
          * A constant holding the positive infinity value of Double.
          */
         @Suppress("DIVISION_BY_ZERO")
-        public val POSITIVE_INFINITY: Double = 1.0 / 0.0
+        public const val POSITIVE_INFINITY: Double = 1.0 / 0.0
 
         /**
          * A constant holding the negative infinity value of Double.
          */
         @Suppress("DIVISION_BY_ZERO")
-        public val NEGATIVE_INFINITY: Double = -1.0 / 0.0
+        public const val NEGATIVE_INFINITY: Double = -1.0 / 0.0
 
         /**
          * A constant holding the "not a number" value of Double.
          */
         @Suppress("DIVISION_BY_ZERO")
-        public val NaN: Double = 0.0 / 0.0
+        public const val NaN: Double = 0.0 / 0.0
 
         /**
          * The number of bytes used to represent an instance of Double in a binary form.
