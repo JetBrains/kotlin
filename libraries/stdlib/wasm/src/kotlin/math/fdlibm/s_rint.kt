@@ -27,8 +27,8 @@ private val TWO52 = doubleArrayOf(
     -4.50359962737049600000e+15, /* 0xC3300000, 0x00000000 */
 )
 
-internal fun rint(x: Double): Double {
-    var x: Double = x
+internal fun rint(_x: Double): Double {
+    var x: Double = _x
     var i0: Int
     var j0: Int
     var sx: Int

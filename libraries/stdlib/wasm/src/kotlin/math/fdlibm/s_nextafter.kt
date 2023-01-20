@@ -19,9 +19,9 @@
 
 package kotlin.math.fdlibm
 
-internal fun nextafter(x: Double, y: Double): Double {
-    var x: Double = x
-    var y: Double = y
+internal fun nextafter(_x: Double, _y: Double): Double {
+    var x: Double = _x
+    var y: Double = _y
     var hx: Int
     var hy: Int
     var ix: Int
