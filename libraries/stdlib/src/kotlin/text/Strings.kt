@@ -355,6 +355,16 @@ public inline fun String?.orEmpty(): String = this ?: ""
 public inline fun <C, R> C.ifEmpty(defaultValue: () -> R): R where C : CharSequence, C : R =
     if (isEmpty()) defaultValue() else this
 
+
+/**
+ * Returns this char sequence if it's not null or empty
+ * or the result of calling [defaultValue] function if the char sequence is null or empty.
+ */
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+public inline fun <C, R> C.ifNullOrEmpty(defaultValue: () -> R): R where C : CharSequence, C : R =
+    if (isNullOrEmpty()) defaultValue() else this
+
 /**
  * Returns this char sequence if it is not empty and doesn't consist solely of whitespace characters,
  * or the result of calling [defaultValue] function otherwise.
