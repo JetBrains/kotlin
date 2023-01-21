@@ -15,7 +15,7 @@ import kotlin.wasm.internal.*
  */
 @WasmAutoboxed
 @Suppress("NOTHING_TO_INLINE")
-public class Char private constructor(public val value: Char) : Comparable<Char> {
+public class Char private constructor(private val value: Char) : Comparable<Char> {
     /**
      * Compares this value with the specified value for order.
      *

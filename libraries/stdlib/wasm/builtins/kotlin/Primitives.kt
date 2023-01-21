@@ -16,7 +16,7 @@ import kotlin.wasm.internal.*
  * Represents a 8-bit signed integer.
  */
 @WasmAutoboxed
-public class Byte private constructor(public val value: Byte) : Number(), Comparable<Byte> {
+public class Byte private constructor(private val value: Byte) : Number(), Comparable<Byte> {
     public companion object {
         /**
          * A constant holding the minimum value an instance of Byte can have.
@@ -382,7 +382,7 @@ public class Byte private constructor(public val value: Byte) : Number(), Compar
  * Represents a 16-bit signed integer.
  */
 @WasmAutoboxed
-public class Short private constructor(public val value: Short) : Number(), Comparable<Short> {
+public class Short private constructor(private val value: Short) : Number(), Comparable<Short> {
     public companion object {
         /**
          * A constant holding the minimum value an instance of Short can have.
@@ -760,7 +760,7 @@ public class Short private constructor(public val value: Short) : Number(), Comp
  * Represents a 32-bit signed integer.
  */
 @WasmAutoboxed
-public class Int private constructor(val value: Int) : Number(), Comparable<Int> {
+public class Int private constructor(private val value: Int) : Number(), Comparable<Int> {
 
     public companion object {
         /**
@@ -1210,7 +1210,7 @@ public class Int private constructor(val value: Int) : Number(), Comparable<Int>
  * Represents a 64-bit signed integer.
  */
 @WasmAutoboxed
-public class Long private constructor(val value: Long) : Number(), Comparable<Long> {
+public class Long private constructor(private val value: Long) : Number(), Comparable<Long> {
 
     public companion object {
         /**
@@ -1643,7 +1643,7 @@ public class Long private constructor(val value: Long) : Number(), Comparable<Lo
  * Represents a single-precision 32-bit IEEE 754 floating point number.
  */
 @WasmAutoboxed
-public class Float private constructor(public val value: Float) : Number(), Comparable<Float> {
+public class Float private constructor(private val value: Float) : Number(), Comparable<Float> {
 
     public companion object {
         /**
@@ -1983,7 +1983,7 @@ public class Float private constructor(public val value: Float) : Number(), Comp
  * Represents a double-precision 64-bit IEEE 754 floating point number.
  */
 @WasmAutoboxed
-public class Double private constructor(public val value: Double) : Number(), Comparable<Double> {
+public class Double private constructor(private val value: Double) : Number(), Comparable<Double> {
 
     public companion object {
         /**
