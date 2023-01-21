@@ -105,6 +105,7 @@ class ClassicFrontend2IrConverter(
 
         return IrBackendInput.JsIrBackendInput(
             moduleFragment,
+            dependentModuleFragments = emptyList(),
             pluginContext,
             sourceFiles.map(::KtPsiSourceFile),
             icData,

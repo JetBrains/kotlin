@@ -35,6 +35,6 @@ object IrActualizer {
     }
 
     private fun mergeIrFragments(mainFragment: IrModuleFragment, dependentFragments: List<IrModuleFragment>) {
-        mainFragment.files.addAll(dependentFragments.flatMap { it.files })
+        mainFragment.files.addAll(0, dependentFragments.flatMap { it.files })
     }
 }
