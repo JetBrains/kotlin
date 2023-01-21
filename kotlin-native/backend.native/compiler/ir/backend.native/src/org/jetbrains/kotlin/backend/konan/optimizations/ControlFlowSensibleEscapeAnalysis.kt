@@ -139,13 +139,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
         }
 //        private val returnsValueField = IrFieldSymbolImpl()
 
-        private class EscapeAnalysisResult(val graph: PointsToGraph, val returnValue: Node.VariableValue) {
+        private class EscapeAnalysisResult(val graph: PointsToGraph, val returnValue: Node) {
             companion object {
                 fun optimistic(returnType: IrType, parameters: List<IrValueParameter>): EscapeAnalysisResult {
                     val pointsToGraph = PointsToGraph(PointsToGraphForest())
                     parameters.forEachIndexed { index, parameter -> pointsToGraph.addParameter(parameter, index) }
                     val returnValue = with(pointsToGraph) {
-                        newTempVariable().also { it.addEdge(if (returnType.isUnit()) Node.Unit else constObjectNode(returnType)) }
+                        if (returnType.isUnit()) Node.Unit else constObjectNode(returnType)
                     }
                     return EscapeAnalysisResult(pointsToGraph, returnValue)
                 }
@@ -647,15 +647,18 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 context.log { "before CFG merge" }
                 graph.logDigraph(context)
 
-                // TODO: uncomment.
-                //val mergedGraph = if (results.size == 1) results[0].graph else forest.mergeGraphs(results.map { it.graph })
-                val resultNodes = results.map { it.value }.toMutableList()
-                val mergedGraph = forest.mergeGraphs(results.map { it.graph }, resultNodes)
-                graph.copyFrom(mergedGraph)
-                return if (type.isUnit())
-                    Node.Unit
-                else graph.newPhiNode().also { phiNode ->
-                    resultNodes.forEach { phiNode.addEdge(it) }
+                return if (results.size == 1) {
+                    graph.copyFrom(results[0].graph)
+                    if (type.isUnit()) Node.Unit else results[0].value
+                } else {
+                    val resultNodes = results.map { it.value }.toMutableList()
+                    val mergedGraph = forest.mergeGraphs(results.map { it.graph }, resultNodes)
+                    graph.copyFrom(mergedGraph)
+                    if (type.isUnit())
+                        Node.Unit
+                    else graph.newPhiNode().also { phiNode ->
+                        resultNodes.forEach { phiNode.addEdge(it) }
+                    }
                 }.also {
 
                     context.log { "after CFG merge" }
@@ -939,12 +942,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     handledNodes.set(fictitiousObject.id)
                 }
 
-                val returnNode = graph.newTempVariable()
-//                val returnNode = when {
-//                    actualCallee is IrConstructor || actualCallee.returnType.isUnit() -> Node.Unit
-//                    else -> graph.newTemporary()
-//                }
-                reflectNode(calleeEscapeAnalysisResult.returnValue, returnNode)
                 reflectNode(Node.Unit, Node.Unit)
                 reflectNode(calleeEscapeAnalysisResult.graph.globalNode, graph.globalNode)
                 for (parameter in calleeEscapeAnalysisResult.graph.parameterNodes.values)
@@ -1082,7 +1079,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 context.log { "after" }
                 graph.logDigraph(context)
 
-                return returnNode
+                return outMirroredNodes[calleeEscapeAnalysisResult.returnValue.id]
+                        ?: error("Node ${calleeEscapeAnalysisResult.returnValue} hasn't been reflected")
             }
 
             fun processConstructorCall(
@@ -1193,22 +1191,27 @@ internal object ControlFlowSensibleEscapeAnalysis {
             context.log { "after analyzing body:" }
             functionResult.graph.logDigraph(context)
 
-            val returnValue = functionResult.graph.newTempVariable()
-            returnValue.addEdge(functionResult.value)
-            val reachable = mutableSetOf<Node>(Node.Unit)
-            findReachable(returnValue, reachable)
-            findReachable(functionResult.graph.globalNode, reachable)
+            val reachable = mutableListOf<Node>(Node.Unit)
+            val nodeSet = BitSet(forest.totalNodes)
+            nodeSet.set(Node.UNIT_ID)
+            if (functionResult.value != Node.Unit)
+                findReachable(functionResult.value, nodeSet, reachable)
+            findReachable(functionResult.graph.globalNode, nodeSet, reachable)
             functionResult.graph.parameterNodes.values.forEach {
-                if (it !in reachable) findReachable(it, reachable)
+                if (!nodeSet.get(it.id)) findReachable(it, nodeSet, reachable)
             }
 
             context.log { "after removing unreachable:" }
-            PointsToGraph(forest, reachable.toMutableList(), functionResult.graph.parameterNodes, mutableMapOf()).logDigraph(context)
+            PointsToGraph(forest, reachable, functionResult.graph.parameterNodes, mutableMapOf()).logDigraph(context)
 
-            // TODO: bypass phi nodes with either single incoming edge or single outgoing edge.
+            nodeSet.clear()
+            nodeSet.set(functionResult.value.id)
+            for (node in reachable)
+                (node as? Node.Object)?.fields?.values?.forEach { nodeSet.set(it.id) }
+
             val nodes = mutableListOf<Node>()
-            reachable.forEach { node ->
-                if (node !is Node.VariableValue || node == returnValue)
+            for (node in reachable) {
+                if (node !is Node.Variable || nodeSet.get(node.id))
                     nodes.add(node)
                 else {
                     if (node.assignedTo.isNotEmpty())
@@ -1218,9 +1221,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
+            // TODO: bypass phi nodes with either single incoming edge or single outgoing edge.
+
             context.log { "after bypassing variables:" }
             PointsToGraph(forest, nodes, functionResult.graph.parameterNodes, mutableMapOf()).logDigraph(context)
-//            val nodes = reachable.toMutableList()
 
             var index = Node.LOWEST_NODE_ID
             nodes.forEach { node ->
@@ -1231,7 +1235,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             context.log { "after reenumerating:" }
             PointsToGraph(forest, nodes, functionResult.graph.parameterNodes, mutableMapOf()).logDigraph(context)
 
-            val list = mutableListOf<Node>(returnValue)
+            val list = mutableListOf(functionResult.value)
             // Remove multi-edges.
             val graph = forest.mergeGraphs(listOf(PointsToGraph(forest, nodes, functionResult.graph.parameterNodes, mutableMapOf())), list)
 
@@ -1240,25 +1244,26 @@ internal object ControlFlowSensibleEscapeAnalysis {
             context.log { "EA result for ${function.render()}" }
             graph.logDigraph(context)
 
-            escapeAnalysisResults[function.symbol] = EscapeAnalysisResult(graph, list[0] as Node.VariableValue)
+            escapeAnalysisResults[function.symbol] = EscapeAnalysisResult(graph, list[0])
         }
 
-        private fun findReachable(node: Node, visited: MutableSet<Node>) {
+        private fun findReachable(node: Node, nodeSet: BitSet, visited: MutableList<Node>) {
             visited.add(node)
+            nodeSet.set(node.id)
             when (node) {
                 is Node.Object -> {
                     node.fields.values.forEach {
-                        if (it !in visited) findReachable(it, visited)
+                        if (!nodeSet.get(it.id)) findReachable(it, nodeSet, visited)
                     }
                 }
                 is Node.Variable -> {
                     node.assignedWith?.let {
-                        if (it !in visited) findReachable(it, visited)
+                        if (!nodeSet.get(it.id)) findReachable(it, nodeSet, visited)
                     }
                 }
                 is Node.Phi -> {
                     node.pointsTo.forEach {
-                        if (it !in visited) findReachable(it, visited)
+                        if (!nodeSet.get(it.id)) findReachable(it, nodeSet, visited)
                     }
                 }
             }
