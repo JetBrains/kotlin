@@ -1688,18 +1688,6 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
-            @TestMetadata("selfTypeForAnnotation.kt")
-            public void testSelfTypeForAnnotation() throws Exception {
-                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypeForAnnotation.kt");
-            }
-
-            @Test
-            @TestMetadata("selfTypeForEnumClass.kt")
-            public void testSelfTypeForEnumClass() throws Exception {
-                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypeForEnumClass.kt");
-            }
-
-            @Test
             @TestMetadata("someOverridesTest.kt")
             public void testSomeOverridesTest() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/someOverridesTest.kt");
@@ -1796,6 +1784,40 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 @TestMetadata("Parameters.kt")
                 public void testParameters() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/functionAsExpression/Parameters.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes")
+            @TestDataPath("$PROJECT_ROOT")
+            public class SelfTypes {
+                @Test
+                public void testAllFilesPresentInSelfTypes() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("forAnnotation.kt")
+                public void testForAnnotation() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes/forAnnotation.kt");
+                }
+
+                @Test
+                @TestMetadata("forEnumClass.kt")
+                public void testForEnumClass() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes/forEnumClass.kt");
+                }
+
+                @Test
+                @TestMetadata("forEnumEntry.kt")
+                public void testForEnumEntry() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes/forEnumEntry.kt");
+                }
+
+                @Test
+                @TestMetadata("forObject.kt")
+                public void testForObject() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes/forObject.kt");
                 }
             }
         }

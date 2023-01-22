@@ -14646,6 +14646,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             public void testFalsePositiveBoundSmartcast() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/falsePositiveBoundSmartcast.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/fir/selfTypes")
+            @TestDataPath("$PROJECT_ROOT")
+            @Tag("codegen")
+            @UseExtTestCaseGroupProvider()
+            public class SelfTypes {
+                @Test
+                public void testAllFilesPresentInSelfTypes() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/selfTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
         }
 
         @Nested

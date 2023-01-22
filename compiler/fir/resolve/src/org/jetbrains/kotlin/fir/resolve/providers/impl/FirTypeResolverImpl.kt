@@ -277,6 +277,14 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
 
         if (symbol is FirRegularClassSymbol) {
+
+            val withAddedSelfTypeStar =
+                symbol.hasAnnotation(StandardClassIds.Annotations.Self, session) && allTypeArguments.size != symbol.fir.typeParameters.size
+            if (withAddedSelfTypeStar) {
+                allTypeArguments.add(ConeStarProjection)
+                typeArgumentsCount++
+            }
+
             val isPossibleBareType = areBareTypesAllowed && allTypeArguments.isEmpty()
             if (!isPossibleBareType) {
                 val actualSubstitutor = substitutor ?: ConeSubstitutor.Empty
@@ -301,7 +309,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
 
                     if (typeParameterIndex < typeArgumentsCount) {
                         // Check if type argument matches type parameter in respective qualifier part
-                        val qualifierPartArgumentsCount = qualifier[qualifierPartIndex].typeArgumentList.typeArguments.size
+                        val qualifierPartArgumentsCount =
+                            qualifier[qualifierPartIndex].typeArgumentList.typeArguments.size + (if (withAddedSelfTypeStar) 1 else 0)
                         createDiagnosticsIfExists(
                             parameterClass,
                             qualifierPartIndex,

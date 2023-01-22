@@ -17556,6 +17556,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         public void testSuspendExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/fir/selfTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        public class SelfTypes {
+            @Test
+            public void testAllFilesPresentInSelfTypes() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/selfTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+            }
+        }
     }
 
     @Nested

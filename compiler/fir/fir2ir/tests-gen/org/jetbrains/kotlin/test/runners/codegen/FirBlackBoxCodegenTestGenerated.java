@@ -18224,12 +18224,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
-        @TestMetadata("ControlFlowInfoSelfTypes.kt")
-        public void testControlFlowInfoSelfTypes() throws Exception {
-            runTest("compiler/testData/codegen/box/fir/ControlFlowInfoSelfTypes.kt");
-        }
-
-        @Test
         @TestMetadata("CustomHashSetSize.kt")
         public void testCustomHashSetSize() throws Exception {
             runTest("compiler/testData/codegen/box/fir/CustomHashSetSize.kt");
@@ -18380,24 +18374,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
-        @TestMetadata("selfTypeBuilderTest.kt")
-        public void testSelfTypeBuilderTest() throws Exception {
-            runTest("compiler/testData/codegen/box/fir/selfTypeBuilderTest.kt");
-        }
-
-        @Test
-        @TestMetadata("selfTypes.kt")
-        public void testSelfTypes() throws Exception {
-            runTest("compiler/testData/codegen/box/fir/selfTypes.kt");
-        }
-
-        @Test
-        @TestMetadata("selfTypesInSealedInterface.kt")
-        public void testSelfTypesInSealedInterface() throws Exception {
-            runTest("compiler/testData/codegen/box/fir/selfTypesInSealedInterface.kt");
-        }
-
-        @Test
         @TestMetadata("SuspendExtension.kt")
         public void testSuspendExtension() throws Exception {
             runTest("compiler/testData/codegen/box/fir/SuspendExtension.kt");
@@ -18407,6 +18383,52 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("unqualifiedEnum.kt")
         public void testUnqualifiedEnum() throws Exception {
             runTest("compiler/testData/codegen/box/fir/unqualifiedEnum.kt");
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/fir/selfTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        public class SelfTypes {
+            @Test
+            public void testAllFilesPresentInSelfTypes() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/selfTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("classWithSelfType.kt")
+            public void testClassWithSelfType() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/selfTypes/classWithSelfType.kt");
+            }
+
+            @Test
+            @TestMetadata("ControlFlowInfoSelfTypes.kt")
+            public void testControlFlowInfoSelfTypes() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/selfTypes/ControlFlowInfoSelfTypes.kt");
+            }
+
+            @Test
+            @TestMetadata("selfClassAsFunctionArgument.kt")
+            public void testSelfClassAsFunctionArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/selfTypes/selfClassAsFunctionArgument.kt");
+            }
+
+            @Test
+            @TestMetadata("selfClassAsReturnType.kt")
+            public void testSelfClassAsReturnType() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/selfTypes/selfClassAsReturnType.kt");
+            }
+
+            @Test
+            @TestMetadata("selfTypeBuilder.kt")
+            public void testSelfTypeBuilder() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/selfTypes/selfTypeBuilder.kt");
+            }
+
+            @Test
+            @TestMetadata("selfTypeInSealedInterface.kt")
+            public void testSelfTypeInSealedInterface() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/selfTypes/selfTypeInSealedInterface.kt");
+            }
         }
     }
 
