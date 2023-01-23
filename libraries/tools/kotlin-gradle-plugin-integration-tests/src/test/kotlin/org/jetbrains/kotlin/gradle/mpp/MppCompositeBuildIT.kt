@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform with composite builds")
@@ -147,6 +148,33 @@ class MppCompositeBuildIT : KGPBaseTest() {
             build("check") {
                 assertTasksExecuted(":jvmTest")
                 assertTasksExecuted(":jsTest")
+            }
+        }
+    }
+
+    @OsCondition(enabledOnCI = [OS.MAC], supportedOn = [OS.MAC])
+    @GradleTest
+    fun `test - sample2-withHostSpecificTargets - assemble`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample2-withHostSpecificTargets/producerBuild", gradleVersion)
+
+        project("mpp-composite-build/sample2-withHostSpecificTargets/consumerBuild", gradleVersion) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            build("cleanNativeDistributionCommonization")
+
+            build("assemble") {
+                assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileKotlinIosX64")
+                assertTasksExecuted(":consumerA:compileKotlinJvm")
+            }
+
+            build("assemble") {
+                assertTasksUpToDate(":consumerA:compileCommonMainKotlinMetadata")
+                assertTasksUpToDate(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksUpToDate(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksUpToDate(":consumerA:compileKotlinIosX64")
+                assertTasksUpToDate(":consumerA:compileKotlinJvm")
             }
         }
     }
