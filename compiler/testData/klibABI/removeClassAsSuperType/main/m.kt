@@ -21,6 +21,6 @@ fun box() = abiTest {
     expectFailure(linkage("Property accessor 'anonymousObjectChildOfRemovedInterface.<get-anonymousObjectChildOfRemovedInterface>' can not be called: Property accessor uses unlinked class symbol '/RemovedInterface'")) { anonymousObjectChildOfRemovedInterface }
     expectFailure(linkage("Constructor 'LocalClass.<init>' can not be called: Class 'LocalClass' uses unlinked class symbol '/RemovedClass'")) { topLevelFunctionWithLocalClassChildOfRemovedClass() }
     expectFailure(linkage("Constructor 'LocalClass.<init>' can not be called: Class 'LocalClass' uses unlinked class symbol '/RemovedInterface'")) { topLevelFunctionWithLocalClassChildOfRemovedInterface() }
-    expectFailure(linkage("Can not read value from variable 'anonymousObject': Variable uses unlinked class symbol '/RemovedClass' (through anonymous object)")) { topLevelFunctionWithAnonymousObjectChildOfRemovedClass() }
-    expectFailure(linkage("Can not read value from variable 'anonymousObject': Variable uses unlinked class symbol '/RemovedInterface' (through anonymous object)")) { topLevelFunctionWithAnonymousObjectChildOfRemovedInterface() }
+    expectFailure(linkage("Can not read value from variable 'anonymousObject': Variable uses unlinked class symbol '/RemovedClass' (via anonymous object)")) { topLevelFunctionWithAnonymousObjectChildOfRemovedClass() }
+    expectFailure(linkage("Can not read value from variable 'anonymousObject': Variable uses unlinked class symbol '/RemovedInterface' (via anonymous object)")) { topLevelFunctionWithAnonymousObjectChildOfRemovedInterface() }
 }

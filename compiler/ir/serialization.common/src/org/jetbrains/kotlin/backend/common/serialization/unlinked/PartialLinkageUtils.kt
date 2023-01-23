@@ -34,10 +34,23 @@ internal object PartialLinkageUtils {
         else -> null
     }
 
-    fun IrDeclarationWithName.computeClassId(): ClassId? = when (val parent = parent) {
-        is IrPackageFragment -> ClassId(parent.fqName, name)
-        is IrDeclarationWithName -> parent.computeClassId()?.createNestedClassId(name)
-        else -> null
+    /** Like [ClassId], but can be used for any declaration. */
+    data class DeclarationId(val packageFqName: String, val declarationRelativeFqName: String) {
+        private fun createNested(name: String) =
+            DeclarationId(packageFqName, if (declarationRelativeFqName.isNotEmpty()) "$declarationRelativeFqName.$name" else name)
+
+        override fun toString() = "$packageFqName/$declarationRelativeFqName"
+
+        companion object {
+            val IrDeclarationWithName.declarationId: DeclarationId?
+                get() {
+                    return when (val parent = parent) {
+                        is IrPackageFragment -> DeclarationId(parent.fqName.asString(), name.asString())
+                        is IrDeclarationWithName -> parent.declarationId?.createNested(name.asString())
+                        else -> null
+                    }
+                }
+        }
     }
 
     /**

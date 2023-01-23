@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Usable
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.DeclarationId
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.DeclarationId.Companion.declarationId
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
@@ -20,13 +22,14 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal class ClassifierExplorer(private val builtIns: IrBuiltIns, val stubGenerator: MissingDeclarationStubGenerator) {
+internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val stubGenerator: MissingDeclarationStubGenerator) {
     private val exploredSymbols = ExploredClassifiers()
 
     private val permittedAnnotationArrayParameterSymbols: Set<IrClassSymbol> by lazy {
@@ -103,10 +106,18 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, val stubGene
                 if (classifier.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
                     return exploredSymbols.registerUnusable(this, MissingClassifier(this))
 
-                classifier.annotationConstructors?.firstUnusable { it.exploreAnnotationConstructor(visitedSymbols) }
-                    ?: classifier.outerClassSymbol?.exploreSymbol(visitedSymbols).asUnusable()
+                // TODO: if the class is from stdlib, don't run all the checks below
+
+                val directSuperTypeSymbols = hashSetOf<IrClassSymbol>()
+
+                classifier.annotationConstructorsIfApplicable?.firstUnusable { it.exploreAnnotationConstructor(visitedSymbols) }
+                    ?: classifier.outerClassSymbolIfApplicable?.exploreSymbol(visitedSymbols).asUnusable()
                     ?: classifier.typeParameters.firstUnusable { it.symbol.exploreSymbol(visitedSymbols) }
-                    ?: classifier.superTypes.firstUnusable { it.exploreType(visitedSymbols) }
+                    ?: classifier.superTypes.firstUnusable { superType ->
+                        directSuperTypeSymbols.addIfNotNull(superType.asSimpleType()?.classifier as? IrClassSymbol)
+                        superType.exploreType(visitedSymbols)
+                    }
+                    ?: classifier.exploreSuperClasses(directSuperTypeSymbols) // Check them all at once.
             }
 
             is IrTypeParameter -> classifier.superTypes.firstUnusable { it.exploreType(visitedSymbols) }
@@ -175,12 +186,110 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, val stubGene
         return null
     }
 
+    private fun IrClass.exploreSuperClasses(superTypeSymbols: Set<IrClassSymbol>): Unusable? {
+        if (isInterface) {
+            // Can inherit only from other interfaces.
+            val realSuperClassSymbols = superTypeSymbols.filter { it != builtIns.anyClass && !it.owner.isInterface }
+            if (realSuperClassSymbols.isNotEmpty())
+                return InvalidInheritance(symbol, realSuperClassSymbols) // Interface inherits from a real class(es).
+        } else {
+            // Check the number of non-interface supertypes.
+            val superClassSymbols = superTypeSymbols.filter { !it.owner.isInterface }
+            val superClassSymbol = when (superClassSymbols.size) {
+                0 -> builtIns.anyClass
+                1 -> superClassSymbols.first()
+                else -> return InvalidInheritance(symbol, superClassSymbols) // Class inherits from multiple classes.
+            }
+
+            // Super class can not be final or of illegal kind.
+            if (superClassSymbol != builtIns.anyClass
+                && superClassSymbol != builtIns.enumClass // Enum class can't be explicitly inherited, only valid enum class can inherit it.
+            ) {
+                val superClass = superClassSymbol.owner
+
+                // Note: Super-interfaces are already filtered out above.
+                val isInvalidInheritance = when (kind) {
+                    ClassKind.INTERFACE,
+                    ClassKind.ENUM_CLASS,
+                    ClassKind.ANNOTATION_CLASS -> true
+                    else -> isValue || when (superClass.kind) {
+                        ClassKind.ENUM_CLASS -> kind != ClassKind.ENUM_ENTRY
+                        ClassKind.CLASS -> superClass.modality == Modality.FINAL
+                        else -> true
+                    }
+                }
+
+                if (isInvalidInheritance)
+                    return InvalidInheritance(symbol, superClassSymbols) // Invalid inheritance.
+            }
+
+            // Check delegating constructor calls.
+            val ownConstructors: Map<IrConstructorSymbol, IrConstructor> = declarations
+                .filterIsInstance<IrConstructor>()
+                .associateBy { it.symbol }
+
+            ownConstructors.forEach { (_, constructor) ->
+                var unexpectedSuperClassConstructorSymbol: IrConstructorSymbol? = null
+
+                constructor.acceptChildrenVoid(object : IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) {
+                        if (unexpectedSuperClassConstructorSymbol != null)
+                            return // Break.
+
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitClass(declaration: IrClass) {
+                        // Skip nested
+                    }
+
+                    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
+                        if (unexpectedSuperClassConstructorSymbol != null)
+                            return // Break.
+
+                        val calledConstructorSymbol = expression.symbol
+                        if (calledConstructorSymbol in ownConstructors) return // OK, just calling another constructor of the same class
+
+                        if (calledConstructorSymbol.isBound) {
+                            val calledConstructor = calledConstructorSymbol.owner
+                            if (calledConstructor.origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION) {
+                                val constructedSuperClassSymbol = calledConstructor.parentAsClass.symbol
+                                if (constructedSuperClassSymbol != superClassSymbol) {
+                                    // Wrong delegating constructor call.
+                                    unexpectedSuperClassConstructorSymbol = calledConstructorSymbol
+                                }
+                            }
+                        } else {
+                            // Fallback to signatures.
+                            (calledConstructorSymbol.signature as? IdSignature.CommonSignature)?.let { constructorSignature ->
+                                val constructedSuperClassId = DeclarationId(
+                                    constructorSignature.packageFqName,
+                                    constructorSignature.declarationFqName.substringBeforeLast('.')
+                                )
+
+                                if (superClassSymbol.owner.declarationId != constructedSuperClassId) {
+                                    // Wrong delegating constructor call.
+                                    unexpectedSuperClassConstructorSymbol = calledConstructorSymbol
+                                }
+                            }
+                        }
+                    }
+                })
+
+                if (unexpectedSuperClassConstructorSymbol != null)
+                    return InvalidInheritance(symbol, superClassSymbol, unexpectedSuperClassConstructorSymbol!!)
+            }
+        }
+
+        return null
+    }
+
     companion object {
-        private inline val IrClass.annotationConstructors: Sequence<IrConstructor>?
+        private inline val IrClass.annotationConstructorsIfApplicable: Sequence<IrConstructor>?
             get() = if (isAnnotationClass) constructors else null
 
-        private inline val IrClass.outerClassSymbol: IrClassSymbol?
-            get() = if (isInner || isEnumEntry) parentClassOrNull?.symbol else null
+        private inline val IrClass.outerClassSymbolIfApplicable: IrClassSymbol?
+            get() = if (isInner || isEnumEntry) (parent as? IrClass)?.symbol else null
 
         private inline val IrTypeArgument.typeOrNull: IrType?
             get() = (this as? IrTypeProjection)?.type

@@ -88,7 +88,7 @@ internal class PartiallyLinkedIrTreePatcher(
             removed -= declarations.size
 
             assert(expectedToRemove == removed) {
-                "Expected to remove $expectedToRemove declarations, but removed only $removed in $container"
+                "Expected to remove $expectedToRemove declarations in $container, but removed only $removed"
             }
         }
 
@@ -142,12 +142,8 @@ internal class PartiallyLinkedIrTreePatcher(
             if (unusableClass != null) {
                 // Transform the reason into the most appropriate linkage case.
                 val partialLinkageCase = when (unusableClass) {
-                    is ExploredClassifier.Unusable.MissingClassifier -> MissingDeclaration(declaration.symbol)
-                    is ExploredClassifier.Unusable.AnnotationWithUnacceptableParameter -> AnnotationWithUnacceptableParameter(
-                        declaration.symbol,
-                        unusableClass.unacceptableClassifierSymbol
-                    )
-                    is ExploredClassifier.Unusable.DueToOtherClassifier -> DeclarationUsesPartiallyLinkedClassifier(
+                    is ExploredClassifier.Unusable.CanBeRootCause -> UnusableClassifier(unusableClass)
+                    is ExploredClassifier.Unusable.DueToOtherClassifier -> DeclarationWithUnusableClassifier(
                         declaration.symbol,
                         unusableClass.rootCause
                     )
@@ -212,7 +208,7 @@ internal class PartiallyLinkedIrTreePatcher(
             val partialLinkageCase = when (declaration.origin) {
                 PartiallyLinkedDeclarationOrigin.UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER -> UnimplementedAbstractCallable(declaration as IrOverridableDeclaration<*>)
                 PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION -> MissingDeclaration(declaration.symbol)
-                else -> unusableClassifierInSignature?.let { DeclarationUsesPartiallyLinkedClassifier(declaration.symbol, it) }
+                else -> unusableClassifierInSignature?.let { DeclarationWithUnusableClassifier(declaration.symbol, it) }
             }
 
             if (partialLinkageCase != null) {
@@ -463,12 +459,12 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         private fun IrExpression.checkExpressionType(type: IrType): PartialLinkageCase? {
-            return ExpressionUsesPartiallyLinkedClassifier(this, type.explore() ?: return null)
+            return ExpressionWithUnusableClassifier(this, type.explore() ?: return null)
         }
 
         private fun IrMemberAccessExpression<*>.checkExpressionTypeArguments(): PartialLinkageCase? {
             // TODO: is it necessary to check that the number of type parameters matches the number of type arguments?
-            return ExpressionUsesPartiallyLinkedClassifier(
+            return ExpressionWithUnusableClassifier(
                 this,
                 (0 until typeArgumentsCount).firstNotNullOfOrNull { index -> getTypeArgument(index)?.explore() } ?: return null
             )
@@ -490,7 +486,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     if (owner.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION
                         || (owner as? IrLazyDeclarationBase)?.isEffectivelyMissingLazyIrDeclaration() == true
                     ) {
-                        return ExpressionUsesMissingDeclaration(this, symbol)
+                        return ExpressionWithMissingDeclaration(this, symbol)
                     }
                 }
 
@@ -498,7 +494,7 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             val partialLinkageCase = when (symbol) {
-                is IrClassifierSymbol -> symbol.explore()?.let { ExpressionUsesPartiallyLinkedClassifier(this, it) }
+                is IrClassifierSymbol -> symbol.explore()?.let { ExpressionWithUnusableClassifier(this, it) }
 
                 is IrEnumEntrySymbol -> checkReferencedDeclaration(symbol.owner.correspondingClass?.symbol, checkVisibility = false)
 
@@ -520,7 +516,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
                     else -> null
                 }?.let { unusableClassifierInReferencedDeclaration ->
-                    ExpressionUsesDeclarationThatUsesPartiallyLinkedClassifier(this, symbol, unusableClassifierInReferencedDeclaration)
+                    ExpressionHasDeclarationWithUnusableClassifier(this, symbol, unusableClassifierInReferencedDeclaration)
                 }
             }
 
@@ -566,7 +562,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     } else
                         containingModule
 
-                    ExpressionsUsesInaccessibleDeclaration(this, symbol, declaringModule, currentFile.module)
+                    ExpressionHasInaccessibleDeclaration(this, symbol, declaringModule, currentFile.module)
                 }
             }
         }
@@ -583,7 +579,7 @@ internal class PartiallyLinkedIrTreePatcher(
             checkDeclarationType: (D) -> Boolean
         ): PartialLinkageCase? {
             return if (!checkDeclarationType(declaration))
-                ExpressionUsesWrongTypeOfDeclaration(this, declaration.symbol, expectedDeclarationDescription)
+                ExpressionHasWrongTypeOfDeclaration(this, declaration.symbol, expectedDeclarationDescription)
             else null
         }
 
@@ -602,7 +598,6 @@ internal class PartiallyLinkedIrTreePatcher(
         private fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrElement {
             if (annotations.isNotEmpty()) {
                 annotations = annotations.filterTo(ArrayList(annotations.size)) { annotation ->
-                    // TODO: check the following steps (do it for nested annotations recursively)
                     val partialLinkageCase = with(annotation) {
                         checkReferencedDeclaration(symbol)
                             ?: checkExpressionTypeArguments()

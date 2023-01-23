@@ -17,6 +17,13 @@ import org.jetbrains.kotlin.ir.symbols.*
  */
 internal sealed interface PartialLinkageCase {
     /**
+     * Unusable (partially linked) classifier.
+     *
+     * Applicable to: Declarations (classifiers).
+     */
+    class UnusableClassifier(val cause: ExploredClassifier.Unusable.CanBeRootCause) : PartialLinkageCase
+
+    /**
      * There is no real owner declaration for the symbol, only synthetic stub created by [MissingDeclarationStubGenerator].
      * Likely the declaration has been deleted in newer version of the library.
      *
@@ -25,32 +32,25 @@ internal sealed interface PartialLinkageCase {
     class MissingDeclaration(val missingDeclarationSymbol: IrSymbol) : PartialLinkageCase
 
     /**
-     * The annotation class has unacceptable classifier as one of its parameters. This may happen if the class representing this
-     * parameter was an annotation class before, but then it was converted to a non-annotation class.
-     *
-     * Applicable to: Declarations (annotation classes).
-     */
-    class AnnotationWithUnacceptableParameter(
-        val annotationClassSymbol: IrClassSymbol,
-        val unacceptableClassifierSymbol: IrClassifierSymbol
-    ) : PartialLinkageCase
-
-    /**
-     * Declaration's signature uses partially linked classifier symbol.
+     * Declaration's signature uses an unusable (partially linked) classifier symbol.
      *
      * Applicable to: Declarations.
      */
-    class DeclarationUsesPartiallyLinkedClassifier(
+    class DeclarationWithUnusableClassifier(
         val declarationSymbol: IrSymbol,
         val cause: ExploredClassifier.Unusable
     ) : PartialLinkageCase
 
     /**
-     * Unimplemented abstract callable member in non-abstract class.
+     * Expression uses an unusable (partially linked) classifier symbol.
+     * Example: An [IrTypeOperatorCall] that casts an argument to a type with unlinked symbol.
      *
-     * Applicable to: Declarations (functions, properties).
+     * Applicable to: Expressions.
      */
-    class UnimplementedAbstractCallable(val callable: IrOverridableDeclaration<*>) : PartialLinkageCase
+    class ExpressionWithUnusableClassifier(
+        val expression: IrExpression,
+        val cause: ExploredClassifier.Unusable
+    ) : PartialLinkageCase
 
     /**
      * Expression references a missing IR declaration (IR declaration)
@@ -58,28 +58,17 @@ internal sealed interface PartialLinkageCase {
      *
      * Applicable to: Expressions.
      */
-    class ExpressionUsesMissingDeclaration(
+    class ExpressionWithMissingDeclaration(
         val expression: IrExpression,
         val missingDeclarationSymbol: IrSymbol
     ) : PartialLinkageCase
 
     /**
-     * Expression uses partially linked classifier symbol.
-     * Example: An [IrTypeOperatorCall] that casts an argument to a type with unlinked symbol.
+     * Expression refers an IR declaration with a signature that uses an unusable (partially linked) classifier symbol.
      *
      * Applicable to: Expressions.
      */
-    class ExpressionUsesPartiallyLinkedClassifier(
-        val expression: IrExpression,
-        val cause: ExploredClassifier.Unusable
-    ) : PartialLinkageCase
-
-    /**
-     * Expression refers an IR declaration with a signature that uses partially linked classifier symbol
-     *
-     * Applicable to: Expressions.
-     */
-    class ExpressionUsesDeclarationThatUsesPartiallyLinkedClassifier(
+    class ExpressionHasDeclarationWithUnusableClassifier(
         val expression: IrExpression,
         val referencedDeclarationSymbol: IrSymbol,
         val cause: ExploredClassifier.Unusable
@@ -91,7 +80,7 @@ internal sealed interface PartialLinkageCase {
      *
      * Applicable to: Expressions.
      */
-    class ExpressionUsesWrongTypeOfDeclaration(
+    class ExpressionHasWrongTypeOfDeclaration(
         val expression: IrExpression,
         val actualDeclarationSymbol: IrSymbol,
         val expectedDeclarationDescription: String
@@ -115,10 +104,17 @@ internal sealed interface PartialLinkageCase {
      *
      * Applicable to: Expressions.
      */
-    class ExpressionsUsesInaccessibleDeclaration(
+    class ExpressionHasInaccessibleDeclaration(
         val expression: IrExpression,
         val referencedDeclarationSymbol: IrSymbol,
         val declaringModule: PartialLinkageUtils.Module,
         val useSiteModule: PartialLinkageUtils.Module
     ) : PartialLinkageCase
+
+    /**
+     * Unimplemented abstract callable member in non-abstract class.
+     *
+     * Applicable to: Declarations (functions, properties).
+     */
+    class UnimplementedAbstractCallable(val callable: IrOverridableDeclaration<*>) : PartialLinkageCase
 }
