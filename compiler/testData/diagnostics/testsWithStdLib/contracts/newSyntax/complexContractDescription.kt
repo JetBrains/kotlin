@@ -1,3 +1,4 @@
+// LANGUAGE: +ContractSyntaxV2
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 
 import kotlin.contracts.*

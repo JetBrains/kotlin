@@ -245,6 +245,7 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
 
             val legacyRawContractDescription = buildLegacyRawContractDescription {
                 this.contractCall = contractCall
+                this.source = contractDescription.source
             }
 
             owner.replaceContractDescription(legacyRawContractDescription)

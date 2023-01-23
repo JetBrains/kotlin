@@ -1208,6 +1208,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/contracts/contractFromOtherModule_samePackage.kt");
         }
 
+        @TestMetadata("disabledFeature.kt")
+        public void testDisabledFeature() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/contracts/disabledFeature.kt");
+        }
+
         @TestMetadata("genericContract.kt")
         public void testGenericContract() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/contracts/genericContract.kt");

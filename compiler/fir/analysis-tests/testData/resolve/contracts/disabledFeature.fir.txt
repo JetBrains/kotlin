@@ -1,0 +1,34 @@
+FILE: disabledFeature.kt
+    public final inline fun <reified T> requreIsInstance(value: R|kotlin/Any|): R|kotlin/Unit|
+        [R|Contract description]
+         <
+            Returns(WILDCARD) -> value is T
+        >
+     {
+        when () {
+            (R|<local>/value| !is R|T|) ->  {
+                throw R|java/lang/IllegalArgumentException.IllegalArgumentException|()
+            }
+        }
+
+    }
+    public final val R|kotlin/Any?|.myLength: R|kotlin/Int?|
+        public get(): R|kotlin/Int?|
+            [R|Contract description]
+             <
+            >
+         {
+            ^ (this@R|/myLength| as? R|kotlin/String|)?.{ $subj$.R|kotlin/String.length| }
+        }
+    public final fun test_1(x: R|kotlin/Any|): R|kotlin/Unit| {
+        R|/requreIsInstance|<R|kotlin/String|>(R|<local>/x|)
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun test_2(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/x|.R|/myLength|, Null(null)) ->  {
+                R|<local>/x|.<Unresolved name: length>#
+            }
+        }
+
+    }

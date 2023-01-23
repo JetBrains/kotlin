@@ -1,3 +1,4 @@
+// LANGUAGE: +ContractSyntaxV2
 import kotlin.contracts.*
 
 fun calculateNumber(block: () -> Int): Int contract <!UNSUPPORTED!>[

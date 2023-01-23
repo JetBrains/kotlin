@@ -1386,6 +1386,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("disabledFeature.kt")
+            public void testDisabledFeature() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/contracts/disabledFeature.kt");
+            }
+
+            @Test
             @TestMetadata("genericContract.kt")
             public void testGenericContract() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/contracts/genericContract.kt");
