@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import kotlin.reflect.KClass
 
 /**
@@ -27,8 +28,32 @@ internal sealed interface ExploredClassifier {
         data class MissingClassifier(override val symbol: IrClassifierSymbol) : CanBeRootCause
 
         /**
-         * An annotation class uses unacceptable parameter in its own constructor: not one of permitted classes ([String], [KClass]),
-         * primitives, etc.
+         * There is an issue with inheritance: interface inherits from a class, class inherits from a final class, etc.
+         * On practice, such class can't be instantiated and used anywhere.
+         */
+        class InvalidInheritance private constructor(
+            override val symbol: IrClassSymbol,
+            val superClassSymbols: Collection<IrClassSymbol>,
+            val unexpectedSuperClassConstructorSymbol: IrConstructorSymbol?
+        ) : CanBeRootCause {
+            constructor(symbol: IrClassSymbol, superClassSymbols: Collection<IrClassSymbol>) : this(symbol, superClassSymbols, null)
+
+            constructor(
+                symbol: IrClassSymbol,
+                superClassSymbol: IrClassSymbol,
+                unexpectedSuperClassConstructorSymbol: IrConstructorSymbol
+            ) : this(symbol, listOf(superClassSymbol), unexpectedSuperClassConstructorSymbol)
+
+            init {
+                // Just a sanity check to avoid creating invalid [InvalidInheritance]s.
+                check(superClassSymbols.isNotEmpty())
+            }
+        }
+
+        /**
+         * The annotation class has unacceptable classifier as one of its parameters: not one of permitted classes ([String], [KClass]),
+         * primitives, etc. This may happen if the class representing this parameter was an annotation class before, but later it was
+         * converted to a non-annotation class.
          */
         data class AnnotationWithUnacceptableParameter(
             override val symbol: IrClassSymbol,
