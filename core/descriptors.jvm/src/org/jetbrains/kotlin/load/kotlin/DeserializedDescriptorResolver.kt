@@ -90,7 +90,6 @@ class DeserializedDescriptorResolver {
                 languageVersion = ownMetadataVersion,
                 expectedVersion = ownMetadataVersion.lastSupportedVersionWithThisLanguageVersion(classHeader.metadataVersion.isStrictSemantics),
                 filePath = location,
-                classId = classId
             )
         }
 

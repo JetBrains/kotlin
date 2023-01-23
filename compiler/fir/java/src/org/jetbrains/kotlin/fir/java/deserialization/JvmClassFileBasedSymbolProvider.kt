@@ -112,7 +112,6 @@ class JvmClassFileBasedSymbolProvider(
                 languageVersion = metadataVersionFromLanguageVersion,
                 expectedVersion = metadataVersionFromLanguageVersion.lastSupportedVersionWithThisLanguageVersion(classHeader.metadataVersion.isStrictSemantics),
                 filePath = location,
-                classId = classId
             )
         }
 
