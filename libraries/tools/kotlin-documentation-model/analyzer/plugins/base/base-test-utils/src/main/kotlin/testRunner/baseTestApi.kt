@@ -53,6 +53,8 @@ class BaseDokkaTestGenerator(
         singleModuleGeneration.render(transformedPages)
         renderingStage(transformedPages, context)
 
+        singleModuleGeneration.runPostActions()
+
         singleModuleGeneration.reportAfterRendering()
     }
 }
