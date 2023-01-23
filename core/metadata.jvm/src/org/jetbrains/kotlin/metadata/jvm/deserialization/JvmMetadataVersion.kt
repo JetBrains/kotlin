@@ -17,8 +17,11 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
  * - Incompatible changes are made in `metadata.proto`
  * - Incompatible changes are made in JVM metadata serialization/deserialization logic
  *
- * The version bump must obey [org.jetbrains.kotlin.metadata.deserialization.BinaryVersion] rules (See `BinaryVersion` KDoc).
- */
+ * The version bump **DOESN'T** obey [org.jetbrains.kotlin.metadata.deserialization.BinaryVersion] rules. Starting from Kotlin 1.4,
+ * `JvmMetadataVersion` major and minor tokens always match the compilers corresponding version tokens.
+ *
+ * Incompatible changes can be made only in major/minor bumps (e.g. `1.9.0 -> 2.0.0`/`1.5.20 -> 1.6.0`) of the **compiler version**.
+ **/
 class JvmMetadataVersion(versionArray: IntArray, val isStrictSemantics: Boolean) : BinaryVersion(*versionArray) {
     constructor(vararg numbers: Int) : this(numbers, isStrictSemantics = false)
 

@@ -32,8 +32,11 @@ fun String.parseKotlinAbiVersion(): KotlinAbiVersion {
 //  way to reuse common logic for Kotlin versions. But unfortunately, BinaryVersion is used in a lot of API definitions, which makes
 //  code hard to read because it's not obvious which subclasses are supposed to be passed into a particular API.
 /**
- * The version of the Kotlin IR. If you do any incompatible changes in Kotlin IR serialization/deserialization (e.g. incompatible change in
- * `KotlinIr.proto` or change serialization logic in `compiler/ir/serialization.common`) then you must bump the version.
+ * The version of the Kotlin IR.
+ *
+ * This version must be bumped when:
+ * - Incompatible changes are made in `KotlinIr.proto`
+ * - Incompatible changes are made in serialization/deserialization logic
  *
  * The version bump must obey [org.jetbrains.kotlin.metadata.deserialization.BinaryVersion] rules (See `BinaryVersion` KDoc)
  */
@@ -74,7 +77,7 @@ data class KotlinAbiVersion(val major: Int, val minor: Int, val patch: Int) {
          *
          * - Incompatible change in KotlinIr.proto
          *   `1b6a43ba69a 2022-07-21 Vsevolod Tolstopyatov Update IR serialization to reflect changes in IrSyntheticBodyKind for enum entries`
-         *   but we can skip abi version bump because we check some other version in different place KT-55082.
+         *   but we can skip abi version bump because we check some other version in different place KT-53620.
          *
          * - Bump 1.6.0 -> 1.7.0
          *   `76da9df1021 2022-05-26 Pavel Kunyavskiy Bump klib ABI version`

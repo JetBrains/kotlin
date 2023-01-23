@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
  * - Incompatible changes are made in Klib metadata serialization/deserialization logic
  *
  * The version bump must obey [org.jetbrains.kotlin.metadata.deserialization.BinaryVersion] rules (See `BinaryVersion` KDoc).
+ *
+ * Known bugs: [KlibMetadataVersion] isn't currently checked for klibs [KT-55808](https://youtrack.jetbrains.com/issue/KT-55808)
+ * [KT-56062](https://youtrack.jetbrains.com/issue/KT-56062).
  */
 class KlibMetadataVersion(vararg numbers: Int) : BinaryVersion(*numbers) {
 
