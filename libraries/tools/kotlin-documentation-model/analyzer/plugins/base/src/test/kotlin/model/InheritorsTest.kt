@@ -2,7 +2,7 @@ package model
 
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.analysis.DokkaAnalysisConfiguration
-import org.jetbrains.dokka.analysis.KotlinAnalysis
+import org.jetbrains.dokka.analysis.ProjectKotlinAnalysis
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.base.transformers.documentables.InheritorsInfo
 import org.jetbrains.dokka.model.DClass
@@ -61,10 +61,12 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
         val configuration = dokkaConfiguration {
             sourceSets {
                 sourceSet {
+                    name = "jvm"
                     sourceRoots = listOf("common/src/", "jvm/src/")
                     analysisPlatform = "jvm"
                 }
                 sourceSet {
+                    name = "js"
                     sourceRoots = listOf("common/src/", "js/src/")
                     analysisPlatform = "js"
                 }
@@ -156,7 +158,7 @@ class InheritorsTest : AbstractModelTest("/src/main/kotlin/inheritors/Test.kt", 
         @Suppress("unused")
         val stdLibKotlinAnalysis by extending {
             dokkaBase.kotlinAnalysis providing { ctx ->
-                KotlinAnalysis(
+                ProjectKotlinAnalysis(
                     sourceSets = ctx.configuration.sourceSets,
                     logger = ctx.logger,
                     analysisConfiguration = DokkaAnalysisConfiguration(ignoreCommonBuiltIns = true)
