@@ -16,12 +16,12 @@ import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLamb
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.FoldConstantLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.*
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 

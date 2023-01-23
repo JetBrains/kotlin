@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
-import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
@@ -328,7 +328,7 @@ abstract class AbstractInvalidationTest(
                     relativeRequirePath = true
                 )
 
-                val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true)
+                val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(granularity = JsGenerationGranularity.PER_MODULE, outJsProgram = true)
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, projStep.dirtyJS)
                 verifyJsCode(projStep.id, mainModuleName, jsOutput)
                 verifyDTS(projStep.id, testInfo)

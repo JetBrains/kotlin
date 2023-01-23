@@ -26,6 +26,10 @@ public interface K2JsArgumentConstants {
     String MODULE_UMD = "umd";
     String MODULE_ES = "es";
 
+    String GRANULARITY_WHOLE_PROGRAM = "whole-program";
+    String GRANULARITY_PER_MODULE = "per-module";
+    String GRANULARITY_PER_FILE = "per-file";
+
     String SOURCE_MAP_SOURCE_CONTENT_ALWAYS = "always";
     String SOURCE_MAP_SOURCE_CONTENT_NEVER = "never";
     String SOURCE_MAP_SOURCE_CONTENT_INLINING = "inlining";

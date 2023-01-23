@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.*

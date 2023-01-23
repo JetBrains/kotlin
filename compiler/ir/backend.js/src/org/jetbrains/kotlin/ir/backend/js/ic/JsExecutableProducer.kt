@@ -26,10 +26,9 @@ class JsExecutableProducer(
         }
     }
 
-    fun buildExecutable(multiModule: Boolean, outJsProgram: Boolean) = if (multiModule) {
-        buildMultiModuleExecutable(outJsProgram)
-    } else {
-        buildSingleModuleExecutable(outJsProgram)
+    fun buildExecutable(granularity: JsGenerationGranularity, outJsProgram: Boolean) = when (granularity) {
+        JsGenerationGranularity.PER_MODULE, JsGenerationGranularity.PER_FILE -> buildMultiModuleExecutable(outJsProgram)
+        JsGenerationGranularity.WHOLE_PROGRAM -> buildSingleModuleExecutable(outJsProgram)
     }
 
     private fun buildSingleModuleExecutable(outJsProgram: Boolean): BuildResult {

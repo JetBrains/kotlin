@@ -44,34 +44,51 @@ val String.safeModuleName: String
 val IrModuleFragment.safeName: String
     get() = name.asString().safeModuleName
 
+enum class JsGenerationGranularity {
+    WHOLE_PROGRAM,
+    PER_MODULE,
+    PER_FILE
+}
+
 enum class TranslationMode(
     val production: Boolean,
-    val perModule: Boolean,
+    val granularity: JsGenerationGranularity,
     val minimizedMemberNames: Boolean,
 ) {
-    FULL_DEV(production = false, perModule = false, minimizedMemberNames = false),
-    FULL_PROD(production = true, perModule = false, minimizedMemberNames = false),
-    FULL_PROD_MINIMIZED_NAMES(production = true, perModule = false, minimizedMemberNames = true),
-    PER_MODULE_DEV(production = false, perModule = true, minimizedMemberNames = false),
-    PER_MODULE_PROD(production = true, perModule = true, minimizedMemberNames = false),
-    PER_MODULE_PROD_MINIMIZED_NAMES(production = true, perModule = true, minimizedMemberNames = true);
+    FULL_DEV(production = false, granularity = JsGenerationGranularity.WHOLE_PROGRAM, minimizedMemberNames = false),
+    FULL_PROD(production = true, granularity = JsGenerationGranularity.WHOLE_PROGRAM, minimizedMemberNames = false),
+    FULL_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.WHOLE_PROGRAM, minimizedMemberNames = true),
+    PER_MODULE_DEV(production = false, granularity = JsGenerationGranularity.PER_MODULE, minimizedMemberNames = false),
+    PER_MODULE_PROD(production = true, granularity = JsGenerationGranularity.PER_MODULE, minimizedMemberNames = false),
+    PER_MODULE_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.PER_MODULE, minimizedMemberNames = true),
+    PER_FILE_DEV(production = false, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = false),
+    PER_FILE_PROD(production = true, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = false),
+    PER_FILE_PROD_MINIMIZED_NAMES(production = true, granularity = JsGenerationGranularity.PER_FILE, minimizedMemberNames = true);
 
     companion object {
         fun fromFlags(
             production: Boolean,
-            perModule: Boolean,
+            granularity: JsGenerationGranularity,
             minimizedMemberNames: Boolean
         ): TranslationMode {
-            return if (perModule) {
-                if (production) {
-                    if (minimizedMemberNames) PER_MODULE_PROD_MINIMIZED_NAMES
-                    else PER_MODULE_PROD
-                } else PER_MODULE_DEV
-            } else {
-                if (production) {
-                    if (minimizedMemberNames) FULL_PROD_MINIMIZED_NAMES
-                    else FULL_PROD
-                } else FULL_DEV
+            return when (granularity) {
+                JsGenerationGranularity.PER_MODULE ->
+                    if (production) {
+                        if (minimizedMemberNames) PER_MODULE_PROD_MINIMIZED_NAMES
+                        else PER_MODULE_PROD
+                    } else PER_MODULE_DEV
+
+                JsGenerationGranularity.PER_FILE ->
+                    if (production) {
+                        if (minimizedMemberNames) PER_FILE_PROD_MINIMIZED_NAMES
+                        else PER_FILE_PROD
+                    } else PER_FILE_DEV
+
+                JsGenerationGranularity.WHOLE_PROGRAM ->
+                    if (production) {
+                        if (minimizedMemberNames) FULL_PROD_MINIMIZED_NAMES
+                        else FULL_PROD
+                    } else FULL_DEV
             }
         }
     }
@@ -79,14 +96,14 @@ enum class TranslationMode(
 
 class JsCodeGenerator(
     private val program: JsIrProgram,
-    private val multiModule: Boolean,
+    private val granularity: JsGenerationGranularity,
     private val mainModuleName: String,
     private val moduleKind: ModuleKind,
     private val sourceMapsInfo: SourceMapsInfo?
 ) {
     fun generateJsCode(relativeRequirePath: Boolean, outJsProgram: Boolean): CompilationOutputsBuilt {
         return generateWrappedModuleBody(
-            multiModule,
+            granularity,
             mainModuleName,
             moduleKind,
             program,
@@ -220,7 +237,7 @@ class IrModuleToJsTransformer(
             }
         )
 
-        return JsCodeGenerator(program, mode.perModule, mainModuleName, moduleKind, sourceMapInfo)
+        return JsCodeGenerator(program, mode.granularity, mainModuleName, moduleKind, sourceMapInfo)
     }
 
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
@@ -377,7 +394,7 @@ class IrModuleToJsTransformer(
 }
 
 private fun generateWrappedModuleBody(
-    multiModule: Boolean,
+    granularity: JsGenerationGranularity,
     mainModuleName: String,
     moduleKind: ModuleKind,
     program: JsIrProgram,
@@ -385,7 +402,7 @@ private fun generateWrappedModuleBody(
     relativeRequirePath: Boolean,
     outJsProgram: Boolean
 ): CompilationOutputsBuilt {
-    if (multiModule) {
+    if (granularity == JsGenerationGranularity.PER_MODULE || granularity == JsGenerationGranularity.PER_FILE) {
         // mutable container allows explicitly remove elements from itself,
         // so we are able to help GC to free heavy JsIrModule objects
         // TODO: It makes sense to invent something better, because this logic can be easily broken

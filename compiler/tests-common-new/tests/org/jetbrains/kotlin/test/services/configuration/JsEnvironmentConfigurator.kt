@@ -58,7 +58,9 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             TranslationMode.FULL_DEV to "out",
             TranslationMode.FULL_PROD_MINIMIZED_NAMES to "outMin",
             TranslationMode.PER_MODULE_DEV to "outPm",
-            TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES to "outPmMin"
+            TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES to "outPmMin",
+            TranslationMode.PER_FILE_DEV to "outPf",
+            TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES to "outPfMin"
         )
 
         private const val OUTPUT_KLIB_DIR_NAME = "outputKlibDir"
