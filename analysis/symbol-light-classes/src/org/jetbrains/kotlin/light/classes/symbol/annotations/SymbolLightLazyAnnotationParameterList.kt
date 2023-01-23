@@ -18,7 +18,7 @@ internal class SymbolLightLazyAnnotationParameterList(
 ) : KtLightElementBase(parent),
     PsiAnnotationParameterList {
     override val kotlinOrigin: KtElement?
-        get() = (parent as SymbolLightLazyAnnotation).kotlinOrigin?.valueArgumentList
+        get() = (parent as SymbolLightAbstractAnnotation).kotlinOrigin?.valueArgumentList
 
     private val _attributes: Array<PsiNameValuePair> by lazyPub {
         val attributes = lazyArguments.value.map {
