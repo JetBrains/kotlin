@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAllSuperClassifiers
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.isNothing
-import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
-import org.jetbrains.kotlin.types.typeUtil.isUnit
-import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
+import org.jetbrains.kotlin.types.typeUtil.*
 
 private val javaLangCloneable = FqNameUnsafe("java.lang.Cloneable")
 
@@ -192,15 +189,6 @@ object ValueClassDeclarationChecker : DeclarationChecker {
 
     private fun KotlinType.isInapplicableParameterType() =
         isUnit() || isNothing()
-
-    private fun KotlinType.isGenericArrayOfTypeParameter(): Boolean {
-        if (!KotlinBuiltIns.isArray(this)) return false
-        val argument0 = arguments[0]
-        if (argument0.isStarProjection) return false
-        val argument0type = argument0.type
-        return argument0type.isTypeParameter() ||
-                argument0type.isGenericArrayOfTypeParameter()
-    }
 
     private fun isParameterAcceptableForInlineClass(parameter: KtParameter): Boolean {
         val isOpen = parameter.modalityModifier()?.node?.elementType == KtTokens.OPEN_KEYWORD

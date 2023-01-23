@@ -101,6 +101,15 @@ fun KotlinType?.isArrayOfNothing(): Boolean {
     return typeArg != null && KotlinBuiltIns.isNothingOrNullableNothing(typeArg)
 }
 
+fun KotlinType.isGenericArrayOfTypeParameter(): Boolean {
+    if (!KotlinBuiltIns.isArray(this)) return false
+    val argument0 = arguments[0]
+    if (argument0.isStarProjection) return false
+    val argument0type = argument0.type
+    return argument0type.isTypeParameter() ||
+            argument0type.isGenericArrayOfTypeParameter()
+}
+
 
 fun KotlinType.isSubtypeOf(superType: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(this, superType)
 
