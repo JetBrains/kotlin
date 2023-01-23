@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.javaSourceSets
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
+import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.gradle.utils.*
@@ -43,6 +45,7 @@ internal object NativeKotlinCompilationDependencyConfigurationsFactory :
             compilationName = compilationName,
             naming = naming,
             withRuntime = false,
+            withHostSpecificMetadata = true,
             compileClasspathConfigurationName = naming.name("compileKlibraries")
         )
     }
@@ -112,7 +115,7 @@ private const val compileClasspath = "compileClasspath"
 private const val runtimeClasspath = "runtimeClasspath"
 
 private fun KotlinCompilationDependencyConfigurationsContainer(
-    target: KotlinTarget, compilationName: String, withRuntime: Boolean,
+    target: KotlinTarget, compilationName: String, withRuntime: Boolean, withHostSpecificMetadata: Boolean = false,
     naming: ConfigurationNaming = ConfigurationNaming.Default(target, compilationName),
     apiConfigurationName: String = naming.name(compilation, API),
     implementationConfigurationName: String = naming.name(compilation, IMPLEMENTATION),
@@ -120,6 +123,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
     runtimeOnlyConfigurationName: String = naming.name(compilation, RUNTIME_ONLY),
     compileClasspathConfigurationName: String = naming.name(compileClasspath),
     runtimeClasspathConfigurationName: String = naming.name(runtimeClasspath),
+    hostSpecificMetadataConfigurationName: String = naming.name(compilation, METADATA_CONFIGURATION_NAME_SUFFIX),
     pluginConfigurationName: String = lowerCamelCaseName(
         PLUGIN_CLASSPATH_CONFIGURATION_NAME,
         target.disambiguationClassifier,
@@ -214,6 +218,18 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
             description = "Runtime classpath of $compilationCoordinates."
         } else null
 
+    val hostSpecificMetadataConfiguration =
+        if (withHostSpecificMetadata) target.project.configurations.maybeCreate(hostSpecificMetadataConfigurationName).apply {
+            markResolvable()
+            isVisible = false
+            description = "Host-specific Metadata dependencies for $compilationCoordinates"
+            extendsFrom(compileDependencyConfiguration)
+            copyAttributes(from = compileDependencyConfiguration.attributes, to = attributes)
+            attributes {
+                it.attribute(Usage.USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
+            }
+        } else null
+
     val pluginConfiguration = target.project.configurations.maybeCreate(pluginConfigurationName).apply {
         addGradlePluginMetadataAttributes(target.project)
 
@@ -237,6 +253,7 @@ private fun KotlinCompilationDependencyConfigurationsContainer(
         runtimeOnlyConfiguration = runtimeOnlyConfiguration,
         compileDependencyConfiguration = compileDependencyConfiguration,
         runtimeDependencyConfiguration = runtimeDependencyConfiguration,
+        hostSpecificMetadataConfiguration = hostSpecificMetadataConfiguration,
         pluginConfiguration = pluginConfiguration
     )
 }
