@@ -1225,6 +1225,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/fir.args");
         }
 
+        @TestMetadata("firMpp.args")
+        public void testFirMpp() throws Exception {
+            runTest("compiler/testData/cli/js/firMpp.args");
+        }
+
         @TestMetadata("inlineCycle.args")
         public void testInlineCycle() throws Exception {
             runTest("compiler/testData/cli/js/inlineCycle.args");

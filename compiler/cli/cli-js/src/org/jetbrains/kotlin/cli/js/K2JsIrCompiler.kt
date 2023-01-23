@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cli.js
 
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -34,29 +35,23 @@ import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
-import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.BinaryModuleData
+import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.FirModuleDataImpl
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
-import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
-import org.jetbrains.kotlin.fir.pipeline.runCheckers
-import org.jetbrains.kotlin.fir.pipeline.runResolution
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
@@ -93,12 +88,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.utils.KotlinPaths
-import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.join
-import org.jetbrains.kotlin.utils.metadataVersion
+import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
@@ -486,6 +480,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         // FIR
 
+        val isMppEnabled = configuration.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+
         val sessionProvider = FirProjectSessionProvider()
         val extensionRegistrars = FirExtensionRegistrar.getInstances(environmentForJS.project)
         val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
@@ -494,7 +490,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             }
         }
 
-        val mainModuleName = Name.special("<${configuration.get(CommonConfigurationKeys.MODULE_NAME)!!}>")
+        val mainModuleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)!!
+        val escapedMainModuleName = Name.special("<$mainModuleName>")
 
         val ktFiles = environmentForJS.getSourceFiles()
         val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
@@ -503,7 +500,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
 
-        val binaryModuleData = BinaryModuleData.initialize(mainModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices)
+        val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices)
         val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
             dependencies(libraries.map { Paths.get(it).toAbsolutePath() })
             friendDependencies(friendLibraries.map { Paths.get(it).toAbsolutePath() })
@@ -514,7 +511,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val resolvedLibraries = jsResolveLibraries(libraries + friendLibraries, logger).getFullResolvedList()
 
         FirJsSessionFactory.createJsLibrarySession(
-            mainModuleName,
+            escapedMainModuleName,
             resolvedLibraries,
             sessionProvider,
             dependencyList.moduleDataProvider,
@@ -522,16 +519,47 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             registerExtraComponents = {},
         )
 
+        val commonModuleData = runIf(isMppEnabled) {
+            FirModuleDataImpl(
+                Name.identifier("<$mainModuleName-common>"),
+                dependencyList.regularDependencies,
+                listOf(),
+                dependencyList.friendsDependencies,
+                JsPlatforms.defaultJsPlatform,
+                JsPlatformAnalyzerServices
+            )
+        }
         val mainModuleData = FirModuleDataImpl(
-            mainModuleName,
+            escapedMainModuleName,
             dependencyList.regularDependencies,
-            dependencyList.dependsOnDependencies,
+            listOfNotNull(commonModuleData),
             dependencyList.friendsDependencies,
             JsPlatforms.defaultJsPlatform,
             JsPlatformAnalyzerServices
         )
 
-        val session = FirJsSessionFactory.createJsModuleBasedSession(
+        val commonKtFiles = mutableListOf<KtFile>()
+        val platformKtFiles = mutableListOf<KtFile>()
+        if (isMppEnabled) {
+            for (ktFile in ktFiles) {
+                (if (ktFile.isCommonSource == true) commonKtFiles else platformKtFiles).add(ktFile)
+            }
+        } else {
+            platformKtFiles.addAll(ktFiles)
+        }
+
+        val commonSession = runIf(isMppEnabled) {
+            FirJsSessionFactory.createJsModuleBasedSession(
+                commonModuleData!!,
+                sessionProvider,
+                extensionRegistrars,
+                configuration.languageVersionSettings,
+                null,
+                registerExtraComponents = {},
+                init = sessionConfigurator,
+            )
+        }
+        val platformSession = FirJsSessionFactory.createJsModuleBasedSession(
             mainModuleData,
             sessionProvider,
             extensionRegistrars,
@@ -541,9 +569,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             init = sessionConfigurator,
         )
 
-        val rawFirFiles = session.buildFirFromKtFiles(ktFiles)
-        val (scopeSession, firFiles) = session.runResolution(rawFirFiles)
-        session.runCheckers(scopeSession, firFiles, diagnosticsReporter)
+        val commonFirOutput = commonSession?.let { buildResolveAndCheckFir(it, commonKtFiles, diagnosticsReporter) }
+        val platformFirOutput = buildResolveAndCheckFir(platformSession, platformKtFiles, diagnosticsReporter)
 
         if (syntaxErrors || diagnosticsReporter.hasErrors) {
             FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
@@ -553,10 +580,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         // FIR2IR
 
         val fir2IrExtensions = Fir2IrExtensions.Default
-        val commonFirFiles = session.moduleData.dependsOnDependencies
-            .map { it.session }
-            .filter { it.kind == FirSession.Kind.Source }
-            .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
 
         var builtInsModule: KotlinBuiltIns? = null
         val dependencies = mutableListOf<ModuleDescriptorImpl>()
@@ -587,31 +610,68 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
         )
 
-        val fir2irResult = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-            session, scopeSession, firFiles + commonFirFiles,
+        // TODO: replace with appropriate (probably empty) implementation
+        val specialAnnotationSymbolProvider = Fir2IrJvmSpecialAnnotationSymbolProvider()
+
+        // TODO: consider passing externally
+        val builtIns = builtInsModule ?: DefaultBuiltIns.Instance
+
+        val commonIrOutput = if (isMppEnabled) {
+            Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
+                commonFirOutput!!.session, commonFirOutput.scopeSession, commonFirOutput.fir,
+                configuration.languageVersionSettings,
+                fir2IrExtensions,
+                JsManglerIr, IrFactoryImpl,
+                Fir2IrVisibilityConverter.Default,
+                specialAnnotationSymbolProvider,
+                IrGenerationExtension.getInstances(environmentForJS.project),
+                generateSignatures = false,
+                kotlinBuiltIns = builtIns,
+                commonMemberStorage = commonMemberStorage,
+                initializedIrBuiltIns = null
+            ).also { fir2IrResult ->
+                (fir2IrResult.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
+            }
+        } else {
+            null
+        }
+
+        val platformIrOutput = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
+            platformFirOutput.session, platformFirOutput.scopeSession, platformFirOutput.fir,
             configuration.languageVersionSettings,
             fir2IrExtensions,
             JsManglerIr, IrFactoryImpl,
             Fir2IrVisibilityConverter.Default,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
+            specialAnnotationSymbolProvider,
             IrGenerationExtension.getInstances(environmentForJS.project),
             generateSignatures = false,
-            kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
+            kotlinBuiltIns = builtIns,
             commonMemberStorage = commonMemberStorage,
-            initializedIrBuiltIns = null
-        ).also {
-            (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
+            initializedIrBuiltIns = commonIrOutput?.components?.irBuiltIns
+        ).also { fir2IrResult ->
+            (fir2IrResult.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
+        }
+
+        if (isMppEnabled) {
+            IrActualizer.actualize(platformIrOutput.irModuleFragment, listOf(commonIrOutput!!.irModuleFragment))
         }
 
         // Serialize klib
 
-        if (/*sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode && */(arguments.irProduceKlibDir || arguments.irProduceKlibFile)) {
-            val sourceFiles = firFiles.mapNotNull { it.sourceFile }
-            val firFilesBySourceFile = firFiles.associateBy { it.sourceFile }
+        if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
+            val sourceFiles = mutableListOf<KtSourceFile>()
+            val firFilesAndSessionsBySourceFile = mutableMapOf<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>()
+
+            commonFirOutput?.fir?.forEach {
+                sourceFiles.add(it.sourceFile!!)
+                firFilesAndSessionsBySourceFile[it.sourceFile!!] = Triple(it, commonFirOutput.session, commonFirOutput.scopeSession)
+            }
+            platformFirOutput.fir.forEach {
+                sourceFiles.add(it.sourceFile!!)
+                firFilesAndSessionsBySourceFile[it.sourceFile!!] = Triple(it, platformFirOutput.session, platformFirOutput.scopeSession)
+            }
 
             val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
-            // TODO: expect -> actual mapping
-            val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
 
             val metadataVersion = configuration.metadataVersion()
 
@@ -622,8 +682,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 sourceFiles,
                 klibPath = outputKlibPath,
                 resolvedLibraries.map { it.library },
-                fir2irResult.irModuleFragment,
-                expectDescriptorToSymbol,
+                platformIrOutput.irModuleFragment,
+                expectDescriptorToSymbol = mutableMapOf(),
                 cleanFiles = icData,
                 nopack = true,
                 perFile = false,
@@ -631,7 +691,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
                 jsOutputName = null
             ) { file ->
-                val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
+                val (firFile, session, scopeSession) = firFilesAndSessionsBySourceFile[file]
+                    ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
                 serializeSingleFirFile(
                     firFile,
                     session,
