@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.builders.classicFrontendStep
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_JVM_DIAGNOSTICS_ON_FRONTEND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
+import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFailingTestSuppressor
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.classic.handlers.FirTestDataConsistencyHandler
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -49,6 +50,9 @@ abstract class AbstractParcelizeDiagnosticTest : AbstractKotlinCompilerTest() {
             useHandlers(::ClassicDiagnosticsHandler)
         }
 
-        useAfterAnalysisCheckers(::FirTestDataConsistencyHandler)
+        useAfterAnalysisCheckers(
+            ::FirTestDataConsistencyHandler,
+            ::ClassicFrontendFailingTestSuppressor
+        )
     }
 }

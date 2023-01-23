@@ -85,6 +85,12 @@ public class FirParcelizeDiagnosticTestGenerated extends AbstractFirParcelizeDia
     }
 
     @Test
+    @TestMetadata("kt47074.kt")
+    public void testKt47074() throws Exception {
+        runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/kt47074.kt");
+    }
+
+    @Test
     @TestMetadata("modality.kt")
     public void testModality() throws Exception {
         runTest("plugins/parcelize/parcelize-compiler/testData/diagnostics/modality.kt");
