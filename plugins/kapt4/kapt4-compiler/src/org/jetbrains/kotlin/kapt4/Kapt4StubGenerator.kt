@@ -1052,10 +1052,10 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         superPsiInterfaces.forEach { addSuperType(it, superInterfaces) }
 
         val jcTypeParameters = mapJList(psiClass.typeParameters) { convertTypeParameter(it) }
-        val jcSuperClass = superClasses.firstOrNull() ?: createJavaLangObjectType().also {
+        val jcSuperClass = superClasses.firstOrNull().takeUnless { psiClass.isInterface } ?: createJavaLangObjectType().also {
             superClassIsObject = true
         }
-        val jcInterfaces = JavacList.from(superInterfaces)
+        val jcInterfaces = JavacList.from(if (psiClass.isInterface) superClasses else superInterfaces)
         return ClassGenericSignature(jcTypeParameters, jcSuperClass, jcInterfaces, superClassIsObject)
     }
 
