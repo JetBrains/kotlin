@@ -50,7 +50,6 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             (it.symbol as? FirPropertySymbol)?.takeIf { symbol -> symbol.requiresInitialization }
         }
         if (memberPropertySymbols.isEmpty()) return null
-        // TODO: this also visits non-constructor member functions...
         // TODO: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
         val data = PropertyInitializationInfoData(memberPropertySymbols, symbol, graph)
         data.checkPropertyAccesses(context, reporter)
