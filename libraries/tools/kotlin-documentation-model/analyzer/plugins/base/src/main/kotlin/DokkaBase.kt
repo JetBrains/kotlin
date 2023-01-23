@@ -4,6 +4,7 @@ package org.jetbrains.dokka.base
 
 import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.analysis.KotlinAnalysis
+import org.jetbrains.dokka.analysis.ProjectKotlinAnalysis
 import org.jetbrains.dokka.base.renderers.*
 import org.jetbrains.dokka.base.renderers.html.*
 import org.jetbrains.dokka.base.renderers.html.command.consumers.PathToRootConsumer
@@ -36,6 +37,8 @@ import org.jetbrains.dokka.base.translators.descriptors.ExternalClasslikesTransl
 import org.jetbrains.dokka.base.translators.descriptors.ExternalDocumentablesProvider
 import org.jetbrains.dokka.base.utils.NoopIntellijLoggerFactory
 import org.jetbrains.dokka.plugability.DokkaPlugin
+import org.jetbrains.dokka.plugability.querySingle
+import org.jetbrains.dokka.renderers.PostAction
 import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 
@@ -189,7 +192,7 @@ class DokkaBase : DokkaPlugin() {
 
     val defaultKotlinAnalysis by extending {
         kotlinAnalysis providing { ctx ->
-            KotlinAnalysis(
+            ProjectKotlinAnalysis(
                 sourceSets = ctx.configuration.sourceSets,
                 logger = ctx.logger
             )
@@ -279,6 +282,10 @@ class DokkaBase : DokkaPlugin() {
 
     val defaultExternalClasslikesTranslator by extending {
         externalClasslikesTranslator providing ::DefaultDescriptorToDocumentableTranslator
+    }
+
+    internal val disposeKotlinAnalysisPostAction by extending {
+        CoreExtensions.postActions with PostAction { this@DokkaBase.querySingle { kotlinAnalysis }.close() }
     }
 
     private companion object {
