@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.psi.KtElement
 
 internal class SymbolLazyAnnotationParameterList(
-    parent: SymbolLightLazyAnnotation,
+    parent: SymbolLightAbstractAnnotation,
     private val lazyArguments: Lazy<List<KtNamedAnnotationValue>>,
 ) : KtLightElementBase(parent),
     PsiAnnotationParameterList {
