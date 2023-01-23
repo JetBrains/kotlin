@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
