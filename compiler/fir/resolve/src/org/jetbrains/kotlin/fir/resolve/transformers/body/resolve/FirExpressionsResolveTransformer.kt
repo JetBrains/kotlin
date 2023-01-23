@@ -67,6 +67,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         components.callResolver.initTransformer(this)
     }
 
+    override fun transformLazyExpression(lazyExpression: FirLazyExpression, data: ResolutionMode): FirStatement {
+        error("FirLazyExpression should be calculated before accessing")
+    }
+
+    override fun transformLazyBlock(lazyBlock: FirLazyBlock, data: ResolutionMode): FirStatement {
+        error("FirLazyBlock should be calculated before accessing")
+    }
+
     override fun transformExpression(expression: FirExpression, data: ResolutionMode): FirStatement {
         if (expression.resultType is FirImplicitTypeRef && expression !is FirWrappedExpression) {
             val type = buildErrorTypeRef {
