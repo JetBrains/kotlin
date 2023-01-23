@@ -1094,13 +1094,16 @@ class CocoaPodsIT : BaseGradleIT() {
             pod("SDWebImage/Core")
         """.trimIndent())
 
+        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
         build(
             ":linkPodDebugFrameworkIOS",
             "-Pkotlin.native.cocoapods.generate.wrapper=true",
-            options = defaultBuildOptions().copy(
-                // Workaround for KT-55751
-                warningMode = WarningMode.None,
-            )) {
+            options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_7_4,
+                currentGradleVersion,
+                "Workaround for KT-55751"
+            )
+        ) {
             assertSuccessful()
 
             assertTasksExecuted(":podBuildAFNetworkingIphonesimulator")
@@ -1137,13 +1140,16 @@ class CocoaPodsIT : BaseGradleIT() {
             pod("AFNetworking") { linkOnly = true }
         """.trimIndent())
 
+        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
         build(
             ":linkPodDebugFrameworkIOS",
             "-Pkotlin.native.cocoapods.generate.wrapper=true",
-            options = defaultBuildOptions().copy(
-                // Workaround for KT-55751
-                warningMode = WarningMode.None,
-            )) {
+            options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
+                TestVersions.Gradle.G_7_4,
+                currentGradleVersion,
+                "Workaround for KT-55751"
+            )
+        ) {
             assertSuccessful()
 
             assertContains("Dependency on 'AFNetworking' with option 'linkOnly=true' is unused for building static frameworks")
