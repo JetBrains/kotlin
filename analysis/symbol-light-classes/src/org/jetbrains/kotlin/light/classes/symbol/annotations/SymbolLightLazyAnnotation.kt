@@ -21,13 +21,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class SymbolLightLazyAnnotation private constructor(
-    val classId: ClassId,
+    classId: ClassId,
     private val annotatedSymbolPointer: KtSymbolPointer<KtAnnotatedSymbol>,
     private val ktModule: KtModule,
     private val index: Int?,
     specialAnnotationApplication: KtAnnotationApplication?,
     owner: PsiModifierList,
-) : SymbolLightAbstractAnnotation(owner) {
+) : SymbolLightAbstractAnnotationWithClassId(classId, owner) {
     init {
         require(index != null || specialAnnotationApplication != null)
     }

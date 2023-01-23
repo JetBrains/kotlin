@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAbstractAnnotationWithClassId
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightLazyAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -26,87 +27,105 @@ internal class LazyAnnotationsBox(
     private val annotatedSymbolPointer: KtSymbolPointer<KtAnnotatedSymbol>,
     private val ktModule: KtModule,
     private val owner: PsiModifierList,
+    private val additionalAnnotationsProviders: Collection<AdditionalAnnotationsProvider>,
 ) : PsiAnnotationOwner {
     private inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
-    private val annotationsArray: AtomicReference<Array<SymbolLightLazyAnnotation>?> = AtomicReference()
-    private var specialAnnotations: SmartList<SymbolLightLazyAnnotation>? = null
+    private val annotationsArray: AtomicReference<Array<SymbolLightAbstractAnnotationWithClassId>?> = AtomicReference()
+    private var specialAnnotations: SmartList<SymbolLightAbstractAnnotationWithClassId>? = null
     private val monitor = Any()
 
-    override fun getAnnotations(): Array<SymbolLightLazyAnnotation> {
+    override fun getAnnotations(): Array<SymbolLightAbstractAnnotationWithClassId> {
         annotationsArray.get()?.let { return it }
+
         val classIds = withAnnotatedSymbol { ktAnnotatedSymbol ->
             ktAnnotatedSymbol.annotationClassIds
         }
 
-        val annotations = classIds.withIndex().map { (index, classId) ->
+        val annotations = classIds.withIndex().mapTo(SmartList<SymbolLightAbstractAnnotationWithClassId>()) { (index, classId) ->
             SymbolLightLazyAnnotation(classId, annotatedSymbolPointer, ktModule, index, owner)
         }
 
-        val array = if (annotations.isNotEmpty()) annotations.toTypedArray() else emptyArray
-
-        val valueToReturn = if (array.isEmpty()) {
-            setAnnotationsArray(array)
+        val valueToReturn = if (annotations.isEmpty()) {
+            setAnnotationsArray(emptyArray)
         } else {
             synchronized(monitor) {
                 specialAnnotations?.forEach { lazyAnnotation ->
-                    val index = array.indexOfFirst { it.classId == lazyAnnotation.classId }
-                    array[index] = lazyAnnotation
+                    val index = annotations.indexOfFirst { it.classId == lazyAnnotation.classId }
+                    if (index != -1) {
+                        annotations[index] = lazyAnnotation
+                    } else {
+                        annotations += lazyAnnotation
+                    }
                 }
 
-                setAnnotationsArray(array)
+                for (annotationsProvider in additionalAnnotationsProviders) {
+                    annotationsProvider.addAllAnnotations(annotations)
+                }
+
+                specialAnnotations = null
+
+                setAnnotationsArray(annotations.toTypedArray())
             }
         }
 
         return valueToReturn
     }
 
-    private fun setAnnotationsArray(array: Array<SymbolLightLazyAnnotation>): Array<SymbolLightLazyAnnotation> =
+    private fun setAnnotationsArray(array: Array<SymbolLightAbstractAnnotationWithClassId>): Array<SymbolLightAbstractAnnotationWithClassId> =
         if (annotationsArray.compareAndSet(null, array)) {
             array
         } else {
             annotationsArray.get() ?: error("Unexpected state")
         }
 
-    override fun getApplicableAnnotations(): Array<SymbolLightLazyAnnotation> = annotations
+    override fun getApplicableAnnotations(): Array<SymbolLightAbstractAnnotationWithClassId> = annotations
 
-    override fun findAnnotation(qualifiedName: String): PsiAnnotation? {
+    override fun findAnnotation(qualifiedName: String): SymbolLightAbstractAnnotationWithClassId? {
         annotationsArray.get()?.let { array ->
             return array.find { it.qualifiedName == qualifiedName }
         }
 
         val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
-        return if (specialAnnotationClassId != null) {
+        val specialAnnotation = if (specialAnnotationClassId != null) {
             val annotationApplication = withAnnotatedSymbol { ktAnnotatedSymbol ->
                 ktAnnotatedSymbol.annotationsByClassId(specialAnnotationClassId).firstOrNull()
             } ?: return null
 
-            val lazyAnnotation = SymbolLightLazyAnnotation(
+            SymbolLightLazyAnnotation(
                 specialAnnotationClassId,
                 annotatedSymbolPointer,
                 ktModule,
                 annotationApplication,
                 owner,
             )
-
-            synchronized(monitor) {
-                if (specialAnnotations != null) {
-                    val specialAnnotations = specialAnnotations!!
-                    val oldAnnotation = specialAnnotations.find { it.classId == lazyAnnotation.classId }
-                    if (oldAnnotation != null) {
-                        oldAnnotation
-                    } else {
-                        specialAnnotations += lazyAnnotation
-                        lazyAnnotation
-                    }
-                } else {
-                    specialAnnotations = SmartList(lazyAnnotation)
-                    lazyAnnotation
-                }
-            }
         } else {
-            annotations.find { it.qualifiedName == qualifiedName }
+            additionalAnnotationsProviders.firstNotNullOfOrNull { it.findAdditionalAnnotation(this, qualifiedName) }
+        }
+
+        if (specialAnnotation == null) {
+            return annotations.find { it.qualifiedName == qualifiedName }
+        }
+
+        return synchronized(monitor) {
+            annotationsArray.get()?.let { array ->
+                return array.find { it.qualifiedName == qualifiedName }
+            }
+
+            if (specialAnnotations != null) {
+                val specialAnnotations = specialAnnotations!!
+                val oldAnnotation = specialAnnotations.find { it.classId == specialAnnotation.classId }
+                if (oldAnnotation != null) {
+                    oldAnnotation
+                } else {
+                    specialAnnotations += specialAnnotation
+                    specialAnnotation
+                }
+            } else {
+                specialAnnotations = SmartList(specialAnnotation)
+                specialAnnotation
+            }
         }
     }
 
@@ -140,6 +159,6 @@ internal class LazyAnnotationsBox(
 //        Annotations.Java.Repeatable,
         ).associateBy { it.asFqNameString() }
 
-        private val emptyArray: Array<SymbolLightLazyAnnotation> = emptyArray<SymbolLightLazyAnnotation>()
+        private val emptyArray: Array<SymbolLightAbstractAnnotationWithClassId> = emptyArray<SymbolLightAbstractAnnotationWithClassId>()
     }
 }
