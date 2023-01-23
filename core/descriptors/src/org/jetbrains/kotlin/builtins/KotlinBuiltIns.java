@@ -109,7 +109,7 @@ public abstract class KotlinBuiltIns {
                     throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(name) + " is not found");
                 }
                 if (!(classifier instanceof TypeAliasDescriptor)) {
-                    throw new AssertionError("Must be a class descriptor " + name + ", but was " + classifier);
+                    throw new AssertionError("Must be a type alias descriptor " + name + ", but was " + classifier);
                 }
                 return (TypeAliasDescriptor) classifier;
             }
