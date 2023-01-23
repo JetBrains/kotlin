@@ -80,9 +80,9 @@ open class MetadataDependencyTransformationTask
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     protected val hostSpecificMetadataConfigurationsToResolve: FileCollection = project.filesProvider {
-        kotlinSourceSet.internal.compilations.mapNotNull { compilation ->
-            compilation.internal.configurations.hostSpecificMetadataConfiguration
-        }
+        kotlinSourceSet.internal.compilations
+            .filter { compilation -> if (compilation is KotlinNativeCompilation) compilation.konanTarget.enabledOnCurrentHost else true }
+            .mapNotNull { compilation -> compilation.internal.configurations.hostSpecificMetadataConfiguration }
     }
 
     @Transient // Only needed for configuring task inputs
