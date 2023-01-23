@@ -3,9 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.light.classes.symbol.modifierLists
-
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAbstractAnnotationWithClassId
+package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 internal interface AdditionalAnnotationsProvider {
     fun addAllAnnotations(currentRawAnnotations: MutableList<out SymbolLightAbstractAnnotationWithClassId>)
