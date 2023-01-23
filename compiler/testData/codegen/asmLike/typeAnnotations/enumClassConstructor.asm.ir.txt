@@ -7,9 +7,13 @@ final class foo/Kotlin$A : foo/Kotlin {
 
 Ljava/lang/Enum<Lfoo/Kotlin;>;
 public class foo/Kotlin : java/lang/Enum {
+    private final static kotlin.enums.EnumEntries $ENTRIES
+
     private final static foo.Kotlin[] $VALUES
 
     public final static foo.Kotlin A
+
+    private final static foo.Kotlin[] $entries()
 
     private final static foo.Kotlin[] $values()
 

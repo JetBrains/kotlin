@@ -29,4 +29,8 @@ open enum class ConfigurationParameter : Enum<ConfigurationParameter> {
 
   fun valueOf(value: String): ConfigurationParameter /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries<ConfigurationParameter>
+    get(): EnumEntries<ConfigurationParameter> /* Synthetic body for ENUM_ENTRIES */
+
 }
+

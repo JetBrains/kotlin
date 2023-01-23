@@ -7,10 +7,12 @@ public annotation class Ann {
 @kotlin.Metadata
 public final enum class SimpleEnum {
     // source: 'enum.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private synthetic final static field $VALUES: SimpleEnum[]
     public final enum static field A: SimpleEnum
     public final enum static field B: SimpleEnum
     public final enum static field C: SimpleEnum
+    private synthetic final static method $entries(): SimpleEnum[]
     private synthetic final static method $values(): SimpleEnum[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
@@ -21,9 +23,11 @@ public final enum class SimpleEnum {
 @kotlin.Metadata
 public final enum class WithAnnotations {
     // source: 'enum.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private synthetic final static field $VALUES: WithAnnotations[]
     public final enum static @Ann field A: WithAnnotations
     public final enum static @Ann field B: WithAnnotations
+    private synthetic final static method $entries(): WithAnnotations[]
     private synthetic final static method $values(): WithAnnotations[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
@@ -34,11 +38,13 @@ public final enum class WithAnnotations {
 @kotlin.Metadata
 public final enum class WithConstructor {
     // source: 'enum.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private synthetic final static field $VALUES: WithConstructor[]
     public final enum static field A: WithConstructor
     public final enum static field B: WithConstructor
     public final enum static field C: WithConstructor
     private final @org.jetbrains.annotations.NotNull field x: java.lang.String
+    private synthetic final static method $entries(): WithConstructor[]
     private synthetic final static method $values(): WithConstructor[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int, p2: java.lang.String): void
@@ -58,9 +64,11 @@ final class WithEntryClass$A {
 @kotlin.Metadata
 public abstract enum class WithEntryClass {
     // source: 'enum.kt'
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private synthetic final static field $VALUES: WithEntryClass[]
     public final enum static field A: WithEntryClass
     final inner class WithEntryClass$A
+    private synthetic final static method $entries(): WithEntryClass[]
     private synthetic final static method $values(): WithEntryClass[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void

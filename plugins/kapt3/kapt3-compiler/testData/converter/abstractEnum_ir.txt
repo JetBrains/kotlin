@@ -11,6 +11,10 @@ public enum E {
     public final void b() {
     }
 
+    public static kotlin.enums.EnumEntries<E> getEntries() {
+        return null;
+    }
+
     @kotlin.Metadata()
     public static final class NestedClass {
 
@@ -45,6 +49,10 @@ public enum E2 {
     }
 
     public abstract void a();
+
+    public static kotlin.enums.EnumEntries<E2> getEntries() {
+        return null;
+    }
 }
 
 ////////////////////
@@ -62,6 +70,10 @@ public enum E3 {
 
     @org.jetbrains.annotations.NotNull()
     public final java.lang.String getA() {
+        return null;
+    }
+
+    public static kotlin.enums.EnumEntries<E3> getEntries() {
         return null;
     }
 }
@@ -96,5 +108,9 @@ public enum E4 {
 
     public final boolean getD() {
         return false;
+    }
+
+    public static kotlin.enums.EnumEntries<E4> getEntries() {
+        return null;
     }
 }

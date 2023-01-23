@@ -1,5 +1,6 @@
 // IGNORE_BACKEND_K2: ANY
 // accessing uninitialized parameter is illegal in FIR
+// LANGUAGE: -ProhibitIllegalValueParameterUsageInDefaultArguments
 
 fun f(
     f1: () -> String = { f2() },

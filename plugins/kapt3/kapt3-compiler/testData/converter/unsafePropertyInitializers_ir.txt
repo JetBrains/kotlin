@@ -221,4 +221,8 @@ public enum State {
 
     State() {
     }
+
+    public static kotlin.enums.EnumEntries<State> getEntries() {
+        return null;
+    }
 }

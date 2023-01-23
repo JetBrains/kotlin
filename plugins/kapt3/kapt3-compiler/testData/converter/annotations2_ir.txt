@@ -59,6 +59,10 @@ public enum Enum {
     public final int getX() {
         return 0;
     }
+
+    public static kotlin.enums.EnumEntries<test.Enum> getEntries() {
+        return null;
+    }
 }
 
 ////////////////////

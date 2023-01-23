@@ -11,6 +11,9 @@ enum class Enum : Enum<Enum> {
 
   fun valueOf(value: String): Enum /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries
+    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+
 }
 
 object A {
@@ -59,3 +62,4 @@ fun test3(): Int {
 fun test4(): Companion {
   return Companion
 }
+

@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // IGNORE_BACKEND_K2: JVM_IR
 // K2 status: declaringClass is error for enums since Kotlin 1.9
+// LANGUAGE: -ProhibitEnumDeclaringClass
 
 package test
 

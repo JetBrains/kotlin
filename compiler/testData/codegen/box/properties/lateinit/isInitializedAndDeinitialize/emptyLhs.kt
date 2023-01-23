@@ -1,3 +1,4 @@
+// LANGUAGE: -NativeJsProhibitLateinitIsInitalizedIntrinsicWithoutPrivateAccess
 // WITH_STDLIB
 
 package test

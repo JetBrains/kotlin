@@ -49,6 +49,10 @@ public enum Colors {
 
     Colors() {
     }
+
+    public static kotlin.enums.EnumEntries<Colors> getEntries() {
+        return null;
+    }
 }
 
 ////////////////////
@@ -61,6 +65,10 @@ public enum Enum1 {
     /*public static final*/ WHITE /* = new Enum1() */;
 
     Enum1() {
+    }
+
+    public static kotlin.enums.EnumEntries<Enum1> getEntries() {
+        return null;
     }
 }
 

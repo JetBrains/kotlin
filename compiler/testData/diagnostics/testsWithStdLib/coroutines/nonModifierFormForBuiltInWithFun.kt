@@ -4,7 +4,7 @@
 infix fun Int.suspend(c: () -> Unit) { c() }
 
 fun bar() {
-    1 <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN_WARNING!>suspend<!> fun() {
+    1 <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN_ERROR!>suspend<!> fun() {
         println()
     }
 
@@ -12,7 +12,7 @@ fun bar() {
         println()
     }
 
-    1 <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN_WARNING!>suspend<!> @Ann fun() {
+    1 <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN_ERROR!>suspend<!> @Ann fun() {
         println()
     }
 }
@@ -22,7 +22,7 @@ fun bar() {
 annotation class Ann
 
 fun main(suspend: WLambdaInvoke) {
-    1 <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN_WARNING!>suspend<!> fun() {}
+    1 <!MODIFIER_FORM_FOR_NON_BUILT_IN_SUSPEND_FUN_ERROR!>suspend<!> fun() {}
 }
 
 class WLambdaInvoke {

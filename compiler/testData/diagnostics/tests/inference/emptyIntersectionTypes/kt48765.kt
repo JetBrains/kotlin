@@ -5,7 +5,7 @@ class B {
 }
 class C<T: D, T2>(val x: T, val y: T2) {
     fun test() {
-        B().<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>foo<!>(x, foo())
+        B().<!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>foo<!>(x, foo())
     }
 }
 open class D: A<Float, Number>()

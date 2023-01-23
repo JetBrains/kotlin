@@ -1,4 +1,4 @@
-/kt49661.kt:10:5: warning: type argument for a type parameter T can't be inferred because it has incompatible upper bounds: Foo, Int (multiple incompatible classes). This will become an error in Kotlin 1.9
+/kt49661.kt:10:5: error: type argument for a type parameter T can't be inferred because it has incompatible upper bounds: Foo, Int (multiple incompatible classes)
     f<Int> { g() }
     ^
 

@@ -65,6 +65,10 @@ FILE fqName:<root> fileName:/enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum1
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum1>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES
   CLASS ENUM_CLASS name:TestEnum2 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum2>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum2
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.TestEnum2 [primary]
@@ -149,6 +153,10 @@ FILE fqName:<root> fileName:/enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum2
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum2>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES
   CLASS ENUM_CLASS name:TestEnum3 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestEnum3>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum3
     CONSTRUCTOR visibility:private <> () returnType:<root>.TestEnum3 [primary]
@@ -276,6 +284,10 @@ FILE fqName:<root> fileName:/enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum3
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum3>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES
   CLASS ENUM_CLASS name:TestEnum4 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestEnum4>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum4
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.TestEnum4 [primary]
@@ -513,6 +525,10 @@ FILE fqName:<root> fileName:/enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum4
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum4>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES
   CLASS ENUM_CLASS name:TestEnum5 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum5>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestEnum5
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.TestEnum5 [primary]
@@ -597,6 +613,10 @@ FILE fqName:<root> fileName:/enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum5
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum5>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES
   FUN name:f visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun f (): kotlin.Int declared in <root>'
@@ -695,3 +715,7 @@ FILE fqName:<root> fileName:/enum.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum6
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum6>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES

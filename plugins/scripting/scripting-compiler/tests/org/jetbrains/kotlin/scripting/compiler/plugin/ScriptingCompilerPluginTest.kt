@@ -207,7 +207,10 @@ class ScriptingCompilerPluginTest : TestCase() {
                 }
 
                 val cp = (runtimeClasspath + scriptingClasspath + defsOut).joinToString(File.pathSeparator)
-                val exitCode = K2JVMCompiler().exec(System.err, "-cp", cp, *(scriptFiles.toTypedArray()), "-d", scriptsOut2.canonicalPath)
+                val exitCode = K2JVMCompiler().exec(
+                    System.err,
+                    "-cp", cp, *(scriptFiles.toTypedArray()), "-d", scriptsOut2.canonicalPath, "-Xallow-any-scripts-in-source-roots"
+                )
 
                 Assert.assertEquals(ExitCode.OK, exitCode)
             }

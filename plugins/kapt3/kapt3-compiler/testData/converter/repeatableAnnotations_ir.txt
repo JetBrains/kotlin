@@ -1,0 +1,231 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoArray {
+
+    public abstract int x();
+
+    public abstract java.lang.String[] a();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoBoolean {
+
+    public abstract int x();
+
+    public abstract boolean bool();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoChar {
+
+    public abstract int x();
+
+    public abstract char chr();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoClass {
+
+    public abstract int x();
+
+    public abstract java.lang.Class<Color> c();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoDouble {
+
+    public abstract int x();
+
+    public abstract double dbl();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoEnum {
+
+    public abstract int x();
+
+    public abstract Color c();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoFloat {
+
+    public abstract int x();
+
+    public abstract float flt();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoInt {
+
+    public abstract int x();
+
+    public abstract int i();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoIntArray {
+
+    public abstract int x();
+
+    public abstract int[] b();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoLong {
+
+    public abstract int x();
+
+    public abstract long l();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoLongArray {
+
+    public abstract int x();
+
+    public abstract long[] b();
+}
+
+////////////////////
+
+
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface AnnoString {
+
+    public abstract int x();
+
+    public abstract java.lang.String s();
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public enum Color {
+    /*public static final*/ BLACK /* = new Color() */;
+
+    Color() {
+    }
+
+    public static kotlin.enums.EnumEntries<Color> getEntries() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class Test {
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String value = "";
+
+    public Test() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getValue() {
+        return null;
+    }
+
+    @lib.Anno(value = "1")
+    @lib.Anno(value = "2", construct = {"A", "B"})
+    @lib.Anno(value = "3", construct = {"C"})
+    @java.lang.Deprecated()
+    public static void getValue$annotations() {
+    }
+}
+
+////////////////////
+
+
+@AnnoChar(x = lib.R.id.textView, chr = 'c')
+@AnnoBoolean(x = lib.R.id.textView, bool = false)
+@AnnoInt(x = lib.R.id.textView, i = 5)
+@AnnoFloat(x = lib.R.id.textView, flt = 1.0F)
+@AnnoDouble(x = lib.R.id.textView, dbl = 4.0)
+@AnnoString(x = lib.R.id.textView, s = "AAA")
+@AnnoIntArray(x = lib.R.id.textView, b = {1, 2, 3})
+@AnnoLongArray(x = lib.R.id.textView, b = {1L, 3L})
+@AnnoArray(x = lib.R.id.textView, a = {"A", "B"})
+@AnnoClass(x = lib.R.id.textView, c = Color.class)
+@kotlin.Metadata()
+public final class Test2 {
+
+    public Test2() {
+        super();
+    }
+}
+
+////////////////////
+
+package lib;
+
+public @interface Anno {
+
+    String[] construct() default {};
+
+    String value();
+}
+
+////////////////////
+
+package lib;
+
+public class R {
+
+    public R() {
+        super();
+    }
+
+    public static class id {
+
+        public id() {
+            super();
+        }
+        public static final int textView = 100;
+    }
+}

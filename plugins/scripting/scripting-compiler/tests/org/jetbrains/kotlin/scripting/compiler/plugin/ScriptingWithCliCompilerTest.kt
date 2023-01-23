@@ -258,7 +258,9 @@ class ScriptingWithCliCompilerTest {
                         K2JVMCompiler(),
                         arrayOf(
                             "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
-                            "-cp", getMainKtsClassPath().joinToString(File.pathSeparator), "-d", tmpdir.path, "-verbose", fileArg)
+                            "-cp", getMainKtsClassPath().joinToString(File.pathSeparator), "-d", tmpdir.path,
+                            "-Xallow-any-scripts-in-source-roots", "-verbose", fileArg
+                        )
                     )
                 }
                 Assert.assertEquals(0, ret.code)

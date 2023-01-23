@@ -7,7 +7,7 @@ This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-compiler/testData/cli/jvm/enumEntriesNotEnabled.kt:7:26: error: the feature "enum entries" is only available since language version 1.9
+compiler/testData/cli/jvm/enumEntriesNotEnabled.kt:7:26: error: the feature "enum entries" is disabled
     val entries = MyEnum.entries
                          ^
 COMPILATION_ERROR

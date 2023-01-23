@@ -11419,11 +11419,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/enum/manyDefaultParameters.kt");
         }
 
-        @TestMetadata("objectInEnum.kt")
-        public void testObjectInEnum() throws Exception {
-            runTest("compiler/testData/codegen/box/enum/objectInEnum.kt");
-        }
-
         @TestMetadata("ordinal.kt")
         public void testOrdinal() throws Exception {
             runTest("compiler/testData/codegen/box/enum/ordinal.kt");
@@ -13589,19 +13584,9 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/inference/builderInference/kt47744.kt");
             }
 
-            @TestMetadata("kt48445.kt")
-            public void testKt48445() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/kt48445.kt");
-            }
-
             @TestMetadata("kt49887.kt")
             public void testKt49887() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/kt49887.kt");
-            }
-
-            @TestMetadata("kt50520.kt")
-            public void testKt50520() throws Exception {
-                runTest("compiler/testData/codegen/box/inference/builderInference/kt50520.kt");
             }
 
             @TestMetadata("kt51988.kt")

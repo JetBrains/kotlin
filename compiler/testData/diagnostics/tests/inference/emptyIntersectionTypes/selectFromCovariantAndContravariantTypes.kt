@@ -12,7 +12,7 @@ fun <V> genericIn(x: In<V>) {}
 fun <V> genericOut(x: Out<V>) {}
 
 fun test1(a: In<A>, b: In<B>) {
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>genericIn<!>(select(a, b))
+    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>genericIn<!>(select(a, b))
 }
 
 fun test2(a: Out<A>, b: Out<B>) {

@@ -9,6 +9,7 @@
       <arg value="-Xuse-deprecated-legacy-compiler"/>
       <arg value="-output"/>
       <arg value="out.js"/>
+      <sysproperty key="kotlin.js.compiler.legacy.force_enabled" value="true"/>
       <jvmarg value="-noverify"/>
     </java>
   </target>

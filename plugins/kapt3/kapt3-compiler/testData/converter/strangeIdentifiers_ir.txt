@@ -23,6 +23,10 @@ public enum StrangeEnum {
     public final java.lang.String getSize() {
         return null;
     }
+
+    public static kotlin.enums.EnumEntries<StrangeEnum> getEntries() {
+        return null;
+    }
 }
 
 ////////////////////

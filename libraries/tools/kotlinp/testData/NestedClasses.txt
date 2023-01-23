@@ -49,6 +49,8 @@ public final enum class A.D.E : kotlin/Enum<A.D.E> {
   E2,
 
   // module name: test-module
+
+  // has Enum.entries
 }
 // A$D$F.class
 // ------------------------------------------

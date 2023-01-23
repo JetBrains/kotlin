@@ -80,6 +80,7 @@ class CompilerClientIT {
     fun testSimpleScript() {
         val (out, code) = runCompiler(
                 "-cp", compilationClasspath.joinToString(File.pathSeparator) { it.canonicalPath },
+                "-Xallow-any-scripts-in-source-roots",
                 File("testData/scripts/simpleHelloWorld.kts").canonicalPath)
         assertEquals(0, code, "compilation failed:\n" + out + "\n")
     }

@@ -57,5 +57,8 @@ open enum class A : Enum<A> {
 
   fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries
+    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+
 }
 

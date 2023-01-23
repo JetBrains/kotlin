@@ -1,3 +1,2 @@
-warning: language version 1.9 is experimental, there are no backwards compatibility guarantees for new language and library features
 error: old Kotlin/JS compiler is no longer supported. Please migrate to the new JS IR backend
 COMPILATION_ERROR

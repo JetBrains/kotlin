@@ -148,6 +148,10 @@ public final class Test {
 
         NestedEnum() {
         }
+
+        public static kotlin.enums.EnumEntries<Test.NestedEnum> getEntries() {
+            return null;
+        }
     }
 
     @kotlin.Metadata()

@@ -1,6 +1,6 @@
 warning: flag is not supported by this version of the compiler: -Xdouble ' quote ' escaped " sequence /
 warning: flag is not supported by this version of the compiler: -Xsingle " quote " escaped ' sequence /
-warning: API version 1.4 is deprecated and its support will be removed in a future version of Kotlin
+warning: language version 1.5 is deprecated and its support will be removed in a future version of Kotlin
 compiler/testData/cli/jvm/apiVersion.kt:4:5: warning: parameter 'p00' is never used
     p00: A, p01: A, p02: A, p03: A, p04: A, p05: A, p06: A, p07: A, p08: A, p09: A,
     ^

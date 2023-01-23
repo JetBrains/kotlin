@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 // !LANGUAGE: +ProgressionsChangingResolve
 
@@ -20,10 +21,10 @@ fun <E> append4(x: E) {}
 fun <E: Collection<*>> append4(x: E) {}
 
 fun main() {
-    SmartList(<!PROGRESSIONS_CHANGING_RESOLVE_ERROR("fun <E> SmartList(x: Collection<E>): Unit")!>1..2<!>) // warning
+    SmartList(1..2) // warning
     SmartList<IntRange>(1..10) // no warning
 
-    append(<!PROGRESSIONS_CHANGING_RESOLVE_ERROR("fun append(x: Collection<*>): Unit")!>1..10<!>)    // warning
+    append(1..10)    // warning
     append((1..10) as Any) // no warning
     append((1..10) as Iterable<Int>) // no warning
     append("a".."z") // no warning, the range is not iterable
@@ -33,5 +34,5 @@ fun main() {
 
     append3(In(1..10))    // no warning
 
-    append4(<!PROGRESSIONS_CHANGING_RESOLVE_ERROR("fun <E : Collection<*>> append4(x: E): Unit")!>1..10<!>)    // warning
+    append4(1..10)    // warning
 }

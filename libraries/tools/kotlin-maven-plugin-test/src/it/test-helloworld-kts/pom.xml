@@ -58,6 +58,11 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration>
+                            <args>
+                                <arg>-Xallow-any-scripts-in-source-roots</arg>
+                            </args>
+                        </configuration>
                     </execution>
                     <execution>
                         <id>test-compile</id>

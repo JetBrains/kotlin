@@ -15,4 +15,8 @@ enum class EE : Enum<EE> {
 
   fun valueOf(value: String): EE /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries<EE>
+    get(): EnumEntries<EE> /* Synthetic body for ENUM_ENTRIES */
+
 }
+

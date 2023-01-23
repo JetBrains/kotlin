@@ -32,9 +32,9 @@ inline class ReservedMembersMfvc(val x: Int, val y: Int) {
 
 inline class SecondaryConstructors(val x: Int) {
     constructor(y: String) : this(5)
-    constructor(x: Int, y: String) : this(x) <!SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS!>{
+    constructor(x: Int, y: String) : this(x) {
 
-    }<!>
+    }
 }
 
 <!VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION!>value<!> class WithInner(val x: String) {

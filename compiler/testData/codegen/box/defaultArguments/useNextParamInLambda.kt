@@ -3,6 +3,7 @@
 // IGNORE_BACKEND_K2: JVM_IR
 // WASM_MUTE_REASON: IGNORED_IN_JS
 // FIR status: don't support legacy feature. UNINITIALIZED_PARAMETER y. See KT-49800
+// LANGUAGE: -ProhibitIllegalValueParameterUsageInDefaultArguments
 
 fun f(
     f1: () -> String = { f2() },

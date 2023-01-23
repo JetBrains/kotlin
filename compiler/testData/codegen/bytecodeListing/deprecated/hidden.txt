@@ -9,7 +9,7 @@ public class Base {
 public final class Derived {
     // source: 'hidden.kt'
     public synthetic deprecated @kotlin.Deprecated(message="", level=HIDDEN) method <init>(): void
-    public synthetic method f(): void
+    public method f(): void
 }
 
 @kotlin.Metadata

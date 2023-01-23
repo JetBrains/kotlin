@@ -2,6 +2,9 @@ public enum AnnotatedParameterInEnumConstructor /* test.AnnotatedParameterInEnum
   A;
 
   @org.jetbrains.annotations.NotNull()
+  public static kotlin.enums.EnumEntries<test.AnnotatedParameterInEnumConstructor> getEntries();//  getEntries()
+
+  @org.jetbrains.annotations.NotNull()
   public static test.AnnotatedParameterInEnumConstructor valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()

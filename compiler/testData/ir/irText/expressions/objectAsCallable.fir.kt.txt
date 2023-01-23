@@ -20,6 +20,9 @@ enum class En : Enum<En> {
 
   fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries
+    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+
 }
 
 operator fun A.invoke(i: Int): Int {
@@ -37,3 +40,4 @@ val test1: Int
 val test2: Int
   field = En.X.invoke(i = 42)
   get
+

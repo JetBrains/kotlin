@@ -81,6 +81,10 @@ FILE fqName:events fileName:/kt38765.kt
       FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:events.internal.NestedExternalEnum
         VALUE_PARAMETER name:value index:0 type:kotlin.String
         SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<events.internal.NestedExternalEnum>
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
       FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>, other:events.internal.NestedExternalEnum) returnType:kotlin.Int [fake_override,operator]
         overridden:
           public final fun compareTo (other: E of kotlin.Enum): kotlin.Int [operator] declared in kotlin.Enum

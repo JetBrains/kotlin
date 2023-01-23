@@ -7,10 +7,12 @@ public final enum class A$B$C {
     public final enum static field C2: A$B$C
     public final enum static field C3: A$B$C
     private synthetic final static field $VALUES: A$B$C[]
+    private synthetic final static field $ENTRIES: kotlin.enums.EnumEntries
     private method <init>(p0: java.lang.String, p1: int): void
     public static method values(): A$B$C[]
     public static method valueOf(p0: java.lang.String): A$B$C
     private synthetic final static method $values(): A$B$C[]
+    private synthetic final static method $entries(): A$B$C[]
     static method <clinit>(): void
 }
 

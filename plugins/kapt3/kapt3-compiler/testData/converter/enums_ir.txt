@@ -1,0 +1,97 @@
+@java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@kotlin.Metadata()
+public abstract @interface Anno1 {
+
+    public abstract java.lang.String value();
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public enum Enum1 {
+    /*public static final*/ BLACK /* = new Enum1() */,
+    /*public static final*/ WHITE /* = new Enum1() */;
+
+    Enum1() {
+    }
+
+    public static kotlin.enums.EnumEntries<Enum1> getEntries() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public enum Enum2 {
+    /*public static final*/ RED /* = new Enum2() */,
+    /*public static final*/ WHITE /* = new Enum2() */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String col = null;
+    private final int col2 = 0;
+
+    Enum2(@Anno1(value = "first")
+    java.lang.String col, @Anno1(value = "second")
+    int col2) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getCol() {
+        return null;
+    }
+
+    public final int getCol2() {
+        return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String color() {
+        return null;
+    }
+
+    private final void privateEnumFun() {
+    }
+
+    public final void publicEnumFun() {
+    }
+
+    public static kotlin.enums.EnumEntries<Enum2> getEntries() {
+        return null;
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public abstract interface I {
+
+    @kotlin.Metadata()
+    public static enum Nested {
+        /*public static final*/ WHITE /* = new Nested() */;
+
+        Nested() {
+        }
+
+        public static kotlin.enums.EnumEntries<I.Nested> getEntries() {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public enum Nested1 {
+    /*public static final*/ WHITE /* = new Nested1() */;
+
+    Nested1() {
+    }
+
+    public static kotlin.enums.EnumEntries<Nested1> getEntries() {
+        return null;
+    }
+}

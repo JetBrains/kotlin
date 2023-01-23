@@ -239,17 +239,24 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
     }
 
     protected open fun setupProject(project: TestProject) {
-        project.subProject("app").buildGradle.append(
-            //language=Groovy
-            """
-            |
-            |tasks
-            |    .withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile)
-            |    .configureEach { 
-            |        kotlinOptions.allWarningsAsErrors = true 
-            |    }
-            """.trimMargin()
-        )
+        project.subProject("app").apply {
+            buildGradle.append(
+                //language=Groovy
+                """
+                |tasks
+                |    .withType(org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile)
+                |    .configureEach { 
+                |        kotlinOptions.allWarningsAsErrors = true 
+                |    }
+                |    
+                |tasks
+                |    .withType(org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile)
+                |    .configureEach { 
+                |        kotlinOptions.allWarningsAsErrors = false 
+                |    }
+                """.trimMargin()
+            )
+        }
     }
 
     protected abstract fun BuildResult.checkOutput(project: TestProject)

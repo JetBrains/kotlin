@@ -5,6 +5,10 @@ public enum Em {
 
     Em() {
     }
+
+    public static kotlin.enums.EnumEntries<Em> getEntries() {
+        return null;
+    }
 }
 
 ////////////////////

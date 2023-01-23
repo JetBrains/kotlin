@@ -11,6 +11,9 @@ enum class TestFinalEnum1 : Enum<TestFinalEnum1> {
 
   fun valueOf(value: String): TestFinalEnum1 /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries
+    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+
 }
 
 open enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
@@ -30,6 +33,9 @@ open enum class TestFinalEnum2 : Enum<TestFinalEnum2> {
 
   fun valueOf(value: String): TestFinalEnum2 /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries
+    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+
 }
 
 enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
@@ -47,6 +53,9 @@ enum class TestFinalEnum3 : Enum<TestFinalEnum3> {
   fun values(): Array<TestFinalEnum3> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestFinalEnum3 /* Synthetic body for ENUM_VALUEOF */
+
+  val entries: EnumEntries
+    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -74,6 +83,9 @@ open enum class TestOpenEnum1 : Enum<TestOpenEnum1> {
   fun values(): Array<TestOpenEnum1> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestOpenEnum1 /* Synthetic body for ENUM_VALUEOF */
+
+  val entries: EnumEntries
+    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -104,6 +116,9 @@ open enum class TestOpenEnum2 : Enum<TestOpenEnum2> {
 
   fun valueOf(value: String): TestOpenEnum2 /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries
+    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+
 }
 
 abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
@@ -130,6 +145,9 @@ abstract enum class TestAbstractEnum1 : Enum<TestAbstractEnum1> {
   fun values(): Array<TestAbstractEnum1> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestAbstractEnum1 /* Synthetic body for ENUM_VALUEOF */
+
+  val entries: EnumEntries
+    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -162,4 +180,8 @@ open enum class TestAbstractEnum2 : IFoo, Enum<TestAbstractEnum2> {
 
   fun valueOf(value: String): TestAbstractEnum2 /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries
+    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+
 }
+

@@ -4,7 +4,7 @@
 
 // CHECK_BYTECODE_TEXT
 // JVM_IR_TEMPLATES
-// 1 java/lang/invoke/LambdaMetafactory
+// 2 java/lang/invoke/LambdaMetafactory
 
 // FILE: enumValues.kt
 enum class ABC(val x: String = "") {

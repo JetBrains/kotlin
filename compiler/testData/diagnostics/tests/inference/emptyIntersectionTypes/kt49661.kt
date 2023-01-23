@@ -7,5 +7,5 @@ inline fun <R> f(block: ()->R?): R? {
 }
 
 fun main() {
-    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_WARNING!>f<!><Int> { g() }
+    <!INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION_ERROR!>f<!><Int> { g() }
 }

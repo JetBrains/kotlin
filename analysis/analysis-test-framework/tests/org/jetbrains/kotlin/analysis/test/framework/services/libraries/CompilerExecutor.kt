@@ -26,6 +26,7 @@ object CompilerExecutor {
             addAll(options)
             add("-d")
             add(library.absolutePathString())
+            add("-XXLanguage:-SkipStandaloneScriptsInSourceRoots")
         }
         try {
             MockLibraryUtil.runJvmCompiler(commands)

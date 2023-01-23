@@ -13,6 +13,9 @@ enum class TestEnum1 : Enum<TestEnum1> {
 
   fun valueOf(value: String): TestEnum1 /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries<TestEnum1>
+    get(): EnumEntries<TestEnum1> /* Synthetic body for ENUM_ENTRIES */
+
 }
 
 open enum class TestEnum2 : Enum<TestEnum2> {
@@ -35,6 +38,9 @@ open enum class TestEnum2 : Enum<TestEnum2> {
   fun values(): Array<TestEnum2> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum2 /* Synthetic body for ENUM_VALUEOF */
+
+  val entries: EnumEntries<TestEnum2>
+    get(): EnumEntries<TestEnum2> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -63,6 +69,9 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
   fun values(): Array<TestEnum3> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum3 /* Synthetic body for ENUM_VALUEOF */
+
+  val entries: EnumEntries<TestEnum3>
+    get(): EnumEntries<TestEnum3> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -117,6 +126,9 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
 
   fun valueOf(value: String): TestEnum4 /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries<TestEnum4>
+    get(): EnumEntries<TestEnum4> /* Synthetic body for ENUM_ENTRIES */
+
 }
 
 open enum class TestEnum5 : Enum<TestEnum5> {
@@ -139,6 +151,9 @@ open enum class TestEnum5 : Enum<TestEnum5> {
   fun values(): Array<TestEnum5> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum5 /* Synthetic body for ENUM_VALUEOF */
+
+  val entries: EnumEntries<TestEnum5>
+    get(): EnumEntries<TestEnum5> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -171,4 +186,8 @@ open enum class TestEnum6 : Enum<TestEnum6> {
 
   fun valueOf(value: String): TestEnum6 /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries<TestEnum6>
+    get(): EnumEntries<TestEnum6> /* Synthetic body for ENUM_ENTRIES */
+
 }
+

@@ -49,6 +49,9 @@ open external class internal {
 
     fun valueOf(value: String): NestedExternalEnum /* Synthetic body for ENUM_VALUEOF */
 
+    val entries: EnumEntries<NestedExternalEnum>
+      get(): EnumEntries<NestedExternalEnum> /* Synthetic body for ENUM_ENTRIES */
+
   }
 
   interface NestedExternalInterface {

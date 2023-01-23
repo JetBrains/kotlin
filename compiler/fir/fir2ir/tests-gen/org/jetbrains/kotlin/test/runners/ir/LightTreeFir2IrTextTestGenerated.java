@@ -233,12 +233,6 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         }
 
         @Test
-        @TestMetadata("kt44013.kt")
-        public void testKt44013() throws Exception {
-            runTest("compiler/testData/ir/irText/classes/kt44013.kt");
-        }
-
-        @Test
         @TestMetadata("kt45853.kt")
         public void testKt45853() throws Exception {
             runTest("compiler/testData/ir/irText/classes/kt45853.kt");

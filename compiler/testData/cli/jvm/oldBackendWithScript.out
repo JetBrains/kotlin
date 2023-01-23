@@ -1,3 +1,4 @@
 warning: language version is automatically inferred to 1.5 when using the old JVM backend. Consider specifying -language-version explicitly, or remove -Xuse-old-backend
+warning: language version 1.5 is deprecated and its support will be removed in a future version of Kotlin
 warning: -Xuse-old-backend is no longer supported. Please migrate to the new JVM IR backend
 OK

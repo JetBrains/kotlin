@@ -44,6 +44,9 @@ public enum StrangeEnum /* StrangeEnum*/ {
   @org.jetbrains.annotations.NotNull()
   public static StrangeEnum[] values();//  values()
 
+  @org.jetbrains.annotations.NotNull()
+  public static kotlin.enums.EnumEntries<StrangeEnum> getEntries();//  getEntries()
+
   private  StrangeEnum(java.lang.String);//  .ctor(java.lang.String)
 }
 

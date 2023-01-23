@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.integration;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.cli.common.CompilerSystemProperties;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
 import java.io.File;
@@ -39,6 +40,7 @@ public abstract class AbstractAntTaskTest extends KotlinIntegrationTestBase {
                 testDataDir,
                 "build.log",
                 "-Xmx256m",
+                "-D" + CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.getProperty() + "=true",
                 "-Dkotlin.lib=" + KotlinIntegrationTestBase.getCompilerLib(),
                 "-Dkotlin.runtime.jar=" + ForTestCompileRuntime.runtimeJarForTests().getAbsolutePath(),
                 "-Dkotlin.reflect.jar=" + ForTestCompileRuntime.reflectJarForTests().getAbsolutePath(),
