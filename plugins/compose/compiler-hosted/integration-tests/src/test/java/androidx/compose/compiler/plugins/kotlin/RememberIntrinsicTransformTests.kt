@@ -1688,4 +1688,64 @@ class RememberIntrinsicTransformTests : AbstractIrTransformTest() {
             fun Text(value: String) { }
         """
     )
+
+    @Test
+    fun testVarargsIntrinsicRemember() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Test(vararg strings: String) {
+                val show = remember { mutableStateOf(false) }
+                if (show.value) {
+                    Text("Showing")
+                }
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun Text(value: String) { }
+        """,
+        expectedTransformed = """
+            @Composable
+            fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<rememb...>,<Text("...>:Test.kt")
+              val %dirty = %changed
+              %composer.startMovableGroup(<>, strings.size)
+              val tmp0_iterator = strings.iterator()
+              while (tmp0_iterator.hasNext()) {
+                val value = tmp0_iterator.next()
+                %dirty = %dirty or if (%composer.changed(value)) 0b0100 else 0
+              }
+              %composer.endMovableGroup()
+              if (%dirty and 0b1110 === 0) {
+                %dirty = %dirty or 0b0010
+              }
+              if (%dirty and 0b0001 !== 0 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                val show = remember({
+                  mutableStateOf(
+                    value = false
+                  )
+                }, %composer, 0)
+                if (show.value) {
+                  Text("Showing", %composer, 0b0110)
+                }
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(*strings, %composer, updateChangedFlags(%changed or 0b0001))
+              }
+            }
+        """
+    )
 }
