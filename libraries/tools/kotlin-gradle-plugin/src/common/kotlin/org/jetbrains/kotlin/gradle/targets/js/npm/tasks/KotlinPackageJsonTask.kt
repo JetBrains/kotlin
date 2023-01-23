@@ -121,7 +121,6 @@ abstract class KotlinPackageJsonTask : DefaultTask() {
 
                 task.dependsOn(target.project.provider { task.findDependentTasks() })
                 task.dependsOn(npmCachesSetupTask)
-                nodeJs.npmResolutionManager.declareBuildServicesUsage(task)
             }
             packageJsonUmbrella.configure { task ->
                 task.inputs.file(packageJsonTask.map { it.packageJson })

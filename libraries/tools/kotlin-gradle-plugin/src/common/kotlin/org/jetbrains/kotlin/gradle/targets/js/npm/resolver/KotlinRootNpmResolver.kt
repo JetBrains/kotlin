@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.Provider
+import org.gradle.api.services.BuildService
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -20,6 +21,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.RootPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnEnv
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnResolution
@@ -81,6 +86,9 @@ class KotlinRootNpmResolver internal constructor(
             .gradle.sharedServices.registerIfAbsent("gradle-node-modules", GradleNodeModulesCache::class.java) {
                 it.parameters.cacheDir.set(nodeJs_.nodeModulesGradleCacheDir)
                 it.parameters.rootProjectDir.set(rootProject_.projectDir)
+            }.also {
+                declareBuildServiceForRootProjectJsTasks(it)
+                declareBuildServiceForAllProjectsJsTasks(it)
             }
 
     internal val gradleNodeModules: GradleNodeModulesCache
@@ -94,16 +102,13 @@ class KotlinRootNpmResolver internal constructor(
             .gradle.sharedServices.registerIfAbsent("composite-node-modules", CompositeNodeModulesCache::class.java) {
                 it.parameters.cacheDir.set(nodeJs_.nodeModulesGradleCacheDir)
                 it.parameters.rootProjectDir.set(rootProject_.projectDir)
+            }.also {
+                declareBuildServiceForRootProjectJsTasks(it)
+                declareBuildServiceForAllProjectsJsTasks(it)
             }
 
     internal val compositeNodeModules: CompositeNodeModulesCache
         get() = compositeNodeModulesProvider.get()
-
-    internal fun declareCacheServicesUsage(task: Task) {
-        task.usesService(gradleNodeModulesProvider)
-        task.usesService(compositeNodeModulesProvider)
-        task.usesService(resolverStateHolder)
-    }
 
     @Transient
     private val projectResolvers_: MutableMap<String, KotlinProjectNpmResolver>? = mutableMapOf()
@@ -140,6 +145,9 @@ class KotlinRootNpmResolver internal constructor(
             service.parameters.packageJsonHandlers.set(compilations.associate { compilation ->
                 "${compilation.project.path}:${compilation.disambiguatedName}" to compilation.packageJsonHandlers
             }.filter { it.value.isNotEmpty() })
+        }.also {
+            declareBuildServiceForRootProjectJsTasks(it)
+            declareBuildServiceForAllProjectsJsTasks(it)
         }
     }
 
@@ -185,9 +193,6 @@ class KotlinRootNpmResolver internal constructor(
         synchronized(projectResolvers) {
             check(state == RootResolverState.CONFIGURING) { alreadyResolvedMessage("add new project: $target") }
             projectResolvers[target.path] = KotlinProjectNpmResolver(target, this)
-            target.tasks.withType<Kotlin2JsCompile>().configureEach { task ->
-                nodeJs_.npmResolutionManager.declareBuildServicesUsage(task)
-            }
         }
     }
 
@@ -312,6 +317,29 @@ class KotlinRootNpmResolver internal constructor(
         nodeJs.projectPackagesDir.listFiles()?.forEach {
             if (it.name !in packages) {
                 it.deleteRecursively()
+            }
+        }
+    }
+
+    internal fun declareBuildServiceForRootProjectJsTasks(serviceProvider: Provider<out BuildService<*>>) {
+        rootProject_.tasks.withType<RootPackageJsonTask>().configureEach {
+            it.usesService(serviceProvider)
+        }
+        rootProject_.tasks.withType<KotlinNpmInstallTask>().configureEach {
+            it.usesService(serviceProvider)
+        }
+        rootProject_.tasks.withType<KotlinNpmCachesSetup>().configureEach {
+            it.usesService(serviceProvider)
+        }
+    }
+
+    internal fun declareBuildServiceForAllProjectsJsTasks(serviceProvider: Provider<out BuildService<*>>) {
+        rootProject_.allprojects { project ->
+            project.tasks.withType<Kotlin2JsCompile>().configureEach {
+                it.usesService(serviceProvider)
+            }
+            project.tasks.withType<KotlinPackageJsonTask>().configureEach {
+                it.usesService(serviceProvider)
             }
         }
     }

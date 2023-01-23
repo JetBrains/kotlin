@@ -46,7 +46,6 @@ open class YarnPlugin : Plugin<Project> {
             task.dependsOn(nodeJs.npmCachesSetupTaskProvider)
             task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             task.description = "Create root package.json"
-            nodeJs.npmResolutionManager.declareBuildServicesUsage(task)
         }
 
         configureRequiresNpmDependencies(project, rootPackageJson)

@@ -97,6 +97,9 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
         .rootProject.gradle.sharedServices.registerIfAbsent(
             "npm-resolution-manager-state-holder", KotlinNpmResolutionManagerStateHolder::class.java
         ) {
+        }.also {
+            resolver.declareBuildServiceForRootProjectJsTasks(it)
+            resolver.declareBuildServiceForAllProjectsJsTasks(it)
         }
 
     private val stateHolder get() = stateHolderProvider.get()
@@ -276,10 +279,5 @@ class KotlinNpmResolutionManager(@Transient private val nodeJsSettings: NodeJsRo
                         "This may be caused by changing $task configuration after npm dependencies resolution."
             }
         }
-    }
-
-    internal fun declareBuildServicesUsage(task: Task) {
-        task.usesService(stateHolderProvider)
-        resolver.declareCacheServicesUsage(task)
     }
 }
