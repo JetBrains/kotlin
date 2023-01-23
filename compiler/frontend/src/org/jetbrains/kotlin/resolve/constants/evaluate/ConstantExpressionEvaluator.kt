@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.types.expressions.DoubleColonLHS
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isBoolean
+import org.jetbrains.kotlin.types.typeUtil.isGenericArrayOfTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.math.BigInteger
@@ -408,6 +409,12 @@ private class ConstantExpressionEvaluatorVisitor(
             if (shouldSkipComplexBooleanValue(expression, compileTimeConstant)) {
                 return null
             }
+
+            // If constant is `Array` and its argument is some generic type, then we must wait for full resolve and only when we can record value
+            if (compileTimeConstant is TypedCompileTimeConstant && compileTimeConstant.type.isGenericArrayOfTypeParameter()) {
+                return compileTimeConstant
+            }
+
             trace.record(BindingContext.COMPILE_TIME_VALUE, expression, compileTimeConstant)
             return compileTimeConstant
         }

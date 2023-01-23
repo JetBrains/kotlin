@@ -17064,6 +17064,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt55912.kt")
+        public void testKt55912() throws Exception {
+            runTest("compiler/testData/codegen/box/evaluate/kt55912.kt");
+        }
+
+        @Test
         @TestMetadata("kt9443.kt")
         public void testKt9443() throws Exception {
             runTest("compiler/testData/codegen/box/evaluate/kt9443.kt");
