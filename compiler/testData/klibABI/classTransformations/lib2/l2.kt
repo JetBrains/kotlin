@@ -63,27 +63,6 @@ inline fun getClassToInterfaceInline(): ClassToInterface = ClassToInterface()
 fun getClassToInterfaceAsAny(): Any = ClassToInterface()
 inline fun getClassToInterfaceAsAnyInline(): Any = ClassToInterface()
 
-//   TODO: fix calling the proper delegating constructor when an inherited interface evolutes to a class
-//fun getInterfaceToClass(): InterfaceToClass = object : InterfaceToClass {}
-//inline fun getInterfaceToClassInline(): InterfaceToClass = object : InterfaceToClass {}
-//fun getInterfaceToClassAsAny(): Any = object : InterfaceToClass {}
-//inline fun getInterfaceToClassAsAnyInline(): Any = object : InterfaceToClass {}
-//
-//class InterfaceToClassImpl : InterfaceToClass
-//class InterfaceToClassContainer {
-//    class InterfaceToClassImpl : InterfaceToClass
-//}
-//
-//fun getInterfaceToClassImpl(): InterfaceToClass = InterfaceToClassImpl()
-//inline fun getInterfaceToClassImplInline(): InterfaceToClass = InterfaceToClassImpl()
-//fun getInterfaceToClassImplAsAny(): Any = InterfaceToClassImpl()
-//inline fun getInterfaceToClassImplAsAnyInline(): Any = InterfaceToClassImpl()
-//
-//fun getInterfaceToClassNestedImpl(): InterfaceToClass = InterfaceToClassContainer.InterfaceToClassImpl()
-//inline fun getInterfaceToClassNestedImplInline(): InterfaceToClass = InterfaceToClassContainer.InterfaceToClassImpl()
-//fun getInterfaceToClassNestedImplAsAny(): Any = InterfaceToClassContainer.InterfaceToClassImpl()
-//inline fun getInterfaceToClassNestedImplAsAnyInline(): Any = InterfaceToClassContainer.InterfaceToClassImpl()
-
 fun getNestedObjectToCompanion1(): NestedObjectToCompanion1.Companion = NestedObjectToCompanion1.Companion
 inline fun getNestedObjectToCompanion1Inline(): NestedObjectToCompanion1.Companion = NestedObjectToCompanion1.Companion
 fun getNestedObjectToCompanion1AsAny(): Any = NestedObjectToCompanion1.Companion
