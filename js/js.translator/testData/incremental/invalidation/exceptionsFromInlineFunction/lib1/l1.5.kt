@@ -1,4 +1,8 @@
 inline fun foo() : Int {
-    throw NumberFormatException()
-    return 5
+    try {
+        val x = listOf(1)
+        return x[2]
+    } catch(e: Exception) {
+        throw NumberFormatException()
+    }
 }
