@@ -54,6 +54,16 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(kotlinJvmInternalUnsafeFqn, null, "monitorExit", listOf(anyFqn)) to MonitorInstruction.MONITOR_EXIT,
                 Key(kotlinJvmFqn, arrayFqn, "isArrayOf", emptyList()) to IsArrayOf,
                 Key(kotlinFqn, null, "arrayOfNulls", listOf(intFqn)) to NewArray,
+
+                Key(kotlinFqn, null, "ByteArray", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, null, "ShortArray", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, null, "IntArray", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, null, "LongArray", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, null, "FloatArray", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, null, "DoubleArray", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, null, "CharArray", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, null, "BooleanArray", listOf(intFqn)) to NewArray,
+
                 Key(kotlinFqn, null, "vArrayOfNulls", listOf(intFqn)) to NewArray,
                 Key(kotlinFqn, StandardClassIds.VArray.asSingleFqName(), "iterator", emptyList()) to VArrayIterator,
                 Key(cloneableFqn, null, "clone", emptyList()) to Clone,
