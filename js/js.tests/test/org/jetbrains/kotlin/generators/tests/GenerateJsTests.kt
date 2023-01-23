@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.incremental.AbstractJsIrInvalidationTest
 import org.jetbrains.kotlin.js.test.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
+import org.jetbrains.kotlin.js.test.wasm.diagnostics.AbstractDiagnosticsWasmTest
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
 import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
 import org.jetbrains.kotlin.js.testOld.wasm.semantics.*
@@ -236,6 +237,12 @@ fun main(args: Array<String>) {
 //            testClass<AbstractFirJsSteppingTest> {
 //                model("debug/stepping")
 //            }
+        }
+
+        testGroup("js/js.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractDiagnosticsWasmTest> {
+                model("diagnostics/wasmTests")
+            }
         }
     }
 }

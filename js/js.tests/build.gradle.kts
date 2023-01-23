@@ -486,6 +486,7 @@ projectTest("wasmTest", true) {
     setupSpiderMonkey()
 
     include("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
+    include("**/DiagnosticsWasmTestGenerated*")
 
     dependsOn(":kotlin-stdlib-wasm:compileKotlinWasm")
     systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/wasm/main")
@@ -494,6 +495,7 @@ projectTest("wasmTest", true) {
     systemProperty("kotlin.wasm.kotlin.test.path", "libraries/kotlin.test/wasm/build/classes/kotlin/wasm/main")
 
     setUpBoxTests()
+    useJUnitPlatform()
 }
 
 projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit4) {
