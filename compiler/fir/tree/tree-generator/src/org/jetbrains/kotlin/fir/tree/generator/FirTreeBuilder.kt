@@ -26,6 +26,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val statement by element(Expression, annotationContainer)
     val expression by element(Expression, statement)
+    val lazyExpression by element(Expression, expression)
 
     val contextReceiver by element(Declaration)
 
@@ -83,6 +84,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val whileLoop by element(Expression, loop)
 
     val block by element(Expression, expression)
+    val lazyBlock by element(Expression, block)
+
     val binaryLogicExpression by element(Expression, expression)
     val jump by sealedElement(Expression, expression)
     val loopJump by element(Expression, jump)

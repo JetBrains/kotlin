@@ -578,19 +578,20 @@ class FirRenderer(
         }
 
         override fun visitExpression(expression: FirExpression) {
-            if (expression !is FirLazyExpression) {
-                annotationRenderer?.render(expression)
-            }
+            annotationRenderer?.render(expression)
             print(
                 when (expression) {
                     is FirExpressionStub -> "STUB"
-                    is FirLazyExpression -> "LAZY_EXPRESSION"
                     is FirUnitExpression -> "Unit"
                     is FirElseIfTrueCondition -> "else"
                     is FirNoReceiverExpression -> ""
                     else -> "??? ${expression.javaClass}"
                 }
             )
+        }
+
+        override fun visitLazyExpression(lazyExpression: FirLazyExpression) {
+            print("LAZY_EXPRESSION")
         }
 
         override fun <T> visitConstExpression(constExpression: FirConstExpression<T>) {
