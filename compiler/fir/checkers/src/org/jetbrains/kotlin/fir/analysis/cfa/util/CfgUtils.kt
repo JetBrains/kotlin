@@ -8,11 +8,6 @@ package org.jetbrains.kotlin.fir.analysis.cfa.util
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
 
-fun ControlFlowGraph.getEnterNode(direction: TraverseDirection): CFGNode<*> = when (direction) {
-    TraverseDirection.Forward -> enterNode
-    TraverseDirection.Backward -> exitNode
-}
-
 fun ControlFlowGraph.getNodesInOrder(direction: TraverseDirection): List<CFGNode<*>> = when (direction) {
     TraverseDirection.Forward -> nodes
     TraverseDirection.Backward -> nodes.asReversed()
