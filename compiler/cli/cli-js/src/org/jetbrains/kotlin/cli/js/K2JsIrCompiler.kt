@@ -682,6 +682,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                         mainModule,
                         cfg,
                         arguments.granularity,
+                        PhaseConfig(jsPhases),
                         es6mode = arguments.useEsClasses
                     )
                 }

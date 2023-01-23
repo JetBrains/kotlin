@@ -26,6 +26,7 @@ class JsIrCompilerWithIC(
     private val mainModule: IrModuleFragment,
     configuration: CompilerConfiguration,
     granularity: JsGenerationGranularity,
+    private val phaseConfig: PhaseConfig,
     exportedDeclarations: Set<FqName> = emptySet(),
     es6mode: Boolean = false
 ) : JsIrCompilerICInterface {
@@ -64,7 +65,7 @@ class JsIrCompilerWithIC(
 
         generateJsTests(context, mainModule)
 
-        lowerPreservingTags(allModules, context, PhaseConfig(jsPhases), context.irFactory.stageController as WholeWorldStageController)
+        lowerPreservingTags(allModules, context, phaseConfig, context.irFactory.stageController as WholeWorldStageController)
 
         val transformer = IrModuleToJsTransformer(context, mainArguments)
         return transformer.makeIrFragmentsGenerators(dirtyFiles, allModules)
@@ -72,7 +73,10 @@ class JsIrCompilerWithIC(
 }
 
 fun lowerPreservingTags(
-    modules: Iterable<IrModuleFragment>, context: JsIrBackendContext, phaseConfig: PhaseConfig, controller: WholeWorldStageController
+    modules: Iterable<IrModuleFragment>,
+    context: JsIrBackendContext,
+    phaseConfig: PhaseConfig,
+    controller: WholeWorldStageController
 ) {
     // Lower all the things
     controller.currentStage = 0

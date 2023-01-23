@@ -4,6 +4,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
@@ -758,6 +759,7 @@ fun rebuildCacheForDirtyFiles(
         currentIrModule,
         configuration,
         JsGenerationGranularity.PER_MODULE,
+        PhaseConfig(jsPhases),
         exportedDeclarations,
         es6mode
     )

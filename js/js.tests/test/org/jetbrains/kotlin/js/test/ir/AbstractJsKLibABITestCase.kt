@@ -191,7 +191,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             irFactory = { IrFactoryImplForJsIC(WholeWorldStageController()) },
             mainArguments = null,
             compilerInterfaceFactory = { mainModule, cfg ->
-                JsIrCompilerWithIC(mainModule, cfg, JsGenerationGranularity.PER_MODULE, setOf(BOX_FUN_FQN))
+                JsIrCompilerWithIC(mainModule, cfg, JsGenerationGranularity.PER_MODULE, PhaseConfig(jsPhases), setOf(BOX_FUN_FQN))
             }
         )
         val icCaches = cacheUpdater.actualizeCaches()

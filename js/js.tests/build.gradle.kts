@@ -346,6 +346,23 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
     setUpBoxTests()
 }
 
+fun Test.forwardProperties() {
+    val rootLocalProperties = Properties().apply {
+        rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
+            load(it)
+        }
+    }
+
+    val allProperties = properties + rootLocalProperties
+
+    val prefixForPropertiesToForward = "fd."
+    for ((key, value) in allProperties) {
+        if (key is String && key.startsWith(prefixForPropertiesToForward)) {
+            systemProperty(key.substring(prefixForPropertiesToForward.length), value!!)
+        }
+    }
+}
+
 fun Test.setUpBoxTests() {
     workingDir = rootDir
     dependsOn(antLauncherJar)
@@ -362,20 +379,7 @@ fun Test.setUpBoxTests() {
             .forUseAtConfigurationTime().orNull ?: "false"
     )
 
-    val rootLocalProperties = Properties().apply {
-        rootProject.file("local.properties").takeIf { it.isFile }?.inputStream()?.use {
-            load(it)
-        }
-    }
-
-    val allProperties = properties + rootLocalProperties
-
-    val prefixForPropertiesToForward = "fd."
-    for ((key, value) in allProperties) {
-        if (key is String && key.startsWith(prefixForPropertiesToForward)) {
-            systemProperty(key.substring(prefixForPropertiesToForward.length), value!!)
-        }
-    }
+    forwardProperties()
 }
 
 val test = projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
@@ -507,6 +511,8 @@ projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit4) {
 
     systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/js-ir/build/libs/kotlin-stdlib-js-ir-js-$version.klib")
     systemProperty("kotlin.js.test.root.out.dir", "$buildDir/")
+
+    forwardProperties()
 }
 
 tasks.named("check") {
