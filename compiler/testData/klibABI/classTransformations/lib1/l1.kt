@@ -24,7 +24,6 @@ class ClassToObject
 object ObjectToClass
 
 class ClassToInterface
-interface InterfaceToClass
 
 class NestedObjectToCompanion1 {
     object Companion {

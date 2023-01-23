@@ -60,6 +60,11 @@ public class JsKLibABINoICTestCaseGenerated extends AbstractJsKLibABINoICTestCas
         runTest("compiler/testData/klibABI/classTransformations/");
     }
 
+    @TestMetadata("inheritanceIssues")
+    public void testInheritanceIssues() throws Exception {
+        runTest("compiler/testData/klibABI/inheritanceIssues/");
+    }
+
     @TestMetadata("noNonImplementedCallableFalsePositives")
     public void testNoNonImplementedCallableFalsePositives() throws Exception {
         runTest("compiler/testData/klibABI/noNonImplementedCallableFalsePositives/");

@@ -1,0 +1,64 @@
+abstract class InterfaceToAbstractClass
+open class InterfaceToOpenClass
+class InterfaceToFinalClass
+annotation class InterfaceToAnnotationClass
+object InterfaceToObject
+enum class InterfaceToEnumClass
+value class InterfaceToValueClass(val x: Int)
+data class InterfaceToDataClass(val x: Int)
+
+final class OpenClassToFinalClass(val x: Int)
+annotation class OpenClassToAnnotationClass(val x: Int)
+object OpenClassToObject { val x: Int = 42 }
+enum class OpenClassToEnumClass(val x: Int)
+value class OpenClassToValueClass(val x: Int)
+data class OpenClassToDataClass(val x: Int)
+interface OpenClassToInterface { val x: Int }
+
+abstract class InterfaceToAbstractClass1
+abstract class InterfaceToAbstractClass2
+abstract class AbstractClass
+
+//interface RemovedInterface {
+//    fun abstractFun(): String
+//    fun abstractFunWithDefaultImpl(): String = "RemovedInterface.abstractFunWithDefaultImpl"
+//    val abstractVal: String
+//    val abstractValWithDefaultImpl: String get() = "RemovedInterface.abstractValWithDefaultImpl"
+//}
+//
+//abstract class RemovedAbstractClass {
+//    abstract fun abstractFun(): String
+//    open fun openFun(): String = "RemovedAbstractClass.openFun"
+//    fun finalFun(): String = "RemovedAbstractClass.finalFun"
+//    abstract val abstractVal: String
+//    open val openVal: String get() = "RemovedAbstractClass.openVal"
+//    val finalVal: String get() = "RemovedAbstractClass.finalVal"
+//}
+//
+//open class RemovedOpenClass {
+//    open fun openFun(): String = "RemovedOpenClass.openFun"
+//    fun finalFun(): String = "RemovedOpenClass.finalFun"
+//    open val openVal: String get() = "RemovedOpenClass.openVal"
+//    val finalVal: String get() = "RemovedOpenClass.finalVal"
+//}
+
+abstract class AbstractClassWithChangedConstructorSignature(name: String, city: String) {
+    val greeting = "Hello, $name from $city!"
+}
+
+open class OpenClassWithChangedConstructorSignature(name: String, city: String) {
+    val greeting = "Hello, $name from $city!"
+}
+
+open class SuperSuperClass {
+    open fun inheritsFrom() = "SuperSuperClass -> Any"
+}
+open class SuperClass : SuperSuperClass() {
+    override fun inheritsFrom() = "SuperClass -> " + super.inheritsFrom()
+}
+class SuperSuperClassReplacedBySuperClass : /*SuperSuperClass()*/ SuperClass() {
+    override fun inheritsFrom() = "SuperSuperClassReplacedBySuperClass -> " + super.inheritsFrom()
+}
+class SuperClassReplacedBySuperSuperClass : /*SuperClass()*/ SuperSuperClass() {
+    override fun inheritsFrom() = "SuperClassReplacedBySuperSuperClass -> " + super.inheritsFrom()
+}

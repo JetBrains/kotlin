@@ -61,6 +61,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("inheritanceIssues")
+    public void testInheritanceIssues() throws Exception {
+        runTest("compiler/testData/klibABI/inheritanceIssues/");
+    }
+
+    @Test
     @TestMetadata("noNonImplementedCallableFalsePositives")
     public void testNoNonImplementedCallableFalsePositives() throws Exception {
         runTest("compiler/testData/klibABI/noNonImplementedCallableFalsePositives/");

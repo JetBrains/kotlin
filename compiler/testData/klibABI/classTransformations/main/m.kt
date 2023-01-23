@@ -78,22 +78,6 @@ fun box() = abiTest {
     expectFailure(linkage("Constructor 'ClassToInterface.<init>' can not be called: No constructor found for symbol '/ClassToInterface.<init>'")) { getClassToInterfaceAsAny() }
     expectFailure(linkage("Constructor 'ClassToInterface.<init>' can not be called: No constructor found for symbol '/ClassToInterface.<init>'")) { getClassToInterfaceAsAnyInline() }
 
-//   TODO: fix calling the proper delegating constructor when an inherited interface evolutes to a class
-//    expectFailure(linkage("?")) { getInterfaceToClass() }
-//    expectFailure(linkage("?")) { getInterfaceToClassInline() }
-//    expectFailure(linkage("?")) { getInterfaceToClassAsAny() }
-//    expectFailure(linkage("?")) { getInterfaceToClassAsAnyInline() }
-//
-//    expectFailure(linkage("?")) { getInterfaceToClassImpl() }
-//    expectFailure(linkage("?")) { getInterfaceToClassImplInline() }
-//    expectFailure(linkage("?")) { getInterfaceToClassImplAsAny() }
-//    expectFailure(linkage("?")) { getInterfaceToClassImplAsAnyInline() }
-//
-//    expectFailure(linkage("?")) { getInterfaceToClassNestedImpl() }
-//    expectFailure(linkage("?")) { getInterfaceToClassNestedImplInline() }
-//    expectFailure(linkage("?")) { getInterfaceToClassNestedImplAsAny() }
-//    expectFailure(linkage("?")) { getInterfaceToClassNestedImplAsAnyInline() }
-
     expectSuccess("NestedObjectToCompanion1.Companion") { getNestedObjectToCompanion1().toString() }
     expectSuccess("NestedObjectToCompanion1.Companion") { getNestedObjectToCompanion1Inline().toString() }
     expectSuccess("NestedObjectToCompanion1.Companion") { getNestedObjectToCompanion1AsAny().toString() }
@@ -159,18 +143,18 @@ fun box() = abiTest {
     expectFailure(linkage("Function 'getAnnotationClassWithParameterThatBecomesRegularClassInline' can not be called: Function uses annotation class 'AnnotationClassWithParameterThatBecomesRegularClass' that has non-annotation class 'AnnotationClassThatBecomesRegularClass' as a parameter")) { getAnnotationClassWithParameterThatBecomesRegularClassInline().x.x }
     expectFailure(linkage("Constructor 'AnnotationClassWithParameterThatBecomesRegularClass.<init>' can not be called: Annotation class 'AnnotationClassWithParameterThatBecomesRegularClass' uses non-annotation class 'AnnotationClassThatBecomesRegularClass' as a parameter")) { getAnnotationClassWithParameterThatBecomesRegularClassAsAny().toString() }
     expectFailure(linkage("Constructor 'AnnotationClassWithParameterThatBecomesRegularClass.<init>' can not be called: Annotation class 'AnnotationClassWithParameterThatBecomesRegularClass' uses non-annotation class 'AnnotationClassThatBecomesRegularClass' as a parameter")) { getAnnotationClassWithParameterThatBecomesRegularClassAsAnyInline().toString() }
-    expectFailure(linkage("Function 'getAnnotationClassWithParameterOfParameterThatBecomesRegularClass' can not be called: Function uses annotation class 'AnnotationClassWithParameterThatBecomesRegularClass' that has non-annotation class 'AnnotationClassThatBecomesRegularClass' as a parameter (through annotation class 'AnnotationClassWithParameterOfParameterThatBecomesRegularClass')")) { getAnnotationClassWithParameterOfParameterThatBecomesRegularClass().x.x.x }
-    expectFailure(linkage("Function 'getAnnotationClassWithParameterOfParameterThatBecomesRegularClassInline' can not be called: Function uses annotation class 'AnnotationClassWithParameterThatBecomesRegularClass' that has non-annotation class 'AnnotationClassThatBecomesRegularClass' as a parameter (through annotation class 'AnnotationClassWithParameterOfParameterThatBecomesRegularClass')")) { getAnnotationClassWithParameterOfParameterThatBecomesRegularClassInline().x.x.x }
+    expectFailure(linkage("Function 'getAnnotationClassWithParameterOfParameterThatBecomesRegularClass' can not be called: Function uses annotation class 'AnnotationClassWithParameterThatBecomesRegularClass' (via annotation class 'AnnotationClassWithParameterOfParameterThatBecomesRegularClass') that has non-annotation class 'AnnotationClassThatBecomesRegularClass' as a parameter")) { getAnnotationClassWithParameterOfParameterThatBecomesRegularClass().x.x.x }
+    expectFailure(linkage("Function 'getAnnotationClassWithParameterOfParameterThatBecomesRegularClassInline' can not be called: Function uses annotation class 'AnnotationClassWithParameterThatBecomesRegularClass' (via annotation class 'AnnotationClassWithParameterOfParameterThatBecomesRegularClass') that has non-annotation class 'AnnotationClassThatBecomesRegularClass' as a parameter")) { getAnnotationClassWithParameterOfParameterThatBecomesRegularClassInline().x.x.x }
     expectFailure(linkage("Constructor 'AnnotationClassWithParameterThatBecomesRegularClass.<init>' can not be called: Annotation class 'AnnotationClassWithParameterThatBecomesRegularClass' uses non-annotation class 'AnnotationClassThatBecomesRegularClass' as a parameter")) { getAnnotationClassWithParameterOfParameterThatBecomesRegularClassAsAny().toString() }
     expectFailure(linkage("Constructor 'AnnotationClassWithParameterThatBecomesRegularClass.<init>' can not be called: Annotation class 'AnnotationClassWithParameterThatBecomesRegularClass' uses non-annotation class 'AnnotationClassThatBecomesRegularClass' as a parameter")) { getAnnotationClassWithParameterOfParameterThatBecomesRegularClassAsAnyInline().toString() }
     expectFailure(linkage("Function 'getAnnotationClassThatDisappears' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears'")) { getAnnotationClassThatDisappears() }
     expectFailure(linkage("Function 'getAnnotationClassThatDisappearsInline' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears'")) { getAnnotationClassThatDisappearsInline() }
     expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassThatDisappearsAsAny() }
     expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassThatDisappearsAsAnyInline() }
-    expectFailure(linkage("Function 'getAnnotationClassWithParameterThatDisappears' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears' (through annotation class 'AnnotationClassWithParameterThatDisappears')")) { getAnnotationClassWithParameterThatDisappears() }
-    expectFailure(linkage("Function 'getAnnotationClassWithParameterThatDisappearsInline' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears' (through annotation class 'AnnotationClassWithParameterThatDisappears')")) { getAnnotationClassWithParameterThatDisappearsInline() }
-    expectFailure(linkage("Function 'getAnnotationClassWithParameterOfParameterThatDisappears' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears' (through annotation class 'AnnotationClassWithParameterOfParameterThatDisappears')")) { getAnnotationClassWithParameterOfParameterThatDisappears() }
-    expectFailure(linkage("Function 'getAnnotationClassWithParameterOfParameterThatDisappearsInline' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears' (through annotation class 'AnnotationClassWithParameterOfParameterThatDisappears')")) { getAnnotationClassWithParameterOfParameterThatDisappearsInline() }
+    expectFailure(linkage("Function 'getAnnotationClassWithParameterThatDisappears' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears' (via annotation class 'AnnotationClassWithParameterThatDisappears')")) { getAnnotationClassWithParameterThatDisappears() }
+    expectFailure(linkage("Function 'getAnnotationClassWithParameterThatDisappearsInline' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears' (via annotation class 'AnnotationClassWithParameterThatDisappears')")) { getAnnotationClassWithParameterThatDisappearsInline() }
+    expectFailure(linkage("Function 'getAnnotationClassWithParameterOfParameterThatDisappears' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears' (via annotation class 'AnnotationClassWithParameterOfParameterThatDisappears')")) { getAnnotationClassWithParameterOfParameterThatDisappears() }
+    expectFailure(linkage("Function 'getAnnotationClassWithParameterOfParameterThatDisappearsInline' can not be called: Function uses unlinked class symbol '/AnnotationClassThatDisappears' (via annotation class 'AnnotationClassWithParameterOfParameterThatDisappears')")) { getAnnotationClassWithParameterOfParameterThatDisappearsInline() }
     expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassWithParameterThatDisappearsAsAny() }
     expectFailure(linkage("Constructor 'AnnotationClassThatDisappears.<init>' can not be called: No constructor found for symbol '/AnnotationClassThatDisappears.<init>'")) { getAnnotationClassWithParameterThatDisappearsAsAnyInline() }
     expectSuccess("@AnnotationClassWithRenamedParameters(xi=129, xs=Banana)") { getAnnotationClassWithRenamedParameters().toString() }
