@@ -247,17 +247,10 @@ abstract class AbstractInvalidationTest(
         }
 
 
-        private fun verifyJsCode(stepId: Int, mainModuleName: String, jsOutput: CompilationOutputs) {
-            val compiledJsFiles = jsOutput.writeAll(jsDir, mainModuleName, true, mainModuleName, JS_MODULE_KIND).filter {
-                it.extension == "js"
-            }
-            for (jsCodeFile in compiledJsFiles) {
-                jsCodeFile.writeAsJsModule(jsCodeFile.readText(), "./${jsCodeFile.name}")
-            }
-
+        private fun verifyJsCode(stepId: Int, mainModuleName: String, jsFiles: List<String>) {
             try {
                 V8IrJsTestChecker.checkWithTestFunctionArgs(
-                    files = compiledJsFiles.mapTo(prepareExternalJsFiles()) { it.absolutePath },
+                    files = jsFiles,
                     testModuleName = "./$mainModuleName.js",
                     testPackageName = null,
                     testFunctionName = BOX_FUNCTION_NAME,
@@ -298,6 +291,17 @@ abstract class AbstractInvalidationTest(
                 dumpToDirectory = buildDir.resolve("irdump").resolve("step-$stepId").path,
                 toDumpStateAfter = jsPhases.toPhaseMap().values.toSet()
             )
+        }
+
+        private fun writeJsCode(mainModuleName: String, jsOutput: CompilationOutputs): List<String> {
+            val compiledJsFiles = jsOutput.writeAll(jsDir, mainModuleName, true, mainModuleName, JS_MODULE_KIND).filter {
+                it.extension == "js"
+            }
+            for (jsCodeFile in compiledJsFiles) {
+                jsCodeFile.writeAsJsModule(jsCodeFile.readText(), "./${jsCodeFile.name}")
+            }
+
+            return compiledJsFiles.mapTo(prepareExternalJsFiles()) { it.absolutePath }
         }
 
         fun execute() {
@@ -345,8 +349,10 @@ abstract class AbstractInvalidationTest(
                 )
 
                 val (jsOutput, rebuiltModules) = jsExecutableProducer.buildExecutable(multiModule = true, outJsProgram = true)
+                val writtenFiles = writeJsCode(mainModuleName, jsOutput)
+
                 verifyJsExecutableProducerBuildModules(projStep.id, rebuiltModules, projStep.dirtyJS)
-                verifyJsCode(projStep.id, mainModuleName, jsOutput)
+                verifyJsCode(projStep.id, mainModuleName, writtenFiles)
                 verifyDTS(projStep.id, testInfo)
             }
         }
