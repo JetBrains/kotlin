@@ -43,7 +43,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         val setupFileHasherTask = registerTask<KotlinNpmCachesSetup>(KotlinNpmCachesSetup.NAME) {
             it.description = "Setup file hasher for caches"
-            settings.npmResolutionManager.declareBuildServicesUsage(it)
         }
 
         registerTask<KotlinNpmInstallTask>(KotlinNpmInstallTask.NAME) {
@@ -51,7 +50,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.dependsOn(setupFileHasherTask)
             it.group = TASKS_GROUP_NAME
             it.description = "Find, download and link NPM dependencies and projects"
-            settings.npmResolutionManager.declareBuildServicesUsage(it)
         }
 
         registerTask<Task>(PACKAGE_JSON_UMBRELLA_TASK_NAME)

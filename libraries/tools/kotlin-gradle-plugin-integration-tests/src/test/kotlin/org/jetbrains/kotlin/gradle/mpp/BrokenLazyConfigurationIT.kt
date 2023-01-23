@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
@@ -52,7 +51,6 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
 
     @GradleTest
     @DisplayName("works in MPP") // aka KT-56131
-    @Disabled
     fun testBrokenTcaInMpp(gradleVersion: GradleVersion) {
         project("new-mpp-lib-with-tests", gradleVersion) {
             buildGradle.modify {
