@@ -24,7 +24,7 @@ internal class SymbolLightAnnotationForAnnotationCall(
         PsiImplUtil.findDeclaredAttributeValue(this, attributeName)
 
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
-        SymbolLazyAnnotationParameterList(this, lazyOf(annotationCall.arguments))
+        SymbolLightLazyAnnotationParameterList(this, lazyOf(annotationCall.arguments))
     }
 
     override fun getParameterList(): PsiAnnotationParameterList = _parameterList

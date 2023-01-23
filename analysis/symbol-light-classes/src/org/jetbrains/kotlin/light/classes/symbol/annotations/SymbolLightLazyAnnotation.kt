@@ -76,7 +76,7 @@ internal class SymbolLightLazyAnnotation private constructor(
     override fun getQualifiedName(): String = classId.asFqNameString()
 
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
-        SymbolLazyAnnotationParameterList(this, lazyPub { annotationApplication.value.arguments })
+        SymbolLightLazyAnnotationParameterList(this, lazyPub { annotationApplication.value.arguments })
     }
 
     override fun getParameterList(): PsiAnnotationParameterList = _parameterList

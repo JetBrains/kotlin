@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.psi.KtElement
 
-internal class SymbolLazyAnnotationParameterList(
+internal class SymbolLightLazyAnnotationParameterList(
     parent: SymbolLightAbstractAnnotation,
     private val lazyArguments: Lazy<List<KtNamedAnnotationValue>>,
 ) : KtLightElementBase(parent),
@@ -30,6 +30,6 @@ internal class SymbolLazyAnnotationParameterList(
 
     override fun getAttributes(): Array<PsiNameValuePair> = _attributes
 
-    override fun equals(other: Any?): Boolean = other === this || other is SymbolLazyAnnotationParameterList && other.parent == parent
+    override fun equals(other: Any?): Boolean = other === this || other is SymbolLightLazyAnnotationParameterList && other.parent == parent
     override fun hashCode(): Int = parent.hashCode()
 }
