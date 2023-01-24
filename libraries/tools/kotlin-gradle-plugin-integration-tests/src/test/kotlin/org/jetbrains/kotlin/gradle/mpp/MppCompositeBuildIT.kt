@@ -80,6 +80,34 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `test - sample0 - assemble - enableCInteropCommonization=true`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
+
+        project(
+            "mpp-composite-build/sample0/consumerBuild", gradleVersion, defaultBuildOptions.copy(
+                freeArgs = defaultBuildOptions.freeArgs + "-Pkotlin.mpp.enableCInteropCommonization=true"
+            )
+        ) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            build("assemble") {
+                assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileKotlinLinuxX64")
+                assertTasksExecuted(":consumerA:compileKotlinJvm")
+            }
+
+            build("assemble") {
+                assertTasksUpToDate(":consumerA:compileCommonMainKotlinMetadata")
+                assertTasksUpToDate(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksUpToDate(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksUpToDate(":consumerA:compileKotlinLinuxX64")
+                assertTasksUpToDate(":consumerA:compileKotlinJvm")
+            }
+        }
+    }
+
+    @GradleTest
     fun `test - sample1 - ide dependencies`(gradleVersion: GradleVersion) {
         project("mpp-composite-build/sample1", gradleVersion) {
             projectPath.resolve("included-build").addDefaultBuildFiles()
