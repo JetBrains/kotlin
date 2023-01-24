@@ -20,6 +20,7 @@ const val KLIB_PROPERTY_CONTAINS_ERROR_CODE = "contains_error_code"
 // Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
 const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations"
+const val KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS = "includedForwardDeclarations"
 
 /**
  * Copy-pasted to `kotlin-native/build-tools/src/main/kotlin/org/jetbrains/kotlin/Utils.kt`
@@ -103,6 +104,9 @@ val KotlinLibrary.packageFqName: String?
 
 val KotlinLibrary.exportForwardDeclarations: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, escapeInQuotes = true)
+
+val KotlinLibrary.includedForwardDeclarations: List<String>
+    get() = manifestProperties.propertyList(KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS, escapeInQuotes = true)
 
 val BaseKotlinLibrary.nativeTargets: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_NATIVE_TARGETS)

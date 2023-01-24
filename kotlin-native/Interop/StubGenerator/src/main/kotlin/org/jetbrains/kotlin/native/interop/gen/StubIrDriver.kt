@@ -5,6 +5,8 @@
 package org.jetbrains.kotlin.native.interop.gen
 
 import kotlinx.metadata.klib.KlibModuleMetadata
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS
+import org.jetbrains.kotlin.library.KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS
 import org.jetbrains.kotlin.native.interop.gen.jvm.GenerationMode
 import org.jetbrains.kotlin.native.interop.gen.jvm.InteropConfiguration
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
@@ -93,7 +95,31 @@ class StubIrContext(
                     "$cnamesStructsPackageName.${getKotlinName(it)}"
                 }
 
-        properties["exportForwardDeclarations"] = exportForwardDeclarations.joinToString(" ")
+        // Note: includedForwardDeclarations is somewhat similar to exportForwardDeclarations. But reusing the latter
+        // instead is undesirable: exportForwardDeclarations makes the compiler enable importing the listed declarations
+        // through interop library package. E.g., if `cnames.structs.Foo` is in exportForwardDeclarations of a cinterop
+        // klib bar with package bar, then `import bar.Foo` is valid. This is an arguable feature and a candidate for
+        // deprecation, so enabling it for new declarations instead is undesirable.
+        // That's why, to make the included Obj-C forward declarations known to the compiler, we have to create a new
+        // manifest property for that.
+        val includedForwardDeclarations = mutableListOf<String>()
+        includedForwardDeclarations.addAll(exportForwardDeclarations)
+
+        // TODO: should we add meta classes?
+        nativeIndex.objCClasses
+                .filter { it.isForwardDeclaration && it.shouldBeIncludedIntoKotlinAPI() }
+                .mapTo(includedForwardDeclarations) {
+                    "$objcnamesClassesPackageName.${it.kotlinClassName(isMeta = false)}"
+                }
+
+        nativeIndex.objCProtocols
+                .filter { it.isForwardDeclaration }
+                .mapTo(includedForwardDeclarations) {
+                    "$objcnamesProtocolsPackageName.${it.kotlinClassName(isMeta = false)}"
+                }
+
+        properties[KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS] = exportForwardDeclarations.joinToString(" ")
+        properties[KLIB_PROPERTY_INCLUDED_FORWARD_DECLARATIONS] = includedForwardDeclarations.joinToString(" ")
 
         // TODO: consider exporting Objective-C class and protocol forward refs.
     }

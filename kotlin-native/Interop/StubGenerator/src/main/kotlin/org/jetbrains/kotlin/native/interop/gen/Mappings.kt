@@ -37,8 +37,8 @@ fun DeclarationMapper.getKotlinClassFor(
 ): Classifier {
     val pkg = if (objCClassOrProtocol.isForwardDeclaration) {
         when (objCClassOrProtocol) {
-            is ObjCClass -> "objcnames.classes"
-            is ObjCProtocol -> "objcnames.protocols"
+            is ObjCClass -> objcnamesClassesPackageName
+            is ObjCProtocol -> objcnamesProtocolsPackageName
         }
     } else {
         this.getPackageFor(objCClassOrProtocol)
@@ -538,6 +538,8 @@ internal tailrec fun ObjCClass.isNSStringOrSubclass(): Boolean = when (this.name
 }
 
 internal fun ObjCClass.isNSStringSubclass(): Boolean = this.baseClass?.isNSStringOrSubclass() == true
+
+internal fun ObjCClass.shouldBeIncludedIntoKotlinAPI(): Boolean = !this.isNSStringSubclass()
 
 private fun objCPointerMirror(declarationMapper: DeclarationMapper, type: ObjCPointer): TypeMirror.ByValue {
     if (type is ObjCObjectPointer && type.def.isNSStringOrSubclass()) {

@@ -162,6 +162,8 @@ data class KotlinFunctionType(
 }
 
 internal val cnamesStructsPackageName = "cnames.structs"
+internal val objcnamesClassesPackageName = "objcnames.classes"
+internal val objcnamesProtocolsPackageName = "objcnames.protocols"
 
 object KotlinTypes {
     val independent = Classifier.topLevel("kotlin.native.internal", "Independent")
