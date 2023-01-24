@@ -6329,7 +6329,7 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
                             extraOpts project.globalTestArgs
                         }
                         extraOpts task.extraOpts
-                        extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target"
+                        extraOpts "-Xsave-llvm-ir-directory=$testOutputFileCheck/$name/$target"
                         extraOpts "-Xsave-llvm-ir-after=${task.phaseToCheck}"
                         if (lib != null) {
                             libraries {
@@ -6345,7 +6345,7 @@ Task fileCheckTest(String name, Closure<FileCheckTest> configureClosure) {
                         if (!isCrossCompiling) {
                             extraOpts project.globalTestArgs
                         }
-                        extraOpts "-Xtemporary-files-dir=$testOutputFileCheck/$name/$target"
+                        extraOpts "-Xsave-llvm-ir-directory=$testOutputFileCheck/$name/$target"
                         extraOpts "-Xsave-llvm-ir-after=${task.phaseToCheck}"
 
                         if (lib != null) {
