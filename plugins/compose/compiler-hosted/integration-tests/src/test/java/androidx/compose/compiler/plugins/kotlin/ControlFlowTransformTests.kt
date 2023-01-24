@@ -3931,16 +3931,15 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun <T> provided(value: T, %composer: Composer?, %changed: Int): State<T> {
               %composer.startReplaceableGroup(<>)
-              sourceInformation(%composer, "C(provided):Test.kt")
+              sourceInformation(%composer, "C(provided)*<rememb...>:Test.kt")
               if (isTraceInProgress()) {
                 traceEventStart(<>, %changed, -1, <>)
               }
-              val tmp0 = %composer.cache(false) {
+              val tmp0 = remember({
                 mutableStateOf(
                   value = value
                 )
-              }
-              .apply {
+              }, %composer, 0).apply {
                 %this%apply.value = value
               }
               if (isTraceInProgress()) {
@@ -5769,7 +5768,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
             @Composable
             fun Test(start: Int, end: Int, %composer: Composer?, %changed: Int) {
               %composer = %composer.startRestartGroup(<>)
-              sourceInformation(%composer, "C(Test)P(1)*<get(bK...>:Test.kt")
+              sourceInformation(%composer, "C(Test)P(1)<rememb...>,*<get(bK...>:Test.kt")
               val %dirty = %changed
               if (%changed and 0b1110 === 0) {
                 %dirty = %dirty or if (%composer.changed(start)) 0b0100 else 0b0010
@@ -5781,9 +5780,9 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %changed, -1, <>)
                 }
-                val a = %composer.cache(false) {
+                val a = remember({
                   A()
-                }
+                }, %composer, 0)
                 val tmp0_iterator = start until end.iterator()
                 while (tmp0_iterator.hasNext()) {
                   val i = tmp0_iterator.next()
