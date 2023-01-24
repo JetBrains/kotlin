@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.kotlinp
 
-import kotlinx.metadata.InconsistentKotlinMetadataException
 import kotlinx.metadata.jvm.KotlinClassMetadata
 import kotlinx.metadata.jvm.KotlinModuleMetadata
 import kotlinx.metadata.jvm.UnstableMetadataApi
@@ -30,7 +29,7 @@ class Kotlinp(private val settings: KotlinpSettings) {
         val header = file.readKotlinClassHeader() ?: throw KotlinpException("file is not a Kotlin class file: $file")
         return try {
             KotlinClassMetadata.read(header)
-        } catch (e: InconsistentKotlinMetadataException) {
+        } catch (e: IllegalArgumentException) {
             throw KotlinpException("inconsistent Kotlin metadata: ${e.message}")
         }
     }

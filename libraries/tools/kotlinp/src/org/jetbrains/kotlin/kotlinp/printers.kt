@@ -171,7 +171,7 @@ private fun printType(type: KmType): String {
         } else {
             val (variance, argumentType) = argument
             if (variance == null || argumentType == null)
-                throw InconsistentKotlinMetadataException("Variance and type must be set for non-star type projection")
+                throw IllegalArgumentException("Variance and type must be set for non-star type projection")
             val argumentTypeString = printType(argumentType)
             buildString {
                 if (variance != KmVariance.INVARIANT) {

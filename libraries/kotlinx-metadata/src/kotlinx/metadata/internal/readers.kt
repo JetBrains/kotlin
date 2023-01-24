@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:Suppress("DEPRECATION")
@@ -347,7 +347,7 @@ private inline fun ProtoBuf.TypeParameter.accept(
     visit: (flags: Flags, name: String, id: Int, variance: KmVariance) -> KmTypeParameterVisitor?,
     c: ReadContext
 ) {
-    val variance = when (variance!!) {
+    val variance = when (requireNotNull(variance)) {
         ProtoBuf.TypeParameter.Variance.IN -> KmVariance.IN
         ProtoBuf.TypeParameter.Variance.OUT -> KmVariance.OUT
         ProtoBuf.TypeParameter.Variance.INV -> KmVariance.INVARIANT
@@ -384,7 +384,7 @@ private fun ProtoBuf.Type.accept(v: KmTypeVisitor, c: ReadContext) {
     }
 
     for (argument in argumentList) {
-        val variance = when (argument.projection!!) {
+        val variance = when (requireNotNull(argument.projection)) {
             ProtoBuf.Type.Argument.Projection.IN -> KmVariance.IN
             ProtoBuf.Type.Argument.Projection.OUT -> KmVariance.OUT
             ProtoBuf.Type.Argument.Projection.INV -> KmVariance.INVARIANT
@@ -451,13 +451,13 @@ private fun ProtoBuf.Contract.accept(v: KmContractVisitor, c: ReadContext) {
     for (effect in effectList) {
         if (!effect.hasEffectType()) continue
 
-        val effectType = when (effect.effectType!!) {
+        val effectType = when (requireNotNull(effect.effectType)) {
             ProtoBuf.Effect.EffectType.RETURNS_CONSTANT -> KmEffectType.RETURNS_CONSTANT
             ProtoBuf.Effect.EffectType.CALLS -> KmEffectType.CALLS
             ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL -> KmEffectType.RETURNS_NOT_NULL
         }
 
-        val effectKind = if (!effect.hasKind()) null else when (effect.kind!!) {
+        val effectKind = if (!effect.hasKind()) null else when (requireNotNull(effect.kind)) {
             ProtoBuf.Effect.InvocationKind.AT_MOST_ONCE -> KmEffectInvocationKind.AT_MOST_ONCE
             ProtoBuf.Effect.InvocationKind.EXACTLY_ONCE -> KmEffectInvocationKind.EXACTLY_ONCE
             ProtoBuf.Effect.InvocationKind.AT_LEAST_ONCE -> KmEffectInvocationKind.AT_LEAST_ONCE
@@ -491,7 +491,7 @@ private fun ProtoBuf.Expression.accept(v: KmEffectExpressionVisitor, c: ReadCont
 
     if (hasConstantValue()) {
         v.visitConstantValue(
-            when (constantValue!!) {
+            when (requireNotNull(constantValue)) {
                 ProtoBuf.Expression.ConstantValue.TRUE -> true
                 ProtoBuf.Expression.ConstantValue.FALSE -> false
                 ProtoBuf.Expression.ConstantValue.NULL -> null

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -866,6 +866,7 @@ class KmType(var flags: Flags) : KmTypeVisitor() {
      * Populates the given visitor with data in this type.
      *
      * @param visitor the visitor which will visit data in this type
+     * @throws IllegalArgumentException if type metadata is inconsistent
      */
     @Deprecated(VISITOR_API_MESSAGE)
     fun accept(visitor: KmTypeVisitor) {
