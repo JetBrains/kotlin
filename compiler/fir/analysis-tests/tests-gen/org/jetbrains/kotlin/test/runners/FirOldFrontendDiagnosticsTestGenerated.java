@@ -23443,6 +23443,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("InheritingJavaClassWithRawTypeInOverrideSignature.kt")
+            public void testInheritingJavaClassWithRawTypeInOverrideSignature() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/InheritingJavaClassWithRawTypeInOverrideSignature.kt");
+            }
+
+            @Test
             @TestMetadata("InternalPotentialOverride.kt")
             public void testInternalPotentialOverride() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/InternalPotentialOverride.kt");
