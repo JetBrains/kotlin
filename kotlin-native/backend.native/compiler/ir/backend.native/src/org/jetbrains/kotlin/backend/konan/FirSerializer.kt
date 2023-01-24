@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -161,7 +162,18 @@ class FirNativeKLibSerializerExtension(
         // inspired by KlibMetadataSerializerExtension.serializeProperty
         declarationFileId(property)?.let { proto.setExtension(KlibMetadataProtoBuf.propertyFile, it) }
         property.annotations.forEach {
-            proto.addExtension(KlibMetadataProtoBuf.propertyAnnotation, annotationSerializer.serializeAnnotation(it))
+            val extension = when (it.useSiteTarget) {
+                AnnotationUseSiteTarget.FIELD -> KlibMetadataProtoBuf.propertyBackingFieldAnnotation
+                AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation
+                else -> KlibMetadataProtoBuf.propertyAnnotation
+            }
+            proto.addExtension(extension, annotationSerializer.serializeAnnotation(it))
+        }
+        property.getter?.annotations?.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        property.setter?.annotations?.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.propertySetterAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         // TODO KT-56090 Serialize KDocString
         super.serializeProperty(property, proto, versionRequirementTable, childSerializer)
@@ -173,6 +185,7 @@ class FirNativeKLibSerializerExtension(
             versionRequirementTable: MutableVersionRequirementTable,
             childSerializer: FirElementSerializer
     ) {
+        declarationFileId(klass)?.let { proto.setExtension(KlibMetadataProtoBuf.classFile, it) }
         klass.annotations.forEach {
             proto.addExtension(KlibMetadataProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(it))
         }
@@ -200,9 +213,7 @@ class FirNativeKLibSerializerExtension(
     }
 
     override fun serializeTypeAnnotation(annotation: FirAnnotation, proto: ProtoBuf.Type.Builder) {
-        annotation.annotations.forEach {
-            proto.addExtension(KlibMetadataProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(it))
-        }
+        proto.addExtension(KlibMetadataProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
         super.serializeTypeAnnotation(annotation, proto)
     }
 
