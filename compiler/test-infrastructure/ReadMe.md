@@ -354,7 +354,7 @@ For example, to debug Kotlin/JS tests, run:
 
 To debug WASM tests, run:
 ```
-./gradlew :js:js.tests:wasmTest -Pfd.kotlin.wasm.debugMode=2
+./gradlew :wasm:wasm.tests:test -Pfd.kotlin.wasm.debugMode=2
 ```
 
 Values of the debug mode: `0` (or `false`), `1` (or `true`), `2`.

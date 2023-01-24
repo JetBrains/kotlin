@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.inline.clean.renameLabels
 import org.jetbrains.kotlin.js.inline.clean.resolveTemporaryNames
 import org.jetbrains.kotlin.js.parser.parse
-import org.jetbrains.kotlin.js.testOld.BasicWasmBoxTest
+import org.jetbrains.kotlin.js.testOld.TEST_DATA_DIR_PATH
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Rule
@@ -50,7 +50,7 @@ class NameResolutionTest {
 
     private fun doTest() {
         val methodName = testName.methodName
-        val baseName = "${BasicWasmBoxTest.TEST_DATA_DIR_PATH}/js-name-resolution/"
+        val baseName = "${TEST_DATA_DIR_PATH}/js-name-resolution/"
         val originalName = "$baseName/$methodName.original.js"
         val expectedName = "$baseName/$methodName.expected.js"
 
