@@ -70,7 +70,7 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
 abstract class AbstractNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     val name: String,
     val description: String,
-    val prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
+    val prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
     val preconditions: Set<Checker<Input>> = emptySet(),
     val postconditions: Set<Checker<Output>> = emptySet(),
     protected val nlevels: Int = 0
@@ -133,7 +133,7 @@ abstract class AbstractNamedCompilerPhase<in Context : LoggingContext, Input, Ou
 class NamedCompilerPhase<in Context : LoggingContext, Data>(
     name: String,
     description: String,
-    prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
+    prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
     private val lower: CompilerPhase<Context, Data, Data>,
     preconditions: Set<Checker<Data>> = emptySet(),
     postconditions: Set<Checker<Data>> = emptySet(),
@@ -189,7 +189,7 @@ typealias SameTypeNamedCompilerPhase<Context, Data> = NamedCompilerPhase<Context
 abstract class SimpleNamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     name: String,
     description: String,
-    prerequisite: Set<SameTypeNamedCompilerPhase<Context, *>> = emptySet(),
+    prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
     preconditions: Set<Checker<Input>> = emptySet(),
     postconditions: Set<Checker<Output>> = emptySet(),
     private val preactions: Set<Action<Input, Context>> = emptySet(),
