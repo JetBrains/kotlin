@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.common.phaser.ActionState
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
+import org.jetbrains.kotlin.backend.konan.driver.utilities.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
@@ -44,7 +45,10 @@ internal val BuildDFGPhase = createSimpleNamedCompilerPhase<NativeGenerationStat
 internal data class DevirtualizationAnalysisInput(
         val irModule: IrModuleFragment,
         val moduleDFG: ModuleDFG,
-)
+) : KotlinBackendIrHolder {
+    override val kotlinIr: IrElement
+        get() = irModule
+}
 
 internal val DevirtualizationAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DevirtualizationAnalysisInput, DevirtualizationAnalysis.AnalysisResult>(
         name = "DevirtualizationAnalysis",
@@ -66,7 +70,10 @@ internal data class DCEInput(
         val irModule: IrModuleFragment,
         val moduleDFG: ModuleDFG,
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
-)
+) : KotlinBackendIrHolder {
+    override val kotlinIr: IrElement
+        get() = irModule
+}
 
 internal val DCEPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DCEInput, Set<IrFunction>?>(
         name = "DCEPhase",
@@ -81,7 +88,10 @@ internal val DCEPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DC
 internal data class DevirtualizationInput(
         val irModule: IrModuleFragment,
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult
-)
+) : KotlinBackendIrHolder {
+    override val kotlinIr: IrElement
+        get() = irModule
+}
 
 internal val DevirtualizationPhase = createSimpleNamedCompilerPhase(
         name = "Devirtualization",
@@ -106,7 +116,10 @@ internal data class EscapeAnalysisInput(
         val irModule: IrModuleFragment,
         val moduleDFG: ModuleDFG,
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
-)
+) : KotlinBackendIrHolder {
+    override val kotlinIr: IrElement
+        get() = irModule
+}
 
 internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerationState, EscapeAnalysisInput, Map<IrElement, Lifetime>>(
         name = "EscapeAnalysis",
@@ -147,7 +160,10 @@ internal data class RedundantCallsInput(
         val moduleDFG: ModuleDFG,
         val devirtualizationAnalysisResult: DevirtualizationAnalysis.AnalysisResult,
         val irModule: IrModuleFragment,
-)
+) : KotlinBackendIrHolder {
+    override val kotlinIr: IrElement
+        get() = irModule
+}
 
 internal val RemoveRedundantCallsToStaticInitializersPhase = createSimpleNamedCompilerPhase(
         name = "RemoveRedundantCallsToStaticInitializersPhase",

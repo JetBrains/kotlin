@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.utilities.BackendContextHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
@@ -43,7 +44,7 @@ internal class NativeGenerationState(
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
         val context: Context,
         val cacheDeserializationStrategy: CacheDeserializationStrategy?
-) : BasicPhaseContext(config) {
+) : BasicPhaseContext(config), BackendContextHolder<Context> {
     private val outputPath = config.cacheSupport.tryGetImplicitOutput(cacheDeserializationStrategy) ?: config.outputPath
     val outputFiles = OutputFiles(outputPath, config.target, config.produce)
     val tempFiles = run {
@@ -123,4 +124,7 @@ internal class NativeGenerationState(
 
         isDisposed = true
     }
+
+    override val backendContext: Context
+        get() = context
 }

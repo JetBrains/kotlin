@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import llvm.DIFinalize
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
+import org.jetbrains.kotlin.backend.konan.driver.utilities.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGeneratorVisitor
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.RTTIGeneratorVisitor
@@ -28,7 +29,10 @@ internal val CreateLLVMDeclarationsPhase = createSimpleNamedCompilerPhase<Native
 internal data class RTTIInput(
         val irModule: IrModuleFragment,
         val referencedFunctions: Set<IrFunction>?
-)
+) : KotlinBackendIrHolder {
+    override val kotlinIr: IrElement
+        get() = irModule
+}
 
 internal val RTTIPhase = createSimpleNamedCompilerPhase<NativeGenerationState, RTTIInput>(
         name = "RTTI",
@@ -43,7 +47,10 @@ internal val RTTIPhase = createSimpleNamedCompilerPhase<NativeGenerationState, R
 internal data class CodegenInput(
         val irModule: IrModuleFragment,
         val lifetimes: Map<IrElement, Lifetime>
-)
+) : KotlinBackendIrHolder {
+    override val kotlinIr: IrElement
+        get() = irModule
+}
 
 internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState, CodegenInput>(
         name = "Codegen",

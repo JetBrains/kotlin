@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanReflectionTypes
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.utilities.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.psiToIr
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -36,7 +38,11 @@ data class PsiToIrInput(
 internal sealed class PsiToIrOutput(
         val irModule: IrModuleFragment,
         val symbols: KonanSymbols,
-) {
+) : KotlinBackendIrHolder {
+
+    override val kotlinIr: IrElement
+        get() = irModule
+
     class ForBackend(
             val irModules: Map<String, IrModuleFragment>,
             irModule: IrModuleFragment,
