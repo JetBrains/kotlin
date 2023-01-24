@@ -14,6 +14,6 @@ FILE fqName:<root> fileName:/tryCatchWithImplicitCast.kt
             TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
               GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Any origin=null
           CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.testImplicitCast
-            VAR name:e type:kotlin.Throwable [val]
+            VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
             BLOCK type=kotlin.String origin=null
               CONST String type=kotlin.String value=""

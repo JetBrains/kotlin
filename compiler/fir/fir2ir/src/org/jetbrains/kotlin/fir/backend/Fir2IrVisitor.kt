@@ -1222,7 +1222,9 @@ class Fir2IrVisitor(
 
     override fun visitCatch(catch: FirCatch, data: Any?): IrElement {
         return catch.convertWithOffsets { startOffset, endOffset ->
-            val catchParameter = declarationStorage.createIrVariable(catch.parameter, conversionScope.parentFromStack())
+            val catchParameter = declarationStorage.createIrVariable(
+                catch.parameter, conversionScope.parentFromStack(), IrDeclarationOrigin.CATCH_PARAMETER
+            )
             IrCatchImpl(startOffset, endOffset, catchParameter, catch.block.convertToIrBlock())
         }
     }

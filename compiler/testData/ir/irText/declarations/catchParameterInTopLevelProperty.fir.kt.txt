@@ -1,7 +1,0 @@
-val test: Unit
-  field = try { // BLOCK
-  }
-  catch (e: Throwable){ // BLOCK
-  }
-
-  get

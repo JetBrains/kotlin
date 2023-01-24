@@ -5,7 +5,7 @@ FILE fqName:<root> fileName:/tryCatch.kt
         try: BLOCK type=kotlin.Unit origin=null
           CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
         CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.test1
-          VAR name:e type:kotlin.Throwable [val]
+          VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
           BLOCK type=kotlin.Unit origin=null
             CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
         finally: BLOCK type=kotlin.Unit origin=null
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/tryCatch.kt
             CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
             CONST Int type=kotlin.Int value=42
           CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.test2
-            VAR name:e type:kotlin.Throwable [val]
+            VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
             BLOCK type=kotlin.Int origin=null
               CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
               CONST Int type=kotlin.Int value=24
