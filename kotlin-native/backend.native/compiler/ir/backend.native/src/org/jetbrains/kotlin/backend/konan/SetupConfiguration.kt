@@ -250,6 +250,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
     put(PARTIAL_LINKAGE, arguments.partialLinkage)
     put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
+    putIfNotNull(SAVE_LLVM_IR_DIRECTORY, arguments.saveLlvmIrDirectory)
 }
 
 internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: KonanConfig) = with(KonanConfigKeys) {

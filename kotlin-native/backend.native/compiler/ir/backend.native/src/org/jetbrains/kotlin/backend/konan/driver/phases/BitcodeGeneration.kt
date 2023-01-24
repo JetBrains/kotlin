@@ -9,6 +9,7 @@ import llvm.DIFinalize
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.utilities.KotlinBackendIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
+import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGeneratorVisitor
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.RTTIGeneratorVisitor
@@ -60,8 +61,8 @@ internal data class CodegenInput(
 internal val CodegenPhase = createSimpleNamedCompilerPhase<NativeGenerationState, CodegenInput>(
         name = "Codegen",
         description = "Code generation",
-        preactions = getDefaultIrActions(),
-        postactions = getDefaultIrActions(),
+        preactions = getDefaultIrActions<CodegenInput, NativeGenerationState>() + getDefaultLlvmModuleActions(),
+        postactions = getDefaultIrActions<CodegenInput, NativeGenerationState>() + getDefaultLlvmModuleActions(),
         op = { generationState, input ->
             val context = generationState.context
             generationState.objCExport = ObjCExport(

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import com.google.common.io.Files
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
@@ -13,7 +14,6 @@ import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.CURRENT
 import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.MetaVersion
@@ -487,6 +487,21 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                         "Trying to disable framework binary compilation when producing ${produce.name.lowercase()} is meaningless.")
             }
+        }
+    }
+
+    /**
+     * Directory to store LLVM IR from -Xsave-llvm-ir-after.
+     */
+    internal val saveLlvmIrDirectory: java.io.File by lazy {
+        val path = configuration.get(KonanConfigKeys.SAVE_LLVM_IR_DIRECTORY)
+        if (path == null) {
+            val tempDir = Files.createTempDir()
+            configuration.report(CompilerMessageSeverity.WARNING,
+                    "Temporary directory for LLVM IR is ${tempDir.canonicalPath}")
+            tempDir
+        } else {
+            java.io.File(path)
         }
     }
 }

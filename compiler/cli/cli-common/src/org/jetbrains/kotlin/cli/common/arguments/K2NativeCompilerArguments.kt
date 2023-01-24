@@ -279,7 +279,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xtemporary-files-dir", deprecatedName = "--temporary_files_dir", valueDescription = "<path>", description = "Save temporary files to the given directory")
     var temporaryFilesDir: String? = null
 
-    @Argument(value = "-Xsave-llvm-ir-after", description = "Save result of Kotlin IR to LLVM IR translation to the temporary files directory.")
+    @Argument(value = "-Xsave-llvm-ir-after", description = "Save result of Kotlin IR to LLVM IR translation to -Xsave-llvm-ir-directory.")
     var saveLlvmIrAfter: Array<String> = emptyArray()
 
     @Argument(value = "-Xverify-bitcode", deprecatedName = "--verify_bitcode", description = "Verify llvm bitcode after each method")
@@ -407,6 +407,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 
     @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling framework")
     var omitFrameworkBinary: Boolean = false
+
+    @Argument(value = "-Xsave-llvm-ir-directory", description = "Directory that should contain results of -Xsave-llvm-ir-after=<phase>")
+    var saveLlvmIrDirectory: String? = null
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {

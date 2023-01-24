@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import llvm.LLVMDumpModule
 import llvm.LLVMModuleRef
 import llvm.LLVMWriteBitcodeToFile
-import org.jetbrains.kotlin.backend.common.phaser.Action
 import org.jetbrains.kotlin.backend.common.phaser.ActionState
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.createLTOFinalPipelineConfig
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
+import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
 import org.jetbrains.kotlin.backend.konan.insertAliasToEntryPoint
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.runCoveragePass
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
@@ -24,12 +24,6 @@ import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepoint
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
 import java.io.File
 
-private val nativeLLVMDumper =
-        fun(actionState: ActionState, _: Unit, context: NativeGenerationState) {
-            llvmIrDumpCallback(actionState, context.llvm.module, context.config, context.tempFiles)
-        }
-
-private val llvmPhaseActions: Set<Action<Unit, NativeGenerationState>> = setOf(nativeLLVMDumper)
 
 internal data class WriteBitcodeFileInput(
         override val llvmModule: LLVMModuleRef,
@@ -48,26 +42,26 @@ internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<PhaseContext
     LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPath)
 }
 
-internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase(
+internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "CheckExternalCalls",
         description = "Check external calls",
-        postactions = llvmPhaseActions,
+        postactions = getDefaultLlvmModuleActions(),
 ) { context, _ ->
     checkLlvmModuleExternalCalls(context)
 }
 
-internal val RewriteExternalCallsCheckerGlobals = createSimpleNamedCompilerPhase(
+internal val RewriteExternalCallsCheckerGlobals = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "RewriteExternalCallsCheckerGlobals",
         description = "Rewrite globals for external calls checker after optimizer run",
-        postactions = llvmPhaseActions,
+        postactions = getDefaultLlvmModuleActions(),
 ) { context, _ ->
     addFunctionsListSymbolForChecker(context)
 }
 
-internal val BitcodeOptimizationPhase = createSimpleNamedCompilerPhase(
+internal val BitcodeOptimizationPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "BitcodeOptimization",
         description = "Optimize bitcode",
-        postactions = llvmPhaseActions,
+        postactions = getDefaultLlvmModuleActions(),
 ) { context, _ ->
     val config = createLTOFinalPipelineConfig(context, context.llvm.targetTriple, closedWorld = context.llvmModuleSpecification.isFinal)
     LlvmOptimizationPipeline(config, context.llvm.module, context).use {
@@ -75,17 +69,17 @@ internal val BitcodeOptimizationPhase = createSimpleNamedCompilerPhase(
     }
 }
 
-internal val CoveragePhase = createSimpleNamedCompilerPhase(
+internal val CoveragePhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "Coverage",
         description = "Produce coverage information",
-        postactions = llvmPhaseActions,
+        postactions = getDefaultLlvmModuleActions(),
         op = { context, _ -> runCoveragePass(context) }
 )
 
-internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase(
+internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "RemoveRedundantSafepoints",
         description = "Remove function prologue safepoints inlined to another function",
-        postactions = llvmPhaseActions,
+        postactions = getDefaultLlvmModuleActions(),
         op = { context, _ ->
             RemoveRedundantSafepointsPass().runOnModule(
                     module = context.llvm.module,
@@ -94,24 +88,24 @@ internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase(
         }
 )
 
-internal val OptimizeTLSDataLoadsPhase = createSimpleNamedCompilerPhase(
+internal val OptimizeTLSDataLoadsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "OptimizeTLSDataLoads",
         description = "Optimize multiple loads of thread data",
-        postactions = llvmPhaseActions,
+        postactions = getDefaultLlvmModuleActions(),
         op = { context, _ -> removeMultipleThreadDataLoads(context) }
 )
 
-internal val CStubsPhase = createSimpleNamedCompilerPhase(
+internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "CStubs",
         description = "C stubs compilation",
-        postactions = llvmPhaseActions,
+        postactions = getDefaultLlvmModuleActions(),
         op = { context, _ -> produceCStubs(context) }
 )
 
-internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase(
+internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "LinkBitcodeDependencies",
         description = "Link bitcode dependencies",
-        postactions = llvmPhaseActions,
+        postactions = getDefaultLlvmModuleActions(),
         op = { context, _ -> linkBitcodeDependencies(context) }
 )
 
