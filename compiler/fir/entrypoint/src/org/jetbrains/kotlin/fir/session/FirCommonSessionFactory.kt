@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 
@@ -39,7 +39,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
         moduleDataProvider: ModuleDataProvider,
         projectEnvironment: AbstractProjectEnvironment,
         scope: AbstractProjectFileSearchScope,
-        packagePartProvider: PackagePartProvider,
+        packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings,
         registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
@@ -59,12 +59,12 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                         session,
                         moduleDataProvider,
                         kotlinScopeProvider,
-                        packagePartProvider,
+                        packageAndMetadataPartProvider,
                         projectEnvironment.getKotlinClassFinder(scope)
                     ),
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
-                    OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider)
+                    OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packageAndMetadataPartProvider)
                 )
             }
         )
@@ -116,7 +116,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                                 session,
                                 moduleDataProvider,
                                 kotlinScopeProvider,
-                                precompiledBinariesPackagePartProvider,
+                                precompiledBinariesPackagePartProvider as PackageAndMetadataPartProvider,
                                 projectEnvironment.getKotlinClassFinder(it.precompiledBinariesFileScope) as KotlinMetadataFinder,
                                 defaultDeserializationOrigin = FirDeclarationOrigin.Precompiled
                             )

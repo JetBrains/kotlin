@@ -10,14 +10,13 @@ import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
-import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 import org.jetbrains.kotlin.serialization.deserialization.MetadataClassDataFinder
-import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.readProto
 
@@ -26,14 +25,12 @@ class MetadataSymbolProvider(
     session: FirSession,
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
-    private val packagePartProvider: PackagePartProvider,
+    private val packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
     private val kotlinClassFinder: KotlinMetadataFinder,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ) {
-    private val metadataPartProvider = packagePartProvider as MetadataPartProvider
-
     private val classDataFinder = MetadataClassDataFinder(kotlinClassFinder)
 
     private val annotationDeserializer = FirBuiltinAnnotationDeserializer(session)
@@ -41,7 +38,7 @@ class MetadataSymbolProvider(
     private val constDeserializer = FirConstDeserializer(session, BuiltInSerializerProtocol)
 
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
-        return metadataPartProvider.findMetadataPackageParts(packageFqName.asString()).mapNotNull { partName ->
+        return packageAndMetadataPartProvider.findMetadataPackageParts(packageFqName.asString()).mapNotNull { partName ->
             if (partName in KotlinBuiltins) return@mapNotNull null
             val classId = ClassId(packageFqName, Name.identifier(partName))
 
@@ -62,7 +59,7 @@ class MetadataSymbolProvider(
         }
     }
 
-    override fun computePackageSetWithNonClassDeclarations() = packagePartProvider.computePackageSetWithNonClassDeclarations()
+    override fun computePackageSetWithNonClassDeclarations() = packageAndMetadataPartProvider.computePackageSetWithNonClassDeclarations()
 
     override fun knownTopLevelClassesInPackage(packageFqName: FqName) = kotlinClassFinder.findMetadataTopLevelClassesInPackage(packageFqName)
 

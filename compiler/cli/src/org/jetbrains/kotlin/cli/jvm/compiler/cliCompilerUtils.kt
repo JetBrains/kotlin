@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.javac.JavacWrapper
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.JavaRootPath
@@ -264,7 +265,7 @@ fun createFirLibraryListAndSession(
             libraryList.moduleDataProvider,
             projectEnvironment,
             scope,
-            projectEnvironment.getPackagePartProvider(librariesScope),
+            projectEnvironment.getPackagePartProvider(librariesScope) as PackageAndMetadataPartProvider,
             configuration.languageVersionSettings,
             registerExtraComponents = {},
         )
