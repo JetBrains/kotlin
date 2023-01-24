@@ -31,7 +31,7 @@ internal class LazyResolvedConfiguration private constructor(
         // via ResolutionResult::root does. ResolutionResult can't be serialised for Configuration Cache
         // but ResolvedComponentResult can. Wrapping it in `lazy` makes it resolve upon serialisation.
         resolvedComponentsRootProvider = configuration.incoming.resolutionResult.let { rr -> lazy { rr.root } },
-        artifactCollection = configuration.incoming.artifacts, // lazy ArtifactCollection
+        artifactCollection = configuration.incoming.artifactView { view -> view.isLenient = true }.artifacts, // lazy ArtifactCollection
         configurationName = configuration.name
     )
 
@@ -39,7 +39,9 @@ internal class LazyResolvedConfiguration private constructor(
 
     val root by resolvedComponentsRootProvider
 
-    private val resolvedArtifacts: Set<ResolvedArtifactResult> get() = artifactCollection.artifacts
+    val resolvedArtifacts: Set<ResolvedArtifactResult> get() = artifactCollection.artifacts
+
+    val resolutionFailures: Collection<Throwable> get() = artifactCollection.failures
 
     private val artifactsByComponentId by TransientLazy { resolvedArtifacts.groupBy { it.id.componentIdentifier } }
 

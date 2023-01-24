@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
+import org.gradle.internal.component.external.model.DefaultModuleComponentSelector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
@@ -117,5 +118,30 @@ class LazyResolvedConfigurationTest {
                 }
             }
         }
+    }
+
+    @Test
+    fun `test - unresolved dependency`() {
+        val project = buildProject()
+        val configuration = project.configurations.create("forTest")
+        val unresolvedDependency = project.dependencies.create("unresolved:dependency")
+        configuration.dependencies.add(unresolvedDependency)
+
+        val lazyConfiguration = LazyResolvedConfiguration(configuration)
+        if (lazyConfiguration.files.toList().isNotEmpty()) fail("Expected no files to be resolved")
+        if (lazyConfiguration.resolvedArtifacts.toList().isNotEmpty()) fail("Expected no artifacts to be resolved")
+        if (lazyConfiguration.allResolvedDependencies.isNotEmpty()) fail("Expected no resolved dependencies")
+
+        if (lazyConfiguration.resolutionFailures.size != 1) fail("Expected one resolution failure: ${lazyConfiguration.resolutionFailures}")
+        val failure = lazyConfiguration.resolutionFailures.first()
+        if ("unresolved:dependency" !in failure.message.orEmpty()) fail("Expected dependency mentioned in failure: ${failure.message}")
+
+        if (lazyConfiguration.allDependencies.size != 1) fail("Expected one dependency: ${lazyConfiguration.allDependencies}")
+        val resolvedDependencyResult = lazyConfiguration.allDependencies.first()
+        val moduleIdentifier = (resolvedDependencyResult.requested as DefaultModuleComponentSelector).moduleIdentifier
+        assertEquals("unresolved", moduleIdentifier.group)
+        assertEquals("dependency", moduleIdentifier.name)
+
+        if (lazyConfiguration.allResolvedDependencies.isNotEmpty()) fail("Expected no resolved dependencies")
     }
 }
