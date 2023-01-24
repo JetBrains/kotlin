@@ -121,11 +121,6 @@ public final class kotlinx/metadata/FlagsKt {
 	public static final fun flagsOf ([Lkotlinx/metadata/Flag;)I
 }
 
-public final class kotlinx/metadata/InconsistentKotlinMetadataException : java/lang/RuntimeException {
-	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-}
-
 public final class kotlinx/metadata/KmAnnotation {
 	public fun <init> (Ljava/lang/String;Ljava/util/Map;)V
 	public fun equals (Ljava/lang/Object;)Z
