@@ -4,31 +4,15 @@
  */
 package org.jetbrains.kotlin.backend.konan
 
-import kotlinx.cinterop.alloc
-import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.ptr
-import kotlinx.cinterop.toKStringFromUtf8
 import llvm.*
-import org.jetbrains.kotlin.backend.common.phaser.ActionState
-import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
-import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.konan.cexport.produceCAdapterBitcode
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
-import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.isBitcode
 import org.jetbrains.kotlin.konan.library.KONAN_STDLIB_NAME
-import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
-import org.jetbrains.kotlin.library.KotlinAbiVersion
-import org.jetbrains.kotlin.library.KotlinLibraryVersioning
-import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
@@ -64,34 +48,8 @@ internal val NativeGenerationState.shouldLinkRuntimeNativeLibraries: Boolean
     get() = producedLlvmModuleContainsStdlib &&
             cacheDeserializationStrategy?.contains(KonanFqNames.internalPackageName, "Runtime.kt") != false
 
-val KonanConfig.involvesLinkStage: Boolean
-    get() = when (this.produce) {
-        CompilerOutputKind.PROGRAM, CompilerOutputKind.DYNAMIC,
-        CompilerOutputKind.DYNAMIC_CACHE, CompilerOutputKind.STATIC_CACHE,
-        CompilerOutputKind.STATIC -> true
-        CompilerOutputKind.LIBRARY, CompilerOutputKind.BITCODE -> false
-        CompilerOutputKind.FRAMEWORK -> !omitFrameworkBinary
-        else -> error("not supported: ${this.produce}")
-    }
-
 val CompilerOutputKind.isCache: Boolean
     get() = this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE
-
-val KonanConfig.involvesCodegen: Boolean
-    get() = produce != CompilerOutputKind.LIBRARY && !omitFrameworkBinary
-
-internal fun llvmIrDumpCallback(state: ActionState, module: LLVMModuleRef, config: KonanConfig, temporaryFiles: TempFiles) {
-    if (state.phase.name in config.configuration.getList(KonanConfigKeys.SAVE_LLVM_IR)) {
-        val moduleName: String = memScoped {
-            val sizeVar = alloc<size_tVar>()
-            LLVMGetModuleIdentifier(module, sizeVar.ptr)!!.toKStringFromUtf8()
-        }
-        val output = temporaryFiles.create("$moduleName.${state.phase.name}", ".ll")
-        if (LLVMPrintModuleToFile(module, output.absolutePath, null) != 0) {
-            error("Can't dump LLVM IR to ${output.absolutePath}")
-        }
-    }
-}
 
 internal fun produceCStubs(generationState: NativeGenerationState) {
     generationState.cStubsManager.compile(

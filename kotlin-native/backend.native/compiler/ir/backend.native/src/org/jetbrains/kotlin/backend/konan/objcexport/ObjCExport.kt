@@ -129,15 +129,6 @@ internal class ObjCExport(
         objCCodeGenerator.generate(codeSpec)
         objCCodeGenerator.dispose()
     }
-
-    /**
-     * Populate framework directory with headers, module and info.plist.
-     */
-    fun produceFrameworkInterface() {
-        if (exportedInterface != null) {
-            createObjCFramework(generationState.config, moduleDescriptor, exportedInterface, File(generationState.outputFile))
-        }
-    }
 }
 
 // See https://bugs.swift.org/browse/SR-10177
