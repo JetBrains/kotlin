@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -51,7 +50,7 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment) {
     useContext(backendContext) { backendEngine ->
-        backendEngine.runPhase(FunctionsWithoutBoundCheck)
+        backendEngine.runPhase(functionsWithoutBoundCheck)
         val fragments = backendEngine.splitIntoFragments(irModule)
         fragments.forEach { (generationState, fragment) ->
             backendEngine.useContext(generationState) { generationStateEngine ->
