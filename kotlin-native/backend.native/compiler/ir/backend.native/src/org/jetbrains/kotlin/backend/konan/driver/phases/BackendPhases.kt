@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.KotlinBackendIrHolder
+import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
@@ -36,6 +37,8 @@ internal data class SpecialBackendChecksInput(
 internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PsiToIrContext, SpecialBackendChecksInput>(
         "SpecialBackendChecks",
         "Special backend checks",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
 ) { context, input ->
     SpecialBackendChecksTraversal(context, context.interopBuiltIns, input.symbols, input.irModule.irBuiltins).lower(input.irModule)
 }
@@ -56,6 +59,8 @@ internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseC
 internal val CopyDefaultValuesToActualPhase = createSimpleNamedCompilerPhase<PhaseContext, IrModuleFragment>(
         name = "CopyDefaultValuesToActual",
         description = "Copy default values from expect to actual declarations",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
 ) { _, input ->
     ExpectToActualDefaultValueCopier(input).process()
 }
@@ -70,7 +75,9 @@ internal fun <T : PhaseContext> PhaseEngine<T>.runK2SpecialBackendChecks(fir2IrO
 
 internal val EntryPointPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "addEntryPoint",
-        description = "Add entry point for program"
+        description = "Add entry point for program",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
 ) { context, module ->
     val parent = context.context
     val entryPoint = parent.ir.symbols.entryPoint!!.owner

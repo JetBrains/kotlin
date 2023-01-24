@@ -10,12 +10,15 @@ import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
 internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "BuildAdditionalCacheInfo",
         description = "Build additional cache info (inline functions bodies and fields of classes)",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
 ) { context, module ->
     // TODO: Use explicit parameter
     val parent = context.context

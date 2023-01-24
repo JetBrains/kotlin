@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.FunctionsWithoutBoundCheckGenerator
 import org.jetbrains.kotlin.backend.konan.lower.*
 import org.jetbrains.kotlin.backend.konan.lower.ImportCachesAbiTransformer
@@ -49,18 +50,6 @@ internal fun PhaseEngine<NativeGenerationState>.runAllLowerings(irModuleFragment
         }
     }
 }
-
-private val validateAll = false
-
-private val fileLoweringActions: Set<Action<IrFile, NativeGenerationState>> = setOfNotNull(
-        nativeStateDumper,
-        nativeStateIrValidator.takeIf { validateAll }
-)
-
-internal val modulePhaseActions: Set<Action<IrModuleFragment, NativeGenerationState>> = setOfNotNull(
-        nativeStateDumper,
-        nativeStateIrValidator.takeIf { validateAll }
-)
 
 internal val functionsWithoutBoundCheck = createSimpleNamedCompilerPhase<Context, Unit>(
         name = "FunctionsWithoutBoundCheckGenerator",
@@ -555,7 +544,8 @@ private fun createFileLoweringPhase(
 ): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
         name,
         description,
-        postactions = fileLoweringActions,
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
         prerequisite = prerequisite,
         outputIfNotEnabled = { _, _, _, irFile -> irFile },
         op = { context, irFile ->
@@ -572,7 +562,8 @@ private fun createFileLoweringPhase(
 ): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
         name,
         description,
-        postactions = fileLoweringActions,
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
         prerequisite = prerequisite,
         outputIfNotEnabled = { _, _, _, irFile -> irFile },
         op = { context, irFile ->
@@ -589,7 +580,8 @@ private fun createFileLoweringPhase(
 ): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
         name,
         description,
-        postactions = fileLoweringActions,
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
         prerequisite = prerequisite,
         outputIfNotEnabled = { _, _, _, irFile -> irFile },
         op = { context, irFile ->

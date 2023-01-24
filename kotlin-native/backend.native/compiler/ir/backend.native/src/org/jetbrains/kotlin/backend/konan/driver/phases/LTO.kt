@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.phaser.ActionState
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.GlobalHierarchyAnalysis
 import org.jetbrains.kotlin.backend.konan.driver.utilities.KotlinBackendIrHolder
+import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.optimizations.*
 import org.jetbrains.kotlin.backend.konan.optimizations.DevirtualizationAnalysis
@@ -31,6 +32,8 @@ internal val GHAPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Ir
 internal val BuildDFGPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment, ModuleDFG>(
         name = "BuildDFG",
         description = "Data flow graph building",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, generationState, irModule ->
             val context = generationState.context
             val symbolTable = DataFlowIR.SymbolTable(context, DataFlowIR.Module(irModule.descriptor))
@@ -53,6 +56,8 @@ internal data class DevirtualizationAnalysisInput(
 internal val DevirtualizationAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DevirtualizationAnalysisInput, DevirtualizationAnalysis.AnalysisResult>(
         name = "DevirtualizationAnalysis",
         description = "Devirtualization analysis",
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, _, _ ->
             DevirtualizationAnalysis.AnalysisResult(
                     emptyMap(),
@@ -79,6 +84,8 @@ internal val DCEPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DC
         name = "DCEPhase",
         description = "Dead code elimination",
         outputIfNotEnabled = { _, _, _, _ -> null },
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
         op = { generationState, input ->
             val context = generationState.context
             dce(context, input.irModule, input.moduleDFG, input.devirtualizationAnalysisResult)
@@ -93,13 +100,11 @@ internal data class DevirtualizationInput(
         get() = irModule
 }
 
-internal val DevirtualizationPhase = createSimpleNamedCompilerPhase(
+internal val DevirtualizationPhase = createSimpleNamedCompilerPhase<NativeGenerationState, DevirtualizationInput>(
         name = "Devirtualization",
         description = "Devirtualization",
-        postactions = modulePhaseActions.map { f ->
-            fun(actionState: ActionState, data: DevirtualizationInput, context: NativeGenerationState) =
-                    f(actionState, data.irModule, context)
-        }.toSet(),
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
         op = { generationState, input ->
             val context = generationState.context
             val devirtualizedCallSites = input.devirtualizationAnalysisResult.devirtualizedCallSites
@@ -125,6 +130,8 @@ internal val EscapeAnalysisPhase = createSimpleNamedCompilerPhase<NativeGenerati
         name = "EscapeAnalysis",
         description = "Escape analysis",
         outputIfNotEnabled = { _, _, _, _ -> emptyMap() },
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
         op = { generationState, input ->
             val lifetimes = mutableMapOf<IrElement, Lifetime>()
             val context = generationState.context
@@ -165,13 +172,11 @@ internal data class RedundantCallsInput(
         get() = irModule
 }
 
-internal val RemoveRedundantCallsToStaticInitializersPhase = createSimpleNamedCompilerPhase(
+internal val RemoveRedundantCallsToStaticInitializersPhase = createSimpleNamedCompilerPhase<NativeGenerationState, RedundantCallsInput>(
         name = "RemoveRedundantCallsToStaticInitializersPhase",
         description = "Redundant static initializers calls removal",
-        postactions = modulePhaseActions.map { f ->
-            fun(actionState: ActionState, data: RedundantCallsInput, context: NativeGenerationState) =
-                    f(actionState, data.irModule, context)
-        }.toSet(),
+        preactions = getDefaultIrActions(),
+        postactions = getDefaultIrActions(),
         op = { generationState, input ->
             val context = generationState.context
             val moduleDFG = input.moduleDFG

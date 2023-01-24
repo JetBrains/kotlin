@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.KonanReflectionTypes
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.KotlinBackendIrHolder
+import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.psiToIr
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
@@ -102,6 +103,7 @@ internal class PsiToIrContextImpl(
 
 internal val PsiToIrPhase = createSimpleNamedCompilerPhase<PsiToIrContext, PsiToIrInput, PsiToIrOutput>(
         "PsiToIr", "Translate PSI to IR",
+        postactions = getDefaultIrActions(),
         outputIfNotEnabled = { _, _, _, _ -> error("PsiToIr phase cannot be disabled") }
 ) { context, input ->
     context.psiToIr(input, useLinkerWhenProducingLibrary = false)
