@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
-import com.intellij.psi.PsiAnnotationOwner
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -17,7 +16,7 @@ internal class LazyAnnotationsBox(
     private val owner: PsiModifierList,
     private val annotationsProvider: AnnotationsProvider,
     private val additionalAnnotationsProvider: AdditionalAnnotationsProvider = DefaultAnnotationsProvider,
-) : PsiAnnotationOwner {
+) : AnnotationsBox {
     private val annotationsArray: AtomicReference<Array<PsiAnnotation>?> = AtomicReference()
     private var specialAnnotations: SmartList<PsiAnnotation>? = null
     private val monitor = Any()
@@ -60,8 +59,6 @@ internal class LazyAnnotationsBox(
         } else {
             annotationsArray.get() ?: error("Unexpected state")
         }
-
-    override fun getApplicableAnnotations(): Array<PsiAnnotation> = annotations
 
     override fun findAnnotation(qualifiedName: String): PsiAnnotation? = findAnnotation(qualifiedName, withAdditionalAnnotations = true)
 
@@ -123,8 +120,6 @@ internal class LazyAnnotationsBox(
             annotations.any { it.qualifiedName == qualifiedName }
         }
     }
-
-    override fun addAnnotation(qualifiedName: String): PsiAnnotation = throw UnsupportedOperationException()
 
     companion object {
         /**
