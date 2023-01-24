@@ -24,10 +24,10 @@ internal typealias LazyModifiersComputer = (modifier: String) -> Map<String, Boo
 internal class LazyModifiersBox(
     initialValue: Map<String, Boolean>,
     private val computer: LazyModifiersComputer,
-) {
+) : ModifiersBox {
     private val modifiersMapReference: AtomicReference<PersistentMap<String, Boolean>> = AtomicReference(initialValue.toPersistentHashMap())
 
-    fun hasModifier(modifier: String): Boolean {
+    override fun hasModifier(modifier: String): Boolean {
         modifiersMapReference.get()[modifier]?.let { return it }
         val newValues = computer(modifier) ?: mapOf(modifier to false)
         modifiersMapReference.updateAndGet {
