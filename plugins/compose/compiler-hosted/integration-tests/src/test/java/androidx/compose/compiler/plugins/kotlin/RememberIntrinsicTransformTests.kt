@@ -17,9 +17,15 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
 class RememberIntrinsicTransformTests : AbstractIrTransformTest() {
+    override fun CompilerConfiguration.updateConfiguration() {
+        put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
+        put(ComposeConfiguration.INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY, true)
+    }
+
     private fun comparisonPropagation(
         @Language("kotlin")
         unchecked: String,
