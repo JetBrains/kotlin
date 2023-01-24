@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.java.JvmSupertypeUpdater
 import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
+import org.jetbrains.kotlin.fir.java.FirOriginalSyntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
@@ -88,6 +89,7 @@ fun FirSession.registerCommonJavaComponents(javaModuleResolver: JavaModuleResolv
     val jsr305State = languageVersionSettings.getFlag(JvmAnalysisFlags.javaTypeEnhancementState)
     register(FirAnnotationTypeQualifierResolver::class, FirAnnotationTypeQualifierResolver(this, jsr305State, javaModuleResolver))
     register(FirEnhancedSymbolsStorage::class, FirEnhancedSymbolsStorage(this))
+    register(FirOriginalSyntheticPropertiesStorage::class, FirOriginalSyntheticPropertiesStorage(this))
     register(
         FirJvmDefaultModeComponent::class,
         FirJvmDefaultModeComponent(languageVersionSettings.getFlag(JvmAnalysisFlags.jvmDefaultMode))

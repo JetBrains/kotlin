@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethodCopy
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameterCopy
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.java.originalSyntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.*
@@ -59,11 +60,12 @@ class JavaClassUseSiteMemberScope(
     declaredMemberScope
 ) {
     private val typeParameterStack = klass.javaTypeParameterStack
-    private val syntheticPropertyByNameMap = hashMapOf<Name, FirSyntheticPropertySymbol>()
 
     private val canUseSpecialGetters: Boolean by lazy { !klass.hasKotlinSuper(session) }
 
     private val javaOverrideChecker: JavaOverrideChecker get() = overrideChecker as JavaOverrideChecker
+
+    private val syntheticPropertyCache = session.originalSyntheticPropertiesStorage.cacheByOwner.getValue(klass.symbol, null)
 
     private fun generateSyntheticPropertySymbol(
         getterSymbol: FirNamedFunctionSymbol,
@@ -71,7 +73,8 @@ class JavaClassUseSiteMemberScope(
         property: FirProperty,
         takeModalityFromGetter: Boolean,
     ): FirSyntheticPropertySymbol {
-        return syntheticPropertyByNameMap.getOrPut(property.name) {
+        return syntheticPropertyCache.getValue(
+            property.name,
             buildSyntheticProperty {
                 moduleData = session.moduleData
                 name = property.name
@@ -90,7 +93,7 @@ class JavaClassUseSiteMemberScope(
                 )
                 deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
             }.symbol
-        }
+        )
     }
 
     private fun chooseModalityForAccessor(property: FirProperty, getter: FirSimpleFunction): Modality? {
