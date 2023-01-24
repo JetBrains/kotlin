@@ -1,0 +1,17 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.light.classes.symbol.annotations
+
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.name.ClassId
+
+interface AnnotationsProvider {
+    fun classIds(): Collection<ClassId>
+    operator fun get(classId: ClassId): Collection<KtAnnotationApplication>
+    operator fun contains(classId: ClassId): Boolean
+    fun isTheSameAs(other: Any?): Boolean
+    fun ownerClassId(): ClassId?
+}

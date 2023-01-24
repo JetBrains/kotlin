@@ -8,28 +8,16 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiAnnotationOwner
 import com.intellij.psi.PsiModifierList
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.annotationClassIds
-import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
-import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.concurrent.atomic.AtomicReference
 
 internal class LazyAnnotationsBox(
-    private val annotatedSymbolPointer: KtSymbolPointer<KtAnnotatedSymbol>,
-    private val ktModule: KtModule,
     private val owner: PsiModifierList,
+    private val annotationsProvider: AnnotationsProvider,
     private val additionalAnnotationsProvider: AdditionalAnnotationsProvider = DefaultAnnotationsProvider,
 ) : PsiAnnotationOwner {
-    private inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
-        annotatedSymbolPointer.withSymbol(ktModule, action)
-
     private val annotationsArray: AtomicReference<Array<PsiAnnotation>?> = AtomicReference()
     private var specialAnnotations: SmartList<PsiAnnotation>? = null
     private val monitor = Any()
@@ -37,12 +25,9 @@ internal class LazyAnnotationsBox(
     override fun getAnnotations(): Array<PsiAnnotation> {
         annotationsArray.get()?.let { return it }
 
-        val classIds = withAnnotatedSymbol { ktAnnotatedSymbol ->
-            ktAnnotatedSymbol.annotationClassIds
-        }
-
+        val classIds = annotationsProvider.classIds()
         val annotations = classIds.withIndex().mapTo(SmartList<PsiAnnotation>()) { (index, classId) ->
-            SymbolLightLazyAnnotation(classId, annotatedSymbolPointer, ktModule, index, owner)
+            SymbolLightLazyAnnotation(classId, annotationsProvider, index, owner)
         }
 
         val valueToReturn = if (annotations.isEmpty()) {
@@ -87,14 +72,11 @@ internal class LazyAnnotationsBox(
 
         val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
         val specialAnnotation = if (specialAnnotationClassId != null) {
-            val annotationApplication = withAnnotatedSymbol { ktAnnotatedSymbol ->
-                ktAnnotatedSymbol.annotationsByClassId(specialAnnotationClassId).firstOrNull()
-            } ?: return null
+            val annotationApplication = annotationsProvider[specialAnnotationClassId].firstOrNull() ?: return null
 
             SymbolLightLazyAnnotation(
                 specialAnnotationClassId,
-                annotatedSymbolPointer,
-                ktModule,
+                annotationsProvider,
                 annotationApplication,
                 owner,
             )
@@ -136,7 +118,7 @@ internal class LazyAnnotationsBox(
 
         val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
         return if (specialAnnotationClassId != null) {
-            withAnnotatedSymbol { ktAnnotatedSymbol -> ktAnnotatedSymbol.hasAnnotation(specialAnnotationClassId) }
+            specialAnnotationClassId in annotationsProvider
         } else {
             annotations.any { it.qualifiedName == qualifiedName }
         }

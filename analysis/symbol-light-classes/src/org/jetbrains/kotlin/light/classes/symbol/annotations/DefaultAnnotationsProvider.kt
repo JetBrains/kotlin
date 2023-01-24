@@ -10,7 +10,6 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -189,9 +188,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToRepeatableJavaAnnotation(
 )
 
 private fun SymbolLightJavaAnnotation.computeRepeatableJavaAnnotationArguments(): List<KtNamedAnnotationValue> {
-    val annotationClassId = originalLightAnnotation.withAnnotatedSymbol { ktAnnotatedSymbol ->
-        (ktAnnotatedSymbol as? KtClassLikeSymbol)?.classIdIfNonLocal
-    } ?: return emptyList()
+    val annotationClassId = originalLightAnnotation.annotationsProvider.ownerClassId() ?: return emptyList()
 
     return listOf(
         KtNamedAnnotationValue(
