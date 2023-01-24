@@ -19,6 +19,8 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
             "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
         )
         args.multiPlatform = true
+        args.noStdlib = true
+        args.noReflect = true
     }
 
     fun testTotalKotlin() {
