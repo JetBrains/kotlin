@@ -164,7 +164,7 @@
 /compiler/testData/psi/ "Kotlin Compiler Core"
 /compiler/testData/psiUtil/ "Kotlin Compiler Core"
 /compiler/testData/recursiveProcessor/ "Kotlin Compiler Core"
-/compiler/testData/reflection/classLoaderForBuiltIns/ "Kotlin Libraries"
+/compiler/testData/reflection/ "Kotlin Libraries"
 /compiler/testData/repl/ "Kotlin Compiler Core"
 /compiler/testData/resolve/ "Kotlin Compiler Core"
 /compiler/testData/resolveAnnotations/ "Kotlin Compiler Core"

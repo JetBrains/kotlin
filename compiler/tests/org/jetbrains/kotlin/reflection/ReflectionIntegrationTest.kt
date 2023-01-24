@@ -34,25 +34,15 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
 
         val lib = CompilerTestUtil.compileJvmLibrary(File("$root/test.kt"))
 
-        val javaHome = System.getProperty("java.home")
-        val javaExe = File(javaHome, "bin/java.exe").takeIf(File::exists)
-            ?: File(javaHome, "bin/java").takeIf(File::exists)
-            ?: error("Can't find 'java' executable in $javaHome")
-
-        val command = arrayOf(
-            javaExe.absolutePath,
+        runJava(
             "-ea",
             "-classpath",
             tmpdir.absolutePath,
             "Main",
             lib.absolutePath,
             ForTestCompileRuntime.runtimeJarForTests().absolutePath,
-            ForTestCompileRuntime.reflectJarForTests().absolutePath
+            ForTestCompileRuntime.reflectJarForTests().absolutePath,
         )
-
-        val process = ProcessBuilder(*command).inheritIO().start()
-        process.waitFor(1, TimeUnit.MINUTES)
-        assertEquals(0, process.exitValue())
     }
 
     // This test checks that simultaneous access to kotlin-reflect from different threads works, in case the URLClassLoader instance is
@@ -94,5 +84,42 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
         latch.countDown()
 
         error.get()?.let { throw it }
+    }
+
+    fun testConcurrentAccessToPropertyDelegate() {
+        compileAndRunProgram(KtTestUtil.getTestDataPathBase() + "/reflection/concurrentAccessToPropertyDelegate")
+    }
+
+    fun testConcurrentAccessToPrivateFunction() {
+        compileAndRunProgram(KtTestUtil.getTestDataPathBase() + "/reflection/concurrentAccessToPrivateFunction")
+    }
+
+    private fun compileAndRunProgram(root: String) {
+        val lib = CompilerTestUtil.compileJvmLibrary(File("$root/test.kt"))
+
+        runJava(
+            "-ea",
+            "-classpath",
+            listOf(
+                ForTestCompileRuntime.runtimeJarForTests().absolutePath,
+                ForTestCompileRuntime.reflectJarForTests().absolutePath,
+                lib.absolutePath,
+            ).joinToString(File.pathSeparator),
+            "TestKt",
+        )
+    }
+
+    private fun runJava(vararg args: String) {
+        val javaHome = System.getProperty("java.home")
+        val javaExe = File(javaHome, "bin/java.exe").takeIf(File::exists)
+            ?: File(javaHome, "bin/java").takeIf(File::exists)
+            ?: error("Can't find 'java' executable in $javaHome")
+
+        val process = ProcessBuilder(javaExe.absolutePath, *args).start()
+        process.waitFor(1, TimeUnit.MINUTES)
+        val stderr = process.errorStream.reader().readText()
+        val stdout = process.inputStream.reader().readText()
+        val exitCode = process.exitValue()
+        assertEquals("Program exited with exit code $exitCode.\nStdout:\n$stdout\nStderr:\n$stderr", 0, exitCode)
     }
 }
