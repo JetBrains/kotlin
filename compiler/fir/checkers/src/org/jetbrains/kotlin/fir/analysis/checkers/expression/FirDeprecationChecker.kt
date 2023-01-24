@@ -40,10 +40,10 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         val reference = resolvable.calleeReference.resolved ?: return
         val referencedSymbol = reference.resolvedSymbol
 
-        reportApiAvailabilityIfNeeded(reference.source, referencedSymbol, expression, context, reporter)
+        reportApiStatusIfNeeded(reference.source, referencedSymbol, expression, context, reporter)
     }
 
-    internal fun reportApiAvailabilityIfNeeded(
+    internal fun reportApiStatusIfNeeded(
         source: KtSourceElement?,
         referencedSymbol: FirBasedSymbol<*>,
         callSite: FirElement?,
@@ -51,10 +51,10 @@ object FirDeprecationChecker : FirBasicExpressionChecker() {
         reporter: DiagnosticReporter
     ) {
         val deprecation = getWorstDeprecation(callSite, referencedSymbol, context) ?: return
-        reportApiAvailability(source, referencedSymbol, deprecation, reporter, context)
+        reportApiStatus(source, referencedSymbol, deprecation, reporter, context)
     }
 
-    internal fun reportApiAvailability(
+    internal fun reportApiStatus(
         source: KtSourceElement?,
         referencedSymbol: FirBasedSymbol<*>,
         deprecationInfo: DeprecationInfo,
