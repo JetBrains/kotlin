@@ -463,6 +463,8 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         private val useOptimizedSuperClass =
             context.state.generateOptimizedCallableReferenceSuperClasses
 
+        // This code is partially duplicated in IrUtils getAdapteeFromAdaptedForReferenceFunction
+        // The difference is utils version supports ReturnableBlock, but returns called function instead of call node.
         private val adapteeCall: IrFunctionAccessExpression? =
             if (callee.origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
                 // The body of a callable reference adapter contains either only a call, or an IMPLICIT_COERCION_TO_UNIT type operator

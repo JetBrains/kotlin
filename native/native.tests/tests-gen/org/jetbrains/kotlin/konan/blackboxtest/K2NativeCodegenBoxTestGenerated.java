@@ -2674,6 +2674,12 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
                 }
 
                 @Test
+                @TestMetadata("conversionCombinations.kt")
+                public void testConversionCombinations() throws Exception {
+                    runTest("compiler/testData/codegen/box/callableReference/equality/conversionCombinations.kt");
+                }
+
+                @Test
                 @TestMetadata("extensionReceiverVsDefault.kt")
                 public void testExtensionReceiverVsDefault() throws Exception {
                     runTest("compiler/testData/codegen/box/callableReference/equality/extensionReceiverVsDefault.kt");

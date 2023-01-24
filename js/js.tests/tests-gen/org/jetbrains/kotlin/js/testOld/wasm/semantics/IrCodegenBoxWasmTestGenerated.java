@@ -2292,6 +2292,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/callableReference/equality/coercionToUnitWithVararg.kt");
             }
 
+            @TestMetadata("conversionCombinations.kt")
+            public void testConversionCombinations() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/equality/conversionCombinations.kt");
+            }
+
             @TestMetadata("extensionReceiverVsDefault.kt")
             public void testExtensionReceiverVsDefault() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/equality/extensionReceiverVsDefault.kt");

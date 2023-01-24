@@ -3219,6 +3219,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
         public static class Equality extends AbstractLightAnalysisModeTest {
+            @TestMetadata("conversionCombinations.kt")
+            public void ignoreConversionCombinations() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/equality/conversionCombinations.kt");
+            }
+
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
             }
