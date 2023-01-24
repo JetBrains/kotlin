@@ -10,9 +10,11 @@ import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AnalysisApiTestServiceRegistrar {
+    abstract fun registerApplicationServices(application: MockApplication, testServices: TestServices)
+
     abstract fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices)
 
     abstract fun registerProjectServices(project: MockProject, testServices: TestServices)
 
-    abstract fun registerApplicationServices(application: MockApplication, testServices: TestServices)
+    abstract fun registerProjectModelServices(project: MockProject, testServices: TestServices)
 }

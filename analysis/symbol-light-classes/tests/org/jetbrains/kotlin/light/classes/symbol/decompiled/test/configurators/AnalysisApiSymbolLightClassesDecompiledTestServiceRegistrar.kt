@@ -15,7 +15,9 @@ object AnalysisApiSymbolLightClassesDecompiledTestServiceRegistrar : AnalysisApi
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
     }
 
-    override fun registerProjectServices(project: MockProject, testServices: TestServices) {
+    override fun registerProjectServices(project: MockProject, testServices: TestServices) {}
+
+    override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(ClsJavaStubByVirtualFileCache::class.java)
         }

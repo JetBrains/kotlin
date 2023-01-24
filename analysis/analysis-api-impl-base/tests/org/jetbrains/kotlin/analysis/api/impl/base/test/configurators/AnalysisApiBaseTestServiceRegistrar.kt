@@ -32,12 +32,16 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
 
     @OptIn(KtAnalysisApiInternals::class)
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
-        val allKtFiles = testServices.ktModuleProvider.getModuleStructure().mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
-
         project.apply {
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
             registerService(KtDefaultLifetimeTokenProvider::class.java, KtReadActionConfinementDefaultLifetimeTokenProvider::class.java)
+        }
+    }
 
+    override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
+        val allKtFiles = testServices.ktModuleProvider.getModuleStructure().mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
+
+        project.apply {
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(allKtFiles))
             registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(project, allKtFiles))

@@ -29,8 +29,10 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         AnalysisHandlerExtension.registerExtensionPoint(project)
     }
 
+    override fun registerProjectServices(project: MockProject, testServices: TestServices) {}
+
     @OptIn(KtAnalysisApiInternals::class)
-    override fun registerProjectServices(project: MockProject, testServices: TestServices) {
+    override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(KtAnalysisSessionProvider::class.java, KtFe10AnalysisSessionProvider(project))
             registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade(project))
