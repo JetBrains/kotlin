@@ -29,9 +29,9 @@ internal class KtFe10AnnotationsList private constructor(
 
     override val annotations: List<KtAnnotationApplication>
         get() = withValidityAssertion {
-            fe10Annotations.mapNotNull { annotation ->
+            fe10Annotations.mapIndexedNotNull { index, annotation ->
                 if (annotation.annotationClass.classId in annotationsToIgnore) null
-                else annotation.toKtAnnotationApplication(analysisContext)
+                else annotation.toKtAnnotationApplication(analysisContext, index)
             }
         }
 
@@ -61,9 +61,10 @@ internal class KtFe10AnnotationsList private constructor(
 
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
         if (classId in annotationsToIgnore) return@withValidityAssertion emptyList()
-        fe10Annotations.mapNotNull { annotation ->
-            if (annotation.annotationClass?.maybeLocalClassId != classId) return@mapNotNull null
-            annotation.toKtAnnotationApplication(analysisContext)
+
+        fe10Annotations.mapIndexedNotNull { index, annotation ->
+            if (annotation.annotationClass?.maybeLocalClassId != classId) return@mapIndexedNotNull null
+            annotation.toKtAnnotationApplication(analysisContext, index)
         }
     }
 

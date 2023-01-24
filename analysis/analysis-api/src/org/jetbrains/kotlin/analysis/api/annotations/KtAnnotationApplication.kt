@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.annotations
 
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtCallElement
 
 /**
@@ -42,4 +41,9 @@ public data class KtAnnotationApplication(
      * A list of annotation arguments which were applied when constructing annotation. Every argument is [KtAnnotationValue]
      */
     public val arguments: List<KtNamedAnnotationValue>,
+
+    /**
+     * An index of the annotation in an owner. Can be `-1` in case of annotation arguments
+     */
+    public val index: Int,
 )

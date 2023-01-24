@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,13 +12,16 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSymbol
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.psi.KtCallElement
@@ -62,7 +65,7 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
         else -> emptyList()
     }
 
-internal fun FirAnnotation.toKtAnnotationApplication(useSiteSession: FirSession): KtAnnotationApplication {
+internal fun FirAnnotation.toKtAnnotationApplication(useSiteSession: FirSession, index: Int): KtAnnotationApplication {
     return KtAnnotationApplication(
         toAnnotationClassId(useSiteSession),
         psi as? KtCallElement,
@@ -70,6 +73,7 @@ internal fun FirAnnotation.toKtAnnotationApplication(useSiteSession: FirSession)
         FirAnnotationValueConverter.toNamedConstantValue(
             mapAnnotationParameters(this),
             useSiteSession,
-        )
+        ),
+        index,
     )
 }

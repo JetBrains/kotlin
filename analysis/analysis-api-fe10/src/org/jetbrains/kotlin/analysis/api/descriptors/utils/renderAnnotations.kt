@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,7 +41,7 @@ internal fun PrettyPrinter.renderFe10Annotations(
             printCollectionIfNotEmpty(valueArguments, separator = ", ", prefix = "(", postfix = ")") { (name, value) ->
                 append(name.render())
                 append(" = ")
-                append(value.toKtAnnotationValue(analysisContext).renderAsSourceCode())
+                append(value.toKtAnnotationValue(analysisContext, -1).renderAsSourceCode())
             }
 
             append(separator)

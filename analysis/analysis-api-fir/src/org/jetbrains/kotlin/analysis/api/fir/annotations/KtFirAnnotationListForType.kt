@@ -29,8 +29,8 @@ internal class KtFirAnnotationListForType private constructor(
 ) : KtAnnotationsList() {
     override val annotations: List<KtAnnotationApplication>
         get() = withValidityAssertion {
-            coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).map {
-                it.toKtAnnotationApplication(useSiteSession)
+            coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).mapIndexed { index, annotation ->
+                annotation.toKtAnnotationApplication(useSiteSession, index)
             }
         }
 
@@ -50,9 +50,9 @@ internal class KtFirAnnotationListForType private constructor(
     }
 
     override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
-        coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).mapNotNull { annotation ->
-            if (annotation.toAnnotationClassId(useSiteSession) != classId) return@mapNotNull null
-            annotation.toKtAnnotationApplication(useSiteSession)
+        coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).mapIndexedNotNull { index, annotation ->
+            if (annotation.toAnnotationClassId(useSiteSession) != classId) return@mapIndexedNotNull null
+            annotation.toKtAnnotationApplication(useSiteSession, index)
         }
     }
 

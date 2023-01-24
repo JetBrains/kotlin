@@ -42,14 +42,14 @@ internal fun annotationsByClassId(
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KtAnnotationApplication> =
     if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId)) {
-        annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).mapNotNull { annotation ->
-            if (annotation.toAnnotationClassIdSafe(useSiteSession) != classId) return@mapNotNull null
-            annotation.toKtAnnotationApplication(useSiteSession)
+        annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).mapIndexedNotNull { index, annotation ->
+            if (annotation.toAnnotationClassIdSafe(useSiteSession) != classId) return@mapIndexedNotNull null
+            annotation.toKtAnnotationApplication(useSiteSession, index)
         }
     } else {
-        annotationContainer.resolvedAnnotationsWithArguments(firSymbol).mapNotNull { annotation ->
-            if (annotation.toAnnotationClassId(useSiteSession) != classId) return@mapNotNull null
-            annotation.toKtAnnotationApplication(useSiteSession)
+        annotationContainer.resolvedAnnotationsWithArguments(firSymbol).mapIndexedNotNull { index, annotation ->
+            if (annotation.toAnnotationClassId(useSiteSession) != classId) return@mapIndexedNotNull null
+            annotation.toKtAnnotationApplication(useSiteSession, index)
         }
     }
 
@@ -57,8 +57,8 @@ internal fun annotations(
     firSymbol: FirBasedSymbol<*>,
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KtAnnotationApplication> = annotationContainer.resolvedAnnotationsWithArguments(firSymbol).map { annotation ->
-    annotation.toKtAnnotationApplication(useSiteSession)
+): List<KtAnnotationApplication> = annotationContainer.resolvedAnnotationsWithArguments(firSymbol).mapIndexed { index, annotation ->
+    annotation.toKtAnnotationApplication(useSiteSession, index)
 }
 
 internal fun annotationClassIds(
