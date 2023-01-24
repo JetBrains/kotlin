@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.fir.visitors.*
 class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     var useSiteTarget: AnnotationUseSiteTarget? = null
+    var calculatedUseSiteTarget: AnnotationUseSiteTarget? = null
     var annotationTypeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
     val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     override var argumentList: FirArgumentList = FirEmptyArgumentList
@@ -49,6 +50,7 @@ class FirAnnotationCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, 
         return FirAnnotationCallImpl(
             source,
             useSiteTarget,
+            calculatedUseSiteTarget,
             annotationTypeRef,
             typeArguments.toMutableOrEmpty(),
             argumentList,
@@ -86,6 +88,7 @@ inline fun buildAnnotationCallCopy(original: FirAnnotationCall, init: FirAnnotat
     val copyBuilder = FirAnnotationCallBuilder()
     copyBuilder.source = original.source
     copyBuilder.useSiteTarget = original.useSiteTarget
+    copyBuilder.calculatedUseSiteTarget = original.calculatedUseSiteTarget
     copyBuilder.annotationTypeRef = original.annotationTypeRef
     copyBuilder.typeArguments.addAll(original.typeArguments)
     copyBuilder.argumentList = original.argumentList

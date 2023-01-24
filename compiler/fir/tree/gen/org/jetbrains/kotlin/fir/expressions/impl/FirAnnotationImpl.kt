@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 internal class FirAnnotationImpl(
     override val source: KtSourceElement?,
     override val useSiteTarget: AnnotationUseSiteTarget?,
+    override var calculatedUseSiteTarget: AnnotationUseSiteTarget?,
     override var annotationTypeRef: FirTypeRef,
     override var argumentMapping: FirAnnotationArgumentMapping,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
@@ -62,6 +63,10 @@ internal class FirAnnotationImpl(
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {}
+
+    override fun replaceCalculatedUseSiteTarget(newCalculatedUseSiteTarget: AnnotationUseSiteTarget?) {
+        calculatedUseSiteTarget = newCalculatedUseSiteTarget
+    }
 
     override fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef) {
         annotationTypeRef = newAnnotationTypeRef

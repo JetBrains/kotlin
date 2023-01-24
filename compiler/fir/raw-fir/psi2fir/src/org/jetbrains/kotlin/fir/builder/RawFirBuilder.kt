@@ -600,10 +600,11 @@ open class RawFirBuilder(
                 val isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
                 for (annotationEntry in annotationEntries) {
                     annotationEntry.convert<FirAnnotation>().takeIf {
-                        !isFromPrimaryConstructor || it.useSiteTarget == null ||
-                                it.useSiteTarget == CONSTRUCTOR_PARAMETER ||
-                                it.useSiteTarget == RECEIVER ||
-                                it.useSiteTarget == FILE
+                        val useSiteTarget = it.calculatedUseSiteTarget ?: it.useSiteTarget
+                        !isFromPrimaryConstructor || useSiteTarget == null ||
+                                useSiteTarget == CONSTRUCTOR_PARAMETER ||
+                                useSiteTarget == RECEIVER ||
+                                useSiteTarget == FILE
                     }?.let {
                         this.annotations += it
                     }

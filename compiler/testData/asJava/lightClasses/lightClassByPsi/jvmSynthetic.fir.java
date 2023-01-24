@@ -3,6 +3,15 @@ public final class A /* A*/ {
 
   public A f;
 
+  @java.lang.Deprecated()
+  @kotlin.jvm.JvmField()
+  @kotlin.jvm.JvmSynthetic()
+  public static void getY$annotations();//  getY$annotations()
+
+  @java.lang.Deprecated()
+  @kotlin.jvm.JvmSynthetic()
+  public static void getX$annotations();//  getX$annotations()
+
   public  A();//  .ctor()
 
   public final int getX();//  getX()

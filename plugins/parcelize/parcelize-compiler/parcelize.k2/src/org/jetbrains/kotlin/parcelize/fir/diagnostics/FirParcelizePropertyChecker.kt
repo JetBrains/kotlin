@@ -155,7 +155,7 @@ object FirParcelizePropertyChecker : FirPropertyChecker() {
     private fun List<FirAnnotation>.hasIgnoredOnParcel(): Boolean {
         return this.any {
             if (it.annotationTypeRef.coneType.classId !in IGNORED_ON_PARCEL_CLASS_IDS) return@any false
-            val target = it.useSiteTarget
+            val target = it.calculatedUseSiteTarget ?: it.useSiteTarget
             target == null || target == AnnotationUseSiteTarget.PROPERTY || target == AnnotationUseSiteTarget.PROPERTY_GETTER
         }
     }

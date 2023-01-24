@@ -8,6 +8,11 @@ public final class FieldModifiersKt /* FieldModifiersKt*/ {
   @kotlin.jvm.Volatile()
   private static transient volatile int implicit = 0 /* initializer type: int */;
 
+  @java.lang.Deprecated()
+  @kotlin.jvm.Transient()
+  @kotlin.jvm.Volatile()
+  public static void getImplicit$annotations();//  getImplicit$annotations()
+
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getExplicit();//  getExplicit()
 

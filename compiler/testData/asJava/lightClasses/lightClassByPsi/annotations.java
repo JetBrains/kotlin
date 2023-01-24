@@ -59,10 +59,40 @@ public abstract @interface AnnotatedAttribute /* AnnotatedAttribute*/ {
   public abstract java.lang.String x();//  x()
 }
 
+public final class ClassWithCompanion /* ClassWithCompanion*/ {
+  @kotlin.jvm.JvmField()
+  public static final int c;
+
+  @org.jetbrains.annotations.NotNull()
+  public static final ClassWithCompanion.CompanionObject CompanionObject;
+
+  private static final int a;
+
+  private static final int b;
+
+  private static final int d;
+
+  public  ClassWithCompanion();//  .ctor()
+
+  public static final int getB();//  getB()
+
+  class CompanionObject ...
+}
+
 public static final class Companion /* AnnoWithCompanion.Companion*/ {
   private  Companion();//  .ctor()
 
   public final void foo();//  foo()
+}
+
+public static final class CompanionObject /* ClassWithCompanion.CompanionObject*/ {
+  private  CompanionObject();//  .ctor()
+
+  public final int getA();//  getA()
+
+  public final int getB();//  getB()
+
+  public final int getD();//  getD()
 }
 
 public final class CtorAnnotations /* CtorAnnotations*/ {
@@ -103,6 +133,12 @@ public final class Example /* Example*/ {
   private final java.lang.String bar;
 
   @org.jetbrains.annotations.NotNull()
+  private final java.lang.String baz;
+
+  @org.jetbrains.annotations.NotNull()
+  private final java.lang.String prop;
+
+  @org.jetbrains.annotations.NotNull()
   private final java.lang.String quux;
 
   @Ann()
@@ -110,12 +146,18 @@ public final class Example /* Example*/ {
   public final java.lang.String getBar();//  getBar()
 
   @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getBaz();//  getBaz()
+
+  @org.jetbrains.annotations.NotNull()
   public final java.lang.String getFoo();//  getFoo()
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getProp();//  getProp()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getQuux();//  getQuux()
 
-  public  Example(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String, @Ann() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String, java.lang.String, java.lang.String)
+  public  Example(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String, @Ann() @org.jetbrains.annotations.NotNull() java.lang.String, @Ann() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 }
 
 @Anno()
@@ -164,6 +206,24 @@ public final class Foo /* Foo*/ {
 @Ann(arg1 = kotlin.String.class, arg2 = kotlin.Int.class)
 public final class MyClass /* MyClass*/ {
   public  MyClass();//  .ctor()
+}
+
+public final class PropertyAnnotations /* PropertyAnnotations*/ {
+  @Anno()
+  private final int c;
+
+  private final int a;
+
+  private final int b;
+
+  @Anno()
+  public final int getC();//  getC()
+
+  public  PropertyAnnotations();//  .ctor()
+
+  public final int getA();//  getA()
+
+  public final int getB();//  getB()
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)

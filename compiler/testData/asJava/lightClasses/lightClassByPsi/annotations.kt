@@ -58,10 +58,42 @@ class Foo @Anno constructor(dependency: MyDependency) {
 
 @Ann(String::class, Int::class) class MyClass
 
-class Example(@field:Ann val foo: String,    // annotate Java field
-              @get:Ann val bar: String,      // annotate Java getter
-              @param:Ann val quux: String)   // annotate Java constructor parameter
+class Example(@field:Ann val foo: String,      // annotate Java field
+              @get:Ann val bar: String,        // annotate Java getter
+              @param:Ann val quux: String,     // annotate Java constructor parameter
+              @Ann val baz: String,            // annotate Java constructor parameter implicitly
+              @property:Ann val prop: String)  // annotate Java property
 
 class CtorAnnotations(@Anno val x: String, @param:Anno val y: String, val z: String)
+
+class PropertyAnnotations {
+    @Anno
+    val a = 1
+
+    @property:Anno
+    val b = 1
+
+    @field:Anno
+    @get:Anno
+    @set:Anno
+    val c = 1 // no getC$annotations
+}
+
+class ClassWithCompanion {
+    companion object CompanionObject {
+        @Anno
+        val a = 1
+
+        @Anno
+        @JvmStatic
+        val b = 1
+
+        @Anno
+        @JvmField
+        val c = 1
+
+        val d = 1
+    }
+}
 
 // COMPILATION_ERRORS

@@ -189,7 +189,7 @@ fun checkRepeatedAnnotation(
     val annotationsMap = hashMapOf<ConeKotlinType, MutableList<AnnotationUseSiteTarget?>>()
 
     for (annotation in annotations) {
-        val useSiteTarget = annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation, context)
+        val useSiteTarget = annotation.calculatedUseSiteTarget ?: annotation.useSiteTarget ?: annotationContainer?.getDefaultUseSiteTarget(annotation, context)
         val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType(context.session)
         val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
 

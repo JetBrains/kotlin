@@ -78,6 +78,10 @@ public final class ClassWithConstContainer /* ClassWithConstContainer*/ {
 }
 
 public static final class Companion /* C.Companion*/ {
+  @java.lang.Deprecated()
+  @kotlin.jvm.JvmStatic()
+  public static void getX$annotations();//  getX$annotations()
+
   @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getC(@org.jetbrains.annotations.NotNull() I);//  getC(I)
@@ -156,6 +160,10 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
 
   @org.jetbrains.annotations.NotNull()
   public static final Obj INSTANCE;
+
+  @java.lang.Deprecated()
+  @kotlin.jvm.JvmStatic()
+  public static void getX$annotations();//  getX$annotations()
 
   @java.lang.Override()
   public void run();//  run()

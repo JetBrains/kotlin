@@ -59,10 +59,62 @@ public abstract @interface AnnotatedAttribute /* AnnotatedAttribute*/ {
   public abstract java.lang.String x();//  x()
 }
 
+public final class ClassWithCompanion /* ClassWithCompanion*/ {
+  @Anno()
+  @kotlin.jvm.JvmField()
+  public static final int c = 1 /* initializer type: int */;
+
+  @Anno()
+  @kotlin.jvm.JvmStatic()
+  private static final int b = 1 /* initializer type: int */;
+
+  @Anno()
+  private static final int a = 1 /* initializer type: int */;
+
+  @org.jetbrains.annotations.NotNull()
+  public static final ClassWithCompanion.CompanionObject CompanionObject;
+
+  private static final int d = 1 /* initializer type: int */;
+
+  public  ClassWithCompanion();//  .ctor()
+
+  public static final int getB();//  getB()
+
+  class CompanionObject ...
+}
+
 public static final class Companion /* AnnoWithCompanion.Companion*/ {
+  @java.lang.Deprecated()
+  @kotlin.jvm.JvmField()
+  public static void getX$annotations();//  getX$annotations()
+
   private  Companion();//  .ctor()
 
   public final void foo();//  foo()
+}
+
+public static final class CompanionObject /* ClassWithCompanion.CompanionObject*/ {
+  @Anno()
+  @java.lang.Deprecated()
+  @kotlin.jvm.JvmField()
+  public static void getC$annotations();//  getC$annotations()
+
+  @Anno()
+  @java.lang.Deprecated()
+  @kotlin.jvm.JvmStatic()
+  public static void getB$annotations();//  getB$annotations()
+
+  @Anno()
+  @java.lang.Deprecated()
+  public static void getA$annotations();//  getA$annotations()
+
+  private  CompanionObject();//  .ctor()
+
+  public final int getA();//  getA()
+
+  public final int getB();//  getB()
+
+  public final int getD();//  getD()
 }
 
 public final class CtorAnnotations /* CtorAnnotations*/ {
@@ -103,19 +155,35 @@ public final class Example /* Example*/ {
   private final java.lang.String bar;
 
   @org.jetbrains.annotations.NotNull()
+  private final java.lang.String baz;
+
+  @org.jetbrains.annotations.NotNull()
+  private final java.lang.String prop;
+
+  @org.jetbrains.annotations.NotNull()
   private final java.lang.String quux;
+
+  @Ann()
+  @java.lang.Deprecated()
+  public static void getProp$annotations();//  getProp$annotations()
 
   @Ann()
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getBar();//  getBar()
 
   @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getBaz();//  getBaz()
+
+  @org.jetbrains.annotations.NotNull()
   public final java.lang.String getFoo();//  getFoo()
+
+  @org.jetbrains.annotations.NotNull()
+  public final java.lang.String getProp();//  getProp()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getQuux();//  getQuux()
 
-  public  Example(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String, @Ann() @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String, java.lang.String, java.lang.String)
+  public  Example(@org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String, @Ann() @org.jetbrains.annotations.NotNull() java.lang.String, @Ann() @org.jetbrains.annotations.NotNull() java.lang.String, @org.jetbrains.annotations.NotNull() java.lang.String);//  .ctor(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 }
 
 @Anno()
@@ -126,6 +194,10 @@ public final class F /* F*/ implements java.lang.Runnable {
 
   @Anno(p = "f")
   public final void f(@Anno() @org.jetbrains.annotations.NotNull() java.lang.String);//  f(java.lang.String)
+
+  @Anno(p = "p")
+  @java.lang.Deprecated()
+  public static void getProp$annotations();//  getProp$annotations()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.String getProp();//  getProp()
@@ -165,6 +237,33 @@ public final class Foo /* Foo*/ {
 @Ann(arg1 = java.lang.String.class, arg2 = int.class)
 public final class MyClass /* MyClass*/ {
   public  MyClass();//  .ctor()
+}
+
+public final class PropertyAnnotations /* PropertyAnnotations*/ {
+  @Anno()
+  private final int a = 1 /* initializer type: int */;
+
+  @Anno()
+  private final int c = 1 /* initializer type: int */;
+
+  private final int b = 1 /* initializer type: int */;
+
+  @Anno()
+  @java.lang.Deprecated()
+  public static void getA$annotations();//  getA$annotations()
+
+  @Anno()
+  @java.lang.Deprecated()
+  public static void getB$annotations();//  getB$annotations()
+
+  @Anno()
+  public final int getC();//  getC()
+
+  public  PropertyAnnotations();//  .ctor()
+
+  public final int getA();//  getA()
+
+  public final int getB();//  getB()
 }
 
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)

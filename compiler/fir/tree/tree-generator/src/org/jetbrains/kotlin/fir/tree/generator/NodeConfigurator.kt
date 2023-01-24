@@ -515,6 +515,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         annotation.configure {
             +field("useSiteTarget", annotationUseSiteTargetType, nullable = true)
+            +field("calculatedUseSiteTarget", annotationUseSiteTargetType, nullable = true, withReplace = true)
             +field("annotationTypeRef", typeRef, withReplace = true).withTransform()
             +field("argumentMapping", annotationArgumentMapping, withReplace = true)
             +typeArguments.withTransform()

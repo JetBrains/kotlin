@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWith
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -74,7 +75,7 @@ internal fun FirAnnotation.toKtAnnotationApplication(
 ): KtAnnotationApplicationWithArgumentsInfo = KtAnnotationApplicationWithArgumentsInfo(
     classId = toAnnotationClassId(useSiteSession),
     psi = psi as? KtCallElement,
-    useSiteTarget = useSiteTarget,
+    useSiteTarget = effectiveUseSiteTarget,
     arguments = FirAnnotationValueConverter.toNamedConstantValue(
         mapAnnotationParameters(this),
         useSiteSession,
@@ -88,7 +89,11 @@ internal fun FirAnnotation.toKtAnnotationInfo(
 ): KtAnnotationApplicationInfo = KtAnnotationApplicationInfo(
     classId = toAnnotationClassId(useSiteSession),
     psi = psi as? KtCallElement,
-    useSiteTarget = useSiteTarget,
+    useSiteTarget = effectiveUseSiteTarget,
     isCallWithArguments = this is FirAnnotationCall && arguments.isNotEmpty(),
     index = index,
 )
+
+
+val FirAnnotation.effectiveUseSiteTarget: AnnotationUseSiteTarget?
+    get() = calculatedUseSiteTarget ?: useSiteTarget

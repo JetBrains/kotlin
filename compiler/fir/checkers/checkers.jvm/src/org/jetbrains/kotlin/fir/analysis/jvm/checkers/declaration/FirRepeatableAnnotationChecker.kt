@@ -52,11 +52,11 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
             if (annotationClassId.isLocal) continue
             val annotationClass = session.symbolProvider.getClassLikeSymbolByClassId(annotationClassId) ?: continue
 
-            val useSiteTarget = annotation.useSiteTarget
+            val effectiveUseSiteTarget = annotation.calculatedUseSiteTarget ?: annotation.useSiteTarget
             val expandedType = annotation.annotationTypeRef.coneType.fullyExpandedType(context.session)
             val existingTargetsForAnnotation = annotationsMap.getOrPut(expandedType) { arrayListOf() }
-            val duplicateAnnotation = useSiteTarget in existingTargetsForAnnotation ||
-                    existingTargetsForAnnotation.any { (it == null) != (useSiteTarget == null) }
+            val duplicateAnnotation = effectiveUseSiteTarget in existingTargetsForAnnotation ||
+                    existingTargetsForAnnotation.any { (it == null) != (effectiveUseSiteTarget == null) }
 
             if (duplicateAnnotation &&
                 annotationClass.containsRepeatableAnnotation(session) &&
@@ -83,7 +83,7 @@ object FirRepeatableAnnotationChecker : FirBasicDeclarationChecker() {
                 }
             }
 
-            existingTargetsForAnnotation.add(useSiteTarget)
+            existingTargetsForAnnotation.add(effectiveUseSiteTarget)
         }
 
         if (declaration is FirRegularClass) {

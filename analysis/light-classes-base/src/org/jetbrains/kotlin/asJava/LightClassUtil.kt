@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightElement
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
+import org.jetbrains.kotlin.asJava.elements.isGetter
 import org.jetbrains.kotlin.asJava.elements.isSetter
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
@@ -183,7 +184,10 @@ object LightClassUtil {
         specialGetter: PsiMethod?, specialSetter: PsiMethod?
     ): PropertyAccessorsPsiMethods {
 
-        val (setters, getters) = getPsiMethodWrappers(ktDeclaration).partition { it.isSetter }
+        val accessors = getPsiMethodWrappers(ktDeclaration).toList()
+        val getters = accessors.filter { it.isGetter }
+        val setters = accessors.filter { it.isSetter }
+        val annotationsHolder = accessors.singleOrNull { it.name.endsWith("\$annotations") }
 
         val allGetters = listOfNotNull(specialGetter) + getters.filterNot { it == specialGetter }
         val allSetters = listOfNotNull(specialSetter) + setters.filterNot { it == specialSetter }
@@ -192,6 +196,7 @@ object LightClassUtil {
         return PropertyAccessorsPsiMethods(
             allGetters.firstOrNull(),
             allSetters.firstOrNull(),
+            annotationsHolder,
             backingField,
             additionalAccessors
         )
@@ -200,15 +205,16 @@ object LightClassUtil {
     class PropertyAccessorsPsiMethods(
         val getter: PsiMethod?,
         val setter: PsiMethod?,
+        val annotationsHolder: PsiMethod?,
         val backingField: PsiField?,
-        additionalAccessors: List<PsiMethod>
+        additionalAccessors: List<PsiMethod>,
     ) : Iterable<PsiMethod> {
         private val allMethods: List<PsiMethod>
         val allDeclarations: List<PsiNamedElement>
 
         init {
             allMethods = arrayListOf()
-            arrayOf(getter, setter).filterNotNullTo(allMethods)
+            arrayOf(getter, setter, annotationsHolder).filterNotNullTo(allMethods)
             additionalAccessors.filterIsInstanceTo<PsiMethod, MutableList<PsiMethod>>(allMethods)
 
             allDeclarations = arrayListOf()
