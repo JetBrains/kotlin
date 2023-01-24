@@ -212,12 +212,12 @@ internal class AdapterGenerator(
             Modality.FINAL,
             returnType,
             isInline = firMemberAdaptee.isInline,
-            isExternal = firMemberAdaptee.isExternal,
-            isTailrec = firMemberAdaptee.isTailRec,
+            isExternal = false,
+            isTailrec = false,
             isSuspend = firMemberAdaptee.isSuspend || type.isSuspendFunction(),
             isOperator = firMemberAdaptee.isOperator,
             isInfix = firMemberAdaptee.isInfix,
-            isExpect = firMemberAdaptee.isExpect,
+            isExpect = false,
             isFakeOverride = false
         ).also { irAdapterFunction ->
             irAdapterFunction.metadata = FirMetadataSource.Function(firAdaptee)
