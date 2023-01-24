@@ -103,6 +103,8 @@ To run blackbox compiler tests use:
 There are also tests that are very Native-backend specific: tests for Kotlin/Native-specific function, C-interop tests, linkage tests, etc.
 In common, they are called "target-specific tests".
 
+Note: on MacOS aarch64, [JDK aarch64 is required](./README.md#building-from-source)
+
 To run Kotlin/Native target-specific tests use (takes time):
 
     ./gradlew :kotlin-native:backend.native:tests:sanity  2>&1 | tee log                             # quick one

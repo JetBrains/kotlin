@@ -43,6 +43,11 @@ Prerequisites:
 *   at the root directory of the repository,
     create `local.properties` file with `kotlin.native.enabled=true` line
 *   macOS: Xcode 14.0 or newer
+    * on `MacOS aarch64`, CInterop functionality is available only using aarch64 JDK builds, e.g.
+[Eclipse Temurin 17.0.5](https://github.com/adoptium/temurin17-binaries/releases) or
+[Azul Zulu JDK8](https://www.azul.com/downloads/?version=java-8-lts&os=macos&architecture=arm-64-bit&package=jdk)
+
+      Note: using `JDK x86_64` on `MacOS aarch64` will cause `java.lang.UnsatisfiedLinkError` for `libclang.dylib`
 *   Linux: glibc 2.23 or newer
 *   Windows:
     * Microsoft C++ build tools for Visual Studio 2019 14.29 or newer
@@ -91,9 +96,14 @@ For an optimized compilation, use `-opt`:
 To import a C or Objective-C library, use `./dist/bin/cinterop` tool.
 See the [documentation](https://kotlinlang.org/docs/native-c-interop.html) for more details.
 
+Note: on MacOS aarch64, [JDK aarch64 is required](./README.md#building-from-source)
+
+
 ### Running tests
 
 For tests, use `./gradlew :native:native.tests:codegenBoxTest` and `./gradlew :kotlin-native:backend.native:tests:run`.
+
+Note: on MacOS aarch64, for target-specific tests, [JDK aarch64 is required](./README.md#building-from-source)
 
 For more details see [Testing](HACKING.md#Testing).
 
