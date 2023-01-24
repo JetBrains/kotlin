@@ -31,17 +31,23 @@ class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(
         val testGroupOutputDirForMinification = File(pathToRootOutputDir + "out-min/" + testGroupOutputDirPrefix)
         val testGroupOutputDirForPerModuleCompilation = File(pathToRootOutputDir + "out-per-module/" + testGroupOutputDirPrefix)
         val testGroupOutputDirForPerModuleMinification = File(pathToRootOutputDir + "out-per-module-min/" + testGroupOutputDirPrefix)
+        val testGroupOutputDirForPerFileCompilation = File(pathToRootOutputDir + "out-per-file/" + testGroupOutputDirPrefix)
+        val testGroupOutputDirForPerFileMinification = File(pathToRootOutputDir + "out-per-file-min/" + testGroupOutputDirPrefix)
 
         val outputDir = getOutputDir(originalFile, testGroupOutputDirForCompilation, stopFile)
         val dceOutputDir = getOutputDir(originalFile, testGroupOutputDirForMinification, stopFile)
         val perModuleOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerModuleCompilation, stopFile)
-        val preModuleDceOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerModuleMinification, stopFile)
+        val perModuleDceOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerModuleMinification, stopFile)
+        val perFileOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerFileCompilation, stopFile)
+        val perFileDceOutputDir = getOutputDir(originalFile, testGroupOutputDirForPerFileMinification, stopFile)
         val minOutputDir = File(dceOutputDir, originalFile.nameWithoutExtension)
 
         copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices), outputDir)
         copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.FULL_PROD_MINIMIZED_NAMES), dceOutputDir)
         copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_DEV), perModuleOutputDir)
-        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES), preModuleDceOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES), perModuleDceOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_FILE_DEV), perFileOutputDir)
+        copy(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES), perFileDceOutputDir)
         copy(JsEnvironmentConfigurator.getMinificationJsArtifactsOutputDir(testServices), minOutputDir)
     }
 

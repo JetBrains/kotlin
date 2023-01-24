@@ -402,44 +402,8 @@ private fun generateWrappedModuleBody(
     relativeRequirePath: Boolean,
     outJsProgram: Boolean
 ): CompilationOutputsBuilt {
-    if (granularity == JsGenerationGranularity.PER_MODULE || granularity == JsGenerationGranularity.PER_FILE) {
-        // mutable container allows explicitly remove elements from itself,
-        // so we are able to help GC to free heavy JsIrModule objects
-        // TODO: It makes sense to invent something better, because this logic can be easily broken
-        val moduleToRef = program.asCrossModuleDependencies(moduleKind, relativeRequirePath).toMutableList()
-        val mainModule = moduleToRef.removeLast().let { (main, mainRef) ->
-            generateSingleWrappedModuleBody(
-                mainModuleName,
-                moduleKind,
-                main.fragments,
-                sourceMapsInfo,
-                generateCallToMain = true,
-                mainRef,
-                outJsProgram
-            )
-        }
-
-        mainModule.dependencies = buildList(moduleToRef.size) {
-            while (moduleToRef.isNotEmpty()) {
-                moduleToRef.removeFirst().let { (module, moduleRef) ->
-                    val moduleName = module.externalModuleName
-                    val moduleCompilationOutput = generateSingleWrappedModuleBody(
-                        moduleName,
-                        moduleKind,
-                        module.fragments,
-                        sourceMapsInfo,
-                        generateCallToMain = false,
-                        moduleRef,
-                        outJsProgram
-                    )
-                    add(moduleName to moduleCompilationOutput)
-                }
-            }
-        }
-
-        return mainModule
-    } else {
-        return generateSingleWrappedModuleBody(
+    return when (granularity) {
+        JsGenerationGranularity.WHOLE_PROGRAM -> generateSingleWrappedModuleBody(
             mainModuleName,
             moduleKind,
             program.asFragments(),
@@ -447,7 +411,108 @@ private fun generateWrappedModuleBody(
             generateCallToMain = true,
             outJsProgram = outJsProgram
         )
+        JsGenerationGranularity.PER_FILE,
+        JsGenerationGranularity.PER_MODULE -> generateMultiModuleWrappedBody(
+            granularity,
+            mainModuleName,
+            moduleKind,
+            program,
+            sourceMapsInfo,
+            relativeRequirePath,
+            outJsProgram
+        )
     }
+}
+
+fun generateMultiFileModuleBody(
+    moduleName: String,
+    moduleKind: ModuleKind,
+    fragments: List<JsIrProgramFragment>,
+    sourceMapsInfo: SourceMapsInfo?,
+    generateCallToMain: Boolean,
+    crossModuleReferences: CrossModuleReferences = CrossModuleReferences.Empty(moduleKind),
+    outJsProgram: Boolean = true
+): CompilationOutputsBuilt {
+    val files = fragments
+        .filter { it.nameBindings.isNotEmpty() }
+        .withIndex()
+        .associate {
+            val fileModuleName = "$moduleName/${it.index}.js"
+            fileModuleName to generateSingleWrappedModuleBody(
+                fileModuleName,
+                moduleKind,
+                listOf(it.value),
+                sourceMapsInfo,
+                generateCallToMain,
+                crossModuleReferences.withOnlyImported(it.value.nameBindings),
+                outJsProgram
+            )
+        }
+
+    val indexFile = generateSingleWrappedModuleBody(
+        moduleName,
+        moduleKind,
+        listOf(JsIrProgramFragment("")),
+        sourceMapsInfo,
+        generateCallToMain,
+        CrossModuleReferences.Empty(moduleKind),
+        outJsProgram
+    )
+
+    indexFile.dependencies = files.toList()
+
+    return indexFile
+}
+
+fun generateMultiModuleWrappedBody(
+    granularity: JsGenerationGranularity,
+    mainModuleName: String,
+    moduleKind: ModuleKind,
+    program: JsIrProgram,
+    sourceMapsInfo: SourceMapsInfo?,
+    relativeRequirePath: Boolean,
+    outJsProgram: Boolean
+): CompilationOutputsBuilt {
+    // mutable container allows explicitly remove elements from itself,
+    // so we are able to help GC to free heavy JsIrModule objects
+    // TODO: It makes sense to invent something better, because this logic can be easily broken
+    val generateSingleModuleBody = when (granularity) {
+        JsGenerationGranularity.PER_FILE -> ::generateMultiFileModuleBody
+        else -> ::generateSingleWrappedModuleBody
+    }
+    val moduleToRef = program.asCrossModuleDependencies(moduleKind, relativeRequirePath).toMutableList()
+    val mainModule = moduleToRef.removeLast().let { (main, mainRef) ->
+        generateSingleModuleBody(
+            mainModuleName,
+            moduleKind,
+            main.fragments,
+            sourceMapsInfo,
+            true,
+            mainRef,
+            outJsProgram
+        )
+    }
+
+    mainModule.dependencies += buildList(moduleToRef.size) {
+        while (moduleToRef.isNotEmpty()) {
+            moduleToRef.removeFirst().let { (module, moduleRef) ->
+                val moduleName = module.externalModuleName
+                val moduleCompilationOutput = generateSingleModuleBody(
+                    moduleName,
+                    moduleKind,
+                    module.fragments,
+                    sourceMapsInfo,
+                    false,
+                    moduleRef,
+                    outJsProgram
+                )
+                add(moduleName to moduleCompilationOutput)
+                addAll(moduleCompilationOutput.dependencies)
+            }
+        }
+    }
+
+    return mainModule
 }
 
 fun generateSingleWrappedModuleBody(

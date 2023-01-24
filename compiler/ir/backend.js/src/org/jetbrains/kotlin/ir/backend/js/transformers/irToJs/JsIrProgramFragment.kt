@@ -221,6 +221,19 @@ class CrossModuleReferences(
     var jsImports = emptyMap<String, JsVars.JsVar>() // tag -> import statement
         private set
 
+    fun withOnlyImported(nameBindings: Map<String, *>): CrossModuleReferences {
+        val newImports = imports.filterKeys { it in nameBindings }
+        val newJsImports = jsImports.filterKeys { it in nameBindings }
+        val newExports = exports.filterKeys { it in nameBindings }
+        return CrossModuleReferences(
+            moduleKind,
+            importedModules,
+            transitiveJsExportFrom,
+            newExports,
+            newImports,
+        ).apply { jsImports = newJsImports }
+    }
+
     fun initJsImportsForModule(module: JsIrModule) {
         val tagToName = module.fragments.flatMap { it.nameBindings.entries }.associate { it.key to it.value }
         jsImports = imports.entries.associate {

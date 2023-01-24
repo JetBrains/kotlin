@@ -4,7 +4,7 @@
 // INFER_MAIN_MODULE
 
 // MODULE: export_all_file
-// FILE: lib.kt
+// FILE: lib1.kt
 @file:JsExport
 
 abstract class A {
@@ -76,6 +76,9 @@ open class C : I {
 
     fun foi() = "foi"
 }
+
+// FILE: lib2.kt
+@file:JsExport
 
 fun topFoo(a: A): String {
     if (a.bar != "bar3") return "fail"

@@ -27,6 +27,8 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
             TranslationMode.FULL_PROD_MINIMIZED_NAMES,
             TranslationMode.PER_MODULE_DEV,
             TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES,
+            TranslationMode.PER_FILE_DEV,
+            TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES,
         )
         val testModules = testServices.moduleStructure.modules
         val allTestFiles = testModules.flatMap { it.files }
