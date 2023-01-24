@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.checkLlvmModuleExternalCalls
 import org.jetbrains.kotlin.backend.konan.createLTOFinalPipelineConfig
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.insertAliasToEntryPoint
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.runCoveragePass
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
@@ -31,9 +32,9 @@ private val nativeLLVMDumper =
 private val llvmPhaseActions: Set<Action<Unit, NativeGenerationState>> = setOf(nativeLLVMDumper)
 
 internal data class WriteBitcodeFileInput(
-        val llvmModule: LLVMModuleRef,
+        override val llvmModule: LLVMModuleRef,
         val outputFile: File,
-)
+) : LlvmIrHolder
 
 /**
  * Write in-memory LLVM module to filesystem as a bitcode.
