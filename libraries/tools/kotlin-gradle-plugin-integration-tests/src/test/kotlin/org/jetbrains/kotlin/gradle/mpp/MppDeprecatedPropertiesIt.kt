@@ -39,7 +39,7 @@ class MppDeprecatedPropertiesIt : KGPBaseTest() {
 
             defaultFlags.keys.forEach { flag ->
                 assert(
-                    warnings.any { warning -> Regex(".*$flag.*is deprecated.*").matches(warning) },
+                    warnings.any { warning -> Regex(".*$flag.*is obsolete.*").matches(warning) },
                     "A deprecation warning for the '$flag' should have been reported",
                 )
             }
