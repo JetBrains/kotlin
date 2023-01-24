@@ -25,8 +25,8 @@ internal class LLFirDesignatedAnnotationsResolveTransformed(
     private fun moveNextDeclaration(designationIterator: Iterator<FirElementWithResolvePhase>) {
         if (!designationIterator.hasNext()) {
             val declaration = designation.target
+            FirLazyBodiesCalculator.calculateCompilerAnnotations(declaration)
             if (declaration is FirRegularClass || declaration is FirTypeAlias) {
-                FirLazyBodiesCalculator.calculateCompilerAnnotations(declaration)
                 declaration.transform<FirDeclaration, Nothing?>(this, null)
             }
             return
