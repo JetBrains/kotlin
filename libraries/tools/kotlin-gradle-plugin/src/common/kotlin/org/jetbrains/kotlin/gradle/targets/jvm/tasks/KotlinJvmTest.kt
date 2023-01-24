@@ -12,7 +12,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.testing.Test
 import org.jetbrains.kotlin.gradle.plugin.UsesVariantImplementationFactories
 import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
-import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactory
+import org.jetbrains.kotlin.gradle.plugin.variantImplementationFactoryProvider
 
 @CacheableTask
 open class KotlinJvmTest : Test(), UsesVariantImplementationFactories {
@@ -21,14 +21,14 @@ open class KotlinJvmTest : Test(), UsesVariantImplementationFactories {
     var targetName: String? = null
 
     private val testReporter = project
-        .variantImplementationFactory<MppTestReportHelper.MppTestReportHelperVariantFactory>()
-        .getInstance()
+        .variantImplementationFactoryProvider<MppTestReportHelper.MppTestReportHelperVariantFactory>()
+        .map { it.getInstance() }
 
     override fun createTestExecuter(): TestExecuter<JvmTestExecutionSpec> =
         if (targetName != null) Executor(
             super.createTestExecuter(),
             targetName!!,
-            testReporter,
+            testReporter.get(),
         )
         else super.createTestExecuter()
 
