@@ -9,30 +9,35 @@ import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.annotations
+import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallElement
 
 internal class SymbolLightLazyAnnotation private constructor(
-    classId: ClassId,
+    private val classId: ClassId,
     private val annotatedSymbolPointer: KtSymbolPointer<KtAnnotatedSymbol>,
     private val ktModule: KtModule,
     private val index: Int?,
     specialAnnotationApplication: KtAnnotationApplication?,
     owner: PsiModifierList,
-) : SymbolLightAbstractAnnotationWithClassId(classId, owner) {
+) : SymbolLightAbstractAnnotation(owner) {
     init {
         require(index != null || specialAnnotationApplication != null)
     }
 
-    private val annotationApplication: Lazy<KtAnnotationApplication> = specialAnnotationApplication?.let(::lazyOf) ?: lazyPub {
+    private val fqName: FqName = classId.asSingleFqName()
+
+    val annotationApplication: Lazy<KtAnnotationApplication> = specialAnnotationApplication?.let(::lazyOf) ?: lazyPub {
         withAnnotatedSymbol { ktAnnotatedSymbol ->
-            ktAnnotatedSymbol.annotations[index!!]
+            val applications = ktAnnotatedSymbol.annotationsByClassId(classId)
+            applications.find { it.index == index }
+                ?: error("expected index: $index, actual indices: ${applications.map { it.index }}")
         }
     }
 
@@ -66,12 +71,12 @@ internal class SymbolLightLazyAnnotation private constructor(
         owner = owner,
     )
 
-    private inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
+    inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
     override val kotlinOrigin: KtCallElement? get() = annotationApplication.value.psi
 
-    override fun getQualifiedName(): String = classId.asFqNameString()
+    override fun getQualifiedName(): String = fqName.asString()
 
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
         SymbolLightLazyAnnotationParameterList(this, lazyPub { annotationApplication.value.arguments })
@@ -81,10 +86,10 @@ internal class SymbolLightLazyAnnotation private constructor(
 
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightLazyAnnotation &&
-            other.classId == classId &&
+            other.fqName == fqName &&
             other.index == index &&
             other.ktModule == ktModule &&
             other.parent == parent
 
-    override fun hashCode(): Int = classId.hashCode()
+    override fun hashCode(): Int = fqName.hashCode()
 }

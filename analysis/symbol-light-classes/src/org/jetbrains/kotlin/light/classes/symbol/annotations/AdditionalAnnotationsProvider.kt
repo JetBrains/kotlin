@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
+import com.intellij.psi.PsiAnnotation
+import com.intellij.psi.PsiModifierList
+
 internal interface AdditionalAnnotationsProvider {
-    fun addAllAnnotations(currentRawAnnotations: MutableList<out SymbolLightAbstractAnnotationWithClassId>)
-    fun findAdditionalAnnotation(box: LazyAnnotationsBox, qualifiedName: String): SymbolLightAbstractAnnotationWithClassId?
+    fun addAllAnnotations(currentRawAnnotations: MutableList<in PsiAnnotation>, foundQualifiers: MutableSet<String>, owner: PsiModifierList)
+    fun findAdditionalAnnotation(annotationsBox: LazyAnnotationsBox, qualifiedName: String, owner: PsiModifierList): PsiAnnotation?
 }
