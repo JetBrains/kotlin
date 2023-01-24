@@ -278,25 +278,39 @@ private val testProcessorPhase = createFileLoweringPhase(
         description = "Unit test processor"
 )
 
+private val delegationPhase = createFileLoweringPhase(
+        lowering = ::PropertyDelegationLowering,
+        name = "Delegation",
+        description = "Delegation lowering",
+        prerequisite = setOf(volatilePhase)
+)
+
+private val functionReferencePhase = createFileLoweringPhase(
+        lowering = ::FunctionReferenceLowering,
+        name = "FunctionReference",
+        description = "Function references lowering",
+        prerequisite = setOf(delegationPhase, localFunctionsPhase) // TODO: make weak dependency on `testProcessorPhase`
+)
+
 private val enumWhenPhase = createFileLoweringPhase(
         ::NativeEnumWhenLowering,
         name = "EnumWhen",
         description = "Enum when lowering",
-//        prerequisite = setOf(enumConstructorsPhase, functionReferencePhase)
+        prerequisite = setOf(enumConstructorsPhase, functionReferencePhase)
 )
 
 private val enumClassPhase = createFileLoweringPhase(
         ::EnumClassLowering,
         name = "Enums",
         description = "Enum classes lowering",
-//        prerequisite = setOf(enumConstructorsPhase, functionReferencePhase, enumWhenPhase) // TODO: make weak dependency on `testProcessorPhase`
+        prerequisite = setOf(enumConstructorsPhase, functionReferencePhase, enumWhenPhase) // TODO: make weak dependency on `testProcessorPhase`
 )
 
 private val enumUsagePhase = createFileLoweringPhase(
         ::EnumUsageLowering,
         name = "EnumUsage",
         description = "Enum usage lowering",
-//        prerequisite = setOf(enumConstructorsPhase, functionReferencePhase, enumClassPhase)
+        prerequisite = setOf(enumConstructorsPhase, functionReferencePhase, enumClassPhase)
 )
 
 
@@ -304,7 +318,7 @@ private val singleAbstractMethodPhase = createFileLoweringPhase(
         ::NativeSingleAbstractMethodLowering,
         name = "SingleAbstractMethod",
         description = "Replace SAM conversions with instances of interface-implementing classes",
-//        prerequisite = setOf(functionReferencePhase)
+        prerequisite = setOf(functionReferencePhase)
 )
 
 private val builtinOperatorPhase = createFileLoweringPhase(
@@ -314,18 +328,54 @@ private val builtinOperatorPhase = createFileLoweringPhase(
         prerequisite = setOf(defaultParameterExtentPhase, singleAbstractMethodPhase, enumWhenPhase)
 )
 
+private val inlinePhase = createFileLoweringPhase(
+        lowering = { context: NativeGenerationState ->
+            object : FileLoweringPass {
+                override fun lower(irFile: IrFile) {
+                    FunctionInlining(context.context, NativeInlineFunctionResolver(context.context, context)).lower(irFile)
+                }
+            }
+        },
+        name = "Inline",
+        description = "Functions inlining",
+        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies)
+)
+
+private val interopPhase = createFileLoweringPhase(
+        lowering = ::InteropLowering,
+        name = "Interop",
+        description = "Interop lowering",
+        prerequisite = setOf(inlinePhase, localFunctionsPhase, functionReferencePhase)
+)
+
 private val varargPhase = createFileLoweringPhase(
         ::VarargInjectionLowering,
         name = "Vararg",
         description = "Vararg lowering",
-//        prerequisite = setOf(functionReferencePhase, defaultParameterExtentPhase, interopPhase, functionsWithoutBoundCheck)
+        prerequisite = setOf(functionReferencePhase, defaultParameterExtentPhase, interopPhase, functionsWithoutBoundCheck)
+)
+
+private val coroutinesPhase = createFileLoweringPhase(
+        lowering = { context: NativeGenerationState ->
+            object : FileLoweringPass {
+                override fun lower(irFile: IrFile) {
+                    NativeSuspendFunctionsLowering(context).lower(irFile)
+                    AddContinuationToNonLocalSuspendFunctionsLowering(context.context).lower(irFile)
+                    NativeAddContinuationToFunctionCallsLowering(context.context).lower(irFile)
+                    AddFunctionSupertypeToSuspendFunctionLowering(context.context).lower(irFile)
+                }
+            }
+        },
+        name = "Coroutines",
+        description = "Coroutines lowering",
+        prerequisite = setOf(localFunctionsPhase, finallyBlocksPhase, kotlinNothingValueExceptionPhase)
 )
 
 private val typeOperatorPhase = createFileLoweringPhase(
         ::TypeOperatorLowering,
         name = "TypeOperators",
         description = "Type operators lowering",
-//        prerequisite = setOf(coroutinesPhase)
+        prerequisite = setOf(coroutinesPhase)
 )
 
 private val bridgesPhase = createFileLoweringPhase(
@@ -335,14 +385,14 @@ private val bridgesPhase = createFileLoweringPhase(
         },
         name = "Bridges",
         description = "Bridges building",
-//        prerequisite = setOf(coroutinesPhase)
+        prerequisite = setOf(coroutinesPhase)
 )
 
 private val autoboxPhase = createFileLoweringPhase(
         ::Autoboxing,
         name = "Autobox",
         description = "Autoboxing of primitive types",
-//        prerequisite = setOf(bridgesPhase, coroutinesPhase)
+        prerequisite = setOf(bridgesPhase, coroutinesPhase)
 )
 
 private val expressionBodyTransformPhase = createFileLoweringPhase(
@@ -392,7 +442,7 @@ private val exportInternalAbiPhase = createFileLoweringPhase(
 internal val ReturnsInsertionPhase = createFileLoweringPhase(
         name = "ReturnsInsertion",
         description = "Returns insertion for Unit functions",
-        //prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase), TODO: if there are no files in the module, this requirement fails.
+        prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase), // TODO: if there are no files in the module, this requirement fails.
         lowering = ::ReturnsInsertionLowering,
 )
 
@@ -420,33 +470,6 @@ internal val UnboxInlinePhase = createFileLoweringPhase(
         lowering = ::UnboxInlineLowering,
 )
 
-private val inlinePhase = createFileLoweringPhase(
-        lowering = { context: NativeGenerationState ->
-            object : FileLoweringPass {
-                override fun lower(irFile: IrFile) {
-                    FunctionInlining(context.context, NativeInlineFunctionResolver(context.context, context)).lower(irFile)
-                }
-            }
-        },
-        name = "Inline",
-        description = "Functions inlining",
-//        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase, extractLocalClassesFromInlineBodies)
-)
-
-private val delegationPhase = createFileLoweringPhase(
-        lowering = ::PropertyDelegationLowering,
-        name = "Delegation",
-        description = "Delegation lowering"
-//        prerequisite = setOf(volatilePhase)
-)
-
-private val functionReferencePhase = createFileLoweringPhase(
-        lowering = ::FunctionReferenceLowering,
-        name = "FunctionReference",
-        description = "Function references lowering",
-//        prerequisite = setOf(delegationPhase, localFunctionsPhase) // TODO: make weak dependency on `testProcessorPhase`
-)
-
 private val inventNamesForLocalClasses = createFileLoweringPhase(
         lowering = ::NativeInventNamesForLocalClasses,
         name = "InventNamesForLocalClasses",
@@ -467,29 +490,6 @@ private val objectClassesPhase = createFileLoweringPhase(
         lowering = ::ObjectClassLowering,
         name = "ObjectClasses",
         description = "Object classes lowering"
-)
-
-private val coroutinesPhase = createFileLoweringPhase(
-        lowering = { context: NativeGenerationState ->
-            object : FileLoweringPass {
-                override fun lower(irFile: IrFile) {
-                    NativeSuspendFunctionsLowering(context).lower(irFile)
-                    AddContinuationToNonLocalSuspendFunctionsLowering(context.context).lower(irFile)
-                    NativeAddContinuationToFunctionCallsLowering(context.context).lower(irFile)
-                    AddFunctionSupertypeToSuspendFunctionLowering(context.context).lower(irFile)
-                }
-            }
-        },
-        name = "Coroutines",
-        description = "Coroutines lowering",
-//        prerequisite = setOf(localFunctionsPhase, finallyBlocksPhase, kotlinNothingValueExceptionPhase)
-)
-
-private val interopPhase = createFileLoweringPhase(
-        lowering = ::InteropLowering,
-        name = "Interop",
-        description = "Interop lowering",
-//        prerequisite = setOf(inlinePhase, localFunctionsPhase, functionReferencePhase)
 )
 
 private fun PhaseEngine<NativeGenerationState>.getAllLowerings() = listOfNotNull<AbstractNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>(
