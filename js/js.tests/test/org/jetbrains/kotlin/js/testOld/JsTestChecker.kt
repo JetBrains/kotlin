@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.js.engine.ScriptEngineV8
 import org.jetbrains.kotlin.js.engine.loadFiles
 import org.junit.Assert
 
+internal const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
 private const val DIST_DIR_JS_PATH = "dist/js/"
 private const val ESM_EXTENSION = ".mjs"
 
@@ -172,7 +173,7 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
     }
 
     override val preloadedScripts = listOf(
-        BasicWasmBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
+        TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
         DIST_DIR_JS_PATH + "kotlin.js",
         DIST_DIR_JS_PATH + "kotlin-test.js"
     )
@@ -188,7 +189,7 @@ object NashornJsTestChecker : AbstractNashornJsTestChecker() {
 
 object NashornIrJsTestChecker : AbstractNashornJsTestChecker() {
     override val preloadedScripts = listOf(
-        BasicWasmBoxTest.TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
+        TEST_DATA_DIR_PATH + "nashorn-polyfills.js",
         "libraries/stdlib/js-v1/src/js/polyfills.js"
     )
 }

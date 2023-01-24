@@ -16,6 +16,7 @@
           <option value=":js:js.tests:generateTests" />
           <option value=":native:native.tests:generateTests" />
           <option value=":core:descriptors.runtime:generateTests" />
+          <option value=":wasm:wasm.tests:generateTests" />
         </list>
       </option>
       <option name="vmOptions" value="" />

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
-import org.jetbrains.kotlin.incremental.AbstractInvalidationTest
 import org.jetbrains.kotlin.incremental.AbstractJsIrES6InvalidationTest
 import org.jetbrains.kotlin.incremental.AbstractJsIrInvalidationTest
 import org.jetbrains.kotlin.js.test.*
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
 import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
-import org.jetbrains.kotlin.js.testOld.wasm.semantics.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrJsTextTest
 
@@ -33,24 +31,6 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuite(args) {
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractJsTranslatorWasmTest> {
-                model("box/main", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
-                model("box/native/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
-                model("box/esModules/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM,
-                    excludeDirs = listOf(
-                        // JsExport is not supported for classes
-                        "jsExport", "native", "export",
-                        // Multimodal infra is not supported. Also, we don't use ES modules for cross-module refs in Wasm
-                        "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule"
-                    )
-                )
-                model("box/jsQualifier/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
-            }
-
-            testClass<AbstractJsTranslatorUnitWasmTest> {
-                model("box/kotlin.test/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
-            }
-
             testClass<AbstractDceTest> {
                 model("dce/", pattern = "(.+)\\.js", targetBackend = TargetBackend.JS)
             }
@@ -74,22 +54,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractJsIrES6InvalidationTest> {
                 model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
-            }
-        }
-
-        testGroup("js/js.tests/tests-gen", "compiler/testData", testRunnerMethodName = "runTest0") {
-            testClass<AbstractIrCodegenBoxWasmTest> {
-                model(
-                    "codegen/box", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM, excludeDirs = jvmOnlyBoxTests
-                )
-            }
-
-            testClass<AbstractIrCodegenBoxInlineWasmTest> {
-                model("codegen/boxInline", targetBackend = TargetBackend.WASM)
-            }
-
-            testClass<AbstractIrCodegenWasmJsInteropWasmTest> {
-                model("codegen/boxWasmJsInterop", targetBackend = TargetBackend.WASM)
             }
         }
 

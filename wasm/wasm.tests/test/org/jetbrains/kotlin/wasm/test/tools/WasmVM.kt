@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.testOld.engines
+package org.jetbrains.kotlin.wasm.test.tools
 
 import java.io.BufferedReader
 import java.io.File

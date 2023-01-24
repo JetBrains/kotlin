@@ -1,11 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.testOld.wasm.semantics
+package org.jetbrains.kotlin.wasm.test
 
-import org.jetbrains.kotlin.js.testOld.BasicWasmBoxTest
+import org.jetbrains.kotlin.wasm.test.BasicWasmBoxTest
 
 abstract class AbstractIrCodegenBoxWasmTest : BasicWasmBoxTest(
     "compiler/testData/codegen/box/",
@@ -23,12 +23,12 @@ abstract class AbstractIrCodegenWasmJsInteropWasmTest : BasicWasmBoxTest(
 )
 
 abstract class AbstractJsTranslatorWasmTest : BasicWasmBoxTest(
-    TEST_DATA_DIR_PATH + "box/",
+    "js/js.translator/testData/box/",
     "js.translator/wasmBox"
 )
 
 abstract class AbstractJsTranslatorUnitWasmTest : BasicWasmBoxTest(
-    TEST_DATA_DIR_PATH + "box/",
+    "js/js.translator/testData/box/",
     "js.translator/wasmBox",
     startUnitTests = true
 )

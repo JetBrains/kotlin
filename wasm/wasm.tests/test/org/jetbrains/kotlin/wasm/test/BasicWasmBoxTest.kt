@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.testOld
+package org.jetbrains.kotlin.wasm.test
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
-import org.jetbrains.kotlin.js.testOld.engines.WasmVM
+import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -42,7 +42,7 @@ abstract class BasicWasmBoxTest(
     private val startUnitTests: Boolean = false
 ) : KotlinTestWithEnvironment() {
 
-    private val pathToRootOutputDir: String = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
+    private val pathToRootOutputDir: String = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
 
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
 
@@ -358,7 +358,6 @@ abstract class BasicWasmBoxTest(
     }
 
     companion object {
-        const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
         const val TEST_MODULE = "main"
         private const val TEST_FUNCTION = "box"
     }
