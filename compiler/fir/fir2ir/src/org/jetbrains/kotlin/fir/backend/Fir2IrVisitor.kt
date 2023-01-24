@@ -1013,12 +1013,11 @@ class Fir2IrVisitor(
         }
         return conversionScope.withWhenSubject(subjectVariable) {
             whenExpression.convertWithOffsets { startOffset, endOffset ->
-                // If the constant true branch has empty body, it won't be converted. Thus, the entire `when` expression is effectively _not_
-                // exhaustive anymore. In that case, coerce the return type of `when` expression to Unit as per the backend expectation.
-                val irBranches = whenExpression.branches.mapNotNullTo(mutableListOf()) { branch ->
-                    branch.takeIf {
-                        it.condition !is FirElseIfTrueCondition || it.result.statements.isNotEmpty()
-                    }?.toIrWhenBranch(whenExpression.typeRef)
+                if (whenExpression.branches.isEmpty()) {
+                    return@convertWithOffsets IrBlockImpl(startOffset, endOffset, irBuiltIns.unitType, origin)
+                }
+                val irBranches = whenExpression.branches.mapTo(mutableListOf()) { branch ->
+                    branch.toIrWhenBranch(whenExpression.typeRef)
                 }
                 if (whenExpression.isProperlyExhaustive && whenExpression.branches.none { it.condition is FirElseIfTrueCondition }) {
                     val irResult = IrCallImpl(
