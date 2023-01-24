@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
+import org.jetbrains.kotlin.library.KotlinLibraryProperResolverWithAttributes
 
 fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
     return when (this) {
@@ -31,7 +32,9 @@ fun IrSymbol.kind(): BinarySymbolData.SymbolKind {
 class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
 
     init {
-        assert(abiVersion.isCompatible())
+        require(abiVersion.isCompatible()) {
+            "Incompatible KLIB should have been discarded in ${KotlinLibraryProperResolverWithAttributes<Nothing>::libraryMatch.name}"
+        }
     }
 
     val oldSignatures: Boolean
@@ -44,11 +47,7 @@ class CompatibilityMode(val abiVersion: KotlinAbiVersion) {
 
     companion object {
         val LAST_PRIVATE_SIG_ABI_VERSION = KotlinAbiVersion(1, 5, 0)
-
-        val WITH_PRIVATE_SIG = CompatibilityMode(LAST_PRIVATE_SIG_ABI_VERSION)
-        val WITH_COMMON_SIG = CompatibilityMode(KotlinAbiVersion.CURRENT)
-
-        val CURRENT = WITH_COMMON_SIG
+        val CURRENT = CompatibilityMode(KotlinAbiVersion.CURRENT)
     }
 }
 
