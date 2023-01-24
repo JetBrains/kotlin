@@ -918,6 +918,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
         }
 
         @Test
+        @TestMetadata("incompleteCodeNoParenthesisDotQualifier.kt")
+        public void testIncompleteCodeNoParenthesisDotQualifier() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/incompleteCodeNoParenthesisDotQualifier.kt");
+        }
+
+        @Test
         @TestMetadata("incompleteCodeWithAmbiguity.kt")
         public void testIncompleteCodeWithAmbiguity() throws Exception {
             runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invalidCode/incompleteCodeWithAmbiguity.kt");

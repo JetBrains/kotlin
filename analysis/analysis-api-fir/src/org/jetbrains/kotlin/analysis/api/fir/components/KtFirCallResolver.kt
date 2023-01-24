@@ -149,12 +149,15 @@ internal class KtFirCallResolver(
 
         createGenericTypeQualifierCallIfApplicable(this, psi)?.let { return it }
 
-        if (this is FirResolvedQualifier && psi is KtCallExpression) {
-            val constructors = findQualifierConstructors()
-            val calls = toKtCalls(constructors)
-            return when (calls.size) {
-                0 -> KtErrorCallInfo(listOf(KtQualifierCall(token, psi)), inapplicableCandidateDiagnostic(), token)
-                else -> KtErrorCallInfo(calls, inapplicableCandidateDiagnostic(), token)
+        if (this is FirResolvedQualifier) {
+            val callExpression = (psi as? KtExpression)?.getPossiblyQualifiedCallExpression()
+            if (callExpression != null) {
+                val constructors = findQualifierConstructors()
+                val calls = toKtCalls(constructors)
+                return when (calls.size) {
+                    0 -> KtErrorCallInfo(listOf(KtQualifierCall(token, callExpression)), inapplicableCandidateDiagnostic(), token)
+                    else -> KtErrorCallInfo(calls, inapplicableCandidateDiagnostic(), token)
+                }
             }
         }
 

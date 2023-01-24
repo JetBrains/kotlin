@@ -1,0 +1,3 @@
+KtSuccessCallInfo:
+  call = KtGenericTypeQualifier:
+    qualifier = kotlin.collections.List<String>
