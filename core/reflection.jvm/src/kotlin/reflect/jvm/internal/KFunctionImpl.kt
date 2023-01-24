@@ -23,6 +23,7 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.CallableReference
 import kotlin.jvm.internal.FunctionBase
 import kotlin.reflect.KFunction
@@ -58,7 +59,7 @@ internal class KFunctionImpl private constructor(
 
     override val name: String get() = descriptor.name.asString()
 
-    override val caller: Caller<*> by ReflectProperties.lazy caller@{
+    override val caller: Caller<*> by lazy(PUBLICATION) caller@{
         val member: Member? = when (val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)) {
             is KotlinConstructor -> {
                 if (isAnnotationConstructor)
@@ -89,7 +90,7 @@ internal class KFunctionImpl private constructor(
         }.createInlineClassAwareCallerIfNeeded(descriptor)
     }
 
-    override val defaultCaller: Caller<*>? by ReflectProperties.lazy defaultCaller@{
+    override val defaultCaller: Caller<*>? by lazy(PUBLICATION) defaultCaller@{
         val jvmSignature = RuntimeTypeMapper.mapSignature(descriptor)
         val member: Member? = when (jvmSignature) {
             is KotlinFunction -> {
