@@ -10386,15 +10386,33 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("entriesPropertyAsExtensionClashOn.kt")
+                public void testEntriesPropertyAsExtensionClashOn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyAsExtensionClashOn.kt");
+                }
+
+                @Test
                 @TestMetadata("entriesPropertyImportedClash.kt")
                 public void testEntriesPropertyImportedClash() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyImportedClash.kt");
                 }
 
                 @Test
+                @TestMetadata("entriesPropertyImportedClashOn.kt")
+                public void testEntriesPropertyImportedClashOn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyImportedClashOn.kt");
+                }
+
+                @Test
                 @TestMetadata("entriesPropertyInCompanionClash.kt")
                 public void testEntriesPropertyInCompanionClash() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyInCompanionClash.kt");
+                }
+
+                @Test
+                @TestMetadata("entriesPropertyInCompanionClashOn.kt")
+                public void testEntriesPropertyInCompanionClashOn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/entriesPropertyInCompanionClashOn.kt");
                 }
 
                 @Test
@@ -10434,9 +10452,21 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("nameShadowingOfExternallyDefinedEntriesOn.kt")
+                public void testNameShadowingOfExternallyDefinedEntriesOn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/nameShadowingOfExternallyDefinedEntriesOn.kt");
+                }
+
+                @Test
                 @TestMetadata("redeclarationOfEnumEntriesNameWithIntrinsic.kt")
                 public void testRedeclarationOfEnumEntriesNameWithIntrinsic() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/enum/entries/redeclarationOfEnumEntriesNameWithIntrinsic.kt");
+                }
+
+                @Test
+                @TestMetadata("redeclarationOfEnumEntriesNameWithIntrinsicOn.kt")
+                public void testRedeclarationOfEnumEntriesNameWithIntrinsicOn() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/enum/entries/redeclarationOfEnumEntriesNameWithIntrinsicOn.kt");
                 }
             }
 

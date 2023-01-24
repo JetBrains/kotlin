@@ -16,5 +16,5 @@ FILE: enumEntriesAmbiguity.fir.kt
             public get(): R|kotlin/enums/EnumEntries<Ambiguous>|
 
     }
-    public final val e: R|Ambiguous| = Q|Ambiguous|.R|/Ambiguous.entries|
-        public get(): R|Ambiguous|
+    public final val e: R|kotlin/Int| = Q|Ambiguous|.R|/Ambiguous.entries|.R|SubstitutionOverride</Ambiguous.ordinal: R|kotlin/Int|>|
+        public get(): R|kotlin/Int|

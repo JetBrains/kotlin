@@ -32,7 +32,12 @@ object CustomEnumEntriesMigrationCallChecker : CallChecker {
         ) {
             context.trace.report(Errors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_COMPANION_PROPERTY.on(reportOn))
         } else if (descriptor.isCallToExternalEntriesInsideEnum(reportOn)) {
-            context.trace.report(Errors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM.on(reportOn))
+            if (context.trace.bindingContext.diagnostics.forElement(reportOn).none {
+                    it.factory == Errors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM
+                }
+            ) {
+                context.trace.report(Errors.DEPRECATED_ACCESS_TO_ENTRY_PROPERTY_FROM_ENUM.on(reportOn))
+            }
         } else if (descriptor.isReferenceToMemberEntriesWithoutExpectedFunctionalType(reportOn, context)) {
             context.trace.report(Errors.DEPRECATED_ACCESS_TO_ENUM_ENTRY_PROPERTY_AS_REFERENCE.on(reportOn))
         }
@@ -54,8 +59,9 @@ object CustomEnumEntriesMigrationCallChecker : CallChecker {
     }
 
     private fun PropertyDescriptor.isCallToExternalEntriesInsideEnum(contextExpression: PsiElement): Boolean {
+        val parent = contextExpression.parent
         return !DescriptorUtils.isEnumClass(this.containingDeclaration) &&
-                contextExpression.parent !is KtDotQualifiedExpression &&
+                (parent !is KtDotQualifiedExpression || parent.receiverExpression === contextExpression) &&
                 contextExpression.parentsWithSelf.any { it is KtClass && it.isEnum() }
     }
 
