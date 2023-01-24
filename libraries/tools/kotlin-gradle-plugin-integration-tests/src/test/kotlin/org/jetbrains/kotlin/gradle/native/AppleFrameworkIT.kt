@@ -179,12 +179,10 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "SDK_NAME" to "iphoneos",
                     "ARCHS" to "arm64"
                 )
-            ).suppressDeprecationWarningsOn(
-                "AGP uses deprecated IncrementalTaskInputs (Gradle 7.5)"
-            ) { options ->
+            )
+            build("tasks", options = options.suppressDeprecationWarningsOn("AGP uses deprecated IncrementalTaskInputs (Gradle 7.5)") {
                 GradleVersion.version(currentGradleVersion) >= GradleVersion.version(TestVersions.Gradle.G_7_5) && options.safeAndroidGradlePluginVersion < AGPVersion.v7_3_0
-            }
-            build("tasks", options = options) {
+            }) {
                 assertSuccessful()
                 assertTasksRegistered(
                     ":shared:embedAndSignAppleFrameworkForXcode",
