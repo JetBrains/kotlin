@@ -5,7 +5,7 @@ public fun baz(/*0*/ container: Container<kotlin.Any>, /*1*/ wrapper: Wrapper<ko
 public fun dif(/*0*/ container: Container<kotlin.String>, /*1*/ wrapper: Wrapper<kotlin.Int>): kotlin.Unit
 public fun foo(/*0*/ container: Container<*>, /*1*/ wrapper: Wrapper<kotlin.String>): kotlin.Unit
 public fun gau(/*0*/ container: Container<kotlin.String>, /*1*/ wrapper: Wrapper<kotlin.Any>): kotlin.Unit
-public fun </*0*/ T> generic(/*0*/ container: Container<out T>, /*1*/ wrapper: Wrapper<out T>): kotlin.Unit
+public fun </*0*/ T> generic(/*0*/ container: Container<out T>, /*1*/ wrapper: Wrapper<out T>, /*2*/ arg: T): kotlin.Unit
 public fun inn(/*0*/ container: Container<in kotlin.String>, /*1*/ wrapper: Wrapper<kotlin.Any>): kotlin.Unit
 public fun out(/*0*/ container: Container<out kotlin.Any>, /*1*/ wrapper: Wrapper<kotlin.String>): kotlin.Unit
 
@@ -13,8 +13,10 @@ public open class Container</*0*/ E : kotlin.Any!> {
     public constructor Container</*0*/ E : kotlin.Any!>()
     public/*package*/ final var w: Wrapper<E!>!
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun getSimple(): E!
     public open fun getWrapper(): Wrapper<E!>!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open fun setSimple(/*0*/ e: E!): kotlin.Unit
     public open fun setWrapper(/*0*/ wrapper: Wrapper<E!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
