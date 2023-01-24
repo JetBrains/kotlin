@@ -715,6 +715,7 @@ abstract class KotlinCompile @Inject constructor(
         validateKotlinAndJavaHasSameTargetCompatibility(args)
 
         val scriptSources = scriptSources.asFileTree.files
+        val javaSources = javaSources.files
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors,)
         val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
         val outputItemCollector = OutputItemsCollectorImpl()
@@ -747,11 +748,11 @@ abstract class KotlinCompile @Inject constructor(
             kotlinScriptExtensions = scriptExtensions.get().toTypedArray()
         )
         logger.info("Kotlin source files: ${kotlinSources.joinToString()}")
-        logger.info("Java source files: ${javaSources.files.joinToString()}")
+        logger.info("Java source files: ${javaSources.joinToString()}")
         logger.info("Script source files: ${scriptSources.joinToString()}")
         logger.info("Script file extensions: ${scriptExtensions.get().joinToString()}")
         compilerRunner.runJvmCompilerAsync(
-            (kotlinSources + scriptSources + javaSources.files).toList(),
+            (kotlinSources + scriptSources + javaSources).toList(),
             commonSourceSet.toList(),
             javaPackagePrefix,
             args,
