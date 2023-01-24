@@ -45,9 +45,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
-import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -393,14 +391,18 @@ internal object FirReferenceResolveHelper {
         if (expression is KtLabelReferenceExpression && fir is FirPropertyAccessExpression && fir.calleeReference is FirSuperReference) {
             return listOfNotNull((fir.dispatchReceiver.typeRef as? FirResolvedTypeRef)?.toTargetSymbol(session, symbolBuilder))
         }
-        val implicitInvokeReceiver = if (fir is FirImplicitInvokeCall) {
-            fir.explicitReceiver?.unwrapSmartcastExpression() as? FirQualifiedAccessExpression
+        val receiverOrImplicitInvoke = if (fir is FirImplicitInvokeCall) {
+            fir.explicitReceiver?.unwrapSmartcastExpression()
         } else {
             null
         }
-        val calleeReference = implicitInvokeReceiver?.calleeReference ?: fir.calleeReference
 
-        return calleeReference.toTargetSymbol(session, symbolBuilder, isInLabelReference = expression is KtLabelReferenceExpression)
+        return if (receiverOrImplicitInvoke is FirResolvedQualifier) {
+            getSymbolsForResolvedQualifier(receiverOrImplicitInvoke, expression, session, symbolBuilder)
+        } else {
+            val calleeReference = (receiverOrImplicitInvoke as? FirQualifiedAccessExpression)?.calleeReference ?: fir.calleeReference
+            calleeReference.toTargetSymbol(session, symbolBuilder, isInLabelReference = expression is KtLabelReferenceExpression)
+        }
     }
 
 
@@ -494,8 +496,12 @@ internal object FirReferenceResolveHelper {
         }
         val referencedClass = referencedSymbol.fir
         val referencedSymbolsByFir = listOfNotNull(symbolBuilder.buildSymbol(referencedSymbol))
-        val firSourcePsi = fir.source.psi
-        if (firSourcePsi !is KtDotQualifiedExpression) return referencedSymbolsByFir
+        val fullQualifiedAccess = when (val psi = fir.source.psi) {
+            // for cases like `Foo.Bar()`, where `Foo.Bar` is an object, and `Foo.Bar()` is a call to `invoke` operator
+            is KtSimpleNameExpression -> psi.getQualifiedElement()
+            else -> psi
+        }
+        if (fullQualifiedAccess !is KtDotQualifiedExpression) return referencedSymbolsByFir
 
         // When the source of an `FirResolvedQualifier` is a KtDotQualifiedExpression, we need to manually break up the qualified access and
         // resolve individual parts of it because in FIR, the entire qualified access is one element.
@@ -503,14 +509,21 @@ internal object FirReferenceResolveHelper {
             // TODO: handle local classes after KT-47135 is fixed
             return referencedSymbolsByFir
         } else {
-            var qualifiedAccess: KtDotQualifiedExpression = firSourcePsi
+            var qualifiedAccess: KtDotQualifiedExpression = fullQualifiedAccess
             val referencedClassId =
-                if ((referencedClass as? FirRegularClass)?.isCompanion == true &&
-                    (qualifiedAccess.selectorExpression as? KtNameReferenceExpression)?.getReferencedName() != referencedClass.classId.shortClassName.asString()
-                ) {
-                    // Remove the last companion name part if the qualified access does not contain it.
-                    // This is needed because the companion name part is optional.
-                    referencedClass.classId.outerClassId ?: return referencedSymbolsByFir
+                if ((referencedClass as? FirRegularClass)?.isCompanion == true) {
+                    val deepestQualifier = qualifiedAccess.selectorExpression?.referenceExpression() as? KtNameReferenceExpression
+
+                    // If we're looking for the deepest qualifier, then just resolve to the companion
+                    if (expression === deepestQualifier) return referencedSymbolsByFir
+
+                    if (deepestQualifier?.getReferencedName() != referencedClass.classId.shortClassName.asString()) {
+                        // Remove the last companion name part if the qualified access does not contain it.
+                        // This is needed because the companion name part is optional.
+                        referencedClass.classId.outerClassId ?: return referencedSymbolsByFir
+                    } else {
+                        referencedClass.classId
+                    }
                 } else {
                     referencedClass.classId
                 }
@@ -548,7 +561,7 @@ internal object FirReferenceResolveHelper {
 
             // Handle nested classes.
             while (classId != null) {
-                if (expression === qualifiedAccess.selectorExpression) {
+                if (expression === qualifiedAccess.selectorExpression?.referenceExpression()) {
                     return listOfNotNull(classId.toTargetPsi(session, symbolBuilder))
                 }
                 val outerClassId = classId.outerClassId
@@ -609,7 +622,13 @@ internal object FirReferenceResolveHelper {
             .toList()
             .asReversed()
 
-        val qualifyingReferences = qualifiers.map { it as? KtNameReferenceExpression ?: return null }
+        val qualifyingReferences = qualifiers.mapIndexed { index, qualifier ->
+            // We want to handle qualified calls like `foo.Bar.Baz()`, but not like `foo.Bar().Baz()`
+            if (qualifier is KtCallExpression && index != qualifiers.lastIndex) return null
+
+            qualifier.referenceExpression() as? KtNameReferenceExpression ?: return null
+        }
+
         return qualifyingReferences.map { it.getReferencedName() }
     }
 

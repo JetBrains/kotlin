@@ -1,2 +1,2 @@
 Resolved to:
-0: (in test.Conflict) operator fun invoke()
+0: (in test) object Conflict

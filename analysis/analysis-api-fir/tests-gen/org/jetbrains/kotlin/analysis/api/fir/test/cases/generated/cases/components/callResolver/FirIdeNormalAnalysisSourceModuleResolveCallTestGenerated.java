@@ -961,6 +961,76 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects")
+    @TestDataPath("$PROJECT_ROOT")
+    public class InvokeOnObjects {
+        @Test
+        public void testAllFilesPresentInInvokeOnObjects() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("companionObject1.kt")
+        public void testCompanionObject1() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects/companionObject1.kt");
+        }
+
+        @Test
+        @TestMetadata("companionObject2.kt")
+        public void testCompanionObject2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects/companionObject2.kt");
+        }
+
+        @Test
+        @TestMetadata("companionObjectWithName1.kt")
+        public void testCompanionObjectWithName1() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects/companionObjectWithName1.kt");
+        }
+
+        @Test
+        @TestMetadata("companionObjectWithName2.kt")
+        public void testCompanionObjectWithName2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects/companionObjectWithName2.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedObject1.kt")
+        public void testNestedObject1() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects/nestedObject1.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedObject2.kt")
+        public void testNestedObject2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects/nestedObject2.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedObject3.kt")
+        public void testNestedObject3() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects/nestedObject3.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedObject4.kt")
+        public void testNestedObject4() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects/nestedObject4.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleObject1.kt")
+        public void testSimpleObject1() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects/simpleObject1.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleObject2.kt")
+        public void testSimpleObject2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/invokeOnObjects/simpleObject2.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/callResolver/resolveCall/nonCalls")
     @TestDataPath("$PROJECT_ROOT")
     public class NonCalls {

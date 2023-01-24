@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.tower
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
@@ -286,7 +287,10 @@ private fun BodyResolveComponents.createExplicitReceiverForInvoke(
         is FirCallableSymbol<*> -> createExplicitReceiverForInvokeByCallable(
             candidate, info, invokeBuiltinExtensionMode, extensionReceiverExpression, symbol
         )
-        is FirRegularClassSymbol -> buildResolvedQualifierForClass(symbol, sourceElement = null)
+        is FirRegularClassSymbol -> buildResolvedQualifierForClass(
+            symbol,
+            sourceElement = info.fakeSourceForImplicitInvokeCallReceiver
+        )
         is FirTypeAliasSymbol -> {
             val type = symbol.fir.expandedTypeRef.coneTypeUnsafe<ConeClassLikeType>().fullyExpandedType(session)
             val expansionRegularClassSymbol = type.lookupTag.toSymbolOrError(session)
@@ -321,11 +325,14 @@ private fun BodyResolveComponents.createExplicitReceiverForInvokeByCallable(
         if (candidate.currentApplicability == CandidateApplicability.K2_PROPERTY_AS_OPERATOR) {
             nonFatalDiagnostics.add(ConePropertyAsOperator(candidate.symbol as FirPropertySymbol))
         }
-        source = (info.callSite as? FirFunctionCall)?.calleeReference?.source?.fakeElement(KtFakeSourceElementKind.ImplicitInvokeCall)
+        source = info.fakeSourceForImplicitInvokeCallReceiver
     }.build().let {
         transformQualifiedAccessUsingSmartcastInfo(it)
     }
 }
+
+private val CallInfo.fakeSourceForImplicitInvokeCallReceiver: KtSourceElement?
+    get() = (callSite as? FirFunctionCall)?.calleeReference?.source?.fakeElement(KtFakeSourceElementKind.ImplicitInvokeCall)
 
 private class InvokeReceiverResolveTask(
     components: BodyResolveComponents,

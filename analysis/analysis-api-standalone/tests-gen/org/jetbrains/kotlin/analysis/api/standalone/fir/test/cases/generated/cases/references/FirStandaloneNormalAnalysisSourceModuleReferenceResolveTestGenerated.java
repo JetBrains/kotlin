@@ -1076,6 +1076,76 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveTestGenerate
         }
 
         @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke/onObjects")
+        @TestDataPath("$PROJECT_ROOT")
+        public class OnObjects {
+            @Test
+            public void testAllFilesPresentInOnObjects() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/invoke/onObjects"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("companionObject1.kt")
+            public void testCompanionObject1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/invoke/onObjects/companionObject1.kt");
+            }
+
+            @Test
+            @TestMetadata("companionObject2.kt")
+            public void testCompanionObject2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/invoke/onObjects/companionObject2.kt");
+            }
+
+            @Test
+            @TestMetadata("companionObjectWithName1.kt")
+            public void testCompanionObjectWithName1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/invoke/onObjects/companionObjectWithName1.kt");
+            }
+
+            @Test
+            @TestMetadata("companionObjectWithName2.kt")
+            public void testCompanionObjectWithName2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/invoke/onObjects/companionObjectWithName2.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedObject1.kt")
+            public void testNestedObject1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/invoke/onObjects/nestedObject1.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedObject2.kt")
+            public void testNestedObject2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/invoke/onObjects/nestedObject2.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedObject3.kt")
+            public void testNestedObject3() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/invoke/onObjects/nestedObject3.kt");
+            }
+
+            @Test
+            @TestMetadata("nestedObject4.kt")
+            public void testNestedObject4() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/invoke/onObjects/nestedObject4.kt");
+            }
+
+            @Test
+            @TestMetadata("simpleObject1.kt")
+            public void testSimpleObject1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/invoke/onObjects/simpleObject1.kt");
+            }
+
+            @Test
+            @TestMetadata("simpleObject2.kt")
+            public void testSimpleObject2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/invoke/onObjects/simpleObject2.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("analysis/analysis-api/testData/referenceResolve/invoke/withErrors")
         @TestDataPath("$PROJECT_ROOT")
         public class WithErrors {
