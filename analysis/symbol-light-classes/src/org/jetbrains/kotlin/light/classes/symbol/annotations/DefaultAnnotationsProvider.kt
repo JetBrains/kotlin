@@ -42,8 +42,11 @@ internal object DefaultAnnotationsProvider : AdditionalAnnotationsProvider {
         return when {
             parent.isAnnotationClass() -> findAdditionalAnnotationFromAnnotationClass(annotationsBox, qualifiedName, owner)
             parent.isMethodWithOverride() -> {
-                val overrideQualifier = JvmAnnotationNames.OVERRIDE_ANNOTATION.asString()
-                if (qualifiedName == overrideQualifier) SymbolLightSimpleAnnotation(overrideQualifier, owner) else null
+                createSimpleAnnotationIfMatches(
+                    qualifier = qualifiedName,
+                    expectedQualifier = JvmAnnotationNames.OVERRIDE_ANNOTATION.asString(),
+                    owner = owner,
+                )
             }
 
             else -> null
@@ -87,16 +90,6 @@ private fun findAdditionalAnnotationFromAnnotationClass(
 
 private fun PsiElement.isAnnotationClass(): Boolean = this is PsiClass && isAnnotationType
 private fun PsiElement.isMethodWithOverride(): Boolean = this is SymbolLightMethod<*> && (isDelegated || isOverride())
-
-private fun addSimpleAnnotationIfMissing(
-    qualifier: String,
-    currentRawAnnotations: MutableList<in PsiAnnotation>,
-    foundQualifiers: MutableSet<String>,
-    owner: PsiModifierList,
-) {
-    if (!foundQualifiers.add(qualifier)) return
-    currentRawAnnotations += SymbolLightSimpleAnnotation(qualifier, owner)
-}
 
 private fun LazyAnnotationsBox.tryConvertToDocumentedJavaAnnotation(
     qualifiedName: String,

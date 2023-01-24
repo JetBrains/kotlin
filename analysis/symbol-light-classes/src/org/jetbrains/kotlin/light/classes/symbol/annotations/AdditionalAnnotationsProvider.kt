@@ -11,4 +11,17 @@ import com.intellij.psi.PsiModifierList
 internal interface AdditionalAnnotationsProvider {
     fun addAllAnnotations(currentRawAnnotations: MutableList<in PsiAnnotation>, foundQualifiers: MutableSet<String>, owner: PsiModifierList)
     fun findAdditionalAnnotation(annotationsBox: LazyAnnotationsBox, qualifiedName: String, owner: PsiModifierList): PsiAnnotation?
+
+    fun addSimpleAnnotationIfMissing(
+        qualifier: String,
+        currentRawAnnotations: MutableList<in PsiAnnotation>,
+        foundQualifiers: MutableSet<String>,
+        owner: PsiModifierList,
+    ) {
+        if (!foundQualifiers.add(qualifier)) return
+        currentRawAnnotations += SymbolLightSimpleAnnotation(qualifier, owner)
+    }
+
+    fun createSimpleAnnotationIfMatches(qualifier: String, expectedQualifier: String, owner: PsiModifierList): PsiAnnotation? =
+        if (qualifier == expectedQualifier) SymbolLightSimpleAnnotation(expectedQualifier, owner) else null
 }
