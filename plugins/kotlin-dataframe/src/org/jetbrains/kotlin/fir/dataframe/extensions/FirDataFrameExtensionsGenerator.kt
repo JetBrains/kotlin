@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.dataframe.GeneratedNames
+import org.jetbrains.kotlin.fir.dataframe.IGeneratedNames
 import org.jetbrains.kotlin.fir.dataframe.Names
 import org.jetbrains.kotlin.fir.dataframe.projectOverDataColumnType
 import org.jetbrains.kotlin.fir.declarations.*
@@ -40,7 +41,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlinx.dataframe.annotations.DataSchema
 
-fun GeneratedNames.FirDataFrameExtensionsGenerator(session: FirSession): FirDeclarationGenerationExtension {
+fun IGeneratedNames.FirDataFrameExtensionsGenerator(session: FirSession): FirDeclarationGenerationExtension {
     return FirDataFrameExtensionsGenerator(session, scopes, scopeState, callables, callableState)
 }
 

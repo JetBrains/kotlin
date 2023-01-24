@@ -86,4 +86,10 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
     public void testReadJson() throws Exception {
         runTest("testData/box/readJson.kt");
     }
+
+    @Test
+    @TestMetadata("unhandledIntrisic.kt")
+    public void testUnhandledIntrisic() throws Exception {
+        runTest("testData/box/unhandledIntrisic.kt");
+    }
 }
