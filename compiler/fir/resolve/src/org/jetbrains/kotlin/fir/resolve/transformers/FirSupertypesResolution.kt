@@ -348,8 +348,11 @@ open class FirSupertypeResolverVisitor(
 
         val transformer = FirSpecificTypeResolverTransformer(session, supertypeSupplier = supertypeComputationSession.supertypesSupplier)
 
-        @OptIn(PrivateForInline::class)
-        val resolvedTypesRefs = transformer.withFile(useSiteFile) {
+        val newUseSiteFile =
+            if (classLikeDeclaration.isLocalClassOrAnonymousObject()) @OptIn(PrivateForInline::class) useSiteFile
+            else session.firProvider.getFirClassifierContainerFileIfAny(classLikeDeclaration.symbol)
+
+        val resolvedTypesRefs = transformer.withFile(newUseSiteFile) {
             resolveSuperTypeRefs(
                 transformer,
                 ScopeClassDeclaration(scopes, classDeclarationsStack, containerDeclaration = classLikeDeclaration),

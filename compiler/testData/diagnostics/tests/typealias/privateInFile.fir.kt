@@ -3,7 +3,7 @@ private class C {
     companion object
 }
 
-private typealias TA = <!INVISIBLE_REFERENCE!>C<!>
+private typealias TA = C
 
 private val test1: <!INVISIBLE_REFERENCE!>C<!> = <!INVISIBLE_REFERENCE!>C<!>()
 private val test1co: <!INVISIBLE_REFERENCE!>C.Companion<!> = <!INITIALIZER_TYPE_MISMATCH, INVISIBLE_REFERENCE, NO_COMPANION_OBJECT!>C<!>
