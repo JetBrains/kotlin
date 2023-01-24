@@ -4477,6 +4477,9 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/include_categories/objc_include_categories.def'
         it.headers "$projectDir/interop/objc/include_categories/objc_include_categories.h"
     }
+    createInterop("frameworkForwardDeclarations") {
+        it.defFile 'framework/forwardDeclarations/clib.def'
+    }
 }
 
 createInterop("withSpaces") {
@@ -6057,6 +6060,14 @@ if (isAppleTarget(project)) {
                 throw new Error("Unexpected CFBundleVersion in Info.plist:\n$plistContent")
             }
         }
+    }
+
+    frameworkTest("testForwardDeclarationsFramework") {
+        framework('ForwardDeclarations') {
+            sources = ['framework/forwardDeclarations']
+            library = 'frameworkForwardDeclarations'
+        }
+        swiftSources = ['framework/forwardDeclarations/']
     }
 }
 

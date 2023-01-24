@@ -536,9 +536,6 @@ fun isFunction0(obj: Any?): Boolean = obj is Function0<*>
 
 abstract class MyAbstractList : List<Any?>
 
-fun takeForwardDeclaredClass(obj: objcnames.classes.ForwardDeclaredClass) {}
-fun takeForwardDeclaredProtocol(obj: objcnames.protocols.ForwardDeclaredProtocol) {}
-
 class TestKClass {
     fun getKotlinClass(clazz: ObjCClass) = getOriginalKotlinClass(clazz)
     fun getKotlinClass(protocol: ObjCProtocol) = getOriginalKotlinClass(protocol)
