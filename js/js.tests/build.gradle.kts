@@ -1,6 +1,4 @@
 import com.github.gradle.node.npm.task.NpmTask
-import de.undercouch.gradle.tasks.download.Download
-import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
@@ -13,7 +11,6 @@ plugins {
     kotlin("plugin.serialization")
     id("jps-compatible")
     id("com.github.node-gradle.node") version "3.2.1"
-    id("de.undercouch.download")
 }
 
 val nodeDir = buildDir.resolve("node")
@@ -48,7 +45,6 @@ dependencies {
     testCompileOnly(project(":compiler:util"))
     testCompileOnly(intellijCore())
     testApi(project(":compiler:backend.js"))
-    testApi(project(":compiler:backend.wasm"))
     testApi(project(":js:js.translator"))
     testApi(project(":js:js.serializer"))
     testApi(project(":js:js.dce"))
@@ -106,58 +102,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-enum class OsName { WINDOWS, MAC, LINUX, UNKNOWN }
-enum class OsArch { X86_32, X86_64, ARM64, UNKNOWN }
-data class OsType(val name: OsName, val arch: OsArch)
 abstract class MochaTestTask : NpmTask(), VerificationTask
-
-val currentOsType = run {
-    val gradleOs = OperatingSystem.current()
-    val osName = when {
-        gradleOs.isMacOsX -> OsName.MAC
-        gradleOs.isWindows -> OsName.WINDOWS
-        gradleOs.isLinux -> OsName.LINUX
-        else -> OsName.UNKNOWN
-    }
-
-    val osArch = when (providers.systemProperty("sun.arch.data.model").forUseAtConfigurationTime().get()) {
-        "32" -> OsArch.X86_32
-        "64" -> when (providers.systemProperty("os.arch").forUseAtConfigurationTime().get().toLowerCase()) {
-            "aarch64" -> OsArch.ARM64
-            else -> OsArch.X86_64
-        }
-        else -> OsArch.UNKNOWN
-    }
-
-    OsType(osName, osArch)
-}
-
-val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2023/01/2023-01-23-09-44-44-mozilla-central"
-val jsShellSuffix = when (currentOsType) {
-    OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
-    OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
-    OsType(OsName.MAC, OsArch.X86_64),
-    OsType(OsName.MAC, OsArch.ARM64) -> "mac"
-    OsType(OsName.WINDOWS, OsArch.X86_32) -> "win32"
-    OsType(OsName.WINDOWS, OsArch.X86_64) -> "win64"
-    else -> error("unsupported os type $currentOsType")
-}
-val jsShellLocation = "$jsShellDirectory/jsshell-$jsShellSuffix.zip"
-
-val downloadedTools = File(buildDir, "tools")
-
-val downloadJsShell by task<Download> {
-    src(jsShellLocation)
-    dest(File(downloadedTools, "jsshell-$jsShellSuffix.zip"))
-    overwrite(false)
-}
-
-val unzipJsShell by task<Copy> {
-    dependsOn(downloadJsShell)
-    from(zipTree(downloadJsShell.get().dest))
-    val unpackedDir = File(downloadedTools, "jsshell-$jsShellSuffix")
-    into(unpackedDir)
-}
 
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")
 val typescriptTestsDir = testDataDir.resolve("typescript-export")
@@ -262,12 +207,6 @@ fun Test.setupNodeJs() {
     )
 }
 
-fun Test.setupSpiderMonkey() {
-    dependsOn(unzipJsShell)
-    val jsShellExecutablePath = File(unzipJsShell.get().destinationDir, "js").absolutePath
-    systemProperty("javascript.engine.path.SpiderMonkey", jsShellExecutablePath)
-}
-
 val d8Plugin = D8RootPlugin.apply(rootProject)
 d8Plugin.version = v8Version
 
@@ -318,7 +257,6 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
         inputs.dir(rootDir.resolve("libraries/kotlin.test/js-ir/build/classes/kotlin/js/main"))
     }
 
-    exclude("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
     exclude("org/jetbrains/kotlin/js/testOld/api/*")
 
     if (jsEnabled && !jsIrEnabled) {
@@ -483,21 +421,6 @@ val mochaTest by task<MochaTestTask> {
 val runMocha by tasks.registering {
     dependsOn(jsTest)
     finalizedBy(mochaTest)
-}
-
-projectTest("wasmTest", true) {
-    setupV8()
-    setupSpiderMonkey()
-
-    include("org/jetbrains/kotlin/js/testOld/wasm/semantics/*")
-
-    dependsOn(":kotlin-stdlib-wasm:compileKotlinWasm")
-    systemProperty("kotlin.wasm.stdlib.path", "libraries/stdlib/wasm/build/classes/kotlin/wasm/main")
-
-    dependsOn(":kotlin-test:kotlin-test-wasm:compileKotlinWasm")
-    systemProperty("kotlin.wasm.kotlin.test.path", "libraries/kotlin.test/wasm/build/classes/kotlin/wasm/main")
-
-    setUpBoxTests()
 }
 
 projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit4) {
