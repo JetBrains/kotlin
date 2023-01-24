@@ -136,10 +136,10 @@ class FirNativeKLibSerializerExtension(
     ) {
         // inspired by KlibMetadataSerializerExtension.serializeFunction
         declarationFileId(function)?.let { proto.setExtension(KlibMetadataProtoBuf.functionFile, it) }
-        function.annotations.forEach {
+        function.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.functionAnnotation, annotationSerializer.serializeAnnotation(it))
         }
-        function.receiverParameter?.annotations?.forEach {
+        function.receiverParameter?.nonSourceAnnotations(session)?.forEach {
             proto.addExtension(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         // TODO KT-56090 Serialize KDocString
@@ -147,7 +147,7 @@ class FirNativeKLibSerializerExtension(
     }
 
     override fun serializeValueParameter(parameter: FirValueParameter, proto: ProtoBuf.ValueParameter.Builder) {
-        parameter.annotations.forEach {
+        parameter.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         super.serializeValueParameter(parameter, proto)
@@ -161,7 +161,7 @@ class FirNativeKLibSerializerExtension(
     ) {
         // inspired by KlibMetadataSerializerExtension.serializeProperty
         declarationFileId(property)?.let { proto.setExtension(KlibMetadataProtoBuf.propertyFile, it) }
-        property.annotations.forEach {
+        property.nonSourceAnnotations(session).forEach {
             val extension = when (it.useSiteTarget) {
                 AnnotationUseSiteTarget.FIELD -> KlibMetadataProtoBuf.propertyBackingFieldAnnotation
                 AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation
@@ -169,10 +169,10 @@ class FirNativeKLibSerializerExtension(
             }
             proto.addExtension(extension, annotationSerializer.serializeAnnotation(it))
         }
-        property.getter?.annotations?.forEach {
+        property.getter?.nonSourceAnnotations(session)?.forEach {
             proto.addExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, annotationSerializer.serializeAnnotation(it))
         }
-        property.setter?.annotations?.forEach {
+        property.setter?.nonSourceAnnotations(session)?.forEach {
             proto.addExtension(KlibMetadataProtoBuf.propertySetterAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         // TODO KT-56090 Serialize KDocString
@@ -186,7 +186,7 @@ class FirNativeKLibSerializerExtension(
             childSerializer: FirElementSerializer
     ) {
         declarationFileId(klass)?.let { proto.setExtension(KlibMetadataProtoBuf.classFile, it) }
-        klass.annotations.forEach {
+        klass.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         // TODO KT-56090 Serialize KDocString
@@ -198,7 +198,7 @@ class FirNativeKLibSerializerExtension(
             proto: ProtoBuf.Constructor.Builder,
             childSerializer: FirElementSerializer
     ) {
-        constructor.annotations.forEach {
+        constructor.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.constructorAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         // TODO KT-56090 Serialize KDocString
@@ -206,7 +206,7 @@ class FirNativeKLibSerializerExtension(
     }
 
     override fun serializeEnumEntry(enumEntry: FirEnumEntry, proto: ProtoBuf.EnumEntry.Builder) {
-        enumEntry.annotations.forEach {
+        enumEntry.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.enumEntryAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         super.serializeEnumEntry(enumEntry, proto)
@@ -218,7 +218,7 @@ class FirNativeKLibSerializerExtension(
     }
 
     override fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
-        typeParameter.annotations.forEach {
+        typeParameter.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         super.serializeTypeParameter(typeParameter, proto)

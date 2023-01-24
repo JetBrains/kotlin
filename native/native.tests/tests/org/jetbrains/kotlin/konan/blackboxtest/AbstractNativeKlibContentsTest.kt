@@ -26,7 +26,7 @@ abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
     protected fun runTest(@TestDataFile testPath: String) {
         val testPathFull = getAbsoluteFile(testPath)
 
-        val testCase: TestCase = generateCInteropTestCaseWithSingleSource(testPathFull, listOf())
+        val testCase: TestCase = generateTestCaseWithSingleSource(testPathFull, listOf())
         val testCompilationResult: TestCompilationResult.Success<out KLIB> = compileToLibrary(testCase)
 
         val klibContents = testCompilationResult.assertSuccess().resultingArtifact.getContents(kotlinNativeClassLoader.classLoader)
@@ -37,7 +37,7 @@ abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
         }
     }
 
-    private fun generateCInteropTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
+    private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
         val moduleName: String = source.name
         val module = TestModule.Exclusive(moduleName, emptySet(), emptySet())
         module.files += TestFile.createCommitted(source, module)
