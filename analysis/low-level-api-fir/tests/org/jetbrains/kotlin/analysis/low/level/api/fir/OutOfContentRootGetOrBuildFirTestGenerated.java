@@ -620,6 +620,12 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
         }
 
         @Test
+        @TestMetadata("qualifiedPartOfQualifiedCallUnresolved.kt")
+        public void testQualifiedPartOfQualifiedCallUnresolved() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/qualifiedExpressions/qualifiedPartOfQualifiedCallUnresolved.kt");
+        }
+
+        @Test
         @TestMetadata("qualifiedPartOfQualifiedCallWithNestedClasses.kt")
         public void testQualifiedPartOfQualifiedCallWithNestedClasses() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/qualifiedExpressions/qualifiedPartOfQualifiedCallWithNestedClasses.kt");

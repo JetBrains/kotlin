@@ -1,0 +1,17 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = foo()
+        isSafeNavigation = false
+        type = F
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = F
+        symbol = /F.peek(<dispatch receiver>: F): F
+        valueParameters = []
+        callableIdIfNonLocal = /F.peek
+    typeArgumentsMapping = {}
+    argumentMapping = {}

@@ -703,7 +703,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         prefix: Boolean,
         convert: T.() -> FirExpression
     ): FirExpression {
-        val argumentReceiver = receiverForOperation.receiverExpression // a
         return buildBlockProbablyUnderSafeCall(
             receiverForOperation,
             convert,
@@ -720,7 +719,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
             val argumentReceiverVariable = generateTemporaryVariable(
                 baseModuleData,
-                argumentReceiver?.toFirSourceElement(),
+                desugaredSource,
                 SpecialNames.RECEIVER,
                 initializer = receiverFir,
             ).also { statements += it }

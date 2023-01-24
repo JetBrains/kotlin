@@ -203,6 +203,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("arrayIncWithDotQualifier.kt")
+    public void testArrayIncWithDotQualifier() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/arrayIncWithDotQualifier.kt");
+    }
+
+    @Test
     @TestMetadata("arrayOfInAnnotation.kt")
     public void testArrayOfInAnnotation() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/arrayOfInAnnotation.kt");
@@ -500,6 +506,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     @TestMetadata("implicitJavaConstuctorCall.kt")
     public void testImplicitJavaConstuctorCall() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/implicitJavaConstuctorCall.kt");
+    }
+
+    @Test
+    @TestMetadata("incWithDotQualifier.kt")
+    public void testIncWithDotQualifier() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/incWithDotQualifier.kt");
     }
 
     @Test
