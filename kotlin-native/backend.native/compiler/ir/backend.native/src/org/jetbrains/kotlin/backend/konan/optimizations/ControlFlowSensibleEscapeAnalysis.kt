@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.pop
+import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
@@ -223,8 +225,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
         }
 
-        private class PointsToGraphForest {
-            private var currentNodeId = Node.LOWEST_NODE_ID
+        private class PointsToGraphForest(startNodeId: Int = Node.LOWEST_NODE_ID) {
+            private var currentNodeId = startNodeId
             fun nextNodeId() = currentNodeId++
             val totalNodes get() = currentNodeId
 
@@ -314,7 +316,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             fun mergeGraphs(graphs: List<PointsToGraph>, otherNodesToMap: MutableList<Node>): PointsToGraph {
-                // TODO: Nothing to do if graphs.size == 1
                 val newNodes = arrayOfNulls<Node?>(totalNodes)
                 val parameterNodes = mutableMapOf<IrValueParameter, Node.Parameter>()
                 val variableNodes = mutableMapOf<IrVariable, Node.VariableValue>()
@@ -394,7 +395,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
         }
 
         private class PointsToGraph(
-                private val forest: PointsToGraphForest,
+                val forest: PointsToGraphForest,
                 val nodes: MutableList<Node>,
                 val parameterNodes: MutableMap<IrValueParameter, Node.Parameter>,
                 val variableNodes: MutableMap<IrVariable, Node.VariableValue>
@@ -898,15 +899,18 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
                         if ((fieldPointee as? Node.Object)?.isFictitious == true
                                 && inMirroredNodes[fieldPointee.id] == null /* Skip loops */) {
-                            val mirroredNode = if (actualObjects.size == 1) null else graph.newPhiNode()
+                            val hasIncomingEdges = fieldValue.assignedTo.isNotEmpty()
+                            val mirroredNode = if (actualObjects.size > 1 && hasIncomingEdges) graph.newPhiNode() else null
                             mirroredNode?.let { reflectNode(fieldValue, it) }
                             val nextActualObjects = mutableListOf<Node.Object>()
                             for (obj in actualObjects) {
                                 val objFieldValue = with(graph) { obj.getField(field) }
-                                if (mirroredNode == null)
-                                    reflectNode(fieldValue, objFieldValue)
-                                else
-                                    mirroredNode.addEdge(objFieldValue)
+                                if (hasIncomingEdges) {
+                                    if (mirroredNode == null)
+                                        reflectNode(fieldValue, objFieldValue)
+                                    else
+                                        mirroredNode.addEdge(objFieldValue)
+                                }
                                 nextActualObjects.addAll(graph.getObjectNodes(objFieldValue))
                             }
                             handledNodes.set(fieldValue.id)
@@ -949,41 +953,14 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 for (parameter in calleeEscapeAnalysisResult.graph.parameterNodes.values)
                     reflectFieldsOf(parameter, graph.getObjectNodes(arguments[parameter.index]))
 
-//                val argumentsObjects = arguments.map { graph.getObjectNodes(it) }
-
-
-
-//                if (calleeEscapeAnalysisResult.returnValue != Node.Unit)
-//                    reflectNode(calleeEscapeAnalysisResult.returnValue, returnNode)
-//                calleeEscapeAnalysisResult.parameters.forEachIndexed { index, parameter ->
-//                    reflectNode(parameter, arguments[index])
-//                    val argumentObjects = argumentsObjects[index]
-//                    if (argumentObjects.size == 1) {
-//                        val argumentObject = argumentObjects[0]
-//                        parameter.fields.forEach { (field, fieldValue) ->
-//                            reflectNode(fieldValue, with(graph) { argumentObject.getField(field) })
-//                        }
-//                    } else {
-//                        parameter.fields.forEach { (field, fieldValue) ->
-//                            val inMirroredNode = graph.newTemporary()
-//                            val outMirroredNode = graph.newTemporary()
-//                            reflectNode(fieldValue, inMirroredNode, outMirroredNode)
-//                            argumentObjects.forEach {
-//                                with(graph) {
-//                                    val argumentFieldValue = it.getField(field)
-//                                    addEdge(argumentFieldValue, outMirroredNode)
-//                                    addEdge(inMirroredNode, argumentFieldValue)
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-
                 for (node in calleeGraph.nodes) {
                     if (handledNodes.get(node.id) || inMirroredNodes[node.id] != null) continue
                     when (node) {
                         is Node.Parameter -> error("Parameter $node should've been handled earlier")
-                        is Node.VariableValue -> error("All the variables should've been bypassed: $node")
+                        is Node.VariableValue -> {
+                            require(node == calleeEscapeAnalysisResult.returnValue) { "All the variables should've been bypassed: $node" }
+                            reflectNode(node, graph.newTempVariable())
+                        }
                         is Node.FieldValue -> Unit // Will be mirrored along with its owner object.
                         is Node.Phi -> reflectNode(node, graph.newPhiNode())
                         is Node.Object -> {
@@ -1018,31 +995,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     }
                 }
 
-//                val calleeObjects = Array(calleeEscapeAnalysisResult.numberOfDrains) { graph.newObject() }
-//
-//                fun mapNode(compressedNode: CompressedPointsToGraph.Node): List<Node> {
-//                    val rootNode = when (val kind = compressedNode.kind) {
-//                        CompressedPointsToGraph.NodeKind.Return -> returnNode
-//                        is CompressedPointsToGraph.NodeKind.Param -> arguments[kind.index]
-//                        is CompressedPointsToGraph.NodeKind.Drain -> calleeObjects[kind.index]
-//                    }
-//                    val path = compressedNode.path
-//                    var nodes = mutableListOf(rootNode)
-//                    for (field in path) {
-//                        val nextNodes = mutableListOf<Node>()
-//                        for (node in nodes) {
-//                            when (field) {
-//                                returnsValueField -> nextNodes.add(node)
-//                                else -> with(graph) {
-//                                    getObjectNodes(node).forEach { nextNodes.add(it.getField(field)) }
-//                                }
-//                            }
-//                        }
-//                        nodes = nextNodes
-//                    }
-//                    return nodes
-//                }
-//
 //                // TODO: Support escapes.
 ////                calleeEscapeAnalysisResult.escapes.forEach { escapingNode ->
 ////                    val (arg, node) = mapNode(escapingNode)
@@ -1178,97 +1130,178 @@ internal object ControlFlowSensibleEscapeAnalysis {
              *    So, we can eliminate nodes until none of the above observations is true.
              */
 
-            // Looks like this is not needed - it will be done during bypassing phase.
-//            with(functionResult.graph) {
-//                nodes.filterIsInstance<Node.Reference>().forEach { it.addObjectNodeIfLeaf() }
-//            }
-
-//            val returnObject = (functionResult.value as? Node.Object)
-//                    ?: with(functionResult.graph) {
-//                        newObject().also { addEdge(it.getField(returnsValueField), functionResult.value) }
-//                    }
-
             context.log { "after analyzing body:" }
             functionResult.graph.logDigraph(context)
 
-            val reachable = mutableListOf<Node>(Node.Unit)
-            val nodeSet = BitSet(forest.totalNodes)
-            nodeSet.set(Node.UNIT_ID)
-            if (functionResult.value != Node.Unit)
-                findReachable(functionResult.value, nodeSet, reachable)
-            findReachable(functionResult.graph.globalNode, nodeSet, reachable)
-            functionResult.graph.parameterNodes.values.forEach {
-                if (!nodeSet.get(it.id)) findReachable(it, nodeSet, reachable)
-            }
+            functionResult.graph.variableNodes.clear() // No need in this map anymore.
+            functionResult.removeUnreachable()
 
             context.log { "after removing unreachable:" }
-            PointsToGraph(forest, reachable, functionResult.graph.parameterNodes, mutableMapOf()).logDigraph(context)
+            functionResult.graph.logDigraph(context)
 
-            nodeSet.clear()
-            nodeSet.set(functionResult.value.id)
-            for (node in reachable)
-                (node as? Node.Object)?.fields?.values?.forEach { nodeSet.set(it.id) }
-
-            val nodes = mutableListOf<Node>()
-            for (node in reachable) {
-                if (node !is Node.Variable || nodeSet.get(node.id))
-                    nodes.add(node)
-                else {
-                    if (node.assignedTo.isNotEmpty())
-                        functionResult.graph.bypass(node)
-                    else
-                        node.assignedWith = null
-                }
-            }
-
-            // TODO: bypass phi nodes with either single incoming edge or single outgoing edge.
+            functionResult.bypassAndRemoveVariables()
 
             context.log { "after bypassing variables:" }
-            PointsToGraph(forest, nodes, functionResult.graph.parameterNodes, mutableMapOf()).logDigraph(context)
+            functionResult.graph.logDigraph(context)
 
-            var index = Node.LOWEST_NODE_ID
-            nodes.forEach { node ->
-                if (node != Node.Unit && node != functionResult.graph.globalNode)
-                    node.id = index++
-            }
-
-            context.log { "after reenumerating:" }
-            PointsToGraph(forest, nodes, functionResult.graph.parameterNodes, mutableMapOf()).logDigraph(context)
-
-            val list = mutableListOf(functionResult.value)
             // Remove multi-edges.
-            val graph = forest.mergeGraphs(listOf(PointsToGraph(forest, nodes, functionResult.graph.parameterNodes, mutableMapOf())), list)
+            functionResult.graph.reenumerateNodes()
+            val list = mutableListOf(functionResult.value)
+            val graph = PointsToGraphForest(functionResult.graph.nodes.size).mergeGraphs(listOf(functionResult.graph), list)
 
-            // TODO: Remove redundant fields and objects.
-
-            context.log { "EA result for ${function.render()}" }
+            context.log { "after removing multi-edges:" }
             graph.logDigraph(context)
 
-            escapeAnalysisResults[function.symbol] = EscapeAnalysisResult(graph, list[0])
+            val optimizedFunctionResult = ExpressionResult(list[0], graph)
+            optimizedFunctionResult.removeRedundantNodes()
+            (optimizedFunctionResult.value as? Node.Reference)?.let { returnValue ->
+                val isALeaf = when (returnValue) {
+                    is Node.Variable -> returnValue.assignedWith == null
+                    is Node.Phi -> returnValue.pointsTo.isEmpty()
+                }
+                if (isALeaf)
+                    returnValue.addEdge(optimizedFunctionResult.graph.constObjectNode(function.returnType))
+            }
+            optimizedFunctionResult.graph.reenumerateNodes()
+
+            context.log { "EA result for ${function.render()}" }
+            optimizedFunctionResult.graph.logDigraph(context)
+
+            escapeAnalysisResults[function.symbol] = EscapeAnalysisResult(optimizedFunctionResult.graph, optimizedFunctionResult.value)
         }
 
-        private fun findReachable(node: Node, nodeSet: BitSet, visited: MutableList<Node>) {
-            visited.add(node)
-            nodeSet.set(node.id)
-            when (node) {
-                is Node.Object -> {
-                    node.fields.values.forEach {
-                        if (!nodeSet.get(it.id)) findReachable(it, nodeSet, visited)
-                    }
-                }
-                is Node.Variable -> {
-                    node.assignedWith?.let {
-                        if (!nodeSet.get(it.id)) findReachable(it, nodeSet, visited)
-                    }
-                }
-                is Node.Phi -> {
-                    node.pointsTo.forEach {
-                        if (!nodeSet.get(it.id)) findReachable(it, nodeSet, visited)
-                    }
-                }
+        private fun PointsToGraph.reenumerateNodes() {
+            var index = Node.LOWEST_NODE_ID
+            for (node in nodes) {
+                if (node != Node.Unit && node != globalNode)
+                    node.id = index++
             }
         }
 
+        private fun ExpressionResult.removeUnreachable() {
+            val nodeSet = BitSet(graph.forest.totalNodes)
+            val reachable = mutableListOf<Node>(Node.Unit)
+            nodeSet.set(Node.UNIT_ID)
+
+            fun findReachable(node: Node) {
+                reachable.add(node)
+                nodeSet.set(node.id)
+                when (node) {
+                    is Node.Object -> {
+                        node.fields.values.forEach {
+                            if (!nodeSet.get(it.id)) findReachable(it)
+                        }
+                    }
+                    is Node.Variable -> {
+                        node.assignedWith?.let {
+                            if (!nodeSet.get(it.id)) findReachable(it)
+                        }
+                    }
+                    is Node.Phi -> {
+                        node.pointsTo.forEach {
+                            if (!nodeSet.get(it.id)) findReachable(it)
+                        }
+                    }
+                }
+            }
+
+            if (value != Node.Unit)
+                findReachable(value)
+            findReachable(graph.globalNode)
+            graph.parameterNodes.values.forEach {
+                if (!nodeSet.get(it.id)) findReachable(it)
+            }
+            graph.nodes.clear()
+            graph.nodes.addAll(reachable)
+        }
+
+        private fun ExpressionResult.bypassAndRemoveVariables() {
+            val nodesCopy = graph.nodes.toMutableList()
+            graph.nodes.clear()
+
+            val nodeSet = BitSet(graph.forest.totalNodes)
+            nodeSet.set(value.id)
+            for (node in nodesCopy)
+                (node as? Node.Object)?.fields?.values?.forEach { nodeSet.set(it.id) }
+
+            nodesCopy.filterTo(graph.nodes) { node ->
+                (node as? Node.Variable)
+                        ?.takeIf { !nodeSet.get(node.id) }
+                        ?.also { variable ->
+                            require(variable.assignedTo.isNotEmpty())
+                            graph.bypass(variable)
+                        } == null
+            }
+        }
+
+        private fun ExpressionResult.removeRedundantNodes() {
+            val singleNodesPointingAt = arrayOfNulls<Node>(graph.nodes.size)
+            val incomingEdgesCounts = IntArray(graph.nodes.size)
+
+            fun checkIncomingEdge(from: Node, toId: Int) {
+                singleNodesPointingAt[toId] = from.takeIf { ++incomingEdgesCounts[toId] == 1 }
+            }
+
+            val leaves = mutableListOf<Node>()
+            for (node in graph.nodes) {
+                when (node) {
+                    is Node.Object -> node.fields.values.let { fieldValues ->
+                        if (fieldValues.isEmpty())
+                            leaves.add(node)
+                        else
+                            fieldValues.forEach { checkIncomingEdge(node, it.id) }
+                    }
+                    is Node.Variable -> node.assignedWith.let { assignedWith ->
+                        if (assignedWith == null)
+                            leaves.add(node)
+                        else
+                            checkIncomingEdge(node, assignedWith.id)
+                    }
+                    is Node.Phi -> node.pointsTo.let { pointsTo ->
+                        if (pointsTo.isEmpty())
+                            leaves.add(node)
+                        else
+                            pointsTo.forEach { checkIncomingEdge(node, it.id) }
+                    }
+                }
+            }
+
+            val forbidToRemove = BitSet(graph.nodes.size)
+            val removed = BitSet(graph.nodes.size)
+            forbidToRemove.set(Node.UNIT_ID)
+            forbidToRemove.set(Node.GLOBAL_ID)
+            forbidToRemove.set(value.id)
+            graph.parameterNodes.values.forEach { forbidToRemove.set(it.id) }
+            while (leaves.isNotEmpty()) {
+                val leafNode = leaves.pop()
+                val leafNodeId = leafNode.id
+                if (forbidToRemove.get(leafNodeId)) continue
+                val singleNodePointingAtLeaf = singleNodesPointingAt[leafNodeId] ?: continue
+                removed.set(leafNodeId)
+                val hasBecomeALeaf = when (singleNodePointingAtLeaf) {
+                    is Node.Object -> singleNodePointingAtLeaf.fields.let { fields ->
+                        fields.remove((leafNode as Node.FieldValue).field)
+                        fields.isEmpty()
+                    }
+                    is Node.Variable -> {
+                        singleNodePointingAtLeaf.assignedWith = null
+                        true
+                    }
+                    is Node.Phi -> singleNodePointingAtLeaf.pointsTo.let { pointsTo ->
+                        pointsTo.remove(leafNode)
+                        pointsTo.isEmpty()
+                    }
+                }
+                if (hasBecomeALeaf)
+                    leaves.push(singleNodePointingAtLeaf)
+            }
+
+            @Suppress("UnnecessaryVariable") val nodesCopy = singleNodesPointingAt
+            for (node in graph.nodes)
+                nodesCopy[node.id] = node.takeIf { !removed.get(node.id) }
+            graph.nodes.clear()
+            nodesCopy.filterNotNullTo(graph.nodes)
+        }
 
     }
 
