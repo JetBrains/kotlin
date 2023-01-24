@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.utils.compact
+import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
@@ -47,7 +48,7 @@ internal class KClassImpl<T : Any>(
     inner class Data : KDeclarationContainerImpl.Data() {
         val descriptor: ClassDescriptor by ReflectProperties.lazySoft {
             val classId = classId
-            val moduleData = data().moduleData
+            val moduleData = data.value.moduleData
 
             val descriptor =
                 if (classId.isLocal) moduleData.deserialization.deserializeClass(classId)
@@ -105,7 +106,7 @@ internal class KClassImpl<T : Any>(
         }
 
         @Suppress("UNCHECKED_CAST")
-        val objectInstance: T? by ReflectProperties.lazy {
+        val objectInstance: T? by lazy(PUBLICATION) {
             val descriptor = descriptor
             if (descriptor.kind != ClassKind.OBJECT) return@lazy null
 
@@ -177,11 +178,11 @@ internal class KClassImpl<T : Any>(
                 by ReflectProperties.lazySoft { allNonStaticMembers + allStaticMembers }
     }
 
-    val data = ReflectProperties.lazy { Data() }
+    val data = lazy(PUBLICATION) { Data() }
 
-    override val descriptor: ClassDescriptor get() = data().descriptor
+    override val descriptor: ClassDescriptor get() = data.value.descriptor
 
-    override val annotations: List<Annotation> get() = data().annotations
+    override val annotations: List<Annotation> get() = data.value.annotations
 
     private val classId: ClassId get() = RuntimeTypeMapper.mapJvmClassToKotlinClassId(jClass)
 
@@ -192,7 +193,7 @@ internal class KClassImpl<T : Any>(
 
     internal val staticScope: MemberScope get() = descriptor.staticScope
 
-    override val members: Collection<KCallable<*>> get() = data().allMembers
+    override val members: Collection<KCallable<*>> get() = data.value.allMembers
 
     override val constructorDescriptors: Collection<ConstructorDescriptor>
         get() {
@@ -231,15 +232,15 @@ internal class KClassImpl<T : Any>(
         }
     }
 
-    override val simpleName: String? get() = data().simpleName
+    override val simpleName: String? get() = data.value.simpleName
 
-    override val qualifiedName: String? get() = data().qualifiedName
+    override val qualifiedName: String? get() = data.value.qualifiedName
 
-    override val constructors: Collection<KFunction<T>> get() = data().constructors
+    override val constructors: Collection<KFunction<T>> get() = data.value.constructors
 
-    override val nestedClasses: Collection<KClass<*>> get() = data().nestedClasses
+    override val nestedClasses: Collection<KClass<*>> get() = data.value.nestedClasses
 
-    override val objectInstance: T? get() = data().objectInstance
+    override val objectInstance: T? get() = data.value.objectInstance
 
     override fun isInstance(value: Any?): Boolean {
         // TODO: use Kotlin semantics for mutable/read-only collections once KT-11754 is supported (see TypeIntrinsics)
@@ -249,14 +250,14 @@ internal class KClassImpl<T : Any>(
         return (jClass.wrapperByPrimitive ?: jClass).isInstance(value)
     }
 
-    override val typeParameters: List<KTypeParameter> get() = data().typeParameters
+    override val typeParameters: List<KTypeParameter> get() = data.value.typeParameters
 
-    override val supertypes: List<KType> get() = data().supertypes
+    override val supertypes: List<KType> get() = data.value.supertypes
 
     /**
      * The list of the immediate subclasses if this class is a sealed class, or an empty list otherwise.
      */
-    override val sealedSubclasses: List<KClass<out T>> get() = data().sealedSubclasses
+    override val sealedSubclasses: List<KClass<out T>> get() = data.value.sealedSubclasses
 
     override val visibility: KVisibility?
         get() = descriptor.visibility.toKVisibility()
