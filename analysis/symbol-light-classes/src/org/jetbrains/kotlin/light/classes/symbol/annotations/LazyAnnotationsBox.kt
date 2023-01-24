@@ -25,7 +25,7 @@ internal class LazyAnnotationsBox(
     private val annotatedSymbolPointer: KtSymbolPointer<KtAnnotatedSymbol>,
     private val ktModule: KtModule,
     private val owner: PsiModifierList,
-    private val additionalAnnotationsProvider: AdditionalAnnotationsProvider,
+    private val additionalAnnotationsProvider: AdditionalAnnotationsProvider = DefaultAnnotationsProvider,
 ) : PsiAnnotationOwner {
     private inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
