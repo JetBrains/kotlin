@@ -401,6 +401,17 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             buildAndFail("assemble")
         }
     }
+
+    @DisplayName("JS IR compiled against automatically added dom-api-compat")
+    @GradleTest
+    fun testJsIrCompiledAgainstAutomaticallyAddedDomApiCompat(gradleVersion: GradleVersion) {
+        project("kotlin-js-coroutines", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("assemble")
+            build("compileDevelopmentExecutableKotlinJs")
+        }
+    }
 }
 
 @JsGradlePluginTests
