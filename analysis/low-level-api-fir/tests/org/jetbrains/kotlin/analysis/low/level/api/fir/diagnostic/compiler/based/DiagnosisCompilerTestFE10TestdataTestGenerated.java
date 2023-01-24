@@ -8586,6 +8586,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 }
 
                 @Test
+                @TestMetadata("kt41952.kt")
+                public void testKt41952() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/kt41952.kt");
+                }
+
+                @Test
                 @TestMetadata("labeledDelegatedExpression.kt")
                 public void testLabeledDelegatedExpression() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/labeledDelegatedExpression.kt");
