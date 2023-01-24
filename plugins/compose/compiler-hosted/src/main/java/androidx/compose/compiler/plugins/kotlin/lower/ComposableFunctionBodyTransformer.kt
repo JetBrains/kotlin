@@ -860,7 +860,10 @@ class ComposableFunctionBodyTransformer(
 
         val emitTraceMarkers = traceEventMarkersEnabled && !scope.function.isInline
 
-        scope.updateIntrinsiceRememberSafety(!mightUseDefaultGroup(false, scope, defaultParam))
+        scope.updateIntrinsiceRememberSafety(
+            !mightUseDefaultGroup(false, scope, defaultParam) &&
+                !mightUseVarArgsGroup(false, scope)
+        )
 
         transformed = transformed.apply {
             transformChildrenVoid()
@@ -1001,7 +1004,10 @@ class ComposableFunctionBodyTransformer(
 
         val emitTraceMarkers = traceEventMarkersEnabled && !scope.isInlinedLambda
 
-        scope.updateIntrinsiceRememberSafety(!mightUseDefaultGroup(canSkipExecution, scope, null))
+        scope.updateIntrinsiceRememberSafety(
+            !mightUseDefaultGroup(canSkipExecution, scope, null) &&
+                !mightUseVarArgsGroup(canSkipExecution, scope)
+        )
 
         // we must transform the body first, since that will allow us to see whether or not we
         // are using the dispatchReceiverParameter or the extensionReceiverParameter
@@ -1157,7 +1163,8 @@ class ComposableFunctionBodyTransformer(
         val defaultScope = transformDefaults(scope)
 
         scope.updateIntrinsiceRememberSafety(
-            !mightUseDefaultGroup(true, scope, defaultParam)
+            !mightUseDefaultGroup(true, scope, defaultParam) &&
+                !mightUseVarArgsGroup(true, scope)
         )
 
         // we must transform the body first, since that will allow us to see whether or not we
@@ -1334,6 +1341,13 @@ class ComposableFunctionBodyTransformer(
         // create a default group.
         return parameters.any { it.defaultValue?.expression?.isStatic() == false }
     }
+
+    // Like mightUseDefaultGroup(), this is an intentionally conservative value that must be true
+    // when ever a varargs group could be generated but can be true when it is not.
+    private fun mightUseVarArgsGroup(
+        isSkippableDeclaration: Boolean,
+        scope: Scope.FunctionScope
+    ) = isSkippableDeclaration && scope.allTrackedParams.any { it.isVararg }
 
     private fun buildPreambleStatementsAndReturnIfSkippingPossible(
         sourceElement: IrElement,
@@ -1535,6 +1549,7 @@ class ComposableFunctionBodyTransformer(
                     irGet(param),
                     param.type.classOrNull!!.getPropertyGetter("size")!!.owner
                 )
+
                 // TODO(lmr): verify this works with default vararg expressions!
                 skipPreamble.statements.add(
                     irStartMovableGroup(
