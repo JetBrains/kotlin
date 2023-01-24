@@ -146,6 +146,7 @@ private inline fun <T> createCoroutineFromSuspendFunction(
 }
 
 @PublishedApi
+@Suppress("UNCHECKED_CAST")
 internal fun <T> createSimpleCoroutineFromSuspendFunction(
     completion: Continuation<T>
 ): CoroutineImpl = object : CoroutineImpl(completion as Continuation<Any?>) {
