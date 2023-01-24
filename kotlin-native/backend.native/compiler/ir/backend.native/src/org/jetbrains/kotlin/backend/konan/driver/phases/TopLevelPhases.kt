@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.library.impl.javaFile
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val frontendOutput = useContext(FrontendContextImpl(config)) { it.runPhase(FrontendPhase, environment) }
@@ -136,13 +137,14 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFr
     if (context.config.produce.isCache) {
         runPhase(SaveAdditionalCacheInfoPhase)
     }
-    val bitcodeFile = runPhase(WriteBitcodeFilePhase, context.llvm.module)
+    val bitcodeFile = context.tempFiles.nativeBinaryFile.javaFile()
+    runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
     val dependenciesTrackingResult = DependenciesTrackingResult(
             context.dependenciesTracker.bitcodeToLink,
             context.dependenciesTracker.allNativeDependencies,
             context.dependenciesTracker.allCachedBitcodeDependencies,
     )
-    return ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult, context.tempFiles, context.outputFiles)
+    return ModuleCompilationOutput(bitcodeFile.canonicalPath, dependenciesTrackingResult, context.tempFiles, context.outputFiles)
 }
 
 internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(

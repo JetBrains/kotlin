@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.coverage.runCoveragePass
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
+import java.io.File
 
 private val nativeLLVMDumper =
         fun(actionState: ActionState, _: Unit, context: NativeGenerationState) {
@@ -29,23 +30,21 @@ private val nativeLLVMDumper =
 
 private val llvmPhaseActions: Set<Action<Unit, NativeGenerationState>> = setOf(nativeLLVMDumper)
 
+internal data class WriteBitcodeFileInput(
+        val llvmModule: LLVMModuleRef,
+        val outputFile: File,
+)
+
 /**
  * Write in-memory LLVM module to filesystem as a bitcode.
- *
- * TODO: Use explicit input (LLVMModule) and output (File)
- *  after static driver removal.
  */
-
-internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeGenerationState, LLVMModuleRef, String>(
+internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<PhaseContext, WriteBitcodeFileInput>(
         "WriteBitcodeFile",
         "Write bitcode file",
-        outputIfNotEnabled = { _, _, _, _ -> error("WriteBitcodeFile be disabled") }
-) { context, llvmModule ->
-    val output = context.tempFiles.nativeBinaryFileName
+) { context, (llvmModule, outputFile) ->
     // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
-    insertAliasToEntryPoint(context)
-    LLVMWriteBitcodeToFile(llvmModule, output)
-    output
+    insertAliasToEntryPoint(context, llvmModule)
+    LLVMWriteBitcodeToFile(llvmModule, outputFile.canonicalPath)
 }
 
 internal val CheckExternalCallsPhase = createSimpleNamedCompilerPhase(

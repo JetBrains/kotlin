@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.phaser.ActionState
 import org.jetbrains.kotlin.backend.common.phaser.BeforeOrAfter
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
 import org.jetbrains.kotlin.backend.konan.cexport.produceCAdapterBitcode
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
@@ -172,12 +173,11 @@ private fun linkAllDependencies(generationState: NativeGenerationState, generate
     }
 }
 
-internal fun insertAliasToEntryPoint(generationState: NativeGenerationState) {
-    val config = generationState.config
+internal fun insertAliasToEntryPoint(context: PhaseContext, module: LLVMModuleRef) {
+    val config = context.config
     val nomain = config.configuration.get(KonanConfigKeys.NOMAIN) ?: false
     if (config.produce != CompilerOutputKind.PROGRAM || nomain)
         return
-    val module = generationState.llvm.module
     val entryPointName = config.entryPointName
     val entryPoint = LLVMGetNamedFunction(module, entryPointName)
             ?: error("Module doesn't contain `$entryPointName`")
