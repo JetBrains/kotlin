@@ -35,16 +35,18 @@ internal fun <V : Any> createCache(compute: (Class<*>) -> V): CacheByClass<V> {
     return if (useClassValue) ClassValueCache(compute) else ConcurrentHashMapCache(compute)
 }
 
-private class ClassValueCache<V>(private val compute: (Class<*>) -> V) : CacheByClass<V>() {
+private class ComputableClassValue<V>(private val compute: (Class<*>) -> V) : ClassValue<V>() {
+    override fun computeValue(type: Class<*>): V {
+        return compute(type)
+    }
+
+    fun createNewCopy() = ComputableClassValue(compute)
+}
+
+private class ClassValueCache<V>(compute: (Class<*>) -> V) : CacheByClass<V>() {
 
     @Volatile
-    private var classValue = initClassValue()
-
-    private fun initClassValue() = object : ClassValue<V>() {
-        override fun computeValue(type: Class<*>): V {
-            return compute(type)
-        }
-    }
+    private var classValue = ComputableClassValue(compute)
 
     override fun get(key: Class<*>): V = classValue[key]
 
@@ -53,7 +55,7 @@ private class ClassValueCache<V>(private val compute: (Class<*>) -> V) : CacheBy
          * ClassValue does not have a proper `clear()` method but is properly weak-referenced,
          * thus abandoning ClassValue instance will eventually clear all associated values.
          */
-        classValue = initClassValue()
+        classValue = classValue.createNewCopy()
     }
 }
 

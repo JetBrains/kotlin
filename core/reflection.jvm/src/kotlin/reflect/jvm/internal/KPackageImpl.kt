@@ -32,11 +32,12 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import java.lang.ref.WeakReference
 import kotlin.reflect.KCallable
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 
 internal class KPackageImpl(
-    override val jClass: Class<*>,
+    jClass: Class<*>,
 ) : KDeclarationContainerImpl() {
     private inner class Data : KDeclarationContainerImpl.Data() {
         private val kotlinClass: ReflectKotlinClass? by ReflectProperties.lazySoft {
@@ -51,7 +52,7 @@ internal class KPackageImpl(
             else MemberScope.Empty
         }
 
-        val multifileFacade: Class<*>? by ReflectProperties.lazy {
+        val multifileFacade: Class<*>? by ReflectProperties.lazySoft {
             val facadeName = kotlinClass?.classHeader?.multifileClassName
             // We need to check isNotEmpty because this is the value read from the annotation which cannot be null.
             // The default value for 'xs' is empty string, as declared in kotlin.Metadata
@@ -76,7 +77,11 @@ internal class KPackageImpl(
         }
     }
 
-    private val data = ReflectProperties.lazy { Data() }
+    private val weaklyReferencedJClass: WeakReference<Class<*>> = WeakReference(jClass)
+
+    override val jClass: Class<*> get() = weaklyReferencedJClass.get() ?: nullClassWeakReference()
+
+    private val data = ReflectProperties.lazySoft { Data() }
 
     override val methodOwner: Class<*> get() = data().multifileFacade ?: jClass
 

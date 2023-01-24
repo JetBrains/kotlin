@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationContext
 import org.jetbrains.kotlin.serialization.deserialization.DeserializedArrayValue
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
+import java.lang.ref.WeakReference
 import java.lang.reflect.Type
 import kotlin.jvm.internal.FunctionReference
 import kotlin.jvm.internal.PropertyReference
@@ -298,3 +299,6 @@ internal open class CreateKCallableVisitor(private val container: KDeclarationCo
     override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Unit): KCallableImpl<*> =
         KFunctionImpl(container, descriptor)
 }
+
+internal fun nullClassWeakReference(): Nothing =
+    error("Unexpected 'null' in WeakReference<Class> that indicates bug in reflection caching in the presence of multiple classloaders")

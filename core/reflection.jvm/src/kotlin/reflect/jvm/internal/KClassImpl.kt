@@ -36,13 +36,14 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.deserialization.MemberDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.utils.compact
+import java.lang.ref.WeakReference
 import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KDeclarationContainerImpl.MemberBelonginess.INHERITED
 
 internal class KClassImpl<T : Any>(
-    override val jClass: Class<T>
+    jClass: Class<T>
 ) : KDeclarationContainerImpl(), KClass<T>, KClassifierImpl, KTypeParameterOwnerImpl {
     inner class Data : KDeclarationContainerImpl.Data() {
         val descriptor: ClassDescriptor by ReflectProperties.lazySoft {
@@ -177,7 +178,11 @@ internal class KClassImpl<T : Any>(
                 by ReflectProperties.lazySoft { allNonStaticMembers + allStaticMembers }
     }
 
-    val data = ReflectProperties.lazy { Data() }
+    private val weaklyReferencedJClass = WeakReference(jClass)
+
+    override val jClass: Class<T> get() = weaklyReferencedJClass.get() ?: nullClassWeakReference()
+
+    val data = ReflectProperties.lazySoft { Data() }
 
     override val descriptor: ClassDescriptor get() = data().descriptor
 
