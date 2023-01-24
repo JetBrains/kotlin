@@ -48,46 +48,39 @@ internal val modulePhaseActions: Set<Action<IrModuleFragment, NativeGenerationSt
         nativeStateIrValidator.takeIf { validateAll }
 )
 
-internal val ReturnsInsertionPhase = createSimpleNamedCompilerPhase(
+internal val ReturnsInsertionPhase = createFileLoweringPhase(
         name = "ReturnsInsertion",
         description = "Returns insertion for Unit functions",
-        postactions = fileLoweringActions,
         //prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase), TODO: if there are no files in the module, this requirement fails.
-        op = { context, irFile -> ReturnsInsertionLowering(context.context).lower(irFile) }
+        lowering = ::ReturnsInsertionLowering,
 )
 
-internal val InlineClassPropertyAccessorsPhase = createSimpleNamedCompilerPhase(
+internal val InlineClassPropertyAccessorsPhase = createFileLoweringPhase(
         name = "InlineClassPropertyAccessorsLowering",
         description = "Inline class property accessors",
-        postactions = fileLoweringActions,
-        op = { context, irFile -> InlineClassPropertyAccessorsLowering(context.context).lower(irFile) }
+        lowering = ::InlineClassPropertyAccessorsLowering,
 )
 
-internal val RedundantCoercionsCleaningPhase = createSimpleNamedCompilerPhase(
+internal val RedundantCoercionsCleaningPhase = createFileLoweringPhase(
         name = "RedundantCoercionsCleaning",
         description = "Redundant coercions cleaning",
-        postactions = fileLoweringActions,
-        op = { context, irFile -> RedundantCoercionsCleaner(context.context).lower(irFile) }
+        lowering = ::RedundantCoercionsCleaner,
 )
 
-internal val PropertyAccessorInlinePhase = createSimpleNamedCompilerPhase(
+internal val PropertyAccessorInlinePhase = createFileLoweringPhase(
         name = "PropertyAccessorInline",
         description = "Property accessor inline lowering",
-        postactions = fileLoweringActions
-) { context, irFile ->
-    PropertyAccessorInlineLowering(context.context).lower(irFile)
-}
+        lowering = ::PropertyAccessorInlineLowering,
+)
 
-internal val UnboxInlinePhase = createSimpleNamedCompilerPhase(
+internal val UnboxInlinePhase = createFileLoweringPhase(
         name = "UnboxInline",
         description = "Unbox functions inline lowering",
-        postactions = fileLoweringActions
-) { context, irFile ->
-    UnboxInlineLowering(context.context).lower(irFile)
-}
+        lowering = ::UnboxInlineLowering,
+)
 
 private val InlinePhase = createFileLoweringPhase(
-        lowering = { context ->
+        lowering = { context: NativeGenerationState ->
             object : FileLoweringPass {
                 override fun lower(irFile: IrFile) {
                     FunctionInlining(context.context, NativeInlineFunctionResolver(context.context, context)).lower(irFile)
@@ -136,7 +129,7 @@ private val ObjectClassesPhase = createFileLoweringPhase(
 )
 
 private val CoroutinesPhase = createFileLoweringPhase(
-        lowering = { context ->
+        lowering = { context: NativeGenerationState ->
             object : FileLoweringPass {
                 override fun lower(irFile: IrFile) {
                     NativeSuspendFunctionsLowering(context).lower(irFile)
@@ -242,6 +235,40 @@ private fun createFileLoweringPhase(
         outputIfNotEnabled = { _, _, _, irFile -> irFile },
         op = { context, irFile ->
             lowering(context).lower(irFile)
+            irFile
+        }
+)
+
+private fun createFileLoweringPhase(
+        lowering: (Context) -> FileLoweringPass,
+        name: String,
+        description: String,
+        prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
+): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
+        name,
+        description,
+        postactions = fileLoweringActions,
+        prerequisite = prerequisite,
+        outputIfNotEnabled = { _, _, _, irFile -> irFile },
+        op = { context, irFile ->
+            lowering(context.context).lower(irFile)
+            irFile
+        }
+)
+
+private fun createFileLoweringPhase(
+        op: (context: Context, irFile: IrFile) -> Unit,
+        name: String,
+        description: String,
+        prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
+): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
+        name,
+        description,
+        postactions = fileLoweringActions,
+        prerequisite = prerequisite,
+        outputIfNotEnabled = { _, _, _, irFile -> irFile },
+        op = { context, irFile ->
+            op(context.context, irFile)
             irFile
         }
 )
