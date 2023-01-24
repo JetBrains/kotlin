@@ -197,7 +197,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
         get() = sourceSet
             .compileDependenciesTransformationOrFail
             .metadataDependencyResolutions
-            .filterIsInstance<ChooseVisibleSourceSets>()
+            .resolutionsToTransform()
 
     @Suppress("unused")
     @get:Nested
@@ -237,5 +237,11 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
                 componentIdentifier !is ProjectComponentIdentifier
             }
         }.files
+    }
+
+    private fun Iterable<MetadataDependencyResolution>.resolutionsToTransform(): List<ChooseVisibleSourceSets> {
+        return filterIsInstance<ChooseVisibleSourceSets>()
+            /* We do not care about Project to Project dependencies: Those shall use the commonizer output directly (no transformation) */
+            .filter { it.dependency.id !is ProjectComponentIdentifier }
     }
 }
