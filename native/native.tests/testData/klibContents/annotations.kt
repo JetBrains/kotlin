@@ -3,6 +3,7 @@ annotation class AnnoConstructor
 annotation class AnnoConstructorParameter
 annotation class AnnoProperty
 annotation class AnnoSetParam
+annotation class AnnoSetParam2
 annotation class AnnoBackingField
 annotation class AnnoGetter
 annotation class AnnoSetter
@@ -24,7 +25,8 @@ class Foo @AnnoConstructor constructor(@AnnoConstructorParameter i: Int) {
         set(x: Int) { field = x*2 }
 
     @set:AnnoSetter2
-    var mutableProp =0
+    var mutableProp = 0
+        set(@AnnoSetParam2 x: Int) { field = x*2 }
 
     @delegate:AnnoDelegatedField
     val immutableProp by lazy { prop }

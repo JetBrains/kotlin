@@ -10,6 +10,7 @@
     annotation class AnnoProperty constructor() : Annotation
     annotation class AnnoPropertyExtensionReceiver constructor() : Annotation
     annotation class AnnoSetParam constructor() : Annotation
+    annotation class AnnoSetParam2 constructor() : Annotation
     annotation class AnnoSetter constructor() : Annotation
     annotation class AnnoSetter2 constructor() : Annotation
     @AnnoClass class Foo @AnnoConstructor constructor(@AnnoConstructorParameter i: Int) {
