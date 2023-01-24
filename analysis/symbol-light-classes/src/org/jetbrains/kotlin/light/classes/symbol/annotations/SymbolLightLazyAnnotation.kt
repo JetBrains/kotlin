@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
-import com.intellij.psi.PsiAnnotationMemberValue
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiModifierList
-import com.intellij.psi.impl.PsiImplUtil
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.annotations.annotations
@@ -80,12 +78,6 @@ internal class SymbolLightLazyAnnotation private constructor(
     }
 
     override fun getParameterList(): PsiAnnotationParameterList = _parameterList
-
-    override fun findAttributeValue(attributeName: String?): PsiAnnotationMemberValue? =
-        PsiImplUtil.findAttributeValue(this, attributeName)
-
-    override fun findDeclaredAttributeValue(attributeName: String?) =
-        PsiImplUtil.findDeclaredAttributeValue(this, attributeName)
 
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightLazyAnnotation &&
