@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator.NativeA
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropKlibLibraryElements.cinteropKlibLibraryElements
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 
@@ -48,11 +50,15 @@ internal fun Project.locateOrCreateCInteropDependencyConfiguration(
         isCanBeResolved = true
         isCanBeConsumed = false
 
-        usesPlatformOf(compilation.target)
-        attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        description = "CInterop dependencies for compilation '${compilation.name}')."
+        /* Deferring attributes to wait for compilation.attributes to be configured  by user*/
+        whenEvaluated {
+            usesPlatformOf(compilation.target)
+            copyAttributes(compilation.attributes, attributes)
+            attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            description = "CInterop dependencies for compilation '${compilation.name}')."
+        }
     }
 }
 
@@ -67,11 +73,15 @@ internal fun Project.locateOrCreateCInteropApiElementsConfiguration(target: Kotl
         isCanBeResolved = false
         isCanBeConsumed = true
 
-        usesPlatformOf(target)
-        attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
-        attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
-        attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
+        /* Deferring attributes to wait for target.attributes to be configured by user */
+        whenEvaluated {
+            usesPlatformOf(target)
+            copyAttributes(target.attributes, attributes)
+            attributes.attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, cinteropKlibLibraryElements())
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_CINTEROP))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, NativeArtifactFormat.KLIB)
+        }
     }
 }
 
