@@ -37,4 +37,10 @@ public class NativeK2LibContentsTestGenerated extends AbstractNativeKlibContents
     public void testKt55464_serializeTypeAnnotation() throws Exception {
         runTest("native/native.tests/testData/klibContents/kt55464_serializeTypeAnnotation.kt");
     }
+
+    @Test
+    @TestMetadata("kt56018_value_parameters_annotations.kt")
+    public void testKt56018_value_parameters_annotations() throws Exception {
+        runTest("native/native.tests/testData/klibContents/kt56018_value_parameters_annotations.kt");
+    }
 }
