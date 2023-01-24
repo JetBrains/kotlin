@@ -51,7 +51,7 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment) {
     useContext(backendContext) { backendEngine ->
-        backendEngine.runPhase(functionsWithoutBoundCheck)
+        backendEngine.runPhase(FunctionsWithoutBoundCheck)
         val fragments = backendEngine.splitIntoFragments(irModule)
         fragments.forEach { (generationState, fragment) ->
             backendEngine.useContext(generationState) { generationStateEngine ->

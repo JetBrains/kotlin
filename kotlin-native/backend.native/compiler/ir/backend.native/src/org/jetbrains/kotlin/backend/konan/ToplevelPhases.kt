@@ -5,64 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.backend.common.IrValidator
-import org.jetbrains.kotlin.backend.common.IrValidatorConfig
-import org.jetbrains.kotlin.backend.common.checkDeclarationParents
-import org.jetbrains.kotlin.backend.common.phaser.*
-import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
-import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
-import org.jetbrains.kotlin.backend.konan.lower.SamSuperTypesChecker
-import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.name.FqName
-
-internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
-    if (!context.config.needVerifyIr) return
-
-    val validatorConfig = IrValidatorConfig(
-        abortOnError = false,
-        ensureAllNodesAreDifferent = true,
-        checkTypes = true,
-        checkDescriptors = false
-    )
-    try {
-        module.accept(IrValidator(context, validatorConfig), null)
-        module.checkDeclarationParents()
-    } catch (t: Throwable) {
-        // TODO: Add reference to source.
-        if (validatorConfig.abortOnError)
-            throw IllegalStateException("Failed IR validation ${state.beforeOrAfter} ${state.phase}", t)
-        else context.reportCompilationWarning("[IR VALIDATION] ${state.beforeOrAfter} ${state.phase}: ${t.message}")
-    }
-}
-
-internal fun fileValidationCallback(state: ActionState, irFile: IrFile, context: Context) {
-    val validatorConfig = IrValidatorConfig(
-        abortOnError = false,
-        ensureAllNodesAreDifferent = true,
-        checkTypes = true,
-        checkDescriptors = false
-    )
-    try {
-        irFile.accept(IrValidator(context, validatorConfig), null)
-        irFile.checkDeclarationParents()
-    } catch (t: Throwable) {
-        // TODO: Add reference to source.
-        if (validatorConfig.abortOnError)
-            throw IllegalStateException("Failed IR validation ${state.beforeOrAfter} ${state.phase}", t)
-        else context.reportCompilationWarning("[IR VALIDATION] ${state.beforeOrAfter} ${state.phase}: ${t.message}")
-    }
-}
-
-internal fun konanUnitPhase(
-        name: String,
-        description: String,
-        prerequisite: Set<AbstractNamedCompilerPhase<Context, *, *>> = emptySet(),
-        op: Context.() -> Unit
-) = namedOpUnitPhase(name, description, prerequisite, op)
 
 /*
  * Sometimes psi2ir produces IR with non-trivial variance in super types of SAM conversions (this is a language design issue).
@@ -91,24 +33,8 @@ internal fun konanUnitPhase(
 //        description = "Check SAM conversions super types"
 //)
 
-
-internal fun PhaseConfigurationService.disableIf(phase: AnyNamedPhase, condition: Boolean) {
-    if (condition) disable(phase)
-}
-
-internal fun PhaseConfigurationService.disableUnless(phase: AnyNamedPhase, condition: Boolean) {
-    if (!condition) disable(phase)
-}
-
-internal fun PhaseConfigurationService.konanPhasesConfig(config: KonanConfig) {
-    with(config.configuration) {
-        // The original comment around [checkSamSuperTypesPhase] still holds, but in order to be on par with JVM_IR
-        // (which doesn't report error for these corner cases), we turn off the checker for now (the problem with variances
-        // is workarounded in [FunctionReferenceLowering] by taking erasure of SAM conversion type).
-        // Also see https://youtrack.jetbrains.com/issue/KT-50399 for more details.
+// The original comment around [checkSamSuperTypesPhase] still holds, but in order to be on par with JVM_IR
+// (which doesn't report error for these corner cases), we turn off the checker for now (the problem with variances
+// is workarounded in [FunctionReferenceLowering] by taking erasure of SAM conversion type).
+// Also see https://youtrack.jetbrains.com/issue/KT-50399 for more details.
 //        disable(checkSamSuperTypesPhase)
-        disableUnless(exportInternalAbiPhase, config.produce.isCache)
-        disableUnless(stringConcatenationTypeNarrowingPhase, config.optimizationsEnabled)
-        disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)
-    }
-}

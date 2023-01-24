@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.konan.ConfigChecks
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.getCompilerMessageLocation
-import org.jetbrains.kotlin.backend.konan.konanPhasesConfig
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -89,8 +88,6 @@ internal class PhaseEngine<C : PhaseContext>(
             val phaserState = PhaserState<Any>()
             val phaseConfig = config.flexiblePhaseConfig
             val context = BasicPhaseContext(config)
-            // TODO: Get rid of when transition to the dynamic driver complete.
-            phaseConfig.konanPhasesConfig(config)
             val topLevelPhase = object : SimpleNamedCompilerPhase<PhaseContext, Any, Unit>(
                     "Compiler",
                     "The whole compilation process",
