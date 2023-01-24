@@ -20,7 +20,7 @@ abstract class AbstractIncrementalK2JvmJpsTest(
     }
 
     override fun updateCommandLineArguments(arguments: CommonCompilerArguments) {
-        additionalCommandLineArguments = additionalCommandLineArguments + listOf("-Xuse-k2")
+        additionalCommandLineArguments = additionalCommandLineArguments + listOf("-Xuse-k2", "-Xuse-fir-lt=false")
         super.updateCommandLineArguments(arguments)
     }
 
