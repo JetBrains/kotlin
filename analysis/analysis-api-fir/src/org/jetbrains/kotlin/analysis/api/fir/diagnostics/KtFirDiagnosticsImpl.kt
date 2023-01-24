@@ -2586,6 +2586,11 @@ internal class LateinitIntrinsicCallOnNonAccessiblePropertyImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.LateinitIntrinsicCallOnNonAccessibleProperty(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class LocalExtensionPropertyImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.LocalExtensionProperty(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class ExpectedDeclarationWithBodyImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

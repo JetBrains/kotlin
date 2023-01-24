@@ -1035,6 +1035,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY by error<PsiElement>() {
             parameter<Symbol>("declaration")
         }
+
+        val LOCAL_EXTENSION_PROPERTY by error<PsiElement>()
     }
 
     val MPP_PROJECTS by object : DiagnosticGroup("Multi-platform projects") {

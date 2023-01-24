@@ -24847,6 +24847,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("localPropertyExtensions.kt")
+            public void testLocalPropertyExtensions() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/properties/localPropertyExtensions.kt");
+            }
+
+            @Test
             @TestMetadata("protectedGetterWithPublicSetter.kt")
             public void testProtectedGetterWithPublicSetter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/properties/protectedGetterWithPublicSetter.kt");

@@ -2145,6 +2145,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val declaration: KtSymbol
     }
 
+    abstract class LocalExtensionProperty : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = LocalExtensionProperty::class
+    }
+
     abstract class ExpectedDeclarationWithBody : KtFirDiagnostic<KtDeclaration>() {
         override val diagnosticClass get() = ExpectedDeclarationWithBody::class
     }

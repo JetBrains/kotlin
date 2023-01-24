@@ -1730,6 +1730,7 @@ open class RawFirBuilder(
                 name = propertyName
                 this.isVar = isVar
 
+                receiverParameter = receiverTypeReference.convertSafe<FirTypeRef>()?.convertToReceiverParameter()
                 initializer = propertyInitializer
 
                 val propertyAnnotations = mutableListOf<FirAnnotationCall>()
@@ -1772,7 +1773,6 @@ open class RawFirBuilder(
                     }
                 } else {
                     isLocal = false
-                    receiverParameter = receiverTypeReference.convertSafe<FirTypeRef>()?.convertToReceiverParameter()
                     symbol = FirPropertySymbol(callableIdForName(propertyName))
                     dispatchReceiverType = currentDispatchReceiverType()
                     extractTypeParametersTo(this, symbol)

@@ -565,6 +565,7 @@ object FirErrors {
     val LATEINIT_INTRINSIC_CALL_ON_NON_LATEINIT by error0<PsiElement>()
     val LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION by error0<PsiElement>()
     val LATEINIT_INTRINSIC_CALL_ON_NON_ACCESSIBLE_PROPERTY by error1<PsiElement, FirBasedSymbol<*>>()
+    val LOCAL_EXTENSION_PROPERTY by error0<PsiElement>()
 
     // Multi-platform projects
     val EXPECTED_DECLARATION_WITH_BODY by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)

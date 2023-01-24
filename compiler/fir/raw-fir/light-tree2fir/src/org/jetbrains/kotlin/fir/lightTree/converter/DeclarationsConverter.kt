@@ -1198,6 +1198,8 @@ class DeclarationsConverter(
             returnTypeRef = returnType
             name = propertyName
             this.isVar = isVar
+
+            receiverParameter = receiverType?.convertToReceiverParameter()
             initializer = propertyInitializer
 
             //probably can do this for delegateExpression itself
@@ -1234,7 +1236,6 @@ class DeclarationsConverter(
                 )
             } else {
                 this.isLocal = false
-                receiverParameter = receiverType?.convertToReceiverParameter()
 
                 dispatchReceiverType = currentDispatchReceiverType()
                 withCapturedTypeParameters(true, propertySource, firTypeParameters) {
