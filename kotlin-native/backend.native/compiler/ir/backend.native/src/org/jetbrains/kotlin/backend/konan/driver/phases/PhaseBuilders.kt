@@ -13,6 +13,7 @@ internal fun <Context : LoggingContext, Input, Output> createSimpleNamedCompiler
         description: String,
         preactions: Set<Action<Input, Context>> = emptySet(),
         postactions: Set<Action<Output, Context>> = emptySet(),
+        prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
         outputIfNotEnabled: (PhaseConfigurationService, PhaserState<Input>, Context, Input) -> Output,
         op: (Context, Input) -> Output
 ): SimpleNamedCompilerPhase<Context, Input, Output> = object : SimpleNamedCompilerPhase<Context, Input, Output>(
@@ -22,6 +23,7 @@ internal fun <Context : LoggingContext, Input, Output> createSimpleNamedCompiler
         postactions = postactions.map { f ->
             fun(actionState: ActionState, data: Pair<Input, Output>, context: Context) = f(actionState, data.second, context)
         }.toSet(),
+        prerequisite = prerequisite,
 ) {
     override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input): Output =
             outputIfNotEnabled(phaseConfig, phaserState, context, input)
@@ -35,6 +37,7 @@ internal fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
         description: String,
         preactions: Set<Action<Input, Context>> = emptySet(),
         postactions: Set<Action<Input, Context>> = emptySet(),
+        prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
         op: (Context, Input) -> Unit
 ): SimpleNamedCompilerPhase<Context, Input, Unit> = object : SimpleNamedCompilerPhase<Context, Input, Unit>(
         name,
@@ -43,6 +46,7 @@ internal fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
         postactions = postactions.map { f ->
             fun(actionState: ActionState, data: Pair<Input, Unit>, context: Context) = f(actionState, data.first, context)
         }.toSet(),
+        prerequisite = prerequisite,
 ) {
     override fun outputIfNotEnabled(phaseConfig: PhaseConfigurationService, phaserState: PhaserState<Input>, context: Context, input: Input) {}
 

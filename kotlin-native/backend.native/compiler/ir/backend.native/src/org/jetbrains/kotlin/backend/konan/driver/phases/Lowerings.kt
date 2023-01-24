@@ -232,11 +232,13 @@ private fun PhaseEngine<NativeGenerationState>.convertToNativeGeneration(
 private fun createFileLoweringPhase(
         name: String,
         description: String,
-        lowering: (NativeGenerationState) -> FileLoweringPass
+        lowering: (NativeGenerationState) -> FileLoweringPass,
+        prerequisite: Set<AbstractNamedCompilerPhase<*, *, *>> = emptySet(),
 ): SimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile> = createSimpleNamedCompilerPhase(
         name,
         description,
         postactions = fileLoweringActions,
+        prerequisite = prerequisite,
         outputIfNotEnabled = { _, _, _, irFile -> irFile },
         op = { context, irFile ->
             lowering(context).lower(irFile)
