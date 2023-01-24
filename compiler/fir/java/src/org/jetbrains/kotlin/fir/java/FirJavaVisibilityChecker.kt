@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
@@ -16,8 +17,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.SupertypeSupplier
 import org.jetbrains.kotlin.fir.resolve.calls.FirSimpleSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
+import org.jetbrains.kotlin.fir.resolve.isSubclassOf
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 @NoMutableState
 object FirJavaVisibilityChecker : FirVisibilityChecker() {
@@ -47,13 +50,21 @@ object FirJavaVisibilityChecker : FirVisibilityChecker() {
 
                     // FE1.0 allows calling public setters with property assignment syntax if the getter is protected.
                     if (!isCallToPropertySetter || symbol !is FirSimpleSyntheticPropertySymbol) return false
-                    symbol.setterSymbol?.visibility == Visibilities.Public
+                    symbol.setterSymbol?.visibility == Visibilities.Public && symbol.isCalledFromSubclass(containingDeclarations, session)
                 }
             }
 
             JavaVisibilities.PackageVisibility -> symbol.isInPackage(useSiteFile.packageFqName)
             else -> true
         }
+    }
+
+    private fun FirSimpleSyntheticPropertySymbol.isCalledFromSubclass(
+        containingDeclarations: List<FirDeclaration>,
+        session: FirSession
+    ): Boolean {
+        val containingClassLookupTag = this.containingClassLookupTag() ?: return false
+        return containingDeclarations.any { it is FirClass && it.isSubclassOf(containingClassLookupTag, session, false)  }
     }
 
     override fun platformOverrideVisibilityCheck(
