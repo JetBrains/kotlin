@@ -284,6 +284,7 @@ open class FirTypeResolveTransformer(
             }
             else -> {
                 val transformedTypeRef = originalTypeRef.transformSingle(this, data)
+                annotationCall.transformTypeArguments(this, data)
                 annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
                 annotationCall.replaceAnnotationTypeRef(transformedTypeRef)
             }
