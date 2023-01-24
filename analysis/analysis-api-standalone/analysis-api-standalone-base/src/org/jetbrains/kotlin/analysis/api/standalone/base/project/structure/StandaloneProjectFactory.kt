@@ -103,8 +103,14 @@ object StandaloneProjectFactory {
         val javaModuleGraph = JavaModuleGraph(javaModuleFinder)
 
         val allSourceFileRoots = sourceFiles.map { JavaRoot(it.virtualFile, JavaRoot.RootType.SOURCE) }
-        val libraryRoots = getAllBinaryRoots(modules, environment)
         val jdkRoots = getDefaultJdkModuleRoots(javaModuleFinder, javaModuleGraph)
+
+        project.registerService(
+            JavaModuleResolver::class.java,
+            CliJavaModuleResolver(javaModuleGraph, emptyList(), javaModuleFinder.systemModules.toList(), project)
+        )
+
+        val libraryRoots = getAllBinaryRoots(modules, environment)
 
         val rootsWithSingleJavaFileRoots = buildList {
             addAll(libraryRoots)
@@ -146,11 +152,6 @@ object StandaloneProjectFactory {
             ),
             SingleJavaFileRootsIndex(singleJavaFileRoots),
             true
-        )
-
-        project.registerService(
-            JavaModuleResolver::class.java,
-            CliJavaModuleResolver(javaModuleGraph, emptyList(), javaModuleFinder.systemModules.toList(), project)
         )
 
         val finderFactory = CliVirtualFileFinderFactory(rootsIndex, false)

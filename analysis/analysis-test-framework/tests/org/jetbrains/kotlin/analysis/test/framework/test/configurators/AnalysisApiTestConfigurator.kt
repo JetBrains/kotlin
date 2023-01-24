@@ -57,6 +57,10 @@ abstract class AnalysisApiTestConfigurator {
         serviceRegistrars.forEach { it.registerProjectServices(project, testServices) }
     }
 
+    fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
+        serviceRegistrars.forEach { it.registerProjectModelServices(project, testServices) }
+    }
+
     fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
         ApplicationServiceRegistrar.register(application, serviceRegistrars, testServices)
     }

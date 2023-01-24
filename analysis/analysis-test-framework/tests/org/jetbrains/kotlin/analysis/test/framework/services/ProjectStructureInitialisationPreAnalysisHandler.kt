@@ -30,8 +30,9 @@ class ProjectStructureInitialisationPreAnalysisHandler(
         configurator.registerApplicationServices(application, testServices)
         createAndRegisterKtModules(moduleStructure, project)
         configurator.registerProjectExtensionPoints(project, testServices)
-        testServices.environmentManager.initializeProjectStructure()
         configurator.registerProjectServices(project, testServices)
+        testServices.environmentManager.initializeProjectStructure()
+        configurator.registerProjectModelServices(project, testServices)
     }
 
     private fun createAndRegisterKtModules(moduleStructure: TestModuleStructure, project: MockProject) {

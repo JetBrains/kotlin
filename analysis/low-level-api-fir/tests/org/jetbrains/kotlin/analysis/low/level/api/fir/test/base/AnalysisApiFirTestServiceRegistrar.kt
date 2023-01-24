@@ -41,7 +41,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
         FirExtensionRegistrarAdapter.registerExtensionPoint(project)
     }
 
-    @OptIn(TestInfrastructureInternals::class, KtAnalysisApiInternals::class)
+    @OptIn(KtAnalysisApiInternals::class)
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider(this))
@@ -56,7 +56,10 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl())
             registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
         }
+    }
 
+    @OptIn(TestInfrastructureInternals::class)
+    override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         with(PsiElementFinder.EP.getPoint(project)) {
             registerExtension(JavaElementFinder(project), testServices.testConfiguration.rootDisposable)
             registerExtension(PsiElementFinderImpl(project), testServices.testConfiguration.rootDisposable)

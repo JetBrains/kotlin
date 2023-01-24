@@ -30,6 +30,9 @@ object AnalysisApiLibraryBaseTestServiceRegistrar : AnalysisApiTestServiceRegist
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {
     }
 
+    override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
+    }
+
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
         application.apply {
             registerService(ClsKotlinBinaryClassCache::class.java)
