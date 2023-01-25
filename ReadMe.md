@@ -113,16 +113,9 @@ To build Kotlin/Native, see
 
 ## <a name="working-in-idea"></a> Working with the project in IntelliJ IDEA
 
-Working with the Kotlin project requires at least IntelliJ IDEA 2019.1. You can download IntelliJ IDEA 2019.1 [here](https://www.jetbrains.com/idea/download).
+It is recommended to use the latest released version of Intellij IDEA (Community or Ultimate Edition). You can download IntelliJ IDEA [here](https://www.jetbrains.com/idea/download).
 
-After cloning the project, to import the project in IntelliJ choose the project directory in the Open project dialog. Then, after project opened, select 
-`File` -> `New` -> `Module from Existing Sources...` in the menu, and select `build.gradle.kts` file in the project's root folder.
-
-In the import dialog, select `use default gradle wrapper`.
-
-To be able to run tests from IntelliJ easily, check `Delegate IDE build/run actions to Gradle` and choose `Gradle Test Runner` in the Gradle runner settings after importing the project.
-
-At this time, you can use the latest released `1.6.x` version of the Kotlin plugin for working with the code. To make sure you have the latest version installed, use `Tools` -> `Kotlin` -> `Configure Kotlin Plugin Updates`.
+After cloning the project, import the project in IntelliJ by choosing the project directory in the Open project dialog.
 
 For handy work with compiler tests it's recommended to use [
 Kotlin Compiler Test Helper](https://github.com/demiurg906/test-data-helper-plugin)
