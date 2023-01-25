@@ -254,13 +254,8 @@ class FirElementSerializer private constructor(
         }
     }
 
-    private fun FirPropertyAccessor.nonSourceAnnotations(session: FirSession, property: FirProperty): List<FirAnnotation> =
-        (this as FirAnnotationContainer).nonSourceAnnotations(session) + property.nonSourceAnnotations(session).filter {
-            val useSiteTarget = it.useSiteTarget
-            useSiteTarget == AnnotationUseSiteTarget.PROPERTY_GETTER && isGetter ||
-                    useSiteTarget == AnnotationUseSiteTarget.PROPERTY_SETTER && isSetter ||
-                    useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER && isSetter
-        }
+    private fun FirPropertyAccessor.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
+        (this as FirAnnotationContainer).nonSourceAnnotations(session)
 
     fun propertyProto(property: FirProperty): ProtoBuf.Property.Builder? = whileAnalysing(session, property) {
         if (!extension.shouldSerializeProperty(property)) return null
@@ -300,7 +295,7 @@ class FirElementSerializer private constructor(
                 builder.setterFlags = accessorFlags
             }
 
-            val nonSourceAnnotations = setter.nonSourceAnnotations(session, property)
+            val nonSourceAnnotations = setter.nonSourceAnnotations(session)
             if (Flags.IS_NOT_DEFAULT.get(accessorFlags)) {
                 val setterLocal = local.createChildSerializer(setter)
                 for (valueParameterDescriptor in setter.valueParameters) {
@@ -865,7 +860,7 @@ class FirElementSerializer private constructor(
     private fun getAccessorFlags(accessor: FirPropertyAccessor, property: FirProperty): Int {
         // [FirDefaultPropertyAccessor]---a property accessor without body---can still hold other information, such as annotations,
         // user-contributed visibility, and modifiers, such as `external` or `inline`.
-        val nonSourceAnnotations = accessor.nonSourceAnnotations(session, property)
+        val nonSourceAnnotations = accessor.nonSourceAnnotations(session)
         val isDefault = accessor is FirDefaultPropertyAccessor &&
                 nonSourceAnnotations.isEmpty() &&
                 accessor.visibility == property.visibility &&
