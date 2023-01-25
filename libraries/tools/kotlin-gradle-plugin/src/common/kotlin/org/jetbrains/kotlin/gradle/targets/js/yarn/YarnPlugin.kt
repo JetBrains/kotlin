@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.ST
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.UPGRADE_YARN_LOCK
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 
 open class YarnPlugin : Plugin<Project> {
     override fun apply(project: Project): Unit = project.run {
@@ -49,20 +48,13 @@ open class YarnPlugin : Plugin<Project> {
             }
         }
 
-        val objectFactory = project.objects
-
         val rootPackageJson = tasks.register(RootPackageJsonTask.NAME, RootPackageJsonTask::class.java) { task ->
             task.dependsOn(nodeJsTaskProviders.npmCachesSetupTaskProvider)
             task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             task.description = "Create root package.json"
 
             task.npmResolutionManager.apply {
-                // npmResolutionManager is initialised inside NodeJsRootPlugin after YarnPlugin applied
-                set(
-                    objectFactory.providerWithLazyConvention {
-                        project.kotlinNpmResolutionManager.get()
-                    }
-                )
+                set(project.kotlinNpmResolutionManager)
                 disallowChanges()
             }
 

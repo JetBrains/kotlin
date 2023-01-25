@@ -5,20 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.logging.Logger
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.tasks.Internal
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.Installation
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
-import org.jetbrains.kotlin.gradle.tasks.withType
-import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 
 internal interface UsesKotlinNpmResolutionManager : Task {
     @get:Internal
@@ -128,60 +124,6 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
 
             is ResolutionState.Installed -> error("Project already installed")
             is ResolutionState.Error -> throw state0.wrappedException
-        }
-    }
-
-    companion object {
-        private val serviceClass = KotlinNpmResolutionManager::class.java
-        private val serviceName = serviceClass.name
-
-        private fun registerIfAbsentImpl(
-            project: Project,
-            resolution: Provider<KotlinRootNpmResolution>?,
-            packageJsonHandlers: Provider<Map<String, MutableList<PackageJson.() -> Unit>>>?,
-            gradleNodeModulesProvider: Provider<GradleNodeModulesCache>,
-            compositeNodeModulesProvider: Provider<CompositeNodeModulesCache>
-        ): Provider<KotlinNpmResolutionManager> {
-            project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
-                @Suppress("UNCHECKED_CAST")
-                return it.service as Provider<KotlinNpmResolutionManager>
-            }
-
-            val message = {
-                "Build service KotlinNpmResolutionManager should be already registered"
-            }
-
-            requireNotNull(resolution, message)
-            requireNotNull(packageJsonHandlers, message)
-
-            return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
-                it.parameters.resolution.set(resolution)
-                it.parameters.packageJsonHandlers.set(packageJsonHandlers)
-                it.parameters.gradleNodeModulesProvider.set(gradleNodeModulesProvider)
-                it.parameters.compositeNodeModulesProvider.set(compositeNodeModulesProvider)
-            }
-        }
-
-        fun registerIfAbsent(
-            project: Project,
-            resolution: Provider<KotlinRootNpmResolution>?,
-            packageJsonHandlers: Provider<Map<String, MutableList<PackageJson.() -> Unit>>>?,
-            gradleNodeModulesProvider: Provider<GradleNodeModulesCache>,
-            compositeNodeModulesProvider: Provider<CompositeNodeModulesCache>
-        ) = registerIfAbsentImpl(
-            project,
-            resolution,
-            packageJsonHandlers,
-            gradleNodeModulesProvider,
-            compositeNodeModulesProvider
-        ).also { serviceProvider ->
-            SingleActionPerProject.run(project, UsesKotlinNpmResolutionManager::class.java.name) {
-                project.tasks.withType<UsesKotlinNpmResolutionManager>().configureEach { task ->
-                    task.usesService(serviceProvider)
-                    task.usesService(gradleNodeModulesProvider)
-                    task.usesService(compositeNodeModulesProvider)
-                }
-            }
         }
     }
 }

@@ -89,8 +89,6 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         project.registerTask<Task>(PACKAGE_JSON_UMBRELLA_TASK_NAME)
 
-        YarnPlugin.apply(project)
-
         nodeJs.resolver = KotlinRootNpmResolver(
             project.name,
             project.version.toString(),
@@ -102,19 +100,27 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         val objectFactory = project.objects
 
-        val npmResolutionManager = KotlinNpmResolutionManager.registerIfAbsent(
-            project,
-            objectFactory.providerWithLazyConvention {
-                nodeJs.resolver.close()
-            },
-            objectFactory.providerWithLazyConvention {
-                nodeJs.resolver.compilations.associate { compilation ->
-                    "${compilation.project.path}:${compilation.disambiguatedName}" to compilation.packageJsonHandlers
+        val npmResolutionManager = project.gradle.sharedServices.registerIfAbsent(
+            KotlinNpmResolutionManager::class.java.name,
+            KotlinNpmResolutionManager::class.java
+        ) {
+            it.parameters.resolution.set(
+                objectFactory.providerWithLazyConvention {
+                    nodeJs.resolver.close()
                 }
-            },
-            gradleNodeModulesProvider,
-            compositeNodeModulesProvider
-        )
+            )
+            it.parameters.packageJsonHandlers.set(
+                objectFactory.providerWithLazyConvention {
+                    nodeJs.resolver.compilations.associate { compilation ->
+                        "${compilation.project.path}:${compilation.disambiguatedName}" to compilation.packageJsonHandlers
+                    }
+                }
+            )
+            it.parameters.gradleNodeModulesProvider.set(gradleNodeModulesProvider)
+            it.parameters.compositeNodeModulesProvider.set(compositeNodeModulesProvider)
+        }
+
+        YarnPlugin.apply(project)
 
         npmInstall.configure {
             it.npmResolutionManager.set(npmResolutionManager)
@@ -140,27 +146,16 @@ open class NodeJsRootPlugin : Plugin<Project> {
         val Project.kotlinNodeJsExtension: NodeJsRootExtension
             get() = extensions.getByName(NodeJsRootExtension.EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
-        private val Project.gradleNodeModules
-            get() = GradleNodeModulesCache.registerIfAbsent(
-                this,
-                null,
-                null
-            )
+        val Project.kotlinNpmResolutionManager: Provider<KotlinNpmResolutionManager>
+            get() {
+                val npmResolutionManager = project.gradle.sharedServices.registerIfAbsent(
+                    KotlinNpmResolutionManager::class.java.name,
+                    KotlinNpmResolutionManager::class.java
+                ) {
+                    error("Must be already registered")
+                }
 
-        private val Project.compositeNodeModules
-            get() = CompositeNodeModulesCache.registerIfAbsent(
-                this,
-                null,
-                null
-            )
-
-        val Project.kotlinNpmResolutionManager
-            get() = KotlinNpmResolutionManager.registerIfAbsent(
-                this,
-                null,
-                null,
-                gradleNodeModules,
-                compositeNodeModules
-            )
+                return npmResolutionManager
+            }
     }
 }
