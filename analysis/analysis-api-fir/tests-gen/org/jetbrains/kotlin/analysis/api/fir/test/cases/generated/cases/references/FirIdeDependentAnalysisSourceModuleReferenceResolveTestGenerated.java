@@ -635,54 +635,6 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
     }
 
     @Test
-    @TestMetadata("TypeArgumentBeforeDot.kt")
-    public void testTypeArgumentBeforeDot() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/TypeArgumentBeforeDot.kt");
-    }
-
-    @Test
-    @TestMetadata("typeArgument_tooFewTypeArguments1.kt")
-    public void testTypeArgument_tooFewTypeArguments1() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooFewTypeArguments1.kt");
-    }
-
-    @Test
-    @TestMetadata("typeArgument_tooFewTypeArguments1a.kt")
-    public void testTypeArgument_tooFewTypeArguments1a() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooFewTypeArguments1a.kt");
-    }
-
-    @Test
-    @TestMetadata("typeArgument_tooFewTypeArguments2.kt")
-    public void testTypeArgument_tooFewTypeArguments2() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooFewTypeArguments2.kt");
-    }
-
-    @Test
-    @TestMetadata("typeArgument_tooManyTypeArguments1.kt")
-    public void testTypeArgument_tooManyTypeArguments1() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments1.kt");
-    }
-
-    @Test
-    @TestMetadata("typeArgument_tooManyTypeArguments1a.kt")
-    public void testTypeArgument_tooManyTypeArguments1a() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments1a.kt");
-    }
-
-    @Test
-    @TestMetadata("typeArgument_tooManyTypeArguments2.kt")
-    public void testTypeArgument_tooManyTypeArguments2() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments2.kt");
-    }
-
-    @Test
-    @TestMetadata("typeArgument_tooManyTypeArguments2a.kt")
-    public void testTypeArgument_tooManyTypeArguments2a() throws Exception {
-        runTest("analysis/analysis-api/testData/referenceResolve/typeArgument_tooManyTypeArguments2a.kt");
-    }
-
-    @Test
     @TestMetadata("ValueParameter.kt")
     public void testValueParameter() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/ValueParameter.kt");
@@ -1597,6 +1549,212 @@ public class FirIdeDependentAnalysisSourceModuleReferenceResolveTestGenerated ex
         @TestMetadata("ResolvePackageOfFullyQualifiedReference.kt")
         public void testResolvePackageOfFullyQualifiedReference() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/qualifiedAccess/ResolvePackageOfFullyQualifiedReference.kt");
+        }
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument")
+    @TestDataPath("$PROJECT_ROOT")
+    public class TypeArgument {
+        @Test
+        public void testAllFilesPresentInTypeArgument() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/constant")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Constant {
+            @Test
+            public void testAllFilesPresentInConstant() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/constant"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("false.kt")
+            public void testFalse() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/constant/false.kt");
+            }
+
+            @Test
+            @TestMetadata("true.kt")
+            public void testTrue() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/constant/true.kt");
+            }
+
+            @Test
+            @TestMetadata("trueCall.kt")
+            public void testTrueCall() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/constant/trueCall.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall")
+        @TestDataPath("$PROJECT_ROOT")
+        public class FunctionCall {
+            @Test
+            public void testAllFilesPresentInFunctionCall() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("tooFewTypeArguments1.kt")
+            public void testTooFewTypeArguments1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/tooFewTypeArguments1.kt");
+            }
+
+            @Test
+            @TestMetadata("tooFewTypeArguments1a.kt")
+            public void testTooFewTypeArguments1a() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/tooFewTypeArguments1a.kt");
+            }
+
+            @Test
+            @TestMetadata("tooFewTypeArguments2.kt")
+            public void testTooFewTypeArguments2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/tooFewTypeArguments2.kt");
+            }
+
+            @Test
+            @TestMetadata("tooManyTypeArguments1.kt")
+            public void testTooManyTypeArguments1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/tooManyTypeArguments1.kt");
+            }
+
+            @Test
+            @TestMetadata("tooManyTypeArguments1a.kt")
+            public void testTooManyTypeArguments1a() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/tooManyTypeArguments1a.kt");
+            }
+
+            @Test
+            @TestMetadata("tooManyTypeArguments2.kt")
+            public void testTooManyTypeArguments2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/tooManyTypeArguments2.kt");
+            }
+
+            @Test
+            @TestMetadata("tooManyTypeArguments2a.kt")
+            public void testTooManyTypeArguments2a() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/tooManyTypeArguments2a.kt");
+            }
+
+            @Test
+            @TestMetadata("unresolvedCallee1.kt")
+            public void testUnresolvedCallee1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/unresolvedCallee1.kt");
+            }
+
+            @Test
+            @TestMetadata("unresolvedCallee2.kt")
+            public void testUnresolvedCallee2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/unresolvedCallee2.kt");
+            }
+
+            @Test
+            @TestMetadata("unresolvedCalleeWithArguments1.kt")
+            public void testUnresolvedCalleeWithArguments1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/unresolvedCalleeWithArguments1.kt");
+            }
+
+            @Test
+            @TestMetadata("unresolvedCalleeWithArguments2.kt")
+            public void testUnresolvedCalleeWithArguments2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/unresolvedCalleeWithArguments2.kt");
+            }
+
+            @Test
+            @TestMetadata("upperBound1.kt")
+            public void testUpperBound1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/upperBound1.kt");
+            }
+
+            @Test
+            @TestMetadata("upperBound2.kt")
+            public void testUpperBound2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/functionCall/upperBound2.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess")
+        @TestDataPath("$PROJECT_ROOT")
+        public class PropertyAccess {
+            @Test
+            public void testAllFilesPresentInPropertyAccess() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("localVariable1.kt")
+            public void testLocalVariable1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess/localVariable1.kt");
+            }
+
+            @Test
+            @TestMetadata("localVariable2.kt")
+            public void testLocalVariable2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess/localVariable2.kt");
+            }
+
+            @Test
+            @TestMetadata("parameter1.kt")
+            public void testParameter1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess/parameter1.kt");
+            }
+
+            @Test
+            @TestMetadata("parameter2.kt")
+            public void testParameter2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess/parameter2.kt");
+            }
+
+            @Test
+            @TestMetadata("property1.kt")
+            public void testProperty1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess/property1.kt");
+            }
+
+            @Test
+            @TestMetadata("property2.kt")
+            public void testProperty2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess/property2.kt");
+            }
+
+            @Test
+            @TestMetadata("propertyWithGetter1.kt")
+            public void testPropertyWithGetter1() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess/propertyWithGetter1.kt");
+            }
+
+            @Test
+            @TestMetadata("propertyWithGetter2.kt")
+            public void testPropertyWithGetter2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess/propertyWithGetter2.kt");
+            }
+
+            @Test
+            @TestMetadata("unresolvedProperty.kt")
+            public void testUnresolvedProperty() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/propertyAccess/unresolvedProperty.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("analysis/analysis-api/testData/referenceResolve/typeArgument/type")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Type {
+            @Test
+            public void testAllFilesPresentInType() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/referenceResolve/typeArgument/type"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("beforeDot.kt")
+            public void testBeforeDot() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/typeArgument/type/beforeDot.kt");
+            }
         }
     }
 
