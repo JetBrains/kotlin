@@ -13,10 +13,12 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SimpleModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -35,16 +37,17 @@ internal class SymbolLightFieldForEnumEntry(
     private val _modifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            staticModifiers = setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
-        ) { modifierList ->
-            withEnumEntrySymbol { enumEntrySymbol ->
-                enumEntrySymbol.computeAnnotations(
-                    modifierList,
-                    nullability = NullabilityType.Unknown, // there is no need to add nullability annotations on enum entries
-                    annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
-                )
-            }
-        }
+            modifiersBox = SimpleModifiersBox(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
+            annotationsBox = SimpleAnnotationsBox { modifierList ->
+                withEnumEntrySymbol { enumEntrySymbol ->
+                    enumEntrySymbol.computeAnnotations(
+                        modifierList,
+                        nullability = NullabilityType.Unknown, // there is no need to add nullability annotations on enum entries
+                        annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
+                    )
+                }
+            },
+        )
     }
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {

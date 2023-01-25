@@ -6,5 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
 internal class SimpleModifiersBox(private val modifiers: Set<String>) : ModifiersBox {
+    constructor(vararg modifiers: String) : this(modifiers.toSet())
     override fun hasModifier(modifier: String): Boolean = modifier in modifiers
 }

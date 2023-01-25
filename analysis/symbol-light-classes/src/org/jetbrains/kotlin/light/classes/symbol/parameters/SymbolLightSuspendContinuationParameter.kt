@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThi
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
@@ -54,13 +55,13 @@ internal class SymbolLightSuspendContinuationParameter(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            staticModifiers = emptySet(),
-        ) { modifierList ->
-            if (withFunctionSymbol { it.visibility.isPrivateOrPrivateToThis() })
-                emptyList()
-            else
-                listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
-        }
+            annotationsBox = SimpleAnnotationsBox { modifierList ->
+                if (withFunctionSymbol { it.visibility.isPrivateOrPrivateToThis() })
+                    emptyList()
+                else
+                    listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
+            },
+        )
     }
 
     override fun hasModifierProperty(p0: String): Boolean = false

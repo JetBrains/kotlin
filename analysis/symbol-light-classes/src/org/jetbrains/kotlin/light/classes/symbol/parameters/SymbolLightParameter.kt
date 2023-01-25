@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -29,22 +30,22 @@ internal class SymbolLightParameter(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            staticModifiers = emptySet(),
-        ) { modifierList ->
-            val annotationSite = isConstructorParameterSymbol.ifTrue {
-                AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
-            }
+            annotationsBox = SimpleAnnotationsBox { modifierList ->
+                val annotationSite = isConstructorParameterSymbol.ifTrue {
+                    AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
+                }
 
-            parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
-                val nullability = if (parameterSymbol.isVararg) NullabilityType.NotNull else super.nullabilityType
-                parameterSymbol.computeAnnotations(
-                    modifierList = modifierList,
-                    nullability = nullability,
-                    annotationUseSiteTarget = annotationSite,
-                    includeAnnotationsWithoutSite = true,
-                )
-            }
-        }
+                parameterSymbolPointer.withSymbol(ktModule) { parameterSymbol ->
+                    val nullability = if (parameterSymbol.isVararg) NullabilityType.NotNull else super.nullabilityType
+                    parameterSymbol.computeAnnotations(
+                        modifierList = modifierList,
+                        nullability = nullability,
+                        annotationUseSiteTarget = annotationSite,
+                        includeAnnotationsWithoutSite = true,
+                    )
+                }
+            },
+        )
     }
 
     private val isVararg: Boolean by lazyPub {

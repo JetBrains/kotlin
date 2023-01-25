@@ -27,10 +27,12 @@ import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SimpleModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -64,23 +66,24 @@ class SymbolLightClassForFacade(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            staticModifiers = setOf(PsiModifier.PUBLIC, PsiModifier.FINAL),
-        ) { modifierList ->
-            if (multiFileClass) {
-                emptyList()
-            } else {
-                withFileSymbols { fileSymbols ->
-                    fileSymbols.flatMap {
-                        it.computeAnnotations(
-                            modifierList = modifierList,
-                            nullability = NullabilityType.Unknown,
-                            annotationUseSiteTarget = AnnotationUseSiteTarget.FILE,
-                            includeAnnotationsWithoutSite = false,
-                        )
+            modifiersBox = SimpleModifiersBox(PsiModifier.PUBLIC, PsiModifier.FINAL),
+            annotationsBox = SimpleAnnotationsBox { modifierList ->
+                if (multiFileClass) {
+                    emptyList()
+                } else {
+                    withFileSymbols { fileSymbols ->
+                        fileSymbols.flatMap {
+                            it.computeAnnotations(
+                                modifierList = modifierList,
+                                nullability = NullabilityType.Unknown,
+                                annotationUseSiteTarget = AnnotationUseSiteTarget.FILE,
+                                includeAnnotationsWithoutSite = false,
+                            )
+                        }
                     }
                 }
-            }
-        }
+            },
+        )
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference
 internal typealias LazyModifiersComputer = (modifier: String) -> Map<String, Boolean>?
 
 internal class LazyModifiersBox(
-    initialValue: Map<String, Boolean>,
+    initialValue: Map<String, Boolean> = emptyMap(),
     private val computer: LazyModifiersComputer,
 ) : ModifiersBox {
     private val modifiersMapReference: AtomicReference<PersistentMap<String, Boolean>> = AtomicReference(initialValue.toPersistentHashMap())

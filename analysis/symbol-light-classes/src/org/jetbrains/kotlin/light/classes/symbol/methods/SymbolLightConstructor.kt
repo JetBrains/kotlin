@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
@@ -52,17 +53,20 @@ internal class SymbolLightConstructor(
 
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            initialValue = initialValue,
-            lazyModifiersComputer = ::computeModifiers,
-        ) { modifierList ->
-            withFunctionSymbol { constructorSymbol ->
-                constructorSymbol.computeAnnotations(
-                    modifierList = modifierList,
-                    nullability = NullabilityType.Unknown,
-                    annotationUseSiteTarget = null,
-                )
-            }
-        }
+            modifiersBox = LazyModifiersBox(
+                initialValue = initialValue,
+                computer = ::computeModifiers,
+            ),
+            annotationsBox = SimpleAnnotationsBox { modifierList ->
+                withFunctionSymbol { constructorSymbol ->
+                    constructorSymbol.computeAnnotations(
+                        modifierList = modifierList,
+                        nullability = NullabilityType.Unknown,
+                        annotationUseSiteTarget = null,
+                    )
+                }
+            },
+        )
     }
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? {

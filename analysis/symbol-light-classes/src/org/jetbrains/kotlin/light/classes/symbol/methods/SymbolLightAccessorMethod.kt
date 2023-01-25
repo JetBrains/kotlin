@@ -204,8 +204,8 @@ internal class SymbolLightAccessorMethod private constructor(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            lazyModifiersComputer = ::computeModifiers,
-            annotationsComputer = ::computeAnnotations,
+            modifiersBox = LazyModifiersBox(computer = ::computeModifiers),
+            annotationsBox = SimpleAnnotationsBox(::computeAnnotations),
         )
     }
 

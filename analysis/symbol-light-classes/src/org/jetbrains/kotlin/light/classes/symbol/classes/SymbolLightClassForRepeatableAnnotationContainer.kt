@@ -11,9 +11,11 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightRepeatableAnnotationContainerMethod
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SimpleModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
 
@@ -39,9 +41,9 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
     override fun computeModifierList(): PsiModifierList = SymbolLightClassModifierList(
         containingDeclaration = this,
         // It is marked as Abstract because all the annotation classes are marked as Abstract
-        // It is marked as Static because all nested interfaces marked as Static
-        staticModifiers = setOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.ABSTRACT),
-        annotationsComputer = { psiModifierList ->
+        // It is marked as Static because all nested interfaces are marked as Static
+        modifiersBox = SimpleModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.ABSTRACT),
+        annotationsBox = SimpleAnnotationsBox { psiModifierList ->
             val annotations = withClassOrObjectSymbol { classOrObjectSymbol ->
                 classOrObjectSymbol.computeAnnotations(
                     modifierList = psiModifierList,

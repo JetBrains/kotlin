@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -67,17 +68,20 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
 
     protected open fun computeModifierList(): PsiModifierList? = SymbolLightClassModifierList(
         containingDeclaration = this,
-        initialValue = LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT),
-        lazyModifiersComputer = ::computeModifiers
-    ) { modifierList ->
-        withClassOrObjectSymbol { classOrObjectSymbol ->
-            classOrObjectSymbol.computeAnnotations(
-                modifierList = modifierList,
-                nullability = NullabilityType.Unknown,
-                annotationUseSiteTarget = null,
-            )
-        }
-    }
+        modifiersBox = LazyModifiersBox(
+            initialValue = LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT),
+            computer = ::computeModifiers
+        ),
+        annotationsBox = SimpleAnnotationsBox { modifierList ->
+            withClassOrObjectSymbol { classOrObjectSymbol ->
+                classOrObjectSymbol.computeAnnotations(
+                    modifierList = modifierList,
+                    nullability = NullabilityType.Unknown,
+                    annotationUseSiteTarget = null,
+                )
+            }
+        },
+    )
 
     private val _modifierList: PsiModifierList? by lazyPub {
         computeModifierList()
