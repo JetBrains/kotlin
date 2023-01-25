@@ -9,6 +9,7 @@ import junit.framework.TestCase
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.load.java.JvmAbi
 import java.lang.reflect.Field
+import java.lang.reflect.Member
 import java.lang.reflect.Modifier
 import kotlin.reflect.jvm.javaField
 
@@ -44,23 +45,24 @@ class ReflectionCodeSanityTest : TestCase() {
     }
 
     fun testNoDelegatedPropertiesInKClassAndKProperties() {
-        val badFields = linkedSetOf<Field>()
+        val badMembers = linkedSetOf<Member>()
         for (klass in collectClassesWithSupers(
                 "KClassImpl",
                 "KMutableProperty0Impl",
                 "KMutableProperty1Impl",
                 "KMutableProperty2Impl"
         )) {
-            badFields.addAll(klass.declaredFields.filter { it.name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) })
+            badMembers.addAll(klass.declaredFields.filter { it.name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) })
+            badMembers.addAll(klass.declaredMethods.filter { it.name.endsWith(JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX) })
         }
 
-        if (badFields.isNotEmpty()) {
-            fail("The fields listed below appear to be delegates for properties.\n" +
+        if (badMembers.isNotEmpty()) {
+            fail("The members listed below appear to be delegates for properties.\n" +
                  "It's highly not recommended to use property delegates in reflection.jvm because a KProperty instance\n" +
                  "is created for each delegated property and that makes the initialization sequence of reflection\n" +
                  "implementation classes unpredictable and leads to a deadlock or ExceptionInInitializerError.\n\n" +
                  "Please un-delegate the corresponding properties:\n\n" +
-                 badFields.joinToString("\n"))
+                 badMembers.joinToString("\n"))
         }
     }
 
