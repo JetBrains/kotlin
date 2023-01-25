@@ -26,6 +26,18 @@ fun forUntilSize() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
+// CHECK-LABEL: define void @"kfun:#forRangeUntilSize(){}"()
+@ExperimentalStdlibApi
+fun forRangeUntilSize() {
+    val array = Array(10) { 0L }
+    // CHECK: {{^}}do_while_loop{{.*}}:
+    for (i in 0..<array.size) {
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
+        array[i] = 6
+    }
+}
+// CHECK-LABEL: {{^}}epilogue:
+
 // CHECK-LABEL: define void @"kfun:#forDownToSize(){}"()
 fun forDownToSize() {
     val array = Array(10) { 0L }
@@ -87,6 +99,18 @@ fun forUntilWithStep() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
+// CHECK-LABEL: define void @"kfun:#forRangeUntilWithStep(){}"()
+@ExperimentalStdlibApi
+fun forRangeUntilWithStep() {
+    val array = CharArray(10) { '0' }
+    // CHECK: {{^}}do_while_loop{{.*}}:
+    for (i in 0..<array.size step 2) {
+        // CHECK: {{call|invoke}} void @Kotlin_CharArray_set_without_BoundCheck
+        array[i] = '6'
+    }
+}
+// CHECK-LABEL: {{^}}epilogue:
+
 // CHECK-LABEL: define void @"kfun:#forDownToWithStep(){}"()
 fun forDownToWithStep() {
     val array = UIntArray(10) { 0U }
@@ -126,6 +150,18 @@ fun forReversed() {
     val array = Array(10) { 100 }
     // CHECK: {{^}}do_while_loop{{.*}}:
     for (i in (0..array.size-1).reversed()) {
+        // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
+        array[i] = 6
+    }
+}
+// CHECK-LABEL: {{^}}epilogue:
+
+// CHECK-LABEL: define void @"kfun:#forRangeUntilReversed(){}"()
+@ExperimentalStdlibApi
+fun forRangeUntilReversed() {
+    val array = Array(10) { 100 }
+    // CHECK: {{^}}do_while_loop{{.*}}:
+    for (i in (0..<array.size).reversed()) {
         // CHECK: {{call|invoke}} void @Kotlin_Array_set_without_BoundCheck
         array[i] = 6
     }
@@ -274,17 +310,21 @@ fun chainedReceivers() {
 }
 // CHECK-LABEL: {{^}}epilogue:
 
+@ExperimentalStdlibApi
 fun main() {
     forEachIndicies()
     forUntilSize()
+    forRangeUntilSize()
     forDownToSize()
     forRangeToSize()
     forRangeToWithStep()
     forUntilWithStep()
+    forRangeUntilWithStep()
     forDownToWithStep()
     forIndiciesWithStep()
     forWithIndex()
     forReversed()
+    forRangeUntilReversed()
     forEachCall()
     forLoop()
     innerLoop()

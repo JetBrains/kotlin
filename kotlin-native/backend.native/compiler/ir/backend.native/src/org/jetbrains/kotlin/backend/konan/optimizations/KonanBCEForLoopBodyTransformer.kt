@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 // Base class describing value of expression.
@@ -194,6 +194,8 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                     (symbol.signature as? IdSignature.AccessorSignature)?.propertySignature?.asPublic()?.shortName == propertyName &&
                     dispatchReceiver?.type?.getClass()?.symbol in context.ir.symbols.progressionClasses
 
+    private val untilFqName = FqName("kotlin.ranges.until")
+
     private fun analyzeLoopHeader(loopHeader: ForLoopHeader): BoundsCheckAnalysisResult {
         var analysisResult = BoundsCheckAnalysisResult(false, null)
         when (loopHeader) {
@@ -247,21 +249,27 @@ class KonanBCEForLoopBodyTransformer : ForLoopBodyTransformer() {
                         analysisResult = checkIrCallCondition(loopHeader.headerInfo.first, ::lessThanSize)
                     }
                     ProgressionDirection.UNKNOWN ->
-                        // Case of progression - for (i in 0 until array.size step n)
+                        // Case of progression - for (i in 0 until array.size step n) or for (i in 0..<array.size step n)
                         if (loopHeader.headerInfo.first.isProgressionPropertyGetter("first") &&
                                 loopHeader.headerInfo.last.isProgressionPropertyGetter("last")) {
-                            val firstReceiver = (loopHeader.headerInfo.first as IrCall).dispatchReceiver as? IrGetValue
-                            val lastReceiver = (loopHeader.headerInfo.last as IrCall).dispatchReceiver as? IrGetValue
-                            if (firstReceiver?.symbol?.owner == lastReceiver?.symbol?.owner) {
-                                val untilFunction =
-                                        ((firstReceiver?.symbol?.owner as? IrVariable)?.initializer as? IrCall)?.extensionReceiver as? IrCall
-                                if (untilFunction?.symbol?.owner?.name?.asString() == "until" && untilFunction.extensionReceiver?.compareIntegerNumericConst { it >= 0 } == true) {
-                                    val last = untilFunction.getValueArgument(0)!!
+                            val firstReceiver = ((loopHeader.headerInfo.first as IrCall).dispatchReceiver as? IrGetValue)?.symbol?.owner
+                            val lastReceiver = ((loopHeader.headerInfo.last as IrCall).dispatchReceiver as? IrGetValue)?.symbol?.owner
+                            if (firstReceiver == lastReceiver) {
+                                val createRange = ((firstReceiver as? IrVariable)?.initializer as? IrCall)?.extensionReceiver as? IrCall
+                                val first = createRange?.symbol?.owner?.let {
+                                    when {
+                                        it.fqNameWhenAvailable == untilFqName -> createRange.extensionReceiver
+                                        createRange.origin == IrStatementOrigin.RANGE_UNTIL -> createRange.dispatchReceiver
+                                        else -> null
+                                    }
+                                }
+                                if (first?.compareIntegerNumericConst { it >= 0 } == true) {
+                                    val last = createRange.getValueArgument(0)!!
                                     analysisResult = checkIrCallCondition(last) { call ->
                                         // `isLastInclusive` for current case is set to true.
                                         // This case isn't fully optimized in ForLoopsLowering.
                                         if (call.isGetSizeCall())
-                                            BoundsCheckAnalysisResult(true, call.dispatchReceiver?.let { findExpressionValueDescription(it) } )
+                                            BoundsCheckAnalysisResult(true, call.dispatchReceiver?.let { findExpressionValueDescription(it) })
                                         else
                                             lessThanSize(call)
                                     }
