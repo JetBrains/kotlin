@@ -6,14 +6,28 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
-import org.jetbrains.kotlin.asJava.classes.lazyPub
+import com.intellij.psi.PsiModifierList
+import java.util.concurrent.atomic.AtomicReference
 
-internal class SimpleAnnotationsBox(annotationsComputer: () -> Collection<PsiAnnotation>) : AnnotationsBox {
-    private val lazyAnnotation: Array<PsiAnnotation> by lazyPub {
-        val annotations = annotationsComputer()
-        if (annotations.isEmpty()) PsiAnnotation.EMPTY_ARRAY else annotations.toTypedArray()
+internal class SimpleAnnotationsBox(private val annotationsComputer: (PsiModifierList) -> Collection<PsiAnnotation>) : AnnotationsBox {
+    private val annotations: AtomicReference<Array<PsiAnnotation>?> = AtomicReference()
+
+    private fun getOrComputeAnnotations(owner: PsiModifierList): Array<PsiAnnotation> {
+        annotations.get()?.let { return it }
+
+        val nonCachedAnnotations = annotationsComputer(owner)
+        val resultArray = if (nonCachedAnnotations.isEmpty()) PsiAnnotation.EMPTY_ARRAY else nonCachedAnnotations.toTypedArray()
+        return if (annotations.compareAndSet(null, resultArray)) {
+            resultArray
+        } else {
+            getOrComputeAnnotations(owner)
+        }
     }
 
-    override fun getAnnotations(): Array<PsiAnnotation> = lazyAnnotation
-    override fun findAnnotation(qualifiedName: String): PsiAnnotation? = lazyAnnotation.find { it.qualifiedName == qualifiedName }
+    override fun annotations(owner: PsiModifierList): Array<PsiAnnotation> = getOrComputeAnnotations(owner)
+
+    override fun findAnnotation(
+        owner: PsiModifierList,
+        qualifiedName: String,
+    ): PsiAnnotation? = getOrComputeAnnotations(owner).find { it.qualifiedName == qualifiedName }
 }

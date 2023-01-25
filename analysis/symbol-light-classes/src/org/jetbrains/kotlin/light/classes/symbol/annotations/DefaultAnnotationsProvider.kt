@@ -268,9 +268,10 @@ private fun LazyAnnotationsBox.tryConvertToJavaAnnotation(
     argumentsComputer: SymbolLightJavaAnnotation.() -> List<KtNamedAnnotationValue> = { emptyList() },
 ): PsiAnnotation? {
     if (qualifiedName != javaQualifier) return null
-    if (hasAnnotation(javaQualifier)) return null
+    if (hasAnnotation(owner, javaQualifier)) return null
 
     val originalLightAnnotation = findAnnotation(
+        owner,
         kotlinQualifier,
         withAdditionalAnnotations = false,
     ) as? SymbolLightLazyAnnotation ?: return null

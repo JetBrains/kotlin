@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.utils.SmartList
 import java.util.concurrent.atomic.AtomicReference
 
 internal class LazyAnnotationsBox(
-    private val owner: PsiModifierList,
     private val annotationsProvider: AnnotationsProvider,
     private val additionalAnnotationsProvider: AdditionalAnnotationsProvider = DefaultAnnotationsProvider,
 ) : AnnotationsBox {
@@ -21,7 +20,7 @@ internal class LazyAnnotationsBox(
     private var specialAnnotations: SmartList<PsiAnnotation>? = null
     private val monitor = Any()
 
-    override fun getAnnotations(): Array<PsiAnnotation> {
+    override fun annotations(owner: PsiModifierList): Array<PsiAnnotation> {
         annotationsArray.get()?.let { return it }
 
         val classIds = annotationsProvider.classIds()
@@ -60,9 +59,12 @@ internal class LazyAnnotationsBox(
             annotationsArray.get() ?: error("Unexpected state")
         }
 
-    override fun findAnnotation(qualifiedName: String): PsiAnnotation? = findAnnotation(qualifiedName, withAdditionalAnnotations = true)
+    override fun findAnnotation(
+        owner: PsiModifierList,
+        qualifiedName: String,
+    ): PsiAnnotation? = findAnnotation(owner, qualifiedName, withAdditionalAnnotations = true)
 
-    fun findAnnotation(qualifiedName: String, withAdditionalAnnotations: Boolean): PsiAnnotation? {
+    fun findAnnotation(owner: PsiModifierList, qualifiedName: String, withAdditionalAnnotations: Boolean): PsiAnnotation? {
         annotationsArray.get()?.let { array ->
             return array.find { it.qualifiedName == qualifiedName }
         }
@@ -84,7 +86,7 @@ internal class LazyAnnotationsBox(
         }
 
         if (specialAnnotation == null) {
-            return annotations.find { it.qualifiedName == qualifiedName }
+            return annotations(owner).find { it.qualifiedName == qualifiedName }
         }
 
         return synchronized(monitor) {
@@ -108,7 +110,7 @@ internal class LazyAnnotationsBox(
         }
     }
 
-    override fun hasAnnotation(qualifiedName: String): Boolean {
+    override fun hasAnnotation(owner: PsiModifierList, qualifiedName: String): Boolean {
         annotationsArray.get()?.let { array ->
             return array.any { it.qualifiedName == qualifiedName }
         }
@@ -117,7 +119,7 @@ internal class LazyAnnotationsBox(
         return if (specialAnnotationClassId != null) {
             specialAnnotationClassId in annotationsProvider
         } else {
-            annotations.any { it.qualifiedName == qualifiedName }
+            annotations(owner).any { it.qualifiedName == qualifiedName }
         }
     }
 
