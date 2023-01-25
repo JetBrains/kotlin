@@ -73,6 +73,10 @@ class IdeaKotlinClasspath private constructor(private val files: MutableSet<File
         return files.hashCode()
     }
 
+    override fun toString(): String {
+        return "IdeaKotlinClasspath($files)"
+    }
+
     internal companion object {
         private const val serialVersionUID = 0L
 
