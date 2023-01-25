@@ -30,8 +30,6 @@ val rootProperties = Properties().apply {
 
 val kotlinVersion = project.bootstrapKotlinVersion
 val slackApiVersion: String by rootProperties
-val ktorVersion: String by rootProperties
-val shadowVersion: String by rootProperties
 val metadataVersion: String by rootProperties
 
 group = "org.jetbrains.kotlin"
@@ -67,18 +65,17 @@ dependencies {
         }
     }
 
-    implementation("io.ktor:ktor-client-auth:$ktorVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
-
     api(project(":native:kotlin-native-utils"))
     api(project(":kotlin-native-shared"))
     api(project(":kotlinx-metadata-klib"))
-    implementation("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
 }
 
-sourceSets["main"].withConvention(KotlinSourceSet::class) {
-    kotlin.srcDir("$projectDir/../tools/benchmarks/shared/src/main/kotlin/report")
+kotlin {
+    sourceSets {
+        main {
+            kotlin.srcDir("$projectDir/../tools/benchmarks/shared/src/main/kotlin/report")
+        }
+    }
 }
 
 val compileKotlin: KotlinCompile by tasks
