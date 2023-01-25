@@ -155,4 +155,26 @@ public class DiagnosticTraversalCounterTestGenerated extends AbstractDiagnosticT
     public void testTypeAlias() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/typeAlias.kt");
     }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/constructorParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ConstructorParameters {
+        @Test
+        public void testAllFilesPresentInConstructorParameters() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/constructorParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("constructorParameter.kt")
+        public void testConstructorParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/constructorParameters/constructorParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorParameterWithAnnotations.kt")
+        public void testConstructorParameterWithAnnotations() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/constructorParameters/constructorParameterWithAnnotations.kt");
+        }
+    }
 }

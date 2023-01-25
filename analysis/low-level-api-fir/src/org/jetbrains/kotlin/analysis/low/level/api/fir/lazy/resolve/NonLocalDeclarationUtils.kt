@@ -51,11 +51,10 @@ internal fun FirDeclaration.getKtDeclarationForFirElement(): KtDeclaration {
 
 internal fun declarationCanBeLazilyResolved(declaration: KtDeclaration): Boolean {
     return when (declaration) {
-        !is KtNamedDeclaration -> false
         is KtDestructuringDeclarationEntry, is KtFunctionLiteral, is KtTypeParameter -> false
-        is KtPrimaryConstructor -> false
         is KtParameter -> declaration.hasValOrVar() && declaration.containingClassOrObject?.getClassId() != null
-        is KtCallableDeclaration, is KtEnumEntry -> {
+        is KtPrimaryConstructor -> (declaration.parent as? KtClassOrObject)?.getClassId() != null
+        is KtCallableDeclaration, is KtEnumEntry, is KtClassInitializer -> {
             when (val parent = declaration.parent) {
                 is KtFile -> true
                 is KtClassBody -> (parent.parent as? KtClassOrObject)?.getClassId() != null
@@ -63,6 +62,7 @@ internal fun declarationCanBeLazilyResolved(declaration: KtDeclaration): Boolean
             }
         }
         is KtClassLikeDeclaration -> declaration.getClassId() != null
+        !is KtNamedDeclaration -> false
         else -> error("Unexpected ${declaration::class.qualifiedName}")
     }
 }
