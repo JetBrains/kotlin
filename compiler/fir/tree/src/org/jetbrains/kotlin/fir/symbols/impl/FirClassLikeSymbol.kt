@@ -33,6 +33,17 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
     val rawStatus: FirDeclarationStatus
         get() = fir.status
 
+    val resolvedStatus: FirResolvedDeclarationStatus
+        get() {
+            lazyResolveToPhase(FirResolvePhase.STATUS)
+            return fir.status as FirResolvedDeclarationStatus
+        }
+
+    val typeParameterSymbols: List<FirTypeParameterSymbol>
+        get() {
+            return fir.typeParameters.map { it.symbol }
+        }
+
     override fun toString(): String = "${this::class.simpleName} ${classId.asString()}"
 }
 
@@ -58,19 +69,8 @@ sealed class FirClassSymbol<C : FirClass>(classId: ClassId) : FirClassLikeSymbol
             return fir.declarations.map { it.symbol }
         }
 
-    val typeParameterSymbols: List<FirTypeParameterSymbol>
-        get() {
-            return fir.typeParameters.map { it.symbol }
-        }
-
     val classKind: ClassKind
         get() = fir.classKind
-
-    val resolvedStatus: FirResolvedDeclarationStatus
-        get() {
-            lazyResolveToPhase(FirResolvePhase.STATUS)
-            return fir.status as FirResolvedDeclarationStatus
-        }
 }
 
 class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(classId) {
@@ -91,20 +91,9 @@ class FirAnonymousObjectSymbol : FirClassSymbol<FirAnonymousObject>(ANONYMOUS_CL
 class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId) {
     override fun toLookupTag(): ConeClassLikeLookupTag = ConeClassLikeLookupTagImpl(classId)
 
-    val resolvedStatus: FirResolvedDeclarationStatus
-        get() {
-            lazyResolveToPhase(FirResolvePhase.STATUS)
-            return fir.status as FirResolvedDeclarationStatus
-        }
-
     val resolvedExpandedTypeRef: FirResolvedTypeRef
         get() {
             lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
             return fir.expandedTypeRef as FirResolvedTypeRef
-        }
-
-    val typeParameterSymbols: List<FirTypeParameterSymbol>
-        get() {
-            return fir.typeParameters.map { it.symbol }
         }
 }

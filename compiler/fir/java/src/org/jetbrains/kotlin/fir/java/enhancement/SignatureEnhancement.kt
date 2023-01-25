@@ -475,7 +475,7 @@ class FirSignatureEnhancement(
             ?: FakePureImplementationsProvider.getPurelyImplementedInterface(owner.symbol.classId)
             ?: return null
         val superTypeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(purelyImplementedClassId) ?: return null
-        val superTypeParameterSymbols = superTypeSymbol.typeParameterSymbols ?: return null
+        val superTypeParameterSymbols = superTypeSymbol.typeParameterSymbols
         val typeParameters = owner.typeParameters
         val supertypeParameterCount = superTypeParameterSymbols.size
         val typeParameterCount = typeParameters.size
@@ -495,8 +495,7 @@ class FirSignatureEnhancement(
         )
     }
 
-
-        private fun enhanceSuperType(type: FirTypeRef): FirTypeRef =
+    private fun enhanceSuperType(type: FirTypeRef): FirTypeRef =
         EnhancementSignatureParts(
             session, typeQualifierResolver, null, isCovariant = false, forceOnlyHeadTypeConstructor = false,
             AnnotationQualifierApplicabilityType.TYPE_USE, contextQualifiers

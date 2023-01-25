@@ -551,8 +551,7 @@ val FirClassLikeSymbol<*>.classKind: ClassKind?
 val FirBasedSymbol<*>.typeParameterSymbols: List<FirTypeParameterSymbol>?
     get() = when (this) {
         is FirCallableSymbol<*> -> typeParameterSymbols
-        is FirClassSymbol<*> -> typeParameterSymbols
-        is FirTypeAliasSymbol -> typeParameterSymbols
+        is FirClassLikeSymbol<*> -> typeParameterSymbols
         else -> null
     }
 
