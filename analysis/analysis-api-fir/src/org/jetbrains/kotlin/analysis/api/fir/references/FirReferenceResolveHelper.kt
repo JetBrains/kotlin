@@ -500,16 +500,24 @@ internal object FirReferenceResolveHelper {
             }
 
             if (!referencedClassIdAndQualifiedAccessMatch(qualifiedAccessSegments)) {
-                // Referenced ClassId and qualified access (from source PSI) could be not identical if an import alias is involved.
-                // E.g., test.pkg.R.string.hello v.s. coreR.string.hello where test.pkg.R is imported as coreR
-                // Since an import alias ends with a simple identifier (i.e., can't be non-trivial dotted qualifier), we can safely assume
-                // that the first segment of the qualified access could be the import alias if any. Then, we can still compare the
-                // remaining parts.
-                // E.g., coreR.string.hello
-                //   -> string.hello (drop the first segment)
-                //   test.pkg.R.string.hello
-                //   -> string.hello (take last two segments, where the size is determined by the size of qualified access minus 1)
-                qualifiedAccessSegments.removeAt(0)
+                fun FirClassLikeDeclaration.isCompanionWithSameName(): Boolean {
+                    val klass = this as? FirRegularClass ?: return false
+                    return klass.isCompanion && klass.name == klass.classId.outerClassId?.shortClassName
+                }
+                if (referencedClass.isCompanionWithSameName()) {
+                    qualifiedAccessSegments.add(referencedClass.classId.shortClassName.asString())
+                } else {
+                    // Referenced ClassId and qualified access (from source PSI) could be not identical if an import alias is involved.
+                    // E.g., test.pkg.R.string.hello v.s. coreR.string.hello where test.pkg.R is imported as coreR
+                    // Since an import alias ends with a simple identifier (i.e., can't be non-trivial dotted qualifier), we can safely
+                    // assume that the first segment of the qualified access could be the import alias if any. Then, we can still compare
+                    // the remaining parts.
+                    // E.g., coreR.string.hello
+                    //   -> string.hello (drop the first segment)
+                    //   test.pkg.R.string.hello
+                    //   -> string.hello (take last two segments, where the size is determined by the size of qualified access minus 1)
+                    qualifiedAccessSegments.removeAt(0)
+                }
                 assert(referencedClassIdAndQualifiedAccessMatch(qualifiedAccessSegments)) {
                     "Referenced classId $referencedClassId should end with qualifiedAccess expression ${qualifiedAccess.text} "
                 }

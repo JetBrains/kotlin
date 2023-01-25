@@ -113,6 +113,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
     }
 
     @Test
+    @TestMetadata("CompanionObjectWithName.kt")
+    public void testCompanionObjectWithName() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/CompanionObjectWithName.kt");
+    }
+
+    @Test
     @TestMetadata("CtrlClickResolve.kt")
     public void testCtrlClickResolve() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/CtrlClickResolve.kt");
