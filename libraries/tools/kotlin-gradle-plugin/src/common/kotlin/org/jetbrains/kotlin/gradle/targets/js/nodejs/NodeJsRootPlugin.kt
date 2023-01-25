@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.npm.CompositeNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.GradleNodeModulesCache
 import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
+import org.jetbrains.kotlin.gradle.targets.js.npm.UsesKotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PACKAGE_JSON_UMBRELLA_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmCachesSetup
@@ -21,6 +22,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.markResolvable
@@ -146,6 +150,20 @@ open class NodeJsRootPlugin : Plugin<Project> {
         val Project.kotlinNodeJsExtension: NodeJsRootExtension
             get() = extensions.getByName(NodeJsRootExtension.EXTENSION_NAME).castIsolatedKotlinPluginClassLoaderAware()
 
+        private val Project.gradleNodeModules
+            get() = GradleNodeModulesCache.registerIfAbsent(
+                this,
+                null,
+                null
+            )
+
+        private val Project.compositeNodeModules
+            get() = CompositeNodeModulesCache.registerIfAbsent(
+                this,
+                null,
+                null
+            )
+
         val Project.kotlinNpmResolutionManager: Provider<KotlinNpmResolutionManager>
             get() {
                 val npmResolutionManager = project.gradle.sharedServices.registerIfAbsent(
@@ -153,6 +171,14 @@ open class NodeJsRootPlugin : Plugin<Project> {
                     KotlinNpmResolutionManager::class.java
                 ) {
                     error("Must be already registered")
+                }
+
+                SingleActionPerProject.run(project, UsesKotlinNpmResolutionManager::class.java.name) {
+                    project.tasks.withType<UsesKotlinNpmResolutionManager>().configureEach { task ->
+                        task.usesService(npmResolutionManager)
+                        task.usesService(gradleNodeModules)
+                        task.usesService(compositeNodeModules)
+                    }
                 }
 
                 return npmResolutionManager
