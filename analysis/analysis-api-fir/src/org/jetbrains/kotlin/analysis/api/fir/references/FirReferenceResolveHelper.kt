@@ -494,7 +494,7 @@ internal object FirReferenceResolveHelper {
         }
         val referencedClass = referencedSymbol.fir
         val referencedSymbolsByFir = listOfNotNull(symbolBuilder.buildSymbol(referencedSymbol))
-        val firSourcePsi = fir.source.psi ?: referencedSymbolsByFir
+        val firSourcePsi = fir.source.psi
         if (firSourcePsi !is KtDotQualifiedExpression) return referencedSymbolsByFir
 
         // When the source of an `FirResolvedQualifier` is a KtDotQualifiedExpression, we need to manually break up the qualified access and
@@ -536,8 +536,8 @@ internal object FirReferenceResolveHelper {
                 //   -> string.hello (drop the first segment)
                 //   test.pkg.R.string.hello
                 //   -> string.hello (take last two segments, where the size is determined by the size of qualified access minus 1)
-                qualifiedAccessSegments.removeAt(0)
-                assert(referencedClassIdAndQualifiedAccessMatch(qualifiedAccessSegments)) {
+                val fixedQualifiedAccessSegments = qualifiedAccessSegments.drop(1)
+                assert(referencedClassIdAndQualifiedAccessMatch(fixedQualifiedAccessSegments)) {
                     "Referenced classId $referencedClassId should end with qualifiedAccess expression ${qualifiedAccess.text} "
                 }
             }
@@ -603,16 +603,14 @@ internal object FirReferenceResolveHelper {
      * Returns the segments of a qualified access PSI. For example, given `foo.bar.OuterClass.InnerClass`, this returns `["foo", "bar",
      * "OuterClass", "InnerClass"]`.
      */
-    private fun KtDotQualifiedExpression.fqNameSegments(): MutableList<String>? {
-        val result: MutableList<String> = mutableListOf()
-        var current: KtExpression = this
-        while (current is KtDotQualifiedExpression) {
-            result += (current.selectorExpression as? KtNameReferenceExpression)?.getReferencedName() ?: return null
-            current = current.receiverExpression
-        }
-        result += (current as? KtNameReferenceExpression)?.getReferencedName() ?: return null
-        result.reverse()
-        return result
+    private fun KtDotQualifiedExpression.fqNameSegments(): List<String>? {
+        val qualifiers = generateSequence(this as KtExpression) { (it as? KtDotQualifiedExpression)?.receiverExpression }
+            .map { (it as? KtDotQualifiedExpression)?.selectorExpression ?: it }
+            .toList()
+            .asReversed()
+
+        val qualifyingReferences = qualifiers.map { it as? KtNameReferenceExpression ?: return null }
+        return qualifyingReferences.map { it.getReferencedName() }
     }
 
     private fun getSymbolsForAnnotationCall(
