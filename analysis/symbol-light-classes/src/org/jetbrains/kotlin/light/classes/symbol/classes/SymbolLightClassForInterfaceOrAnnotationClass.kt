@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
-import org.jetbrains.kotlin.light.classes.symbol.annotations.DefaultAdditionalAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
@@ -74,7 +74,7 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         ),
         annotationsBox = LazyAnnotationsBox(
             annotationsProvider = SymbolAnnotationsProvider(ktModule, classOrObjectSymbolPointer),
-            additionalAnnotationsProvider = DefaultAdditionalAnnotationsProvider,
+            additionalAnnotationsProvider = AbstractClassAdditionalAnnotationsProvider,
         ),
     )
 

@@ -11,7 +11,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethod
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.CallableId
@@ -19,40 +18,28 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import java.lang.annotation.ElementType
 
-internal object DefaultAdditionalAnnotationsProvider : AdditionalAnnotationsProvider {
+internal object AbstractClassAdditionalAnnotationsProvider : AdditionalAnnotationsProvider {
     override fun addAllAnnotations(
         currentRawAnnotations: MutableList<in PsiAnnotation>,
         foundQualifiers: MutableSet<String>,
-        owner: PsiModifierList,
+        owner: PsiModifierList
     ) {
-        val parent = owner.parent
-        if (parent.isAnnotationClass()) {
-            addAllAnnotationsFromAnnotationClass(currentRawAnnotations, foundQualifiers, owner)
-        } else if (parent.isMethodWithOverride()) {
-            addSimpleAnnotationIfMissing(JvmAnnotationNames.OVERRIDE_ANNOTATION.asString(), currentRawAnnotations, foundQualifiers, owner)
-        }
+        if (!owner.parent.isAnnotationClass()) return
+
+        addAllAnnotationsFromAnnotationClass(currentRawAnnotations, foundQualifiers, owner)
     }
 
     override fun findAdditionalAnnotation(
         annotationsBox: LazyAnnotationsBox,
         qualifiedName: String,
-        owner: PsiModifierList,
-    ): PsiAnnotation? {
-        val parent = owner.parent
-        return when {
-            parent.isAnnotationClass() -> findAdditionalAnnotationFromAnnotationClass(annotationsBox, qualifiedName, owner)
-            parent.isMethodWithOverride() -> {
-                createSimpleAnnotationIfMatches(
-                    qualifier = qualifiedName,
-                    expectedQualifier = JvmAnnotationNames.OVERRIDE_ANNOTATION.asString(),
-                    owner = owner,
-                )
-            }
-
-            else -> null
-        }
-    }
+        owner: PsiModifierList
+    ): PsiAnnotation? = if (owner.parent.isAnnotationClass())
+        findAdditionalAnnotationFromAnnotationClass(annotationsBox, qualifiedName, owner)
+    else
+        null
 }
+
+private fun PsiElement.isAnnotationClass(): Boolean = this is PsiClass && isAnnotationType
 
 private fun addAllAnnotationsFromAnnotationClass(
     currentRawAnnotations: MutableList<in PsiAnnotation>,
@@ -88,8 +75,6 @@ private fun findAdditionalAnnotationFromAnnotationClass(
     ?: annotationsBox.tryConvertToDocumentedJavaAnnotation(qualifiedName, owner)
     ?: annotationsBox.tryConvertToRepeatableJavaAnnotation(qualifiedName, owner)
 
-private fun PsiElement.isAnnotationClass(): Boolean = this is PsiClass && isAnnotationType
-private fun PsiElement.isMethodWithOverride(): Boolean = this is SymbolLightMethod<*> && (isDelegated || isOverride())
 
 private fun LazyAnnotationsBox.tryConvertToDocumentedJavaAnnotation(
     qualifiedName: String,
