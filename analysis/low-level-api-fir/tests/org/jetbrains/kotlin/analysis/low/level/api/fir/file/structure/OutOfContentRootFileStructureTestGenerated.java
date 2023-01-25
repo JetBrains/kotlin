@@ -37,6 +37,12 @@ public class OutOfContentRootFileStructureTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("constructors.kt")
+    public void testConstructors() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/constructors.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationClassLevel.kt")
     public void testDanglingAnnotationClassLevel() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/danglingAnnotationClassLevel.kt");

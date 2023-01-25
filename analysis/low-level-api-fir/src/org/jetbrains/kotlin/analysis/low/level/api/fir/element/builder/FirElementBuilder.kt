@@ -120,6 +120,16 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
             when (parent) {
                 is KtScript -> propose(parent)
                 is KtDestructuringDeclaration -> propose(parent)
+                is KtAnonymousInitializer -> {
+                    val container = parent.containingDeclaration
+                    if (container is KtClassOrObject &&
+                        !container.isObjectLiteral() &&
+                        declarationCanBeLazilyResolved(container) &&
+                        predicate(parent)
+                    ) {
+                        propose(parent)
+                    }
+                }
                 is KtNamedDeclaration -> {
                     val isKindApplicable = when (parent) {
                         is KtClassOrObject -> !parent.isObjectLiteral()

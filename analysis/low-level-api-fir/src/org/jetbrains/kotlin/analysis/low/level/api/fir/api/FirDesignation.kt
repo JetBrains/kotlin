@@ -99,6 +99,11 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
             val containingClassId = target.containingClass()?.classId ?: return emptyList()
             return collectDesignationPathWithContainingClass(target, containingClassId)
         }
+        is FirAnonymousInitializer -> {
+            val containingClassId = target.containingClass().symbol.classId
+            if (containingClassId.isLocal) return null
+            return collectDesignationPathWithContainingClass(target, containingClassId)
+        }
 
         is FirErrorProperty -> {
             return if (target.diagnostic == ConeDestructuringDeclarationsOnTopLevel) emptyList() else null

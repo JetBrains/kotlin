@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilt
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDiagnosticsForFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.ClassDiagnosticRetreiver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.SingleNonLocalDeclarationDiagnosticRetriever
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistentCheckerContextFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.renderWithClassName
@@ -89,7 +90,7 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractLowLevelApiSingl
                     false
                 }
                 element.source?.kind == KtRealSourceElementKind -> true
-                SingleNonLocalDeclarationDiagnosticRetriever.shouldDiagnosticsAlwaysBeCheckedOn(element) -> true
+                ClassDiagnosticRetreiver.shouldDiagnosticsAlwaysBeCheckedOn(element) -> true
                 else -> false
             }
         }

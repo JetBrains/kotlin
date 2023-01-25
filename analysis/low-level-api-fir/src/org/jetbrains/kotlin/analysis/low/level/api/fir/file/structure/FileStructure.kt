@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceByTraversingWholeTree
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.concurrent.ConcurrentHashMap
 
 internal class FileStructure private constructor(
@@ -44,7 +47,7 @@ internal class FileStructure private constructor(
     private val structureElements = ConcurrentHashMap<KtElement, FileStructureElement>()
 
     fun getStructureElementFor(element: KtElement): FileStructureElement {
-        val declaration = element.getNonLocalContainingOrThisDeclaration()
+        val declaration = getStructureKtElement(element)
         val container: KtElement
         if (declaration != null) {
             container = declaration
@@ -55,6 +58,49 @@ internal class FileStructure private constructor(
             } else element.containingKtFile
         }
         return getStructureElementForDeclaration(container)
+    }
+
+    private fun getStructureKtElement(element: KtElement): KtDeclaration? {
+        val container = element.getNonLocalContainingOrThisDeclaration()
+        when {
+            container is KtClassOrObject && container.isInsideSuperClassCall(element) -> {
+                container.primaryConstructor?.let { return it }
+            }
+            container is KtPrimaryConstructor && container.isInsideAnnotationOnParameter(element) -> {
+                container.containingClassOrObject?.let { return it }
+            }
+        }
+        return container
+    }
+
+    private fun KtClassOrObject.isInsideSuperClassCall(element: KtElement): Boolean {
+        for (entry in superTypeListEntries) {
+            if (entry is KtSuperTypeCallEntry && entry.isAncestor(element, strict = false)) return true
+        }
+        return false
+    }
+
+    private fun KtPrimaryConstructor.isInsideAnnotationOnParameter(element: KtElement): Boolean {
+        for (parameter in valueParameters) {
+            for (annotation in parameter.annotationEntries) {
+                val target = annotation.useSiteTarget?.getAnnotationUseSiteTarget() ?: continue
+                when (target) {
+                    AnnotationUseSiteTarget.FIELD,
+                    AnnotationUseSiteTarget.PROPERTY,
+                    AnnotationUseSiteTarget.PROPERTY_GETTER,
+                    AnnotationUseSiteTarget.PROPERTY_SETTER,
+                    AnnotationUseSiteTarget.SETTER_PARAMETER -> {
+                        if (annotation.isAncestor(element)) return true
+                    }
+                    AnnotationUseSiteTarget.FILE,
+                    AnnotationUseSiteTarget.RECEIVER,
+                    AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER,
+                    AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> {
+                    }
+                }
+            }
+        }
+        return false
     }
 
     private fun getStructureElementForDeclaration(declaration: KtElement): FileStructureElement {
@@ -133,7 +179,8 @@ internal class FileStructure private constructor(
     }
 
     private fun createDanglingModifierListStructure(container: KtElement): FileStructureElement {
-        val firDanglingModifierList = container.findSourceByTraversingWholeTree(moduleComponents.firFileBuilder, firFile) as? FirDanglingModifierList
+        val firDanglingModifierList =
+            container.findSourceByTraversingWholeTree(moduleComponents.firFileBuilder, firFile) as? FirDanglingModifierList
                 ?: errorWithFirSpecificEntries("No dangling modifier found", psi = container)
         firDanglingModifierList.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         return DanglingTopLevelModifierListStructureElement(firFile, firDanglingModifierList, moduleComponents, container.containingKtFile)
@@ -142,6 +189,7 @@ internal class FileStructure private constructor(
     private fun createStructureElement(container: KtElement): FileStructureElement = when {
         container is KtFile -> {
             val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+            firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
             moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
                 target = firFile.annotationsContainer,
                 scopeSession = moduleComponents.scopeSessionProvider.getScopeSession(),

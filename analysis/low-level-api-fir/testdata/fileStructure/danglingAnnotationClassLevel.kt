@@ -1,11 +1,11 @@
-class Foo {/* NonReanalyzableDeclarationStructureElement */
+class Foo {/* NonReanalyzableClassDeclarationStructureElement */
     @Suppress("") @MustBeDocumented
 }
-class Bar {/* NonReanalyzableDeclarationStructureElement */
+class Bar {/* NonReanalyzableClassDeclarationStructureElement */
     @Suppress("") @MustBeDocumented
 }
-class Outer {/* NonReanalyzableDeclarationStructureElement */
-    class Inner {/* NonReanalyzableDeclarationStructureElement */
+class Outer {/* NonReanalyzableClassDeclarationStructureElement */
+    class Inner {/* NonReanalyzableClassDeclarationStructureElement */
         @Suppress("") @MustBeDocumented
     }
     fun foo() {/* ReanalyzableFunctionStructureElement */

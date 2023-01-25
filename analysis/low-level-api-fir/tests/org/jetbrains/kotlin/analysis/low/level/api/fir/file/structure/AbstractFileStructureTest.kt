@@ -14,6 +14,7 @@ import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.isSourceSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
@@ -62,6 +63,9 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
                 }
                 is KtTypeAlias -> {
                     elementToComment[ktDeclaration.getTypeReference()!!] = comment
+                }
+                is KtClassInitializer -> {
+                    elementToComment[ktDeclaration.openBraceNode!!] = comment
                 }
                 else -> error("Unsupported declaration $ktDeclaration")
             }

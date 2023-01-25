@@ -1,1 +1,1 @@
-typealias A = 10/* NonReanalyzableDeclarationStructureElement */
+typealias A = 10/* NonReanalyzableNonClassDeclarationStructureElement */

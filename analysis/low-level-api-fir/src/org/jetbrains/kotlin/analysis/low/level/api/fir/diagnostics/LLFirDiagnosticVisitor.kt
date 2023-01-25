@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvi
 import org.jetbrains.kotlin.fir.analysis.collectors.CheckerRunningDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.collectors.DiagnosticCollectorComponents
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 
 internal open class LLFirDiagnosticVisitor(
     context: CheckerContextForProvider,
@@ -37,5 +38,22 @@ internal open class LLFirDiagnosticVisitor(
         }
         checkCanceled()
         element.accept(components.reportCommitter, context)
+
+
+        if (element is FirRegularClass) {
+            suppressReportedDiagnosticsOnClassMembers(element)
+        }
+    }
+
+    /**
+     * Some FirClassChecker may report diagnostics on class member headers.
+     * Those diagnostics should be suppressed if we have a `@Suppress` annotation on class member.
+     */
+    private fun suppressReportedDiagnosticsOnClassMembers(element: FirRegularClass) {
+        for (member in element.declarations) {
+            withAnnotationContainer(member) {
+                member.accept(components.reportCommitter, context)
+            }
+        }
     }
 }

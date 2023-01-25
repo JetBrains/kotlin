@@ -5,23 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic
 
-import org.jetbrains.kotlin.fir.SessionConfiguration
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
-import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.fir.PersistenceContextCollector
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.DanglingTopLevelModifierListStructureElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.NonReanalyzableDeclarationStructureElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.ReanalyzableStructureElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.RootStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.isSourceSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.name
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolveWithClearCaches
@@ -30,6 +19,12 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLeve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
+import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.AssertionsService
 import org.jetbrains.kotlin.test.services.TestModuleStructure
@@ -62,10 +57,11 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
     }
 
     private fun FileStructureElement.getFirDeclaration(): FirDeclaration = when (this) {
-        is NonReanalyzableDeclarationStructureElement -> fir
         is ReanalyzableStructureElement<*, *> -> firSymbol.fir
         is RootStructureElement -> firFile
         is DanglingTopLevelModifierListStructureElement -> fir
+        is NonReanalyzableClassDeclarationStructureElement -> fir
+        is NonReanalyzableNonClassDeclarationStructureElement -> fir
     }
 
 
