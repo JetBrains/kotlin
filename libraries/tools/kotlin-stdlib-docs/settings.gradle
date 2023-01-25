@@ -13,7 +13,6 @@ pluginManagement {
 
 rootProject.name = 'kotlin-stdlib-docs'
 
-include 'kotlin_native'
 include 'kotlin_big'
 include 'plugins:dokka-samples-transformer-plugin'
 include 'plugins:dokka-stdlib-configuration-plugin'
