@@ -42,13 +42,10 @@ private constructor(
                 )
             } else {
                 val key = ProjectPathWithBuildName(moduleId.projectPath, moduleId.build.name)
-                val projectStructureMetadataProvider = includedBuildsProjectStructureMetadataProviders.value[key]
-                    ?: error("Project structure metadata not found for project $key")
-
                 IncludedBuildMppDependencyProjectStructureMetadataExtractor(
                     componentId = moduleId,
                     primaryArtifact = metadataArtifact.file,
-                    projectStructureMetadataProvider = projectStructureMetadataProvider::value
+                    projectStructureMetadataProvider = { includedBuildsProjectStructureMetadataProviders.value[key]?.value }
                 )
             }
         } else {
