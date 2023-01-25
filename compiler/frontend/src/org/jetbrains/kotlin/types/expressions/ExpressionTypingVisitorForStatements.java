@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.resolve.BindingContext;
 import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace;
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver;
+import org.jetbrains.kotlin.resolve.calls.checkers.AssignmentChecker;
+import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext;
 import org.jetbrains.kotlin.resolve.calls.checkers.NewSchemeOfIntegerOperatorResolutionChecker;
 import org.jetbrains.kotlin.resolve.calls.context.CallPosition;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
@@ -482,6 +484,19 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
         }
         if (expectedType != null && leftOperand != null) { //if expectedType == null, some other error has been generated
             basic.checkLValue(context.trace, context, leftOperand, right, expression, false);
+
+            CallCheckerContext callCheckerContext =
+                    new CallCheckerContext(
+                            context,
+                            components.deprecationResolver,
+                            components.moduleDescriptor,
+                            components.missingSupertypesResolver,
+                            components.callComponents,
+                            context.trace
+                    );
+            for (AssignmentChecker checker : components.assignmentCheckers) {
+                checker.check(expression, callCheckerContext);
+            }
         }
 
         if (!refineJavaFieldInTypeProperly) {

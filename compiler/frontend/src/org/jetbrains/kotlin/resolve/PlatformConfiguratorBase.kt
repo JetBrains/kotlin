@@ -110,6 +110,7 @@ abstract class PlatformConfiguratorBase(
     private val dynamicTypesSettings: DynamicTypesSettings? = null,
     private val additionalDeclarationCheckers: List<DeclarationChecker> = emptyList(),
     private val additionalCallCheckers: List<CallChecker> = emptyList(),
+    private val additionalAssignmentCheckers: List<AssignmentChecker> = emptyList(),
     private val additionalTypeCheckers: List<AdditionalTypeChecker> = emptyList(),
     private val additionalClassifierUsageCheckers: List<ClassifierUsageChecker> = emptyList(),
     private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker> = emptyList(),
@@ -135,6 +136,7 @@ abstract class PlatformConfiguratorBase(
             useInstanceIfNotNull(dynamicTypesSettings)
             additionalDeclarationCheckers.forEach { useInstance(it) }
             additionalCallCheckers.forEach { useInstance(it) }
+            additionalAssignmentCheckers.forEach { useInstance(it) }
             additionalTypeCheckers.forEach { useInstance(it) }
             additionalClassifierUsageCheckers.forEach { useInstance(it) }
             additionalAnnotationCheckers.forEach { useInstance(it) }
