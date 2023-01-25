@@ -36427,6 +36427,18 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("kt48445.kt")
+            public void testKt48445() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/kt48445.kt");
+            }
+
+            @Test
+            @TestMetadata("kt50520.kt")
+            public void testKt50520() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/kt50520.kt");
+            }
+
+            @Test
             @TestMetadata("resolveUsualCallWithBuilderInference.kt")
             public void testResolveUsualCallWithBuilderInference() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/resolveUsualCallWithBuilderInference.kt");
