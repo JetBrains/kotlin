@@ -13,6 +13,8 @@ def pKotlinBig() { return project('kotlin_big').extensions }
 def pKotlinNative() { return project('kotlin_native').extensions }
 
 ext.outputDir = "$buildDir/doc"
+ext.outputDirLatest = "$outputDir/latest"
+ext.outputDirPrevious = "$outputDir/previous"
 ext.kotlin_root = pKotlinBig().kotlin_root
 ext.kotlin_libs = pKotlinBig().kotlin_libs
 ext.kotlin_native_root = pKotlinNative().kotlin_native_root
@@ -68,14 +70,15 @@ TaskProvider<DokkaTask> createStdLibVersionedDocTask(String version, Boolean isL
             kotlinLanguageVersion =  "1.1"
 
 
-        moduleName.set("stdlib")
+        moduleName.set("kotlin-stdlib")
+        def moduleDirName = "kotlin-stdlib"
         if (isLatest) {
-            outputDirectory.set(new File(outputDir, "/kotlin-stdlib/latest"))
+            outputDirectory.set(new File(outputDirLatest, moduleDirName))
             pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"                       : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
                                          "org.jetbrains.dokka.kotlinlang.StdLibConfigurationPlugin": """{ "ignoreCommonBuiltIns": "true" }""",
-                                         "org.jetbrains.dokka.versioning.VersioningPlugin"         : """{ "version": "$version", "olderVersionsDir": "${outputDir.toString().replace('\\', '/')}//kotlin-stdlib/old" }"""])
+                                         "org.jetbrains.dokka.versioning.VersioningPlugin"         : """{ "version": "$version", "olderVersionsDir": "${outputDirPrevious.toString().replace('\\', '/')}/$moduleDirName" }"""])
         } else {
-            outputDirectory.set(new File(outputDir, "/kotlin-stdlib/old/" + version))
+            outputDirectory.set(new File(new File(outputDirPrevious, moduleDirName), version))
             pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"                      : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
                                          "org.jetbrains.dokka.kotlinlang.StdLibConfigurationPlugin": """{ "ignoreCommonBuiltIns": "true" }""",
                                          "org.jetbrains.dokka.kotlinlang.VersionFilterPlugin"      : """{ "targetVersion": "$version" }""",
@@ -237,18 +240,19 @@ TaskProvider<DokkaTask> createKotlinTestVersionedDocTask(String version, Boolean
         def kotlinTestJsClasspath = fileTree("$kotlin_libs/kotlin-test-js")
         def kotlinTestJvmClasspath = fileTree("$kotlin_libs/kotlin-test")
 
-        def stdlibPackageList = new URL("file:///${stdlibDocTask.get().outputDirectory.get()}/stdlib/package-list".toString())
+        def stdlibPackageList = new URL("file:///${stdlibDocTask.get().outputDirectory.get()}/kotlin-stdlib/package-list".toString())
         def junit5PackageList = new URL("https://junit.org/junit5/docs/current/api/element-list".toString())
         def kotlinLanguageVersion = version
 
-        moduleName.set("kotlin.test")
+        moduleName.set("kotlin-test")
 
+        def moduleDirName = "kotlin-test"
         if (isLatest) {
-            outputDirectory.set(new File(outputDir, "/kotlin.test/latest"))
+            outputDirectory.set(new File(outputDirLatest, moduleDirName))
             pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"             : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
-                                         "org.jetbrains.dokka.versioning.VersioningPlugin": """{ "version": "$version", "olderVersionsDir": "${outputDir.toString().replace('\\', '/')}//kotlin.test/old" }"""])
+                                         "org.jetbrains.dokka.versioning.VersioningPlugin": """{ "version": "$version", "olderVersionsDir": "${outputDirPrevious.toString().replace('\\', '/')}/$moduleDirName" }"""])
         } else {
-            outputDirectory.set(new File(outputDir, "/kotlin.test/old/" + version))
+            outputDirectory.set(new File(new File(outputDirPrevious, moduleDirName), version))
             pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase"                : """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""",
                                          "org.jetbrains.dokka.kotlinlang.VersionFilterPlugin": """{ "targetVersion": "$version" }""",
                                          "org.jetbrains.dokka.versioning.VersioningPlugin"   : """{ "version": "$version" }"""])
