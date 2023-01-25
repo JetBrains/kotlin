@@ -1,9 +1,6 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.backend.konan.serialization.ClassFieldsSerializer
-import org.jetbrains.kotlin.backend.konan.serialization.EagerInitializedPropertySerializer
-import org.jetbrains.kotlin.backend.konan.serialization.InlineFunctionBodyReferenceSerializer
 import org.jetbrains.kotlin.konan.KonanExternalToolFailure
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
@@ -166,33 +163,24 @@ internal class Linker(
         return executable
     }
 
-    private fun shouldPerformPreLink(caches: CachesToLink, linkerOutputKind: LinkerOutputKind): Boolean {
-        // Pre-link is only useful when producing static library. Otherwise its just a waste of time.
-        val isStaticLibrary = linkerOutputKind == LinkerOutputKind.STATIC_LIBRARY &&
-                config.isFinalBinary
-        val enabled = config.cacheSupport.preLinkCaches
-        val nonEmptyCaches = caches.static.isNotEmpty()
-        return isStaticLibrary && enabled && nonEmptyCaches
-    }
-
     private fun determineLinkerInput(
             objectFiles: List<ObjectFile>,
             linkerOutputKind: LinkerOutputKind,
             dependenciesTrackingResult: DependenciesTrackingResult,
     ): LinkerInput {
-        val caches = determineCachesToLink(context, dependenciesTrackingResult)
+        val caches = resolveCacheBinaries(context.config.cachedLibraries, dependenciesTrackingResult)
         // Since we have several linker stages that involve caching,
         // we should detect cache usage early to report errors correctly.
         val cachingInvolved = caches.static.isNotEmpty() || caches.dynamic.isNotEmpty()
         return when {
             config.produce == CompilerOutputKind.STATIC_CACHE -> {
                 // Do not link static cache dependencies.
-                LinkerInput(objectFiles, CachesToLink(emptyList(), caches.dynamic), emptyList(), cachingInvolved)
+                LinkerInput(objectFiles, ResolvedCacheBinaries(emptyList(), caches.dynamic), emptyList(), cachingInvolved)
             }
-            shouldPerformPreLink(caches, linkerOutputKind) -> {
+            shouldPerformPreLink(config, caches, linkerOutputKind) -> {
                 val preLinkResult = tempFiles.create("withStaticCaches", ".o").absolutePath
                 val preLinkCommands = linker.preLinkCommands(objectFiles + caches.static, preLinkResult)
-                LinkerInput(listOf(preLinkResult), CachesToLink(emptyList(), caches.dynamic), preLinkCommands, cachingInvolved)
+                LinkerInput(listOf(preLinkResult), ResolvedCacheBinaries(emptyList(), caches.dynamic), preLinkCommands, cachingInvolved)
             }
             else -> LinkerInput(objectFiles, caches, emptyList(), cachingInvolved)
         }
@@ -201,33 +189,7 @@ internal class Linker(
 
 private class LinkerInput(
         val objectFiles: List<ObjectFile>,
-        val caches: CachesToLink,
+        val caches: ResolvedCacheBinaries,
         val preLinkCommands: List<Command>,
         val cachingInvolved: Boolean
 )
-
-private class CachesToLink(val static: List<String>, val dynamic: List<String>)
-
-private fun determineCachesToLink(
-        context: PhaseContext,
-        dependenciesTrackingResult: DependenciesTrackingResult,
-): CachesToLink {
-    val staticCaches = mutableListOf<String>()
-    val dynamicCaches = mutableListOf<String>()
-
-    dependenciesTrackingResult.allCachedBitcodeDependencies.forEach { dependency ->
-        val library = dependency.library
-        val cache = context.config.cachedLibraries.getLibraryCache(library)
-                ?: error("Library $library is expected to be cached")
-
-        val list = when (cache.kind) {
-            CachedLibraries.Kind.DYNAMIC -> dynamicCaches
-            CachedLibraries.Kind.STATIC -> staticCaches
-        }
-
-        list += if (dependency.kind is DependenciesTracker.DependencyKind.CertainFiles && cache is CachedLibraries.Cache.PerFile)
-            dependency.kind.files.map { cache.getFileBinaryPath(it) }
-        else cache.binariesPaths
-    }
-    return CachesToLink(static = staticCaches, dynamic = dynamicCaches)
-}
