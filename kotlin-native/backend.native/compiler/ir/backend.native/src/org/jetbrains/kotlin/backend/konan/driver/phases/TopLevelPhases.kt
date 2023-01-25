@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -137,7 +138,8 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFr
     if (context.config.produce.isCache) {
         runPhase(SaveAdditionalCacheInfoPhase)
     }
-    val bitcodeFile = context.tempFiles.nativeBinaryFile.javaFile()
+    // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
+    val bitcodeFile = context.tempFiles.create(context.llvm.module.getName(), ".bc").javaFile()
     runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
     val dependenciesTrackingResult = DependenciesTrackingResult(
             context.dependenciesTracker.bitcodeToLink,
@@ -175,8 +177,8 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     mergeDependencies(module, dependenciesToCompile)
     runCodegen(module)
     val generatedBitcodeFiles = if (context.config.produce.isNativeLibrary) {
-        val cppAdapterFile = context.tempFiles.cAdapterCpp.javaFile()
-        val bitcodeAdapterFile = context.tempFiles.cAdapterBitcode.javaFile()
+        val cppAdapterFile = context.tempFiles.create("api", ".cpp").javaFile()
+        val bitcodeAdapterFile = context.tempFiles.create("api", ".bc").javaFile()
         val input = CExportGenerateApiInput(
                 context.context.cAdapterExportedElements!!,
                 headerFile = context.outputFiles.cAdapterHeader.javaFile(),
