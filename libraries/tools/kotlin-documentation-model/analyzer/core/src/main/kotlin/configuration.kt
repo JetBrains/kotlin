@@ -49,6 +49,7 @@ object DokkaDefaults {
 enum class Platform(val key: String) {
     jvm("jvm"),
     js("js"),
+    wasm("wasm"),
     native("native"),
     common("common");
 
@@ -59,6 +60,7 @@ enum class Platform(val key: String) {
             return when (key.toLowerCase()) {
                 jvm.key -> jvm
                 js.key -> js
+                wasm.key -> wasm
                 native.key -> native
                 common.key -> common
                 "androidjvm", "android" -> jvm
