@@ -45,8 +45,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                 propertiesProvider.languageVersion?.let { languageVersionFromProperty ->
                     task.compilerOptions.languageVersion.set(KotlinVersion.fromVersion(languageVersionFromProperty))
                 }
-                propertiesProvider.apiVersion?.let { languageVersionFromProperty ->
-                    task.compilerOptions.apiVersion.set(KotlinVersion.fromVersion(languageVersionFromProperty))
+                propertiesProvider.apiVersion?.let { apiVersionFromProperty ->
+                    task.compilerOptions.apiVersion.set(KotlinVersion.fromVersion(apiVersionFromProperty))
                 }
                 if (propertiesProvider.useK2 == true) {
                     task.compilerOptions.useK2.value(true)
