@@ -1,4 +1,4 @@
-# Module stdlib
+# Module kotlin-stdlib
 
 ## Kotlin Standard Library
 
