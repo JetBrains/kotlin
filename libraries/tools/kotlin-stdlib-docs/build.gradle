@@ -10,14 +10,13 @@ plugins {
 evaluationDependsOnChildren()
 
 def pKotlinBig() { return project('kotlin_big').extensions }
-def pKotlinNative() { return project('kotlin_native').extensions }
 
 ext.outputDir = "$buildDir/doc"
 ext.outputDirLatest = "$outputDir/latest"
 ext.outputDirPrevious = "$outputDir/previous"
 ext.kotlin_root = pKotlinBig().kotlin_root
 ext.kotlin_libs = pKotlinBig().kotlin_libs
-ext.kotlin_native_root = pKotlinNative().kotlin_native_root
+ext.kotlin_native_root = file("$kotlin_root/kotlin-native").absolutePath
 ext.github_revision = pKotlinBig().github_revision
 ext.localRoot = kotlin_root
 ext.baseUrl = new URL("https://github.com/JetBrains/kotlin/tree/$github_revision")
