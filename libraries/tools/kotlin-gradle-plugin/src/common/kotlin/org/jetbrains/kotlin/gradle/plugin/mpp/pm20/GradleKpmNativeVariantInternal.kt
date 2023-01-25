@@ -48,6 +48,9 @@ abstract class GradleKpmNativeVariantInternal(
 interface GradleKpmNativeCompilationData<T : KotlinCommonOptions> : GradleKpmCompilationData<T> {
     val konanTarget: KonanTarget
 
-    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
+    @Deprecated(
+        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
+        level = DeprecationLevel.ERROR
+    )
     val enableEndorsedLibs: Boolean
 }

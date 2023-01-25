@@ -13,9 +13,16 @@ kotlin {
         hostOs.startsWith("Windows") -> mingwX64("csvParser")
         else -> throw GradleException("Host OS '$hostOs' is not supported in Kotlin/Native $project.")
     }
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
+            }
+        }
+    }
         
     hostTarget.apply {
-        compilations["main"].enableEndorsedLibs = true
         binaries {
             executable {
                 entryPoint = "sample.csvparser.main"

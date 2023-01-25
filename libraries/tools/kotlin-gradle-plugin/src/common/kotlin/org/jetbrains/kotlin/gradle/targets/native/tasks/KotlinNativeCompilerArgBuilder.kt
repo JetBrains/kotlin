@@ -37,7 +37,6 @@ internal fun buildKotlinNativeKlibCompilerArgs(
     libraries: List<File>,
 
     languageSettings: LanguageSettings,
-    enableEndorsedLibs: Boolean,
     compilerOptions: KotlinCommonCompilerOptions,
     compilerPlugins: List<CompilerPluginData>,
 
@@ -77,7 +76,7 @@ internal fun buildKotlinNativeKlibCompilerArgs(
         }
     }
 
-    addAll(buildKotlinNativeCompileCommonArgs(enableEndorsedLibs, languageSettings, compilerOptions, compilerPlugins))
+    addAll(buildKotlinNativeCompileCommonArgs(languageSettings, compilerOptions, compilerPlugins))
 
     addAll(source.map { it.absolutePath })
     if (!commonSourcesTree.isEmpty) {
@@ -94,7 +93,6 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
     libraries: List<File>,
     friendModules: List<File>,
 
-    enableEndorsedLibs: Boolean,
     toolOptions: KotlinCommonCompilerToolOptions,
     compilerPlugins: List<CompilerPluginData>,
 
@@ -122,7 +120,7 @@ internal fun buildKotlinNativeBinaryLinkerArgs(
     binaryOptions.forEach { (name, value) -> add("-Xbinary=$name=$value") }
     addKey("-Xstatic-framework", isStaticFramework)
 
-    addAll(buildKotlinNativeCommonArgs(enableEndorsedLibs, toolOptions, compilerPlugins))
+    addAll(buildKotlinNativeCommonArgs(toolOptions, compilerPlugins))
 
     exportLibraries.forEach { add("-Xexport-library=${it.absolutePath}") }
     includeLibraries.forEach { add("-Xinclude=${it.absolutePath}") }
@@ -150,13 +148,12 @@ private fun buildKotlinNativeMainArgs(
 }
 
 internal fun buildKotlinNativeCompileCommonArgs(
-    enableEndorsedLibs: Boolean,
     languageSettings: LanguageSettings,
     compilerOptions: KotlinCommonCompilerOptions,
     compilerPlugins: List<CompilerPluginData>
 ): List<String> = mutableListOf<String>().apply {
     add("-Xmulti-platform")
-    addKey("-no-endorsed-libs", !enableEndorsedLibs)
+    addKey("-no-endorsed-libs", true)
 
     compilerPlugins.forEach { plugin ->
         plugin.files.map { it.canonicalPath }.sorted().forEach { add("-Xplugin=$it") }
@@ -179,12 +176,11 @@ internal fun buildKotlinNativeCompileCommonArgs(
 }
 
 internal fun buildKotlinNativeCommonArgs(
-    enableEndorsedLibs: Boolean,
     toolOptions: KotlinCommonCompilerToolOptions,
     compilerPlugins: List<CompilerPluginData>
 ): List<String> = mutableListOf<String>().apply {
     add("-Xmulti-platform")
-    addKey("-no-endorsed-libs", !enableEndorsedLibs)
+    addKey("-no-endorsed-libs", true)
 
     compilerPlugins.forEach { plugin ->
         plugin.files.map { it.canonicalPath }.sorted().forEach { add("-Xplugin=$it") }

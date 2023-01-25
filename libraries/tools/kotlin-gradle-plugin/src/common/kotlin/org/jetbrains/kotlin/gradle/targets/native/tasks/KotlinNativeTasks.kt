@@ -203,11 +203,14 @@ abstract class AbstractKotlinNativeCompile<
         get() = languageSettings.progressiveMode
     // endregion.
 
-    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
+        level = DeprecationLevel.ERROR
+    )
     @get:Input
-    val enableEndorsedLibs: Boolean by project.provider {
-        compilation.tcsOrNull?.compilation?.run { this as? KotlinNativeCompilation }?.enableEndorsedLibs ?: false
-    }
+    val enableEndorsedLibs: Boolean
+        get() = false
 
     @get:Input
     val kotlinNativeVersion: String
@@ -425,7 +428,6 @@ internal constructor(
         )
 
         return buildKotlinNativeCompileCommonArgs(
-            enableEndorsedLibs,
             languageSettings,
             compilerOptions,
             plugins
@@ -467,7 +469,6 @@ internal constructor(
             konanTarget,
             libraries.files.filterKlibsPassedToCompiler(),
             languageSettings,
-            enableEndorsedLibs,
             compilerOptions,
             plugins,
             moduleName,

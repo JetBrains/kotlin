@@ -45,8 +45,14 @@ kotlin {
                 }
             }
         }
+    }
 
-        compilations["main"].enableEndorsedLibs = true
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
+            }
+        }
     }
 
     // Enable experimental stdlib API used by the sample.

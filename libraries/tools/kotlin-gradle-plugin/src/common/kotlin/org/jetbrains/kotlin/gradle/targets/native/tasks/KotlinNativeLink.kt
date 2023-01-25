@@ -263,10 +263,14 @@ constructor(
             objectFactory.property(it.file(filename).asFile)
         }
 
-    @Suppress("DEPRECATION", "DeprecatedCallableAddReplaceWith")
-    @Deprecated("Please declare explicit dependency on kotlinx-cli. This option is scheduled to be removed in 1.9.0")
+    @Suppress("unused", "DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+        "Please declare explicit dependency on kotlinx-cli. This option has no longer effect since 1.9.0",
+        level = DeprecationLevel.ERROR
+    )
     @get:Input
-    val enableEndorsedLibs: Boolean by lazy { compilation.enableEndorsedLibs }
+    val enableEndorsedLibs: Boolean
+        get() = false
 
     @Internal
     val compilerPluginOptions = CompilerPluginOptions()
@@ -313,8 +317,6 @@ constructor(
             }
         }
 
-        @Suppress("DEPRECATION") val enableEndorsedLibs = this.enableEndorsedLibs // TODO: remove before 1.9.0, see KT-54098
-
         val buildArgs = buildKotlinNativeBinaryLinkerArgs(
             output,
             optimized,
@@ -323,7 +325,6 @@ constructor(
             outputKind,
             libraries.files.filterKlibsPassedToCompiler(),
             friendModule.files.toList(),
-            enableEndorsedLibs,
             toolOptions,
             plugins,
             processTests,

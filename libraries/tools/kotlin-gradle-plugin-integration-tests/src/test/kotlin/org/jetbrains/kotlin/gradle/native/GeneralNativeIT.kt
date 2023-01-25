@@ -140,23 +140,6 @@ class GeneralNativeIT : BaseGradleIT() {
     }
 
     @Test
-    fun testEndorsedLibsController() {
-        with(
-            transformNativeTestProjectWithPluginDsl("native-endorsed")
-        ) {
-            build("build") {
-                assertSuccessful()
-            }
-            gradleBuildScript().modify {
-                it.replace("enableEndorsedLibs = true", "")
-            }
-            build("build") {
-                assertFailed()
-            }
-        }
-    }
-
-    @Test
     fun testCanProduceNativeLibraries() = with(transformNativeTestProjectWithPluginDsl("libraries", directoryPrefix = "native-binaries")) {
         val baseName = "native_library"
 

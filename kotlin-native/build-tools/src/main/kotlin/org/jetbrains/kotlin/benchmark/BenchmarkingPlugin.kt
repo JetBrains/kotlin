@@ -162,10 +162,13 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
 
     protected fun Project.configureNativeTarget(hostPreset: AbstractKotlinNativeTargetPreset<*>) {
         kotlin.targetFromPreset(hostPreset, NATIVE_TARGET_NAME) {
-            @Suppress("DEPRECATION")
-            compilations.getByName("main").kotlinOptions.freeCompilerArgs = benchmark.compilerOpts + project.compilerArgs
-            @Suppress("DEPRECATION") // enableEndorsedLibs is scheduled to be removed in 1.9.0, see KT-54098
-            compilations.getByName("main").enableEndorsedLibs = true
+            compilations.named("main").configure {
+                @Suppress("DEPRECATION")
+                kotlinOptions.freeCompilerArgs = benchmark.compilerOpts + project.compilerArgs
+                dependencies {
+                    implementation("org.jetbrains.kotlinx:kotlinx-cli:0.3.5")
+                }
+            }
             configureNativeOutput(this@configureNativeTarget)
         }
     }
