@@ -157,10 +157,35 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
         temporaryFiles: TempFiles,
         isCoverageEnabled: Boolean,
 ) {
-    val objectFile = temporaryFiles.create("result", ".o").javaFile()
-    runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, objectFile))
-    val linkerPhaseInput = LinkerPhaseInput(linkerOutputFile, listOf(objectFile.canonicalPath), moduleCompilationOutput.dependenciesTrackingResult,
-            outputFiles, temporaryFiles, isCoverageEnabled = isCoverageEnabled)
+    val compilationResult = temporaryFiles.create("result", ".o").javaFile()
+    runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
+    val linkerOutputKind = determineLinkerOutput(context)
+    val (linkerInput, cacheBinaries) = run {
+        val resolvedCacheBinaries = resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult)
+        when {
+            context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
+                compilationResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
+            }
+            shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
+                val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").javaFile()
+                runPhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
+                // Static caches are linked into binary, so we don't need to pass them.
+                prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
+            }
+            else -> {
+                compilationResult to resolvedCacheBinaries
+            }
+        }
+    }
+    val linkerPhaseInput = LinkerPhaseInput(
+            linkerOutputFile,
+            linkerOutputKind,
+            listOf(linkerInput.canonicalPath),
+            moduleCompilationOutput.dependenciesTrackingResult,
+            outputFiles,
+            cacheBinaries,
+            isCoverageEnabled = isCoverageEnabled
+    )
     runPhase(LinkerPhase, linkerPhaseInput)
     if (context.config.produce.isCache) {
         runPhase(FinalizeCachePhase, outputFiles)

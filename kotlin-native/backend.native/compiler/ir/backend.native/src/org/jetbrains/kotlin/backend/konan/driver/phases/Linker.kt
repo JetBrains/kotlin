@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Linker
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.konan.TempFiles
+import org.jetbrains.kotlin.konan.target.LinkerOutputKind
+import java.io.File
 
-data class LinkerPhaseInput(
+internal data class LinkerPhaseInput(
         val outputFile: String,
+        val outputKind: LinkerOutputKind,
         val objectFiles: List<ObjectFile>,
         val dependenciesTrackingResult: DependenciesTrackingResult,
         val outputFiles: OutputFiles,
-        val temporaryFiles: TempFiles,
+        val resolvedCacheBinaries: ResolvedCacheBinaries,
         val isCoverageEnabled: Boolean,
 )
 
@@ -23,6 +25,32 @@ internal val LinkerPhase = createSimpleNamedCompilerPhase<PhaseContext, LinkerPh
         name = "Linker",
         description = "Linker"
 ) { context, input ->
-    val linker = Linker(context, input.isCoverageEnabled, input.temporaryFiles, input.outputFiles)
-    linker.link(input.outputFile, input.objectFiles, input.dependenciesTrackingResult)
+    val linker = Linker(
+            config = context.config,
+            linkerOutput = input.outputKind,
+            isCoverageEnabled = input.isCoverageEnabled,
+            outputFiles = input.outputFiles
+    )
+    val commands = linker.linkCommands(
+            input.outputFile,
+            input.objectFiles,
+            input.dependenciesTrackingResult,
+            input.resolvedCacheBinaries
+    )
+    runLinkerCommands(context, commands, cachingInvolved = !input.resolvedCacheBinaries.isEmpty())
+}
+
+internal data class PreLinkCachesInput(
+        val objectFiles: List<File>,
+        val caches: ResolvedCacheBinaries,
+        val outputObjectFile: File,
+)
+
+internal val PreLinkCachesPhase = createSimpleNamedCompilerPhase<PhaseContext, PreLinkCachesInput>(
+        name = "PreLinkCaches",
+        description = "Pre-link static caches",
+) { context, input ->
+    val inputFiles = input.objectFiles.map { it.canonicalPath } + input.caches.static
+    val commands = context.config.platform.linker.preLinkCommands(inputFiles, input.outputObjectFile.canonicalPath)
+    runLinkerCommands(context, commands, cachingInvolved = true)
 }
