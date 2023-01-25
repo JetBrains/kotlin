@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
@@ -158,8 +159,8 @@ internal class SymbolLightSimpleMethod(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            lazyModifiersComputer = ::computeModifiers,
-            annotationsComputer = ::computeAnnotations,
+            modifiersBox = LazyModifiersBox(computer = ::computeModifiers),
+            annotationsBox = SimpleAnnotationsBox(::computeAnnotations),
         )
     }
 
