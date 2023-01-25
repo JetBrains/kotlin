@@ -18,7 +18,7 @@ package org.jetbrains.kotlin.metadata.builtins;
 
 import "core/metadata/src/metadata.proto";
 
-// Whenever you change this proto in an incompatible way, don't forget to bump BuiltInsBinaryVersion
+// Changes to this proto are tracked by BuiltInsBinaryVersion version. See BuiltInsBinaryVersion KDoc.
 
 option java_outer_classname = "BuiltInsProtoBuf";
 option optimize_for = LITE_RUNTIME;

@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.library.metadata;
 
-// Whenever you change this proto in an incompatible way, don't forget to bump KlibMetadataVersion
+// Changes to this proto are tracked by KlibMetadataVersion version. See KlibMetadataVersion KDoc.
 
 import "core/metadata/src/metadata.proto";
 import "core/metadata/src/ext_options.proto";

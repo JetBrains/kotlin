@@ -1,7 +1,7 @@
 syntax = "proto2";
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
-// Whenever you change this proto in an incompatible way, don't forget to bump KotlinAbiVersion
+// Changes to this proto are tracked by KotlinAbiVersion version. See KotlinAbiVersion KDoc.
 
 option java_multiple_files = true;
 option java_outer_classname = "KotlinIr";
