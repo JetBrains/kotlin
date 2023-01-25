@@ -881,7 +881,7 @@ open class RawFirBuilder(
             }
 
             when {
-                this is KtClass && classKind == ClassKind.ENUM_CLASS -> {
+                this is KtClass && classKind == ClassKind.ENUM_CLASS && superTypeCallEntry == null -> {
                     /*
                      * kotlin.Enum constructor has (name: String, ordinal: Int) signature,
                      *   so we should generate non-trivial constructors for enum and it's entry

@@ -7,9 +7,9 @@ FILE: classInSupertypeForEnum.kt
     }
     public abstract interface C : R|kotlin/Any| {
     }
-    public final enum class B : R|C|, R|A|, R|kotlin/Any|, R|kotlin/Enum<B>| {
+    public final enum class B : R|C|, R|A|, R|kotlin/Any| {
         private constructor(): R|B| {
-            super<R|kotlin/Enum<B>|>()
+            super<R|kotlin/Any|>()
         }
 
         public final static fun values(): R|kotlin/Array<B>| {

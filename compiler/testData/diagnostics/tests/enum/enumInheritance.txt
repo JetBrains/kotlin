@@ -35,6 +35,23 @@ public final enum class MyEnum2 : kotlin.Enum<MyEnum2>, MyTrait {
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum2>
 }
 
+public final enum class MyEnum2_1 : kotlin.Enum<MyEnum2_1>, MyTrait {
+    private constructor MyEnum2_1()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: MyEnum2_1): kotlin.Int
+    public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<MyEnum2_1!>!
+    public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnum2_1
+    public final /*synthesized*/ fun values(): kotlin.Array<MyEnum2_1>
+}
+
 public final enum class MyEnum3 : MyEnumBase {
     private constructor MyEnum3()
     @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String

@@ -371,6 +371,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("enumSuperTypeInterface.kt")
+    public void testEnumSuperTypeInterface() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/enumSuperTypeInterface.kt");
+    }
+
+    @Test
     @TestMetadata("eqEqCall_fromAny.kt")
     public void testEqEqCall_fromAny() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/eqEqCall_fromAny.kt");

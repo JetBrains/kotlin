@@ -538,7 +538,7 @@ class DeclarationsConverter(
                     delegationSpecifiers?.let { superTypeRefs += it.superTypesRef }
 
                     when {
-                        modifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) -> {
+                        modifiers.isEnum() && (classKind == ClassKind.ENUM_CLASS) && delegatedConstructorSource == null -> {
                             delegatedSuperTypeRef = buildResolvedTypeRef {
                                 type = ConeClassLikeTypeImpl(
                                     implicitEnumType.type.lookupTag,
