@@ -369,6 +369,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("kt54775.kt")
+        public void testKt54775() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/kt54775.kt");
+        }
+
+        @Test
         @TestMetadata("labelAndReceiverForInfix.kt")
         public void testLabelAndReceiverForInfix() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/labelAndReceiverForInfix.kt");

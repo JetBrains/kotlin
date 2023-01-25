@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -87,10 +88,16 @@ fun buildErrorLoop(source: KtSourceElement?, diagnostic: ConeDiagnostic): FirErr
     }
 }
 
-fun buildErrorExpression(source: KtSourceElement?, diagnostic: ConeDiagnostic): FirErrorExpression {
+fun buildErrorExpression(
+    source: KtSourceElement?,
+    diagnostic: ConeDiagnostic,
+    element: FirElement? = null
+): FirErrorExpression {
     return buildErrorExpression {
         this.source = source
         this.diagnostic = diagnostic
+        this.expression = element as? FirExpression
+        this.nonExpressionElement = element.takeUnless { it is FirExpression }
     }
 }
 

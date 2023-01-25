@@ -63,11 +63,13 @@ class ExpressionsConverter(
         get() = declarationsConverter.offset
 
     inline fun <reified R : FirElement> getAsFirExpression(expression: LighterASTNode?, errorReason: String = ""): R {
-        return expression?.let {
-            convertExpression(it, errorReason)
-        } as? R ?: buildErrorExpression(
-            expression?.toFirSourceElement(), ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
-        ) as R
+        val converted = expression?.let { convertExpression(it, errorReason) }
+        return converted as? R
+            ?: buildErrorExpression(
+                expression?.toFirSourceElement(),
+                ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
+                converted,
+            ) as R
     }
 
     /*****    EXPRESSIONS    *****/

@@ -1011,7 +1011,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
     }
 
     private val FirVariable.initializerResolved: Boolean
-        get() = initializer?.typeRef is FirResolvedTypeRef
+        get() {
+            val initializer = initializer ?: return false
+            return initializer.typeRef is FirResolvedTypeRef && initializer !is FirErrorExpression
+        }
 
     protected val FirFunction.bodyResolved: Boolean
         get() = body !is FirLazyBlock && body?.typeRef is FirResolvedTypeRef
