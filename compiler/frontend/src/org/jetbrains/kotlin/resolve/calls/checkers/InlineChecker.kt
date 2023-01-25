@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPrivateApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.isInsidePrivateClass
+import org.jetbrains.kotlin.resolve.descriptorUtil.isMemberOfCompanionOfPrivateClass
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.allowsNonLocalReturns
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.checkNonLocalReturnUsage
@@ -313,6 +314,9 @@ internal class InlineChecker(private val descriptor: FunctionDescriptor) : CallC
         if (!isEffectivelyPrivateApiFunction) {
             if (declarationDescriptor.isInsidePrivateClass) {
                 context.trace.report(PRIVATE_CLASS_MEMBER_FROM_INLINE.on(expression, declarationDescriptor, descriptor))
+                context.reportDeprecationOnReplacement(expression, replacementForReport)
+            } else if (declarationDescriptor.isMemberOfCompanionOfPrivateClass) {
+                context.trace.report(PRIVATE_CLASS_MEMBER_FROM_INLINE_WARNING.on(expression, declarationDescriptor, descriptor))
                 context.reportDeprecationOnReplacement(expression, replacementForReport)
             }
         }

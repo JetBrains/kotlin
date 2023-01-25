@@ -18076,6 +18076,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("kt55179.kt")
+                public void testKt55179() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/kt55179.kt");
+                }
+
+                @Test
                 @TestMetadata("localClass.kt")
                 public void testLocalClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inline/nonPublicMember/localClass.kt");

@@ -1121,6 +1121,7 @@ public class DefaultErrorMessages {
         MAP.put(NON_PUBLIC_CALL_FROM_PUBLIC_INLINE, "Public-API inline function cannot access non-public-API ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
         MAP.put(DEPRECATED_IMPLICIT_NON_PUBLIC_API_ACCESS, "Deprecated implicit access of non-public-API from public-API inline function");
         MAP.put(PRIVATE_CLASS_MEMBER_FROM_INLINE, "Non-private inline function cannot access members of private classes: ''{0}''", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
+        MAP.put(PRIVATE_CLASS_MEMBER_FROM_INLINE_WARNING, "Non-private inline function cannot access members of private classes: ''{0}''. This warning will become an error in 2.0", SHORT_NAMES_IN_TYPES, SHORT_NAMES_IN_TYPES);
         MAP.put(NOT_YET_SUPPORTED_IN_INLINE, "{0} are not yet supported in inline functions", STRING);
         MAP.put(DECLARATION_CANT_BE_INLINED, "'inline' modifier is not allowed on virtual members. Only private or final members can be inlined");
         MAP.put(DECLARATION_CANT_BE_INLINED_WARNING, "'inline' modifier is not allowed on virtual enum members. Only private or final members can be inlined. This warning will become an error in K2");

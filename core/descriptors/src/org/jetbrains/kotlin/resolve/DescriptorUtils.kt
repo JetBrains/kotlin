@@ -135,6 +135,13 @@ val DeclarationDescriptor.isInsidePrivateClass: Boolean
         return parent != null && DescriptorVisibilities.isPrivate(parent.visibility)
     }
 
+val DeclarationDescriptor.isMemberOfCompanionOfPrivateClass: Boolean
+    get() {
+        val parent = containingDeclaration as? ClassDescriptor ?: return false
+        if (!parent.isCompanionObject) return false
+        return parent.isInsidePrivateClass
+    }
+
 val DeclarationDescriptor.isInsideInterface: Boolean
     get() {
         val parent = containingDeclaration as? ClassDescriptor
