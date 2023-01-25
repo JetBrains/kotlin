@@ -13,11 +13,11 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 @MppGradlePluginTests
-class MppDeprecatedPropertiesIt : KGPBaseTest() {
+class MppDiagnosticsIt : KGPBaseTest() {
     @GradleTest
-    fun testDeprecations(gradleVersion: GradleVersion) {
+    fun testDeprecatedProperties(gradleVersion: GradleVersion) {
         project("mppDeprecatedProperties", gradleVersion) {
-            checkDeprecations(isDeprecationExpected = false)
+            checkDeprecatedProperties(isDeprecationExpected = false)
 
             this.gradleProperties.appendText(
                 defaultFlags.entries.joinToString(
@@ -26,18 +26,31 @@ class MppDeprecatedPropertiesIt : KGPBaseTest() {
                     separator = System.lineSeparator(),
                 ) { (prop, value) -> "$prop=$value" }
             )
-            checkDeprecations(isDeprecationExpected = true)
+            checkDeprecatedProperties(isDeprecationExpected = true)
 
             // remove the MPP plugin from the top-level project and check the warnings are still reported in subproject
             this.buildGradleKts.writeText("")
-            checkDeprecations(isDeprecationExpected = true)
+            checkDeprecatedProperties(isDeprecationExpected = true)
 
             this.gradleProperties.appendText("kotlin.mpp.deprecatedProperties.nowarn=true${System.lineSeparator()}")
-            checkDeprecations(isDeprecationExpected = false)
+            checkDeprecatedProperties(isDeprecationExpected = false)
         }
     }
 
-    private fun TestProject.checkDeprecations(isDeprecationExpected: Boolean) {
+    @GradleTest
+    fun testCommonMainMustNotDependOnOtherSourceSets(gradleVersion: GradleVersion) {
+        project("commonMainDependsOnAnotherSourceSet", gradleVersion) {
+            build("tasks") {
+                assertOutputContains("w: 'commonMain' source set can't depend on other source sets.")
+            }
+
+            build("tasks", buildOptions = defaultBuildOptions.copy(freeArgs = listOf("-PcommonSourceSetDependsOnNothing"))) {
+                assertOutputDoesNotContain("w: 'commonMain' source set can't depend on other source sets.")
+            }
+        }
+    }
+
+    private fun TestProject.checkDeprecatedProperties(isDeprecationExpected: Boolean) {
         build {
             val assert: (Boolean, String) -> Unit = if (isDeprecationExpected) ::assertTrue else ::assertFalse
             val warnings = output.lines().filter { it.startsWith("w:") }.toSet()
