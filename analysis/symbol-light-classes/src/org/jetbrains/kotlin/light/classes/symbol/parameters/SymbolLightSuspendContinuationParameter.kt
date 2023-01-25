@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.buildClassType
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
@@ -16,8 +15,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.isPrivateOrPrivateToThi
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightSimpleAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
+import org.jetbrains.kotlin.light.classes.symbol.annotations.EmptyAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -55,12 +56,15 @@ internal class SymbolLightSuspendContinuationParameter(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            annotationsBox = SimpleAnnotationsBox { modifierList ->
-                if (withFunctionSymbol { it.visibility.isPrivateOrPrivateToThis() })
-                    emptyList()
-                else
-                    listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
-            },
+            annotationsBox = LazyAnnotationsBox(
+                annotationsProvider = EmptyAnnotationsProvider,
+                additionalAnnotationsProvider = NullabilityAnnotationsProvider {
+                    if (withFunctionSymbol { it.visibility.isPrivateOrPrivateToThis() })
+                        NullabilityType.Unknown
+                    else
+                        NullabilityType.NotNull
+                },
+            ),
         )
     }
 

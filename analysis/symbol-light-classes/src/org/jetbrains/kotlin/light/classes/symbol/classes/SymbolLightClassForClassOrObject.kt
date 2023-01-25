@@ -25,9 +25,8 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
@@ -89,15 +88,9 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         SymbolLightClassModifierList(
             containingDeclaration = this,
             modifiersBox = LazyModifiersBox(computer = ::computeModifiers),
-            annotationsBox = SimpleAnnotationsBox { modifierList ->
-                withClassOrObjectSymbol { classOrObjectSymbol ->
-                    classOrObjectSymbol.computeAnnotations(
-                        modifierList = modifierList,
-                        nullability = NullabilityType.Unknown,
-                        annotationUseSiteTarget = null,
-                    )
-                }
-            },
+            annotationsBox = LazyAnnotationsBox(
+                annotationsProvider = SymbolAnnotationsProvider(ktModule, classOrObjectSymbolPointer)
+            ),
         )
     }
 

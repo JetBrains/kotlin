@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
 internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: Lazy<NullabilityType>) : AdditionalAnnotationsProvider {
+    constructor(initializer: () -> NullabilityType) : this(lazyPub(initializer))
+
     override fun addAllAnnotations(
         currentRawAnnotations: MutableList<in PsiAnnotation>,
         foundQualifiers: MutableSet<String>,

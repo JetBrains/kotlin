@@ -9,7 +9,6 @@ import com.intellij.psi.PsiIdentifier
 import com.intellij.psi.PsiModifierList
 import com.intellij.psi.PsiType
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.annotations
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
@@ -17,9 +16,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolLightAnnotationForAnnotationCall
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeNullabilityAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
@@ -71,16 +68,17 @@ internal class SymbolLightParameterForReceiver private constructor(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            annotationsBox = SimpleAnnotationsBox { modifierList ->
-                withReceiverSymbol { receiver ->
-                    buildList {
-                        receiver.type.nullabilityType.computeNullabilityAnnotation(modifierList)?.let(::add)
-                        receiver.annotations.mapTo(this) {
-                            SymbolLightAnnotationForAnnotationCall(it, modifierList)
+            annotationsBox = LazyAnnotationsBox(
+                annotationsProvider = SymbolAnnotationsProvider(ktModule, receiverPointer),
+                additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                    DefaultAnnotationsProvider,
+                    NullabilityAnnotationsProvider {
+                        withReceiverSymbol { receiver ->
+                            receiver.type.nullabilityType
                         }
-                    }
-                }
-            },
+                    },
+                )
+            ),
         )
     }
 
