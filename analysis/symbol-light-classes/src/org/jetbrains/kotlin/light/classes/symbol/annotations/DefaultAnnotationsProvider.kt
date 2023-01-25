@@ -105,6 +105,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToDocumentedJavaAnnotation(
     owner: PsiModifierList,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.DOCUMENTED_ANNOTATION.asString(),
+    kotlinQualifier = StandardNames.FqNames.mustBeDocumented.asString(),
     owner = owner,
 )
 
@@ -126,6 +127,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToRetentionJavaAnnotation(
     owner: PsiModifierList,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.RETENTION_ANNOTATION.asString(),
+    kotlinQualifier = StandardNames.FqNames.retention.asString(),
     owner = owner,
     argumentsComputer = SymbolLightJavaAnnotation::computeJavaRetentionArguments,
 )
@@ -176,6 +178,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToRepeatableJavaAnnotation(
     owner: PsiModifierList,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.REPEATABLE_ANNOTATION.asString(),
+    kotlinQualifier = StandardNames.FqNames.repeatable.asString(),
     owner = owner,
     argumentsComputer = SymbolLightJavaAnnotation::computeRepeatableJavaAnnotationArguments,
 )
@@ -209,6 +212,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToTargetJavaAnnotation(
     owner: PsiModifierList,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
     javaQualifier = JvmAnnotationNames.TARGET_ANNOTATION.asString(),
+    kotlinQualifier = StandardNames.FqNames.target.asString(),
     owner = owner,
     argumentsComputer = SymbolLightJavaAnnotation::computeTargetJavaAnnotationArguments,
 )
@@ -286,10 +290,11 @@ private fun LazyAnnotationsBox.tryConvertToJavaAnnotation(
 
 private fun SymbolLightLazyAnnotation.tryConvertToJavaAnnotation(
     javaQualifier: String,
+    kotlinQualifier: String,
     owner: PsiModifierList,
     argumentsComputer: SymbolLightJavaAnnotation.() -> List<KtNamedAnnotationValue> = { emptyList() },
 ): PsiAnnotation? {
-    if (qualifiedName != javaQualifier) return null
+    if (qualifiedName != kotlinQualifier) return null
     return SymbolLightJavaAnnotation(
         originalLightAnnotation = this,
         javaQualifier = javaQualifier,
