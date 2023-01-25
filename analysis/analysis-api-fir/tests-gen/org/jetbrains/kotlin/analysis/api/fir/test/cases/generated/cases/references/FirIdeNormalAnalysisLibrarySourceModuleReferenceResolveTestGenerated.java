@@ -113,6 +113,18 @@ public class FirIdeNormalAnalysisLibrarySourceModuleReferenceResolveTestGenerate
     }
 
     @Test
+    @TestMetadata("CompanionObjectWithName1.kt")
+    public void testCompanionObjectWithName1() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/CompanionObjectWithName1.kt");
+    }
+
+    @Test
+    @TestMetadata("CompanionObjectWithName2.kt")
+    public void testCompanionObjectWithName2() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/CompanionObjectWithName2.kt");
+    }
+
+    @Test
     @TestMetadata("CtrlClickResolve.kt")
     public void testCtrlClickResolve() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/CtrlClickResolve.kt");

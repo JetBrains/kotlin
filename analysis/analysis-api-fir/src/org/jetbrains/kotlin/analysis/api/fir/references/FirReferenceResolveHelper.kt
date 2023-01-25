@@ -517,12 +517,12 @@ internal object FirReferenceResolveHelper {
                     // If we're looking for the deepest qualifier, then just resolve to the companion
                     if (expression === deepestQualifier) return referencedSymbolsByFir
 
-                    if (deepestQualifier?.getReferencedName() != referencedClass.classId.shortClassName.asString()) {
-                        // Remove the last companion name part if the qualified access does not contain it.
-                        // This is needed because the companion name part is optional.
+                    if (fir.resolvedToCompanionObject) {
+                        // this flag is true only when companion object is resolved through its containing class name,
+                        // so we want to drop companion object own name from the classId
                         referencedClass.classId.outerClassId ?: return referencedSymbolsByFir
                     } else {
-                        referencedClass.classId
+                        referencedClass.classId // ?: return referencedSymbolsByFir
                     }
                 } else {
                     referencedClass.classId
