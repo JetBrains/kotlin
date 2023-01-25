@@ -28,25 +28,21 @@ internal class LazyAnnotationsBox(
             SymbolLightLazyAnnotation(classId, annotationsProvider, index, owner)
         }
 
-        val valueToReturn = if (annotations.isEmpty()) {
-            setAnnotationsArray(PsiAnnotation.EMPTY_ARRAY)
-        } else {
-            synchronized(monitor) {
-                specialAnnotations?.forEach { specialAnnotation ->
-                    val index = annotations.indexOfFirst { it.qualifiedName == specialAnnotation.qualifiedName }
-                    if (index != -1) {
-                        annotations[index] = specialAnnotation
-                    } else {
-                        annotations += specialAnnotation
-                    }
+        val valueToReturn = synchronized(monitor) {
+            specialAnnotations?.forEach { specialAnnotation ->
+                val index = annotations.indexOfFirst { it.qualifiedName == specialAnnotation.qualifiedName }
+                if (index != -1) {
+                    annotations[index] = specialAnnotation
+                } else {
+                    annotations += specialAnnotation
                 }
-
-                val foundQualifiers = hashSetOf<String>()
-                additionalAnnotationsProvider.addAllAnnotations(annotations, foundQualifiers, owner)
-
-                specialAnnotations = null
-                setAnnotationsArray(annotations.toTypedArray())
             }
+
+            val foundQualifiers = annotations.mapNotNullTo(hashSetOf()) { it.qualifiedName }
+            additionalAnnotationsProvider.addAllAnnotations(annotations, foundQualifiers, owner)
+
+            specialAnnotations = null
+            setAnnotationsArray(if (annotations.isNotEmpty()) annotations.toTypedArray() else PsiAnnotation.EMPTY_ARRAY)
         }
 
         return valueToReturn
