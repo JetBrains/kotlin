@@ -124,6 +124,9 @@ internal class KtFirScopeProvider(
             fir.lazyResolveToPhase(FirResolvePhase.STATUS)
             val delegateFields = fir.delegateFields
             if (delegateFields.isNotEmpty()) {
+                delegateFields.forEach {
+                    it.lazyResolveToPhase(FirResolvePhase.TYPES)
+                }
                 val firSession = analysisSession.useSiteSession
                 FirDelegatedMemberScope(
                     firSession,

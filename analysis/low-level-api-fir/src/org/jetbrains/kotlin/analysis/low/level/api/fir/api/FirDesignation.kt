@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClass
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
@@ -39,15 +40,13 @@ class FirDesignationWithFile(
         yieldAll(path)
         if (includeTarget) yield(target)
     }
+
 }
 
 open class FirDesignation(
     val path: List<FirRegularClass>,
     val target: FirElementWithResolveState,
 ) {
-    val firstNonFileDeclaration: FirElementWithResolveState
-        get() = path.firstOrNull() ?: target
-
     fun toSequence(includeTarget: Boolean): Sequence<FirElementWithResolveState> = sequence {
         yieldAll(path)
         if (includeTarget) yield(target)
@@ -256,3 +255,4 @@ fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWi
         else -> unexpectedElementError<FirElementWithResolveState>(this)
     }
 }
+
