@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
-import java.io.Serializable
 import kotlin.reflect.KProperty
 
 abstract class ConfigurationPhaseAware<C : Any> {
