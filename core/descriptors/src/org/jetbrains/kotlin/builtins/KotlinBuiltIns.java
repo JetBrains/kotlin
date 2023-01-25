@@ -511,7 +511,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     private SimpleType getBuiltInTypeByTypeAliasName(@NotNull String typeAliasName) {
-        return getBuiltInTypeAliasByName(typeAliasName).getDefaultType();
+        return getBuiltInTypeAliasByName(typeAliasName).getExpandedType();
     }
 
     @NotNull
@@ -606,7 +606,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public KotlinType getArrayElementType(@NotNull KotlinType arrayType) {
-        if (isArray(arrayType)) {
+        if (isArray(arrayType) || isVArray(arrayType)) {
             if (arrayType.getArguments().size() != 1) {
                 throw new IllegalStateException();
             }

@@ -58,7 +58,7 @@ val IrType.isVArray: Boolean
     get() = classOrNull?.owner?.fqNameWhenAvailable == StandardNames.FqNames.vArray.toSafe()
 
 fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType {
-    require(isBoxedArray || isVArray) { "Array of VArray expected" }
+    require(isBoxedArray || isVArray) { "Array or VArray expected" }
     return when (val argument = (this as IrSimpleType).arguments.singleOrNull()) {
         is IrTypeProjection ->
             argument.type

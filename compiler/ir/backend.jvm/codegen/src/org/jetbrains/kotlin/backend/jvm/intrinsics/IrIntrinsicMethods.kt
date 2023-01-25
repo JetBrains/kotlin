@@ -127,6 +127,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     symbols.primitiveIteratorsByType.values.map { iteratorClass ->
                         createKeyMapping(PrimitiveArrayIteratorNext, iteratorClass, "next")
                     } +
+                    arrayMethods() +
                     vArrayMethods() +
                     primitiveComparisonIntrinsics(irBuiltIns.lessFunByOperandType, KtTokens.LT) +
                     primitiveComparisonIntrinsics(irBuiltIns.lessOrEqualFunByOperandType, KtTokens.LTEQ) +
@@ -179,6 +180,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         PrimitiveType.NUMBER_TYPES.flatMap { type -> numberConversionMethods(type.symbol) } +
                 numberConversionMethods(irBuiltIns.numberClass)
 
+    private fun arrayMethods() = arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
     private fun vArrayMethods() = arrayMethods(irBuiltIns.vArrayClass.owner.typeParameters.single().symbol, irBuiltIns.vArrayClass)
 
     private fun arrayMethods(

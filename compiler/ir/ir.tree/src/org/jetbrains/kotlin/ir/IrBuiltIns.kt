@@ -137,7 +137,7 @@ abstract class IrBuiltIns {
 
     abstract val vArrayOfNulls: IrSimpleFunctionSymbol
 
-    abstract val intArrayFactory : IrSimpleFunctionSymbol
+    abstract val intArrayFactory: IrSimpleFunctionSymbol
 
     abstract val linkageErrorSymbol: IrSimpleFunctionSymbol
 
