@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
+import java.io.File
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val frontendOutput = useContext(FrontendContextImpl(config)) { it.runPhase(FrontendPhase, environment) }
@@ -111,7 +112,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
 }
 
 internal data class ModuleCompilationOutput(
-        val bitcodeFile: String,
+        val bitcodeFile: File,
         val dependenciesTrackingResult: DependenciesTrackingResult,
         // Passing tempFiles and output files through this file looks silly and incorrect.
         // TODO: Refactor these classes and remove them from here.
@@ -146,7 +147,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFr
             context.dependenciesTracker.allNativeDependencies,
             context.dependenciesTracker.allCachedBitcodeDependencies,
     )
-    return ModuleCompilationOutput(bitcodeFile.canonicalPath, dependenciesTrackingResult, context.tempFiles, context.outputFiles)
+    return ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult, context.tempFiles, context.outputFiles)
 }
 
 internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
@@ -156,8 +157,9 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
         temporaryFiles: TempFiles,
         isCoverageEnabled: Boolean,
 ) {
-    val objectFiles = runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, temporaryFiles))
-    val linkerPhaseInput = LinkerPhaseInput(linkerOutputFile, objectFiles, moduleCompilationOutput.dependenciesTrackingResult,
+    val objectFile = temporaryFiles.create("result", ".o").javaFile()
+    runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, objectFile))
+    val linkerPhaseInput = LinkerPhaseInput(linkerOutputFile, listOf(objectFile.canonicalPath), moduleCompilationOutput.dependenciesTrackingResult,
             outputFiles, temporaryFiles, isCoverageEnabled = isCoverageEnabled)
     runPhase(LinkerPhase, linkerPhaseInput)
     if (context.config.produce.isCache) {

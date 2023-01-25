@@ -6,17 +6,15 @@
 package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
-import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.target.*
+import java.io.File
 
-typealias BitcodeFile = String
 typealias ObjectFile = String
 typealias ExecutableFile = String
 
 internal class BitcodeCompiler(
         private val context: PhaseContext,
-        private val temporaryFiles: TempFiles,
 ) {
 
     private val config = context.config
@@ -36,9 +34,6 @@ internal class BitcodeCompiler(
                     .logWith(context::log)
                     .execute()
 
-    private fun temporary(name: String, suffix: String): String =
-            temporaryFiles.create(name, suffix).absolutePath
-
     private fun targetTool(tool: String, vararg arg: String) {
         val absoluteToolName = if (platform.configurables is AppleConfigurables) {
             "${platform.absoluteTargetToolchain}/usr/bin/$tool"
@@ -53,9 +48,7 @@ internal class BitcodeCompiler(
         runTool(absoluteToolName, *arg)
     }
 
-    private fun clang(configurables: ClangFlags, file: BitcodeFile): ObjectFile {
-        val objectFile = temporary("result", ".o")
-
+    private fun clang(configurables: ClangFlags, bitcodeFile: File, objectFile: File) {
         val targetTriple = if (configurables is AppleConfigurables) {
             platform.targetTriple.withOSVersion(configurables.osVersionMin)
         } else {
@@ -77,11 +70,10 @@ internal class BitcodeCompiler(
                     addNonEmpty(configurables.currentRelocationMode(context).translateToClangCc1Flag())
                 }
         if (configurables is AppleConfigurables) {
-            targetTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
+            targetTool("clang++", *flags.toTypedArray(), bitcodeFile.canonicalPath, "-o", objectFile.canonicalPath)
         } else {
-            hostLlvmTool("clang++", *flags.toTypedArray(), file, "-o", objectFile)
+            hostLlvmTool("clang++", *flags.toTypedArray(), bitcodeFile.canonicalPath, "-o", objectFile.canonicalPath)
         }
-        return objectFile
     }
 
     private fun RelocationModeFlags.Mode.translateToClangCc1Flag() = when (this) {
@@ -90,9 +82,12 @@ internal class BitcodeCompiler(
         RelocationModeFlags.Mode.DEFAULT -> emptyList()
     }
 
-    fun makeObjectFiles(bitcodeFile: BitcodeFile): List<ObjectFile> =
-            listOf(when (val configurables = platform.configurables) {
-                is ClangFlags -> clang(configurables, bitcodeFile)
+    /**
+     * Compile [bitcodeFile] to [objectFile].
+     */
+    fun makeObjectFile(bitcodeFile: File, objectFile: File) =
+            when (val configurables = platform.configurables) {
+                is ClangFlags -> clang(configurables, bitcodeFile, objectFile)
                 else -> error("Unsupported configurables kind: ${configurables::class.simpleName}!")
-            })
+            }
 }
