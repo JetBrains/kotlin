@@ -1,6 +1,6 @@
 apply plugin: 'base'
 
-final boolean isTeamcityBuild = System.getenv("TEAMCITY_VERSION") != null
+final boolean isTeamcityBuild = project.hasProperty("teamcity.version")
 
 // kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
 final String kotlinRootDir = rootProject.file("../../../").absolutePath.replace('\\', '/')
