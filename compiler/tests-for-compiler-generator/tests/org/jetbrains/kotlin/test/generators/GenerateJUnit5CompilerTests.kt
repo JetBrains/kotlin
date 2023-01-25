@@ -334,6 +334,10 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractFirBytecodeTextTest> {
                 model("codegen/bytecodeText")
             }
+
+            testClass<AbstractFirLightTreeBytecodeTextTest> {
+                model("codegen/bytecodeText")
+            }
         }
 
         testGroup("compiler/visualizer/tests-gen", "compiler/fir/raw-fir/psi2fir/testData") {
