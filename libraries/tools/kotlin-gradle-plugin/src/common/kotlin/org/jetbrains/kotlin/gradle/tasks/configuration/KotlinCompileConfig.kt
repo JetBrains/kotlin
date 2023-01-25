@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
@@ -41,6 +42,12 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             taskProvider.configure { task ->
                 task.incremental = propertiesProvider.incrementalJvm ?: true
 
+                propertiesProvider.languageVersion?.let { languageVersionFromProperty ->
+                    task.compilerOptions.languageVersion.set(KotlinVersion.fromVersion(languageVersionFromProperty))
+                }
+                propertiesProvider.apiVersion?.let { languageVersionFromProperty ->
+                    task.compilerOptions.apiVersion.set(KotlinVersion.fromVersion(languageVersionFromProperty))
+                }
                 if (propertiesProvider.useK2 == true) {
                     task.compilerOptions.useK2.value(true)
                 }
