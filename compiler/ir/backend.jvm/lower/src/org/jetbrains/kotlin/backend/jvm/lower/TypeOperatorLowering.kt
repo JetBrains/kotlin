@@ -740,15 +740,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
                 val source = if (owner is IrFunction && owner.isDelegated()) {
                     "${owner.name.asString()}(...)"
                 } else {
-                    val declarationParent = parent as? IrDeclaration
-                    val sourceView = declarationParent?.let(::sourceViewFor)
-                    val (startOffset, endOffset) = expression.extents()
-                    if (sourceView?.validSourcePosition(startOffset, endOffset) == true) {
-                        sourceView.subSequence(startOffset, endOffset).toString()
-                    } else {
-                        // Fallback for inconsistent line numbers
-                        (declarationParent as? IrDeclarationWithName)?.name?.asString() ?: "Unknown Declaration"
-                    }
+                    expression.dumpKotlinLike(KotlinLikeDumpOptions(printOperatorDetails = false))
                 }
 
                 irLetS(expression.argument.transformVoid(), irType = context.irBuiltIns.anyNType) { valueSymbol ->
@@ -774,27 +766,6 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
     private fun IrFunction.isDelegated() =
         origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR ||
                 origin == IrDeclarationOrigin.DELEGATED_MEMBER
-
-    private fun CharSequence.validSourcePosition(startOffset: Int, endOffset: Int): Boolean =
-        startOffset in 0 until endOffset && endOffset < length
-
-    private fun IrElement.extents(): Pair<Int, Int> {
-        var startOffset = Int.MAX_VALUE
-        var endOffset = 0
-        acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
-                if (element.startOffset in 0 until startOffset)
-                    startOffset = element.startOffset
-                if (endOffset < element.endOffset)
-                    endOffset = element.endOffset
-            }
-        })
-        return startOffset to endOffset
-    }
-
-    private fun sourceViewFor(declaration: IrDeclaration): CharSequence? =
-        declaration.fileParent.getKtFile()?.viewProvider?.contents
 
     private val throwTypeCastException: IrSimpleFunctionSymbol =
         backendContext.ir.symbols.throwTypeCastException

@@ -65,6 +65,7 @@ class KotlinLikeDumpOptions(
     val labelPrintingStrategy: LabelPrintingStrategy = LabelPrintingStrategy.NEVER,
     val printFakeOverridesStrategy: FakeOverridesStrategy = FakeOverridesStrategy.ALL,
     val printElseAsTrue: Boolean = false,
+    val printOperatorDetails: Boolean = true,
     /*
     TODO add more options:
      always print visibility?
@@ -1248,25 +1249,26 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: IrDeclaration?) {
-        val (operator, after) = when (expression.operator) {
-            IrTypeOperator.CAST -> "as" to ""
-            IrTypeOperator.IMPLICIT_CAST -> "/*as" to " */"
-            IrTypeOperator.IMPLICIT_NOTNULL -> "/*!!" to " */"
-            IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> "/*~>" to " */"
-            IrTypeOperator.SAFE_CAST -> "as?" to ""
-            IrTypeOperator.INSTANCEOF -> "is" to ""
-            IrTypeOperator.NOT_INSTANCEOF -> "!is" to ""
-            IrTypeOperator.IMPLICIT_INTEGER_COERCION -> "/*~>" to " */"
-            IrTypeOperator.SAM_CONVERSION -> "/*->" to " */"
-            IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> "/*~>" to " */"
-            IrTypeOperator.REINTERPRET_CAST -> "/*=>" to " */"
-        }
-
         expression.argument.accept(this, data)
-        p.printWithNoIndent(" $operator ")
-        expression.typeOperand.printTypeWithNoIndent()
-        p.printWithNoIndent(after)
 
+        if (options.printOperatorDetails) {
+            val (operator, after) = when (expression.operator) {
+                IrTypeOperator.CAST -> "as" to ""
+                IrTypeOperator.IMPLICIT_CAST -> "/*as" to " */"
+                IrTypeOperator.IMPLICIT_NOTNULL -> "/*!!" to " */"
+                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> "/*~>" to " */"
+                IrTypeOperator.SAFE_CAST -> "as?" to ""
+                IrTypeOperator.INSTANCEOF -> "is" to ""
+                IrTypeOperator.NOT_INSTANCEOF -> "!is" to ""
+                IrTypeOperator.IMPLICIT_INTEGER_COERCION -> "/*~>" to " */"
+                IrTypeOperator.SAM_CONVERSION -> "/*->" to " */"
+                IrTypeOperator.IMPLICIT_DYNAMIC_CAST -> "/*~>" to " */"
+                IrTypeOperator.REINTERPRET_CAST -> "/*=>" to " */"
+            }
+            p.printWithNoIndent(" $operator ")
+            expression.typeOperand.printTypeWithNoIndent()
+            p.printWithNoIndent(after)
+        }
     }
 
     override fun visitWhen(expression: IrWhen, data: IrDeclaration?) {
