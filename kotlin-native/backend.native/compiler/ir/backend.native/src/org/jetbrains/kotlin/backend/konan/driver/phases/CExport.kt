@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.konan.cexport.*
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
@@ -39,4 +40,16 @@ internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<PhaseConte
             cppAdapterFile = input.cppAdapterFile,
             target = context.config.target,
     ).makeGlobalStruct()
+}
+
+internal class CExportCompileAdapterInput(
+        val cppAdapterFile: File,
+        val bitcodeAdapterFile: File,
+)
+
+internal val CExportCompileAdapterPhase = createSimpleNamedCompilerPhase<PhaseContext, CExportCompileAdapterInput>(
+        name = "CExportCompileAdapter",
+        description = "Compile C++ adapter to bitcode"
+) { context, input ->
+    produceCAdapterBitcode(context.config.clang, input.cppAdapterFile, input.bitcodeAdapterFile)
 }

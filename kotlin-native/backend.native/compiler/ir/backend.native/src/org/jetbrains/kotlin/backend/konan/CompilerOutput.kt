@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.library.BaseKotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import java.io.File
 
 /**
  * Supposed to be true for a single LLVM module within final binary.
@@ -142,23 +143,15 @@ internal fun insertAliasToEntryPoint(context: PhaseContext, module: LLVMModuleRe
     LLVMAddAlias(module, LLVMTypeOf(entryPoint)!!, entryPoint, "main")
 }
 
-internal fun linkBitcodeDependencies(generationState: NativeGenerationState) {
+internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
+                                     generatedBitcodeFiles: List<File>) {
     val config = generationState.config
-    val tempFiles = generationState.tempFiles
     val produce = config.produce
 
-    val generatedBitcodeFiles =
-            if (produce == CompilerOutputKind.DYNAMIC || produce == CompilerOutputKind.STATIC) {
-                produceCAdapterBitcode(
-                        config.clang,
-                        tempFiles.cAdapterCppName,
-                        tempFiles.cAdapterBitcodeName)
-                listOf(tempFiles.cAdapterBitcodeName)
-            } else emptyList()
     if (produce == CompilerOutputKind.FRAMEWORK && config.produceStaticFramework) {
         embedAppleLinkerOptionsToBitcode(generationState.llvm, config)
     }
-    linkAllDependencies(generationState, generatedBitcodeFiles)
+    linkAllDependencies(generationState, generatedBitcodeFiles.map { it.canonicalPath })
 
 }
 

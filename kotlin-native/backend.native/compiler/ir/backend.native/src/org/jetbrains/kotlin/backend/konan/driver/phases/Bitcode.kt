@@ -102,11 +102,11 @@ internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState,
         op = { context, _ -> produceCStubs(context) }
 )
 
-internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+internal val LinkBitcodeDependenciesPhase = createSimpleNamedCompilerPhase<NativeGenerationState, List<File>>(
         name = "LinkBitcodeDependencies",
         description = "Link bitcode dependencies",
         postactions = getDefaultLlvmModuleActions(),
-        op = { context, _ -> linkBitcodeDependencies(context) }
+        op = { context, input -> linkBitcodeDependencies(context, input) }
 )
 
 internal val VerifyBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LLVMModuleRef>(
