@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.konan.file.*
  * Creates and stores temporary compiler outputs
  * If pathToTemporaryDir is given and is not empty then temporary outputs will be preserved
  */
-class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
+class TempFiles(pathToTemporaryDir: String? = null) {
     fun dispose() {
         if (deleteOnExit) {
             // Note: this can throw an exception if a file deletion is failed for some reason (e.g. OS is Windows and the file is in use).

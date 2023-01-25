@@ -55,7 +55,7 @@ internal class NativeGenerationState(
                 it
             else File(it, CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).path
         }
-        TempFiles(outputFiles.outputName, pathToTempDir)
+        TempFiles(pathToTempDir)
     }
     val outputFile = outputFiles.mainFileName
 
