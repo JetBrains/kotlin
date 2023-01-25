@@ -164,6 +164,8 @@ object FirErrors {
     val FUNCTION_EXPECTED by error2<PsiElement, String, ConeKotlinType>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
     val RESOLUTION_TO_CLASSIFIER by error1<PsiElement, FirRegularClassSymbol>()
     val AMBIGUOUS_ALTERED_ASSIGN by error1<PsiElement, List<String?>>()
+    val FORBIDDEN_BINARY_MOD by error2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.OPERATOR_MODIFIER)
+    val DEPRECATED_BINARY_MOD by error2<PsiElement, FirBasedSymbol<*>, String>(SourceElementPositioningStrategies.OPERATOR_MODIFIER)
 
     // Super
     val SUPER_IS_NOT_AN_EXPRESSION by error0<PsiElement>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)

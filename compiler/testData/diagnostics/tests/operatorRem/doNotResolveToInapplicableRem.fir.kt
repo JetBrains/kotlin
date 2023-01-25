@@ -2,7 +2,7 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 object OldMod {
-    operator fun mod(x: Int) {}
+    <!DEPRECATED_BINARY_MOD!>operator<!> fun mod(x: Int) {}
 }
 
 object RemExtension

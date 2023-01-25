@@ -307,6 +307,18 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val altererNames: List<String?>
     }
 
+    abstract class ForbiddenBinaryMod : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = ForbiddenBinaryMod::class
+        abstract val forbiddenFunction: KtSymbol
+        abstract val suggestedFunction: String
+    }
+
+    abstract class DeprecatedBinaryMod : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = DeprecatedBinaryMod::class
+        abstract val forbiddenFunction: KtSymbol
+        abstract val suggestedFunction: String
+    }
+
     abstract class SuperIsNotAnExpression : KtFirDiagnostic<PsiElement>() {
         override val diagnosticClass get() = SuperIsNotAnExpression::class
     }

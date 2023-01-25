@@ -2,16 +2,16 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 object ModAndRem {
-    operator fun mod(x: Int) {}
+    <!FORBIDDEN_BINARY_MOD!>operator<!> fun mod(x: Int) {}
     operator fun rem(x: Int) {}
 
-    operator fun modAssign(x: Int) {}
+    <!FORBIDDEN_BINARY_MOD!>operator<!> fun modAssign(x: Int) {}
     operator fun remAssign(x: Int) {}
 }
 
 object JustMod {
-    operator fun mod(x: Int) {}
-    operator fun modAssign(x: Int) {}
+    <!FORBIDDEN_BINARY_MOD!>operator<!> fun mod(x: Int) {}
+    <!FORBIDDEN_BINARY_MOD!>operator<!> fun modAssign(x: Int) {}
 }
 
 fun foo() {

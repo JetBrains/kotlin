@@ -92,4 +92,7 @@ object OperatorNameConventions {
 
     @JvmField
     val DELEGATED_PROPERTY_OPERATORS = setOf(GET_VALUE, SET_VALUE, PROVIDE_DELEGATE)
+
+    @JvmField
+    val MOD_OPERATORS_REPLACEMENT = mapOf(MOD to REM, MOD_ASSIGN to REM_ASSIGN)
 }

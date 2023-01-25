@@ -214,6 +214,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXTENSION_PROPERT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FLOAT_LITERAL_OUT_OF_RANGE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_BINARY_MOD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_BINARY_MOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
@@ -712,6 +714,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Multiple extensions tried to alter this assignement at the same time. Extensions: {0}",
             COLLECTION(NULLABLE_STRING)
         )
+        map.put(DEPRECATED_BINARY_MOD, "Convention for ''{0}'' is forbidden. Use ''{1}''", SYMBOL, STRING)
+        map.put(FORBIDDEN_BINARY_MOD, "Deprecated convention for ''{0}''. Use ''{1}''", SYMBOL, STRING)
 
         map.put(ILLEGAL_SELECTOR, "The expression cannot be a selector (occur after a dot)")
         map.put(NO_RECEIVER_ALLOWED, "No receiver can be passed to this function or property")
