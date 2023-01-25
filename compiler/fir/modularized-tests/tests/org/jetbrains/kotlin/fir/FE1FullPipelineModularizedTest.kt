@@ -19,6 +19,7 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
             "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
         )
         args.multiPlatform = true
+        args.renderInternalDiagnosticNames = true
         args.noStdlib = true
         args.noReflect = true
     }
