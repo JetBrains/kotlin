@@ -45,7 +45,6 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun isInterface(): Boolean = false
     override fun isDeprecated(): Boolean = false
     override fun isAnnotationType(): Boolean = false
-    override fun isEnum(): Boolean = false
     override fun hasTypeParameters(): Boolean = false
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
         baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT

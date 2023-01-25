@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -86,24 +85,6 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     internal val isObject: Boolean by lazyPub {
         classOrObjectDeclaration?.let { it is KtObjectDeclaration } ?: withClassOrObjectSymbol { it.classKind.isObject }
-    }
-
-    internal val isInterface: Boolean by lazyPub {
-        classOrObjectDeclaration?.let { it is KtClass && it.isInterface() } ?: withClassOrObjectSymbol {
-            it.classKind == KtClassKind.INTERFACE
-        }
-    }
-
-    internal val isAnnotation: Boolean by lazyPub {
-        classOrObjectDeclaration?.let { it is KtClass && it.isAnnotation() } ?: withClassOrObjectSymbol {
-            it.classKind == KtClassKind.ANNOTATION_CLASS
-        }
-    }
-
-    internal val isEnum: Boolean by lazyPub {
-        classOrObjectDeclaration?.let { it is KtClass && it.isEnum() } ?: withClassOrObjectSymbol {
-            it.classKind == KtClassKind.ENUM_CLASS
-        }
     }
 
     private val _isDeprecated: Boolean by lazyPub {
@@ -180,9 +161,9 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
 
     override fun hasModifierProperty(@NonNls name: String): Boolean = modifierList?.hasModifierProperty(name) ?: false
 
-    override fun isInterface(): Boolean = isInterface
-    override fun isAnnotationType(): Boolean = isAnnotation
-    override fun isEnum(): Boolean = isEnum
+    abstract override fun isInterface(): Boolean
+    abstract override fun isAnnotationType(): Boolean
+    abstract override fun isEnum(): Boolean
 
     override fun isValid(): Boolean = classOrObjectDeclaration?.isValid ?: classOrObjectSymbolPointer.isValid(ktModule)
 

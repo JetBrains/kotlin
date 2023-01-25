@@ -107,6 +107,11 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getNameIdentifier(): KtLightIdentifier? = null
     override fun getModifierList(): PsiModifierList? = null
     override fun hasModifierProperty(name: String): Boolean = name == PsiModifier.FINAL
+
+    override fun isInterface(): Boolean = false
+    override fun isAnnotationType(): Boolean = false
+    override fun isEnum(): Boolean = false
+
     override fun getContainingClass(): PsiClass? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null

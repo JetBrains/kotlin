@@ -298,8 +298,15 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     }
 
     override fun isInterface(): Boolean = false
-
     override fun isAnnotationType(): Boolean = false
+
+    private val _isEnum: Boolean by lazyPub {
+        classOrObjectDeclaration?.let { it is KtClass && it.isEnum() } ?: withClassOrObjectSymbol {
+            it.classKind == KtClassKind.ENUM_CLASS
+        }
+    }
+
+    override fun isEnum(): Boolean = _isEnum
 
     override fun copy(): SymbolLightClassForClassOrObject =
         SymbolLightClassForClassOrObject(classOrObjectDeclaration, classOrObjectSymbolPointer, ktModule, manager)
