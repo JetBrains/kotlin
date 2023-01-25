@@ -174,14 +174,20 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     }
     mergeDependencies(module, dependenciesToCompile)
     runCodegen(module)
-    if (context.config.produce.isNativeLibrary) {
+    val generatedBitcodeFiles = if (context.config.produce.isNativeLibrary) {
+        val cppAdapterFile = context.tempFiles.cAdapterCpp.javaFile()
+        val bitcodeAdapterFile = context.tempFiles.cAdapterBitcode.javaFile()
         val input = CExportGenerateApiInput(
                 context.context.cAdapterExportedElements!!,
                 headerFile = context.outputFiles.cAdapterHeader.javaFile(),
                 defFile = if (context.config.target.family == Family.MINGW) context.outputFiles.cAdapterDef.javaFile() else null,
-                cppAdapterFile = context.tempFiles.cAdapterCpp.javaFile()
+                cppAdapterFile = cppAdapterFile
         )
         runPhase(CExportGenerateApiPhase, input)
+        runPhase(CExportCompileAdapterPhase, CExportCompileAdapterInput(cppAdapterFile, bitcodeAdapterFile))
+        listOf(bitcodeAdapterFile)
+    } else {
+        emptyList()
     }
     runPhase(CStubsPhase)
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.
@@ -194,7 +200,7 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     if (context.shouldPrintBitCode()) {
         runPhase(PrintBitcodePhase, llvmModule)
     }
-    runPhase(LinkBitcodeDependenciesPhase)
+    runPhase(LinkBitcodeDependenciesPhase, generatedBitcodeFiles)
 }
 
 /**
