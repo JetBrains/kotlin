@@ -173,10 +173,14 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     }
     mergeDependencies(module, dependenciesToCompile)
     runCodegen(module)
+    if (context.config.produce.isNativeLibrary) {
+        runPhase(CExportGenerateApiPhase)
+    }
     runPhase(CStubsPhase)
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.
     //  Motivation: possibility to run LTO on bitcode level after separate IR compilation.
     val llvmModule = context.llvm.module
+    // TODO: Consider dropping these in favor of proper phases dumping and validation.
     if (context.config.needCompilerVerification || context.config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE)) {
         runPhase(VerifyBitcodePhase, llvmModule)
     }
