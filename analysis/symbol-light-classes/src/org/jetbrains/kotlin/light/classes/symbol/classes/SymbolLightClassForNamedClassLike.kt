@@ -5,14 +5,18 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.classes
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.PsiModifier
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.asJava.classes.getParentForLocalDeclaration
+import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -51,6 +55,18 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
         ktModule = ktModule,
         manager = manager
     )
+
+    protected val isLocal: Boolean by lazyPub {
+        classOrObjectDeclaration?.isLocal ?: withClassOrObjectSymbol { it.symbolKind == KtSymbolKind.LOCAL }
+    }
+
+    override fun getParent(): PsiElement? {
+        if (isLocal) {
+            return classOrObjectDeclaration?.let(::getParentForLocalDeclaration)
+        }
+
+        return containingClass ?: containingFile
+    }
 
     context(KtAnalysisSession)
     protected fun addMethodsFromCompanionIfNeeded(

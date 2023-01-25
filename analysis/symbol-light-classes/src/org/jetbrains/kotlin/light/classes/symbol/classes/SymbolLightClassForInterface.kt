@@ -78,5 +78,5 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
     }
 
     override fun getExtendsList(): PsiReferenceList? = _extendsList
-    override fun isAnnotationType(): Boolean = false
+    override fun classKind(): KtClassKind = KtClassKind.INTERFACE
 }

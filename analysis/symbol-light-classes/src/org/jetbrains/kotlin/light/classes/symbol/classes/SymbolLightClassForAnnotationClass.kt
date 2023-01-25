@@ -50,7 +50,7 @@ internal open class SymbolLightClassForAnnotationClass : SymbolLightClassForInte
         manager = manager,
     )
 
-    override fun isAnnotationType(): Boolean = true
+    override fun classKind(): KtClassKind = KtClassKind.ANNOTATION_CLASS
 
     protected open fun computeOwnMethods(): List<PsiMethod> = withClassOrObjectSymbol { classOrObjectSymbol ->
         val result = mutableListOf<KtLightMethod>()

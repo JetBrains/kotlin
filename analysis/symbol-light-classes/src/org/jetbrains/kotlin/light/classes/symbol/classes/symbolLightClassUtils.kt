@@ -169,7 +169,7 @@ private fun SymbolLightClassBase.shouldGenerateNoArgOverload(
 private fun SymbolLightClassBase.defaultConstructor(): KtLightMethod {
     val classOrObject = kotlinOrigin
     val visibility = when {
-        this is SymbolLightClassForClassLike<*> && (isObject || isEnum) -> PsiModifier.PRIVATE
+        this is SymbolLightClassForClassLike<*> && (classKind().let { it.isObject || it == KtClassKind.ENUM_CLASS }) -> PsiModifier.PRIVATE
         classOrObject?.hasModifier(SEALED_KEYWORD) == true -> PsiModifier.PROTECTED
         this is SymbolLightClassForEnumEntry -> PsiModifier.PACKAGE_LOCAL
         else -> PsiModifier.PUBLIC

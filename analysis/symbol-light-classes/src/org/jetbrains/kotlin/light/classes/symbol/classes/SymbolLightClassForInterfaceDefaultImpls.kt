@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SimpleModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -42,9 +43,8 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
         modifiersBox = SimpleModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL),
     )
 
-    override fun isInterface(): Boolean = false
-    override fun isDeprecated(): Boolean = false
-    override fun isAnnotationType(): Boolean = false
+    override fun classKind(): KtClassKind = KtClassKind.CLASS
+
     override fun hasTypeParameters(): Boolean = false
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
         baseClass.qualifiedName == CommonClassNames.JAVA_LANG_OBJECT

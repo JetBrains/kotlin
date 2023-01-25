@@ -82,9 +82,6 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         computeModifierList()
     }
 
-    override fun isInterface(): Boolean = true
-    override fun isEnum(): Boolean = false
-
     final override fun getModifierList(): PsiModifierList? = _modifierList
 
     private val _ownFields: List<KtLightField> by lazyPub {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousObjectSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
@@ -108,9 +109,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     override fun getModifierList(): PsiModifierList? = null
     override fun hasModifierProperty(name: String): Boolean = name == PsiModifier.FINAL
 
-    override fun isInterface(): Boolean = false
-    override fun isAnnotationType(): Boolean = false
-    override fun isEnum(): Boolean = false
+    override fun classKind(): KtClassKind = KtClassKind.ANONYMOUS_OBJECT
 
     override fun getContainingClass(): PsiClass? = null
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
