@@ -22,7 +22,6 @@ import java.io.PrintStream
 import java.nio.file.Files
 import java.nio.file.Path
 
-private val USE_BUILD_FILE: Boolean = System.getProperty("fir.bench.use.build.file", "true").toBooleanLenient()!!
 private val JVM_TARGET: String = System.getProperty("fir.bench.jvm.target", "1.8")
 
 abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
@@ -132,20 +131,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         args.reportPerf = true
         args.jvmTarget = JVM_TARGET
         args.allowKotlinPackage = true
-        if (USE_BUILD_FILE) {
-            configureArgsUsingBuildFile(args, moduleData, tmp)
-        } else {
-            configureRegularArgs(args, moduleData, tmp)
-        }
-    }
-
-    private fun configureRegularArgs(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
-        args.classpath = moduleData.classpath.joinToString(separator = ":") { it.absolutePath }
-        args.javaSourceRoots = moduleData.javaSourceRoots.map { it.path.absolutePath }.toTypedArray()
-        args.freeArgs = moduleData.sources.map { it.absolutePath }
-        args.destination = tmp.toAbsolutePath().toFile().toString()
-        args.friendPaths = moduleData.friendDirs.map { it.canonicalPath }.toTypedArray()
-        args.optIn = moduleData.optInAnnotations.toTypedArray()
+        configureArgsUsingBuildFile(args, moduleData, tmp)
     }
 
     private fun configureArgsUsingBuildFile(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
