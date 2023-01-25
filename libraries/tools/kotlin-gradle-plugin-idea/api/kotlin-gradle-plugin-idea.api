@@ -352,6 +352,7 @@ public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinClasspath : ja
 	public final fun size ()I
 	public fun toArray ()[Ljava/lang/Object;
 	public fun toArray ([Ljava/lang/Object;)[Ljava/lang/Object;
+	public fun toString ()Ljava/lang/String;
 }
 
 public final class org/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinClasspathKt {
