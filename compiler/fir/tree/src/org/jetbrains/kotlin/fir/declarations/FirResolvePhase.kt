@@ -31,6 +31,8 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
         }
 
     val next: FirResolvePhase get() = values()[ordinal + 1]
+    val previous: FirResolvePhase get() = values()[ordinal - 1]
+
 
     companion object {
         // Short-cut
