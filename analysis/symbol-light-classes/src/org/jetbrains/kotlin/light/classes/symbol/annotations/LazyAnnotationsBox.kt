@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 internal class LazyAnnotationsBox(
     private val annotationsProvider: AnnotationsProvider,
-    private val additionalAnnotationsProvider: AdditionalAnnotationsProvider = DefaultAnnotationsProvider,
+    private val additionalAnnotationsProvider: AdditionalAnnotationsProvider = EmptyAdditionalAnnotationsProvider,
 ) : AnnotationsBox {
     private val annotationsArray: AtomicReference<Array<PsiAnnotation>?> = AtomicReference()
     private var specialAnnotations: SmartList<PsiAnnotation>? = null

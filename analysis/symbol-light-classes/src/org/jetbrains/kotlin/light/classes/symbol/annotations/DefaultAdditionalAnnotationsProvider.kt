@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import java.lang.annotation.ElementType
 
-internal object DefaultAnnotationsProvider : AdditionalAnnotationsProvider {
+internal object DefaultAdditionalAnnotationsProvider : AdditionalAnnotationsProvider {
     override fun addAllAnnotations(
         currentRawAnnotations: MutableList<in PsiAnnotation>,
         foundQualifiers: MutableSet<String>,

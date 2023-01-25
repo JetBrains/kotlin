@@ -71,7 +71,6 @@ internal class SymbolLightParameterForReceiver private constructor(
             annotationsBox = LazyAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(ktModule, receiverPointer),
                 additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
-                    DefaultAnnotationsProvider,
                     NullabilityAnnotationsProvider {
                         withReceiverSymbol { receiver ->
                             receiver.type.nullabilityType
