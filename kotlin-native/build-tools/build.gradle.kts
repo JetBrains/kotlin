@@ -53,9 +53,6 @@ dependencies {
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
 
-    implementation("com.ullink.slack:simpleslackapi:$slackApiVersion") {
-        exclude(group = "com.google.code.gson", module = "gson") // Workaround for Gradle dependency resolution error
-    }
     val versionProperties = Properties()
     project.rootProject.projectDir.resolve("gradle/versions.properties").inputStream().use { propInput ->
         versionProperties.load(propInput)
