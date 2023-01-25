@@ -1,0 +1,8 @@
+Before shortening: Outer.Inner.foo()
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] Outer.Inner
+with SHORTEN_AND_IMPORT:
+[qualifier] Outer.Inner
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] Outer.Inner

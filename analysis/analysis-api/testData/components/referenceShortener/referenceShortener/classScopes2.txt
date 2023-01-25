@@ -1,0 +1,11 @@
+Before shortening: Child.Foo.check()
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] Child.Foo
+[qualifier] Child.Foo.check()
+with SHORTEN_AND_IMPORT:
+[qualifier] Child.Foo
+[qualifier] Child.Foo.check()
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] Child.Foo
+[qualifier] Child.Foo.check()

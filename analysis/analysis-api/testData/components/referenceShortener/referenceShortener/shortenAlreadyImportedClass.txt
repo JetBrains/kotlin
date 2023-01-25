@@ -1,0 +1,8 @@
+Before shortening: dependency.T<Int>(3)
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] dependency.T<Int>(3)
+with SHORTEN_AND_IMPORT:
+[qualifier] dependency.T<Int>(3)
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] dependency.T<Int>(3)

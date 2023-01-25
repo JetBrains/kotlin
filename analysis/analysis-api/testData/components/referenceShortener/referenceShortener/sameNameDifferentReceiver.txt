@@ -1,0 +1,13 @@
+Before shortening: foo.myRun {
+            42
+        }
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[qualifier] foo.myRun {
+            42
+        }
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] foo.myRun {
+            42
+        }

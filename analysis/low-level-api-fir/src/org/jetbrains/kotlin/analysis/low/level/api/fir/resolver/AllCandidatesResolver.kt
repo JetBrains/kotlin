@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.InapplicableCandidate
@@ -61,16 +61,16 @@ class AllCandidatesResolver(private val firSession: FirSession) {
 
     fun getAllCandidates(
         firResolveSession: LLFirResolveSession,
-        functionCall: FirFunctionCall,
+        qualifiedAccess: FirQualifiedAccessExpression,
         calleeName: Name,
-        element: KtElement
+        element: KtElement,
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(firResolveSession, element)
 
         val firFile = element.containingKtFile.getOrBuildFirFile(firResolveSession)
         return bodyResolveComponents.context.withFile(firFile, bodyResolveComponents) {
             bodyResolveComponents.callResolver
-                .collectAllCandidates(functionCall, calleeName, bodyResolveComponents.context.containers, resolutionContext)
+                .collectAllCandidates(qualifiedAccess, calleeName, bodyResolveComponents.context.containers, resolutionContext)
                 .apply { postProcessCandidates() }
         }
     }
