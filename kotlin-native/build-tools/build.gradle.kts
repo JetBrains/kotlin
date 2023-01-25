@@ -3,7 +3,6 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
