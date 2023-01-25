@@ -1,0 +1,7 @@
+Before shortening: C.foo()
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+[qualifier] C.foo()
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] C.foo()

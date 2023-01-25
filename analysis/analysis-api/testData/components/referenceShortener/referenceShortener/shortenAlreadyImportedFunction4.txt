@@ -1,0 +1,8 @@
+Before shortening: Base.foo()
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] Base.foo()
+with SHORTEN_AND_IMPORT:
+[qualifier] Base.foo()
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] Base.foo()

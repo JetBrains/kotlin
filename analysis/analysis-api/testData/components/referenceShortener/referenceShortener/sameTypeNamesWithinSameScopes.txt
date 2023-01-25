@@ -1,0 +1,5 @@
+Before shortening: fun foo(p1: dependency1.T, p2: dependency2.T) {}
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+with SHORTEN_AND_IMPORT:
+with SHORTEN_AND_STAR_IMPORT:

@@ -231,6 +231,13 @@ class FirTowerDataElement(
             contextReceiverGroup?.map { it.createSnapshot() },
             isLocal,
         )
+
+    /**
+     * Returns [scope] if it is not null. Otherwise, returns [implicitReceiver.implicitScope].
+     *
+     * Note that a scope for a companion object is an implicit scope.
+     */
+    fun getAvailableScope() = scope ?: implicitReceiver?.implicitScope
 }
 
 fun ImplicitReceiverValue<*>.asTowerDataElement(): FirTowerDataElement =

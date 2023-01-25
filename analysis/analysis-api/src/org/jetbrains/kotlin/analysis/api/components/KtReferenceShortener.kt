@@ -6,26 +6,55 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption.Companion.defaultCallableShortenOption
 import org.jetbrains.kotlin.analysis.api.components.ShortenOption.Companion.defaultClassShortenOption
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtUserType
 
 public enum class ShortenOption {
     /** Skip shortening references to this symbol. */
     DO_NOT_SHORTEN,
 
-    /** Only shorten references to this symbol if it's already imported in the file. Otherwise, leave it as it is. */
+    /**
+     * Only shorten references to this symbol if it's possible without adding a new import directive to the file. Otherwise, leave it as
+     * it is.
+     *
+     * Example:
+     *   package a.b.c
+     *   import foo.bar
+     *   fun test() {}
+     *   fun runFunctions() {
+     *     foo.bar()     // -> bar()
+     *     a.b.c.test()  // -> test()
+     *   }
+     */
     SHORTEN_IF_ALREADY_IMPORTED,
 
-    /** Shorten references to this symbol and import it into the file. */
+    /**
+     * Shorten references to this symbol and import it into the file if importing it is needed for the shortening.
+     *
+     * Example:
+     *   package a.b.c
+     *   fun test() {}
+     *   fun runFunctions() {
+     *     foo.bar()     // -> bar() and add a new import directive `import foo.bar`
+     *     a.b.c.test()  // -> test()
+     *   }
+     */
     SHORTEN_AND_IMPORT,
 
-    /** Shorten references to this symbol and import this symbol and all its sibling symbols with star import on the parent. */
+    /**
+     * Shorten references to this symbol and import this symbol and all its sibling symbols with star import on the parent if importing them
+     * is needed for the shortening.
+     */
     SHORTEN_AND_STAR_IMPORT;
 
     public companion object {
@@ -92,4 +121,6 @@ public interface KtReferenceShortenerMixIn : KtAnalysisSessionMixIn {
 public interface ShortenCommand {
     public fun invokeShortening()
     public val isEmpty: Boolean
+    public fun getTypesToShorten(): List<SmartPsiElementPointer<KtUserType>>
+    public fun getQualifiersToShorten(): List<SmartPsiElementPointer<KtDotQualifiedExpression>>
 }

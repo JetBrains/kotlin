@@ -1,0 +1,8 @@
+Before shortening: foo.www.ddd.Check.BBD.Companion::class.java.annotatedInterfaces.size
+with DO_NOT_SHORTEN:
+with SHORTEN_IF_ALREADY_IMPORTED:
+[qualifier] foo.www.ddd.Check.BBD.Companion
+with SHORTEN_AND_IMPORT:
+[qualifier] foo.www.ddd.Check.BBD.Companion
+with SHORTEN_AND_STAR_IMPORT:
+[qualifier] foo.www.ddd.Check.BBD.Companion
