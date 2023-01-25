@@ -347,8 +347,6 @@ internal class CodeGeneratorVisitor(
     }
     private fun appendCAdapters(elements: CAdapterExportedElements) {
         CAdapterCodegen(codegen, generationState).buildAllAdaptersRecursively(elements)
-        // TODO: It is not a part of IrToBitcode. Maybe move it somewhere?
-        CAdapterApiExporter(generationState, elements).makeGlobalStruct()
     }
 
     private fun FunctionGenerationContext.initThreadLocalField(irField: IrField) {
