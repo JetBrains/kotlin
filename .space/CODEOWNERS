@@ -322,7 +322,7 @@
 /libraries/tools/kotlin-serialization-unshaded/ "Kotlin Build Tools"
 /libraries/tools/kotlin-stdlib-docs/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /libraries/tools/kotlin-stdlib-gen/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
-/libraries/tools/kotlin-test-js-runner/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
+/libraries/tools/kotlin-test-js-runner/ "Kotlin JS"
 /libraries/tools/kotlin-tooling-core/ "Kotlin Build Tools" "Kotlin Multiplatform"
 /libraries/tools/kotlin-tooling-metadata/ "Kotlin Build Tools" "Kotlin Multiplatform"
 /libraries/tools/kotlinp/ "Kotlin JVM"

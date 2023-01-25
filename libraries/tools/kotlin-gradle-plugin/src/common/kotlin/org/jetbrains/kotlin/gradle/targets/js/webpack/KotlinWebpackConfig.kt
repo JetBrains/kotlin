@@ -61,6 +61,7 @@ data class KotlinWebpackConfig(
     var devtool: String? = WebpackDevtool.EVAL_SOURCE_MAP,
     @Input
     var showProgress: Boolean = false,
+    var optimization: Optimization? = null,
     @Input
     var sourceMaps: Boolean = false,
     @Input
@@ -166,6 +167,12 @@ data class KotlinWebpackConfig(
         }
     }
 
+    @Suppress("unused")
+    data class Optimization(
+        var runtimeChunk: Any,
+        var splitChunks: Any
+    ) : Serializable
+
     fun save(configFile: File) {
         configFile.writer().use {
             appendTo(it)
@@ -196,6 +203,7 @@ data class KotlinWebpackConfig(
             appendEntry()
             appendResolveModules()
             appendSourceMaps()
+            appendOptimization()
             appendDevServer()
             appendProgressReporter()
             rules.forEach { rule ->
@@ -298,6 +306,18 @@ data class KotlinWebpackConfig(
                 )
             }
                 
+            """.trimIndent()
+        )
+    }
+
+    private fun Appendable.appendOptimization() {
+        if (optimization == null) return
+
+        //language=JavaScript 1.8
+        appendLine(
+            """
+                // optimization
+                config.optimization = config.optimization || ${json(optimization!!)};
             """.trimIndent()
         )
     }

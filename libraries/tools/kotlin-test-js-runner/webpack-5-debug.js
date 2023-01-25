@@ -6,7 +6,7 @@ const {absolutify} = require("webpack/lib/util/identifier");
 // https://github.com/webpack/webpack/issues/12951
 class PatchSourceMapSourcePlugin {
     apply(compiler) {
-        compiler.hooks.beforeRun.tap("PathcSourceMapSourcePlugin", compiler => {
+        compiler.hooks.beforeRun.tap("PatchSourceMapSourcePlugin", compiler => {
             const original = SourceMapSource.prototype._ensureSourceMapObject;
 
             SourceMapSource.prototype._ensureSourceMapObject = function () {
