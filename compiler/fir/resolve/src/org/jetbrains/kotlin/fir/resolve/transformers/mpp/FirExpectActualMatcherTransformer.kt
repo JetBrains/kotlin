@@ -76,7 +76,7 @@ open class FirExpectActualMatcherTransformer(
 
     // ------------------------------------------------------
 
-    private fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
+    fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         if (!memberDeclaration.isActual) return
         val actualSymbol = memberDeclaration.symbol
 

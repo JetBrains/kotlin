@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 
 import kotlinx.collections.immutable.toImmutableList
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.expressions.*
@@ -51,15 +52,20 @@ fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
     return this.transform(transformer, null)
 }
 
+@OptIn(PrivateForInline::class)
 open class FirTypeResolveTransformer(
     final override val session: FirSession,
-    private val scopeSession: ScopeSession,
+    @property:PrivateForInline val scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList(),
     initialCurrentFile: FirFile? = null,
-    private val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
+    @property:PrivateForInline val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
-    private val scopes = mutableListOf<FirScope>()
-    private val towerScope = scopes.asReversed()
+    @PrivateForInline
+    val scopes = mutableListOf<FirScope>()
+
+    @PrivateForInline
+    val towerScope = scopes.asReversed()
+
     private var currentDeclaration: FirDeclaration? = null
 
     private inline fun <T> withDeclaration(declaration: FirDeclaration, crossinline action: () -> T): T {
@@ -77,31 +83,46 @@ open class FirTypeResolveTransformer(
     }
 
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session)
-    private var currentFile: FirFile? = initialCurrentFile
+
+    @PrivateForInline
+    var currentFile: FirFile? = initialCurrentFile
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
+        return withFileScope(file) {
+            super.transformFile(file, data)
+        }
+    }
+
+    inline fun <R> withFileScope(file: FirFile, crossinline action: () -> R): R {
         currentFile = file
         return withScopeCleanup {
             scopes.addAll(createImportingScopes(file, session, scopeSession))
-            super.transformFile(file, data)
+            action()
         }
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         whileAnalysing(session, regularClass) {
-            withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
-                withScopeCleanup {
-                    regularClass.addTypeParametersScope()
-                    regularClass.typeParameters.forEach {
-                        it.accept(this, data)
-                    }
-                    unboundCyclesInTypeParametersSupertypes(regularClass)
-                }
-
+            withClassDeclarationCleanup(regularClass) {
+                transformClassTypeParameters(regularClass, data)
                 return resolveClassContent(regularClass, data)
             }
         }
+    }
+
+    fun transformClassTypeParameters(regularClass: FirRegularClass, data: Any?) {
+        withScopeCleanup {
+            addTypeParametersScope(regularClass)
+            regularClass.typeParameters.forEach {
+                it.accept(this, data)
+            }
+            unboundCyclesInTypeParametersSupertypes(regularClass)
+        }
+    }
+
+    inline fun <R> withClassDeclarationCleanup(regularClass: FirRegularClass, action: () -> R): R {
+        return withClassDeclarationCleanup(classDeclarationsStack, regularClass, action)
     }
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
@@ -112,14 +133,14 @@ open class FirTypeResolveTransformer(
 
     override fun transformConstructor(constructor: FirConstructor, data: Any?): FirConstructor = whileAnalysing(session, constructor) {
         return withScopeCleanup {
-            constructor.addTypeParametersScope()
+            addTypeParametersScope(constructor)
             transformDeclaration(constructor, data)
         } as FirConstructor
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirTypeAlias = whileAnalysing(session, typeAlias) {
         withScopeCleanup {
-            typeAlias.addTypeParametersScope()
+            addTypeParametersScope(typeAlias)
             transformDeclaration(typeAlias, data)
         } as FirTypeAlias
     }
@@ -138,7 +159,7 @@ open class FirTypeResolveTransformer(
     override fun transformProperty(property: FirProperty, data: Any?): FirProperty = whileAnalysing(session, property) {
         withScopeCleanup {
             withDeclaration(property) {
-                property.addTypeParametersScope()
+                addTypeParametersScope(property)
                 property.transformTypeParameters(this, data)
                     .transformReturnTypeRef(this, data)
                     .transformReceiverParameter(this, data)
@@ -183,7 +204,7 @@ open class FirTypeResolveTransformer(
     ): FirSimpleFunction = whileAnalysing(session, simpleFunction) {
         withScopeCleanup {
             withDeclaration(simpleFunction) {
-                simpleFunction.addTypeParametersScope()
+                addTypeParametersScope(simpleFunction)
                 transformDeclaration(simpleFunction, data).also {
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
                 }
@@ -292,7 +313,7 @@ open class FirTypeResolveTransformer(
         return annotationCall
     }
 
-    private inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
+    inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
         val sizeBefore = scopes.size
         val result = l()
         val size = scopes.size
@@ -312,16 +333,28 @@ open class FirTypeResolveTransformer(
             firClass.transformAnnotations(this, null)
 
             if (firClass is FirRegularClass) {
-                firClass.addTypeParametersScope()
+                addTypeParametersScope(firClass)
             }
 
             // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
             for (constructor in firClass.declarations.filterIsInstance<FirConstructor>()) {
-                constructor.delegatedConstructor?.let(this::resolveConstructedTypeRefForDelegatedConstructorCall)
+                transformDelegatedConstructorCall(constructor)
             }
 
         }
 
+        return withClassScopes(firClass) {
+            // Note that annotations are still visited here
+            // again, although there's no need in it
+            transformElement(firClass, data)
+        }
+    }
+
+    fun transformDelegatedConstructorCall(constructor: FirConstructor) {
+        constructor.delegatedConstructor?.let(this::resolveConstructedTypeRefForDelegatedConstructorCall)
+    }
+
+    inline fun <R> withClassScopes(firClass: FirClass, crossinline action: () -> R): R {
         return withScopeCleanup {
             // ? Is it Ok to use original file session here ?
             val superTypes = lookupSuperTypes(
@@ -343,12 +376,10 @@ open class FirTypeResolveTransformer(
                 if (companionObject != null) {
                     session.nestedClassifierScope(companionObject)?.let(scopes::add)
                 }
-                firClass.addTypeParametersScope()
+                addTypeParametersScope(firClass)
             }
 
-            // Note that annotations are still visited here
-            // again, although there's no need in it
-            transformElement(firClass, data)
+            action()
         }
     }
 
@@ -362,9 +393,9 @@ open class FirTypeResolveTransformer(
         delegatedConstructorCall.transformCalleeReference(this, null)
     }
 
-    private fun FirMemberDeclaration.addTypeParametersScope() {
-        if (typeParameters.isNotEmpty()) {
-            scopes.add(FirMemberTypeParameterScope(this))
+    fun addTypeParametersScope(firMemberDeclaration: FirMemberDeclaration) {
+        if (firMemberDeclaration.typeParameters.isNotEmpty()) {
+            scopes.add(FirMemberTypeParameterScope(firMemberDeclaration))
         }
     }
 }

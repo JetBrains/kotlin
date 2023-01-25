@@ -133,7 +133,7 @@ FILE: lambdaAsSAMInterface.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [ResolvedTo(STATUS)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
+        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -153,7 +153,7 @@ FILE: lambdaAsSAMInterface.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [ResolvedTo(STATUS)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
+        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -173,7 +173,7 @@ FILE: lambdaAsSAMInterface.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [ResolvedTo(STATUS)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
+        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -193,7 +193,7 @@ FILE: lambdaAsSAMInterface.kt
     }
     public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [ResolvedTo(STATUS)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
+        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
             b#
         }
         )
@@ -202,12 +202,12 @@ FILE: lambdaAsSAMInterface.kt
 BODY_RESOLVE:
 FILE: lambdaAsSAMInterface.kt
     public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Arg : R|kotlin/Any| {
-        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Arg] constructor(): R|foo/Arg| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public abstract fun [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
 
     }

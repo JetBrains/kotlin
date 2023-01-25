@@ -26,46 +26,46 @@ FILE: annotations.kt
 
 TYPES:
 FILE: annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:R|kotlin/Suppress|(LAZY_EXPRESSION)
     @R|kotlin/Suppress|(LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 STATUS:
 FILE: annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:R|kotlin/Suppress|(LAZY_EXPRESSION)
     @R|kotlin/Suppress|(LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:R|kotlin/Suppress|(String(1))
     @R|kotlin/Suppress|(String(2)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:R|kotlin/Suppress|(String(1))
     @R|kotlin/Suppress|(String(2)) public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: annotations.kt
-    @FILE:Suppress(LAZY_EXPRESSION)
+    @FILE:R|kotlin/Suppress|(String(1))
     @R|kotlin/Suppress|(String(2)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: annotations.kt
-    @FILE:Suppress(String(1))
+    @FILE:R|kotlin/Suppress|(names = vararg(String(1)))
     @R|kotlin/Suppress|(names = vararg(String(2))) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: annotations.kt
-    @FILE:Suppress(String(1))
+    @FILE:R|kotlin/Suppress|(names = vararg(String(1)))
     @R|kotlin/Suppress|(names = vararg(String(2))) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
     }
 
 BODY_RESOLVE:
 FILE: annotations.kt
-    @FILE:Suppress(String(1))
+    @FILE:R|kotlin/Suppress|(names = vararg(String(1)))
     @R|kotlin/Suppress|(names = vararg(String(2))) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
     }
 

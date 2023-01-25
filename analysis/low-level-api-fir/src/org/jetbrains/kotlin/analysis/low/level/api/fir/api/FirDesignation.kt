@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
-import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.nullableJavaSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.containingClass
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
@@ -27,8 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.parents
 
 class FirDesignationWithFile(
     path: List<FirRegularClass>,
@@ -43,15 +38,13 @@ class FirDesignationWithFile(
         yieldAll(path)
         if (includeTarget) yield(target)
     }
+
 }
 
 open class FirDesignation(
     val path: List<FirRegularClass>,
     val target: FirElementWithResolveState,
 ) {
-    val firstNonFileDeclaration: FirElementWithResolveState
-        get() = path.firstOrNull() ?: target
-
     fun toSequence(includeTarget: Boolean): Sequence<FirElementWithResolveState> = sequence {
         yieldAll(path)
         if (includeTarget) yield(target)
@@ -256,3 +249,4 @@ fun FirElementWithResolveState.tryCollectDesignationWithFile(): FirDesignationWi
         else -> unexpectedElementError<FirElementWithResolveState>(this)
     }
 }
+

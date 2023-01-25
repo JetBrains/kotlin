@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.*
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 
 class FirKotlinScopeProvider(
@@ -43,8 +45,10 @@ class FirKotlinScopeProvider(
                     val delegateFields = klass.delegateFields
                     if (delegateFields.isEmpty())
                         it
-                    else
+                    else {
+                        delegateFields.forEach { field -> field.lazyResolveToPhase(FirResolvePhase.TYPES) }
                         FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
+                    }
                 }
 
             val scopes = lookupSuperTypes(

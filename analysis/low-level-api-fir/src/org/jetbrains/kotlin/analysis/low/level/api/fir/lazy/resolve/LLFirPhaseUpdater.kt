@@ -12,11 +12,22 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 internal object LLFirPhaseUpdater {
-    fun updateDeclarationInternalsPhase(target: FirElementWithResolveState, newPhase: FirResolvePhase, updateForLocalDeclarations: Boolean) {
-        if (updateForLocalDeclarations) {
-            target.acceptChildren(PhaseUpdatingTransformer, newPhase)
-        } else {
-            updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
+    fun updateDeclarationInternalsPhase(
+        target: FirElementWithResolveState,
+        newPhase: FirResolvePhase,
+        updateForLocalDeclarations: Boolean
+    ) {
+        updatePhaseForNonLocals(target, newPhase, isTargetDeclaration = true)
+        if (updateForLocalDeclarations && target is FirCallableDeclaration) {
+            when (target) {
+                is FirFunction -> target.body?.accept(PhaseUpdatingTransformer, newPhase)
+                is FirVariable -> {
+                    target.initializer?.accept(PhaseUpdatingTransformer, newPhase)
+                    target.getter?.body?.accept(PhaseUpdatingTransformer, newPhase)
+                    target.setter?.body?.accept(PhaseUpdatingTransformer, newPhase)
+                    target.backingField?.accept(PhaseUpdatingTransformer, newPhase)
+                }
+            }
         }
     }
 
@@ -44,13 +55,9 @@ internal object LLFirPhaseUpdater {
             is FirProperty -> {
                 element.getter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
                 element.setter?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
+                element.backingField?.let { updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false) }
             }
-            is FirClass -> {
-                element.declarations.forEach {
-                    updatePhaseForNonLocals(it, newPhase, isTargetDeclaration = false)
-                }
-            }
-            else -> Unit
+            else -> {}
         }
     }
 }

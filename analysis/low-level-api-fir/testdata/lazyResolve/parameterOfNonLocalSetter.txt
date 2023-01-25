@@ -53,7 +53,7 @@ FILE: parameterOfNonLocalSetter.kt
 
 SUPER_TYPES:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public? final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
@@ -66,8 +66,8 @@ FILE: parameterOfNonLocalSetter.kt
 
 TYPES:
 FILE: parameterOfNonLocalSetter.kt
-    public? final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
-        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
@@ -79,8 +79,8 @@ FILE: parameterOfNonLocalSetter.kt
 
 STATUS:
 FILE: parameterOfNonLocalSetter.kt
-    public final [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=X] constructor(): R|X| {
+    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 

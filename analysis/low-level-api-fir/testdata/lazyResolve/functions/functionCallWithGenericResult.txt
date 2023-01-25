@@ -142,7 +142,7 @@ FILE: functionCallWithGenericResult.kt
 BODY_RESOLVE:
 FILE: functionCallWithGenericResult.kt
     public? open [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Foo<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : CharSequence> : R|kotlin/Any| {
-        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : CharSequence>(): R|Foo<T>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo] constructor<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] T : CharSequence>(): R|Foo<T>| {
             super<R|kotlin/Any|>()
         }
 

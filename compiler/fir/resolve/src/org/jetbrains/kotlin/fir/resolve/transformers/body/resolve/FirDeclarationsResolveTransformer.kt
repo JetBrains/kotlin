@@ -22,9 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
-import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildUnitExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -528,13 +525,22 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         return typeAlias
     }
 
-    private fun doTransformRegularClass(
+    protected fun doTransformRegularClass(
         regularClass: FirRegularClass,
         data: ResolutionMode
     ): FirRegularClass {
-        dataFlowAnalyzer.enterClass(regularClass, !implicitTypeOnly)
-        val result = context.withRegularClass(regularClass, components) {
+        return withRegularClass(regularClass) {
             transformDeclarationContent(regularClass, data) as FirRegularClass
+        }
+    }
+
+       open fun withRegularClass(
+        regularClass: FirRegularClass,
+        action: () -> FirRegularClass
+    ): FirRegularClass {
+        dataFlowAnalyzer.enterClass(regularClass, buildGraph = transformer.preserveCFGForClasses)
+        val result = context.withRegularClass(regularClass, components) {
+            action()
         }
         val controlFlowGraph = dataFlowAnalyzer.exitClass()
         if (controlFlowGraph != null) {

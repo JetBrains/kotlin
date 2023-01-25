@@ -12,19 +12,27 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 open class FirAnnotationArgumentsResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     resolvePhase: FirResolvePhase,
-    outerBodyResolveContext: BodyResolveContext? = null
+    outerBodyResolveContext: BodyResolveContext? = null,
+    returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve,
 ) : FirAbstractBodyResolveTransformerDispatcher(
     session,
     resolvePhase,
     implicitTypeOnly = false,
     scopeSession,
-    outerBodyResolveContext = outerBodyResolveContext
+    outerBodyResolveContext = outerBodyResolveContext,
+    returnTypeCalculator = returnTypeCalculator,
 ) {
     final override val expressionsTransformer: FirExpressionsResolveTransformer = FirExpressionsResolveTransformerForSpecificAnnotations(this)
 
@@ -36,15 +44,21 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
 ) : FirDeclarationsResolveTransformer(transformer) {
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
         regularClass.transformAnnotations(this, data)
-        context.withContainingClass(regularClass) {
-            context.withRegularClass(regularClass, components) {
-                regularClass
-                    .transformTypeParameters(transformer, data)
-                    .transformSuperTypeRefs(transformer, data)
-                    .transformDeclarations(transformer, data)
-            }
+        withRegularClass(regularClass) {
+            regularClass
+                .transformTypeParameters(transformer, data)
+                .transformSuperTypeRefs(transformer, data)
+                .transformDeclarations(transformer, data)
         }
         return regularClass
+    }
+
+    override fun withRegularClass(regularClass: FirRegularClass, action: () -> FirRegularClass): FirRegularClass {
+        return context.withContainingClass(regularClass) {
+            context.withRegularClass(regularClass, components) {
+                action()
+            }
+        }
     }
 
     override fun transformAnonymousInitializer(
@@ -131,6 +145,7 @@ private class FirDeclarationsResolveTransformerForArgumentAnnotations(
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
         typeAlias.transformAnnotations(transformer, data)
+        typeAlias.expandedTypeRef.transform<FirTypeRef, _>(transformer, data)
         return typeAlias
     }
 

@@ -213,19 +213,19 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 BODY_RESOLVE:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public open [ResolvedTo(TYPES)] class Foo<[ResolvedTo(TYPES)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=Foo] constructor<[ResolvedTo(TYPES)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
+    public open [ResolvedTo(STATUS)] class Foo<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor<[ResolvedTo(STATUS)] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final [ResolvedTo(TYPES)] class Bar : R|Foo<kotlin/String>| {
+    public final [ResolvedTo(STATUS)] class Bar : R|Foo<kotlin/String>| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Bar] constructor(): R|Bar| {
             super<<implicit>>()
         }
 
     }
-    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun bar(): R|Bar| {
+    public final [ResolvedTo(CONTRACTS)] fun bar(): R|Bar| {
         ^bar R|/Bar.Bar|()
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
