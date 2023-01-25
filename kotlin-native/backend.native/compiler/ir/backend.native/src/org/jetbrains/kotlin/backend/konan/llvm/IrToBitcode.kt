@@ -10,7 +10,6 @@ import llvm.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.common.lower.inline.InlinerExpressionLocationHint
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterCodegen
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cgen.CBridgeOrigin

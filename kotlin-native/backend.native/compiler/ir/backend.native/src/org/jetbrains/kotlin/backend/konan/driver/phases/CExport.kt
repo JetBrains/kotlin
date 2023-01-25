@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterApiExporter
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterExportedElements
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterGenerator
 import org.jetbrains.kotlin.backend.konan.cexport.CAdapterTypeTranslator
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import java.io.File
 
 internal val BuildCExports = createSimpleNamedCompilerPhase<PsiToIrContext, FrontendPhaseOutput.Full, CAdapterExportedElements>(
         "BuildCExports", "Build C exports",
@@ -20,9 +21,22 @@ internal val BuildCExports = createSimpleNamedCompilerPhase<PsiToIrContext, Fron
     CAdapterGenerator(context, typeTranslator).buildExports(input.moduleDescriptor)
 }
 
-internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+internal data class CExportGenerateApiInput(
+        val elements: CAdapterExportedElements,
+        val headerFile: File,
+        val defFile: File?,
+        val cppAdapterFile: File,
+)
+
+internal val CExportGenerateApiPhase = createSimpleNamedCompilerPhase<PhaseContext, CExportGenerateApiInput>(
         name = "CExportGenerateApi",
         description = "Create C header for the exported API",
-) { context, _ ->
-    CAdapterApiExporter(context, context.context.cAdapterExportedElements!!).makeGlobalStruct()
+) { context, input ->
+    CAdapterApiExporter(
+            elements = input.elements,
+            headerFile = input.headerFile,
+            defFile = input.defFile,
+            cppAdapterFile = input.cppAdapterFile,
+            target = context.config.target,
+    ).makeGlobalStruct()
 }

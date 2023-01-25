@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.path
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
@@ -174,7 +175,13 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     mergeDependencies(module, dependenciesToCompile)
     runCodegen(module)
     if (context.config.produce.isNativeLibrary) {
-        runPhase(CExportGenerateApiPhase)
+        val input = CExportGenerateApiInput(
+                context.context.cAdapterExportedElements!!,
+                headerFile = context.outputFiles.cAdapterHeader.javaFile(),
+                defFile = if (context.config.target.family == Family.MINGW) context.outputFiles.cAdapterDef.javaFile() else null,
+                cppAdapterFile = context.tempFiles.cAdapterCpp.javaFile()
+        )
+        runPhase(CExportGenerateApiPhase, input)
     }
     runPhase(CStubsPhase)
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.
