@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker;
 import org.jetbrains.kotlin.resolve.*;
 import org.jetbrains.kotlin.resolve.calls.CallExpressionResolver;
 import org.jetbrains.kotlin.resolve.calls.CallResolver;
+import org.jetbrains.kotlin.resolve.calls.checkers.AssignmentChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker;
 import org.jetbrains.kotlin.resolve.calls.checkers.RttiExpressionChecker;
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents;
@@ -52,6 +53,7 @@ public class ExpressionTypingComponents {
     public ModifiersChecker modifiersChecker;
     public DataFlowAnalyzer dataFlowAnalyzer;
     public Iterable<CallChecker> callCheckers;
+    public Iterable<AssignmentChecker> assignmentCheckers;
     public IdentifierChecker identifierChecker;
     public DeclarationsCheckerBuilder declarationsCheckerBuilder;
     public LocalVariableResolver localVariableResolver;
@@ -186,6 +188,11 @@ public class ExpressionTypingComponents {
     @Inject
     public void setCallCheckers(@NotNull Iterable<CallChecker> callCheckers) {
         this.callCheckers = callCheckers;
+    }
+
+    @Inject
+    public void setAssignmentCheckers(@NotNull Iterable<AssignmentChecker> assignmentCheckers) {
+        this.assignmentCheckers = assignmentCheckers;
     }
 
     @Inject
