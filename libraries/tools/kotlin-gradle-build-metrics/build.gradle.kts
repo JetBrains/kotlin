@@ -32,3 +32,5 @@ publishing {
         }
     }
 }
+sourcesJar()
+javadocJar()
