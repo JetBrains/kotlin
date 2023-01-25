@@ -206,4 +206,32 @@ class MppCompositeBuildIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    fun `test - sample3-KT-56198-singleTargetMpp-includingJvm - ide dependencies`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample3-KT-56198-singleTargetMpp-includingJvm/producerBuild", gradleVersion)
+
+        project("mpp-composite-build/sample3-KT-56198-singleTargetMpp-includingJvm/consumerBuild", gradleVersion) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            resolveIdeDependencies(":consumerA") { dependencies ->
+                assertOutputDoesNotContain("e: org.jetbrains.kotlin.gradle.plugin.ide")
+                dependencies["commonMain"].assertMatches(
+                    kotlinStdlibDependencies,
+                    jetbrainsAnnotationDependencies,
+                    projectArtifactDependency(
+                        Regular, "producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
+                    )
+                )
+
+                dependencies["jvmMain"].assertMatches(
+                    kotlinStdlibDependencies,
+                    jetbrainsAnnotationDependencies,
+                    dependsOnDependency(":consumerA/commonMain"),
+                    projectArtifactDependency(
+                        Regular, "producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
+                    )
+                )
+            }
+        }
+    }
 }
