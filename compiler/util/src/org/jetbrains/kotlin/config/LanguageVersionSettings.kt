@@ -485,7 +485,7 @@ interface LanguageOrApiVersion : DescriptionAware {
 }
 
 fun LanguageVersion.isStableOrReadyForPreview(): Boolean =
-    isStable
+    isStable || this == KOTLIN_1_9 || this == KOTLIN_2_0
 
 fun LanguageVersion.toKotlinVersion() = KotlinVersion(major, minor)
 
