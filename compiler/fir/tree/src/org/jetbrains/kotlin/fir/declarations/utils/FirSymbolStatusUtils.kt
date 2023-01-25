@@ -44,62 +44,36 @@ inline val FirCallableSymbol<*>.isFromSealedClass: Boolean get() = rawStatus.isF
 inline val FirCallableSymbol<*>.isFromEnumClass: Boolean get() = rawStatus.isFromEnumClass
 inline val FirCallableSymbol<*>.isFun: Boolean get() = rawStatus.isFun
 
-// ---------------------- regular with status ----------------------
+// ---------------------- class like with status ----------------------
 
-inline val FirClassSymbol<*>.modality: Modality? get() = resolvedStatus.modality
-inline val FirClassSymbol<*>.isAbstract: Boolean get() = resolvedStatus.modality == Modality.ABSTRACT
-inline val FirClassSymbol<*>.isOpen: Boolean get() = resolvedStatus.modality == Modality.OPEN
-inline val FirClassSymbol<*>.isFinal: Boolean
+inline val FirClassLikeSymbol<*>.modality: Modality? get() = resolvedStatus.modality
+inline val FirClassLikeSymbol<*>.isAbstract: Boolean get() = resolvedStatus.modality == Modality.ABSTRACT
+inline val FirClassLikeSymbol<*>.isOpen: Boolean get() = resolvedStatus.modality == Modality.OPEN
+inline val FirClassLikeSymbol<*>.isFinal: Boolean
     get() {
         // member with unspecified modality is final
         val modality = resolvedStatus.modality ?: return true
         return modality == Modality.FINAL
     }
 
-inline val FirClassSymbol<*>.visibility: Visibility get() = resolvedStatus.visibility
-inline val FirClassSymbol<*>.effectiveVisibility: EffectiveVisibility get() = resolvedStatus.effectiveVisibility
+inline val FirClassLikeSymbol<*>.visibility: Visibility get() = resolvedStatus.visibility
+inline val FirClassLikeSymbol<*>.effectiveVisibility: EffectiveVisibility get() = resolvedStatus.effectiveVisibility
 
-inline val FirClassSymbol<*>.isActual: Boolean get() = resolvedStatus.isActual
-inline val FirClassSymbol<*>.isExpect: Boolean get() = resolvedStatus.isExpect
-inline val FirClassSymbol<*>.isInner: Boolean get() = rawStatus.isInner
-inline val FirClassSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
-inline val FirClassSymbol<*>.isInline: Boolean get() = rawStatus.isInline
-inline val FirClassSymbol<*>.isExternal: Boolean get() = rawStatus.isExternal
-inline val FirClassSymbol<*>.isFromSealedClass: Boolean get() = rawStatus.isFromSealedClass
-inline val FirClassSymbol<*>.isFromEnumClass: Boolean get() = rawStatus.isFromEnumClass
-inline val FirClassSymbol<*>.isFun: Boolean get() = rawStatus.isFun
-inline val FirClassSymbol<*>.isCompanion: Boolean get() = rawStatus.isCompanion
-inline val FirClassSymbol<*>.isData: Boolean get() = rawStatus.isData
-inline val FirClassSymbol<*>.isSealed: Boolean get() = resolvedStatus.modality == Modality.SEALED
+inline val FirClassLikeSymbol<*>.isActual: Boolean get() = resolvedStatus.isActual
+inline val FirClassLikeSymbol<*>.isExpect: Boolean get() = resolvedStatus.isExpect
+inline val FirClassLikeSymbol<*>.isInner: Boolean get() = rawStatus.isInner
+inline val FirClassLikeSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
+inline val FirClassLikeSymbol<*>.isInline: Boolean get() = rawStatus.isInline
+inline val FirClassLikeSymbol<*>.isExternal: Boolean get() = rawStatus.isExternal
+inline val FirClassLikeSymbol<*>.isFromSealedClass: Boolean get() = rawStatus.isFromSealedClass
+inline val FirClassLikeSymbol<*>.isFromEnumClass: Boolean get() = rawStatus.isFromEnumClass
+inline val FirClassLikeSymbol<*>.isFun: Boolean get() = rawStatus.isFun
+inline val FirClassLikeSymbol<*>.isCompanion: Boolean get() = rawStatus.isCompanion
+inline val FirClassLikeSymbol<*>.isData: Boolean get() = rawStatus.isData
+inline val FirClassLikeSymbol<*>.isSealed: Boolean get() = resolvedStatus.modality == Modality.SEALED
 
 inline val FirRegularClassSymbol.canHaveAbstractDeclaration: Boolean
     get() = isAbstract || isSealed || isEnumClass
-
-// ---------------------- type aliases with status ----------------------
-
-inline val FirTypeAliasSymbol.modality: Modality? get() = resolvedStatus.modality
-inline val FirTypeAliasSymbol.isAbstract: Boolean get() = resolvedStatus.modality == Modality.ABSTRACT
-inline val FirTypeAliasSymbol.isOpen: Boolean get() = resolvedStatus.modality == Modality.OPEN
-inline val FirTypeAliasSymbol.isFinal: Boolean
-    get() {
-        // member with unspecified modality is final
-        val modality = resolvedStatus.modality ?: return true
-        return modality == Modality.FINAL
-    }
-
-inline val FirTypeAliasSymbol.visibility: Visibility get() = resolvedStatus.visibility
-inline val FirTypeAliasSymbol.effectiveVisibility: EffectiveVisibility
-    get() = resolvedStatus.effectiveVisibility
-
-inline val FirTypeAliasSymbol.isActual: Boolean get() = resolvedStatus.isActual
-inline val FirTypeAliasSymbol.isExpect: Boolean get() = resolvedStatus.isExpect
-inline val FirTypeAliasSymbol.isInner: Boolean get() = rawStatus.isInner
-inline val FirTypeAliasSymbol.isStatic: Boolean get() = rawStatus.isStatic
-inline val FirTypeAliasSymbol.isInline: Boolean get() = rawStatus.isInline
-inline val FirTypeAliasSymbol.isExternal: Boolean get() = rawStatus.isExternal
-inline val FirTypeAliasSymbol.isFromSealedClass: Boolean get() = rawStatus.isFromSealedClass
-inline val FirTypeAliasSymbol.isFromEnumClass: Boolean get() = rawStatus.isFromEnumClass
-inline val FirTypeAliasSymbol.isFun: Boolean get() = rawStatus.isFun
 
 // ---------------------- common classes ----------------------
 
@@ -108,19 +82,6 @@ inline val FirClassLikeSymbol<*>.isLocal: Boolean get() = classId.isLocal
 inline val FirClassSymbol<*>.isLocalClassOrAnonymousObject: Boolean
     get() = classId.isLocal || this is FirAnonymousObjectSymbol
 
-inline val FirClassLikeSymbol<*>.isExpect: Boolean
-    get() = when (this) {
-        is FirRegularClassSymbol -> isExpect
-        is FirTypeAliasSymbol -> isExpect
-        else -> false
-    }
-
-inline val FirClassLikeSymbol<*>.isActual: Boolean
-    get() = when (this) {
-        is FirRegularClassSymbol -> isActual
-        is FirTypeAliasSymbol -> isActual
-        else -> false
-    }
 
 inline val FirClassSymbol<*>.isInterface: Boolean
     get() = classKind.isInterface
