@@ -37,6 +37,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
     }
 
     @Test
+    @TestMetadata("AnnotationsWithUnresolvedAnnotations.kt")
+    public void testAnnotationsWithUnresolvedAnnotations() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/AnnotationsWithUnresolvedAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("classModifiers.kt")
     public void testClassModifiers() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/classModifiers.kt");
