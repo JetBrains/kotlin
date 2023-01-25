@@ -10,6 +10,6 @@ private class Foo {
 internal <!NOTHING_TO_INLINE!>inline<!> fun foo() {
     <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Foo<!>()
     Foo.Companion
-    Foo.buildFoo()
+    Foo.<!PRIVATE_CLASS_MEMBER_FROM_INLINE!>buildFoo<!>()
 }
 

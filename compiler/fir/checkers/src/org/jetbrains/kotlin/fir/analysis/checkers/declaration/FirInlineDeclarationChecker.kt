@@ -12,19 +12,16 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.collectors.AbstractDiagnosticCollectorVisitor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -319,15 +316,21 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
             }
         }
 
-        private fun FirCallableSymbol<*>.isInsidePrivateClass(): Boolean {
-            val containingClassSymbol = this.containingClassLookupTag()?.toSymbol(session) ?: return false
+        private fun FirBasedSymbol<*>.isInsidePrivateClass(): Boolean {
+            val containingClassSymbol = this.getOwnerLookupTag()?.toSymbol(session) ?: return false
 
             val containingClassVisibility = when (containingClassSymbol) {
                 is FirAnonymousObjectSymbol -> return false
                 is FirRegularClassSymbol -> containingClassSymbol.visibility
                 is FirTypeAliasSymbol -> containingClassSymbol.visibility
             }
-            return containingClassVisibility == Visibilities.Private || containingClassVisibility == Visibilities.PrivateToThis
+            if (containingClassVisibility == Visibilities.Private || containingClassVisibility == Visibilities.PrivateToThis) {
+                return true
+            }
+            if (containingClassSymbol is FirRegularClassSymbol && containingClassSymbol.isCompanion) {
+                return containingClassSymbol.isInsidePrivateClass()
+            }
+            return false
         }
     }
 
