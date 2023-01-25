@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
 import org.jetbrains.kotlin.name.ClassId
 
-interface AnnotationsProvider {
+internal sealed interface AnnotationsProvider {
     fun classIds(): Collection<ClassId>
     operator fun get(classId: ClassId): Collection<KtAnnotationApplication>
     operator fun contains(classId: ClassId): Boolean
