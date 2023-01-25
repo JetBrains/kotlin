@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.impl.FirScriptImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.name.Name
@@ -42,6 +43,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
     lateinit var name: Name
     val statements: MutableList<FirStatement> = mutableListOf()
     lateinit var symbol: FirScriptSymbol
+    lateinit var containingFileSymbol: FirFileSymbol
     val parameters: MutableList<FirVariable> = mutableListOf()
     val contextReceivers: MutableList<FirContextReceiver> = mutableListOf()
 
@@ -56,6 +58,7 @@ class FirScriptBuilder : FirAnnotationContainerBuilder {
             name,
             statements,
             symbol,
+            containingFileSymbol,
             parameters,
             contextReceivers.toMutableOrEmpty(),
         )

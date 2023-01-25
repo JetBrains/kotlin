@@ -1079,6 +1079,7 @@ open class RawFirBuilder(
                 origin = FirDeclarationOrigin.Source
                 name = Name.special("<script-${containingFile.name}>")
                 symbol = FirScriptSymbol(context.packageFqName.child(name))
+                containingFileSymbol = containingFile.symbol
                 for (declaration in script.declarations) {
                     when (declaration) {
                         is KtScriptInitializer -> {

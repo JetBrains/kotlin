@@ -475,6 +475,9 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +name
             +fieldList(statement).withTransform()
             +symbol("FirScriptSymbol")
+            +field("containingFileSymbol", type("fir.symbols.impl", "FirFileSymbol"), argument = null).apply {
+                withBindThis = false
+            }
             +FieldList("parameters", variable, withReplace = false)
             +fieldList(contextReceiver, useMutableOrEmpty = true)
         }

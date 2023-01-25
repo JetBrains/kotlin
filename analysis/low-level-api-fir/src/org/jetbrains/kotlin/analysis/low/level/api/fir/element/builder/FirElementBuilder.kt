@@ -12,15 +12,13 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.declarationCanBeLazilyResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isNonAnonymousClassOrObject
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
-import org.jetbrains.kotlin.psi.psiUtil.isAncestor
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.psi2ir.deparenthesize
 
 
@@ -98,28 +96,44 @@ internal class FirElementBuilder(
     }
 }
 
-// TODO: simplify
-internal inline fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
-    var container: PsiElement? = this
-    while (container != null && container !is KtFile) {
-        if (container is KtNamedDeclaration
-            && (container.isNonAnonymousClassOrObject() || container is KtDeclarationWithBody || container is KtProperty || container is KtTypeAlias)
-            && container !is KtPrimaryConstructor
-            && declarationCanBeLazilyResolved(container)
-            && container !is KtFunctionLiteral
-            && container.containingClassOrObject !is KtEnumEntry
-            && predicate(container)
-        ) {
-            return container
+internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
+    var candidate: KtDeclaration? = null
+
+    fun propose(declaration: KtDeclaration) {
+        if (candidate == null) {
+            candidate = declaration
         }
-        if (container is KtDestructuringDeclaration && container.parent is KtFile) {
-            return container
-        }
-        container = container.parent
     }
-    return null
+
+    for (parent in parentsWithSelf) {
+        if (candidate != null) {
+            if (parent is KtEnumEntry || parent is KtCallableDeclaration) {
+                // Candidate turned to be local. Let's find another one
+                candidate = null
+            }
+        }
+
+        when (parent) {
+            is KtScript -> propose(parent)
+            is KtDestructuringDeclaration -> propose(parent)
+            is KtNamedDeclaration -> {
+                val isKindApplicable = when (parent) {
+                    is KtClassOrObject -> !parent.isObjectLiteral()
+                    is KtDeclarationWithBody, is KtProperty, is KtTypeAlias -> true
+                    else -> false
+                }
+
+                if (isKindApplicable && declarationCanBeLazilyResolved(parent) && predicate(parent)) {
+                    propose(parent)
+                }
+            }
+        }
+    }
+
+    return candidate
 }
 
+@Suppress("unused") // Used in the IDE plugin
 fun PsiElement.getNonLocalContainingInBodyDeclarationWith(): KtDeclaration? =
     getNonLocalContainingOrThisDeclaration { declaration ->
         when (declaration) {

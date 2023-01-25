@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirScript
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
@@ -39,6 +40,7 @@ internal class FirScriptImpl(
     override val name: Name,
     override val statements: MutableList<FirStatement>,
     override val symbol: FirScriptSymbol,
+    override val containingFileSymbol: FirFileSymbol,
     override val parameters: MutableList<FirVariable>,
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
 ) : FirScript() {

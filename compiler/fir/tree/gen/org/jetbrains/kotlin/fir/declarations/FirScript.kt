@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirScriptSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.fir.visitors.*
@@ -29,6 +30,7 @@ abstract class FirScript : FirDeclaration() {
     abstract val name: Name
     abstract val statements: List<FirStatement>
     abstract override val symbol: FirScriptSymbol
+    abstract val containingFileSymbol: FirFileSymbol
     abstract val parameters: List<FirVariable>
     abstract val contextReceivers: List<FirContextReceiver>
 

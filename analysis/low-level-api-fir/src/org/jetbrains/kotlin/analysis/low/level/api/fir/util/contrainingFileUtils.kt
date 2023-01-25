@@ -17,6 +17,7 @@ fun FirElementWithResolvePhase.getContainingFile(): FirFile? {
     val provider = moduleData.session.firProvider
     return when (this) {
         is FirFile -> this
+        is FirScript -> containingFileSymbol.fir
         is FirFileAnnotationsContainer -> containingFileSymbol.fir
         is FirTypeParameter -> containingDeclarationSymbol.fir.getContainingFile()
         is FirPropertyAccessor -> propertySymbol.fir.getContainingFile()
