@@ -300,6 +300,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 taskBuildCacheableOutputDirectory.get().asFile,
                 multiModuleICSettings = multiModuleICSettings,
                 preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
+                keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
             )
         } else null
 

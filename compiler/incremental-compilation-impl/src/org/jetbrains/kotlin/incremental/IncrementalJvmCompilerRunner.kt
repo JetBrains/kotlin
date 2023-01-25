@@ -142,6 +142,7 @@ open class IncrementalJvmCompilerRunner(
     private val classpathChanges: ClasspathChanges,
     withAbiSnapshot: Boolean = false,
     preciseCompilationResultsBackup: Boolean = false,
+    keepIncrementalCompilationCachesInMemory: Boolean = false,
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
@@ -150,15 +151,13 @@ open class IncrementalJvmCompilerRunner(
     outputDirs = outputDirs,
     withAbiSnapshot = withAbiSnapshot,
     preciseCompilationResultsBackup = preciseCompilationResultsBackup,
+    keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory,
 ) {
-    override fun createIncrementalCompilationContext(projectDir: File?, transaction: CompilationTransaction) =
-        IncrementalCompilationContext(
-            transaction = transaction,
-            rootProjectDir = projectDir,
-            reporter = reporter,
-            trackChangesInLookupCache = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun,
-            storeFullFqNamesInLookupCache = withAbiSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled,
-        )
+    override val shouldTrackChangesInLookupCache
+        get() = classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
+
+    override val shouldStoreFullFqNamesInLookupCache
+        get() = withAbiSnapshot || classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
 
     override fun createCacheManager(icContext: IncrementalCompilationContext, args: K2JVMCompilerArguments) =
         IncrementalJvmCachesManager(icContext, args.destination?.let { File(it) }, cacheDirectory)

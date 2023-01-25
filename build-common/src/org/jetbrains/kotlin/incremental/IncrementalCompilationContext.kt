@@ -35,11 +35,13 @@ class IncrementalCompilationContext(
         transaction: CompilationTransaction = DummyCompilationTransaction(),
         reporter: ICReporter = DoNothingICReporter,
         trackChangesInLookupCache: Boolean = false,
+        keepIncrementalCompilationCachesInMemory: Boolean = false,
     ) : this(
         createDefaultPathConverter(rootProjectDir),
         storeFullFqNamesInLookupCache,
         transaction,
         reporter,
         trackChangesInLookupCache,
+        keepIncrementalCompilationCachesInMemory
     )
 }

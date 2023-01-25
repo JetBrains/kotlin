@@ -559,6 +559,7 @@ abstract class CompileServiceImplBase(
             modulesApiHistory = modulesApiHistory,
             withAbiSnapshot = incrementalCompilationOptions.withAbiSnapshot,
             preciseCompilationResultsBackup = incrementalCompilationOptions.preciseCompilationResultsBackup,
+            keepIncrementalCompilationCachesInMemory = incrementalCompilationOptions.keepIncrementalCompilationCachesInMemory,
         )
         return try {
             compiler.compile(allKotlinFiles, args, compilerMessageCollector, changedFiles)
@@ -619,6 +620,7 @@ abstract class CompileServiceImplBase(
             classpathChanges = incrementalCompilationOptions.classpathChanges,
             withAbiSnapshot = incrementalCompilationOptions.withAbiSnapshot,
             preciseCompilationResultsBackup = incrementalCompilationOptions.preciseCompilationResultsBackup,
+            keepIncrementalCompilationCachesInMemory = incrementalCompilationOptions.keepIncrementalCompilationCachesInMemory,
         )
         return try {
             compiler.compile(allKotlinFiles, k2jvmArgs, compilerMessageCollector, changedFiles, projectRoot)

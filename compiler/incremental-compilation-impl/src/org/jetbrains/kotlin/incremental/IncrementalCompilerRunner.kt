@@ -72,6 +72,7 @@ abstract class IncrementalCompilerRunner<
 
     protected val withAbiSnapshot: Boolean = false,
     private val preciseCompilationResultsBackup: Boolean = false,
+    private val keepIncrementalCompilationCachesInMemory: Boolean = false,
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
@@ -83,10 +84,21 @@ abstract class IncrementalCompilerRunner<
     /**
      * Creates an instance of [IncrementalCompilationContext] that holds common incremental compilation context mostly required for [CacheManager]
      */
-    protected abstract fun createIncrementalCompilationContext(
+    private fun createIncrementalCompilationContext(
         projectDir: File?,
         transaction: CompilationTransaction
-    ): IncrementalCompilationContext
+    ) = IncrementalCompilationContext(
+        transaction = transaction,
+        rootProjectDir = projectDir,
+        reporter = reporter,
+        trackChangesInLookupCache = shouldTrackChangesInLookupCache,
+        storeFullFqNamesInLookupCache = shouldStoreFullFqNamesInLookupCache,
+        keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory,
+    )
+
+    protected abstract val shouldTrackChangesInLookupCache: Boolean
+
+    protected abstract val shouldStoreFullFqNamesInLookupCache: Boolean
 
     protected abstract fun createCacheManager(icContext: IncrementalCompilationContext, args: Args): CacheManager
     protected abstract fun destinationDir(args: Args): File

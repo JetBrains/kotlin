@@ -278,6 +278,7 @@ abstract class KotlinCompile @Inject constructor(
                 multiModuleICSettings = multiModuleICSettings,
                 withAbiSnapshot = useKotlinAbiSnapshot.get(),
                 preciseCompilationResultsBackup = preciseCompilationResultsBackup.get(),
+                keepIncrementalCompilationCachesInMemory = keepIncrementalCompilationCachesInMemory.get(),
             )
         } else null
 
