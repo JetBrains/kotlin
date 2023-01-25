@@ -24,7 +24,9 @@ internal fun shouldPerformPreLink(config: KonanConfig, caches: ResolvedCacheBina
  * [static] is a list of static libraries (e.g. "libcache.a")
  * [dynamic] is a list of dynamic libraries (e.g. "libcache.dylib")
  */
-internal class ResolvedCacheBinaries(val static: List<String>, val dynamic: List<String>)
+internal class ResolvedCacheBinaries(val static: List<String>, val dynamic: List<String>) {
+    fun isEmpty(): Boolean = static.isEmpty() && dynamic.isEmpty()
+}
 
 /**
  * Find binary files for compiler caches that are actually required for the linkage.
