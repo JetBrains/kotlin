@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithArguments
+import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithClassIds
+import org.jetbrains.kotlin.fir.symbols.resolvedCompilerRequiredAnnotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -63,8 +66,11 @@ internal fun annotations(
 
 internal fun annotationClassIds(
     firSymbol: FirBasedSymbol<*>,
+    useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): Collection<ClassId> = annotationContainer.resolvedAnnotationClassIds(firSymbol)
+): Collection<ClassId> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapNotNull {
+    it.toAnnotationClassId(useSiteSession)
+}
 
 internal fun hasAnnotation(
     firSymbol: FirBasedSymbol<*>,

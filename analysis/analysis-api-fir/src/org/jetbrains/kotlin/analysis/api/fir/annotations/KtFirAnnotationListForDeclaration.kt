@@ -43,7 +43,7 @@ internal class KtFirAnnotationListForDeclaration private constructor(
 
     override val annotationClassIds: Collection<ClassId>
         get() = withValidityAssertion {
-            annotationClassIds(firSymbol)
+            annotationClassIds(firSymbol, useSiteSession)
         }
 
     companion object {

@@ -46,7 +46,7 @@ internal class KtFirAnnotationListForReceiverParameter private constructor(
 
     override val annotationClassIds: Collection<ClassId>
         get() = withValidityAssertion {
-            annotationClassIds(firCallableSymbol, receiverParameter)
+            annotationClassIds(firCallableSymbol, useSiteSession, receiverParameter)
         }
 
     companion object {
