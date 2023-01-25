@@ -30,16 +30,7 @@ class TempFiles(outputPath: String, pathToTemporaryDir: String? = null) {
         }
     }
 
-    private val outputName = File(outputPath).name
     val deleteOnExit = pathToTemporaryDir == null || pathToTemporaryDir.isEmpty()
-
-    val nativeBinaryFile    by lazy { create(outputName,".kt.bc") }
-    val cAdapterCpp         by lazy { create("api", ".cpp") }
-    val cAdapterBitcode     by lazy { create("api", ".bc") }
-
-    val nativeBinaryFileName    get() = nativeBinaryFile.absolutePath
-    val cAdapterCppName         get() = cAdapterCpp.absolutePath
-    val cAdapterBitcodeName     get() = cAdapterBitcode.absolutePath
 
     private val dir by lazy {
         if (deleteOnExit) {

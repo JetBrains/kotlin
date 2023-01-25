@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.backend.konan.driver.utilities
 
 import kotlinx.cinterop.*
-import llvm.LLVMGetModuleIdentifier
 import llvm.LLVMModuleRef
 import llvm.LLVMPrintModuleToFile
-import llvm.size_tVar
 import org.jetbrains.kotlin.backend.common.phaser.Action
 import org.jetbrains.kotlin.backend.common.phaser.ActionState
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import java.io.File
@@ -39,10 +38,7 @@ private fun <Data, Context : PhaseContext> createLlvmDumperAction(): Action<Data
                             "Cannot dump LLVM IR ${state.beforeOrAfter.name.lowercase()} ${state.phase.name}")
                     return
                 }
-                val moduleName: String = memScoped {
-                    val sizeVar = alloc<size_tVar>()
-                    LLVMGetModuleIdentifier(llvmModule, sizeVar.ptr)!!.toKStringFromUtf8()
-                }
+                val moduleName: String = llvmModule.getName()
                 val output = File(context.config.saveLlvmIrDirectory, "$moduleName.${state.phase.name}.ll")
                 if (LLVMPrintModuleToFile(llvmModule, output.absolutePath, null) != 0) {
                     error("Can't dump LLVM IR to ${output.absolutePath}")
