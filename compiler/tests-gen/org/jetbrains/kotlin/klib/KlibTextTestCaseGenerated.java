@@ -1950,6 +1950,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/InnerClassInAnonymous.kt");
         }
 
+        @TestMetadata("integerLiteralWithExpectedTypealiasType.kt")
+        public void testIntegerLiteralWithExpectedTypealiasType() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/integerLiteralWithExpectedTypealiasType.kt");
+        }
+
         @TestMetadata("kt43342.kt")
         public void testKt43342() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/kt43342.kt");

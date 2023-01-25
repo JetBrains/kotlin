@@ -2649,6 +2649,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         }
 
         @Test
+        @TestMetadata("integerLiteralWithExpectedTypealiasType.kt")
+        public void testIntegerLiteralWithExpectedTypealiasType() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/integerLiteralWithExpectedTypealiasType.kt");
+        }
+
+        @Test
         @TestMetadata("internalPotentialFakeOverride.kt")
         public void testInternalPotentialFakeOverride() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/internalPotentialFakeOverride.kt");

@@ -695,7 +695,7 @@ class FirCallCompletionResultsWriterTransformer(
             val finalType = finalSubstitutor.substituteOrNull(initialType)
             var resultType = block.resultType.withReplacedConeType(finalType)
             resultType.coneTypeSafe<ConeIntegerLiteralType>()?.let {
-                resultType = resultType.resolvedTypeFromPrototype(it.getApproximatedType(data?.getExpectedType(block)))
+                resultType = resultType.resolvedTypeFromPrototype(it.getApproximatedType(data?.getExpectedType(block)?.fullyExpandedType(session)))
             }
             block.replaceTypeRef(resultType)
             session.lookupTracker?.recordTypeResolveAsLookup(resultType, block.source, context.file.source)
