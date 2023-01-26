@@ -2,7 +2,6 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
@@ -38,7 +37,6 @@ internal fun PhaseContext.fir2Ir(
         input: FirOutput.Full,
 ): Fir2IrOutput {
     val fir2IrExtensions = Fir2IrExtensions.Default
-    val signaturer = IdSignatureDescriptor(KonanManglerDesc)
     val commonFirFiles = input.session.moduleData.dependsOnDependencies
             .map { it.session }
             .filter { it.kind == FirSession.Kind.Source }
@@ -73,19 +71,25 @@ internal fun PhaseContext.fir2Ir(
         moduleDescriptor.setDependencies(ArrayList(dependencies))
     }
 
+    val (signatureComposer, symbolTable) = Fir2IrConverter.createSignatureComposerAndSymbolTable(
+        generateSignatures = false,
+        signatureComposerCreator = null,
+        manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
+    )
+
     val fir2irResult = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
             input.session, input.scopeSession, input.firFiles + commonFirFiles,
-            configuration.languageVersionSettings, signaturer,
+            configuration.languageVersionSettings,
             fir2IrExtensions,
-            FirJvmKotlinMangler(), // TODO: replace with potentially simpler Konan version
             KonanManglerIr, IrFactoryImpl,
             Fir2IrVisibilityConverter.Default,
             Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
             IrGenerationExtension.getInstances(config.project),
             generateSignatures = false,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
-            dependentComponents = emptyList(),
-            currentSymbolTable = null
+            signatureComposer = signatureComposer,
+            symbolTable = symbolTable,
+            dependentComponents = emptyList()
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }

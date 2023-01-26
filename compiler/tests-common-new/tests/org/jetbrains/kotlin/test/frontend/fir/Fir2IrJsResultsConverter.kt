@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir
 
-import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -36,7 +35,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
 import org.jetbrains.kotlin.ir.backend.js.getSerializedData
 import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -111,7 +109,6 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
     testServices: TestServices
 ): Fir2IrResult {
     this as FirAnalyzerFacade
-    val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val commonFirFiles = session.moduleData.dependsOnDependencies
         .map { it.session }
         .filter { it.kind == FirSession.Kind.Source }
@@ -121,19 +118,25 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
     val libraries = resolveJsLibraries(module, testServices, configuration)
     val (dependencies, builtIns) = loadResolvedLibraries(libraries, configuration.languageVersionSettings, testServices)
 
+    val (signatureComposer, symbolTable) = Fir2IrConverter.createSignatureComposerAndSymbolTable(
+        generateSignatures = false,
+        signatureComposerCreator = null,
+        manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
+    )
+
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
         session, scopeSession, firFiles + commonFirFiles,
-        languageVersionSettings, signaturer,
+        languageVersionSettings,
         fir2IrExtensions,
-        FirJvmKotlinMangler(), // TODO: replace with potentially simpler JS version
         JsManglerIr, IrFactoryImpl,
         Fir2IrVisibilityConverter.Default,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
         irGeneratorExtensions,
         generateSignatures = false,
         kotlinBuiltIns = builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
-        dependentComponents = emptyList(),
-        currentSymbolTable = null
+        signatureComposer = signatureComposer,
+        symbolTable = symbolTable,
+        dependentComponents = emptyList()
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
     }

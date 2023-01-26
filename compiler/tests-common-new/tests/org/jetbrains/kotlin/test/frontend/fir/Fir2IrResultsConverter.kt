@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -14,13 +15,16 @@ import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.container.get
+import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -68,7 +72,15 @@ class Fir2IrResultsConverter(
         val dependentIrParts = mutableListOf<JvmIrCodegenFactory.JvmIrBackendInput>()
         lateinit var mainIrPart: JvmIrCodegenFactory.JvmIrBackendInput
 
-        var currentSymbolTable: SymbolTable? = null
+        val generateSignatures =
+            (inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade as? FirAnalyzerFacade)?.generateSignatures == true
+
+        val (signatureComposer, symbolTable) = Fir2IrConverter.createSignatureComposerAndSymbolTable(
+            generateSignatures = generateSignatures,
+            signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
+            manglerCreator = { FirJvmKotlinMangler() }
+        )
+
         for ((index, firOutputPart) in inputArtifact.partsForDependsOnModules.withIndex()) {
             val dependentComponents = mutableListOf<Fir2IrComponents>()
             if (isMppSupported) {
@@ -78,9 +90,8 @@ class Fir2IrResultsConverter(
             }
 
             val (irModuleFragment, components, pluginContext) = firOutputPart.firAnalyzerFacade.convertToIr(
-                fir2IrExtensions, dependentComponents, currentSymbolTable
+                fir2IrExtensions, signatureComposer, symbolTable, dependentComponents, irBuiltIns
             )
-            currentSymbolTable = components.symbolTable
             componentsMap[firOutputPart.module.name] = components
 
             val irPart = JvmIrCodegenFactory.JvmIrBackendInput(

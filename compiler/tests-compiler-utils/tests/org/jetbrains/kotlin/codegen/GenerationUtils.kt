@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
+import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
@@ -31,10 +32,13 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
+import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
+import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
@@ -123,10 +127,18 @@ object GenerationUtils {
             generateSignatures = false
         )
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
+
+        val (signatureComposer, symbolTable) = Fir2IrConverter.createSignatureComposerAndSymbolTable(
+            generateSignatures = firAnalyzerFacade.generateSignatures,
+            signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
+            manglerCreator = { FirJvmKotlinMangler() }
+        )
+
         val (moduleFragment, components, pluginContext) = firAnalyzerFacade.convertToIr(
             fir2IrExtensions,
+            signatureComposer = signatureComposer,
+            symbolTable = symbolTable,
             dependentComponents = emptyList(),
-            symbolTable = null
         )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 

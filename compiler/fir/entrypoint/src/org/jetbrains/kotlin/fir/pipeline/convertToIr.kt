@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -43,20 +44,28 @@ fun FirResult.convertToIrAndActualize(
 ): Fir2IrResult {
     val result: Fir2IrResult
 
+    val (signatureComposer, symbolTable) = Fir2IrConverter.createSignatureComposerAndSymbolTable(
+        generateSignatures = linkViaSignatures,
+        signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
+        manglerCreator = { FirJvmKotlinMangler() }
+    )
+
     if (commonOutput != null) {
         val commonIrOutput = commonOutput.convertToIr(
             fir2IrExtensions,
             irGeneratorExtensions,
             linkViaSignatures = linkViaSignatures,
-            dependentComponents = emptyList(),
-            currentSymbolTable = null
+            signatureComposer = signatureComposer,
+            symbolTable = symbolTable,
+            dependentComponents = emptyList()
         )
         result = platformOutput.convertToIr(
             fir2IrExtensions,
             irGeneratorExtensions,
             linkViaSignatures = linkViaSignatures,
-            dependentComponents = listOf(commonIrOutput.components),
-            currentSymbolTable = commonIrOutput.components.symbolTable
+            signatureComposer = signatureComposer,
+            symbolTable = symbolTable,
+            dependentComponents = listOf(commonIrOutput.components)
         )
         IrActualizer.actualize(
             result.irModuleFragment,
@@ -67,8 +76,9 @@ fun FirResult.convertToIrAndActualize(
             fir2IrExtensions,
             irGeneratorExtensions,
             linkViaSignatures = linkViaSignatures,
-            dependentComponents = emptyList(),
-            currentSymbolTable = null
+            signatureComposer = signatureComposer,
+            symbolTable = symbolTable,
+            dependentComponents = emptyList()
         )
     }
 
@@ -79,34 +89,20 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
     fir2IrExtensions: Fir2IrExtensions,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
     linkViaSignatures: Boolean,
-    dependentComponents: List<Fir2IrComponents>,
-    currentSymbolTable: SymbolTable?
+    signatureComposer: FirBasedSignatureComposer,
+    symbolTable: SymbolTable,
+    dependentComponents: List<Fir2IrComponents>
 ): Fir2IrResult {
-    if (linkViaSignatures) {
-        val signaturer = JvmIdSignatureDescriptor(mangler = JvmDescriptorMangler(mainDetector = null))
-        return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-            session, scopeSession, fir,
-            session.languageVersionSettings, signaturer, fir2IrExtensions,
-            FirJvmKotlinMangler(),
-            JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            irGeneratorExtensions,
-            kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally
-            generateSignatures = true,
-            dependentComponents = dependentComponents,
-            currentSymbolTable = currentSymbolTable
-        )
-    } else {
-        return Fir2IrConverter.createModuleFragmentWithoutSignatures(
-            session, scopeSession, fir,
-            session.languageVersionSettings, fir2IrExtensions,
-            FirJvmKotlinMangler(),
-            JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(),
-            irGeneratorExtensions,
-            kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
-            dependentComponents = dependentComponents,
-            currentSymbolTable = currentSymbolTable
-        )
-    }
+    return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
+        session, scopeSession, fir,
+        session.languageVersionSettings, fir2IrExtensions,
+        JvmIrMangler, IrFactoryImpl, FirJvmVisibilityConverter,
+        Fir2IrJvmSpecialAnnotationSymbolProvider(),
+        irGeneratorExtensions,
+        kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally
+        generateSignatures = linkViaSignatures,
+        signatureComposer = signatureComposer,
+        symbolTable = symbolTable,
+        dependentComponents = dependentComponents
+    )
 }

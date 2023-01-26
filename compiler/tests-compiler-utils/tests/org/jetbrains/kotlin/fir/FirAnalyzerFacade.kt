@@ -6,18 +6,13 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
-import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.Fir2IrResult
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -26,7 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
+import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -41,8 +36,9 @@ abstract class AbstractFirAnalyzerFacade {
 
     abstract fun convertToIr(
         fir2IrExtensions: Fir2IrExtensions,
-        dependentComponents: List<Fir2IrComponents>,
-        symbolTable: SymbolTable?
+        signatureComposer: FirBasedSignatureComposer,
+        symbolTable: SymbolTable,
+        dependentComponents: List<Fir2IrComponents>
     ): Fir2IrResult
 }
 
@@ -110,25 +106,25 @@ class FirAnalyzerFacade(
 
     override fun convertToIr(
         fir2IrExtensions: Fir2IrExtensions,
-        dependentComponents: List<Fir2IrComponents>,
-        symbolTable: SymbolTable?
+        signatureComposer: FirBasedSignatureComposer,
+        symbolTable: SymbolTable,
+        dependentComponents: List<Fir2IrComponents>
     ): Fir2IrResult {
         if (_scopeSession == null) runResolution()
-        val mangler = JvmDescriptorMangler(null)
-        val signaturer = JvmIdSignatureDescriptor(mangler)
 
         return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
             session, _scopeSession!!, firFiles!!,
-            languageVersionSettings, signaturer,
+            languageVersionSettings,
             fir2IrExtensions,
-            FirJvmKotlinMangler(), JvmIrMangler, IrFactoryImpl,
+            JvmIrMangler, IrFactoryImpl,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions,
             generateSignatures,
             kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
-            dependentComponents = dependentComponents,
-            currentSymbolTable = symbolTable
+            signatureComposer = signatureComposer,
+            symbolTable = symbolTable,
+            dependentComponents = dependentComponents
         )
     }
 }
