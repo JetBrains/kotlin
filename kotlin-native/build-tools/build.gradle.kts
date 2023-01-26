@@ -43,9 +43,6 @@ dependencies {
     api(gradleApi())
 
     api(kotlinStdlib())
-    commonApi(project(":kotlin-gradle-plugin"))
-    commonApi(project(":kotlin-gradle-plugin-api"))
-    commonApi(project(":kotlin-gradle-plugin-model"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
 
@@ -63,17 +60,12 @@ dependencies {
         }
     }
 
-    api(project(":native:kotlin-native-utils"))
-    api(project(":kotlin-native-shared"))
-    api(project(":kotlinx-metadata-klib"))
-}
+    implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-coroutines-core"))
 
-kotlin {
-    sourceSets {
-        main {
-            kotlin.srcDir("$projectDir/../tools/benchmarks/shared/src/main/kotlin/report")
-        }
-    }
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"))
+    implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion"))
+
+    api(project(":kotlin-native-shared"))
 }
 
 val compileKotlin: KotlinCompile by tasks

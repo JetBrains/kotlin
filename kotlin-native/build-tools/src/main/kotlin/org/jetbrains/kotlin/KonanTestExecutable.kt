@@ -2,6 +2,8 @@ package org.jetbrains.kotlin
 
 import org.gradle.api.Action
 import org.gradle.api.Task
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 
 /**
  * An interface that any test that works with ExecutorService
@@ -11,12 +13,14 @@ interface KonanTestExecutable : Task {
     /**
      * Test executable to be run by the service.
      */
+    @get:Input
     val executable: String
 
     /**
      * Action that configures task or does some workload before the test will be executed.
      * Could be done as a first step in the test or just as a `doFirst` action in the test task.
      */
+    @get:Input
     var doBeforeRun: Action<in Task>?
 
     /**
@@ -24,10 +28,12 @@ interface KonanTestExecutable : Task {
      * Depending on the test task implementation this action is done before the build task
      * or as its `doFirst` action.
      */
+    @get:Input
     var doBeforeBuild: Action<in Task>?
 
     /**
      * Build tasks that this [executable] depends on, or is built from.
      */
+    @get:Internal
     val buildTasks: List<Task>
 }
