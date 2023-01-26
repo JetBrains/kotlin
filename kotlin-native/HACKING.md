@@ -371,22 +371,26 @@ Please note:
 1. Kotlin Native passes bitcode files to Clang instead of C or C++, so many flags won't work.
 2. `-cc1 -emit-obj` should be passed because Kotlin/Native calls linker by itself.
 3. Use `clang -cc1 -help` to see a list of available options.
- 
-Another useful compiler option is `-Xtemporary-files-dir=<PATH>` which allows
- specifying a directory for intermediate compiler artifacts like bitcode and object files.
-For example, it allows to store LLVM IR after a particular compiler phase.
-
-```shell script
-konanc main.kt -Xsave-llvm-ir-after=BitcodeOptimization -Xtemporary-files-dir=<PATH>
-```
-
-`<PATH>/out.BitcodeOptimization.ll` will contain LLVM IR after LLVM optimization pipeline.
 
 #### Example: replace predefined LLVM pipeline with Clang options.
 ```shell script
 CLANG_FLAGS="clangFlags.macos_x64=-cc1 -emit-obj;clangNooptFlags.macos_x64=-O2"
-konanc main.kt -Xdisable-phases=BitcodeOptimization -Xoverride-konan-properties="$CLANG_FLAGS"
+kotlinc-native main.kt -Xdisable-phases=BitcodeOptimization -Xoverride-konan-properties="$CLANG_FLAGS"
 ```
+
+### Dumping LLVM IR
+
+It is possible to dump LLVM IR after a particular compiler phase.
+
+```shell script
+kotlinc-native main.kt -Xsave-llvm-ir-after=<PhaseName> -Xsave-llvm-ir-directory=<PATH>
+```
+
+`<PATH>/out.<PhaseName>.ll` will contain LLVM IR after LLVM optimization pipeline.
+
+Passing `Codegen` phase allows to get LLVM IR right after translation from Kotlin Backend IR, and
+`BitcodeOptimization` phase allows to see the result of LLVM optimization pipeline. The list of phases that support LLVM IR dumping is constantly changing, so check out compiler sources
+if you want to get the full list of such phases.
 
 ## Running Clang the same way Kotlin/Native compiler does
 
