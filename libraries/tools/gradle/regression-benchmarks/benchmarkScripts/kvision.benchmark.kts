@@ -9,19 +9,21 @@
 @file:BenchmarkProject(
     name = "kvision",
     gitUrl = "https://github.com/rjaros/kvision.git",
-    gitCommitSha = "3fe69bf6db9a3650b026630d857862f3cee6485b"
+    gitCommitSha = "3fe69bf6db9a3650b026630d857862f3cee6485b",
+    stableKotlinVersion = "1.7.20",
 )
 
 import java.io.File
 
-val currentReleasePatch = {
+val repoPatch = {
     "kvision-kotlin-current.patch" to File("benchmarkScripts/files/kvision-kotlin-current.patch")
         .readText()
         .run { replace("<kotlin_version>", currentKotlinVersion) }
         .byteInputStream()
 }
 
-runAllBenchmarks(
+runBenchmarks(
+    repoPatch,
     suite {
         scenario {
             title = "Build Js IR clean build"
@@ -86,9 +88,5 @@ runAllBenchmarks(
             iterations = 20
             runTasks("jsIrJar")
         }
-    },
-    mapOf(
-        "1.7.20" to null,
-        "1.8.0" to currentReleasePatch
-    )
+    }
 )
