@@ -100,6 +100,23 @@ fun main() {
             }
         }
 
+        // Klib contents tests
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeKlibContentsTest>(
+                suiteTestClassName = "NativeK1LibContentsTestGenerated"
+            ) {
+                model("klibContents", pattern = "^([^_](.+)).kt$", recursive = false)
+            }
+        }
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeKlibContentsTest>(
+                suiteTestClassName = "NativeK2LibContentsTestGenerated",
+                annotations = listOf(provider<K2Pipeline>())
+            ) {
+                model("klibContents", pattern = "^([^_](.+)).kt$", recursive = false)
+            }
+        }
+
         // LLDB integration tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(

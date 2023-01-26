@@ -1,0 +1,6 @@
+    @Retention(value = AnnotationRetention.BINARY) @Target(allowedTargets = {AnnotationTarget.TYPE}) annotation class AnnoBinary constructor() : Annotation
+    @Retention(value = AnnotationRetention.RUNTIME) @Target(allowedTargets = {AnnotationTarget.TYPE}) annotation class AnnoRuntime constructor() : Annotation
+    @Retention(value = AnnotationRetention.SOURCE) @Target(allowedTargets = {AnnotationTarget.TYPE}) annotation class AnnoSource constructor() : Annotation
+    fun withBinaryAnnotation(id: @AnnoBinary Int)
+    fun withRuntimeAnnotation(id: @AnnoRuntime Int)
+    fun withSourceAnnotation(id: Int)

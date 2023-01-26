@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -135,10 +136,10 @@ class FirNativeKLibSerializerExtension(
     ) {
         // inspired by KlibMetadataSerializerExtension.serializeFunction
         declarationFileId(function)?.let { proto.setExtension(KlibMetadataProtoBuf.functionFile, it) }
-        function.annotations.forEach {
+        function.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.functionAnnotation, annotationSerializer.serializeAnnotation(it))
         }
-        function.receiverParameter?.annotations?.forEach {
+        function.receiverParameter?.nonSourceAnnotations(session)?.forEach {
             proto.addExtension(KlibMetadataProtoBuf.functionExtensionReceiverAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         // TODO KT-56090 Serialize KDocString
@@ -146,7 +147,7 @@ class FirNativeKLibSerializerExtension(
     }
 
     override fun serializeValueParameter(parameter: FirValueParameter, proto: ProtoBuf.ValueParameter.Builder) {
-        parameter.annotations.forEach {
+        parameter.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.parameterAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         super.serializeValueParameter(parameter, proto)
@@ -160,8 +161,19 @@ class FirNativeKLibSerializerExtension(
     ) {
         // inspired by KlibMetadataSerializerExtension.serializeProperty
         declarationFileId(property)?.let { proto.setExtension(KlibMetadataProtoBuf.propertyFile, it) }
-        property.annotations.forEach {
-            proto.addExtension(KlibMetadataProtoBuf.propertyAnnotation, annotationSerializer.serializeAnnotation(it))
+        property.nonSourceAnnotations(session).forEach {
+            val extension = when (it.useSiteTarget) {  // Revise this code after KT-54385
+                AnnotationUseSiteTarget.FIELD -> KlibMetadataProtoBuf.propertyBackingFieldAnnotation
+                AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> KlibMetadataProtoBuf.propertyDelegatedFieldAnnotation
+                else -> KlibMetadataProtoBuf.propertyAnnotation
+            }
+            proto.addExtension(extension, annotationSerializer.serializeAnnotation(it))
+        }
+        property.getter?.nonSourceAnnotations(session)?.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
+        property.setter?.nonSourceAnnotations(session)?.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.propertySetterAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         // TODO KT-56090 Serialize KDocString
         super.serializeProperty(property, proto, versionRequirementTable, childSerializer)
@@ -173,7 +185,8 @@ class FirNativeKLibSerializerExtension(
             versionRequirementTable: MutableVersionRequirementTable,
             childSerializer: FirElementSerializer
     ) {
-        klass.annotations.forEach {
+        declarationFileId(klass)?.let { proto.setExtension(KlibMetadataProtoBuf.classFile, it) }
+        klass.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.classAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         // TODO KT-56090 Serialize KDocString
@@ -185,7 +198,7 @@ class FirNativeKLibSerializerExtension(
             proto: ProtoBuf.Constructor.Builder,
             childSerializer: FirElementSerializer
     ) {
-        constructor.annotations.forEach {
+        constructor.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.constructorAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         // TODO KT-56090 Serialize KDocString
@@ -193,21 +206,19 @@ class FirNativeKLibSerializerExtension(
     }
 
     override fun serializeEnumEntry(enumEntry: FirEnumEntry, proto: ProtoBuf.EnumEntry.Builder) {
-        enumEntry.annotations.forEach {
+        enumEntry.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.enumEntryAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         super.serializeEnumEntry(enumEntry, proto)
     }
 
     override fun serializeTypeAnnotation(annotation: FirAnnotation, proto: ProtoBuf.Type.Builder) {
-        annotation.annotations.forEach {
-            proto.addExtension(KlibMetadataProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(it))
-        }
+        proto.addExtension(KlibMetadataProtoBuf.typeAnnotation, annotationSerializer.serializeAnnotation(annotation))
         super.serializeTypeAnnotation(annotation, proto)
     }
 
     override fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
-        typeParameter.annotations.forEach {
+        typeParameter.nonSourceAnnotations(session).forEach {
             proto.addExtension(KlibMetadataProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(it))
         }
         super.serializeTypeParameter(typeParameter, proto)

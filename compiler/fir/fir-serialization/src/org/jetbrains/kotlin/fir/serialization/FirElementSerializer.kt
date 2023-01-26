@@ -744,7 +744,7 @@ class FirElementSerializer private constructor(
         for (attribute in type.attributes) {
             when {
                 attribute is CustomAnnotationTypeAttribute ->
-                    for (annotation in attribute.annotations) {
+                    for (annotation in attribute.annotations.nonSourceAnnotations(session)) {
                         extension.serializeTypeAnnotation(annotation, builder)
                     }
                 attribute.key in CompilerConeAttributes.classIdByCompilerAttributeKey ->
