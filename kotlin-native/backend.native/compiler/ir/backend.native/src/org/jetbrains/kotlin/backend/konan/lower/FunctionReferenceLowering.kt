@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -130,7 +131,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                         return super.visitTypeOperator(expression)
                     }
                     reference.transformChildrenVoid()
-                    return transformFunctionReference(reference, expression.typeOperand.erasure())
+                    return transformFunctionReference(reference, expression.typeOperand)
                 }
                 return super.visitTypeOperator(expression)
             }
@@ -254,12 +255,17 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                 typeParametersFromEnclosingScope.zip(functionReferenceClass.typeParameters).toMap()
         )
 
-        private val functionParameterAndReturnTypes = (functionReference.type as IrSimpleType).arguments.map {
-            when (it) {
-                is IrTypeProjection -> typeParameterRemapper.remapType(it.type)
-                is IrStarProjection -> context.irBuiltIns.anyNType
+        private fun IrType.remappedTypeArguments(): List<IrType> {
+            if (this !is IrSimpleType) return emptyList()
+            return arguments.mapIndexed { index, typeArgument ->
+                when (typeArgument) {
+                    is IrTypeProjection -> typeParameterRemapper.remapType(typeArgument.type)
+                    is IrStarProjection -> (classifier as IrClassSymbol).owner.typeParameters[index].defaultType.erasure()
+                }
             }
         }
+
+        private val functionParameterAndReturnTypes = functionReference.type.remappedTypeArguments()
 
         private val functionParameterTypes = functionParameterAndReturnTypes.dropLast(1)
         private val functionReturnType = functionParameterAndReturnTypes.last()
@@ -330,9 +336,10 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             val superTypes = mutableListOf(superClass)
             val transformedSuperMethod: IrSimpleFunction
             if (samSuperType != null) {
-                superTypes += samSuperType
-                val samSuperClass = samSuperType.classOrNull ?: error("Expected a class but was: ${samSuperType.render()}")
-                transformedSuperMethod = samSuperClass.functions.single { it.owner.modality == Modality.ABSTRACT }.owner
+                val remappedSuperType = (samSuperType.classOrNull ?: error("Expected a class but was: ${samSuperType.render()}"))
+                        .typeWith(samSuperType.remappedTypeArguments())
+                superTypes += remappedSuperType
+                transformedSuperMethod = remappedSuperType.classOrNull!!.functions.single { it.owner.modality == Modality.ABSTRACT }.owner
             } else {
                 val numberOfParameters = unboundFunctionParameters.size
                 if (isKSuspendFunction) {
