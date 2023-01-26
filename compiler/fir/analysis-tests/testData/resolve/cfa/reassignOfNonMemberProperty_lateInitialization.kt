@@ -12,6 +12,12 @@ class Some {
         x = "ok"
         <!VAL_REASSIGNMENT!>x<!> = "error"
         <!VAL_REASSIGNMENT!>z<!> = "error"
+
+        fun foo() {
+            <!CAPTURED_MEMBER_VAL_INITIALIZATION!>x<!> = "error" // VAL_REASSIGNMENT also ok (or even better?)
+            <!CAPTURED_MEMBER_VAL_INITIALIZATION!>y<!> = "error"
+            <!VAL_REASSIGNMENT!>z<!> = "error"
+        }
     }
 
     val a: String = run {

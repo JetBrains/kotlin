@@ -18,6 +18,12 @@ FILE: reassignOfNonMemberProperty_lateInitialization.kt
             this@R|/Some|.R|/Some.x| = String(ok)
             this@R|/Some|.R|/Some.x| = String(error)
             this@R|/Some|.R|/z| = String(error)
+            local final fun foo(): R|kotlin/Unit| {
+                this@R|/Some|.R|/Some.x| = String(error)
+                this@R|/Some|.R|/Some.y| = String(error)
+                this@R|/Some|.R|/z| = String(error)
+            }
+
         }
 
         public final val a: R|kotlin/String| = this@R|/Some|.R|kotlin/run|<R|Some|, R|kotlin/String|>(<L> = run@fun R|Some|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
