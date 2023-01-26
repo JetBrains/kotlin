@@ -386,7 +386,7 @@ It is possible to dump LLVM IR after a particular compiler phase.
 kotlinc-native main.kt -Xsave-llvm-ir-after=<PhaseName> -Xsave-llvm-ir-directory=<PATH>
 ```
 
-`<PATH>/out.<PhaseName>.ll` will contain LLVM IR after LLVM optimization pipeline.
+`<PATH>/out.<PhaseName>.ll` will contain LLVM IR after given phase.
 
 Passing `Codegen` phase allows to get LLVM IR right after translation from Kotlin Backend IR, and
 `BitcodeOptimization` phase allows to see the result of LLVM optimization pipeline. The list of phases that support LLVM IR dumping is constantly changing, so check out compiler sources
