@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
-import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -52,18 +51,54 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
     return psiToIrOutput to additionalOutput
 }
 
+private fun createTempFiles(config: KonanConfig, cacheDeserializationStrategy: CacheDeserializationStrategy?): TempFiles {
+    val pathToTempDir = config.configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR)?.let {
+        val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
+        if (singleFileStrategy == null)
+            it
+        else org.jetbrains.kotlin.konan.file.File(it, CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).path
+    }
+    return TempFiles(pathToTempDir)
+}
+
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment) {
+    val config = context.config
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
         val fragments = backendEngine.splitIntoFragments(irModule)
         fragments.forEach { fragment ->
-            val generationState = NativeGenerationState(context.config, backendContext,
-                    fragment.cacheDeserializationStrategy, fragment.dependenciesTracker, fragment.llvmModuleSpecification)
-            backendEngine.useContext(generationState) { generationStateEngine ->
-                // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                val it = generationStateEngine.compileModule(fragment.irModule)
-                // Split here
-                compileAndLink(it, it.outputFiles.mainFileName, it.outputFiles, it.temporaryFiles, isCoverageEnabled = false)
+            val tempFiles = createTempFiles(context.config, fragment.cacheDeserializationStrategy)
+            try {
+                val outputPath = config.cacheSupport.tryGetImplicitOutput(fragment.cacheDeserializationStrategy) ?: config.outputPath
+                val outputFiles = OutputFiles(outputPath, config.target, config.produce)
+                val generationState = NativeGenerationState(context.config, backendContext,
+                        fragment.cacheDeserializationStrategy, fragment.dependenciesTracker, fragment.llvmModuleSpecification, outputFiles,
+                        llvmModuleName = "out" // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
+                )
+                backendEngine.useContext(generationState) { generationStateEngine ->
+                    val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
+                    val cExportFiles = if (config.produce.isNativeLibrary) {
+                        CExportFiles(
+                                cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
+                                bitcodeAdapter = tempFiles.create("api", ".bc").javaFile(),
+                                header = outputFiles.cAdapterHeader.javaFile(),
+                                def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.javaFile() else null,
+                        )
+                    } else null
+                    // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
+                    generationStateEngine.compileModule(fragment.irModule, bitcodeFile, cExportFiles)
+                    // Split here
+                    compileAndLink(
+                            bitcodeFile,
+                            generationState.dependenciesTracker.collectResult(),
+                            outputFiles.mainFileName,
+                            outputFiles,
+                            tempFiles,
+                            isCoverageEnabled = false
+                    )
+                }
+            } finally {
+                tempFiles.dispose()
             }
         }
     }
@@ -138,15 +173,6 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
     )
 }
 
-internal data class ModuleCompilationOutput(
-        val bitcodeFile: File,
-        val dependenciesTrackingResult: DependenciesTrackingResult,
-        // Passing tempFiles and output files through this file looks silly and incorrect.
-        // TODO: Refactor these classes and remove them from here.
-        val temporaryFiles: TempFiles,
-        val outputFiles: OutputFiles,
-)
-
 /**
  * 1. Runs IR lowerings
  * 2. Runs LTO.
@@ -154,41 +180,34 @@ internal data class ModuleCompilationOutput(
  * 4. Optimizes it.
  * 5. Serializes it to a bitcode file.
  */
-internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFragment): ModuleCompilationOutput {
+internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFragment, bitcodeFile: File, cExportFiles: CExportFiles?) {
     if (context.config.produce.isCache) {
         runPhase(BuildAdditionalCacheInfoPhase, module)
     }
     if (context.config.produce == CompilerOutputKind.PROGRAM) {
         runPhase(EntryPointPhase, module)
     }
-    runBackendCodegen(module)
+    runBackendCodegen(module, cExportFiles)
     runBitcodePostProcessing()
     if (context.config.produce.isCache) {
         runPhase(SaveAdditionalCacheInfoPhase)
     }
-    // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
-    val bitcodeFile = context.tempFiles.create(context.llvm.module.getName(), ".bc").javaFile()
     runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
-    val dependenciesTrackingResult = DependenciesTrackingResult(
-            context.dependenciesTracker.bitcodeToLink,
-            context.dependenciesTracker.allNativeDependencies,
-            context.dependenciesTracker.allCachedBitcodeDependencies,
-    )
-    return ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult, context.tempFiles, context.outputFiles)
 }
 
 internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
-        moduleCompilationOutput: ModuleCompilationOutput,
+        bitcodeFile: File,
+        dependenciesTrackingResult: DependenciesTrackingResult,
         linkerOutputFile: String,
         outputFiles: OutputFiles,
         temporaryFiles: TempFiles,
         isCoverageEnabled: Boolean,
 ) {
     val compilationResult = temporaryFiles.create("result", ".o").javaFile()
-    runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(moduleCompilationOutput.bitcodeFile, compilationResult))
+    runPhase(ObjectFilesPhase, ObjectFilesPhaseInput(bitcodeFile, compilationResult))
     val linkerOutputKind = determineLinkerOutput(context)
     val (linkerInput, cacheBinaries) = run {
-        val resolvedCacheBinaries = resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult)
+        val resolvedCacheBinaries = resolveCacheBinaries(context.config.cachedLibraries, dependenciesTrackingResult)
         when {
             context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
                 compilationResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
@@ -208,7 +227,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
             linkerOutputFile,
             linkerOutputKind,
             listOf(linkerInput.canonicalPath),
-            moduleCompilationOutput.dependenciesTrackingResult,
+            dependenciesTrackingResult,
             outputFiles,
             cacheBinaries,
             isCoverageEnabled = isCoverageEnabled
@@ -219,8 +238,16 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
     }
 }
 
+// TODO: At some point this class and it usages can be generalized to all possible compiler outputs,
+//  so instead of OutputFiles we will create a series of classes for each specific compiler output kit.
+internal class CExportFiles(
+        val cppAdapter: File,
+        val bitcodeAdapter: File,
+        val header: File,
+        val def: File?,
+)
 
-internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment) {
+internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, cExportFiles: CExportFiles?) {
     runAllLowerings(module)
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
@@ -230,18 +257,16 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
     }
     mergeDependencies(module, dependenciesToCompile)
     runCodegen(module)
-    val generatedBitcodeFiles = if (context.config.produce.isNativeLibrary) {
-        val cppAdapterFile = context.tempFiles.create("api", ".cpp").javaFile()
-        val bitcodeAdapterFile = context.tempFiles.create("api", ".bc").javaFile()
+    val generatedBitcodeFiles = if (cExportFiles != null) {
         val input = CExportGenerateApiInput(
                 context.context.cAdapterExportedElements!!,
-                headerFile = context.outputFiles.cAdapterHeader.javaFile(),
-                defFile = if (context.config.target.family == Family.MINGW) context.outputFiles.cAdapterDef.javaFile() else null,
-                cppAdapterFile = cppAdapterFile
+                headerFile = cExportFiles.header,
+                defFile = cExportFiles.def,
+                cppAdapterFile = cExportFiles.cppAdapter
         )
         runPhase(CExportGenerateApiPhase, input)
-        runPhase(CExportCompileAdapterPhase, CExportCompileAdapterInput(cppAdapterFile, bitcodeAdapterFile))
-        listOf(bitcodeAdapterFile)
+        runPhase(CExportCompileAdapterPhase, CExportCompileAdapterInput(cExportFiles.cppAdapter, cExportFiles.bitcodeAdapter))
+        listOf(cExportFiles.bitcodeAdapter)
     } else {
         emptyList()
     }

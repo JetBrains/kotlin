@@ -52,6 +52,8 @@ interface DependenciesTracker {
     val nativeDependenciesToLink: List<KonanLibrary>
     val allNativeDependencies: List<KonanLibrary>
     val bitcodeToLink: List<KonanLibrary>
+
+    fun collectResult(): DependenciesTrackingResult
 }
 
 private sealed class FileOrigin {
@@ -323,6 +325,12 @@ internal class DependenciesTrackerImpl(
     override val nativeDependenciesToLink get() = dependencies.nativeDependenciesToLink
     override val allNativeDependencies get() = dependencies.allNativeDependencies
     override val bitcodeToLink get() = dependencies.bitcodeToLink
+
+    override fun collectResult(): DependenciesTrackingResult = DependenciesTrackingResult(
+            bitcodeToLink,
+            allNativeDependencies,
+            allCachedBitcodeDependencies,
+    )
 }
 
 internal object DependenciesSerializer {
