@@ -14,8 +14,10 @@ internal class SymbolPsiArrayInitializerMemberValue(
     private val lightParent: PsiElement,
     private val arguments: (SymbolPsiArrayInitializerMemberValue) -> List<PsiAnnotationMemberValue>
 ) : KtLightElementBase(lightParent), PsiArrayInitializerMemberValue {
-
-    override fun getInitializers(): Array<PsiAnnotationMemberValue> = arguments(this).toTypedArray()
+    override fun getInitializers(): Array<PsiAnnotationMemberValue> {
+        val memberValues = arguments(this)
+        return if (memberValues.isEmpty()) PsiAnnotationMemberValue.EMPTY_ARRAY else memberValues.toTypedArray()
+    }
 
     override fun getParent(): PsiElement = lightParent
     override fun isPhysical(): Boolean = false
@@ -27,7 +29,6 @@ internal abstract class SymbolPsiAnnotationMemberValue(
     override val kotlinOrigin: KtElement?,
     private val lightParent: PsiElement,
 ) : KtLightElementBase(lightParent), PsiAnnotationMemberValue {
-
     override fun getParent(): PsiElement = lightParent
     override fun isPhysical(): Boolean = false
 }
