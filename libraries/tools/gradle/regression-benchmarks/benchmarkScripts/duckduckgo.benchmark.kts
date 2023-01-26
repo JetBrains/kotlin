@@ -4,25 +4,21 @@
 @file:BenchmarkProject(
     name = "duckduckgo",
     gitUrl = "https://github.com/duckduckgo/Android.git",
-    gitCommitSha = "18e230fcefbefb4317c1fe128b4539a2315e7c0a"
+    gitCommitSha = "18e230fcefbefb4317c1fe128b4539a2315e7c0a",
+    stableKotlinVersion = "1.7.20",
 )
 
 import java.io.File
 
-val stableReleasePatch = {
-    "duckduckgo-kotlin-1.7.20.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-1.7.20.patch")
-        .readText()
-        .byteInputStream()
-}
-
-val currentReleasePatch = {
+val repoPatch = {
     "duckduckgo-kotlin-current.patch" to File("benchmarkScripts/files/duckduckgo-kotlin-current.patch")
         .readText()
         .run { replace("<kotlin_version>", currentKotlinVersion) }
         .byteInputStream()
 }
 
-runAllBenchmarks(
+runBenchmarks(
+    repoPatch,
     suite {
         scenario {
             title = "Clean build"
@@ -86,9 +82,5 @@ runAllBenchmarks(
             iterations = 20
             runTasks(":app:assemblePlayDebug")
         }
-    },
-    mapOf(
-        "1.7.20" to stableReleasePatch,
-        "1.8.0" to currentReleasePatch
-    )
+    }
 )
