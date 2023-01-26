@@ -1,5 +1,5 @@
 expression: xy
 expected type: KtUsualClassType:
-  type: kotlin/Boolean
   annotationsList: []
   ownTypeArguments: []
+  type: kotlin/Boolean

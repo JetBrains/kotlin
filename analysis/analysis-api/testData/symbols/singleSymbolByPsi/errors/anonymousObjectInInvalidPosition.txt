@@ -6,14 +6,14 @@ KtAnonymousObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: A<kotlin/Int>
       annotationsList: []
       ownTypeArguments: [
         KtUsualClassType:
-          type: kotlin/Int
           annotationsList: []
           ownTypeArguments: []
+          type: kotlin/Int
       ]
+      type: A<kotlin/Int>
   ]
   symbolKind: LOCAL
   typeParameters: []

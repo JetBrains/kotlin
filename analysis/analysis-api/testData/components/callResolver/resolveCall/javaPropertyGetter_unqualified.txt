@@ -7,9 +7,9 @@ KtSuccessCallInfo:
           origin: SOURCE
           owningCallableSymbol: KtFunctionSymbol(/call)
           type: KtUsualClassType:
-            type: JavaClass
             annotationsList: []
             ownTypeArguments: []
+            type: JavaClass
         type = JavaClass
       extensionReceiver = null
       signature = KtVariableLikeSignature:

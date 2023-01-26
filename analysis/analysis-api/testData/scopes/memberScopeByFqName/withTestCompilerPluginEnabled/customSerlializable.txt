@@ -18,9 +18,9 @@ KtFunctionSymbol:
   origin: PLUGIN
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -39,9 +39,9 @@ KtFunctionSymbol:
       origin: PLUGIN
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: test/FirstTarget
         annotationsList: []
         ownTypeArguments: []
+        type: test/FirstTarget
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -49,9 +49,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: test/Serializer
     annotationsList: []
     ownTypeArguments: []
+    type: test/Serializer
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -75,9 +75,9 @@ KtFunctionSymbol:
   origin: PLUGIN
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -96,9 +96,9 @@ KtFunctionSymbol:
       origin: PLUGIN
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: test/SecondTarget
         annotationsList: []
         ownTypeArguments: []
+        type: test/SecondTarget
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -106,9 +106,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: test/Serializer
     annotationsList: []
     ownTypeArguments: []
+    type: test/Serializer
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -132,9 +132,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Boolean
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -153,9 +153,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Any?
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -163,9 +163,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Any
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -189,17 +189,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Any
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -223,17 +223,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/String
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Any
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -248,9 +248,9 @@ KtConstructorSymbol:
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: test/Serializer
     annotationsList: []
     ownTypeArguments: []
+    type: test/Serializer
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []

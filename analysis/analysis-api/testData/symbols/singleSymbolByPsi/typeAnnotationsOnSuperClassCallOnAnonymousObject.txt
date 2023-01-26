@@ -6,7 +6,6 @@ KtAnonymousObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseClass
       annotationsList: [
         Anno1()
           psi: KtAnnotationEntry
@@ -16,6 +15,7 @@ KtAnonymousObjectSymbol:
           psi: KtAnnotationEntry
       ]
       ownTypeArguments: []
+      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseClass
   ]
   symbolKind: LOCAL
   typeParameters: []

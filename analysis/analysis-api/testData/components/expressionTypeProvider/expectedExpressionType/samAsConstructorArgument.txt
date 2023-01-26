@@ -1,4 +1,4 @@
 expression: { println("hello1") }
 expected type: KtFlexibleType:
-  type: java/lang/Runnable!
   annotationsList: []
+  type: java/lang/Runnable!

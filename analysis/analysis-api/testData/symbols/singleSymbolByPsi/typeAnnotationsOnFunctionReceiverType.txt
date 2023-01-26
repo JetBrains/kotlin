@@ -21,7 +21,6 @@ KtFunctionSymbol:
     origin: SOURCE
     owningCallableSymbol: KtFunctionSymbol(/foo)
     type: KtUsualClassType:
-      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
       annotationsList: [
         Anno1()
           psi: KtAnnotationEntry
@@ -31,12 +30,13 @@ KtFunctionSymbol:
           psi: KtAnnotationEntry
       ]
       ownTypeArguments: []
+      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

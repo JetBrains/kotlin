@@ -14,9 +14,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -41,9 +41,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -59,9 +59,9 @@ KtFunctionSymbol:
     KtContextReceiver:
       label: null
       type: KtUsualClassType:
-        type: A
         annotationsList: []
         ownTypeArguments: []
+        type: A
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -79,9 +79,9 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
@@ -96,9 +96,9 @@ KtFunctionSymbol:
     KtContextReceiver:
       label: null
       type: KtUsualClassType:
-        type: B
         annotationsList: []
         ownTypeArguments: []
+        type: B
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -116,9 +116,9 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
@@ -133,15 +133,15 @@ KtFunctionSymbol:
     KtContextReceiver:
       label: null
       type: KtUsualClassType:
-        type: A
         annotationsList: []
         ownTypeArguments: []
+        type: A
     KtContextReceiver:
       label: null
       type: KtUsualClassType:
-        type: B
         annotationsList: []
         ownTypeArguments: []
+        type: B
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -159,9 +159,9 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []
@@ -176,15 +176,15 @@ KtFunctionSymbol:
     KtContextReceiver:
       label: null
       type: KtUsualClassType:
-        type: B
         annotationsList: []
         ownTypeArguments: []
+        type: B
     KtContextReceiver:
       label: null
       type: KtUsualClassType:
-        type: A
         annotationsList: []
         ownTypeArguments: []
+        type: A
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -202,9 +202,9 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

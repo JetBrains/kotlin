@@ -8,9 +8,9 @@ KtEnumEntrySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: X
     annotationsList: []
     ownTypeArguments: []
+    type: X
   symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
@@ -26,9 +26,9 @@ KtEnumEntrySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: X
     annotationsList: []
     ownTypeArguments: []
+    type: X
   symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
@@ -50,14 +50,14 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Enum<X>
       annotationsList: []
       ownTypeArguments: [
         KtUsualClassType:
-          type: X
           annotationsList: []
           ownTypeArguments: []
+          type: X
       ]
+      type: kotlin/Enum<X>
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

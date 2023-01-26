@@ -9,13 +9,13 @@ KtConstructorSymbol:
   origin: JAVA
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: java/util/ArrayList<E>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
     ]
+    type: java/util/ArrayList<E>
   symbolKind: CLASS_MEMBER
   typeParameters: [
     KtTypeParameterSymbol(E)
@@ -36,8 +36,8 @@ KtConstructorSymbol:
       origin: JAVA
       receiverParameter: null
       returnType: KtFlexibleType:
-        type: (kotlin/collections/MutableCollection<out E!>..kotlin/collections/Collection<E!>?)
         annotationsList: []
+        type: (kotlin/collections/MutableCollection<out E!>..kotlin/collections/Collection<E!>?)
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: Could not render due to java.util.NoSuchElementException: Collection contains no element matching the predicate.

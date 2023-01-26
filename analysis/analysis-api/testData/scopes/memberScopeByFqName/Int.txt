@@ -21,9 +21,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -42,9 +42,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Int
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -52,9 +52,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -81,9 +81,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -102,9 +102,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Byte
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -112,9 +112,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -141,9 +141,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -162,9 +162,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Double
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -172,9 +172,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -201,9 +201,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -222,9 +222,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Float
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Float
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -232,9 +232,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -261,9 +261,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -282,9 +282,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Int
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -292,9 +292,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -321,9 +321,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -342,9 +342,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Long
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -352,9 +352,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -381,9 +381,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -402,9 +402,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Short
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -412,9 +412,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -438,17 +438,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -475,9 +475,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -496,9 +496,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Byte
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -506,9 +506,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -535,9 +535,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Double
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -556,9 +556,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Double
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -566,9 +566,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -595,9 +595,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Float
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -616,9 +616,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Float
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -626,9 +626,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -655,9 +655,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -676,9 +676,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Int
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -686,9 +686,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -715,9 +715,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Long
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -736,9 +736,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Long
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -746,9 +746,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -775,9 +775,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -796,9 +796,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Short
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -806,9 +806,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -835,9 +835,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Boolean
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -856,9 +856,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Any?
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -866,9 +866,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -892,17 +892,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -929,17 +929,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -966,9 +966,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -987,9 +987,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Byte
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -997,9 +997,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1026,9 +1026,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Double
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1047,9 +1047,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Double
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1057,9 +1057,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1086,9 +1086,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Float
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1107,9 +1107,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Float
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1117,9 +1117,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1146,9 +1146,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1167,9 +1167,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Int
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1177,9 +1177,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1206,9 +1206,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Long
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1227,9 +1227,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Long
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1237,9 +1237,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1266,9 +1266,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1287,9 +1287,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Short
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1297,9 +1297,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1326,9 +1326,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1347,9 +1347,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Int
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1357,9 +1357,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1386,9 +1386,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1407,9 +1407,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Byte
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1417,9 +1417,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1446,9 +1446,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Double
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1467,9 +1467,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Double
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1477,9 +1477,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1506,9 +1506,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Float
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1527,9 +1527,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Float
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1537,9 +1537,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1566,9 +1566,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1587,9 +1587,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1597,9 +1597,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1626,9 +1626,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Long
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1647,9 +1647,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Long
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1657,9 +1657,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1686,9 +1686,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1707,9 +1707,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Short
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1717,9 +1717,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1743,9 +1743,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/ranges/IntRange
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/ranges/IntRange
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1764,9 +1764,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Byte
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1774,9 +1774,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1800,9 +1800,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/ranges/IntRange
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/ranges/IntRange
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1821,9 +1821,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Int
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1831,9 +1831,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1857,9 +1857,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/ranges/LongRange
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1878,9 +1878,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Long
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1888,9 +1888,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1914,9 +1914,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/ranges/IntRange
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/ranges/IntRange
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1935,9 +1935,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Short
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -1945,9 +1945,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -1976,9 +1976,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/ranges/IntRange
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/ranges/IntRange
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -1997,9 +1997,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Byte
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2007,9 +2007,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2038,9 +2038,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/ranges/IntRange
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/ranges/IntRange
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2059,9 +2059,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Int
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2069,9 +2069,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2100,9 +2100,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/ranges/LongRange
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2121,9 +2121,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Long
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2131,9 +2131,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2162,9 +2162,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/ranges/IntRange
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/ranges/IntRange
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2183,9 +2183,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Short
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2193,9 +2193,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2224,9 +2224,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2245,9 +2245,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Byte
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Byte
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2255,9 +2255,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2286,9 +2286,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Double
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2307,9 +2307,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Double
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2317,9 +2317,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2348,9 +2348,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Float
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2369,9 +2369,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Float
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2379,9 +2379,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2410,9 +2410,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2431,9 +2431,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Int
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2441,9 +2441,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2472,9 +2472,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Long
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2493,9 +2493,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Long
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2503,9 +2503,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2534,9 +2534,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2555,9 +2555,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Short
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2565,9 +2565,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2594,9 +2594,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2615,9 +2615,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2625,9 +2625,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2654,9 +2654,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2675,9 +2675,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2685,9 +2685,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2714,9 +2714,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2735,9 +2735,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Byte
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2745,9 +2745,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2774,9 +2774,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Double
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2795,9 +2795,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Double
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2805,9 +2805,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2834,9 +2834,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Float
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2855,9 +2855,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Float
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2865,9 +2865,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2894,9 +2894,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2915,9 +2915,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
+        annotationsList: []
+        ownTypeArguments: []
         type: kotlin/Int
-        annotationsList: []
-        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2925,9 +2925,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -2954,9 +2954,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
     type: kotlin/Long
-    annotationsList: []
-    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -2975,9 +2975,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Long
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Long
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -2985,9 +2985,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3014,9 +3014,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -3035,9 +3035,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Short
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Short
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -3045,9 +3045,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3074,17 +3074,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Byte
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Byte
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3111,17 +3111,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Char
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Char
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3148,17 +3148,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Double
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Double
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3185,17 +3185,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Float
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Float
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3222,17 +3222,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3259,17 +3259,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Long
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Long
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3296,17 +3296,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Short
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Short
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3333,17 +3333,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/String
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3370,17 +3370,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3407,17 +3407,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3444,9 +3444,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -3465,9 +3465,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -3475,9 +3475,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3504,9 +3504,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -3525,9 +3525,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
@@ -3535,9 +3535,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3561,17 +3561,17 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/Any
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Any
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -3591,9 +3591,9 @@ KtNamedClassOrObjectSymbol:
   origin: LIBRARY
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -3613,9 +3613,9 @@ KtConstructorSymbol:
   origin: JAVA
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: java/lang/Integer
     annotationsList: []
     ownTypeArguments: []
+    type: java/lang/Integer
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -3634,9 +3634,9 @@ KtConstructorSymbol:
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSdkModule "SDK jdk"
@@ -3657,9 +3657,9 @@ KtConstructorSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []

@@ -19,9 +19,9 @@ KtSuccessCallInfo:
           origin: SOURCE
           superTypes: [
             KtUsualClassType:
-              type: AbstractModule
               annotationsList: []
               ownTypeArguments: []
+              type: AbstractModule
           ]
           symbolKind: TOP_LEVEL
           typeParameters: []

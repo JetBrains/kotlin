@@ -171,9 +171,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Boolean
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -192,8 +192,8 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -218,9 +218,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Boolean
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -239,13 +239,13 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/collections/Collection<E>
         annotationsList: []
         ownTypeArguments: [
           KtTypeParameterType:
-            type: E
             annotationsList: []
+            type: E
         ]
+        type: kotlin/collections/Collection<E>
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -270,8 +270,8 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtTypeParameterType:
-    type: E
     annotationsList: []
+    type: E
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -290,9 +290,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -317,9 +317,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -338,8 +338,8 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -364,9 +364,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Boolean
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
@@ -391,13 +391,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/Iterator<E>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
     ]
+    type: kotlin/collections/Iterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
@@ -422,9 +422,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -443,8 +443,8 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -469,13 +469,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/ListIterator<E>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
     ]
+    type: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
@@ -500,13 +500,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/ListIterator<E>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
     ]
+    type: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -525,9 +525,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -552,13 +552,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/List<E>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
     ]
+    type: kotlin/collections/List<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -577,9 +577,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
     KtValueParameterSymbol:
@@ -597,9 +597,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -622,9 +622,9 @@ KtKotlinPropertySymbol:
     origin: LIBRARY
     receiverParameter: null
     returnType: KtUsualClassType:
-      type: kotlin/Int
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -646,9 +646,9 @@ KtKotlinPropertySymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
@@ -673,9 +673,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Boolean
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Boolean
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -694,9 +694,9 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Any?
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
   ]
@@ -721,9 +721,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
@@ -748,9 +748,9 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/String
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/String
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []

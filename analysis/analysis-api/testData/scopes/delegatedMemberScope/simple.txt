@@ -23,23 +23,23 @@ KtKotlinPropertySymbol:
     origin: DELEGATED
     owningCallableSymbol: KtKotlinPropertySymbol(/I.zoo)
     type: KtUsualClassType:
-      type: kotlin/Int
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Int
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: A
     annotationsList: []
     ownTypeArguments: []
+    type: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -67,17 +67,17 @@ KtFunctionSymbol:
   origin: DELEGATED
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: A
     annotationsList: []
     ownTypeArguments: []
+    type: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -103,17 +103,17 @@ KtKotlinPropertySymbol:
   origin: DELEGATED
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: A
     annotationsList: []
     ownTypeArguments: []
+    type: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -144,23 +144,23 @@ KtFunctionSymbol:
     origin: DELEGATED
     owningCallableSymbol: KtFunctionSymbol(/I.smth)
     type: KtUsualClassType:
-      type: kotlin/Int
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Int
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
-    type: kotlin/Short
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Short
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: A
     annotationsList: []
     ownTypeArguments: []
+    type: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -186,17 +186,17 @@ KtKotlinPropertySymbol:
   origin: DELEGATED
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Long
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Long
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: A
     annotationsList: []
     ownTypeArguments: []
+    type: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -229,23 +229,23 @@ KtKotlinPropertySymbol:
     origin: DELEGATED
     owningCallableSymbol: KtKotlinPropertySymbol(/I.doo)
     type: KtUsualClassType:
-      type: kotlin/Int
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Int
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
-    type: kotlin/String
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/String
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: A
     annotationsList: []
     ownTypeArguments: []
+    type: A
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

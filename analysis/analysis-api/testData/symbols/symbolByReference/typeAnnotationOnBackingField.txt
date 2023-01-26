@@ -8,7 +8,6 @@ KtBackingFieldSymbol:
   owningProperty: KtKotlinPropertySymbol(/foo)
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
     annotationsList: [
       Anno1()
         psi: KtAnnotationEntry
@@ -18,6 +17,7 @@ KtBackingFieldSymbol:
         psi: KtAnnotationEntry
     ]
     ownTypeArguments: []
+    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
   symbolKind: LOCAL
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"

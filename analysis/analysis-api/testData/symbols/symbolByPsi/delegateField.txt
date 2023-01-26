@@ -9,9 +9,9 @@ KtConstructorSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: MyColor
     annotationsList: []
     ownTypeArguments: []
+    type: MyColor
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -37,17 +37,17 @@ KtConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KtUsualClassType:
-            type: kotlin/Int
             annotationsList: []
             ownTypeArguments: []
+            type: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KtUsualClassType:
-            type: MyColor
             annotationsList: []
             ownTypeArguments: []
+            type: MyColor
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -67,17 +67,17 @@ KtConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KtUsualClassType:
-          type: kotlin/Int
           annotationsList: []
           ownTypeArguments: []
+          type: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KtUsualClassType:
-          type: MyColor
           annotationsList: []
           ownTypeArguments: []
+          type: MyColor
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -94,9 +94,9 @@ KtConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -123,17 +123,17 @@ KtConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KtUsualClassType:
-            type: kotlin/Int
             annotationsList: []
             ownTypeArguments: []
+            type: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KtUsualClassType:
-            type: MyColor
             annotationsList: []
             ownTypeArguments: []
+            type: MyColor
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -153,17 +153,17 @@ KtConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KtUsualClassType:
-          type: kotlin/Int
           annotationsList: []
           ownTypeArguments: []
+          type: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KtUsualClassType:
-          type: MyColor
           annotationsList: []
           ownTypeArguments: []
+          type: MyColor
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -180,9 +180,9 @@ KtConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -209,17 +209,17 @@ KtConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KtUsualClassType:
-            type: kotlin/Int
             annotationsList: []
             ownTypeArguments: []
+            type: kotlin/Int
           symbolKind: ACCESSOR
           typeParameters: []
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KtUsualClassType:
-            type: MyColor
             annotationsList: []
             ownTypeArguments: []
+            type: MyColor
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -239,17 +239,17 @@ KtConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KtUsualClassType:
-          type: kotlin/Int
           annotationsList: []
           ownTypeArguments: []
+          type: kotlin/Int
         setter: null
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KtUsualClassType:
-          type: MyColor
           annotationsList: []
           ownTypeArguments: []
+          type: MyColor
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -266,9 +266,9 @@ KtConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -294,9 +294,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -314,9 +314,9 @@ KtAnonymousFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: MyColor
     annotationsList: []
     ownTypeArguments: []
+    type: MyColor
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: []
@@ -341,9 +341,9 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:
-      type: MyColor
       annotationsList: []
       ownTypeArguments: []
+      type: MyColor
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -367,17 +367,17 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: MyColor
     annotationsList: []
     ownTypeArguments: []
+    type: MyColor
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: Some
     annotationsList: []
     ownTypeArguments: []
+    type: Some
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -394,9 +394,9 @@ KtAnonymousFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: MyColor
     annotationsList: []
     ownTypeArguments: []
+    type: MyColor
   symbolKind: LOCAL
   typeParameters: []
   valueParameters: []
@@ -421,22 +421,22 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:
-      type: kotlin/Lazy<MyColor>
       annotationsList: []
       ownTypeArguments: [
         KtUsualClassType:
-          type: MyColor
           annotationsList: []
           ownTypeArguments: []
+          type: MyColor
       ]
+      type: kotlin/Lazy<MyColor>
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
-      type: Some
       annotationsList: []
       ownTypeArguments: []
+      type: Some
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -456,22 +456,22 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Lazy<MyColor>
     annotationsList: []
     ownTypeArguments: [
       KtUsualClassType:
-        type: MyColor
         annotationsList: []
         ownTypeArguments: []
+        type: MyColor
     ]
+    type: kotlin/Lazy<MyColor>
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: Some
     annotationsList: []
     ownTypeArguments: []
+    type: Some
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -497,17 +497,17 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:
-      type: MyColor
       annotationsList: []
       ownTypeArguments: []
+      type: MyColor
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
-      type: Some
       annotationsList: []
       ownTypeArguments: []
+      type: Some
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -527,17 +527,17 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: MyColor
     annotationsList: []
     ownTypeArguments: []
+    type: MyColor
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: Some
     annotationsList: []
     ownTypeArguments: []
+    type: Some
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -561,9 +561,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

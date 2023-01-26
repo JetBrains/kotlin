@@ -10,15 +10,15 @@ KtJavaFieldSymbol:
   origin: JAVA
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: JavaClass
     annotationsList: []
     ownTypeArguments: []
+    type: JavaClass
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

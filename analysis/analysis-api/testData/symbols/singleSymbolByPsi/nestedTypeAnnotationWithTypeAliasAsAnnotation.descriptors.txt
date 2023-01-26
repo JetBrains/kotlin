@@ -21,26 +21,26 @@ KtFunctionSymbol:
     origin: SOURCE
     owningCallableSymbol: KtFunctionSymbol(/foo2)
     type: KtTypeParameterType:
-      type: T
       annotationsList: []
+      type: T
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/List<kotlin/collections/List<@R|BaseAnnotation|()  T>>?
     annotationsList: []
     ownTypeArguments: [
       KtUsualClassType:
-        type: kotlin/collections/List<@R|BaseAnnotation|()  T>
         annotationsList: []
         ownTypeArguments: [
           KtTypeParameterType:
-            type: @R|BaseAnnotation|()  T
             annotationsList: [
               BaseAnnotation()
                 psi: KtAnnotationEntry
             ]
+            type: @R|BaseAnnotation|()  T
         ]
+        type: kotlin/collections/List<@R|BaseAnnotation|()  T>
     ]
+    type: kotlin/collections/List<kotlin/collections/List<@R|BaseAnnotation|()  T>>?
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)

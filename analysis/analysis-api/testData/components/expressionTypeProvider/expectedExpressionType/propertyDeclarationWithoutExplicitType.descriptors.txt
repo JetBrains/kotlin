@@ -1,4 +1,4 @@
 expression: av
 expected type: KtTypeErrorType:
-  type: ERROR_TYPE
   annotationsList: []
+  type: ERROR_TYPE

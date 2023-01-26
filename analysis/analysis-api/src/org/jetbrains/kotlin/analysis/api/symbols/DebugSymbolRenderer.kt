@@ -208,13 +208,6 @@ public class DebugSymbolRenderer(
         renderSymbolHeader(typeToRender)
         withIndent {
             appendLine()
-            append("type: ")
-            when (typeToRender) {
-                is KtClassErrorType -> append("ERROR_TYPE")
-                else -> append(typeToRender.asStringForDebugging())
-            }
-
-            appendLine()
             append("annotationsList: ")
             renderAnnotationsList(typeToRender.annotationsList)
 
@@ -222,6 +215,13 @@ public class DebugSymbolRenderer(
                 appendLine()
                 append("ownTypeArguments: ")
                 renderList(typeToRender.ownTypeArguments, renderSymbolsFully = false)
+            }
+
+            appendLine()
+            append("type: ")
+            when (typeToRender) {
+                is KtClassErrorType -> append("ERROR_TYPE")
+                else -> append(typeToRender.asStringForDebugging())
             }
         }
     }

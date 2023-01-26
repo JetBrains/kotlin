@@ -25,9 +25,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [
@@ -53,13 +53,13 @@ KtTypeAliasSymbol:
   annotationsList: []
   classIdIfNonLocal: Y
   expandedType: KtUsualClassType:
-    type: X<Z>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: Z
         annotationsList: []
+        type: Z
     ]
+    type: X<Z>
   name: Y
   origin: SOURCE
   symbolKind: TOP_LEVEL

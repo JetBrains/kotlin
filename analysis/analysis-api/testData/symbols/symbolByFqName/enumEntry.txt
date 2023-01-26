@@ -8,9 +8,9 @@ KtEnumEntrySymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/LazyThreadSafetyMode
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/LazyThreadSafetyMode
   symbolKind: CLASS_MEMBER
   typeParameters: []
   getContainingModule: KtLibraryModule "Library kotlin-stdlib"

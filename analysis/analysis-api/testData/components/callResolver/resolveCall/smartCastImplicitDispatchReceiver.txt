@@ -8,9 +8,9 @@ KtSuccessCallInfo:
             origin: SOURCE
             owningCallableSymbol: KtFunctionSymbol(/test)
             type: KtUsualClassType:
-              type: kotlin/Any
               annotationsList: []
               ownTypeArguments: []
+              type: kotlin/Any
           type = kotlin.Any
         type = kotlin.String
       extensionReceiver = null

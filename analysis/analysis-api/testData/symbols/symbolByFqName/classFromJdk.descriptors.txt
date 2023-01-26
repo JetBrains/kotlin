@@ -14,25 +14,25 @@ KtNamedClassOrObjectSymbol:
   origin: JAVA
   superTypes: [
     KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
       type: kotlin/Any
+    KtUsualClassType:
       annotationsList: []
       ownTypeArguments: []
-    KtUsualClassType:
       type: java/io/Serializable
-      annotationsList: []
-      ownTypeArguments: []
     KtUsualClassType:
-      type: kotlin/Comparable<kotlin/String!>
       annotationsList: []
       ownTypeArguments: [
         KtFlexibleType:
-          type: kotlin/String!
           annotationsList: []
+          type: kotlin/String!
       ]
+      type: kotlin/Comparable<kotlin/String!>
     KtUsualClassType:
-      type: kotlin/CharSequence
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/CharSequence
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

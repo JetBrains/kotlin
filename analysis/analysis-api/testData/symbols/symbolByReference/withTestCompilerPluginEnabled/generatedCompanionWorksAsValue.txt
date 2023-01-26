@@ -14,9 +14,9 @@ KtNamedClassOrObjectSymbol:
   origin: PLUGIN
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: CLASS_MEMBER
   typeParameters: []

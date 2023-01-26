@@ -18,19 +18,19 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtTypeParameterType:
-    type: Outer?
     annotationsList: []
+    type: Outer?
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: test/TopLevel.Base<T, Outer>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
     ]
+    type: test/TopLevel.Base<T, Outer>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

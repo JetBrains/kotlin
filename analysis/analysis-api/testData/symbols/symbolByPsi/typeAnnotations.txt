@@ -17,9 +17,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Annotation
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -47,9 +47,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Annotation
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -77,9 +77,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Annotation
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -107,9 +107,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Annotation
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -129,9 +129,9 @@ KtConstructorSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: Anno5
     annotationsList: []
     ownTypeArguments: []
+    type: Anno5
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -157,17 +157,17 @@ KtConstructorSymbol:
           origin: SOURCE
           receiverParameter: null
           returnType: KtUsualClassType:
-            type: kotlin/String
             annotationsList: []
             ownTypeArguments: []
+            type: kotlin/String
           symbolKind: ACCESSOR
           typeParameters: []
           valueParameters: []
           visibility: Public
           getDispatchReceiver(): KtUsualClassType:
-            type: Anno5
             annotationsList: []
             ownTypeArguments: []
+            type: Anno5
           getContainingModule: KtSourceModule "Sources of main"
           deprecationStatus: null
         hasBackingField: true
@@ -187,17 +187,17 @@ KtConstructorSymbol:
         origin: SOURCE
         receiverParameter: null
         returnType: KtUsualClassType:
-          type: kotlin/String
           annotationsList: []
           ownTypeArguments: []
+          type: kotlin/String
         setter: null
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
         getDispatchReceiver(): KtUsualClassType:
-          type: Anno5
           annotationsList: []
           ownTypeArguments: []
+          type: Anno5
         getContainingModule: KtSourceModule "Sources of main"
         deprecationStatus: null
         getterDeprecationStatus: null
@@ -214,9 +214,9 @@ KtConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/String
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/String
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -245,9 +245,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Annotation
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Annotation
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -272,9 +272,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -303,12 +303,12 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: @R|Anno3|()  I
     annotationsList: [
       Anno3()
         psi: KtAnnotationEntry
     ]
     ownTypeArguments: []
+    type: @R|Anno3|()  I
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -327,12 +327,12 @@ KtFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: @R|Anno2|()  I
         annotationsList: [
           Anno2()
             psi: KtAnnotationEntry
         ]
         ownTypeArguments: []
+        type: @R|Anno2|()  I
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -340,9 +340,9 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: X
     annotationsList: []
     ownTypeArguments: []
+    type: X
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -364,20 +364,20 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:
-      type: @R|Anno4|()  I
       annotationsList: [
         Anno4()
           psi: KtAnnotationEntry
       ]
       ownTypeArguments: []
+      type: @R|Anno4|()  I
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
-      type: X
       annotationsList: []
       ownTypeArguments: []
+      type: X
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -397,20 +397,20 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: @R|Anno4|()  I
     annotationsList: [
       Anno4()
         psi: KtAnnotationEntry
     ]
     ownTypeArguments: []
+    type: @R|Anno4|()  I
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: X
     annotationsList: []
     ownTypeArguments: []
+    type: X
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -434,12 +434,12 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: @R|Anno1|()  I
       annotationsList: [
         Anno1()
           psi: KtAnnotationEntry
       ]
       ownTypeArguments: []
+      type: @R|Anno1|()  I
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -482,21 +482,21 @@ KtFunctionSymbol:
     origin: SOURCE
     owningCallableSymbol: KtFunctionSymbol(/foo)
     type: KtTypeParameterType:
-      type: T
       annotationsList: []
+      type: T
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/List<@R|Anno5|(s = String(1))  T>?
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: @R|Anno5|(s = String(1))  T
         annotationsList: [
           Anno5(s = "1")
             psi: KtAnnotationEntry
         ]
+        type: @R|Anno5|(s = String(1))  T
     ]
+    type: kotlin/collections/List<@R|Anno5|(s = String(1))  T>?
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -540,26 +540,26 @@ KtFunctionSymbol:
     origin: SOURCE
     owningCallableSymbol: KtFunctionSymbol(/foo2)
     type: KtTypeParameterType:
-      type: T
       annotationsList: []
+      type: T
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/List<kotlin/collections/List<@R|Anno5|(s = String(1))  T>>?
     annotationsList: []
     ownTypeArguments: [
       KtUsualClassType:
-        type: kotlin/collections/List<@R|Anno5|(s = String(1))  T>
         annotationsList: []
         ownTypeArguments: [
           KtTypeParameterType:
-            type: @R|Anno5|(s = String(1))  T
             annotationsList: [
               Anno5(s = "1")
                 psi: KtAnnotationEntry
             ]
+            type: @R|Anno5|(s = String(1))  T
         ]
+        type: kotlin/collections/List<@R|Anno5|(s = String(1))  T>
     ]
+    type: kotlin/collections/List<kotlin/collections/List<@R|Anno5|(s = String(1))  T>>?
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)

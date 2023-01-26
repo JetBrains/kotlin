@@ -18,9 +18,9 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -39,20 +39,20 @@ KtFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtFunctionalType:
-        type: kotlin/Function2<kotlin/Int, ERROR CLASS: Symbol not found for p2, ERROR CLASS: Unwrapped type is null>
         annotationsList: []
         ownTypeArguments: [
           KtUsualClassType:
-            type: kotlin/Int
             annotationsList: []
             ownTypeArguments: []
+            type: kotlin/Int
           KtClassErrorType:
+            annotationsList: []
             type: ERROR_TYPE
-            annotationsList: []
           KtTypeErrorType:
-            type: ERROR CLASS: Unwrapped type is null
             annotationsList: []
+            type: ERROR CLASS: Unwrapped type is null
         ]
+        type: kotlin/Function2<kotlin/Int, ERROR CLASS: Symbol not found for p2, ERROR CLASS: Unwrapped type is null>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -72,8 +72,8 @@ KtFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtTypeErrorType:
-        type: ERROR CLASS: No type for parameter
         annotationsList: []
+        type: ERROR CLASS: No type for parameter
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

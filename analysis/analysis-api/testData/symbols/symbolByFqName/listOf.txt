@@ -14,14 +14,14 @@ KtNamedClassOrObjectSymbol:
   origin: LIBRARY
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Enum<kotlin/io/FileWalkDirection>
       annotationsList: []
       ownTypeArguments: [
         KtUsualClassType:
-          type: kotlin/io/FileWalkDirection
           annotationsList: []
           ownTypeArguments: []
+          type: kotlin/io/FileWalkDirection
       ]
+      type: kotlin/Enum<kotlin/io/FileWalkDirection>
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

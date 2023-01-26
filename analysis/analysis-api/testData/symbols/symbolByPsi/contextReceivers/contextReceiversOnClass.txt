@@ -9,9 +9,9 @@ KtConstructorSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: A
     annotationsList: []
     ownTypeArguments: []
+    type: A
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -30,9 +30,9 @@ KtConstructorSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -51,15 +51,15 @@ KtNamedClassOrObjectSymbol:
     KtContextReceiver:
       label: null
       type: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
     KtContextReceiver:
       label: s
       type: KtUsualClassType:
-        type: kotlin/String
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/String
   ]
   isData: false
   isExternal: false
@@ -71,9 +71,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

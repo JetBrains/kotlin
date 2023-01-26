@@ -6,11 +6,11 @@ KtReceiverParameterSymbol:
   origin: SOURCE
   owningCallableSymbol: KtFunctionSymbol(/foo)
   type: KtUsualClassType:
-    type: @R|ReceiverTypeAnnotation|()  kotlin/Int
     annotationsList: [
       ReceiverTypeAnnotation()
         psi: KtAnnotationEntry
     ]
     ownTypeArguments: []
+    type: @R|ReceiverTypeAnnotation|()  kotlin/Int
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

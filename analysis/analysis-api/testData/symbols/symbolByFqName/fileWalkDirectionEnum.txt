@@ -18,13 +18,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/List<T>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
     ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -45,8 +45,8 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtLibraryModule "Library kotlin-stdlib"
@@ -79,13 +79,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/List<T>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
     ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -115,13 +115,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/List<T>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
     ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -142,8 +142,8 @@ KtFunctionSymbol:
       origin: LIBRARY
       receiverParameter: null
       returnType: KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtLibraryModule "Library kotlin-stdlib"

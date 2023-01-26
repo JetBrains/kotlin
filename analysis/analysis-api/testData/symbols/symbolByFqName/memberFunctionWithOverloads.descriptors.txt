@@ -18,25 +18,25 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/ListIterator<E>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
     ]
+    type: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/collections/List<E>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
     ]
+    type: kotlin/collections/List<E>
   getContainingModule: Could not render due to java.lang.NullPointerException: null cannot be cast to non-null type org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 
   deprecationStatus: null
@@ -61,13 +61,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/ListIterator<E>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
     ]
+    type: kotlin/collections/ListIterator<E>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -86,9 +86,9 @@ KtFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
@@ -97,13 +97,13 @@ KtFunctionSymbol:
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: kotlin/collections/List<E>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: E
         annotationsList: []
+        type: E
     ]
+    type: kotlin/collections/List<E>
   getContainingModule: Could not render due to java.lang.NullPointerException: null cannot be cast to non-null type org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 
   deprecationStatus: null

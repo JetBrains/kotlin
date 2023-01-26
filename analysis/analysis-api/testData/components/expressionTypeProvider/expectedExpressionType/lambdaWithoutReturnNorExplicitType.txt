@@ -3,15 +3,15 @@ expression: { a: Int ->
     a + b
 }
 expected type: KtFunctionalType:
-  type: kotlin/Function1<kotlin/Int, kotlin/Int>
   annotationsList: []
   ownTypeArguments: [
     KtUsualClassType:
-      type: kotlin/Int
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Int
     KtUsualClassType:
-      type: kotlin/Int
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Int
   ]
+  type: kotlin/Function1<kotlin/Int, kotlin/Int>

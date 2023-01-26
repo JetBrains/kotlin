@@ -1,5 +1,5 @@
 expression: { /* Argument */ }
 expected type: KtUsualClassType:
-  type: java/lang/Runnable
   annotationsList: []
   ownTypeArguments: []
+  type: java/lang/Runnable

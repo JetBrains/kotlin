@@ -18,17 +18,17 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: <no name provided>
     annotationsList: []
     ownTypeArguments: []
+    type: <no name provided>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -50,17 +50,17 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:
-      type: kotlin/Int
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
-      type: <no name provided>
       annotationsList: []
       ownTypeArguments: []
+      type: <no name provided>
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -80,17 +80,17 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: <no name provided>
     annotationsList: []
     ownTypeArguments: []
+    type: <no name provided>
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -106,9 +106,9 @@ KtAnonymousObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: java/lang/Runnable
       annotationsList: []
       ownTypeArguments: []
+      type: java/lang/Runnable
   ]
   symbolKind: LOCAL
   typeParameters: []
@@ -134,17 +134,17 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:
-      type: java/lang/Runnable
       annotationsList: []
       ownTypeArguments: []
+      type: java/lang/Runnable
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
     getDispatchReceiver(): KtUsualClassType:
-      type: AnonymousContainer
       annotationsList: []
       ownTypeArguments: []
+      type: AnonymousContainer
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -164,17 +164,17 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: java/lang/Runnable
     annotationsList: []
     ownTypeArguments: []
+    type: java/lang/Runnable
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: AnonymousContainer
     annotationsList: []
     ownTypeArguments: []
+    type: AnonymousContainer
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -198,9 +198,9 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

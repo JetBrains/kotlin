@@ -8,9 +8,9 @@ KtSamConstructorSymbol:
   origin: SAM_CONSTRUCTOR
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: java/lang/Runnable
     annotationsList: []
     ownTypeArguments: []
+    type: java/lang/Runnable
   symbolKind: SAM_CONSTRUCTOR
   typeParameters: []
   valueParameters: [
@@ -29,14 +29,14 @@ KtSamConstructorSymbol:
       origin: SAM_CONSTRUCTOR
       receiverParameter: null
       returnType: KtFunctionalType:
-        type: kotlin/Function0<kotlin/Unit>
         annotationsList: []
         ownTypeArguments: [
           KtUsualClassType:
-            type: kotlin/Unit
             annotationsList: []
             ownTypeArguments: []
+            type: kotlin/Unit
         ]
+        type: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

@@ -18,13 +18,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/List<T>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
     ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -45,8 +45,8 @@ KtFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
@@ -80,13 +80,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/List<T>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
     ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -116,13 +116,13 @@ KtFunctionSymbol:
   origin: LIBRARY
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/collections/List<T>
     annotationsList: []
     ownTypeArguments: [
       KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
     ]
+    type: kotlin/collections/List<T>
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -143,8 +143,8 @@ KtFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtTypeParameterType:
-        type: T
         annotationsList: []
+        type: T
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: Could not render due to kotlin.NotImplementedError: An operation is not implemented: org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol

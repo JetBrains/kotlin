@@ -17,13 +17,13 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
       type: kotlin/Any
-      annotationsList: []
-      ownTypeArguments: []
     KtUsualClassType:
-      type: foo/MyInterface
       annotationsList: []
       ownTypeArguments: []
+      type: foo/MyInterface
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

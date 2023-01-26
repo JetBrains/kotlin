@@ -17,9 +17,9 @@ KtFunctionSymbol:
               origin: SOURCE
               owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
               type: KtUsualClassType:
-                type: kotlin/Boolean
                 annotationsList: []
                 ownTypeArguments: []
+                type: kotlin/Boolean
               getContainingModule: KtSourceModule "Sources of main"
               deprecationStatus: null
   ]
@@ -41,15 +41,15 @@ KtFunctionSymbol:
     origin: SOURCE
     owningCallableSymbol: KtFunctionSymbol(/referenceReceiverInContract)
     type: KtUsualClassType:
-      type: kotlin/Boolean
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Boolean
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

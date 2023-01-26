@@ -5,15 +5,15 @@ KtKotlinPropertySymbol:
     KtContextReceiver:
       label: null
       type: KtUsualClassType:
-        type: kotlin/Int
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Int
     KtContextReceiver:
       label: s
       type: KtUsualClassType:
-        type: kotlin/String
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/String
   ]
   getter: KtPropertyGetterSymbol:
     annotationsList: []
@@ -29,9 +29,9 @@ KtKotlinPropertySymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:
-      type: kotlin/Int
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Int
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -55,9 +55,9 @@ KtKotlinPropertySymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Int
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Int
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []

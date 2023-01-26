@@ -18,7 +18,6 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
     annotationsList: [
       Anno1()
         psi: KtAnnotationEntry
@@ -28,6 +27,7 @@ KtFunctionSymbol:
         psi: KtAnnotationEntry
     ]
     ownTypeArguments: []
+    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

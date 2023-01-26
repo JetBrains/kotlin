@@ -8,14 +8,14 @@ KtApplicableCallCandidateInfo:
           origin: SOURCE
           owningCallableSymbol: KtAnonymousFunctionSymbol(<local>/<no name provided>)
           type: KtUsualClassType:
-            type: test/Target<kotlin/String>
             annotationsList: []
             ownTypeArguments: [
               KtUsualClassType:
-                type: kotlin/String
                 annotationsList: []
                 ownTypeArguments: []
+                type: kotlin/String
             ]
+            type: test/Target<kotlin/String>
         type = test.Target<Stub (chain inference): TypeVariable(T)>
       extensionReceiver = null
       signature = KtFunctionLikeSignature:

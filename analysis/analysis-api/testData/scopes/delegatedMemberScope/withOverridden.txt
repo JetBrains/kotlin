@@ -18,16 +18,16 @@ KtFunctionSymbol:
   origin: DELEGATED
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
-    type: B
     annotationsList: []
     ownTypeArguments: []
+    type: B
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

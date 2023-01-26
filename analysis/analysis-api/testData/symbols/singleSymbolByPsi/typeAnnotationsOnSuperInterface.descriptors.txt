@@ -14,11 +14,10 @@ KtNamedClassOrObjectSymbol:
   origin: SOURCE
   superTypes: [
     KtUsualClassType:
-      type: kotlin/Any
       annotationsList: []
       ownTypeArguments: []
+      type: kotlin/Any
     KtUsualClassType:
-      type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
       annotationsList: [
         Anno3()
           psi: KtAnnotationEntry
@@ -28,6 +27,7 @@ KtNamedClassOrObjectSymbol:
           psi: KtAnnotationEntry
       ]
       ownTypeArguments: []
+      type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

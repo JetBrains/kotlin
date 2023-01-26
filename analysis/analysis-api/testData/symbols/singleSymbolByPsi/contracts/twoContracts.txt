@@ -34,9 +34,9 @@ KtFunctionSymbol:
                       origin: SOURCE
                       receiverParameter: null
                       returnType: KtUsualClassType:
-                        type: kotlin/Any?
                         annotationsList: []
                         ownTypeArguments: []
+                        type: kotlin/Any?
                       symbolKind: LOCAL
                       typeParameters: []
                       getContainingModule: KtSourceModule "Sources of main"
@@ -62,9 +62,9 @@ KtFunctionSymbol:
                       origin: SOURCE
                       receiverParameter: null
                       returnType: KtUsualClassType:
-                        type: kotlin/Any?
                         annotationsList: []
                         ownTypeArguments: []
+                        type: kotlin/Any?
                       symbolKind: LOCAL
                       typeParameters: []
                       getContainingModule: KtSourceModule "Sources of main"
@@ -90,14 +90,14 @@ KtFunctionSymbol:
               origin: SOURCE
               receiverParameter: null
               returnType: KtFunctionalType:
-                type: kotlin/Function0<kotlin/Unit>
                 annotationsList: []
                 ownTypeArguments: [
                   KtUsualClassType:
-                    type: kotlin/Unit
                     annotationsList: []
                     ownTypeArguments: []
+                    type: kotlin/Unit
                 ]
+                type: kotlin/Function0<kotlin/Unit>
               symbolKind: LOCAL
               typeParameters: []
               getContainingModule: KtSourceModule "Sources of main"
@@ -119,9 +119,9 @@ KtFunctionSymbol:
   origin: SOURCE
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Boolean
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Boolean
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -140,9 +140,9 @@ KtFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Any?
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -162,9 +162,9 @@ KtFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: kotlin/Any?
         annotationsList: []
         ownTypeArguments: []
+        type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -184,14 +184,14 @@ KtFunctionSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtFunctionalType:
-        type: kotlin/Function0<kotlin/Unit>
         annotationsList: []
         ownTypeArguments: [
           KtUsualClassType:
-            type: kotlin/Unit
             annotationsList: []
             ownTypeArguments: []
+            type: kotlin/Unit
         ]
+        type: kotlin/Function0<kotlin/Unit>
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

@@ -25,7 +25,6 @@ KtPropertySetterSymbol:
     origin: SOURCE
     receiverParameter: null
     returnType: KtUsualClassType:
-      type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
       annotationsList: [
         Anno3()
           psi: KtAnnotationEntry
@@ -35,15 +34,16 @@ KtPropertySetterSymbol:
           psi: KtAnnotationEntry
       ]
       ownTypeArguments: []
+      type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
     symbolKind: LOCAL
     typeParameters: []
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Unit
     annotationsList: []
     ownTypeArguments: []
+    type: kotlin/Unit
   symbolKind: ACCESSOR
   typeParameters: []
   valueParameters: [
@@ -62,7 +62,6 @@ KtPropertySetterSymbol:
       origin: SOURCE
       receiverParameter: null
       returnType: KtUsualClassType:
-        type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
         annotationsList: [
           Anno3()
             psi: KtAnnotationEntry
@@ -72,6 +71,7 @@ KtPropertySetterSymbol:
             psi: KtAnnotationEntry
         ]
         ownTypeArguments: []
+        type: @R|Anno3|() @R|Anno2|() @R|Anno1|()  @R|Anno3|()  SecondTypeAlias
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

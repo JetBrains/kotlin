@@ -18,14 +18,14 @@ KtFunctionSymbol:
   origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KtUsualClassType:
-    type: kotlin/Array<MyKotlinEnum>
     annotationsList: []
     ownTypeArguments: [
       KtUsualClassType:
-        type: MyKotlinEnum
         annotationsList: []
         ownTypeArguments: []
+        type: MyKotlinEnum
     ]
+    type: kotlin/Array<MyKotlinEnum>
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
