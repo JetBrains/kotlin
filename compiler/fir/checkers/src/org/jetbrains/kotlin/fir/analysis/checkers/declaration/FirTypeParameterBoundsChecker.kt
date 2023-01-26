@@ -146,7 +146,7 @@ object FirTypeParameterBoundsChecker : FirTypeParameterChecker() {
 
     private fun checkDynamicBounds(declaration: FirTypeParameter, context: CheckerContext, reporter: DiagnosticReporter) {
         declaration.bounds.forEach { bound ->
-            if (bound is FirDynamicTypeRef) {
+            if (bound.coneType is ConeDynamicType) {
                 reporter.reportOn(bound.source, FirErrors.DYNAMIC_UPPER_BOUND, context)
             }
         }
