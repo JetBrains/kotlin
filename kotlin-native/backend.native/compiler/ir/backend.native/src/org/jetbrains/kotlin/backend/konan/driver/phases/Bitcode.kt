@@ -70,8 +70,13 @@ internal val BitcodeOptimizationPhase = createSimpleNamedCompilerPhase(
         postactions = llvmPhaseActions,
 ) { context, _ ->
     val config = createLTOFinalPipelineConfig(context, context.llvm.targetTriple, closedWorld = context.llvmModuleSpecification.isFinal)
-    LlvmOptimizationPipeline(config, context.llvm.module, context).use {
-        it.run()
+    LlvmOptimizationPipeline(config, context.generationState.llvm.module, generationState).use {
+        it.runModulePhases()
+    }
+    if (!context.config.skipLTOOptimizations) {
+        LlvmOptimizationPipeline(config, context.generationState.llvm.module, generationState).use {
+            it.runLTOPhases()
+        }
     }
 }
 

@@ -161,6 +161,7 @@ class KonanConfigKeys {
         val PARTIAL_LINKAGE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("allows some symbols in klibs be missed")
         val TEST_DUMP_OUTPUT_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to a file to dump the list of all available tests")
         val OMIT_FRAMEWORK_BINARY: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("do not generate binary in framework")
+        val SKIP_LTO_OPTIMIZATIONS: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("do not perform LTO optimizations")
     }
 }
 

@@ -489,6 +489,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
     }
+
+    internal val skipLTOOptimizations: Boolean by lazy {
+        configuration.getBoolean(KonanConfigKeys.SKIP_LTO_OPTIMIZATIONS)
+    }
 }
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)

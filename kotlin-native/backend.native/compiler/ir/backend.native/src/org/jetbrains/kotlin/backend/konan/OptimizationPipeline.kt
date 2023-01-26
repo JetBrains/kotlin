@@ -219,35 +219,9 @@ class LlvmOptimizationPipeline(
         initializeLlvmGlobalPassRegistry()
     }
 
-    private fun populatePasses() {
+    private fun populateBasicPhases() {
         LLVMPassManagerBuilderSetOptLevel(passBuilder, config.optimizationLevel.value)
         LLVMPassManagerBuilderSetSizeLevel(passBuilder, config.sizeLevel.value)
-        LLVMKotlinAddTargetLibraryInfoWrapperPass(modulePasses, config.targetTriple)
-        // TargetTransformInfo pass.
-        LLVMAddAnalysisPasses(targetMachine, modulePasses)
-        if (config.internalize) {
-            LLVMAddInternalizePass(modulePasses, 0)
-        }
-        if (config.makeDeclarationsHidden) {
-            makeVisibilityHiddenLikeLlvmInternalizePass(llvmModule)
-        }
-        if (config.globalDce) {
-            LLVMAddGlobalDCEPass(modulePasses)
-        }
-        config.inlineThreshold?.let { threshold ->
-            LLVMPassManagerBuilderUseInlinerWithThreshold(passBuilder, threshold)
-        }
-
-        // Pipeline that is similar to `llvm-lto`.
-        LLVMPassManagerBuilderPopulateLTOPassManager(passBuilder, modulePasses, Internalize = 0, RunInliner = 1)
-
-        if (config.objCPasses) {
-            // Lower ObjC ARC intrinsics (e.g. `@llvm.objc.clang.arc.use(...)`).
-            // While Kotlin/Native codegen itself doesn't produce these intrinsics, they might come
-            // from cinterop "glue" bitcode.
-            // TODO: Consider adding other ObjC passes.
-            LLVMAddObjCARCContractPass(modulePasses)
-        }
 
         when (config.sanitizer) {
             null -> {}
@@ -261,9 +235,23 @@ class LlvmOptimizationPipeline(
         }
     }
 
-    fun run() {
+    fun runModulePhases() {
         init()
-        populatePasses()
+        populateBasicPhases()
+        LLVMKotlinAddTargetLibraryInfoWrapperPass(modulePasses, config.targetTriple)
+        // TargetTransformInfo pass.
+        LLVMAddAnalysisPasses(targetMachine, modulePasses)
+        config.inlineThreshold?.let { threshold ->
+            LLVMPassManagerBuilderUseInlinerWithThreshold(passBuilder, threshold)
+        }
+        if (config.objCPasses) {
+            // Lower ObjC ARC intrinsics (e.g. `@llvm.objc.clang.arc.use(...)`).
+            // While Kotlin/Native codegen itself doesn't produce these intrinsics, they might come
+            // from cinterop "glue" bitcode.
+            // TODO: Consider adding other ObjC passes.
+            LLVMAddObjCARCContractPass(modulePasses)
+        }
+        LLVMPassManagerBuilderPopulateModulePassManager(passBuilder, modulePasses)
         logger?.log {
             """
             Running LLVM optimizations with the following parameters:
@@ -275,6 +263,24 @@ class LlvmOptimizationPipeline(
             inline_threshold: ${config.inlineThreshold ?: "default"}
         """.trimIndent()
         }
+        LLVMRunPassManager(modulePasses, llvmModule)
+    }
+
+    fun runLTOPhases() {
+        init()
+        populateBasicPhases()
+        if (config.internalize) {
+            LLVMAddInternalizePass(modulePasses, 0)
+        }
+        if (config.makeDeclarationsHidden) {
+            makeVisibilityHiddenLikeLlvmInternalizePass(llvmModule)
+        }
+        if (config.globalDce) {
+            LLVMAddGlobalDCEPass(modulePasses)
+        }
+
+        // Pipeline that is similar to `llvm-lto`.
+        LLVMPassManagerBuilderPopulateLTOPassManager(passBuilder, modulePasses, Internalize = 0, RunInliner = 1)
         LLVMRunPassManager(modulePasses, llvmModule)
     }
 

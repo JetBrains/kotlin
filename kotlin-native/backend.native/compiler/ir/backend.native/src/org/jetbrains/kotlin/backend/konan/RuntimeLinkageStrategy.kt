@@ -53,8 +53,9 @@ internal sealed class RuntimeLinkageStrategy {
             }
             val config = createLTOPipelineConfigForRuntime(generationState)
             LlvmOptimizationPipeline(config, runtimeModule, generationState).use {
-                it.run()
+                it.runModulePhases()
             }
+
             return listOf(runtimeModule)
         }
     }

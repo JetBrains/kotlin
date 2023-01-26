@@ -408,6 +408,9 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling framework")
     var omitFrameworkBinary: Boolean = false
 
+    @Argument(value = "-Xskip-LTO-optimizations", description = "Skip whole program optimizations")
+    var skipLTOOptimizations: Boolean = false
+
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> =
         super.configureAnalysisFlags(collector, languageVersion).also {
             val optInList = it[AnalysisFlags.optIn] as List<*>
