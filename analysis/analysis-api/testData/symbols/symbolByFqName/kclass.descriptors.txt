@@ -13,9 +13,18 @@ KtNamedClassOrObjectSymbol:
   name: KClass
   origin: LIBRARY
   superTypes: [
-    kotlin/reflect/KDeclarationContainer
-    kotlin/reflect/KAnnotatedElement
-    kotlin/reflect/KClassifier
+    KtUsualClassType:
+      type: kotlin/reflect/KDeclarationContainer
+      annotationsList: []
+      ownTypeArguments: []
+    KtUsualClassType:
+      type: kotlin/reflect/KAnnotatedElement
+      annotationsList: []
+      ownTypeArguments: []
+    KtUsualClassType:
+      type: kotlin/reflect/KClassifier
+      annotationsList: []
+      ownTypeArguments: []
   ]
   symbolKind: TOP_LEVEL
   typeParameters: [

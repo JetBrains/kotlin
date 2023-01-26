@@ -1,2 +1,4 @@
 expression: ab
-expected type: T
+expected type: KtTypeParameterType:
+  type: T
+  annotationsList: []

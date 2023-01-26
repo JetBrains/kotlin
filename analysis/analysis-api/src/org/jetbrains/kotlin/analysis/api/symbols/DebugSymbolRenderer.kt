@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectD
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
-import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
-import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -144,7 +142,7 @@ public class DebugSymbolRenderer(
     }
 
     context(KtAnalysisSession)
-    private fun PrettyPrinter.renderSymbolHeader(symbol: KtSymbol) {
+    private fun PrettyPrinter.renderSymbolHeader(symbol: Any) {
         val apiClass = getSymbolApiClass(symbol)
         append(apiClass.simpleName).append(':')
     }
@@ -207,14 +205,24 @@ public class DebugSymbolRenderer(
             return
         }
 
-        if (typeToRender.annotations.isNotEmpty()) {
-            renderList(typeToRender.annotations, renderSymbolsFully = false)
-            append(' ')
-        }
+        renderSymbolHeader(typeToRender)
+        withIndent {
+            appendLine()
+            append("type: ")
+            when (typeToRender) {
+                is KtClassErrorType -> append("ERROR_TYPE")
+                else -> append(typeToRender.asStringForDebugging())
+            }
 
-        when (typeToRender) {
-            is KtClassErrorType -> append("ERROR_TYPE")
-            else -> append(typeToRender.asStringForDebugging())
+            appendLine()
+            append("annotationsList: ")
+            renderAnnotationsList(typeToRender.annotationsList)
+
+            if (typeToRender is KtNonErrorClassType) {
+                appendLine()
+                append("ownTypeArguments: ")
+                renderList(typeToRender.ownTypeArguments, renderSymbolsFully = false)
+            }
         }
     }
 
@@ -329,7 +337,7 @@ public class DebugSymbolRenderer(
 
     context(KtAnalysisSession)
     private fun PrettyPrinter.renderKtModule(ktModule: KtModule) {
-        val ktModuleClass = ktModule::class.allSuperclasses.filter { it in ktModuleSubclasses }.first()
+        val ktModuleClass = ktModule::class.allSuperclasses.first { it in ktModuleSubclasses }
         append("${ktModuleClass.simpleName} \"${ktModule.moduleDescription}\"")
     }
 
@@ -375,8 +383,8 @@ public class DebugSymbolRenderer(
         renderList(value.annotations, renderSymbolsFully = false)
     }
 
-    private fun getSymbolApiClass(symbol: KtSymbol): KClass<*> {
-        var current: Class<in KtSymbol> = symbol.javaClass
+    private fun getSymbolApiClass(symbol: Any): KClass<*> {
+        var current: Class<*> = symbol.javaClass
 
         while (true) {
             val className = current.name

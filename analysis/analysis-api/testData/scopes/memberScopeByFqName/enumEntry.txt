@@ -15,12 +15,18 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: kotlin/String
+    returnType: KtUsualClassType:
+      type: kotlin/String
+      annotationsList: []
+      ownTypeArguments: []
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): <anonymous>
+    getDispatchReceiver(): KtUsualClassType:
+      type: <anonymous>
+      annotationsList: []
+      ownTypeArguments: []
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
   hasBackingField: true
@@ -39,12 +45,18 @@ KtKotlinPropertySymbol:
   name: x
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/String
+  returnType: KtUsualClassType:
+    type: kotlin/String
+    annotationsList: []
+    ownTypeArguments: []
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): <anonymous>
+  getDispatchReceiver(): KtUsualClassType:
+    type: <anonymous>
+    annotationsList: []
+    ownTypeArguments: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -71,12 +83,22 @@ KtFunctionSymbol:
   name: clone
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/Any
+  returnType: KtUsualClassType:
+    type: kotlin/Any
+    annotationsList: []
+    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Protected
-  getDispatchReceiver(): kotlin/Enum<E>
+  getDispatchReceiver(): KtUsualClassType:
+    type: kotlin/Enum<E>
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        type: E
+        annotationsList: []
+    ]
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -99,7 +121,10 @@ KtFunctionSymbol:
   name: compareTo
   origin: SUBSTITUTION_OVERRIDE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    type: kotlin/Int
+    annotationsList: []
+    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -117,14 +142,20 @@ KtFunctionSymbol:
       name: other
       origin: SUBSTITUTION_OVERRIDE
       receiverParameter: null
-      returnType: test/E
+      returnType: KtUsualClassType:
+        type: test/E
+        annotationsList: []
+        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): test/E
+  getDispatchReceiver(): KtUsualClassType:
+    type: test/E
+    annotationsList: []
+    ownTypeArguments: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
@@ -147,7 +178,10 @@ KtFunctionSymbol:
   name: equals
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/Boolean
+  returnType: KtUsualClassType:
+    type: kotlin/Boolean
+    annotationsList: []
+    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: [
@@ -165,14 +199,24 @@ KtFunctionSymbol:
       name: other
       origin: LIBRARY
       receiverParameter: null
-      returnType: kotlin/Any?
+      returnType: KtUsualClassType:
+        type: kotlin/Any?
+        annotationsList: []
+        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
   visibility: Public
-  getDispatchReceiver(): kotlin/Enum<E>
+  getDispatchReceiver(): KtUsualClassType:
+    type: kotlin/Enum<E>
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        type: E
+        annotationsList: []
+    ]
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -195,12 +239,22 @@ KtFunctionSymbol:
   name: hashCode
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    type: kotlin/Int
+    annotationsList: []
+    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): kotlin/Enum<E>
+  getDispatchReceiver(): KtUsualClassType:
+    type: kotlin/Enum<E>
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        type: E
+        annotationsList: []
+    ]
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -223,12 +277,22 @@ KtFunctionSymbol:
   name: toString
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/String
+  returnType: KtUsualClassType:
+    type: kotlin/String
+    annotationsList: []
+    ownTypeArguments: []
   symbolKind: CLASS_MEMBER
   typeParameters: []
   valueParameters: []
   visibility: Public
-  getDispatchReceiver(): kotlin/Enum<E>
+  getDispatchReceiver(): KtUsualClassType:
+    type: kotlin/Enum<E>
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        type: E
+        annotationsList: []
+    ]
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
@@ -252,12 +316,22 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
-    returnType: kotlin/String
+    returnType: KtUsualClassType:
+      type: kotlin/String
+      annotationsList: []
+      ownTypeArguments: []
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): kotlin/Enum<E>
+    getDispatchReceiver(): KtUsualClassType:
+      type: kotlin/Enum<E>
+      annotationsList: []
+      ownTypeArguments: [
+        KtTypeParameterType:
+          type: E
+          annotationsList: []
+      ]
     getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
     deprecationStatus: null
   hasBackingField: true
@@ -276,12 +350,22 @@ KtKotlinPropertySymbol:
   name: name
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/String
+  returnType: KtUsualClassType:
+    type: kotlin/String
+    annotationsList: []
+    ownTypeArguments: []
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): kotlin/Enum<E>
+  getDispatchReceiver(): KtUsualClassType:
+    type: kotlin/Enum<E>
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        type: E
+        annotationsList: []
+    ]
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
   getterDeprecationStatus: null
@@ -306,12 +390,22 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: LIBRARY
     receiverParameter: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      type: kotlin/Int
+      annotationsList: []
+      ownTypeArguments: []
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
     visibility: Public
-    getDispatchReceiver(): kotlin/Enum<E>
+    getDispatchReceiver(): KtUsualClassType:
+      type: kotlin/Enum<E>
+      annotationsList: []
+      ownTypeArguments: [
+        KtTypeParameterType:
+          type: E
+          annotationsList: []
+      ]
     getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
     deprecationStatus: null
   hasBackingField: true
@@ -330,12 +424,22 @@ KtKotlinPropertySymbol:
   name: ordinal
   origin: LIBRARY
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    type: kotlin/Int
+    annotationsList: []
+    ownTypeArguments: []
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): kotlin/Enum<E>
+  getDispatchReceiver(): KtUsualClassType:
+    type: kotlin/Enum<E>
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        type: E
+        annotationsList: []
+    ]
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
   getterDeprecationStatus: null

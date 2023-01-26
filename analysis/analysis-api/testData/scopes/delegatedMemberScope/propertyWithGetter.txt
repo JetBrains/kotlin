@@ -19,12 +19,18 @@ KtKotlinPropertySymbol:
   name: foo
   origin: DELEGATED
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    type: kotlin/Int
+    annotationsList: []
+    ownTypeArguments: []
   setter: null
   symbolKind: CLASS_MEMBER
   typeParameters: []
   visibility: Public
-  getDispatchReceiver(): A
+  getDispatchReceiver(): KtUsualClassType:
+    type: A
+    annotationsList: []
+    ownTypeArguments: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
   getterDeprecationStatus: null

@@ -13,10 +13,26 @@ KtNamedClassOrObjectSymbol:
   name: String
   origin: JAVA
   superTypes: [
-    kotlin/Any
-    java/io/Serializable
-    kotlin/Comparable<kotlin/String!>
-    kotlin/CharSequence
+    KtUsualClassType:
+      type: kotlin/Any
+      annotationsList: []
+      ownTypeArguments: []
+    KtUsualClassType:
+      type: java/io/Serializable
+      annotationsList: []
+      ownTypeArguments: []
+    KtUsualClassType:
+      type: kotlin/Comparable<kotlin/String!>
+      annotationsList: []
+      ownTypeArguments: [
+        KtFlexibleType:
+          type: kotlin/String!
+          annotationsList: []
+      ]
+    KtUsualClassType:
+      type: kotlin/CharSequence
+      annotationsList: []
+      ownTypeArguments: []
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []

@@ -20,10 +20,16 @@ KtFunctionSymbol:
     annotationsList: []
     origin: SOURCE
     owningCallableSymbol: KtFunctionSymbol(/foo)
-    type: kotlin/String
+    type: KtUsualClassType:
+      type: kotlin/String
+      annotationsList: []
+      ownTypeArguments: []
     getContainingModule: KtSourceModule "Sources of main"
     deprecationStatus: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    type: kotlin/Int
+    annotationsList: []
+    ownTypeArguments: []
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: []

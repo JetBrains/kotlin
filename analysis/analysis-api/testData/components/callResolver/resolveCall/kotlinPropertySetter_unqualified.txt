@@ -6,7 +6,10 @@ KtSuccessCallInfo:
           annotationsList: []
           origin: SOURCE
           owningCallableSymbol: KtFunctionSymbol(/foo)
-          type: A
+          type: KtUsualClassType:
+            type: A
+            annotationsList: []
+            ownTypeArguments: []
         type = A
       extensionReceiver = null
       signature = KtVariableLikeSignature:

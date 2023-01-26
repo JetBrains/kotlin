@@ -18,7 +18,10 @@ KtSuccessCallInfo:
           name: RunnerModule
           origin: SOURCE
           superTypes: [
-            AbstractModule
+            KtUsualClassType:
+              type: AbstractModule
+              annotationsList: []
+              ownTypeArguments: []
           ]
           symbolKind: TOP_LEVEL
           typeParameters: []

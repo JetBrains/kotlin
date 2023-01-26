@@ -25,7 +25,10 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: kotlin/Int
+    returnType: KtUsualClassType:
+      type: kotlin/Int
+      annotationsList: []
+      ownTypeArguments: []
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -48,7 +51,10 @@ KtKotlinPropertySymbol:
   name: x
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Int
+  returnType: KtUsualClassType:
+    type: kotlin/Int
+    annotationsList: []
+    ownTypeArguments: []
   setter: KtPropertySetterSymbol:
     annotationsList: [
       ExplicitSetAnnotation()
@@ -85,13 +91,19 @@ KtKotlinPropertySymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Int
+      returnType: KtUsualClassType:
+        type: kotlin/Int
+        annotationsList: []
+        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
     receiverParameter: null
-    returnType: kotlin/Unit
+    returnType: KtUsualClassType:
+      type: kotlin/Unit
+      annotationsList: []
+      ownTypeArguments: []
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: [
@@ -114,7 +126,10 @@ KtKotlinPropertySymbol:
         name: value
         origin: SOURCE
         receiverParameter: null
-        returnType: kotlin/Int
+        returnType: KtUsualClassType:
+          type: kotlin/Int
+          annotationsList: []
+          ownTypeArguments: []
         symbolKind: LOCAL
         typeParameters: []
         getContainingModule: KtSourceModule "Sources of main"

@@ -1,2 +1,5 @@
 expression: { /* Type Cast */ }
-expected type: java/lang/Runnable
+expected type: KtUsualClassType:
+  type: java/lang/Runnable
+  annotationsList: []
+  ownTypeArguments: []

@@ -28,13 +28,19 @@ KtFunctionSymbol:
                   name: value
                   origin: SOURCE
                   receiverParameter: null
-                  returnType: kotlin/Any
+                  returnType: KtUsualClassType:
+                    type: kotlin/Any
+                    annotationsList: []
+                    ownTypeArguments: []
                   symbolKind: LOCAL
                   typeParameters: []
                   getContainingModule: KtSourceModule "Sources of main"
                   deprecationStatus: null
           type:
-            Foo
+            KtUsualClassType:
+              type: Foo
+              annotationsList: []
+              ownTypeArguments: []
           isNegated: false
   ]
   hasStableParameterNames: true
@@ -51,7 +57,10 @@ KtFunctionSymbol:
   name: isInstancePredicateContract
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    type: kotlin/Unit
+    annotationsList: []
+    ownTypeArguments: []
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -69,7 +78,10 @@ KtFunctionSymbol:
       name: value
       origin: SOURCE
       receiverParameter: null
-      returnType: kotlin/Any
+      returnType: KtUsualClassType:
+        type: kotlin/Any
+        annotationsList: []
+        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

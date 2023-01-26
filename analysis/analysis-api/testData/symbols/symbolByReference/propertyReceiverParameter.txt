@@ -5,9 +5,12 @@ KtReceiverParameterSymbol:
   ]
   origin: SOURCE
   owningCallableSymbol: KtKotlinPropertySymbol(/prop)
-  type: [
-    ReceiverTypeAnnotation()
-      psi: KtAnnotationEntry
-  ] @R|ReceiverTypeAnnotation|()  kotlin/Long
+  type: KtUsualClassType:
+    type: @R|ReceiverTypeAnnotation|()  kotlin/Long
+    annotationsList: [
+      ReceiverTypeAnnotation()
+        psi: KtAnnotationEntry
+    ]
+    ownTypeArguments: []
   getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null

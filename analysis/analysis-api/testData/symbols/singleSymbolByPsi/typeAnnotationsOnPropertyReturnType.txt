@@ -15,14 +15,17 @@ KtKotlinPropertySymbol:
     modality: FINAL
     origin: SOURCE
     receiverParameter: null
-    returnType: [
-      Anno1()
-        psi: KtAnnotationEntry
-      Anno2()
-        psi: KtAnnotationEntry
-      Anno3()
-        psi: KtAnnotationEntry
-    ] @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+    returnType: KtUsualClassType:
+      type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+      annotationsList: [
+        Anno1()
+          psi: KtAnnotationEntry
+        Anno2()
+          psi: KtAnnotationEntry
+        Anno3()
+          psi: KtAnnotationEntry
+      ]
+      ownTypeArguments: []
     symbolKind: ACCESSOR
     typeParameters: []
     valueParameters: []
@@ -45,14 +48,17 @@ KtKotlinPropertySymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: [
-    Anno1()
-      psi: KtAnnotationEntry
-    Anno2()
-      psi: KtAnnotationEntry
-    Anno3()
-      psi: KtAnnotationEntry
-  ] @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+  returnType: KtUsualClassType:
+    type: @R|Anno1|()  @R|Anno2|()  @R|Anno3|()  BaseInterface
+    annotationsList: [
+      Anno1()
+        psi: KtAnnotationEntry
+      Anno2()
+        psi: KtAnnotationEntry
+      Anno3()
+        psi: KtAnnotationEntry
+    ]
+    ownTypeArguments: []
   setter: null
   symbolKind: TOP_LEVEL
   typeParameters: []

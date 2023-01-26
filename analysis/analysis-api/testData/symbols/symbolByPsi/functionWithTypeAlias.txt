@@ -13,7 +13,10 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      type: kotlin/Any
+      annotationsList: []
+      ownTypeArguments: []
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -25,7 +28,10 @@ KtNamedClassOrObjectSymbol:
 KtTypeAliasSymbol:
   annotationsList: []
   classIdIfNonLocal: TypeAlias
-  expandedType: A
+  expandedType: KtUsualClassType:
+    type: A
+    annotationsList: []
+    ownTypeArguments: []
   name: TypeAlias
   origin: SOURCE
   symbolKind: TOP_LEVEL
@@ -53,7 +59,10 @@ KtFunctionSymbol:
   name: function
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    type: kotlin/Unit
+    annotationsList: []
+    ownTypeArguments: []
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -71,7 +80,10 @@ KtFunctionSymbol:
       name: t
       origin: SOURCE
       receiverParameter: null
-      returnType: TypeAlias
+      returnType: KtUsualClassType:
+        type: TypeAlias
+        annotationsList: []
+        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -100,7 +112,10 @@ KtFunctionSymbol:
   name: function
   origin: SOURCE
   receiverParameter: null
-  returnType: kotlin/Unit
+  returnType: KtUsualClassType:
+    type: kotlin/Unit
+    annotationsList: []
+    ownTypeArguments: []
   symbolKind: TOP_LEVEL
   typeParameters: []
   valueParameters: [
@@ -118,7 +133,10 @@ KtFunctionSymbol:
       name: t
       origin: SOURCE
       receiverParameter: null
-      returnType: A
+      returnType: KtUsualClassType:
+        type: A
+        annotationsList: []
+        ownTypeArguments: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"

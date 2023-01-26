@@ -13,7 +13,10 @@ KtNamedClassOrObjectSymbol:
   name: A
   origin: SOURCE
   superTypes: [
-    kotlin/Any
+    KtUsualClassType:
+      type: kotlin/Any
+      annotationsList: []
+      ownTypeArguments: []
   ]
   symbolKind: TOP_LEVEL
   typeParameters: []
@@ -29,7 +32,10 @@ KtTypeParameterSymbol:
   origin: SOURCE
   typeParameters: []
   upperBounds: [
-    A
+    KtUsualClassType:
+      type: A
+      annotationsList: []
+      ownTypeArguments: []
   ]
   variance: INVARIANT
   getContainingModule: KtSourceModule "Sources of main"
@@ -54,7 +60,9 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: J
+  returnType: KtTypeParameterType:
+    type: J
+    annotationsList: []
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(J)
@@ -74,7 +82,9 @@ KtFunctionSymbol:
       name: j
       origin: SOURCE
       receiverParameter: null
-      returnType: J
+      returnType: KtTypeParameterType:
+        type: J
+        annotationsList: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
@@ -114,7 +124,9 @@ KtFunctionSymbol:
   name: foo
   origin: SOURCE
   receiverParameter: null
-  returnType: T
+  returnType: KtTypeParameterType:
+    type: T
+    annotationsList: []
   symbolKind: TOP_LEVEL
   typeParameters: [
     KtTypeParameterSymbol(T)
@@ -134,7 +146,9 @@ KtFunctionSymbol:
       name: j
       origin: SOURCE
       receiverParameter: null
-      returnType: T
+      returnType: KtTypeParameterType:
+        type: T
+        annotationsList: []
       symbolKind: LOCAL
       typeParameters: []
       getContainingModule: KtSourceModule "Sources of main"
