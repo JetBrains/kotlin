@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
+import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.JsFactories
@@ -90,7 +92,12 @@ class Fir2IrJsResultsConverter(
             hasErrors,
         ) { file ->
             val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
-            serializeSingleFirFile(firFile, components.session, components.scopeSession, metadataVersion)
+            serializeSingleFirFile(
+                firFile,
+                components.session,
+                components.scopeSession,
+                FirKLibSerializerExtension(components.session, metadataVersion, FirElementAwareSerializableStringTable())
+            )
         }
     }
 }
