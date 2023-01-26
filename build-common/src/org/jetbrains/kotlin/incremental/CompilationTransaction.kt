@@ -35,6 +35,16 @@ interface CompilationTransaction : Closeable {
      * Marks the transaction as successful, so it should not revert changes if it is able to perform revert.
      */
     fun markAsSuccessful()
+
+    /**
+     * A closeable object (caches manager) that is had to be closed on the transaction close
+     */
+    var cachesManager: Closeable?
+
+    /**
+     * A throwable that was thrown during the transaction execution
+     */
+    var executionThrowable: Throwable?
 }
 
 fun CompilationTransaction.write(file: Path, writeAction: () -> Unit) {
@@ -55,6 +65,22 @@ fun CompilationTransaction.writeBytes(file: Path, array: ByteArray) {
     }
 }
 
+inline fun <R> CompilationTransaction.runWithin(
+    exceptionTransformer: (Throwable) -> R = { throw it },
+    body: (CompilationTransaction) -> R
+): R {
+    return runCatching {
+        use {
+            try {
+                body(this)
+            } catch (t: Throwable) {
+                executionThrowable = t
+                throw t
+            }
+        }
+    }.recover { exceptionTransformer(it) }.getOrThrow() // some exceptions may be transformed into results
+}
+
 /**
  * A dummy implementation of compilation transaction
  */
@@ -73,10 +99,21 @@ class DummyCompilationTransaction : CompilationTransaction {
         // do nothing
     }
 
-    override fun close() {
-        // do nothing
-    }
+    override var cachesManager: Closeable? = null
 
+    override var executionThrowable: Throwable? = null
+
+    override fun close() {
+        try {
+            cachesManager?.close()
+        } catch (t: Throwable) {
+            if (executionThrowable != null) {
+                executionThrowable?.addSuppressed(CachesManagerCloseException(t))
+            } else {
+                throw CachesManagerCloseException(t)
+            }
+        }
+    }
 }
 
 /**
@@ -173,12 +210,30 @@ class RecoverableCompilationTransaction(
         successful = true
     }
 
+    override var cachesManager: Closeable? = null
+
+    override var executionThrowable: Throwable? = null
+
     override fun close() {
-        if (successful) {
-            cleanupStash()
-        } else {
-            revertChanges()
-            cleanupStash()
+        val mainException = runCatching {
+            cachesManager?.close()
+        }.exceptionOrNull()?.run {
+            successful = false
+            val exception = CachesManagerCloseException(this)
+            executionThrowable?.addSuppressed(exception)
+            executionThrowable ?: exception
+        }
+
+        try {
+            if (successful) {
+                cleanupStash()
+            } else {
+                revertChanges()
+                cleanupStash()
+            }
+        } catch (t: Throwable) {
+            mainException?.addSuppressed(t)
+            throw mainException ?: t
         }
     }
 }
