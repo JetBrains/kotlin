@@ -65,34 +65,3 @@ modules.forEach { module ->
 project.extensions.github_revision = githubRevision
 project.extensions.kotlin_root = kotlinRootDir
 project.extensions.kotlin_libs = kotlinLibsDir
-
-// TODO: Eliminate this workaround when KT-52977 gets fixed in the Kotlin compiler used in Dokka
-final List<File> enumsToComment = [
-        "$kotlinRootDir/libraries/stdlib/jdk7/src/kotlin/io/path/PathWalkOption.kt",
-        "$kotlinRootDir/libraries/stdlib/jdk7/src/kotlin/io/path/CopyActionResult.kt",
-        "$kotlinRootDir/libraries/stdlib/jdk7/src/kotlin/io/path/OnErrorResult.kt",
-].collect { new File(it) }
-
-project.extensions.commentOutSinceKotlinForNewEnums = {
-  for (file in enumsToComment) {
-    final List<String> lines = file.readLines()
-    for (def i = 0; i < lines.size(); i++) {
-      if (lines[i].startsWith("@SinceKotlin")) {
-        lines[i] = "//" + lines[i]
-      }
-    }
-    file.write(String.join("\n", lines))
-  }
-}
-
-project.extensions.uncommentSinceKotlinForNewEnums = {
-  for (file in enumsToComment) {
-    final List<String> lines = file.readLines()
-    for (def i = 0; i < lines.size(); i++) {
-      if (lines[i].startsWith("//@SinceKotlin")) {
-        lines[i] = lines[i].substring(2)
-      }
-    }
-    file.write(String.join("\n", lines))
-  }
-}
