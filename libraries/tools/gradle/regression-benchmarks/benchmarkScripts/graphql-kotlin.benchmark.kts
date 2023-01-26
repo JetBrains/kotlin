@@ -9,8 +9,8 @@
 @file:BenchmarkProject(
     name = "graphql-kotlin",
     gitUrl = "https://github.com/ExpediaGroup/graphql-kotlin.git",
-    gitCommitSha = "fd1e9063f3aae144e099cdcfa69a4416fa434fb2",
-    stableKotlinVersion = "1.7.20",
+    gitCommitSha = "46a7c7704c31ee3aaf514d764f6101056c340b0a",
+    stableKotlinVersion = "1.8.0",
 )
 
 import java.io.File
@@ -69,7 +69,6 @@ runBenchmarks(
             title = "Dry run configuration time"
             useGradleArgs("--no-build-cache", "-m")
 
-            iterations = 20
             runTasks("assemble")
         }
 
@@ -77,7 +76,6 @@ runBenchmarks(
             title = "No-op configuration time"
             useGradleArgs("--no-build-cache")
 
-            iterations = 20
             runTasks("help")
         }
 
@@ -85,7 +83,6 @@ runBenchmarks(
             title = "UP-TO-DATE configuration time"
             useGradleArgs("--no-build-cache")
 
-            iterations = 20
             runTasks("assemble")
         }
     }
