@@ -29,21 +29,17 @@ internal class SymbolLightParameterForReceiver private constructor(
     methodName: String,
     method: SymbolLightMethodBase,
 ) : SymbolLightParameterBase(method) {
-    private inline fun <T> withReceiverSymbol(crossinline action: context(KtAnalysisSession) (KtReceiverParameterSymbol) -> T): T {
-        return analyzeForLightClasses(ktModule) {
-            action(this, receiverPointer.restoreSymbolOrThrowIfDisposed())
-        }
-    }
+    private inline fun <T> withReceiverSymbol(crossinline action: context(KtAnalysisSession) (KtReceiverParameterSymbol) -> T): T =
+        receiverPointer.withSymbol(ktModule, action)
 
     companion object {
         fun tryGet(
             callableSymbolPointer: KtSymbolPointer<KtCallableSymbol>,
             method: SymbolLightMethodBase
-        ): SymbolLightParameterForReceiver? = analyzeForLightClasses(method.ktModule) {
-            val callableSymbol = callableSymbolPointer.restoreSymbolOrThrowIfDisposed()
-            if (callableSymbol !is KtNamedSymbol) return@analyzeForLightClasses null
-            if (!callableSymbol.isExtension) return@analyzeForLightClasses null
-            val receiverSymbol = callableSymbol.receiverParameter ?: return@analyzeForLightClasses null
+        ): SymbolLightParameterForReceiver? = callableSymbolPointer.withSymbol(method.ktModule) { callableSymbol ->
+            if (callableSymbol !is KtNamedSymbol) return@withSymbol null
+            if (!callableSymbol.isExtension) return@withSymbol null
+            val receiverSymbol = callableSymbol.receiverParameter ?: return@withSymbol null
 
             SymbolLightParameterForReceiver(
                 receiverPointer = receiverSymbol.createPointer(),

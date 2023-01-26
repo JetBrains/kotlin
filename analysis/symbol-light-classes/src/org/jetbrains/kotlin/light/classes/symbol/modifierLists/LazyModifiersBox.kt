@@ -12,10 +12,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
-import org.jetbrains.kotlin.light.classes.symbol.restoreSymbolOrThrowIfDisposed
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
+import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.concurrent.atomic.AtomicReference
 
@@ -54,8 +53,8 @@ internal class LazyModifiersBox(
             ktModule: KtModule,
             declarationPointer: KtSymbolPointer<KtSymbolWithVisibility>,
         ): PersistentMap<String, Boolean> {
-            val visibility = analyzeForLightClasses(ktModule) {
-                declarationPointer.restoreSymbolOrThrowIfDisposed().toPsiVisibilityForMember()
+            val visibility = declarationPointer.withSymbol(ktModule) {
+                it.toPsiVisibilityForMember()
             }
 
             return VISIBILITY_MODIFIERS_MAP.with(visibility)
@@ -65,8 +64,8 @@ internal class LazyModifiersBox(
             ktModule: KtModule,
             declarationPointer: KtSymbolPointer<KtSymbolWithModality>,
         ): PersistentMap<String, Boolean> {
-            val modality = analyzeForLightClasses(ktModule) {
-                declarationPointer.restoreSymbolOrThrowIfDisposed().computeSimpleModality()
+            val modality = declarationPointer.withSymbol(ktModule) {
+                it.computeSimpleModality()
             }
 
             return MODALITY_MODIFIERS_MAP.with(modality)
