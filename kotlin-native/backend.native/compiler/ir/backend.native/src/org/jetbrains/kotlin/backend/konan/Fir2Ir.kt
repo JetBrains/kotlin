@@ -61,12 +61,16 @@ internal fun PhaseContext.fir2Ir(
                 lookupTracker = LookupTracker.DO_NOTHING
         )
         dependencies += moduleDescriptor
-        moduleDescriptor.setDependencies(ArrayList(dependencies))
 
         val isBuiltIns = moduleDescriptor.isNativeStdlib()
         if (isBuiltIns) builtInsModule = moduleDescriptor.builtIns
 
         moduleDescriptor
+    }
+
+    librariesDescriptors.forEach { moduleDescriptor ->
+        // Yes, just to all of them.
+        moduleDescriptor.setDependencies(ArrayList(dependencies))
     }
 
     val fir2irResult = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
