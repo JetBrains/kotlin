@@ -223,6 +223,13 @@ class LlvmOptimizationPipeline(
         LLVMPassManagerBuilderSetOptLevel(passBuilder, config.optimizationLevel.value)
         LLVMPassManagerBuilderSetSizeLevel(passBuilder, config.sizeLevel.value)
 
+        config.inlineThreshold?.let { threshold ->
+            LLVMPassManagerBuilderUseInlinerWithThreshold(passBuilder, threshold)
+        }
+
+        if (config.makeDeclarationsHidden) {
+            makeVisibilityHiddenLikeLlvmInternalizePass(llvmModule)
+        }
         when (config.sanitizer) {
             null -> {}
             SanitizerKind.ADDRESS -> TODO("Address sanitizer is not supported yet")
@@ -237,13 +244,9 @@ class LlvmOptimizationPipeline(
 
     fun runModulePhases() {
         init()
-        populateBasicPhases()
         LLVMKotlinAddTargetLibraryInfoWrapperPass(modulePasses, config.targetTriple)
         // TargetTransformInfo pass.
         LLVMAddAnalysisPasses(targetMachine, modulePasses)
-        config.inlineThreshold?.let { threshold ->
-            LLVMPassManagerBuilderUseInlinerWithThreshold(passBuilder, threshold)
-        }
         if (config.objCPasses) {
             // Lower ObjC ARC intrinsics (e.g. `@llvm.objc.clang.arc.use(...)`).
             // While Kotlin/Native codegen itself doesn't produce these intrinsics, they might come
@@ -252,6 +255,7 @@ class LlvmOptimizationPipeline(
             LLVMAddObjCARCContractPass(modulePasses)
         }
         LLVMPassManagerBuilderPopulateModulePassManager(passBuilder, modulePasses)
+        populateBasicPhases()
         logger?.log {
             """
             Running LLVM optimizations with the following parameters:
@@ -268,12 +272,8 @@ class LlvmOptimizationPipeline(
 
     fun runLTOPhases() {
         init()
-        populateBasicPhases()
         if (config.internalize) {
             LLVMAddInternalizePass(modulePasses, 0)
-        }
-        if (config.makeDeclarationsHidden) {
-            makeVisibilityHiddenLikeLlvmInternalizePass(llvmModule)
         }
         if (config.globalDce) {
             LLVMAddGlobalDCEPass(modulePasses)
@@ -281,6 +281,7 @@ class LlvmOptimizationPipeline(
 
         // Pipeline that is similar to `llvm-lto`.
         LLVMPassManagerBuilderPopulateLTOPassManager(passBuilder, modulePasses, Internalize = 0, RunInliner = 1)
+        populateBasicPhases()
         LLVMRunPassManager(modulePasses, llvmModule)
     }
 
