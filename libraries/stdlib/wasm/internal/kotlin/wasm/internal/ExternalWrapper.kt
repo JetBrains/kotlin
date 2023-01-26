@@ -139,6 +139,22 @@ private fun Any.asWasmExternRef(): ExternalInterfaceType =
 @JsFun("(ref) => ref == null")
 internal external fun isNullish(ref: ExternalInterfaceType?): Boolean
 
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+/*
+* Compiler generates inplace next code:
+* ```
+* block (result anyref) {
+*     local.get 0
+*     extern.internalize
+*     br_on_non_data_fail 0
+*     br_on_cast_fail 0 (type $kotlin.Any)
+*     return
+* }
+* ```
+*/
+internal fun returnArgumentIfItIsKotlinAny(ref: ExternalInterfaceType): Unit = implementedAsIntrinsic
+
 internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // TODO rewrite it so to get something like:
     // block {
@@ -147,13 +163,7 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     //     return
     // }
     // If ref is an instance of kotlin class -- return it casted to Any
-    val refAsAnyref = ref.externAsWasmAnyref()
-    if (wasm_ref_is_data_deprecated(refAsAnyref)) {
-        val refAsDataRef = wasm_ref_as_data_deprecated(refAsAnyref)
-        if (wasm_ref_test_deprecated<Any>(refAsDataRef)) {
-            return wasm_ref_cast_deprecated<Any>(refAsDataRef)
-        }
-    }
+    returnArgumentIfItIsKotlinAny(ref)
 
     // If we have Null in notNullRef -- return null
     // If we already have a box -- return it,

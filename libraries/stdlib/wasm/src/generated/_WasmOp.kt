@@ -243,7 +243,6 @@ internal annotation class WasmOp(val name: String) {
         const val ARRAY_COPY = "ARRAY_COPY"
         const val ARRAY_NEW_DATA = "ARRAY_NEW_DATA"
         const val ARRAY_NEW_FIXED = "ARRAY_NEW_FIXED"
-        const val ARRAY_NEW_ELEM = "ARRAY_NEW_ELEM"
         const val I31_NEW = "I31_NEW"
         const val I31_GET_S = "I31_GET_S"
         const val I31_GET_U = "I31_GET_U"
@@ -252,9 +251,11 @@ internal annotation class WasmOp(val name: String) {
         const val EXTERN_EXTERNALIZE = "EXTERN_EXTERNALIZE"
         const val REF_TEST_DEPRECATED = "REF_TEST_DEPRECATED"
         const val REF_CAST_DEPRECATED = "REF_CAST_DEPRECATED"
-        const val REF_IS_DATA_DEPRECATED = "REF_IS_DATA_DEPRECATED"
-        const val REF_AS_DATA_DEPRECATED = "REF_AS_DATA_DEPRECATED"
         const val BR_ON_CAST_FAIL_DEPRECATED = "BR_ON_CAST_FAIL_DEPRECATED"
+        const val BR_ON_NON_DATA_DEPRECATED = "BR_ON_NON_DATA_DEPRECATED"
         const val GET_UNIT = "GET_UNIT"
+        const val PSEUDO_COMMENT_PREVIOUS_INSTR = "PSEUDO_COMMENT_PREVIOUS_INSTR"
+        const val PSEUDO_COMMENT_GROUP_START = "PSEUDO_COMMENT_GROUP_START"
+        const val PSEUDO_COMMENT_GROUP_END = "PSEUDO_COMMENT_GROUP_END"
     }
 }
