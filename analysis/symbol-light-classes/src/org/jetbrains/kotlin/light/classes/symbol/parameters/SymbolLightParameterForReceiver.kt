@@ -15,8 +15,11 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.*
+import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
@@ -69,14 +72,17 @@ internal class SymbolLightParameterForReceiver private constructor(
         SymbolLightClassModifierList(
             containingDeclaration = this,
             annotationsBox = LazyAnnotationsBox(
-                annotationsProvider = SymbolAnnotationsProvider(ktModule, receiverPointer),
-                additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
-                    NullabilityAnnotationsProvider {
-                        withReceiverSymbol { receiver ->
-                            receiver.type.nullabilityType
-                        }
-                    },
-                )
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = receiverPointer,
+                    annotationUseSiteTarget = AnnotationUseSiteTarget.RECEIVER,
+                    acceptAnnotationsWithoutSite = true,
+                ),
+                additionalAnnotationsProvider = NullabilityAnnotationsProvider {
+                    withReceiverSymbol { receiver ->
+                        receiver.type.nullabilityType
+                    }
+                },
             ),
         )
     }
