@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicReference
 internal class LazyAnnotationsBox(
     private val annotationsProvider: AnnotationsProvider,
     private val additionalAnnotationsProvider: AdditionalAnnotationsProvider = EmptyAdditionalAnnotationsProvider,
+    private val annotationFilter: AnnotationFilter = AlwaysAllowedAnnotationFilter,
 ) : AnnotationsBox {
     private val annotationsArray: AtomicReference<Array<PsiAnnotation>?> = AtomicReference()
     private var specialAnnotations: SmartList<PsiAnnotation>? = null
@@ -42,8 +43,9 @@ internal class LazyAnnotationsBox(
             val foundQualifiers = annotations.mapNotNullTo(hashSetOf()) { it.qualifiedName }
             additionalAnnotationsProvider.addAllAnnotations(annotations, foundQualifiers, owner)
 
+            val resultAnnotations = annotationFilter.filtered(annotations)
             specialAnnotations = null
-            setAnnotationsArray(if (annotations.isNotEmpty()) annotations.toTypedArray() else PsiAnnotation.EMPTY_ARRAY)
+            setAnnotationsArray(if (resultAnnotations.isNotEmpty()) resultAnnotations.toTypedArray() else PsiAnnotation.EMPTY_ARRAY)
         }
 
         return valueToReturn
@@ -62,6 +64,8 @@ internal class LazyAnnotationsBox(
     ): PsiAnnotation? = findAnnotation(owner, qualifiedName, withAdditionalAnnotations = true)
 
     fun findAnnotation(owner: PsiModifierList, qualifiedName: String, withAdditionalAnnotations: Boolean): PsiAnnotation? {
+        if (!annotationFilter.isAllowed(qualifiedName)) return null
+
         annotationsArray.get()?.let { array ->
             return array.find { it.qualifiedName == qualifiedName }
         }
@@ -108,6 +112,8 @@ internal class LazyAnnotationsBox(
     }
 
     override fun hasAnnotation(owner: PsiModifierList, qualifiedName: String): Boolean {
+        if (!annotationFilter.isAllowed(qualifiedName)) return false
+
         annotationsArray.get()?.let { array ->
             return array.any { it.qualifiedName == qualifiedName }
         }
