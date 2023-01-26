@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import kotlin.io.path.appendText
+import kotlin.io.path.writeText
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -25,6 +26,10 @@ class MppDeprecatedPropertiesIt : KGPBaseTest() {
                     separator = System.lineSeparator(),
                 ) { (prop, value) -> "$prop=$value" }
             )
+            checkDeprecations(isDeprecationExpected = true)
+
+            // remove the MPP plugin from the top-level project and check the warnings are still reported in subproject
+            this.buildGradleKts.writeText("")
             checkDeprecations(isDeprecationExpected = true)
 
             this.gradleProperties.appendText("kotlin.mpp.deprecatedProperties.nowarn=true${System.lineSeparator()}")
