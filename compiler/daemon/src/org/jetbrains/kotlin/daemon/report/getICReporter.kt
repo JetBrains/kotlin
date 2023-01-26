@@ -60,6 +60,8 @@ fun getBuildReporter(
             }
             CompilationResultCategory.BUILD_METRICS -> {
             }
+            CompilationResultCategory.COMPILED_SOURCES -> {
+            }
         }
     }
     val areBuildMetricsNeeded = CompilationResultCategory.BUILD_METRICS in requestedResults

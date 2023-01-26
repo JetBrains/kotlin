@@ -29,5 +29,6 @@ enum class CompilationResultCategory(val code: Int) {
     IC_COMPILE_ITERATION(0),
     BUILD_REPORT_LINES(1),
     VERBOSE_BUILD_REPORT_LINES(2),
-    BUILD_METRICS(3)
+    BUILD_METRICS(3),
+    COMPILED_SOURCES(4)
 }
