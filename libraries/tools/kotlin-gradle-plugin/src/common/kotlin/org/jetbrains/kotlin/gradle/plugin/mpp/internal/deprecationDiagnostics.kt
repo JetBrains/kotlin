@@ -38,12 +38,13 @@ internal fun checkAndReportDeprecatedNativeTargets(project: Project) {
  * Warnings have to be reported only for successfully evaluated projects without errors.
  */
 internal fun checkAndReportDeprecatedMppProperties(project: Project) {
-    if (project !== project.rootProject) return
-
     val projectProperties = project.kotlinPropertiesProvider
     if (projectProperties.ignoreHmppDeprecationWarnings == true) return
 
     val warnings = deprecatedMppProperties.mapNotNull { propertyName ->
+        if (propertyName in propertiesSetByPlugin && projectProperties.mpp13XFlagsSetByPlugin)
+            return@mapNotNull null
+
         @OptIn(UnsafeApi::class)
         projectProperties.property(propertyName)?.let { getMppDeprecationWarningMessageForProperty(propertyName) }
     }
@@ -62,6 +63,11 @@ internal val deprecatedMppProperties: List<String> = listOf(
     KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA,
     KOTLIN_MPP_HIERARCHICAL_STRUCTURE_BY_DEFAULT,
     KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT,
+    KOTLIN_NATIVE_DEPENDENCY_PROPAGATION,
+)
+
+private val propertiesSetByPlugin: Set<String> = setOf(
+    KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA,
     KOTLIN_NATIVE_DEPENDENCY_PROPAGATION,
 )
 
