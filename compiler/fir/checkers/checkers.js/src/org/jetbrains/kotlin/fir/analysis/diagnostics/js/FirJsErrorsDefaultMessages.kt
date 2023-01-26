@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_SETTER_WRONG_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_JS_EXPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS
@@ -162,6 +163,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.RENDER_TYPE,
         )
         map.put(EXTERNAL_INTERFACE_AS_CLASS_LITERAL, "Can't refer to external interface from class literal")
+        map.put(NESTED_JS_EXPORT, "@JsExport is only allowed on files and top-level declarations")
 
         map.checkMissingMessages(FirJsErrors)
     }

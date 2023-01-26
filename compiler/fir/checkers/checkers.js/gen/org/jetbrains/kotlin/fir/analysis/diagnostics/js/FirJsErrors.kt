@@ -78,6 +78,9 @@ object FirJsErrors {
     val UNCHECKED_CAST_TO_EXTERNAL_INTERFACE by error2<KtElement, ConeKotlinType, ConeKotlinType>()
     val EXTERNAL_INTERFACE_AS_CLASS_LITERAL by error0<KtElement>()
 
+    // Export
+    val NESTED_JS_EXPORT by error0<KtElement>()
+
     // Dynamics
     val DELEGATION_BY_DYNAMIC by error0<KtElement>()
 

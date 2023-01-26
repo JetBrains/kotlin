@@ -4137,6 +4137,11 @@ internal class ExternalInterfaceAsClassLiteralImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ExternalInterfaceAsClassLiteral(), KtAbstractFirDiagnostic<KtElement>
 
+internal class NestedJsExportImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NestedJsExport(), KtAbstractFirDiagnostic<KtElement>
+
 internal class DelegationByDynamicImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

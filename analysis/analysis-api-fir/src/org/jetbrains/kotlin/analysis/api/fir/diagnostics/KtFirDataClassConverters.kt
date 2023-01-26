@@ -4915,6 +4915,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.NESTED_JS_EXPORT) { firDiagnostic ->
+        NestedJsExportImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.DELEGATION_BY_DYNAMIC) { firDiagnostic ->
         DelegationByDynamicImpl(
             firDiagnostic as KtPsiDiagnostic,

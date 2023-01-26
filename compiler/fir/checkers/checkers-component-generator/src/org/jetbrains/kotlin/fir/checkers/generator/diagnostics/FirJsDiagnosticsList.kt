@@ -95,6 +95,10 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val EXTERNAL_INTERFACE_AS_CLASS_LITERAL by error<KtElement>()
     }
 
+    val EXPORT by object : DiagnosticGroup("Export") {
+        val NESTED_JS_EXPORT by error<KtElement>()
+    }
+
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {
         val DELEGATION_BY_DYNAMIC by error<KtElement>()
     }
