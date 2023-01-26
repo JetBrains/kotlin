@@ -44,6 +44,9 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
+/**
+ * @see org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox.Companion
+ */
 object CompilerRequiredAnnotationsHelper {
     internal val REQUIRED_ANNOTATIONS_WITH_ARGUMENTS: Set<ClassId> = setOf(
         Deprecated,
