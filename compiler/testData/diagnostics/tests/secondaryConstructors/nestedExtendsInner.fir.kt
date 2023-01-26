@@ -2,6 +2,6 @@ class A {
     open inner class Inner
 
     class Nested : Inner {
-        constructor()
+        <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
     }
 }

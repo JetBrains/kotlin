@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguityError
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
@@ -59,11 +59,8 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker() {
             }
         } else {
             for (it in otherConstructors) {
-                val callee = it.delegatedConstructor?.calleeReference
-
                 // couldn't find proper super() constructor implicitly
-                if (
-                    callee is FirErrorNamedReference && callee.diagnostic is ConeAmbiguityError &&
+                if (it.delegatedConstructor?.calleeReference is FirDiagnosticHolder &&
                     it.delegatedConstructor?.source?.kind is KtFakeSourceElementKind
                 ) {
                     reporter.reportOn(it.source, FirErrors.EXPLICIT_DELEGATION_CALL_REQUIRED, context)

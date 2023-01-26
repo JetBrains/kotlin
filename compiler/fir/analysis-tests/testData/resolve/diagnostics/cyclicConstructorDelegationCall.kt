@@ -63,5 +63,5 @@ open class M {
 }
 
 class U : M {
-    constructor()
+    <!EXPLICIT_DELEGATION_CALL_REQUIRED!>constructor()<!>
 }
