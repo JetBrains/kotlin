@@ -64,3 +64,7 @@ fun Project.projectModel(code: KotlinPm20ProjectExtension.() -> Unit) {
     val extension = project.extensions.getByType(KotlinPm20ProjectExtension::class.java)
     extension.code()
 }
+
+fun Project.enableCompatibilityMetadataVariant(enabled: Boolean = true) {
+    propertiesExtension.set("kotlin.mpp.enableCompatibilityMetadataVariant", enabled.toString())
+}
