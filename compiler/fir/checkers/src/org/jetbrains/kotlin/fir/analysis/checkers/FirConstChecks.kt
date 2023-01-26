@@ -144,7 +144,7 @@ internal fun checkConstantArguments(
         }
         expression is FirQualifiedAccessExpression -> {
             val expressionType = expression.typeRef.coneType
-            if (expressionType.isReflectFunctionalType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
+            if (expressionType.isReflectFunctionType(session) || expressionType.isKProperty(session) || expressionType.isKMutableProperty(session)) {
                 return checkConstantArguments(expression.dispatchReceiver, session)
             }
 

@@ -487,7 +487,7 @@ internal class KtSymbolByFirBuilder constructor(
         }
 
         private fun hasFunctionalClassId(coneType: ConeClassLikeTypeImpl): Boolean {
-            return coneType.isSomeFunctionalType(analysisSession.firResolveSession.useSiteFirSession)
+            return coneType.isSomeFunctionType(analysisSession.firResolveSession.useSiteFirSession)
         }
 
         fun buildKtType(coneType: FirTypeRef): KtType {

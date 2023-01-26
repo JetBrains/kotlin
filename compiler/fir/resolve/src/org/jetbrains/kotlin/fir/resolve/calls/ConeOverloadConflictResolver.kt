@@ -94,7 +94,7 @@ class ConeOverloadConflictResolver(
         }
 
         if (discriminateSuspendConversions) {
-            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesFunctionalConversion }
+            val filtered = candidates.filterTo(mutableSetOf()) { !it.usesFunctionConversion }
             when (filtered.size) {
                 1 -> return filtered
                 0, candidates.size -> {

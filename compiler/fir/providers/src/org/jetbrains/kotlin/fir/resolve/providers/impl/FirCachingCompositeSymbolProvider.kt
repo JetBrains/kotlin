@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.functionalTypeService
+import org.jetbrains.kotlin.fir.types.functionTypeService
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -116,7 +116,7 @@ class FirCachingCompositeSymbolProvider(
     }
 
     private fun isNameForFunctionClass(classId: ClassId): Boolean {
-        return session.functionalTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
+        return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
     }
 
     @OptIn(FirSymbolProviderInternals::class)

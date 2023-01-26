@@ -40,7 +40,7 @@ open class FirBuiltinSymbolProvider(
     val moduleData: FirModuleData,
     val kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSymbolProvider(session) {
-    private val syntheticFunctionalInterfaceProvider = FirBuiltinSyntheticFunctionalInterfaceProvider(
+    private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
         session,
         moduleData,
         kotlinScopeProvider
@@ -68,7 +68,7 @@ open class FirBuiltinSymbolProvider(
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         return allPackageFragments[classId.packageFqName]?.firstNotNullOfOrNull {
             it.getClassLikeSymbolByClassId(classId)
-        } ?: syntheticFunctionalInterfaceProvider.getClassLikeSymbolByClassId(classId)
+        } ?: syntheticFunctionInterfaceProvider.getClassLikeSymbolByClassId(classId)
     }
 
     override fun computePackageSetWithTopLevelCallables(): Set<String> =

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ArgumentTypeMismatch
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.CheckerSink
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
-import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.types.*
@@ -51,7 +51,7 @@ fun Candidate.preprocessLambdaArgument(
     val anonymousFunction = argument.anonymousFunction
 
     val resolvedArgument =
-        extractLambdaInfoFromFunctionalType(
+        extractLambdaInfoFromFunctionType(
             expectedType,
             expectedTypeRef,
             anonymousFunction,
@@ -63,8 +63,8 @@ fun Candidate.preprocessLambdaArgument(
 
     if (expectedType != null) {
         val parameters = resolvedArgument.parameters
-        val lambdaType = createFunctionalType(
-            resolvedArgument.expectedFunctionalTypeKind ?: FunctionalTypeKind.Function,
+        val lambdaType = createFunctionType(
+            resolvedArgument.expectedFunctionTypeKind ?: FunctionTypeKind.Function,
             if (resolvedArgument.coerceFirstParameterToExtensionReceiver) parameters.drop(1) else parameters,
             resolvedArgument.receiver,
             resolvedArgument.returnType,
@@ -107,8 +107,8 @@ private fun extractLambdaInfo(
     session: FirSession,
     candidate: Candidate?
 ): ResolvedLambdaAtom {
-    val expectedFunctionalKind = expectedType?.lowerBoundIfFlexible()?.functionalTypeKind(session)
-    val isFunctionSupertype = expectedFunctionalKind != null
+    val expectedFunctionKind = expectedType?.lowerBoundIfFlexible()?.functionTypeKind(session)
+    val isFunctionSupertype = expectedFunctionKind != null
 
     val typeVariable = ConeTypeVariableForLambdaReturnType(argument, "_L")
 
@@ -133,7 +133,7 @@ private fun extractLambdaInfo(
     return ResolvedLambdaAtom(
         argument,
         expectedType,
-        expectedFunctionalKind,
+        expectedFunctionKind,
         receiverType,
         contextReceivers,
         parameters,

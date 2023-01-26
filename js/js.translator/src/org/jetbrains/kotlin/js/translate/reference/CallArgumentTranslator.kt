@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.js.translate.reference
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.builtins.getFunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -185,7 +185,7 @@ class CallArgumentTranslator private constructor(
             val parenthisedArgumentExpression = arg.getArgumentExpression()
 
             val param = argsToParameters[arg]!!.original
-            val isLambda = resolvedCall.resultingDescriptor.let { it.getFunctionalClassKind() != null || it is FunctionInvokeDescriptor }
+            val isLambda = resolvedCall.resultingDescriptor.let { it.getFunctionTypeKind() != null || it is FunctionInvokeDescriptor }
             val parameterType = if (!isLambda) param.varargElementType ?: param.type else context.currentModule.builtIns.anyType
 
             var argJs = Translation.translateAsExpression(parenthisedArgumentExpression!!, argumentContext)

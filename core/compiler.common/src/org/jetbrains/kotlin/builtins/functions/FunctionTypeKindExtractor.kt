@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.name.FqName
 @RequiresOptIn
 annotation class AllowedToUsedOnlyInK1
 
-class FunctionalTypeKindExtractor(kinds: List<FunctionalTypeKind>) {
+class FunctionTypeKindExtractor(kinds: List<FunctionTypeKind>) {
     companion object {
         /**
          * This instance should be used only in:
@@ -19,19 +19,19 @@ class FunctionalTypeKindExtractor(kinds: List<FunctionalTypeKind>) {
          */
         @JvmStatic
         @AllowedToUsedOnlyInK1
-        val Default = FunctionalTypeKindExtractor(
+        val Default = FunctionTypeKindExtractor(
             listOf(
-                FunctionalTypeKind.Function,
-                FunctionalTypeKind.SuspendFunction,
-                FunctionalTypeKind.KFunction,
-                FunctionalTypeKind.KSuspendFunction,
+                FunctionTypeKind.Function,
+                FunctionTypeKind.SuspendFunction,
+                FunctionTypeKind.KFunction,
+                FunctionTypeKind.KSuspendFunction,
             )
         )
     }
 
     private val knownKindsByPackageFqName = kinds.groupBy { it.packageFqName }
 
-    fun getFunctionalClassKind(packageFqName: FqName, className: String): FunctionalTypeKind? {
+    fun getFunctionalClassKind(packageFqName: FqName, className: String): FunctionTypeKind? {
         return getFunctionalClassKindWithArity(packageFqName, className)?.kind
     }
 
@@ -49,7 +49,7 @@ class FunctionalTypeKindExtractor(kinds: List<FunctionalTypeKind>) {
         return packageFqName in knownKindsByPackageFqName
     }
 
-    data class KindWithArity(val kind: FunctionalTypeKind, val arity: Int)
+    data class KindWithArity(val kind: FunctionTypeKind, val arity: Int)
 
     private fun toInt(s: String): Int? {
         if (s.isEmpty()) return null

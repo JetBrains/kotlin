@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
-import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionalType
+import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
@@ -763,7 +763,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         data: ResolutionMode
     ): FirAnonymousFunction {
         val resolvedLambdaAtom = (expectedTypeRef as? FirResolvedTypeRef)?.let {
-            extractLambdaInfoFromFunctionalType(
+            extractLambdaInfoFromFunctionType(
                 it.type, it, anonymousFunction, returnTypeVariable = null, components, candidate = null, duringCompletion = false
             )
         }
@@ -806,7 +806,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             session.lookupTracker?.recordTypeResolveAsLookup(lambda.returnTypeRef, lambda.source, context.file.source)
         }
 
-        lambda.replaceTypeRef(lambda.constructFunctionalTypeRef(session, resolvedLambdaAtom?.expectedFunctionalTypeKind))
+        lambda.replaceTypeRef(lambda.constructFunctionTypeRef(session, resolvedLambdaAtom?.expectedFunctionTypeKind))
         session.lookupTracker?.recordTypeResolveAsLookup(lambda.typeRef, lambda.source, context.file.source)
         lambda.addReturnToLastStatementIfNeeded()
         return lambda
@@ -859,7 +859,7 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         lambda: FirAnonymousFunction
     ): List<FirValueParameter> {
         if (expectedType == null) return lambda.valueParameters
-        if (!expectedType.isNonReflectFunctionalType(session)) return lambda.valueParameters
+        if (!expectedType.isNonReflectFunctionType(session)) return lambda.valueParameters
         val parameterTypes = expectedType.typeArguments
             .mapTo(mutableListOf()) { it.type ?: session.builtinTypes.nullableAnyType.type }
             .also { it.removeLastOrNull() }

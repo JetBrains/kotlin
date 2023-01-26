@@ -5,30 +5,30 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKindExtractor
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
-import org.jetbrains.kotlin.fir.extensions.FirFunctionalTypeKindExtension
+import org.jetbrains.kotlin.fir.extensions.FirFunctionTypeKindExtension
 import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.functionalTypeKindExtensions
+import org.jetbrains.kotlin.fir.extensions.functionTypeKindExtensions
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 
-class FirFunctionalTypeKindServiceImpl(private val session: FirSession) : FirFunctionalTypeKindService() {
-    private val nonReflectKindsFromExtensions = mutableListOf<FunctionalTypeKind>()
+class FirFunctionTypeKindServiceImpl(private val session: FirSession) : FirFunctionTypeKindService() {
+    private val nonReflectKindsFromExtensions = mutableListOf<FunctionTypeKind>()
 
-    override val extractor: FunctionalTypeKindExtractor = run {
+    override val extractor: FunctionTypeKindExtractor = run {
         val kinds = buildList {
-            add(FunctionalTypeKind.Function)
-            add(FunctionalTypeKind.SuspendFunction)
-            add(FunctionalTypeKind.KFunction)
-            add(FunctionalTypeKind.KSuspendFunction)
+            add(FunctionTypeKind.Function)
+            add(FunctionTypeKind.SuspendFunction)
+            add(FunctionTypeKind.KFunction)
+            add(FunctionTypeKind.KSuspendFunction)
 
-            val registrar = object : FirFunctionalTypeKindExtension.FunctionalTypeKindRegistrar {
-                override fun registerKind(nonReflectKind: FunctionalTypeKind, reflectKind: FunctionalTypeKind) {
+            val registrar = object : FirFunctionTypeKindExtension.FunctionTypeKindRegistrar {
+                override fun registerKind(nonReflectKind: FunctionTypeKind, reflectKind: FunctionTypeKind) {
                     require(nonReflectKind.reflectKind() == reflectKind)
                     require(reflectKind.nonReflectKind() == nonReflectKind)
                     add(nonReflectKind)
@@ -37,7 +37,7 @@ class FirFunctionalTypeKindServiceImpl(private val session: FirSession) : FirFun
                 }
             }
 
-            for (extension in session.extensionService.functionalTypeKindExtensions) {
+            for (extension in session.extensionService.functionTypeKindExtensions) {
                 with(extension) { registrar.registerKinds() }
             }
         }.also { kinds ->
@@ -47,18 +47,18 @@ class FirFunctionalTypeKindServiceImpl(private val session: FirSession) : FirFun
             }
         }
 
-        FunctionalTypeKindExtractor(kinds)
+        FunctionTypeKindExtractor(kinds)
     }
 
-    override fun extractSingleSpecialKindForFunction(functionSymbol: FirFunctionSymbol<*>): FunctionalTypeKind? {
+    override fun extractSingleSpecialKindForFunction(functionSymbol: FirFunctionSymbol<*>): FunctionTypeKind? {
         if (nonReflectKindsFromExtensions.isEmpty()) {
-            return FunctionalTypeKind.SuspendFunction.takeIf { functionSymbol.isSuspend }
+            return FunctionTypeKind.SuspendFunction.takeIf { functionSymbol.isSuspend }
         }
 
         return extractAllSpecialKindsForFunction(functionSymbol).singleOrNull()
     }
 
-    override fun extractAllSpecialKindsForFunction(functionSymbol: FirFunctionSymbol<*>): List<FunctionalTypeKind> {
+    override fun extractAllSpecialKindsForFunction(functionSymbol: FirFunctionSymbol<*>): List<FunctionTypeKind> {
         return extractSpecialKindsImpl(
             functionSymbol,
             { isSuspend },
@@ -71,7 +71,7 @@ class FirFunctionalTypeKindServiceImpl(private val session: FirSession) : FirFun
         )
     }
 
-    override fun extractAllSpecialKindsForFunctionalTypeRef(typeRef: FirFunctionTypeRef): List<FunctionalTypeKind> {
+    override fun extractAllSpecialKindsForFunctionTypeRef(typeRef: FirFunctionTypeRef): List<FunctionTypeKind> {
         return extractSpecialKindsImpl(typeRef, { isSuspend }, { annotations.mapNotNull { it.toAnnotationClassId(session) } })
     }
 
@@ -79,10 +79,10 @@ class FirFunctionalTypeKindServiceImpl(private val session: FirSession) : FirFun
         source: T,
         isSuspend: T.() -> Boolean,
         annotations: T.() -> List<ClassId>
-    ): List<FunctionalTypeKind> {
+    ): List<FunctionTypeKind> {
         return buildList {
             if (source.isSuspend()) {
-                add(FunctionalTypeKind.SuspendFunction)
+                add(FunctionTypeKind.SuspendFunction)
             }
             if (nonReflectKindsFromExtensions.isNotEmpty()) {
                 for (annotationClassId in source.annotations()) {

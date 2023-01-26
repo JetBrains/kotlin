@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -88,9 +88,9 @@ fun FirAnonymousFunction.addReturnToLastStatementIfNeeded() {
 }
 
 /**
- * [kind] == null means that [FunctionalTypeKind.Function] will be used
+ * [kind] == null means that [FunctionTypeKind.Function] will be used
  */
-fun FirFunction.constructFunctionalType(kind: FunctionalTypeKind? = null): ConeLookupTagBasedType {
+fun FirFunction.constructFunctionType(kind: FunctionTypeKind? = null): ConeLookupTagBasedType {
     val receiverTypeRef = when (this) {
         is FirSimpleFunction -> receiverParameter
         is FirAnonymousFunction -> receiverParameter
@@ -107,28 +107,28 @@ fun FirFunction.constructFunctionalType(kind: FunctionalTypeKind? = null): ConeL
     }
     val rawReturnType = (this as FirCallableDeclaration).returnTypeRef.coneType
 
-    return createFunctionalType(
-        kind ?: FunctionalTypeKind.Function, parameters, receiverTypeRef?.coneType, rawReturnType,
+    return createFunctionType(
+        kind ?: FunctionTypeKind.Function, parameters, receiverTypeRef?.coneType, rawReturnType,
         contextReceivers = contextReceivers.map { it.typeRef.coneType }
     )
 }
 
 /**
- * [kind] == null means that [FunctionalTypeKind.Function] will be used
+ * [kind] == null means that [FunctionTypeKind.Function] will be used
  */
-fun FirAnonymousFunction.constructFunctionalTypeRef(session: FirSession, kind: FunctionalTypeKind? = null): FirResolvedTypeRef {
+fun FirAnonymousFunction.constructFunctionTypeRef(session: FirSession, kind: FunctionTypeKind? = null): FirResolvedTypeRef {
     var diagnostic: ConeDiagnostic? = null
-    val kinds = session.functionalTypeService.extractAllSpecialKindsForFunction(symbol)
+    val kinds = session.functionTypeService.extractAllSpecialKindsForFunction(symbol)
     val kindFromDeclaration = when(kinds.size) {
         0 -> null
         1 -> kinds.single()
         else -> {
-            diagnostic = ConeAmbiguousFunctionalTypeKinds(kinds)
-            FunctionalTypeKind.Function
+            diagnostic = ConeAmbiguousFunctionTypeKinds(kinds)
+            FunctionTypeKind.Function
         }
     }
-    val type = constructFunctionalType(kindFromDeclaration ?: kind)
-    val source = this@constructFunctionalTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
+    val type = constructFunctionType(kindFromDeclaration ?: kind)
+    val source = this@constructFunctionTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
     return if (diagnostic == null) {
         buildResolvedTypeRef {
             this.source = source
@@ -143,8 +143,8 @@ fun FirAnonymousFunction.constructFunctionalTypeRef(session: FirSession, kind: F
     }
 }
 
-fun createFunctionalType(
-    kind: FunctionalTypeKind,
+fun createFunctionType(
+    kind: FunctionTypeKind,
     parameters: List<ConeKotlinType>,
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
@@ -158,7 +158,7 @@ fun createFunctionalType(
             add(rawReturnType)
         }
 
-    val functionalTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
+    val functionTypeId = ClassId(kind.packageFqName, kind.numberedClassName(receiverAndParameterTypes.size - 1))
     val attributes = when {
         contextReceivers.isNotEmpty() -> ConeAttributes.create(
             buildList {
@@ -172,7 +172,7 @@ fun createFunctionalType(
         else -> ConeAttributes.Empty
     }
     return ConeClassLikeTypeImpl(
-        functionalTypeId.toLookupTag(),
+        functionTypeId.toLookupTag(),
         receiverAndParameterTypes.toTypedArray(),
         isNullable = false,
         attributes = attributes
@@ -592,7 +592,7 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
             result
         }
         // referenced function of a Kotlin function type
-        FirDeclarationOrigin.BuiltIns -> runIf(dispatchReceiverClassLookupTagOrNull()?.isSomeFunctionalType(session) == true) {
+        FirDeclarationOrigin.BuiltIns -> runIf(dispatchReceiverClassLookupTagOrNull()?.isSomeFunctionType(session) == true) {
             ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
         }
 

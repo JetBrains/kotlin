@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.diagnostics
 
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -143,7 +143,7 @@ object FirDiagnosticRenderers {
         }
     }
 
-    val FUNCTIONAL_TYPE_KIND = Renderer { kind: FunctionalTypeKind ->
+    val FUNCTIONAL_TYPE_KIND = Renderer { kind: FunctionTypeKind ->
         kind.prefixForTypeRender ?: kind.classNamePrefix
     }
 

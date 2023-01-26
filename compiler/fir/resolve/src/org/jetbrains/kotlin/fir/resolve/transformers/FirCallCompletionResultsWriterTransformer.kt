@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -561,7 +561,7 @@ class FirCallCompletionResultsWriterTransformer(
             // From the argument mapping, the expected type of this anonymous function would be:
             when {
                 // a built-in functional type, no-brainer
-                expectedArgumentType.isSomeFunctionalType(session) -> expectedArgumentType
+                expectedArgumentType.isSomeFunctionType(session) -> expectedArgumentType
                 // fun interface (a.k.a. SAM), then unwrap it and build a functional type from that interface function
                 expectedArgumentType is ConeClassLikeType -> {
                     val firRegularClass =
@@ -570,8 +570,8 @@ class FirCallCompletionResultsWriterTransformer(
                     firRegularClass?.let answer@{
                         val functionType = samResolver.getFunctionTypeForPossibleSamType(firRegularClass.defaultType())
                             ?: return@answer null
-                        val kind = functionType.functionalTypeKind(session) ?: FunctionalTypeKind.Function
-                        createFunctionalType(
+                        val kind = functionType.functionTypeKind(session) ?: FunctionTypeKind.Function
+                        createFunctionType(
                             kind,
                             functionType.typeArguments.dropLast(1).map { it as ConeKotlinType },
                             null,
@@ -617,9 +617,9 @@ class FirCallCompletionResultsWriterTransformer(
         }
 
         if (needUpdateLambdaType) {
-            val kind = expectedType?.functionalTypeKind(session)
-                ?: result.typeRef.coneTypeSafe<ConeClassLikeType>()?.functionalTypeKind(session)
-            result.replaceTypeRef(result.constructFunctionalTypeRef(session, kind))
+            val kind = expectedType?.functionTypeKind(session)
+                ?: result.typeRef.coneTypeSafe<ConeClassLikeType>()?.functionTypeKind(session)
+            result.replaceTypeRef(result.constructFunctionTypeRef(session, kind))
             session.lookupTracker?.recordTypeResolveAsLookup(result.typeRef, result.source, context.file.source)
         }
         // Have to delay this until the type is written to avoid adding a return if the type is Unit.

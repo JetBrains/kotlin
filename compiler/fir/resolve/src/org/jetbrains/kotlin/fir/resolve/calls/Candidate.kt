@@ -62,13 +62,13 @@ class Candidate(
     internal var callableReferenceAdaptation: CallableReferenceAdaptation? = null
         set(value) {
             field = value
-            usesFunctionalConversion = value?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
+            usesFunctionConversion = value?.suspendConversionStrategy is CallableReferenceConversionStrategy.CustomConversion
             if (value != null) {
                 numDefaults = value.defaults
             }
         }
 
-    var usesFunctionalConversion: Boolean = false
+    var usesFunctionConversion: Boolean = false
 
     var argumentMapping: LinkedHashMap<FirExpression, FirValueParameter>? = null
     var numDefaults: Int = 0

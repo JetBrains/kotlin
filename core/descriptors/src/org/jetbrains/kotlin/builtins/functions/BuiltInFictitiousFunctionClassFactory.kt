@@ -38,7 +38,7 @@ class BuiltInFictitiousFunctionClassFactory(
         val string = name.asString()
         return (string.startsWith("Function") || string.startsWith("KFunction") ||
                 string.startsWith("SuspendFunction") || string.startsWith("KSuspendFunction")) // an optimization
-               && FunctionalTypeKindExtractor.Default.getFunctionalClassKindWithArity(packageFqName, string) != null
+               && FunctionTypeKindExtractor.Default.getFunctionalClassKindWithArity(packageFqName, string) != null
     }
 
     @OptIn(AllowedToUsedOnlyInK1::class)
@@ -49,7 +49,7 @@ class BuiltInFictitiousFunctionClassFactory(
         if ("Function" !in className) return null // An optimization
 
         val packageFqName = classId.packageFqName
-        val (kind, arity) = FunctionalTypeKindExtractor.Default.getFunctionalClassKindWithArity(packageFqName, className) ?: return null
+        val (kind, arity) = FunctionTypeKindExtractor.Default.getFunctionalClassKindWithArity(packageFqName, className) ?: return null
 
 
         val builtInsFragments = module.getPackage(packageFqName).fragments.filterIsInstance<BuiltInsPackageFragment>()

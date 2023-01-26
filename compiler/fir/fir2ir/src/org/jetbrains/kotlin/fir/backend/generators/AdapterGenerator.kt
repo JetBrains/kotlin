@@ -134,7 +134,7 @@ internal class AdapterGenerator(
     }
 
     internal fun ConeKotlinType.kFunctionTypeToFunctionType(): IrSimpleType =
-        reflectFunctionalTypeToNonReflectFunctionalType(session).toIrType() as IrSimpleType
+        reflectFunctionTypeToNonReflectFunctionType(session).toIrType() as IrSimpleType
 
     internal fun generateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
@@ -479,7 +479,7 @@ internal class AdapterGenerator(
         }
         // If the expected type is a built-in functional type, we don't need SAM conversion.
         val expectedType = argument.getExpectedType(parameter)
-        if (expectedType is ConeTypeParameterType || expectedType.isSomeFunctionalType(session)) {
+        if (expectedType is ConeTypeParameterType || expectedType.isSomeFunctionType(session)) {
             return false
         }
         // On the other hand, the actual type should be either a functional type or a subtype of a class that has a contributed `invoke`.
@@ -514,10 +514,10 @@ internal class AdapterGenerator(
             return this
         }
         // Expect the expected type to be a suspend functional type.
-        if (!parameterType.isSuspendFunctionType(session)) {
+        if (!parameterType.isSuspendOrKSuspendFunctionType(session)) {
             return this
         }
-        val expectedFunctionalType = parameterType.customFunctionalTypeToSimpleFunctionalType(session)
+        val expectedFunctionalType = parameterType.customFunctionTypeToSimpleFunctionType(session)
         if (this is IrVararg) {
             // element-wise conversion if and only if we can build 1-to-1 mapping for elements.
             return applyConversionOnVararg(argument) { firVarargArgument ->
@@ -546,9 +546,9 @@ internal class AdapterGenerator(
         argument: FirExpression
     ): IrSimpleFunctionSymbol? {
         val argumentType = argument.typeRef.coneType
-        val argumentTypeWithInvoke = argumentType.findSubtypeOfSimpleFunctionalType(session, expectedFunctionalType) ?: return null
+        val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionalType) ?: return null
 
-        return if (argumentTypeWithInvoke.isSomeFunctionalType(session)) {
+        return if (argumentTypeWithInvoke.isSomeFunctionType(session)) {
             (argumentTypeWithInvoke as? ConeClassLikeType)?.findBaseInvokeSymbol(session, scopeSession)
         } else {
             argumentTypeWithInvoke.findContributedInvokeSymbol(

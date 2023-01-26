@@ -123,7 +123,7 @@ class FirSpecificTypeResolverTransformer(
                     type = resolvedType
                 }
                 this.diagnostic = diagnostic ?: (resolvedType as? ConeErrorType)?.diagnostic
-                        ?: ConeSimpleDiagnostic("Unresolved functional type: ${functionTypeRef.render()}")
+                        ?: ConeSimpleDiagnostic("Unresolved function type: ${functionTypeRef.render()}")
             }
         }
     }

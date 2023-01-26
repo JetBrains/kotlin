@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.fir.plugin.types
 
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.extensions.FirFunctionalTypeKindExtension
+import org.jetbrains.kotlin.fir.extensions.FirFunctionTypeKindExtension
 import org.jetbrains.kotlin.fir.plugin.fqn
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-class ComposableLikeFunctionalTypeKindExtension(session: FirSession) : FirFunctionalTypeKindExtension(session) {
-    override fun FunctionalTypeKindRegistrar.registerKinds() {
+class ComposableLikeFunctionTypeKindExtension(session: FirSession) : FirFunctionTypeKindExtension(session) {
+    override fun FunctionTypeKindRegistrar.registerKinds() {
         registerKind(ComposableFunction, KComposableFunction)
     }
 }
@@ -22,7 +22,7 @@ class ComposableLikeFunctionalTypeKindExtension(session: FirSession) : FirFuncti
 private val COMPOSABLE_PACKAGE_FQN = FqName.topLevel(Name.identifier("some"))
 private val MY_COMPOSABLE_ANNOTATION_CLASS_ID = ClassId.topLevel("MyComposable".fqn())
 
-object ComposableFunction : FunctionalTypeKind(
+object ComposableFunction : FunctionTypeKind(
     COMPOSABLE_PACKAGE_FQN,
     "MyComposableFunction",
     MY_COMPOSABLE_ANNOTATION_CLASS_ID,
@@ -31,14 +31,14 @@ object ComposableFunction : FunctionalTypeKind(
     override val prefixForTypeRender: String
         get() = "@MyComposable"
 
-    override fun reflectKind(): FunctionalTypeKind = KComposableFunction
+    override fun reflectKind(): FunctionTypeKind = KComposableFunction
 }
 
-object KComposableFunction : FunctionalTypeKind(
+object KComposableFunction : FunctionTypeKind(
     COMPOSABLE_PACKAGE_FQN,
     "KMyComposableFunction",
     MY_COMPOSABLE_ANNOTATION_CLASS_ID,
     isReflectType = true
 ) {
-    override fun nonReflectKind(): FunctionalTypeKind = ComposableFunction
+    override fun nonReflectKind(): FunctionTypeKind = ComposableFunction
 }

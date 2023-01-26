@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.isSomeFunctionalType
+import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirTypeAnnotationChecker : FirTypeRefChecker() {
@@ -33,7 +33,7 @@ object FirTypeAnnotationChecker : FirTypeRefChecker() {
                 }
             }
             if (annotation.toAnnotationClassId(context.session) == StandardClassIds.Annotations.ExtensionFunctionType) {
-                if (!typeRef.type.isSomeFunctionalType(context.session)) {
+                if (!typeRef.type.isSomeFunctionType(context.session)) {
                     if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidExtensionFunctionTypeOnNonFunctionTypes)) {
                         reporter.reportOn(annotation.source, FirErrors.WRONG_EXTENSION_FUNCTION_TYPE, context)
                     } else {

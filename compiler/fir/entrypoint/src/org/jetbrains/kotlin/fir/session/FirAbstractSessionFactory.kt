@@ -77,7 +77,7 @@ abstract class FirAbstractSessionFactory {
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
             FirSwitchableExtensionDeclarationsSymbolProvider?,
-            FirExtensionSyntheticFunctionalInterfaceProvider,
+            FirExtensionSyntheticFunctionInterfaceProvider,
             dependencies: List<FirSymbolProvider>,
         ) -> List<FirSymbolProvider>
     ): FirSession {
@@ -109,14 +109,14 @@ abstract class FirAbstractSessionFactory {
 
             val dependencyProviders = computeDependencyProviderList(moduleData)
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.create(this)
-            val syntheticFunctionalInterfaceProvider = FirExtensionSyntheticFunctionalInterfaceProvider(this, moduleData, kotlinScopeProvider)
+            val syntheticFunctionInterfaceProvider = FirExtensionSyntheticFunctionInterfaceProvider(this, moduleData, kotlinScopeProvider)
 
             val providers = createProviders(
                 this,
                 kotlinScopeProvider,
                 firProvider.symbolProvider,
                 generatedSymbolsProvider,
-                syntheticFunctionalInterfaceProvider,
+                syntheticFunctionInterfaceProvider,
                 dependencyProviders,
             )
 

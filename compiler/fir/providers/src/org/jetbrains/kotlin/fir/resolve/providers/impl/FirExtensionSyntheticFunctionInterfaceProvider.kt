@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.builtins.functions.isBuiltin
-import org.jetbrains.kotlin.builtins.functions.isSuspendType
+import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -39,14 +39,14 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 /*
- * Provides functional interfaces for functional kinds from compiler plugins
+ * Provides function interfaces for function kinds from compiler plugins
  */
-class FirExtensionSyntheticFunctionalInterfaceProvider(
+class FirExtensionSyntheticFunctionInterfaceProvider(
     session: FirSession,
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider
-) : FirSyntheticFunctionalInterfaceProviderBase(session, moduleData, kotlinScopeProvider) {
-    override fun FunctionalTypeKind.isAcceptable(): Boolean {
+) : FirSyntheticFunctionInterfaceProviderBase(session, moduleData, kotlinScopeProvider) {
+    override fun FunctionTypeKind.isAcceptable(): Boolean {
         return !this.isBuiltin
     }
 }
@@ -54,17 +54,17 @@ class FirExtensionSyntheticFunctionalInterfaceProvider(
 /*
  * Provides kotlin.FunctionN, kotlin.coroutines.SuspendFunctionN, kotlin.reflect.KFunctionN and kotlin.reflect.KSuspendFunctionN
  */
-class FirBuiltinSyntheticFunctionalInterfaceProvider(
+class FirBuiltinSyntheticFunctionInterfaceProvider(
     session: FirSession,
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider
-) : FirSyntheticFunctionalInterfaceProviderBase(session, moduleData, kotlinScopeProvider) {
-    override fun FunctionalTypeKind.isAcceptable(): Boolean {
+) : FirSyntheticFunctionInterfaceProviderBase(session, moduleData, kotlinScopeProvider) {
+    override fun FunctionTypeKind.isAcceptable(): Boolean {
         return this.isBuiltin
     }
 }
 
-abstract class FirSyntheticFunctionalInterfaceProviderBase(
+abstract class FirSyntheticFunctionInterfaceProviderBase(
     session: FirSession,
     val moduleData: FirModuleData,
     val kotlinScopeProvider: FirKotlinScopeProvider
@@ -83,7 +83,7 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {}
 
     override fun getPackage(fqName: FqName): FqName? {
-        return fqName.takeIf { session.functionalTypeService.hasKindWithSpecificPackage(it) }
+        return fqName.takeIf { session.functionTypeService.hasKindWithSpecificPackage(it) }
     }
 
     override fun computePackageSetWithTopLevelCallables(): Set<String> {
@@ -91,7 +91,7 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
     }
 
     /**
-     * This method has no sence for synthetic functional interfaces
+     * This method has no sense for synthetic function interfaces
      */
     override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? {
         return emptySet()
@@ -101,20 +101,20 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
         return emptySet()
     }
 
-    private val cache = moduleData.session.firCachesFactory.createCache(::createSyntheticFunctionalInterface)
+    private val cache = moduleData.session.firCachesFactory.createCache(::createSyntheticFunctionInterface)
 
-    protected abstract fun FunctionalTypeKind.isAcceptable(): Boolean
+    protected abstract fun FunctionTypeKind.isAcceptable(): Boolean
 
-    private fun createSyntheticFunctionalInterface(classId: ClassId): FirRegularClassSymbol? {
+    private fun createSyntheticFunctionInterface(classId: ClassId): FirRegularClassSymbol? {
         return with(classId) {
             val className = relativeClassName.asString()
-            val kind = session.functionalTypeService.getKindByClassNamePrefix(packageFqName, className) ?: return null
+            val kind = session.functionTypeService.getKindByClassNamePrefix(packageFqName, className) ?: return null
             if (!kind.isAcceptable()) return null
             val prefix = kind.classNamePrefix
             val arity = className.substring(prefix.length).toIntOrNull() ?: return null
             FirRegularClassSymbol(classId).apply symbol@{
                 buildRegularClass klass@{
-                    moduleData = this@FirSyntheticFunctionalInterfaceProviderBase.moduleData
+                    moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
                     origin = FirDeclarationOrigin.BuiltIns
                     name = relativeClassName.shortName()
                     status = FirResolvedDeclarationStatusImpl(
@@ -136,7 +136,7 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
                     typeParameters.addAll(
                         (1..arity).map {
                             buildTypeParameter {
-                                moduleData = this@FirSyntheticFunctionalInterfaceProviderBase.moduleData
+                                moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
                                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                                 origin = FirDeclarationOrigin.BuiltIns
                                 name = Name.identifier("P$it")
@@ -150,7 +150,7 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
                     )
                     typeParameters.add(
                         buildTypeParameter {
-                            moduleData = this@FirSyntheticFunctionalInterfaceProviderBase.moduleData
+                            moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
                             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                             origin = FirDeclarationOrigin.BuiltIns
                             name = Name.identifier("R")
@@ -175,13 +175,13 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
                         isInline = false
                         isTailRec = false
                         isExternal = false
-                        isSuspend = kind.isSuspendType
+                        isSuspend = kind.isSuspendOrKSuspendFunction
                     }
                     val typeArguments = typeParameters.map {
                         ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false).toFirResolvedTypeRef()
                     }
 
-                    fun createSuperType(kind: FunctionalTypeKind): FirResolvedTypeRef {
+                    fun createSuperType(kind: FunctionTypeKind): FirResolvedTypeRef {
                         return kind.classId(arity).toLookupTag()
                             .constructClassType(typeArguments.map { it.type }.toTypedArray(), isNullable = false)
                             .toFirResolvedTypeRef()
@@ -200,7 +200,7 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
 
                     addDeclaration(
                         buildSimpleFunction {
-                            moduleData = this@FirSyntheticFunctionalInterfaceProviderBase.moduleData
+                            moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
                             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                             origin = FirDeclarationOrigin.BuiltIns
                             returnTypeRef = typeArguments.last()
@@ -213,7 +213,7 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
                             valueParameters += typeArguments.dropLast(1).mapIndexed { index, typeArgument ->
                                 val parameterName = Name.identifier("p${index + 1}")
                                 buildValueParameter {
-                                    moduleData = this@FirSyntheticFunctionalInterfaceProviderBase.moduleData
+                                    moduleData = this@FirSyntheticFunctionInterfaceProviderBase.moduleData
                                     containingFunctionSymbol = this@buildSimpleFunction.symbol
                                     origin = FirDeclarationOrigin.BuiltIns
                                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -242,5 +242,5 @@ abstract class FirSyntheticFunctionalInterfaceProviderBase(
         }
     }
 
-    private fun FunctionalTypeKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
+    private fun FunctionTypeKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
 }

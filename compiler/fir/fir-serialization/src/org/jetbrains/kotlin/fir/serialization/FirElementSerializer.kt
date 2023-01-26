@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -682,7 +682,7 @@ class FirElementSerializer private constructor(
                 return lowerBound
             }
             is ConeClassLikeType -> {
-                if (type.functionalTypeKind(session) == FunctionalTypeKind.SuspendFunction) {
+                if (type.functionTypeKind(session) == FunctionTypeKind.SuspendFunction) {
                     val runtimeFunctionType = type.suspendFunctionTypeToFunctionTypeWithContinuation(
                         session, StandardClassIds.Continuation
                     )

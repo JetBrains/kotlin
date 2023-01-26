@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionDiagnostic
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.ScopeClassDeclaration
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
@@ -445,20 +443,20 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
     }
 
-    private fun createFunctionalType(typeRef: FirFunctionTypeRef): Pair<ConeClassLikeTypeImpl, ConeDiagnostic?> {
+    private fun createFunctionType(typeRef: FirFunctionTypeRef): Pair<ConeClassLikeTypeImpl, ConeDiagnostic?> {
         val parameters =
             typeRef.contextReceiverTypeRefs.map { it.coneType } +
                     listOfNotNull(typeRef.receiverTypeRef?.coneType) +
                     typeRef.parameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it, session) } +
                     listOf(typeRef.returnTypeRef.coneType)
-        val functionalKinds = session.functionalTypeService.extractAllSpecialKindsForFunctionalTypeRef(typeRef)
+        val functionKinds = session.functionTypeService.extractAllSpecialKindsForFunctionTypeRef(typeRef)
         var diagnostic: ConeDiagnostic? = null
-        val kind = when (functionalKinds.size) {
-            0 -> FunctionalTypeKind.Function
-            1 -> functionalKinds.single()
+        val kind = when (functionKinds.size) {
+            0 -> FunctionTypeKind.Function
+            1 -> functionKinds.single()
             else -> {
-                diagnostic = ConeAmbiguousFunctionalTypeKinds(functionalKinds)
-                FunctionalTypeKind.Function
+                diagnostic = ConeAmbiguousFunctionTypeKinds(functionKinds)
+                FunctionTypeKind.Function
             }
         }
 
@@ -505,7 +503,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     isOperandOfIsOperator,
                 ) to (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic
             }
-            is FirFunctionTypeRef -> createFunctionalType(typeRef)
+            is FirFunctionTypeRef -> createFunctionType(typeRef)
             is FirDynamicTypeRef -> ConeDynamicType.create(session) to null
             is FirIntersectionTypeRef -> {
                 val leftType = typeRef.leftType.coneType

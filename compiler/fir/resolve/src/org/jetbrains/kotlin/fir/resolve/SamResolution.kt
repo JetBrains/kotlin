@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve
 
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -263,7 +263,7 @@ class FirSamResolver(
             // TODO: val shouldConvertFirstParameterToDescriptor = samWithReceiverResolvers.any { it.shouldConvertFirstSamParameterToReceiver(abstractMethod) }
 
             val typeFromExtension = samConversionTransformers.firstNotNullOfOrNull {
-                it.getCustomFunctionalTypeForSamConversion(abstractMethod)
+                it.getCustomFunctionTypeForSamConversion(abstractMethod)
             }
 
             SAMInfo(abstractMethod.symbol, typeFromExtension ?: abstractMethod.getFunctionTypeForAbstractMethod(session))
@@ -415,8 +415,8 @@ private fun FirSimpleFunction.getFunctionTypeForAbstractMethod(session: FirSessi
     val contextReceiversTypes = contextReceivers.map {
         it.typeRef.coneTypeSafe<ConeKotlinType>() ?: ConeErrorType(ConeIntermediateDiagnostic("No type for context receiver $it"))
     }
-    val kind = session.functionalTypeService.extractSingleSpecialKindForFunction(symbol) ?: FunctionalTypeKind.Function
-    return createFunctionalType(
+    val kind = session.functionTypeService.extractSingleSpecialKindForFunction(symbol) ?: FunctionTypeKind.Function
+    return createFunctionType(
         kind,
         parameterTypes,
         receiverType = receiverParameter?.typeRef?.coneType,

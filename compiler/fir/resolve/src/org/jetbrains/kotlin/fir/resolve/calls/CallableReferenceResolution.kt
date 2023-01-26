@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
-import org.jetbrains.kotlin.builtins.functions.isRegularFunction
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
-import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -131,12 +131,12 @@ private fun buildReflectionType(
             }
 
 
-            val baseFunctionalTypeKind = callableReferenceAdaptation?.suspendConversionStrategy?.kind
-                ?: fir.specialFunctionalTypeKind(context.session)
-                ?: FunctionalTypeKind.Function
+            val baseFunctionTypeKind = callableReferenceAdaptation?.suspendConversionStrategy?.kind
+                ?: fir.specialFunctionTypeKind(context.session)
+                ?: FunctionTypeKind.Function
 
-            return createFunctionalType(
-                baseFunctionalTypeKind.reflectKind(),
+            return createFunctionType(
+                baseFunctionTypeKind.reflectKind(),
                 parameters,
                 receiverType = receiverType.takeIf { fir.receiverParameter != null },
                 rawReturnType = returnType,
@@ -255,11 +255,11 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     else
         mappedArguments
 
-    val expectedTypeFunctionalKind = expectedType.functionalTypeKind(session)?.takeUnless { it.isRegularFunction }
-    val functionKind = function.specialFunctionalTypeKind(session)
+    val expectedTypeFunctionKind = expectedType.functionTypeKind(session)?.takeUnless { it.isBasicFunctionOrKFunction }
+    val functionKind = function.specialFunctionTypeKind(session)
 
-    val conversionStrategy = if (expectedTypeFunctionalKind != null && functionKind == null) {
-        CallableReferenceConversionStrategy.CustomConversion(expectedTypeFunctionalKind)
+    val conversionStrategy = if (expectedTypeFunctionKind != null && functionKind == null) {
+        CallableReferenceConversionStrategy.CustomConversion(expectedTypeFunctionKind)
     } else {
         CallableReferenceConversionStrategy.NoConversion
     }
@@ -277,14 +277,14 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
 
 
 sealed class CallableReferenceConversionStrategy {
-    abstract val kind: FunctionalTypeKind?
+    abstract val kind: FunctionTypeKind?
 
     object NoConversion : CallableReferenceConversionStrategy() {
-        override val kind: FunctionalTypeKind?
+        override val kind: FunctionTypeKind?
             get() = null
     }
 
-    class CustomConversion(override val kind: FunctionalTypeKind) : CallableReferenceConversionStrategy()
+    class CustomConversion(override val kind: FunctionTypeKind) : CallableReferenceConversionStrategy()
 }
 
 private fun varargParameterTypeByExpectedParameter(

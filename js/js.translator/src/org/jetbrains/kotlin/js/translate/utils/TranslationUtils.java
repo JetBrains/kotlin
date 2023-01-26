@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.resolve.BindingContextUtils;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
-import org.jetbrains.kotlin.resolve.source.KotlinSourceElementKt;
 import org.jetbrains.kotlin.resolve.source.PsiSourceElementKt;
 import org.jetbrains.kotlin.types.DynamicTypesKt;
 import org.jetbrains.kotlin.types.KotlinType;
@@ -434,7 +433,7 @@ public final class TranslationUtils {
     public static KotlinType getReturnTypeForCoercion(@NotNull CallableDescriptor descriptor, boolean forcePrivate) {
         descriptor = descriptor.getOriginal();
 
-        if (FunctionTypesKt.getFunctionalClassKind(descriptor) != null || descriptor instanceof AnonymousFunctionDescriptor) {
+        if (FunctionTypesKt.getFunctionTypeKind(descriptor) != null || descriptor instanceof AnonymousFunctionDescriptor) {
             return getAnyTypeFromSameModule(descriptor);
         }
 

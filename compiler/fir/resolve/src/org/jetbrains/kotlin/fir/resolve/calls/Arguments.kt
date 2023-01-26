@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.builtins.functions.isRegularFunction
+import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.createFunctionalType
+import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.dfa.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
@@ -271,7 +271,7 @@ fun Candidate.resolvePlainArgumentType(
         )?.let {
             argumentTypeForApplicabilityCheck = it
             substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck)
-            usesFunctionalConversion = true
+            usesFunctionConversion = true
         }
     }
 
@@ -287,21 +287,21 @@ private fun argumentTypeWithCustomConversion(
     argumentType: ConeKotlinType
 ): ConeKotlinType? {
     // Expect the expected type to be a not regular functional type (e.g. suspend or custom)
-    val expectedTypeKind = expectedType.functionalTypeKind(session) ?: return null
-    if (expectedTypeKind.isRegularFunction) return null
+    val expectedTypeKind = expectedType.functionTypeKind(session) ?: return null
+    if (expectedTypeKind.isBasicFunctionOrKFunction) return null
 
     // We want to check the argument type against non-suspend functional type.
-    val expectedFunctionalType = expectedType.customFunctionalTypeToSimpleFunctionalType(session)
+    val expectedFunctionType = expectedType.customFunctionTypeToSimpleFunctionType(session)
 
-    val argumentTypeWithInvoke = argumentType.findSubtypeOfSimpleFunctionalType(session, expectedFunctionalType)
+    val argumentTypeWithInvoke = argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionType)
 
     return argumentTypeWithInvoke?.findContributedInvokeSymbol(
         session,
         scopeSession,
-        expectedFunctionalType,
+        expectedFunctionType,
         shouldCalculateReturnTypesOfFakeOverrides = false
     )?.let { invokeSymbol ->
-        createFunctionalType(
+        createFunctionType(
             expectedTypeKind,
             invokeSymbol.fir.valueParameters.map { it.returnTypeRef.coneType },
             null,
@@ -495,7 +495,7 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
     candidateExpectedType: ConeKotlinType,
     context: ResolutionContext
 ): ConeKotlinType? {
-    if (candidateExpectedType.isSomeFunctionalType(session)) return null
+    if (candidateExpectedType.isSomeFunctionType(session)) return null
 
     // TODO: resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
@@ -518,7 +518,7 @@ fun FirExpression.isFunctional(
         else -> {
             // Either a functional type or a subtype of a class that has a contributed `invoke`.
             val coneType = typeRef.coneTypeSafe<ConeKotlinType>() ?: return false
-            if (coneType.isSomeFunctionalType(session)) {
+            if (coneType.isSomeFunctionType(session)) {
                 return true
             }
             val classLikeExpectedFunctionType = expectedFunctionType?.lowerBoundIfFlexible() as? ConeClassLikeType

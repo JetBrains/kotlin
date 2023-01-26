@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  * This allows to use both 'invoke' and reflection API on function references obtained by '::'.
  */
 class FunctionClassDescriptor(
-        private val storageManager: StorageManager,
-        private val containingDeclaration: PackageFragmentDescriptor,
-        val functionKind: FunctionalTypeKind,
-        val arity: Int
+    private val storageManager: StorageManager,
+    private val containingDeclaration: PackageFragmentDescriptor,
+    val functionKind: FunctionTypeKind,
+    val arity: Int
 ) : AbstractClassDescriptor(storageManager, functionKind.numberedClassName(arity)) {
 
     private val typeConstructor = FunctionTypeConstructor()
@@ -96,14 +96,14 @@ class FunctionClassDescriptor(
         override fun computeSupertypes(): Collection<KotlinType> {
             // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for K{Suspend}Function2
             val supertypes = when (functionKind) {
-                FunctionalTypeKind.Function -> // Function$N <: Function
+                FunctionTypeKind.Function -> // Function$N <: Function
                     listOf(functionClassId)
-                FunctionalTypeKind.KFunction -> // KFunction$N <: KFunction
-                    listOf(kFunctionClassId, ClassId(BUILT_INS_PACKAGE_FQ_NAME, FunctionalTypeKind.Function.numberedClassName(arity)))
-                FunctionalTypeKind.SuspendFunction -> // SuspendFunction$N<...> <: Function
+                FunctionTypeKind.KFunction -> // KFunction$N <: KFunction
+                    listOf(kFunctionClassId, ClassId(BUILT_INS_PACKAGE_FQ_NAME, FunctionTypeKind.Function.numberedClassName(arity)))
+                FunctionTypeKind.SuspendFunction -> // SuspendFunction$N<...> <: Function
                     listOf(functionClassId)
-                FunctionalTypeKind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
-                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME, FunctionalTypeKind.SuspendFunction.numberedClassName(arity)))
+                FunctionTypeKind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
+                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME, FunctionTypeKind.SuspendFunction.numberedClassName(arity)))
                 else -> shouldNotBeCalled()
             }
 

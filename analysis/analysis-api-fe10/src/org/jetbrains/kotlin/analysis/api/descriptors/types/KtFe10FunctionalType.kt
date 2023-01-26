@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
-import org.jetbrains.kotlin.builtins.functions.isSuspendType
+import org.jetbrains.kotlin.builtins.functions.isSuspendOrKSuspendFunction
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.SimpleType
 
@@ -53,7 +52,7 @@ internal class KtFe10FunctionalType(
         }
 
     override val isSuspend: Boolean
-        get() = withValidityAssertion { descriptor.functionKind.isSuspendType }
+        get() = withValidityAssertion { descriptor.functionKind.isSuspendOrKSuspendFunction }
 
     override val isReflectType: Boolean
         get() = withValidityAssertion { descriptor.functionKind.isReflectType }

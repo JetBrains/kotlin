@@ -339,7 +339,7 @@ class FirVisualizer(private val firFile: FirFile) : BaseRenderer() {
             val projectionBuilder = StringBuilder()
             ConeTypeRendererForDebugging(projectionBuilder).renderAsPossibleFunctionType(
                 this,
-                { it.functionalTypeKind(session) }
+                { it.functionTypeKind(session) }
             ) {
                 localTypeProjectionRenderer(projectionBuilder)
             }

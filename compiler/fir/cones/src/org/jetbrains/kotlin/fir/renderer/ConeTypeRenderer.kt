@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.renderer
 
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.types.*
 
 open class ConeTypeRenderer {
@@ -15,10 +15,10 @@ open class ConeTypeRenderer {
 
     open fun renderAsPossibleFunctionType(
         type: ConeKotlinType,
-        functionalClassKindExtractor: (ConeKotlinType) -> FunctionalTypeKind?,
+        functionClassKindExtractor: (ConeKotlinType) -> FunctionTypeKind?,
         renderType: ConeTypeProjection.() -> Unit = { render() }
     ) {
-        val kind = functionalClassKindExtractor(type)
+        val kind = functionClassKindExtractor(type)
         if (kind?.isReflectType != false) {
             type.renderType()
             return

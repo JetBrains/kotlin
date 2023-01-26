@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionalInterfaceProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -64,7 +64,7 @@ class LLFirBuiltinsSessionFactory(
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
             val symbolProvider = createCompositeSymbolProvider(this) {
                 add(LLFirBuiltinSymbolProvider(this@session, moduleData, kotlinScopeProvider))
-                add(FirExtensionSyntheticFunctionalInterfaceProvider(this@session, moduleData, kotlinScopeProvider))
+                add(FirExtensionSyntheticFunctionInterfaceProvider(this@session, moduleData, kotlinScopeProvider))
                 add(FirCloneableSymbolProvider(this@session, moduleData, kotlinScopeProvider))
             }
 

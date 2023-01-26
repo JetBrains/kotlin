@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
@@ -67,7 +67,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
     ): SimpleTypeMarker {
         val attributesList = attributes?.filterIsInstanceTo<ConeAttribute<*>, MutableList<ConeAttribute<*>>>(mutableListOf())
         val coneAttributes: ConeAttributes = if (isExtensionFunction) {
-            require(constructor is ConeClassLikeLookupTag && constructor.isSomeFunctionalType(session))
+            require(constructor is ConeClassLikeLookupTag && constructor.isSomeFunctionType(session))
             // We don't want to create new instance of ConeAttributes which
             //   contains only CompilerConeAttributes.ExtensionFunctionType
             //   to avoid memory consumption
@@ -224,10 +224,10 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.typeConstructor().isUnitTypeConstructor() && !this.isNullable
     }
 
-    override fun KotlinTypeMarker.isBuiltinFunctionalTypeOrSubtype(): Boolean {
+    override fun KotlinTypeMarker.isBuiltinFunctionTypeOrSubtype(): Boolean {
         require(this is ConeKotlinType)
         return this.isTypeOrSubtypeOf {
-            (it.lowerBoundIfFlexible() as ConeKotlinType).isSomeFunctionalType(session)
+            (it.lowerBoundIfFlexible() as ConeKotlinType).isSomeFunctionType(session)
         }
     }
 
@@ -464,7 +464,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.isFunctionOrKFunctionWithAnySuspendability(): Boolean {
         require(this is ConeKotlinType)
-        return this.isSomeFunctionalType(session)
+        return this.isSomeFunctionType(session)
     }
 
     fun ConeKotlinType.isTypeOrSubtypeOf(predicate: (ConeKotlinType) -> Boolean): Boolean {
@@ -495,34 +495,35 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return (this.lowerBoundIfFlexible() as? ConeKotlinType)?.isExtensionFunctionType(session) == true
     }
 
-    override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
-        val builtInFunctionalType = getFunctionalTypeFromSupertypes() as ConeKotlinType
+    override fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker> {
+        val builtInFunctionType = getFunctionTypeFromSupertypes() as ConeKotlinType
         return buildList {
             // excluding return type
-            for (index in 0 until builtInFunctionalType.argumentsCount() - 1) {
-                add(builtInFunctionalType.getArgument(index).getType())
+            for (index in 0 until builtInFunctionType.argumentsCount() - 1) {
+                add(builtInFunctionType.getArgument(index).getType())
             }
         }
     }
 
-    override fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker {
+    override fun KotlinTypeMarker.getFunctionTypeFromSupertypes(): KotlinTypeMarker {
         require(this is ConeKotlinType)
-        assert(this.isBuiltinFunctionalTypeOrSubtype()) {
+        assert(this.isBuiltinFunctionTypeOrSubtype()) {
             "Not a function type or subtype: ${this.renderForDebugging()}"
         }
 
         return fullyExpandedType(session).let {
             val simpleType = it.lowerBoundIfFlexible()
-            if ((simpleType as ConeKotlinType).isSomeFunctionalType(session))
+            if ((simpleType as ConeKotlinType).isSomeFunctionType(session))
                 this
             else {
                 var functionalSupertype: KotlinTypeMarker? = null
                 simpleType.anySuperTypeConstructor { type ->
                     simpleType.fastCorrespondingSupertypes(type.typeConstructor())?.any { superType ->
-                        val isFunctional = (superType as ConeKotlinType).isSomeFunctionalType(session)
-                        if (isFunctional)
+                        val isFunction = (superType as ConeKotlinType).isSomeFunctionType(session)
+                        if (isFunction) {
                             functionalSupertype = superType
-                        isFunctional
+                        }
+                        isFunction
                     } ?: false
                 }
                 functionalSupertype ?: error("Failed to find functional supertype for $simpleType")
@@ -530,16 +531,16 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         }
     }
 
-    override fun KotlinTypeMarker.functionalTypeKind(): FunctionalTypeKind? {
+    override fun KotlinTypeMarker.functionTypeKind(): FunctionTypeKind? {
         require(this is ConeKotlinType)
-        return this.functionalTypeKind(session)
+        return this.functionTypeKind(session)
     }
 
-    override fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionalTypeKind): TypeConstructorMarker {
+    override fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker {
         return kind.nonReflectKind().numberedClassId(parametersNumber).toLookupTag()
     }
 
-    override fun getReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionalTypeKind): TypeConstructorMarker {
+    override fun getReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker {
         return kind.reflectKind().numberedClassId(parametersNumber).toLookupTag()
     }
 

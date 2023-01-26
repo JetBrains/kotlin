@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 /**
- * [FunctionalTypeKind] describes a family of various similar functional types (like kotlin.FunctionN)
+ * [FunctionTypeKind] describes a family of various similar functional types (like kotlin.FunctionN)
  *   All types in the same family have corresponding shape of classId: [packageFqName].[classNamePrefix]N,
  *   where `N` is an arity of function
  *
@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.name.Name
  * Note that if you provide some new functional type kind it's your responsibility to handle all references to it in backend
  *   with [IrGenerationExtension] implementation
  */
-abstract class FunctionalTypeKind internal constructor(
+abstract class FunctionTypeKind internal constructor(
     val packageFqName: FqName,
     val classNamePrefix: String,
     val isReflectType: Boolean,
@@ -69,7 +69,7 @@ abstract class FunctionalTypeKind internal constructor(
      *
      * Should be overridden for reflect kinds
      */
-    open fun nonReflectKind(): FunctionalTypeKind {
+    open fun nonReflectKind(): FunctionTypeKind {
         return if (isReflectType) error("Should be overridden explicitly") else this
     }
 
@@ -79,7 +79,7 @@ abstract class FunctionalTypeKind internal constructor(
      *
      * Should be overridden for non reflect kinds
      */
-    open fun reflectKind(): FunctionalTypeKind {
+    open fun reflectKind(): FunctionTypeKind {
         return if (isReflectType) this else error("Should be overridden explicitly")
     }
 
@@ -93,16 +93,16 @@ abstract class FunctionalTypeKind internal constructor(
 
     // ------------------------------------------- Builtin functional kinds -------------------------------------------
 
-    object Function : FunctionalTypeKind(
+    object Function : FunctionTypeKind(
         StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
         "Function",
         isReflectType = false,
         annotationOnInvokeClassId = null
     ) {
-        override fun reflectKind(): FunctionalTypeKind = KFunction
+        override fun reflectKind(): FunctionTypeKind = KFunction
     }
 
-    object SuspendFunction : FunctionalTypeKind(
+    object SuspendFunction : FunctionTypeKind(
         StandardNames.COROUTINES_PACKAGE_FQ_NAME,
         "SuspendFunction",
         isReflectType = false,
@@ -111,39 +111,39 @@ abstract class FunctionalTypeKind internal constructor(
         override val prefixForTypeRender: String
             get() = "suspend"
 
-        override fun reflectKind(): FunctionalTypeKind = KSuspendFunction
+        override fun reflectKind(): FunctionTypeKind = KSuspendFunction
     }
 
-    object KFunction : FunctionalTypeKind(
+    object KFunction : FunctionTypeKind(
         StandardNames.KOTLIN_REFLECT_FQ_NAME,
         "KFunction",
         isReflectType = true,
         annotationOnInvokeClassId = null
     ) {
-        override fun nonReflectKind(): FunctionalTypeKind = Function
+        override fun nonReflectKind(): FunctionTypeKind = Function
     }
 
-    object KSuspendFunction : FunctionalTypeKind(
+    object KSuspendFunction : FunctionTypeKind(
         StandardNames.KOTLIN_REFLECT_FQ_NAME,
         "KSuspendFunction",
         isReflectType = true,
         annotationOnInvokeClassId = null
     ) {
-        override fun nonReflectKind(): FunctionalTypeKind = SuspendFunction
+        override fun nonReflectKind(): FunctionTypeKind = SuspendFunction
     }
 }
 
-val FunctionalTypeKind.isBuiltin: Boolean
+val FunctionTypeKind.isBuiltin: Boolean
     get() = when (this) {
-        FunctionalTypeKind.Function,
-        FunctionalTypeKind.SuspendFunction,
-        FunctionalTypeKind.KFunction,
-        FunctionalTypeKind.KSuspendFunction -> true
+        FunctionTypeKind.Function,
+        FunctionTypeKind.SuspendFunction,
+        FunctionTypeKind.KFunction,
+        FunctionTypeKind.KSuspendFunction -> true
         else -> false
     }
 
-val FunctionalTypeKind.isSuspendType: Boolean
-    get() = this.nonReflectKind() == FunctionalTypeKind.SuspendFunction
+val FunctionTypeKind.isSuspendOrKSuspendFunction: Boolean
+    get() = this.nonReflectKind() == FunctionTypeKind.SuspendFunction
 
-val FunctionalTypeKind.isRegularFunction: Boolean
-    get() = this.nonReflectKind() == FunctionalTypeKind.Function
+val FunctionTypeKind.isBasicFunctionOrKFunction: Boolean
+    get() = this.nonReflectKind() == FunctionTypeKind.Function

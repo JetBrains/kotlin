@@ -303,8 +303,8 @@ private fun isUpcast(context: CheckerContext, candidateType: ConeKotlinType, tar
     if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, candidateType, targetType, stubTypesEqualToAnything = false))
         return false
 
-    // E.g., foo(p1: (X) -> Y), where p1 has a functional type whose receiver type is X and return type is Y.
-    // For bar(p2: X.() -> Y), p2 has the same functional type (with same receiver and return types).
+    // E.g., foo(p1: (X) -> Y), where p1 has a function type whose receiver type is X and return type is Y.
+    // For bar(p2: X.() -> Y), p2 has the same function type (with same receiver and return types).
     // The only difference is the existence of type annotation, @ExtensionFunctionType,
     //   which indicates that the annotated type represents an extension function.
     // If one casts p1 to p2 (or vice versa), it is _not_ up cast, i.e., not redundant, yet meaningful.

@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
@@ -40,7 +40,7 @@ sealed class PostponedResolvedAtom : PostponedResolvedAtomMarker {
 class ResolvedLambdaAtom(
     override val atom: FirAnonymousFunction,
     expectedType: ConeKotlinType?,
-    val expectedFunctionalTypeKind: FunctionalTypeKind?,
+    val expectedFunctionTypeKind: FunctionTypeKind?,
     val receiver: ConeKotlinType?,
     val contextReceivers: List<ConeKotlinType>,
     val parameters: List<ConeKotlinType>,
@@ -178,7 +178,7 @@ internal fun extractInputOutputTypesFromCallableReferenceExpectedType(
     if (expectedType == null) return null
 
     return when {
-        expectedType.isSomeFunctionalType(session) ->
+        expectedType.isSomeFunctionType(session) ->
             InputOutputTypes(expectedType.valueParameterTypesIncludingReceiver(session), expectedType.returnType(session))
 
 //        ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType) ->

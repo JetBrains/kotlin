@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.checkers.generator.diagnostics
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -568,8 +568,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NEXT_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<FirBasedSymbol<*>>>("candidates")
         }
-        val AMBIGUOUS_FUNCTIONAL_TYPE_KIND by error<PsiElement> {
-            parameter<Collection<FunctionalTypeKind>>("kinds")
+        val AMBIGUOUS_FUNCTION_TYPE_KIND by error<PsiElement> {
+            parameter<Collection<FunctionTypeKind>>("kinds")
         }
     }
 

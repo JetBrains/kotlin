@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.builtins
 
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames.reflect
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -252,7 +252,7 @@ object StandardNames {
 
     @JvmStatic
     fun getKFunctionFqName(parameterCount: Int): FqNameUnsafe {
-        return reflect(FunctionalTypeKind.KFunction.classNamePrefix + parameterCount)
+        return reflect(FunctionTypeKind.KFunction.classNamePrefix + parameterCount)
     }
 
     @JvmStatic
@@ -263,7 +263,7 @@ object StandardNames {
 
     @JvmStatic
     fun getSuspendFunctionName(parameterCount: Int): String {
-        return FunctionalTypeKind.SuspendFunction.classNamePrefix + parameterCount
+        return FunctionTypeKind.SuspendFunction.classNamePrefix + parameterCount
     }
 
     @JvmStatic
@@ -273,7 +273,7 @@ object StandardNames {
 
     @JvmStatic
     fun getKSuspendFunctionName(parameterCount: Int): FqNameUnsafe {
-        return reflect(FunctionalTypeKind.KSuspendFunction.classNamePrefix + parameterCount)
+        return reflect(FunctionTypeKind.KSuspendFunction.classNamePrefix + parameterCount)
     }
 
     @JvmStatic

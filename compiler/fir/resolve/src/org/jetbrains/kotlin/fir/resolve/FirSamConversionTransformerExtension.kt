@@ -23,7 +23,7 @@ abstract class FirSamConversionTransformerExtension(session: FirSession) : FirEx
 
     final override val extensionType: KClass<out FirExtension> = FirSamConversionTransformerExtension::class
 
-    abstract fun getCustomFunctionalTypeForSamConversion(function: FirSimpleFunction): ConeLookupTagBasedType?
+    abstract fun getCustomFunctionTypeForSamConversion(function: FirSimpleFunction): ConeLookupTagBasedType?
 
     fun interface Factory : FirExtension.Factory<FirSamConversionTransformerExtension>
 }

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
-import org.jetbrains.kotlin.builtins.functions.FunctionalTypeKind
+import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -411,7 +411,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return KotlinBuiltIns.isUnit(this)
     }
 
-    override fun KotlinTypeMarker.isBuiltinFunctionalTypeOrSubtype(): Boolean {
+    override fun KotlinTypeMarker.isBuiltinFunctionTypeOrSubtype(): Boolean {
         require(this is UnwrappedType, this::errorMessage)
         return isBuiltinFunctionalTypeOrSubtype
     }
@@ -855,34 +855,34 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this.isBuiltinExtensionFunctionalType
     }
 
-    override fun KotlinTypeMarker.extractArgumentsForFunctionalTypeOrSubtype(): List<KotlinTypeMarker> {
+    override fun KotlinTypeMarker.extractArgumentsForFunctionTypeOrSubtype(): List<KotlinTypeMarker> {
         require(this is KotlinType, this::errorMessage)
         return this.getPureArgumentsForFunctionalTypeOrSubtype()
     }
 
-    override fun KotlinTypeMarker.getFunctionalTypeFromSupertypes(): KotlinTypeMarker {
+    override fun KotlinTypeMarker.getFunctionTypeFromSupertypes(): KotlinTypeMarker {
         require(this is KotlinType)
         return this.extractFunctionalTypeFromSupertypes()
     }
 
-    override fun KotlinTypeMarker.functionalTypeKind(): FunctionalTypeKind? {
+    override fun KotlinTypeMarker.functionTypeKind(): FunctionTypeKind? {
         require(this is KotlinType)
-        return this.functionalTypeKind
+        return this.functionTypeKind
     }
 
-    override fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionalTypeKind): TypeConstructorMarker {
+    override fun getNonReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker {
         return getFunctionDescriptor(
             builtIns,
             parametersNumber,
-            isSuspendFunction = kind.nonReflectKind() == FunctionalTypeKind.SuspendFunction
+            isSuspendFunction = kind.nonReflectKind() == FunctionTypeKind.SuspendFunction
         ).typeConstructor
     }
 
-    override fun getReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionalTypeKind): TypeConstructorMarker {
+    override fun getReflectFunctionTypeConstructor(parametersNumber: Int, kind: FunctionTypeKind): TypeConstructorMarker {
         return getKFunctionDescriptor(
             builtIns,
             parametersNumber,
-            isSuspendFunction = kind.reflectKind() == FunctionalTypeKind.KSuspendFunction
+            isSuspendFunction = kind.reflectKind() == FunctionTypeKind.KSuspendFunction
         ).typeConstructor
     }
 

@@ -133,7 +133,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
 
                 // Stage 4: create atoms with revised expected types if needed
                 for (argument in postponedArgumentsWithRevisableType) {
-                    val argumentWasTransformed = transformToAtomWithNewFunctionalExpectedType(
+                    val argumentWasTransformed = transformToAtomWithNewFunctionExpectedType(
                         this, context, argument
                     )
 
@@ -214,7 +214,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         return variableForFixation?.hasProperConstraint == true
     }
 
-    private fun transformToAtomWithNewFunctionalExpectedType(
+    private fun transformToAtomWithNewFunctionExpectedType(
         c: ConstraintSystemCompletionContext,
         resolutionContext: ResolutionContext,
         argument: PostponedAtomWithRevisableExpectedType,
