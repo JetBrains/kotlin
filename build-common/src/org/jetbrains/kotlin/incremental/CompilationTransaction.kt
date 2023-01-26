@@ -82,9 +82,9 @@ inline fun <R> CompilationTransaction.runWithin(
 }
 
 /**
- * A dummy implementation of compilation transaction
+ * A non-recoverable implementation of compilation transaction. Changes reverting on failure should be performed externally if needed.
  */
-class DummyCompilationTransaction : CompilationTransaction {
+class NonRecoverableCompilationTransaction : CompilationTransaction {
     override fun registerAddedOrChangedFile(outputFile: Path) {
         // do nothing
     }

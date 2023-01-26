@@ -16,7 +16,7 @@ private fun createDefaultPathConverter(rootProjectDir: File?) = IncrementalFileT
 class IncrementalCompilationContext(
     val pathConverter: FileToPathConverter,
     val storeFullFqNamesInLookupCache: Boolean = false,
-    val transaction: CompilationTransaction = DummyCompilationTransaction(),
+    val transaction: CompilationTransaction = NonRecoverableCompilationTransaction(),
     val reporter: ICReporter = DoNothingICReporter,
     /**
      * Controls whether changes in lookup cache should be tracked. Required for the classpath snapshots based IC approach
@@ -32,7 +32,7 @@ class IncrementalCompilationContext(
     constructor(
         rootProjectDir: File?,
         storeFullFqNamesInLookupCache: Boolean = false,
-        transaction: CompilationTransaction = DummyCompilationTransaction(),
+        transaction: CompilationTransaction = NonRecoverableCompilationTransaction(),
         reporter: ICReporter = DoNothingICReporter,
         trackChangesInLookupCache: Boolean = false,
         keepIncrementalCompilationCachesInMemory: Boolean = false,

@@ -33,8 +33,8 @@ abstract class BaseCompilationTransactionTest {
     }
 }
 
-class DummyCompilationTransactionTest : BaseCompilationTransactionTest() {
-    override fun createTransaction() = DummyCompilationTransaction()
+class NonRecoverableCompilationTransactionTest : BaseCompilationTransactionTest() {
+    override fun createTransaction() = NonRecoverableCompilationTransaction()
 
     @Test
     fun testModifyingExistingFileOnSuccess() {

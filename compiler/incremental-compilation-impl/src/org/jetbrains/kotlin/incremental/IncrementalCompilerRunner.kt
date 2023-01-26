@@ -268,7 +268,7 @@ abstract class IncrementalCompilerRunner<
             reporter.debug { "Cleaning ${outputDirsToClean.size} output directories" }
             cleanOrCreateDirectories(outputDirsToClean)
         }
-        val icContext = createIncrementalCompilationContext(projectDir, DummyCompilationTransaction())
+        val icContext = createIncrementalCompilationContext(projectDir, NonRecoverableCompilationTransaction())
         return createCacheManager(icContext, args).use { caches ->
             if (trackChangedFiles) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
@@ -405,7 +405,7 @@ abstract class IncrementalCompilerRunner<
     private fun createTransaction() = if (preciseCompilationResultsBackup) {
         RecoverableCompilationTransaction(reporter, Files.createTempDirectory("kotlin-backups"))
     } else {
-        DummyCompilationTransaction()
+        NonRecoverableCompilationTransaction()
     }
 
     protected open fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: Args) {}
