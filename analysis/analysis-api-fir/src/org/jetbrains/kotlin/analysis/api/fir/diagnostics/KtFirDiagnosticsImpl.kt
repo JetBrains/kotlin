@@ -4119,6 +4119,24 @@ internal class NonExternalDeclarationInInappropriateFileImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NonExternalDeclarationInInappropriateFile(), KtAbstractFirDiagnostic<KtElement>
 
+internal class CannotCheckForExternalInterfaceImpl(
+    override val targetType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.CannotCheckForExternalInterface(), KtAbstractFirDiagnostic<KtElement>
+
+internal class UncheckedCastToExternalInterfaceImpl(
+    override val sourceType: KtType,
+    override val targetType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.UncheckedCastToExternalInterface(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ExternalInterfaceAsClassLiteralImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ExternalInterfaceAsClassLiteral(), KtAbstractFirDiagnostic<KtElement>
+
 internal class DelegationByDynamicImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

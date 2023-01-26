@@ -85,6 +85,14 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("type")
         }
+        val CANNOT_CHECK_FOR_EXTERNAL_INTERFACE by error<KtElement> {
+            parameter<ConeKotlinType>("targetType")
+        }
+        val UNCHECKED_CAST_TO_EXTERNAL_INTERFACE by error<KtElement> {
+            parameter<ConeKotlinType>("sourceType")
+            parameter<ConeKotlinType>("targetType")
+        }
+        val EXTERNAL_INTERFACE_AS_CLASS_LITERAL by error<KtElement>()
     }
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {

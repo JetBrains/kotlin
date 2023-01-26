@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 external interface I
 
 external interface J

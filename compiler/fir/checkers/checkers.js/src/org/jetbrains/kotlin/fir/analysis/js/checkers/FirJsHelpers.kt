@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.hasAnnotationOrInsideAnnotated
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
+import org.jetbrains.kotlin.fir.declarations.utils.isInterface
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -84,6 +85,10 @@ fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {
     return false
 }
 
+fun FirBasedSymbol<*>.isNativeInterface(session: FirSession): Boolean {
+    return isNativeObject(session) && (fir as? FirClass)?.isInterface == true
+}
+
 private val FirBasedSymbol<*>.isExpect
     get() = when (this) {
         is FirCallableSymbol<*> -> isExpect
@@ -105,5 +110,7 @@ fun FirBasedSymbol<*>.isPredefinedObject(session: FirSession): Boolean {
 }
 
 fun FirBasedSymbol<*>.isNativeObject(context: CheckerContext) = isNativeObject(context.session)
+
+fun FirBasedSymbol<*>.isNativeInterface(context: CheckerContext) = isNativeInterface(context.session)
 
 fun FirBasedSymbol<*>.isPredefinedObject(context: CheckerContext) = isPredefinedObject(context.session)

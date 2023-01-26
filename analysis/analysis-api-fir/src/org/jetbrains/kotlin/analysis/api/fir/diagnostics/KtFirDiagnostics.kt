@@ -3402,6 +3402,21 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val type: KtType
     }
 
+    abstract class CannotCheckForExternalInterface : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = CannotCheckForExternalInterface::class
+        abstract val targetType: KtType
+    }
+
+    abstract class UncheckedCastToExternalInterface : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = UncheckedCastToExternalInterface::class
+        abstract val sourceType: KtType
+        abstract val targetType: KtType
+    }
+
+    abstract class ExternalInterfaceAsClassLiteral : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ExternalInterfaceAsClassLiteral::class
+    }
+
     abstract class DelegationByDynamic : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = DelegationByDynamic::class
     }
