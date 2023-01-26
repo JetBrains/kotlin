@@ -245,10 +245,15 @@ $jsCodeBodyIndented
     let wasmExports;
 
     const isNodeJs = (typeof process !== 'undefined') && (process.release.name === 'node');
-    const isD8 = !isNodeJs && (typeof d8 !== 'undefined');
-    const isBrowser = !isNodeJs && !isD8 && (typeof window !== 'undefined');
+    const isStandaloneJsVM =
+        !isNodeJs && (
+            typeof d8 !== 'undefined' // V8
+            || typeof inIon !== 'undefined' // SpiderMonkey
+            || typeof jscOptions !== 'undefined' // JavaScriptCore
+        );
+    const isBrowser = !isNodeJs && !isStandaloneJsVM && (typeof window !== 'undefined');
     
-    if (!isNodeJs && !isD8 && !isBrowser) {
+    if (!isNodeJs && !isStandaloneJsVM && !isBrowser) {
       throw "Supported JS engine not detected";
     }
     
@@ -271,7 +276,7 @@ $imports
       wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
     }
     
-    if (isD8) {
+    if (isStandaloneJsVM) {
       const wasmBuffer = read(wasmFilePath, 'binary');
       const wasmModule = new WebAssembly.Module(wasmBuffer);
       wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
