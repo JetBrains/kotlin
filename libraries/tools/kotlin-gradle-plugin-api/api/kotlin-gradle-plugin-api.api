@@ -1042,50 +1042,50 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetE
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder {
-	public abstract fun addCompilations (Lkotlin/jvm/functions/Function1;)V
-	public abstract fun anyAndroid ()V
-	public abstract fun anyAndroidNative ()V
-	public abstract fun anyAndroidNativeArm32 ()V
-	public abstract fun anyAndroidNativeArm64 ()V
-	public abstract fun anyAndroidNativeX64 ()V
-	public abstract fun anyAndroidNativeX86 ()V
-	public abstract fun anyApple ()V
-	public abstract fun anyIos ()V
-	public abstract fun anyIosArm32 ()V
-	public abstract fun anyIosArm64 ()V
-	public abstract fun anyIosSimulatorArm64 ()V
-	public abstract fun anyIosX64 ()V
-	public abstract fun anyJs ()V
-	public abstract fun anyJvm ()V
-	public abstract fun anyLinux ()V
-	public abstract fun anyLinuxArm32Hfp ()V
-	public abstract fun anyLinuxArm64 ()V
-	public abstract fun anyLinuxMips32 ()V
-	public abstract fun anyLinuxMipsel32 ()V
-	public abstract fun anyLinuxX64 ()V
-	public abstract fun anyMacos ()V
-	public abstract fun anyMacosArm64 ()V
-	public abstract fun anyMacosX64 ()V
-	public abstract fun anyMingw ()V
-	public abstract fun anyMingwX64 ()V
-	public abstract fun anyMingwX86 ()V
-	public abstract fun anyNative ()V
-	public abstract fun anyTvos ()V
-	public abstract fun anyTvosArm64 ()V
-	public abstract fun anyTvosSimulatorArm64 ()V
-	public abstract fun anyTvosX64 ()V
-	public abstract fun anyWasm32 ()V
-	public abstract fun anyWatchos ()V
-	public abstract fun anyWatchosArm32 ()V
-	public abstract fun anyWatchosArm64 ()V
-	public abstract fun anyWatchosDeviceArm64 ()V
-	public abstract fun anyWatchosSimulatorArm64 ()V
-	public abstract fun anyWatchosX64 ()V
-	public abstract fun anyWatchosX86 ()V
 	public abstract fun common (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun filterCompilations (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun group (Ljava/lang/String;Lkotlin/jvm/functions/Function1;)V
-	public abstract fun removeCompilations (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun withAndroid ()V
+	public abstract fun withAndroidNative ()V
+	public abstract fun withAndroidNativeArm32 ()V
+	public abstract fun withAndroidNativeArm64 ()V
+	public abstract fun withAndroidNativeX64 ()V
+	public abstract fun withAndroidNativeX86 ()V
+	public abstract fun withApple ()V
+	public abstract fun withCompilations (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun withIos ()V
+	public abstract fun withIosArm32 ()V
+	public abstract fun withIosArm64 ()V
+	public abstract fun withIosSimulatorArm64 ()V
+	public abstract fun withIosX64 ()V
+	public abstract fun withJs ()V
+	public abstract fun withJvm ()V
+	public abstract fun withLinux ()V
+	public abstract fun withLinuxArm32Hfp ()V
+	public abstract fun withLinuxArm64 ()V
+	public abstract fun withLinuxMips32 ()V
+	public abstract fun withLinuxMipsel32 ()V
+	public abstract fun withLinuxX64 ()V
+	public abstract fun withMacos ()V
+	public abstract fun withMacosArm64 ()V
+	public abstract fun withMacosX64 ()V
+	public abstract fun withMingw ()V
+	public abstract fun withMingwX64 ()V
+	public abstract fun withMingwX86 ()V
+	public abstract fun withNative ()V
+	public abstract fun withTvos ()V
+	public abstract fun withTvosArm64 ()V
+	public abstract fun withTvosSimulatorArm64 ()V
+	public abstract fun withTvosX64 ()V
+	public abstract fun withWasm32 ()V
+	public abstract fun withWatchos ()V
+	public abstract fun withWatchosArm32 ()V
+	public abstract fun withWatchosArm64 ()V
+	public abstract fun withWatchosDeviceArm64 ()V
+	public abstract fun withWatchosSimulatorArm64 ()V
+	public abstract fun withWatchosX64 ()V
+	public abstract fun withWatchosX86 ()V
+	public abstract fun withoutCompilations (Lkotlin/jvm/functions/Function1;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$DefaultImpls {

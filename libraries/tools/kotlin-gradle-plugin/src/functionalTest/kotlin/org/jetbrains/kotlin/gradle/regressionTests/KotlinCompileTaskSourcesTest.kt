@@ -66,8 +66,8 @@ class KotlinCompileTaskSourcesTest {
         kotlin.targetHierarchy.default {
             common {
                 group("jvmAndLinux") {
-                    anyLinux()
-                    anyJvm()
+                    withLinux()
+                    withJvm()
                 }
             }
         }

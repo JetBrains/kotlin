@@ -38,8 +38,8 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         project.multiplatformExtension.targetHierarchy.custom {
             common {
                 group("jvmAndAndroid") {
-                    anyJvm()
-                    anyAndroid()
+                    withJvm()
+                    withAndroid()
                 }
             }
         }

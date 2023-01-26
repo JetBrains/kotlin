@@ -208,8 +208,8 @@ class KotlinTargetHierarchyDslTest {
         kotlin.targetHierarchy.default {
             common {
                 group("jvmAndAndroid") {
-                    anyJvm()
-                    anyAndroid()
+                    withJvm()
+                    withAndroid()
                 }
             }
         }
@@ -260,7 +260,7 @@ class KotlinTargetHierarchyDslTest {
             targetHierarchy.apply(descriptor) {
                 group("base") {
                     group("extension") {
-                        anyLinuxX64()
+                        withLinuxX64()
                     }
                 }
             }
@@ -289,12 +289,12 @@ class KotlinTargetHierarchyDslTest {
         kotlin.targetHierarchy.custom {
             common {
                 group("native") {
-                    anyNative()
+                    withNative()
                 }
 
                 group("nix") {
-                    anyLinux()
-                    anyMacos()
+                    withLinux()
+                    withMacos()
                 }
             }
         }
@@ -332,7 +332,7 @@ class KotlinTargetHierarchyDslTest {
                 group("newRoot") {
                     group("base") {
                         group("extension") {
-                            anyLinuxX64()
+                            withLinuxX64()
                         }
                     }
                 }

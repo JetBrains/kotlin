@@ -21,38 +21,38 @@ internal val naturalKotlinTargetHierarchy = KotlinTargetHierarchyDescriptor {
 
     common {
         group("native") {
-            anyNative()
+            withNative()
 
             group("apple") {
-                anyApple()
+                withApple()
 
                 group("ios") {
-                    anyIos()
+                    withIos()
                 }
 
                 group("tvos") {
-                    anyTvos()
+                    withTvos()
                 }
 
                 group("watchos") {
-                    anyWatchos()
+                    withWatchos()
                 }
 
                 group("macos") {
-                    anyMacos()
+                    withMacos()
                 }
             }
 
             group("linux") {
-                anyLinux()
+                withLinux()
             }
 
             group("mingw") {
-                anyMingw()
+                withMingw()
             }
 
             group("androidNative") {
-                anyAndroidNative()
+                withAndroidNative()
             }
         }
     }
