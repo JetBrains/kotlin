@@ -152,7 +152,7 @@ class ControlFlowGraphBuilder {
             else -> throw IllegalArgumentException("Unknown function: ${function.render()}")
         }
 
-        val localFunctionNode = runIf(function.symbol.callableId.isLocal && bodyBuildingMode) {
+        val localFunctionNode = runIf(function is FirSimpleFunction && function.isLocal && bodyBuildingMode) {
             createLocalFunctionDeclarationNode(function).also { addNewSimpleNode(it) }
         }
         val enterNode = enterGraph(function, name, ControlFlowGraph.Kind.Function) {
