@@ -600,7 +600,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
             signatureComposer = signatureComposer,
             symbolTable = symbolTable,
-            dependentComponents = emptyList()
+            dependentComponents = emptyList(),
+            initializedIrBuiltIns = null
         ).also {
             (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
         }

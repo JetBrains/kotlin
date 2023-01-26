@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
+import org.jetbrains.kotlin.fir.backend.IrBuiltInsOverFir
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -43,7 +44,8 @@ class LowLevelFirAnalyzerFacade(
         fir2IrExtensions: Fir2IrExtensions,
         signatureComposer: FirBasedSignatureComposer,
         symbolTable: SymbolTable,
-        dependentComponents: List<Fir2IrComponents>
+        dependentComponents: List<Fir2IrComponents>,
+        irBuiltIns: IrBuiltInsOverFir?
     ): Fir2IrResult = shouldNotBeCalled()
 }
 

@@ -136,7 +136,8 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
         kotlinBuiltIns = builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
         signatureComposer = signatureComposer,
         symbolTable = symbolTable,
-        dependentComponents = emptyList()
+        dependentComponents = emptyList(),
+        initializedIrBuiltIns = null
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = dependencies }
     }

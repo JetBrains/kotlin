@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
-import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
-import org.jetbrains.kotlin.fir.backend.Fir2IrResult
+import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
@@ -57,7 +54,8 @@ fun FirResult.convertToIrAndActualize(
             linkViaSignatures = linkViaSignatures,
             signatureComposer = signatureComposer,
             symbolTable = symbolTable,
-            dependentComponents = emptyList()
+            dependentComponents = emptyList(),
+            irBuiltIns = null
         )
         result = platformOutput.convertToIr(
             fir2IrExtensions,
@@ -65,7 +63,8 @@ fun FirResult.convertToIrAndActualize(
             linkViaSignatures = linkViaSignatures,
             signatureComposer = signatureComposer,
             symbolTable = symbolTable,
-            dependentComponents = listOf(commonIrOutput.components)
+            dependentComponents = listOf(commonIrOutput.components),
+            irBuiltIns = commonIrOutput.components.irBuiltIns
         )
         IrActualizer.actualize(
             result.irModuleFragment,
@@ -78,7 +77,8 @@ fun FirResult.convertToIrAndActualize(
             linkViaSignatures = linkViaSignatures,
             signatureComposer = signatureComposer,
             symbolTable = symbolTable,
-            dependentComponents = emptyList()
+            dependentComponents = emptyList(),
+            irBuiltIns = null
         )
     }
 
@@ -91,7 +91,8 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
     linkViaSignatures: Boolean,
     signatureComposer: FirBasedSignatureComposer,
     symbolTable: SymbolTable,
-    dependentComponents: List<Fir2IrComponents>
+    dependentComponents: List<Fir2IrComponents>,
+    irBuiltIns: IrBuiltInsOverFir?
 ): Fir2IrResult {
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
         session, scopeSession, fir,
@@ -103,6 +104,7 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
         generateSignatures = linkViaSignatures,
         signatureComposer = signatureComposer,
         symbolTable = symbolTable,
-        dependentComponents = dependentComponents
+        dependentComponents = dependentComponents,
+        initializedIrBuiltIns = irBuiltIns
     )
 }

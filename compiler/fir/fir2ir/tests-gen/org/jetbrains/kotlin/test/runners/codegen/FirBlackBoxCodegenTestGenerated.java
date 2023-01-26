@@ -33083,6 +33083,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("independentCommonSourceModules.kt")
+            public void testIndependentCommonSourceModules() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/independentCommonSourceModules.kt");
+            }
+
+            @Test
             @TestMetadata("kt-51753-1.kt")
             public void testKt_51753_1() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/kt-51753-1.kt");

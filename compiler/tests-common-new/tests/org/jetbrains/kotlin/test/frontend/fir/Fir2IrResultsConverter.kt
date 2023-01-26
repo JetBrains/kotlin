@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.IrBuiltInsOverFir
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
@@ -80,6 +81,7 @@ class Fir2IrResultsConverter(
             signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
             manglerCreator = { FirJvmKotlinMangler() }
         )
+        var irBuiltIns: IrBuiltInsOverFir? = null
 
         for ((index, firOutputPart) in inputArtifact.partsForDependsOnModules.withIndex()) {
             val dependentComponents = mutableListOf<Fir2IrComponents>()
@@ -93,6 +95,7 @@ class Fir2IrResultsConverter(
                 fir2IrExtensions, signatureComposer, symbolTable, dependentComponents, irBuiltIns
             )
             componentsMap[firOutputPart.module.name] = components
+            irBuiltIns = components.irBuiltIns
 
             val irPart = JvmIrCodegenFactory.JvmIrBackendInput(
                 irModuleFragment,

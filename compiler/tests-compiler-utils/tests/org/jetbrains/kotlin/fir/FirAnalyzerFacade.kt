@@ -38,7 +38,8 @@ abstract class AbstractFirAnalyzerFacade {
         fir2IrExtensions: Fir2IrExtensions,
         signatureComposer: FirBasedSignatureComposer,
         symbolTable: SymbolTable,
-        dependentComponents: List<Fir2IrComponents>
+        dependentComponents: List<Fir2IrComponents>,
+        irBuiltIns: IrBuiltInsOverFir?
     ): Fir2IrResult
 }
 
@@ -108,7 +109,8 @@ class FirAnalyzerFacade(
         fir2IrExtensions: Fir2IrExtensions,
         signatureComposer: FirBasedSignatureComposer,
         symbolTable: SymbolTable,
-        dependentComponents: List<Fir2IrComponents>
+        dependentComponents: List<Fir2IrComponents>,
+        irBuiltIns: IrBuiltInsOverFir?
     ): Fir2IrResult {
         if (_scopeSession == null) runResolution()
 
@@ -124,7 +126,8 @@ class FirAnalyzerFacade(
             kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
             signatureComposer = signatureComposer,
             symbolTable = symbolTable,
-            dependentComponents = dependentComponents
+            dependentComponents = dependentComponents,
+            initializedIrBuiltIns = irBuiltIns
         )
     }
 }

@@ -139,6 +139,7 @@ object GenerationUtils {
             signatureComposer = signatureComposer,
             symbolTable = symbolTable,
             dependentComponents = emptyList(),
+            irBuiltIns = null
         )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
 

@@ -89,7 +89,8 @@ internal fun PhaseContext.fir2Ir(
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
             signatureComposer = signatureComposer,
             symbolTable = symbolTable,
-            dependentComponents = emptyList()
+            dependentComponents = emptyList(),
+            initializedIrBuiltIns = null
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }

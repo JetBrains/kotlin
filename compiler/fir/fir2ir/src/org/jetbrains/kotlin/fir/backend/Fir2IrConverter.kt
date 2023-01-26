@@ -61,12 +61,15 @@ class Fir2IrConverter(
         irGenerationExtensions: Collection<IrGenerationExtension>,
         fir2irVisitor: Fir2IrVisitor,
         fir2IrExtensions: Fir2IrExtensions,
+        runPreCacheBuiltinClasses: Boolean
     ) {
         session.lazyDeclarationResolver.disableLazyResolveContractChecks()
         for (firFile in allFirFiles) {
             registerFileAndClasses(firFile, irModuleFragment)
         }
-        classifierStorage.preCacheBuiltinClasses()
+        if (runPreCacheBuiltinClasses) {
+            classifierStorage.preCacheBuiltinClasses()
+        }
         // The file processing is performed phase-to-phase:
         //   1. Creation of all non-local regular classes
         //   2. Class header processing (type parameters, supertypes, this receiver)
@@ -459,7 +462,8 @@ class Fir2IrConverter(
             kotlinBuiltIns: KotlinBuiltIns,
             signatureComposer: FirBasedSignatureComposer,
             symbolTable: SymbolTable,
-            dependentComponents: List<Fir2IrComponents>
+            dependentComponents: List<Fir2IrComponents>,
+            initializedIrBuiltIns: IrBuiltInsOverFir?
         ): Fir2IrResult {
             val moduleDescriptor = FirModuleDescriptor(session, kotlinBuiltIns)
             val components = Fir2IrComponentsStorage(
@@ -477,7 +481,7 @@ class Fir2IrConverter(
             components.visibilityConverter = visibilityConverter
             val typeConverter = Fir2IrTypeConverter(components)
             components.typeConverter = typeConverter
-            val irBuiltIns = dependentComponents.lastOrNull()?.irBuiltIns ?: IrBuiltInsOverFir(
+            val irBuiltIns = initializedIrBuiltIns ?: IrBuiltInsOverFir(
                 components, languageVersionSettings, moduleDescriptor, irMangler,
                 languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources) || kotlinBuiltIns !== DefaultBuiltIns.Instance
             )
@@ -505,7 +509,8 @@ class Fir2IrConverter(
             }
 
             converter.runSourcesConversion(
-                allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, fir2IrExtensions
+                allFirFiles, irModuleFragment, irGenerationExtensions, fir2irVisitor, fir2IrExtensions,
+                runPreCacheBuiltinClasses = initializedIrBuiltIns == null
             )
 
             return Fir2IrResult(irModuleFragment, components, moduleDescriptor)
