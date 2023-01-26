@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationOverview
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -30,8 +32,20 @@ internal class KtFe10AnnotationsList private constructor(
     override val annotations: List<KtAnnotationApplication>
         get() = withValidityAssertion {
             fe10Annotations.mapIndexedNotNull { index, annotation ->
-                if (annotation.annotationClass.classId in annotationsToIgnore) null
-                else annotation.toKtAnnotationApplication(analysisContext, index)
+                if (annotation.annotationClass.classId in annotationsToIgnore)
+                    null
+                else
+                    annotation.toKtAnnotationApplication(analysisContext, index)
+            }
+        }
+
+    override val annotationOverviews: List<KtAnnotationOverview>
+        get() = withValidityAssertion {
+            fe10Annotations.mapIndexedNotNull { index, annotation ->
+                if (annotation.annotationClass.classId in annotationsToIgnore)
+                    null
+                else
+                    annotation.toKtAnnotationOverview(index)
             }
         }
 

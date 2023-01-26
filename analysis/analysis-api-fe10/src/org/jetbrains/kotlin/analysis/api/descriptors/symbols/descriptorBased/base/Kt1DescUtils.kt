@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.impl.*
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -608,27 +609,41 @@ internal fun createKtInitializerValue(
     return KtNonConstantInitializerValue(initializer)
 }
 
-internal fun AnnotationDescriptor.toKtAnnotationApplication(analysisContext: Fe10AnalysisContext, index: Int): KtAnnotationApplication {
-    return KtAnnotationApplication(
-        annotationClass?.maybeLocalClassId,
-        (source as? PsiSourceElement)?.psi as? KtCallElement,
-        (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget(),
-        getKtNamedAnnotationArguments(analysisContext),
-        index,
-    )
-}
+internal fun AnnotationDescriptor.toKtAnnotationApplication(
+    analysisContext: Fe10AnalysisContext,
+    index: Int,
+): KtAnnotationApplication = KtAnnotationApplication(
+    classId = classIdIfNonLocal,
+    psi = psi,
+    useSiteTarget = useSiteTarget,
+    arguments = getKtNamedAnnotationArguments(analysisContext),
+    index = index,
+)
+
+internal fun AnnotationDescriptor.toKtAnnotationOverview(index: Int): KtAnnotationOverview = KtAnnotationOverview(
+    classId = classIdIfNonLocal,
+    psi = psi,
+    useSiteTarget = useSiteTarget,
+    hasArguments = allValueArguments.isNotEmpty(),
+    index = index,
+)
+
+private val AnnotationDescriptor.psi: KtCallElement? get() = (source as? PsiSourceElement)?.psi as? KtCallElement
+private val AnnotationDescriptor.classIdIfNonLocal: ClassId? get() = annotationClass?.maybeLocalClassId
+private val AnnotationDescriptor.useSiteTarget: AnnotationUseSiteTarget?
+    get() = (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget()
 
 internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext): List<KtNamedAnnotationValue> =
     allValueArguments.map { (name, value) ->
         KtNamedAnnotationValue(name, value.toKtAnnotationValue(analysisContext, index = -1))
     }
 
-
 internal fun CallableDescriptor.createContextReceivers(
     analysisContext: Fe10AnalysisContext
 ): List<KtContextReceiver> {
     return contextReceiverParameters.map { createContextReceiver(it, analysisContext) }
 }
+
 internal fun ClassDescriptor.createContextReceivers(
     analysisContext: Fe10AnalysisContext
 ): List<KtContextReceiver> {

@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationOverview
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
@@ -62,6 +64,14 @@ internal fun annotations(
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KtAnnotationApplication> = annotationContainer.resolvedAnnotationsWithArguments(firSymbol).mapIndexed { index, annotation ->
     annotation.toKtAnnotationApplication(useSiteSession, index)
+}
+
+internal fun annotationOverviews(
+    firSymbol: FirBasedSymbol<*>,
+    useSiteSession: FirSession,
+    annotationContainer: FirAnnotationContainer = firSymbol.fir,
+): List<KtAnnotationOverview> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapIndexed { index, annotation ->
+    annotation.toKtAnnotationOverview(useSiteSession, index)
 }
 
 internal fun annotationClassIds(

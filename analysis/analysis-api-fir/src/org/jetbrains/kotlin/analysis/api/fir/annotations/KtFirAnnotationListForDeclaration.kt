@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -23,6 +24,11 @@ internal class KtFirAnnotationListForDeclaration private constructor(
     override val annotations: List<KtAnnotationApplication>
         get() = withValidityAssertion {
             annotations(firSymbol, useSiteSession)
+        }
+
+    override val annotationOverviews: List<KtAnnotationOverview>
+        get() = withValidityAssertion {
+            annotationOverviews(firSymbol, useSiteSession)
         }
 
     override fun hasAnnotation(

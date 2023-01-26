@@ -24,6 +24,14 @@ public val KtAnnotated.annotations: List<KtAnnotationApplication>
     get() = annotationsList.annotations
 
 /**
+ * A list of annotation overviews.
+ *
+ * @see [KtAnnotationsList.annotationOverviews]
+ */
+public val KtAnnotated.annotationOverviews: List<KtAnnotationOverview>
+    get() = annotationsList.annotationOverviews
+
+/**
  * Checks if entity has annotation with specified [classId].
  *
  * @see [KtAnnotationsList.hasAnnotation]

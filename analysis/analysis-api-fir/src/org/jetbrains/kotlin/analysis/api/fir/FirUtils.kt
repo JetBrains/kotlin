@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -13,7 +14,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -65,15 +68,24 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
         else -> emptyList()
     }
 
-internal fun FirAnnotation.toKtAnnotationApplication(useSiteSession: FirSession, index: Int): KtAnnotationApplication {
-    return KtAnnotationApplication(
-        toAnnotationClassId(useSiteSession),
-        psi as? KtCallElement,
-        useSiteTarget,
-        FirAnnotationValueConverter.toNamedConstantValue(
-            mapAnnotationParameters(this),
-            useSiteSession,
-        ),
-        index,
-    )
-}
+internal fun FirAnnotation.toKtAnnotationApplication(
+    useSiteSession: FirSession,
+    index: Int,
+): KtAnnotationApplication = KtAnnotationApplication(
+    classId = toAnnotationClassId(useSiteSession),
+    psi = psi as? KtCallElement,
+    useSiteTarget = useSiteTarget,
+    arguments = FirAnnotationValueConverter.toNamedConstantValue(
+        mapAnnotationParameters(this),
+        useSiteSession,
+    ),
+    index = index,
+)
+
+internal fun FirAnnotation.toKtAnnotationOverview(useSiteSession: FirSession, index: Int): KtAnnotationOverview = KtAnnotationOverview(
+    classId = toAnnotationClassId(useSiteSession),
+    psi = psi as? KtCallElement,
+    useSiteTarget = useSiteTarget,
+    hasArguments = this is FirAnnotationCall && arguments.isNotEmpty(),
+    index = index,
+)

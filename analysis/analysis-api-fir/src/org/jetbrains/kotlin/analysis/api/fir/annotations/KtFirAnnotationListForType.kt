@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationOverview
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -33,6 +35,13 @@ internal class KtFirAnnotationListForType private constructor(
         get() = withValidityAssertion {
             coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).mapIndexed { index, annotation ->
                 annotation.toKtAnnotationApplication(useSiteSession, index)
+            }
+        }
+
+    override val annotationOverviews: List<KtAnnotationOverview>
+        get() = withValidityAssertion {
+            coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).mapIndexed { index, annotation ->
+                annotation.toKtAnnotationOverview(useSiteSession, index)
             }
         }
 

@@ -25,6 +25,15 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
     public abstract val annotations: List<KtAnnotationApplication>
 
     /**
+     * A list of annotation overviews.
+     *
+     * Can be used instead of [annotations] if applicable to reduce resolve.
+     *
+     * @see KtAnnotationOverview
+     */
+    public abstract val annotationOverviews: List<KtAnnotationOverview>
+
+    /**
      * Checks if entity contains annotation with specified [classId].
      *
      * The semantic is equivalent to
@@ -81,4 +90,3 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
      */
     public abstract val annotationClassIds: Collection<ClassId>
 }
-
