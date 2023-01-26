@@ -431,7 +431,7 @@ private val exportInternalAbiPhase = createFileLoweringPhase(
 internal val ReturnsInsertionPhase = createFileLoweringPhase(
         name = "ReturnsInsertion",
         description = "Returns insertion for Unit functions",
-        prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase), // TODO: if there are no files in the module, this requirement fails.
+        prerequisite = setOf(autoboxPhase, coroutinesPhase, enumClassPhase),
         lowering = ::ReturnsInsertionLowering,
 )
 
