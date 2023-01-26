@@ -32,7 +32,8 @@ data class CompileStatisticsData(
     //TODO think about it,time in milliseconds
     val buildTimesMetrics: Map<BuildTime, Long>,
     val performanceMetrics: Map<BuildPerformanceMetric, Long>,
-    val type: String = BuildDataType.TASK_DATA.name
+    val type: String = BuildDataType.TASK_DATA.name,
+    val compilatedSources: List<String> = emptyList(),
 )
 
 
