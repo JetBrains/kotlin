@@ -77,6 +77,18 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends 
     }
 
     @Test
+    @TestMetadata("nestedTypeAnnotationWithTypeAlias.kt")
+    public void testNestedTypeAnnotationWithTypeAlias() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/nestedTypeAnnotationWithTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedTypeAnnotationWithTypeAliasAsAnnotation.kt")
+    public void testNestedTypeAnnotationWithTypeAliasAsAnnotation() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/nestedTypeAnnotationWithTypeAliasAsAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("propertyWithAnnotations.kt")
     public void testPropertyWithAnnotations() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/propertyWithAnnotations.kt");
