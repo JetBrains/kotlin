@@ -54,12 +54,13 @@ abstract class KonanTest : DefaultTask(), KonanTestExecutable {
     /**
      * Test executable arguments.
      */
-    @Input
+    @get:Input
     var arguments = mutableListOf<String>()
 
     /**
      * Test executable.
      */
+    @get:Input
     abstract override val executable: String
 
     /**

@@ -10,7 +10,6 @@ plugins {
     kotlin
     groovy
     `kotlin-dsl`
-    id("gradle-plugin-dependency-configuration")
     id("org.jetbrains.kotlin.plugin.sam.with.receiver")
 }
 
@@ -43,9 +42,6 @@ dependencies {
     api(gradleApi())
 
     api(kotlinStdlib())
-    commonApi(project(":kotlin-gradle-plugin"))
-    commonApi(project(":kotlin-gradle-plugin-api"))
-    commonApi(project(":kotlin-gradle-plugin-model"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
 
@@ -63,17 +59,11 @@ dependencies {
         }
     }
 
+    implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-coroutines-core"))
+
     api(project(":native:kotlin-native-utils"))
     api(project(":kotlin-native-shared"))
     api(project(":kotlinx-metadata-klib"))
-}
-
-kotlin {
-    sourceSets {
-        main {
-            kotlin.srcDir("$projectDir/../tools/benchmarks/shared/src/main/kotlin/report")
-        }
-    }
 }
 
 val compileKotlin: KotlinCompile by tasks
