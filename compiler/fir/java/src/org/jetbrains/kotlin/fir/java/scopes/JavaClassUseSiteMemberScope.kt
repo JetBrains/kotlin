@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethodCopy
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameterCopy
+import org.jetbrains.kotlin.fir.java.syntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
-import org.jetbrains.kotlin.fir.java.originalSyntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.java.toConeKotlinTypeProbablyFlexible
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.*
@@ -65,7 +65,7 @@ class JavaClassUseSiteMemberScope(
 
     private val javaOverrideChecker: JavaOverrideChecker get() = overrideChecker as JavaOverrideChecker
 
-    private val syntheticPropertyCache = session.originalSyntheticPropertiesStorage.cacheByOwner.getValue(klass.symbol, null)
+    private val syntheticPropertyCache = session.syntheticPropertiesStorage.cacheByOwner.getValue(klass, null)
 
     private fun generateSyntheticPropertySymbol(
         getterSymbol: FirNamedFunctionSymbol,
@@ -73,27 +73,24 @@ class JavaClassUseSiteMemberScope(
         property: FirProperty,
         takeModalityFromGetter: Boolean,
     ): FirSyntheticPropertySymbol {
-        return syntheticPropertyCache.getValue(
-            property.name,
-            buildSyntheticProperty {
-                moduleData = session.moduleData
-                name = property.name
-                symbol = FirJavaOverriddenSyntheticPropertySymbol(
-                    getterId = getterSymbol.callableId,
-                    propertyId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, property.name)
-                )
-                delegateGetter = getterSymbol.fir
-                delegateSetter = setterSymbol?.fir
-                status = getterSymbol.fir.status.copy(
-                    modality = if (takeModalityFromGetter) {
-                        delegateGetter.modality ?: property.modality
-                    } else {
-                        chooseModalityForAccessor(property, delegateGetter)
-                    }
-                )
-                deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
-            }.symbol
-        )
+        return buildSyntheticProperty {
+            moduleData = session.moduleData
+            name = property.name
+            symbol = FirJavaOverriddenSyntheticPropertySymbol(
+                getterId = getterSymbol.callableId,
+                propertyId = CallableId(getterSymbol.callableId.packageName, getterSymbol.callableId.className, property.name)
+            )
+            delegateGetter = getterSymbol.fir
+            delegateSetter = setterSymbol?.fir
+            status = getterSymbol.fir.status.copy(
+                modality = if (takeModalityFromGetter) {
+                    delegateGetter.modality ?: property.modality
+                } else {
+                    chooseModalityForAccessor(property, delegateGetter)
+                }
+            )
+            deprecationsProvider = getDeprecationsProviderFromAccessors(session, delegateGetter, delegateSetter)
+        }.symbol
     }
 
     private fun chooseModalityForAccessor(property: FirProperty, getter: FirSimpleFunction): Modality? {
@@ -143,13 +140,7 @@ class JavaClassUseSiteMemberScope(
 
         @Suppress("UNCHECKED_CAST")
         val overriddenProperty = propertiesFromSupertypes.firstOrNull() as ResultOfIntersection<FirPropertySymbol>? ?: return result
-
-        val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull { (symbol, _) ->
-            symbol.createOverridePropertyIfExists(declaredMemberScope, takeModalityFromGetter = true)
-                ?: superTypeScopes.firstNotNullOfOrNull { scope ->
-                    symbol.createOverridePropertyIfExists(scope, takeModalityFromGetter = false)
-                }
-        }
+        val overrideInClass = syntheticPropertyCache.getValue(name, this to overriddenProperty)
 
         val chosenSymbol = overrideInClass ?: overriddenProperty.chosenSymbol
         directOverriddenProperties[chosenSymbol] = listOf(overriddenProperty)
@@ -158,10 +149,20 @@ class JavaClassUseSiteMemberScope(
         return result
     }
 
+    internal fun syntheticPropertyFromOverride(overriddenProperty: ResultOfIntersection<FirPropertySymbol>): FirSyntheticPropertySymbol? {
+        val overrideInClass = overriddenProperty.overriddenMembers.firstNotNullOfOrNull { (symbol, _) ->
+            symbol.createOverridePropertyIfExists(declaredMemberScope, takeModalityFromGetter = true)
+                ?: superTypeScopes.firstNotNullOfOrNull { scope ->
+                    symbol.createOverridePropertyIfExists(scope, takeModalityFromGetter = false)
+                }
+        }
+        return overrideInClass
+    }
+
     private fun FirPropertySymbol.createOverridePropertyIfExists(
         scope: FirScope,
         takeModalityFromGetter: Boolean
-    ): FirPropertySymbol? {
+    ): FirSyntheticPropertySymbol? {
         val getterSymbol = this.findGetterOverride(scope) ?: return null
         val setterSymbol =
             if (this.fir.isVar)
