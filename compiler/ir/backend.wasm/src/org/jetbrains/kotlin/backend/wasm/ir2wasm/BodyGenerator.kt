@@ -303,7 +303,7 @@ class BodyGenerator(
             return
         }
 
-        body.buildRefNull(WasmHeapType.Simple.NullNone, location) // this = null
+        body.buildRefNull(WasmHeapType.Type(wasmGcType), location) // this = null
         generateCall(expression)
     }
 
@@ -725,14 +725,8 @@ class BodyGenerator(
         // NOTHING -> TYPE -> TRUE
         if (actualType.isNothing()) return
 
-        // NOTHING? -> TYPE? -> (NOTHING?)NULL
-        if (actualType.isNullableNothing() && expectedType.isNullable()) {
-            if (expectedType.getClass()?.isExternal == true) {
-                body.buildDrop(location)
-                body.buildRefNull(WasmHeapType.Simple.NullNoExtern, location)
-            }
-            return
-        }
+        // NOTHING? -> TYPE? -> TRUE
+        if (actualType.isNullableNothing() && expectedType.isNullable()) return
 
         val expectedClassErased = expectedType.getRuntimeClass(irBuiltIns)
 
