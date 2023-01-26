@@ -419,7 +419,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         if (field == null) {
             fun IrBuilderWithScope.setCallArguments(call: IrCall, arguments: List<IrValueParameter>) {
                 val receiverFromField = boundReceiver?.let { irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type) }
-                call.copyTypeArgumentsFrom(expression)
+                if (call.typeArgumentsCount > 0) {
+                    call.copyTypeArgumentsFrom(expression)
+                }
                 call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
                     receiverFromField ?: irImplicitCast(irGet(arguments[1]), expression.receiverType)
                 }
