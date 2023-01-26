@@ -39,7 +39,7 @@ class SinceKotlinVersion constructor(str: String) : Comparable<SinceKotlinVersio
 class SinceKotlinTransformer(val context: DokkaContext) : DocumentableTransformer {
 
     private val minSinceKotlinVersionOfPlatform = mapOf(
-        Platform.common to SinceKotlinVersion("1.2"),
+        Platform.common to SinceKotlinVersion("1.0"),
         Platform.jvm to SinceKotlinVersion("1.0"),
         Platform.js to SinceKotlinVersion("1.1"),
         Platform.native to SinceKotlinVersion("1.3")
