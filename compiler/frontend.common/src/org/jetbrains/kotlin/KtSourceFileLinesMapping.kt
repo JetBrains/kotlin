@@ -91,7 +91,7 @@ fun InputStreamReader.readSourceFileWithMapping(): Pair<CharSequence, KtSourceFi
             charsRead++
             when {
                 c == '\n' && skipNextLf -> {
-                    lineOffsets[lineOffsets.size - 1] = charsRead
+                    charsRead--
                     skipNextLf = false
                 }
                 c == '\n' || c == '\r' -> {
