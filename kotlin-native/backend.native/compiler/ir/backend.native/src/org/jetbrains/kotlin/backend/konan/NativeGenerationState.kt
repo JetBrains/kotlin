@@ -44,7 +44,9 @@ internal class NativeGenerationState(
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
         val context: Context,
-        val cacheDeserializationStrategy: CacheDeserializationStrategy?
+        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+        val dependenciesTracker: DependenciesTracker,
+        val llvmModuleSpecification: LlvmModuleSpecification,
 ) : BasicPhaseContext(config), BackendContextHolder<Context>, LlvmIrHolder {
     private val outputPath = config.cacheSupport.tryGetImplicitOutput(cacheDeserializationStrategy) ?: config.outputPath
     val outputFiles = OutputFiles(outputPath, config.target, config.produce)
@@ -77,16 +79,7 @@ internal class NativeGenerationState(
 
     lateinit var fileLowerState: FileLowerState
 
-    val llvmModuleSpecification by lazy {
-        if (config.produce.isCache)
-            CacheLlvmModuleSpecification(this, config.cachedLibraries,
-                    PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy!!))
-        else DefaultLlvmModuleSpecification(config.cachedLibraries)
-    }
-
     val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
-
-    val dependenciesTracker: DependenciesTracker = DependenciesTrackerImpl(this)
 
     private val runtimeDelegate = lazy { Runtime(llvmContext, config.distribution.compilerInterface(config.target)) }
     private val llvmDelegate = lazy { Llvm(this, LLVMModuleCreateWithNameInContext("out", llvmContext)!!) }

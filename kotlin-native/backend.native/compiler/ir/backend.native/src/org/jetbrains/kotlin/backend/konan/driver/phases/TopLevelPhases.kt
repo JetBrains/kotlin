@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -55,10 +56,12 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
         val fragments = backendEngine.splitIntoFragments(irModule)
-        fragments.forEach { (generationState, fragment) ->
+        fragments.forEach { fragment ->
+            val generationState = NativeGenerationState(context.config, backendContext,
+                    fragment.cacheDeserializationStrategy, fragment.dependenciesTracker, fragment.llvmModuleSpecification)
             backendEngine.useContext(generationState) { generationStateEngine ->
                 // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                val it = generationStateEngine.compileModule(fragment)
+                val it = generationStateEngine.compileModule(fragment.irModule)
                 // Split here
                 compileAndLink(it, it.outputFiles.mainFileName, it.outputFiles, it.temporaryFiles, isCoverageEnabled = false)
             }
@@ -74,9 +77,17 @@ private fun isReferencedByNativeRuntime(declarations: List<IrDeclaration>): Bool
             it is IrClass && isReferencedByNativeRuntime(it.declarations)
         }
 
+private data class BackendFragments(
+        val irModule: IrModuleFragment,
+        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+        val dependenciesTracker: DependenciesTracker,
+        val llvmModuleSpecification: LlvmModuleSpecification,
+)
+
 private fun PhaseEngine<out Context>.splitIntoFragments(
         input: IrModuleFragment,
-): Sequence<Pair<NativeGenerationState, IrModuleFragment>> = if (context.config.producePerFileCache) {
+): Sequence<BackendFragments> = if (context.config.producePerFileCache) {
+    val config = context.config
     val module = input
     val files = module.files.toList()
     val stdlibIsBeingCached = module.descriptor == context.stdlibModule
@@ -86,29 +97,45 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
             ?.filter { isReferencedByNativeRuntime(it.declarations) }.orEmpty()
 
     files.asSequence().filter { !it.isFunctionInterfaceFile }.map { file ->
-        val generationState = NativeGenerationState(
-                context.config,
-                context,
-                CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
-        )
+        val cacheDeserializationStrategy = CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
+        val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
+        val llvmModuleSpecification = CacheLlvmModuleSpecification(
+                config.cachedLibraries,
+                PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy),
+                cacheDeserializationStrategy,
+                containsStdlib = containsStdlib
+                )
+        val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, context.config, context)
         val fragment = IrModuleFragmentImpl(input.descriptor, input.irBuiltins, listOf(file))
-        if (generationState.shouldDefineFunctionClasses)
+        if (containsStdlib && cacheDeserializationStrategy.containsKFunctionImpl)
             fragment.files += functionInterfaceFiles
 
-        if (generationState.shouldLinkRuntimeNativeLibraries) {
+        if (containsStdlib && cacheDeserializationStrategy.containsRuntime) {
             filesReferencedByNativeRuntime.forEach {
-                generationState.dependenciesTracker.add(it)
+                dependenciesTracker.add(it)
             }
         }
 
         fragment.files.filterIsInstance<IrFileImpl>().forEach {
             it.module = fragment
         }
-        generationState to fragment
+        BackendFragments(
+                fragment,
+                cacheDeserializationStrategy,
+                dependenciesTracker,
+                llvmModuleSpecification,
+        )
     }
 } else {
-    val nativeGenerationState = NativeGenerationState(context.config, context, context.config.libraryToCache?.strategy)
-    sequenceOf(nativeGenerationState to input)
+    val llvmModuleSpecification = DefaultLlvmModuleSpecification(context.config.cachedLibraries)
+    sequenceOf(
+            BackendFragments(
+                    input,
+                    context.config.libraryToCache?.strategy,
+                    DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
+                    llvmModuleSpecification
+            )
+    )
 }
 
 internal data class ModuleCompilationOutput(

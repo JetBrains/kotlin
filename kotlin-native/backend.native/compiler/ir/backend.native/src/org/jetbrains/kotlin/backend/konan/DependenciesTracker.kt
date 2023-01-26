@@ -66,11 +66,12 @@ private sealed class FileOrigin {
     class CertainFile(val library: KotlinLibrary, val fqName: String, val filePath: String) : FileOrigin()
 }
 
-internal class DependenciesTrackerImpl(private val generationState: NativeGenerationState) : DependenciesTracker {
+internal class DependenciesTrackerImpl(
+        private val llvmModuleSpecification: LlvmModuleSpecification,
+        private val config: KonanConfig,
+        private val context: Context,
+) : DependenciesTracker {
     private data class LibraryFile(val library: KotlinLibrary, val fqName: String, val filePath: String)
-
-    private val config = generationState.config
-    private val context = generationState.context
 
     private val usedBitcode = mutableSetOf<KotlinLibrary>()
     private val usedNativeDependencies = mutableSetOf<KotlinLibrary>()
@@ -297,11 +298,11 @@ internal class DependenciesTrackerImpl(private val generationState: NativeGenera
         val bitcodeToLink = topSortedLibraries.filter { shouldContainBitcode(it) }
 
         private fun shouldContainBitcode(library: KonanLibrary): Boolean {
-            if (!generationState.llvmModuleSpecification.containsLibrary(library)) {
+            if (!llvmModuleSpecification.containsLibrary(library)) {
                 return false
             }
 
-            if (!generationState.llvmModuleSpecification.isFinal) {
+            if (!llvmModuleSpecification.isFinal) {
                 return true
             }
 

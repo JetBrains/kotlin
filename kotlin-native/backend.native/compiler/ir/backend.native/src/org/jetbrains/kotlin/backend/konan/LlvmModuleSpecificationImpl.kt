@@ -43,19 +43,20 @@ internal class DefaultLlvmModuleSpecification(cachedLibraries: CachedLibraries)
 }
 
 internal class CacheLlvmModuleSpecification(
-        private val generationState: NativeGenerationState,
         cachedLibraries: CachedLibraries,
-        private val libraryToCache: PartialCacheInfo
+        private val libraryToCache: PartialCacheInfo,
+        private val cacheDeserializationStrategy: CacheDeserializationStrategy,
+        private val containsStdlib: Boolean,
 ) : LlvmModuleSpecificationBase(cachedLibraries) {
     override val isFinal = false
 
     override fun containsLibrary(library: KotlinLibrary): Boolean = library == libraryToCache.klib
 
     override fun containsDeclaration(declaration: IrDeclaration): Boolean {
-        if (generationState.shouldDefineFunctionClasses && declaration.getPackageFragment().isFunctionInterfaceFile)
+        if (containsStdlib && cacheDeserializationStrategy.containsKFunctionImpl && declaration.getPackageFragment().isFunctionInterfaceFile)
             return true
         if (!super.containsDeclaration(declaration)) return false
-        return (generationState.cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)
+        return (cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile)
                 ?.filePath.let { it == null || it == declaration.fileOrNull?.path }
     }
 }

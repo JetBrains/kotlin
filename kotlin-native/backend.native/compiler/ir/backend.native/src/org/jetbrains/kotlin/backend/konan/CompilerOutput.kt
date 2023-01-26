@@ -45,9 +45,11 @@ internal val NativeGenerationState.shouldDefineCachedBoxes: Boolean
     get() = producedLlvmModuleContainsStdlib &&
             cacheDeserializationStrategy?.contains(KonanFqNames.internalPackageName, "Boxing.kt") != false
 
+internal val CacheDeserializationStrategy?.containsRuntime: Boolean
+    get() = this?.contains(KonanFqNames.internalPackageName, "Runtime.kt") != false
+
 internal val NativeGenerationState.shouldLinkRuntimeNativeLibraries: Boolean
-    get() = producedLlvmModuleContainsStdlib &&
-            cacheDeserializationStrategy?.contains(KonanFqNames.internalPackageName, "Runtime.kt") != false
+    get() = producedLlvmModuleContainsStdlib && cacheDeserializationStrategy.containsRuntime
 
 val CompilerOutputKind.isCache: Boolean
     get() = this == CompilerOutputKind.STATIC_CACHE || this == CompilerOutputKind.DYNAMIC_CACHE
