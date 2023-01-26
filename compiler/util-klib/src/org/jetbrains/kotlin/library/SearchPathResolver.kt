@@ -162,17 +162,12 @@ abstract class KotlinLibrarySearchPathResolver<L : KotlinLibrary>(
     }
 
     override fun resolve(unresolved: LenientUnresolvedLibrary, isDefaultLink: Boolean): L? {
-        return resolveOrNull(unresolved, isDefaultLink).also { resolvedLibrary ->
-            if (resolvedLibrary == null) {
-                logger.warning("Could not find \"${unresolved.path}\" in ${searchRoots.map { it.absolutePath }}")
-            }
-        }
+        return resolveOrNull(unresolved, isDefaultLink)
     }
 
     override fun resolve(unresolved: RequiredUnresolvedLibrary, isDefaultLink: Boolean): L {
         return resolveOrNull(unresolved, isDefaultLink)
             ?: logger.fatal("Could not find \"${unresolved.path}\" in ${searchRoots.map { it.absolutePath }}")
-
     }
 
     override fun libraryMatch(candidate: L, unresolved: UnresolvedLibrary): Boolean = true
