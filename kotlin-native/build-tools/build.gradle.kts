@@ -28,7 +28,6 @@ val rootProperties = Properties().apply {
 }
 
 val kotlinVersion = project.bootstrapKotlinVersion
-val slackApiVersion: String by rootProperties
 val metadataVersion: String by rootProperties
 
 group = "org.jetbrains.kotlin"
@@ -63,8 +62,6 @@ dependencies {
             }
         }
     }
-
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
 
     api(project(":native:kotlin-native-utils"))
     api(project(":kotlin-native-shared"))
