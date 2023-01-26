@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getType
 import org.jetbrains.kotlin.types.StubTypeForBuilderInference
-import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.BasicExpressionTypingVisitor
 import org.jetbrains.kotlin.types.isError
 
@@ -36,19 +35,7 @@ object BuilderInferenceAssignmentChecker : CallChecker {
         val right = binaryExpression.right ?: return
         val rightType = right.getType(context.trace.bindingContext) ?: return
 
-        if (!KotlinTypeChecker.DEFAULT.isSubtypeOf(rightType, leftType)) {
-            val dfi = context.dataFlowInfo
-            val dfvFactory = context.dataFlowValueFactory
-            val stableTypesFromDataFlow = dfi.getStableTypes(
-                dfvFactory.createDataFlowValue(right, rightType, context.trace.bindingContext, context.moduleDescriptor),
-                context.languageVersionSettings
-            )
-            if (stableTypesFromDataFlow.none {
-                    KotlinTypeChecker.DEFAULT.isSubtypeOf(it, leftType)
-                }
-            ) {
-                context.trace.report(Errors.TYPE_MISMATCH.on(right, leftType, rightType))
-            }
-        }
+        if (isAssignmentCorrectWithDataFlowInfo(leftType, right, rightType, context)) return
+        context.trace.report(Errors.TYPE_MISMATCH.on(right, leftType, rightType))
     }
 }
