@@ -9,6 +9,9 @@ package org.jetbrains.kotlin
 import com.google.gson.GsonBuilder
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.properties.saveProperties
@@ -313,37 +316,6 @@ fun Array<String>.runCommand(
     }
 }
 
-fun String.splitCommaSeparatedOption(optionName: String) =
-    split("\\s*,\\s*".toRegex()).map {
-        if (it.isNotEmpty()) listOf(optionName, it) else listOf(null)
-    }.flatten().filterNotNull()
-
-data class Commit(val revision: String, val developer: String, val webUrlWithDescription: String)
-
-val teamCityUrl = "https://buildserver.labs.intellij.net"
-
-fun buildsUrl(buildLocator: String) =
-    "$teamCityUrl/app/rest/builds/?locator=$buildLocator"
-
-fun getBuild(buildLocator: String, user: String, password: String) =
-    try {
-        sendGetRequest(buildsUrl(buildLocator), user, password)
-    } catch (t: Throwable) {
-        error("Try to get build! TeamCity is unreachable!")
-    }
-
-fun sendGetRequest(url: String, username: String? = null, password: String? = null): String {
-    val connection = URL(url).openConnection() as HttpURLConnection
-    if (username != null && password != null) {
-        val auth = Base64.getEncoder().encode(("$username:$password").toByteArray()).toString(Charsets.UTF_8)
-        connection.addRequestProperty("Authorization", "Basic $auth")
-    }
-    connection.setRequestProperty("Accept", "application/json");
-    connection.connect()
-    return connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
-}
-
-
 @JvmOverloads
 fun compileSwift(
     project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
@@ -484,3 +456,11 @@ internal val Project.testTargetConfigurables: Configurables
     }
 
 internal val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()!!
+
+internal val Project.ext: ExtraPropertiesExtension
+    get() = extensions.getByName("ext") as ExtraPropertiesExtension
+
+internal val FileCollection.isNotEmpty: Boolean
+    get() = !isEmpty
+
+internal fun Provider<File>.resolve(child: String): Provider<File> = map { it.resolve(child) }
