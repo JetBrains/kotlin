@@ -44,10 +44,6 @@ gradlePlugin {
     }
 }
 
-kotlinDslPluginOptions {
-    experimentalWarning.set(false)
-}
-
 fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
     val v = it.toString()
     if (v.isBlank()) true
@@ -98,17 +94,6 @@ sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourc
         kotlin.srcDir("../compiler/util-klib/src")
         kotlin.srcDir("../native/utils/src")
     }
-    /**
-     * TODO: mentioned bellow and Co it'd be better to move to :kotlin-native:performance:buildSrc,
-     * because all this relates to benchmarking.
-     */
-    kotlin.exclude("**/benchmark/*.kt")
-    kotlin.exclude("**/kotlin/MPPTools.kt")
-    kotlin.exclude("**/kotlin/RegressionsReporter.kt")
-    kotlin.exclude("**/kotlin/RunJvmTask.kt")
-    kotlin.exclude("**/kotlin/RunKotlinNativeTask.kt")
-    kotlin.exclude("**/kotlin/BuildRegister.kt")
-    kotlin.exclude("**/kotlin/benchmarkUtils.kt")
 }
 
 tasks.validatePlugins.configure {
@@ -141,21 +126,14 @@ dependencies {
     compileOnly(gradleApi())
 
     val kotlinVersion = project.bootstrapKotlinVersion
-    val ktorVersion  = "1.2.1"
-    val slackApiVersion = "1.2.0"
     val metadataVersion = "0.0.1-dev-10"
+    val coroutinesVersion = "1.5.0"
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    implementation("com.ullink.slack:simpleslackapi:$slackApiVersion") {
-        exclude(group = "com.google.code.gson", module = "gson") // Workaround for Gradle dependency resolution error
-    }
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion") { isTransitive = false }
     implementation("com.google.code.gson:gson:2.8.9") // Workaround for Gradle dependency resolution error
-
-    implementation("io.ktor:ktor-client-auth:$ktorVersion")
-    implementation("io.ktor:ktor-client-core:$ktorVersion")
-    implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
@@ -168,27 +146,30 @@ samWithReceiver {
     annotation("org.gradle.api.HasImplicitReceiver")
 }
 
-fun Project.`samWithReceiver`(configure: org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension.() -> Unit): Unit =
-        extensions.configure("samWithReceiver", configure)
+fun Project.samWithReceiver(configure: org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension.() -> Unit): Unit =
+    extensions.configure("samWithReceiver", configure)
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.allWarningsAsErrors = true
-    kotlinOptions.freeCompilerArgs += listOf(
-        "-opt-in=kotlin.RequiresOptIn",
-        "-Xsuppress-version-warnings",
-        "-opt-in=kotlin.ExperimentalStdlibApi"
-    )
-}
-
-sourceSets["main"].withConvention(org.gradle.api.tasks.GroovySourceSet::class) {
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        groovy.srcDir("../kotlin-native/build-tools/src/main/groovy")
+val compileKotlin: KotlinCompile by tasks
+compileKotlin.apply {
+    kotlinOptions {
+        allWarningsAsErrors = true
+        freeCompilerArgs += listOf(
+            "-opt-in=kotlin.RequiresOptIn",
+            "-Xsuppress-version-warnings",
+            "-opt-in=kotlin.ExperimentalStdlibApi"
+        )
     }
 }
 
-tasks.named("compileGroovy", GroovyCompile::class.java) {
-    classpath += project.files(tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java))
-    dependsOn(tasks.named("compileKotlin"))
+if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+    sourceSets["main"].extensions
+        .getByType(GroovySourceDirectorySet::class.java)
+        .srcDir("../kotlin-native/build-tools/src/main/groovy")
+}
+
+tasks.withType<GroovyCompile>().configureEach {
+    classpath += project.files(compileKotlin.outputs)
+    dependsOn(compileKotlin)
 }
 
 allprojects {

@@ -28,7 +28,6 @@ val rootProperties = Properties().apply {
 }
 
 val kotlinVersion = project.bootstrapKotlinVersion
-val slackApiVersion: String by rootProperties
 val metadataVersion: String by rootProperties
 
 group = "org.jetbrains.kotlin"
