@@ -986,83 +986,83 @@ public final annotation class BuilderInference : kotlin.Annotation {
 }
 
 public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override operator fun compareTo(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Double): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Float): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Long): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Short): kotlin.Int
 
     public final operator fun dec(): kotlin.Byte
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
     public final operator fun inc(): kotlin.Byte
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Short): kotlin.Int
 
     public final operator fun rangeTo(other: kotlin.Byte): kotlin.ranges.IntRange
@@ -1090,77 +1090,77 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Byte): kotlin.Int
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Double): kotlin.Double
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Float): kotlin.Float
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Int): kotlin.Int
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Long): kotlin.Long
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toByte(): kotlin.Byte
 
     @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
     @kotlin.DeprecatedSinceKotlin(errorSince = "2.3", warningSince = "1.5")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toChar(): kotlin.Char
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toDouble(): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toFloat(): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toInt(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toLong(): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toString(): kotlin.String
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun unaryMinus(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun unaryPlus(): kotlin.Int
 
     public companion object of Byte {
@@ -1397,161 +1397,161 @@ public final enum class DeprecationLevel : kotlin.Enum<kotlin.DeprecationLevel> 
 }
 
 public final class Double : kotlin.Number, kotlin.Comparable<kotlin.Double> {
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override operator fun compareTo(other: kotlin.Double): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Float): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Long): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Short): kotlin.Int
 
     public final operator fun dec(): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Byte): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Float): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Int): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Long): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Short): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
     public final operator fun inc(): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Byte): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Float): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Int): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Long): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Short): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Byte): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Float): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Int): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Long): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Short): kotlin.Double
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Byte): kotlin.Double
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Double): kotlin.Double
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Float): kotlin.Double
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Int): kotlin.Double
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Long): kotlin.Double
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Short): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Byte): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Float): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Int): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Long): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Short): kotlin.Double
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = {}))
     @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toByte(): kotlin.Byte
 
     @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
     @kotlin.DeprecatedSinceKotlin(errorSince = "2.3", warningSince = "1.5")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toChar(): kotlin.Char
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toDouble(): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toFloat(): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toInt(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toLong(): kotlin.Long
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = {}))
     @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toString(): kotlin.String
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun unaryMinus(): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun unaryPlus(): kotlin.Double
 
     public companion object of Double {
@@ -1692,161 +1692,161 @@ public final annotation class ExtensionFunctionType : kotlin.Annotation {
 }
 
 public final class Float : kotlin.Number, kotlin.Comparable<kotlin.Float> {
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Double): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override operator fun compareTo(other: kotlin.Float): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Long): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Short): kotlin.Int
 
     public final operator fun dec(): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Byte): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Int): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Long): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Short): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
     public final operator fun inc(): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Byte): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Int): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Long): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Short): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Byte): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Int): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Long): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Short): kotlin.Float
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Byte): kotlin.Float
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Double): kotlin.Double
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Float): kotlin.Float
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Int): kotlin.Float
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Long): kotlin.Float
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Short): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Byte): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Int): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Long): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Short): kotlin.Float
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toByte()", imports = {}))
     @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toByte(): kotlin.Byte
 
     @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
     @kotlin.DeprecatedSinceKotlin(errorSince = "2.3", warningSince = "1.5")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toChar(): kotlin.Char
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toDouble(): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toFloat(): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toInt(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toLong(): kotlin.Long
 
     @kotlin.Deprecated(message = "Unclear conversion. To achieve the same result convert to Int explicitly and then to Short.", replaceWith = kotlin.ReplaceWith(expression = "toInt().toShort()", imports = {}))
     @kotlin.DeprecatedSinceKotlin(errorSince = "1.5", warningSince = "1.3")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toString(): kotlin.String
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun unaryMinus(): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun unaryPlus(): kotlin.Float
 
     public companion object of Float {
@@ -1915,92 +1915,92 @@ public open class IndexOutOfBoundsException : kotlin.RuntimeException {
 }
 
 public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final infix fun and(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Double): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Float): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override operator fun compareTo(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Long): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Short): kotlin.Int
 
     public final operator fun dec(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
     public final operator fun inc(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final fun inv(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final infix fun or(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Short): kotlin.Int
 
     public final operator fun rangeTo(other: kotlin.Byte): kotlin.ranges.IntRange
@@ -2028,87 +2028,87 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Byte): kotlin.Int
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Double): kotlin.Double
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Float): kotlin.Float
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Int): kotlin.Int
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Long): kotlin.Long
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final infix fun shl(bitCount: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final infix fun shr(bitCount: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toByte(): kotlin.Byte
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toChar(): kotlin.Char
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toDouble(): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toFloat(): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toInt(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toLong(): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toString(): kotlin.String
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun unaryMinus(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun unaryPlus(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final infix fun ushr(bitCount: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final infix fun xor(other: kotlin.Int): kotlin.Int
 
     public companion object of Int {
@@ -2621,83 +2621,83 @@ public open class RuntimeException : kotlin.Exception {
 }
 
 public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Double): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Float): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun compareTo(other: kotlin.Long): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override operator fun compareTo(other: kotlin.Short): kotlin.Int
 
     public final operator fun dec(): kotlin.Short
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun div(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override operator fun equals(other: kotlin.Any?): kotlin.Boolean
 
     public final operator fun inc(): kotlin.Short
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun minus(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun plus(other: kotlin.Short): kotlin.Int
 
     public final operator fun rangeTo(other: kotlin.Byte): kotlin.ranges.IntRange
@@ -2725,77 +2725,77 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Byte): kotlin.Int
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Double): kotlin.Double
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Float): kotlin.Float
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Int): kotlin.Int
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Long): kotlin.Long
 
     @kotlin.SinceKotlin(version = "1.1")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun rem(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Byte): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Double): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Float): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Int): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Long): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun times(other: kotlin.Short): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toByte(): kotlin.Byte
 
     @kotlin.Deprecated(message = "Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", replaceWith = kotlin.ReplaceWith(expression = "this.toInt().toChar()", imports = {}))
     @kotlin.DeprecatedSinceKotlin(errorSince = "2.3", warningSince = "1.5")
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toChar(): kotlin.Char
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toDouble(): kotlin.Double
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toFloat(): kotlin.Float
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toInt(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toLong(): kotlin.Long
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toShort(): kotlin.Short
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public open override fun toString(): kotlin.String
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun unaryMinus(): kotlin.Int
 
-/*∆*/     @kotlin.internal.IntrinsicConstEvaluation
+    @kotlin.internal.IntrinsicConstEvaluation
     public final operator fun unaryPlus(): kotlin.Int
 
     public companion object of Short {
