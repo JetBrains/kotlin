@@ -7,24 +7,22 @@ import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.BinaryModuleData
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.pipeline.buildFirFromKtFiles
-import org.jetbrains.kotlin.fir.pipeline.runCheckers
-import org.jetbrains.kotlin.fir.pipeline.runResolution
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 
 internal fun PhaseContext.firFrontend(
         input: KotlinCoreEnvironment
@@ -61,31 +59,49 @@ internal fun PhaseContext.firFrontend(
             configuration.languageVersionSettings,
             registerExtraComponents = {},
     )
-    val mainModuleData = FirModuleDataImpl(
-            mainModuleName,
-            dependencyList.regularDependencies,
-            dependencyList.dependsOnDependencies,
-            dependencyList.friendsDependencies,
-            CommonPlatforms.defaultCommonPlatform,
-            NativePlatformAnalyzerServices
-    )
-    val session = FirNativeSessionFactory.createModuleBasedSession(
-            mainModuleData,
-            sessionProvider,
-            extensionRegistrars,
-            configuration.languageVersionSettings,
-            sessionConfigurator,
-    )
-    val rawFirFiles = session.buildFirFromKtFiles(ktFiles)
-    val (scopeSession, firFiles) = session.runResolution(rawFirFiles)
-    if (shouldPrintFiles())
-        firFiles.forEach { println(it.render()) }
-    session.runCheckers(scopeSession, firFiles, diagnosticsReporter)
+
+    fun runFrontend(
+            moduleName: Name,
+            dependsOn: List<FirModuleData>,
+            ktFiles: List<KtFile>
+    ): ModuleCompilerAnalyzedOutput {
+        val moduleData = FirModuleDataImpl(
+                moduleName,
+                dependencyList.regularDependencies,
+                dependsOn,
+                dependencyList.friendsDependencies,
+                CommonPlatforms.defaultCommonPlatform,
+                NativePlatformAnalyzerServices
+        )
+        val session = FirNativeSessionFactory.createModuleBasedSession(
+                moduleData,
+                sessionProvider,
+                extensionRegistrars,
+                configuration.languageVersionSettings,
+                sessionConfigurator,
+        )
+        val output = buildResolveAndCheckFir(session, ktFiles, diagnosticsReporter)
+        if (shouldPrintFiles())
+            output.fir.forEach { println(it.render()) }
+
+        return output
+    }
+
+    val isMppEnabled = configuration.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
+
+    val firResult = if (isMppEnabled) {
+        val (commonKtFiles, platformKtFiles) = ktFiles.partition { it.isCommonSource == true }
+        val commonOutput = runFrontend(Name.identifier("${mainModuleName}-common"), emptyList(), commonKtFiles)
+        val platformOutput = runFrontend(mainModuleName, listOf(commonOutput.session.moduleData), platformKtFiles)
+        FirResult(platformOutput, commonOutput)
+    } else {
+        FirResult(runFrontend(mainModuleName, emptyList(), ktFiles), null)
+    }
 
     return if (syntaxErrors || diagnosticsReporter.hasErrors) {
         FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
         FirOutput.ShouldNotGenerateCode
     } else {
-        FirOutput.Full(session, scopeSession, firFiles)
+        FirOutput.Full(firResult)
     }
 }

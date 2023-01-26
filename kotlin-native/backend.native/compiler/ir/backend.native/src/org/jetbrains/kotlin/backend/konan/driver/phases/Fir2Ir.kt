@@ -9,15 +9,11 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.fir2Ir
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrResult
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.pipeline.FirResult
 
 internal data class Fir2IrOutput(
-        val session: FirSession,
-        val scopeSession: ScopeSession,
-        val firFiles: List<FirFile>,
+        val firResult: FirResult,
         val fir2irResult: Fir2IrResult,
         val symbols: KonanSymbols
 )

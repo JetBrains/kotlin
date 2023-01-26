@@ -9,18 +9,12 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.firFrontend
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.pipeline.FirResult
 
 sealed class FirOutput {
     object ShouldNotGenerateCode : FirOutput()
 
-    data class Full(
-            val session: FirSession,
-            val scopeSession: ScopeSession,
-            val firFiles: List<FirFile>,
-    ) : FirOutput()
+    data class Full(val firResult: FirResult) : FirOutput()
 }
 
 internal val FIRPhase = createSimpleNamedCompilerPhase(

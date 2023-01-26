@@ -16,16 +16,10 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.moduleData
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
@@ -36,10 +30,6 @@ internal fun PhaseContext.fir2Ir(
         input: FirOutput.Full,
 ): Fir2IrOutput {
     val fir2IrExtensions = Fir2IrExtensions.Default
-    val commonFirFiles = input.session.moduleData.dependsOnDependencies
-            .map { it.session }
-            .filter { it.kind == FirSession.Kind.Source }
-            .flatMap { (it.firProvider as FirProviderImpl).getAllFirFiles() }
 
     var builtInsModule: KotlinBuiltIns? = null
     val dependencies = mutableListOf<ModuleDescriptorImpl>()
@@ -70,31 +60,21 @@ internal fun PhaseContext.fir2Ir(
         moduleDescriptor.setDependencies(ArrayList(dependencies))
     }
 
-    val commonMemberStorage = Fir2IrCommonMemberStorage(
-        generateSignatures = false,
-        signatureComposerCreator = null,
-        manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
-    )
-
-    val fir2irResult = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-            input.session, input.scopeSession, input.firFiles + commonFirFiles,
-            configuration.languageVersionSettings,
+    val fir2irResult = input.firResult.convertToIrAndActualize(
             fir2IrExtensions,
-            KonanManglerIr, IrFactoryImpl,
-            Fir2IrVisibilityConverter.Default,
-            Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
             IrGenerationExtension.getInstances(config.project),
-            generateSignatures = false,
-            kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
-            commonMemberStorage = commonMemberStorage,
-            initializedIrBuiltIns = null
+            linkViaSignatures = false,
+            signatureComposerCreator = null,
+            irMangler = KonanManglerIr,
+            visibilityConverter = Fir2IrVisibilityConverter.Default,
+            kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
     }
 
     val symbols = createKonanSymbols(fir2irResult)
     // TODO KT-55580 Invoke CopyDefaultValuesToActualPhase, same as PsiToir phase does.
-    return Fir2IrOutput(input.session, input.scopeSession, input.firFiles, fir2irResult, symbols)
+    return Fir2IrOutput(input.firResult, fir2irResult, symbols)
 }
 
 private fun PhaseContext.createKonanSymbols(

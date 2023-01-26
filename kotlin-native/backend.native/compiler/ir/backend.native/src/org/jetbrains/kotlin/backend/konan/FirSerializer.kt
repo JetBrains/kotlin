@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -29,13 +30,22 @@ import org.jetbrains.kotlin.utils.toMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.psi
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal fun PhaseContext.firSerializer(
         input: Fir2IrOutput
 ): SerializerOutput {
     val configuration = config.configuration
-    val sourceFiles = input.firFiles.mapNotNull { it.sourceFile }
-    val firFilesBySourceFile = input.firFiles.associateBy { it.sourceFile }
+    val sourceFiles = mutableListOf<KtSourceFile>()
+    val firFilesAndSessionsBySourceFile = mutableMapOf<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>()
+
+    for (firOutput in listOfNotNull(input.firResult.commonOutput, input.firResult.platformOutput)) {
+        for (firFile in firOutput.fir) {
+            sourceFiles.add(firFile.sourceFile!!)
+            firFilesAndSessionsBySourceFile[firFile.sourceFile!!] = Triple(firFile, firOutput.session, firOutput.scopeSession)
+        }
+    }
+
     val metadataVersion =
             configuration.get(CommonConfigurationKeys.METADATA_VERSION)
                     ?: configuration.languageVersionSettings.languageVersion.toMetadataVersion()
@@ -49,12 +59,13 @@ internal fun PhaseContext.firSerializer(
             input.fir2irResult.irModuleFragment,
             expectDescriptorToSymbol = mutableMapOf() // TODO: expect -> actual mapping
     ) { file ->
-        val firFile = firFilesBySourceFile[file] ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
+        val (firFile, session, scopeSession) = firFilesAndSessionsBySourceFile[file]
+                ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
         serializeSingleFirFile(
                 firFile,
-                input.session,
-                input.scopeSession,
-                FirNativeKLibSerializerExtension(input.session, metadataVersion, FirElementAwareSerializableStringTable()),
+                session,
+                scopeSession,
+                FirNativeKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
                 configuration.languageVersionSettings,
         )
     }
