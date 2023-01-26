@@ -61,9 +61,10 @@ dependencies {
 
     implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-coroutines-core"))
 
-    api(project(":native:kotlin-native-utils"))
+    implementation(commonDependency("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"))
+    implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion"))
+
     api(project(":kotlin-native-shared"))
-    api(project(":kotlinx-metadata-klib"))
 }
 
 val compileKotlin: KotlinCompile by tasks
