@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import org.gradle.api.Project
-import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.*
@@ -38,8 +37,8 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         project.multiplatformExtension.targetHierarchy.custom {
             common {
                 group("jvmAndAndroid") {
-                    anyJvm()
-                    anyAndroid()
+                    withJvm()
+                    withAndroid()
                 }
             }
         }

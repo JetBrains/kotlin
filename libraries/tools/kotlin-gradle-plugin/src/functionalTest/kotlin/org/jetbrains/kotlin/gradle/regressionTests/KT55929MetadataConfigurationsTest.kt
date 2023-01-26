@@ -36,8 +36,8 @@ class KT55929MetadataConfigurationsTest {
         kotlin.targetHierarchy.default {
             common {
                 group("jvmAndLinux") {
-                    addCompilations { it.platformType == KotlinPlatformType.jvm }
-                    anyLinux()
+                    withCompilations { it.platformType == KotlinPlatformType.jvm }
+                    withLinux()
                     group("linux")
                 }
             }

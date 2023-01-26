@@ -27,8 +27,8 @@ class KotlinTargetHierarchyDescriptorTest {
     fun `test - simple descriptor`() {
         val descriptor = KotlinTargetHierarchyDescriptor {
             common {
-                group("groupA") { addCompilations { it.target.name == "a" } }
-                group("groupB") { addCompilations { it.target.name == "b" } }
+                group("groupA") { withCompilations { it.target.name == "a" } }
+                group("groupB") { withCompilations { it.target.name == "b" } }
             }
         }
 
@@ -65,7 +65,7 @@ class KotlinTargetHierarchyDescriptorTest {
         val descriptor = KotlinTargetHierarchyDescriptor { group("base") }.extend {
             group("base") {
                 group("extension") {
-                    addCompilations { true }
+                    withCompilations { true }
                 }
             }
         }
@@ -87,7 +87,7 @@ class KotlinTargetHierarchyDescriptorTest {
             group("newRoot") {
                 group("base") {
                     group("extension") {
-                        addCompilations { true }
+                        withCompilations { true }
                     }
                 }
             }
@@ -113,7 +113,7 @@ class KotlinTargetHierarchyDescriptorTest {
                 group("newRoot1") {
                     group("base") {
                         group("extension1") {
-                            addCompilations { true }
+                            withCompilations { true }
                         }
                     }
                 }
@@ -122,7 +122,7 @@ class KotlinTargetHierarchyDescriptorTest {
                 group("newRoot2") {
                     group("base") {
                         group("extension2") {
-                            addCompilations { true }
+                            withCompilations { true }
                         }
                     }
                 }
@@ -198,7 +198,7 @@ class KotlinTargetHierarchyDescriptorTest {
             filterCompilations { it.name in setOf("a", "b") }
             common {
                 group("x") {
-                    addCompilations { true }
+                    withCompilations { true }
                 }
             }
         }
@@ -225,7 +225,7 @@ class KotlinTargetHierarchyDescriptorTest {
     @Test
     fun `test - filterCompilations - include them again`() {
         val descriptor = KotlinTargetHierarchyDescriptor {
-            addCompilations { true }
+            withCompilations { true }
             filterCompilations { it.name == "a" }
         }
 
@@ -233,7 +233,7 @@ class KotlinTargetHierarchyDescriptorTest {
         assertNull(descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))
 
         val extended = descriptor.extend {
-            addCompilations { true } // <- adds all compilations back again!
+            withCompilations { true } // <- adds all compilations back again!
         }
 
         assertNull(descriptor.buildKotlinTargetHierarchy(kotlin.linuxX64().compilations.maybeCreate("b")))

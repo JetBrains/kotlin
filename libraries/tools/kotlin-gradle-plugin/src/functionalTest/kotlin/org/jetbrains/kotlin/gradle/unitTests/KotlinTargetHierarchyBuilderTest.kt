@@ -26,15 +26,15 @@ class KotlinTargetHierarchyBuilderTest {
 
         buildProjectWithMPP().multiplatformExtension.presets
 
-            // JS targets are special and therefore are only handled manually using `anyJs()`
+            // JS targets are special and therefore are only handled manually using `withJs()`
             .filter { it !is KotlinJsTargetPreset }
             .filter { it !is KotlinJsIrTargetPreset }
             .filter { it !is KotlinWasmTargetPreset }
 
-            // jvmWithJava is covered by the jvm() call
+            // jvmWithJava is covered by the withJvm() call
             .filter { it !is KotlinJvmWithJavaTargetPreset }
             .forEach { preset ->
-                val expectedFunctionName = "any${preset.name.capitalizeAsciiOnly()}"
+                val expectedFunctionName = "with${preset.name.capitalizeAsciiOnly()}"
                 if (kotlinTargetHierarchyBuilderInterface.declaredMethods.none { it.name == expectedFunctionName })
                     fail("${kotlinTargetHierarchyBuilderInterface.name}: Missing ${expectedFunctionName}() function")
             }

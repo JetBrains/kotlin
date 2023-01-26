@@ -69,8 +69,8 @@ interface KotlinTargetHierarchyDsl {
      *     targets.hierarchy.default { target ->
      *         group("native") { // <- we can re-declare already existing groups and connect children to it!
      *             group("unixLike") {
-     *                 anyLinux()
-     *                 anyApple()
+     *                 withLinux()
+     *                 withApple()
      *             }
      *         }
      *     }
