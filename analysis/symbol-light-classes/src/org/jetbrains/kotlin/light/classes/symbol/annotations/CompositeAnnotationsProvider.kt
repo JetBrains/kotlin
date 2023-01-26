@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
 import org.jetbrains.kotlin.name.ClassId
 
 internal class CompositeAnnotationsProvider(val providers: Collection<AnnotationsProvider>) : AnnotationsProvider {
-    override fun classIds(): Collection<ClassId> = buildList {
+    constructor(vararg providers: AnnotationsProvider) : this(providers.toList())
+
+    override fun annotationOverviews(): List<KtAnnotationOverview> = buildList {
         for (provider in providers) {
-            addAll(provider.classIds())
+            addAll(provider.annotationOverviews())
         }
     }
 

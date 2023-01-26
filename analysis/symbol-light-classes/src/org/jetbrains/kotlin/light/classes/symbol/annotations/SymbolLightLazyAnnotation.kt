@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.PsiAnnotationParameterList
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -16,30 +17,31 @@ import org.jetbrains.kotlin.psi.KtCallElement
 internal class SymbolLightLazyAnnotation private constructor(
     private val classId: ClassId,
     val annotationsProvider: AnnotationsProvider,
-    private val index: Int?,
-    specialAnnotationApplication: KtAnnotationApplication?,
+    private val annotationOverview: KtAnnotationOverview?,
+    private val specialAnnotationApplication: KtAnnotationApplication?,
     owner: PsiModifierList,
 ) : SymbolLightAbstractAnnotation(owner) {
     init {
-        require(index != null || specialAnnotationApplication != null)
+        require(annotationOverview != null || specialAnnotationApplication != null)
     }
 
     private val fqName: FqName = classId.asSingleFqName()
 
     val annotationApplication: Lazy<KtAnnotationApplication> = specialAnnotationApplication?.let(::lazyOf) ?: lazyPub {
         val applications = annotationsProvider[classId]
-        applications.find { it.index == index } ?: error("expected index: $index, actual indices: ${applications.map { it.index }}")
+        applications.find { it.index == annotationOverview?.index }
+            ?: error("expected index: ${annotationOverview?.index}, actual indices: ${applications.map { it.index }}")
     }
 
     constructor(
         classId: ClassId,
         annotationsProvider: AnnotationsProvider,
-        index: Int,
+        annotationOverview: KtAnnotationOverview,
         owner: PsiModifierList,
     ) : this(
         classId = classId,
         annotationsProvider = annotationsProvider,
-        index = index,
+        annotationOverview = annotationOverview,
         specialAnnotationApplication = null,
         owner = owner,
     )
@@ -52,7 +54,7 @@ internal class SymbolLightLazyAnnotation private constructor(
     ) : this(
         classId = classId,
         annotationsProvider = annotationsProvider,
-        index = null,
+        annotationOverview = null,
         specialAnnotationApplication = annotationApplication,
         owner = owner,
     )
@@ -70,7 +72,8 @@ internal class SymbolLightLazyAnnotation private constructor(
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightLazyAnnotation &&
             other.fqName == fqName &&
-            other.index == index &&
+            other.annotationOverview == annotationOverview &&
+            other.specialAnnotationApplication == specialAnnotationApplication &&
             annotationsProvider.isTheSameAs(other.annotationsProvider) &&
             other.parent == parent
 

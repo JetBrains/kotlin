@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
 import org.jetbrains.kotlin.name.ClassId
 
 object EmptyAnnotationsProvider : AnnotationsProvider {
-    override fun classIds(): Collection<ClassId> = emptyList()
+    override fun annotationOverviews(): List<KtAnnotationOverview> = emptyList()
     override fun get(classId: ClassId): Collection<KtAnnotationApplication> = emptyList()
     override fun contains(classId: ClassId): Boolean = false
     override fun isTheSameAs(other: Any?): Boolean = this === other

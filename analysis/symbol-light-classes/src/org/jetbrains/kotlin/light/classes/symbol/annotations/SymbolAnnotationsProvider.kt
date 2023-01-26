@@ -6,10 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.annotationClassIds
-import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
-import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
+import org.jetbrains.kotlin.analysis.api.annotations.*
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
@@ -24,8 +21,8 @@ internal class SymbolAnnotationsProvider<T : KtAnnotatedSymbol>(
     private inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
-    override fun classIds(): Collection<ClassId> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotationClassIds
+    override fun annotationOverviews(): List<KtAnnotationOverview> = withAnnotatedSymbol { annotatedSymbol ->
+        annotatedSymbol.annotationOverviews
     }
 
     override fun get(classId: ClassId): Collection<KtAnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
