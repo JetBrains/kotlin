@@ -37,6 +37,7 @@ void Heap::PrepareForGC() noexcept {
     for (int blockSize = 0; blockSize <= SMALL_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
         smallPages_[blockSize].PrepareForGC();
     }
+    usedExtraObjectPages_.TransferAllFrom(std::move(extraObjectPages_));
 }
 
 void Heap::Sweep() noexcept {

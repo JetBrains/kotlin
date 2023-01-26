@@ -32,9 +32,9 @@ private:
     std::condition_variable finalizerQueueCondVar_;
     std::mutex finalizerQueueMutex_;
     std::function<void(int64_t)> epochDoneCallback_;
-    int64_t scheduledEpoch_ = 0;
-    int64_t finalizedEpoch_ = 0;
+    int64_t finalizerQueueEpoch_ = 0;
     bool shutdownFlag_ = false;
+    bool newTasksAllowed_ = true;
 
     std::mutex initializedMutex_;
     std::condition_variable initializedCondVar_;

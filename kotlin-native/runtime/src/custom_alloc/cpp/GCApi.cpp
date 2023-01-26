@@ -53,6 +53,7 @@ bool SweepExtraObject(ExtraObjectCell* extraObjectCell, AtomicStack<ExtraObjectC
         return false;
     }
     if (IsAlive(baseObject)) {
+        CustomAllocDebug("SweepIsCollectable(%p): base object (%p) is alive", extraObject, baseObject);
         return false;
     }
     extraObject->ClearWeakReferenceCounter();

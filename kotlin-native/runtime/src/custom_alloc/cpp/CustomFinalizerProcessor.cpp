@@ -30,30 +30,30 @@ void CustomFinalizerProcessor::StartFinalizerThreadIfNone() noexcept {
             initialized_ = true;
         }
         initializedCondVar_.notify_all();
+        int64_t finalizersEpoch = 0;
         while (true) {
             std::unique_lock lock(finalizerQueueMutex_);
-            finalizerQueueCondVar_.wait(lock, [this] {
-                return finalizedEpoch_ != scheduledEpoch_ || shutdownFlag_;
+            finalizerQueueCondVar_.wait(lock, [this, &finalizersEpoch] {
+                return !finalizerQueue_.isEmpty() || finalizerQueueEpoch_ != finalizersEpoch || shutdownFlag_;
             });
-            if (finalizedEpoch_ == scheduledEpoch_) {
+            if (finalizerQueue_.isEmpty() && finalizerQueueEpoch_ == finalizersEpoch) {
+                newTasksAllowed_ = false;
                 RuntimeAssert(shutdownFlag_, "Nothing to do, but no shutdownFlag_ is set on wakeup");
-                RuntimeAssert(finalizerQueue_.isEmpty(), "Finalizer queue should be empty when killing finalizer thread");
                 break;
             }
-            int64_t queueEpoch = scheduledEpoch_;
-            Queue finalizerQueue = std::move(finalizerQueue_);
+            auto queue = std::move(finalizerQueue_);
+            finalizersEpoch = finalizerQueueEpoch_;
             lock.unlock();
-            ThreadStateGuard guard(ThreadState::kRunnable);
-            ExtraObjectCell* cell;
-            while ((cell = finalizerQueue.Pop())) {
-                auto* extraObject = cell->Data();
-                auto* baseObject = extraObject->GetBaseObject();
-                RunFinalizers(baseObject);
-                extraObject->setFlag(mm::ExtraObjectData::FLAGS_FINALIZED);
+            {
+                ThreadStateGuard guard(ThreadState::kRunnable);
+                while (auto* cell = queue.Pop()) {
+                    auto* extraObject = cell->Data();
+                    auto* baseObject = extraObject->GetBaseObject();
+                    RunFinalizers(baseObject);
+                    extraObject->setFlag(mm::ExtraObjectData::FLAGS_FINALIZED);
+                }
             }
-            while (finalizedEpoch_ != queueEpoch) {
-                epochDoneCallback_(++finalizedEpoch_);
-            }
+            epochDoneCallback_(finalizersEpoch);
         }
         {
             std::unique_lock guard(initializedMutex_);
@@ -75,14 +75,20 @@ void CustomFinalizerProcessor::StopFinalizerThread() noexcept {
     shutdownFlag_ = false;
     RuntimeAssert(finalizerQueue_.isEmpty(), "Finalizer queue should be empty when killing finalizer thread");
     std::unique_lock guard(finalizerQueueMutex_);
+    newTasksAllowed_ = true;
     finalizerQueueCondVar_.notify_all();
 }
 
 void CustomFinalizerProcessor::ScheduleTasks(Queue&& tasks, int64_t epoch) noexcept {
     std::unique_lock guard(finalizerQueueMutex_);
+    if (tasks.isEmpty() && !IsRunning()) {
+        epochDoneCallback_(epoch);
+        return;
+    }
     StartFinalizerThreadIfNone();
+    finalizerQueueCondVar_.wait(guard, [this] { return newTasksAllowed_; });
     finalizerQueue_.TransferAllFrom(std::move(tasks));
-    scheduledEpoch_ = epoch;
+    finalizerQueueEpoch_ = epoch;
     finalizerQueueCondVar_.notify_all();
 }
 
