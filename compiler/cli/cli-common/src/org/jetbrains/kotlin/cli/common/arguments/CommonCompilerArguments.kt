@@ -711,27 +711,16 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         val explicitVersion = parseVersion(collector, languageVersion, "language")
         val explicitOrDefaultVersion = explicitVersion ?: defaultLanguageVersion(collector)
         if (useK2) {
-            when {
-                explicitVersion?.usesK2 == true -> {
-                    collector.report(
-                        CompilerMessageSeverity.STRONG_WARNING,
-                        "Compiler flag -Xuse-k2 is redundant, the \"-language-version 2.0\" is used instead"
-                    )
-                }
-                explicitVersion != null -> {
-                    collector.report(
-                        CompilerMessageSeverity.STRONG_WARNING,
-                        "With -Xuse-k2 compiler flag \"-language-version $explicitVersion\" has no effect," +
-                                " please remove -Xuse-k2 flag and use \"-language-version 2.0\" instead"
-                    )
-                }
-                else -> {
-                    collector.report(
-                        CompilerMessageSeverity.STRONG_WARNING,
-                        "Compiler flag -Xuse-k2 is deprecated, please use \"-language-version 2.0\" instead"
-                    )
-                }
+            val message = when (explicitVersion?.usesK2) {
+                true ->
+                    "Deprecated compiler flag -Xuse-k2 is redundant because of \"-language-version $explicitVersion\" and should be removed"
+                false ->
+                    "Deprecated compiler flag -Xuse-k2 overrides \"-language-version $explicitVersion\" to 2.0;" +
+                            " please remove -Xuse-k2 and use -language-version to select either $explicitVersion or 2.0"
+                null ->
+                    "Compiler flag -Xuse-k2 is deprecated; please use \"-language-version 2.0\" instead"
             }
+            collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
         }
         return if (useK2 && !explicitOrDefaultVersion.usesK2) LanguageVersion.KOTLIN_2_0
         else explicitOrDefaultVersion
