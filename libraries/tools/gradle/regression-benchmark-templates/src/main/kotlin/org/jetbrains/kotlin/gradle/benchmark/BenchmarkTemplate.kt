@@ -123,19 +123,25 @@ abstract class BenchmarkTemplate(
         patch: InputStream
     ) {
         println("Applying patch $patchName to repository")
-        Git.open(projectRepoDir)
-            .apply()
+        val git = Git.open(projectRepoDir)
+        git.apply()
             .setPatch(patch)
             .call()
+        git.close()
     }
 
     fun repoReset() {
         println("Hard resetting project repo")
-        Git.open(projectRepoDir)
-            .reset()
+        val git = Git.open(projectRepoDir)
+        git.reset()
             .setMode(ResetCommand.ResetType.HARD)
             .setProgressMonitor(gitOperationsPrinter)
             .call()
+        git.clean()
+            .setCleanDirectories(true)
+            .setForce(true)
+            .call()
+        git.close()
     }
 
     private fun runBenchmark(
