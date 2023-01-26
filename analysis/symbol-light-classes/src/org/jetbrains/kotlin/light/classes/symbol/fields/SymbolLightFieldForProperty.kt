@@ -19,8 +19,9 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
@@ -147,21 +148,23 @@ internal class SymbolLightFieldForProperty private constructor(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = LazyModifiersBox(initializerValue, ::computeModifiers),
-            annotationsBox = SimpleAnnotationsBox { modifierList ->
-                withPropertySymbol { propertySymbol ->
-                    val nullability = if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
-                        getTypeNullability(propertySymbol.returnType)
-                    } else {
-                        NullabilityType.Unknown
+            annotationsBox = LazyAnnotationsBox(
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = propertySymbolPointer,
+                    annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
+                    acceptAnnotationsWithoutSite = true,
+                ),
+                additionalAnnotationsProvider = NullabilityAnnotationsProvider {
+                    withPropertySymbol { propertySymbol ->
+                        if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
+                            getTypeNullability(propertySymbol.returnType)
+                        } else {
+                            NullabilityType.Unknown
+                        }
                     }
-
-                    propertySymbol.computeAnnotations(
-                        modifierList = modifierList,
-                        nullability = nullability,
-                        annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
-                    )
                 }
-            },
+            ),
         )
     }
 

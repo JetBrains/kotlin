@@ -12,13 +12,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
-import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.CompositeAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
-import org.jetbrains.kotlin.light.classes.symbol.restoreSymbolOrThrowIfDisposed
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.SpecialNames
 
@@ -44,24 +43,22 @@ internal class SymbolLightSetterParameter(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            annotationsBox = SimpleAnnotationsBox { modifierList ->
-                analyzeForLightClasses(ktModule) {
-                    val annotationsFromSetter = parameterSymbolPointer.restoreSymbolOrThrowIfDisposed().computeAnnotations(
-                        modifierList = modifierList,
-                        nullability = NullabilityType.Unknown,
+            annotationsBox = LazyAnnotationsBox(
+                annotationsProvider = CompositeAnnotationsProvider(
+                    SymbolAnnotationsProvider(
+                        ktModule = ktModule,
+                        annotatedSymbolPointer = parameterSymbolPointer,
                         annotationUseSiteTarget = AnnotationUseSiteTarget.SETTER_PARAMETER,
-                    )
-
-                    val annotationsFromProperty = containingPropertySymbolPointer.restoreSymbolOrThrowIfDisposed().computeAnnotations(
-                        modifierList = modifierList,
-                        nullability = nullabilityType,
+                        acceptAnnotationsWithoutSite = true,
+                    ),
+                    SymbolAnnotationsProvider(
+                        ktModule = ktModule,
+                        annotatedSymbolPointer = containingPropertySymbolPointer,
                         annotationUseSiteTarget = AnnotationUseSiteTarget.SETTER_PARAMETER,
-                        includeAnnotationsWithoutSite = false,
-                    )
-
-                    annotationsFromSetter + annotationsFromProperty
-                }
-            },
+                    ),
+                ),
+                additionalAnnotationsProvider = NullabilityAnnotationsProvider(::nullabilityType),
+            ),
         )
     }
 

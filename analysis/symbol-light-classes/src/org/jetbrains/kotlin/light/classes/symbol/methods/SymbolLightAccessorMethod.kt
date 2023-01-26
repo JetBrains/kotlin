@@ -141,30 +141,6 @@ internal class SymbolLightAccessorMethod private constructor(
         }
     }
 
-    private fun computeAnnotations(modifierList: PsiModifierList): List<PsiAnnotation> = analyzeForLightClasses(ktModule) {
-        val nullabilityApplicable = isGetter &&
-                !modifierList.hasModifierProperty(PsiModifier.PRIVATE) &&
-                !(isParameter && containingClass.isAnnotationType)
-
-        val propertySymbol = propertySymbol()
-        val nullabilityType = if (nullabilityApplicable) getTypeNullability(propertySymbol.returnType) else NullabilityType.Unknown
-        val annotationsFromProperty = propertySymbol.computeAnnotations(
-            modifierList = modifierList,
-            nullability = nullabilityType,
-            annotationUseSiteTarget = accessorSite,
-            includeAnnotationsWithoutSite = false,
-        )
-
-        val propertyAccessorSymbol = propertyAccessorSymbol()
-        val annotationsFromAccessor = propertyAccessorSymbol.computeAnnotations(
-            modifierList = modifierList,
-            nullability = NullabilityType.Unknown,
-            annotationUseSiteTarget = accessorSite,
-        )
-
-        annotationsFromProperty + annotationsFromAccessor
-    }
-
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in LazyModifiersBox.VISIBILITY_MODIFIERS -> LazyModifiersBox.computeVisibilityForMember(ktModule, propertyAccessorSymbolPointer)
 
@@ -205,7 +181,34 @@ internal class SymbolLightAccessorMethod private constructor(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = LazyModifiersBox(computer = ::computeModifiers),
-            annotationsBox = SimpleAnnotationsBox(::computeAnnotations),
+            annotationsBox = LazyAnnotationsBox(
+                annotationsProvider = CompositeAnnotationsProvider(
+                    SymbolAnnotationsProvider(
+                        ktModule = ktModule,
+                        annotatedSymbolPointer = propertyAccessorSymbolPointer,
+                        annotationUseSiteTarget = accessorSite,
+                        acceptAnnotationsWithoutSite = true,
+                    ),
+                    SymbolAnnotationsProvider(
+                        ktModule = ktModule,
+                        annotatedSymbolPointer = containingPropertySymbolPointer,
+                        annotationUseSiteTarget = accessorSite,
+                    ),
+                ),
+                additionalAnnotationsProvider = NullabilityAnnotationsProvider {
+                    val nullabilityApplicable = isGetter &&
+                            !(isParameter && containingClass.isAnnotationType) &&
+                            !modifierList.hasModifierProperty(PsiModifier.PRIVATE)
+
+                    if (nullabilityApplicable) {
+                        analyzeForLightClasses(ktModule) {
+                            getTypeNullability(propertySymbol().returnType)
+                        }
+                    } else {
+                        NullabilityType.Unknown
+                    }
+                }
+            ),
         )
     }
 

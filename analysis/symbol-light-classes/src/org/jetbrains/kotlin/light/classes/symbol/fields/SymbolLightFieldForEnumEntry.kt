@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
@@ -38,15 +38,14 @@ internal class SymbolLightFieldForEnumEntry(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = SimpleModifiersBox(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
-            annotationsBox = SimpleAnnotationsBox { modifierList ->
-                withEnumEntrySymbol { enumEntrySymbol ->
-                    enumEntrySymbol.computeAnnotations(
-                        modifierList,
-                        nullability = NullabilityType.Unknown, // there is no need to add nullability annotations on enum entries
-                        annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
-                    )
-                }
-            },
+            annotationsBox = LazyAnnotationsBox(
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = enumEntry.symbolPointerOfType<KtEnumEntrySymbol>(),
+                    annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
+                    acceptAnnotationsWithoutSite = true,
+                )
+            ),
         )
     }
 

@@ -17,10 +17,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -71,25 +68,6 @@ internal class SymbolLightSimpleMethod(
 
     override fun getTypeParameterList(): PsiTypeParameterList? = _typeParameterList
     override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
-
-    private fun computeAnnotations(
-        modifierList: PsiModifierList,
-    ): List<PsiAnnotation> = withFunctionSymbol { functionSymbol ->
-        val nullability = when {
-            modifierList.hasModifierProperty(PsiModifier.PRIVATE) -> NullabilityType.Unknown
-            functionSymbol.isSuspend -> /* Any? */ NullabilityType.Nullable
-            else -> {
-                val returnType = functionSymbol.returnType
-                if (returnType.isVoidType) NullabilityType.Unknown else getTypeNullability(returnType)
-            }
-        }
-
-        functionSymbol.computeAnnotations(
-            modifierList = modifierList,
-            nullability = nullability,
-            annotationUseSiteTarget = null,
-        )
-    }
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in LazyModifiersBox.MODALITY_MODIFIERS -> {
@@ -160,7 +138,29 @@ internal class SymbolLightSimpleMethod(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = LazyModifiersBox(computer = ::computeModifiers),
-            annotationsBox = SimpleAnnotationsBox(::computeAnnotations),
+            annotationsBox = LazyAnnotationsBox(
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = functionSymbolPointer,
+                ),
+                additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                    NullabilityAnnotationsProvider {
+                        if (modifierList.hasModifierProperty(PsiModifier.PRIVATE)) {
+                            NullabilityType.Unknown
+                        } else {
+                            withFunctionSymbol { functionSymbol ->
+                                if (functionSymbol.isSuspend) { // Any?
+                                    NullabilityType.Nullable
+                                } else {
+                                    val returnType = functionSymbol.returnType
+                                    if (returnType.isVoidType) NullabilityType.Unknown else getTypeNullability(returnType)
+                                }
+                            }
+                        }
+                    },
+                    MethodAdditionalAnnotationsProvider,
+                ),
+            )
         )
     }
 

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
+import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -25,12 +26,8 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasInlineOnlyAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SimpleModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
@@ -67,21 +64,17 @@ class SymbolLightClassForFacade(
         SymbolLightClassModifierList(
             containingDeclaration = this,
             modifiersBox = SimpleModifiersBox(PsiModifier.PUBLIC, PsiModifier.FINAL),
-            annotationsBox = SimpleAnnotationsBox { modifierList ->
-                if (multiFileClass) {
-                    emptyList()
-                } else {
-                    withFileSymbols { fileSymbols ->
-                        fileSymbols.flatMap {
-                            it.computeAnnotations(
-                                modifierList = modifierList,
-                                nullability = NullabilityType.Unknown,
-                                annotationUseSiteTarget = AnnotationUseSiteTarget.FILE,
-                                includeAnnotationsWithoutSite = false,
-                            )
-                        }
-                    }
-                }
+            annotationsBox = if (multiFileClass) {
+                EmptyAnnotationsBox
+            } else {
+                LazyAnnotationsBox(
+                    annotationsProvider = SymbolAnnotationsProvider(
+                        ktModule = ktModule,
+                        annotatedSymbolPointer = firstFileInFacade.symbolPointerOfType<KtFileSymbol>(),
+                        annotationUseSiteTarget = AnnotationUseSiteTarget.FILE,
+                        acceptAnnotationsWithoutSite = true,
+                    )
+                )
             },
         )
     }

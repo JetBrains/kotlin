@@ -9,9 +9,8 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.light.classes.symbol.NullabilityType
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SimpleAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.computeAnnotations
+import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
@@ -57,15 +56,12 @@ internal class SymbolLightConstructor(
                 initialValue = initialValue,
                 computer = ::computeModifiers,
             ),
-            annotationsBox = SimpleAnnotationsBox { modifierList ->
-                withFunctionSymbol { constructorSymbol ->
-                    constructorSymbol.computeAnnotations(
-                        modifierList = modifierList,
-                        nullability = NullabilityType.Unknown,
-                        annotationUseSiteTarget = null,
-                    )
-                }
-            },
+            annotationsBox = LazyAnnotationsBox(
+                annotationsProvider = SymbolAnnotationsProvider(
+                    ktModule = ktModule,
+                    annotatedSymbolPointer = functionSymbolPointer,
+                )
+            ),
         )
     }
 

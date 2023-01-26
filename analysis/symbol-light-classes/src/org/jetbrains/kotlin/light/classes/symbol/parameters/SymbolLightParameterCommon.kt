@@ -51,11 +51,13 @@ internal abstract class SymbolLightParameterCommon(
         KtLightIdentifier(this, parameterDeclaration)
     }
 
-    protected val nullabilityType: NullabilityType by lazyPub {
+    protected fun nullabilityType(): NullabilityType {
+        if (isVarArgs) return NullabilityType.NotNull
+
         val nullabilityApplicable = !containingMethod.hasModifierProperty(PsiModifier.PRIVATE) &&
                 !containingMethod.containingClass.let { it.isAnnotationType || it.isEnum }
 
-        if (nullabilityApplicable) {
+        return if (nullabilityApplicable) {
             parameterSymbolPointer.withSymbol(ktModule) { getTypeNullability(it.returnType) }
         } else {
             NullabilityType.Unknown
