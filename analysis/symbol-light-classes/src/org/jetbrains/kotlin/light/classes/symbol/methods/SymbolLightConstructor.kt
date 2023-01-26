@@ -44,7 +44,7 @@ internal class SymbolLightConstructor(
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     private val _modifierList: PsiModifierList by lazyPub {
-        val initialValue = if (containingClass is SymbolLightClassForEnumEntry) {
+        val initialValue = if (this.containingClass is SymbolLightClassForEnumEntry) {
             LazyModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PACKAGE_LOCAL)
         } else {
             emptyMap()

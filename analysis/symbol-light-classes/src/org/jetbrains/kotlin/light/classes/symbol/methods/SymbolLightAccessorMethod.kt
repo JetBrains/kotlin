@@ -93,10 +93,10 @@ internal class SymbolLightAccessorMethod private constructor(
             propertyAccessorSymbol().getJvmNameFromAnnotation(accessorSite) ?: run {
                 val symbol = propertySymbol()
                 val defaultName = symbol.name.identifier.let {
-                    if (containingClass.isAnnotationType) it else it.abiName()
+                    if (this@SymbolLightAccessorMethod.containingClass.isAnnotationType) it else it.abiName()
                 }
 
-                symbol.computeJvmMethodName(defaultName, containingClass, accessorSite)
+                symbol.computeJvmMethodName(defaultName, this@SymbolLightAccessorMethod.containingClass, accessorSite)
             }
         }
     }
@@ -196,7 +196,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     val nullabilityApplicable = isGetter &&
-                            !(isParameter && containingClass.isAnnotationType) &&
+                            !(isParameter && this.containingClass.isAnnotationType) &&
                             !modifierList.hasModifierProperty(PsiModifier.PRIVATE)
 
                     if (nullabilityApplicable) {

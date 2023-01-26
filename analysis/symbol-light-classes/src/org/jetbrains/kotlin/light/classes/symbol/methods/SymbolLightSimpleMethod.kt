@@ -47,7 +47,11 @@ internal class SymbolLightSimpleMethod(
 ) {
     private val _name: String by lazyPub {
         withFunctionSymbol { functionSymbol ->
-            functionSymbol.computeJvmMethodName(functionSymbol.name.asString(), containingClass, annotationUseSiteTarget = null)
+            functionSymbol.computeJvmMethodName(
+                functionSymbol.name.asString(),
+                this@SymbolLightSimpleMethod.containingClass,
+                annotationUseSiteTarget = null,
+            )
         }
     }
 
@@ -188,7 +192,7 @@ internal class SymbolLightSimpleMethod(
                 this@SymbolLightSimpleMethod,
                 allowErrorTypes = true,
                 KtTypeMappingMode.RETURN_TYPE,
-                containingClass.isAnnotationType,
+                this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
             )
         } ?: nonExistentType()
     }

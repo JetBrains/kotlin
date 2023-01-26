@@ -69,7 +69,7 @@ class SymbolLightClassForFacade(
             } else {
                 LazyAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
-                        ktModule = ktModule,
+                        ktModule = this.ktModule,
                         annotatedSymbolPointer = firstFileInFacade.symbolPointerOfType<KtFileSymbol>(),
                         annotationUseSiteTarget = AnnotationUseSiteTarget.FILE,
                         acceptAnnotationsWithoutSite = true,
