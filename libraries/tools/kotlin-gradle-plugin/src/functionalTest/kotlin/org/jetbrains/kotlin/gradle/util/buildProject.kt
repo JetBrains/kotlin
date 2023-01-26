@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformAndroidPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_INTRANSITIVE_METADATA_CONFIGURATION
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.unitTests.kpm.applyKpmPlugin
@@ -116,4 +117,8 @@ fun Project.setMultiplatformAndroidSourceSetLayoutVersion(version: Int) {
 fun Project.enableDependencyVerification(enabled: Boolean = true) {
     gradle.startParameter.dependencyVerificationMode = if (enabled) DependencyVerificationMode.STRICT
     else DependencyVerificationMode.OFF
+}
+
+fun Project.enableCompatibilityMetadataVariant(enabled: Boolean = true) {
+    propertiesExtension.set(KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT, enabled.toString())
 }
