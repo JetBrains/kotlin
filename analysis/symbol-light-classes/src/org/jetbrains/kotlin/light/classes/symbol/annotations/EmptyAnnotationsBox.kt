@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
 
-object EmptyAnnotationsBox : AnnotationsBox {
+internal object EmptyAnnotationsBox : AnnotationsBox {
     override fun annotations(owner: PsiModifierList): Array<PsiAnnotation> = PsiAnnotation.EMPTY_ARRAY
     override fun findAnnotation(owner: PsiModifierList, qualifiedName: String): PsiAnnotation? = null
 }
