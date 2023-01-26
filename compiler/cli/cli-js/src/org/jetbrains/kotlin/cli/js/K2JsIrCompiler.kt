@@ -149,7 +149,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         private fun makeJsCodeGenerator(): JsCodeGenerator {
             val ir = lowerIr()
-            val transformer = IrModuleToJsTransformer(ir.context, mainCallArguments, ir.moduleFragmentToUniqueName)
+            val transformer = IrModuleToJsTransformer(
+                ir.context,
+                mainCallArguments,
+                ir.moduleFragmentToUniqueName.asModuleFragmentToNameMapper()
+            )
 
             val mode = TranslationMode.fromFlags(arguments.irDce, arguments.granularity, arguments.irMinimizedMemberNames)
             return transformer.makeJsCodeGenerator(ir.allModules, mode)

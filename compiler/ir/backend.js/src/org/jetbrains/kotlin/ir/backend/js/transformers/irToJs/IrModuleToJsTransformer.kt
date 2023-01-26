@@ -117,7 +117,7 @@ class JsCodeGenerator(
 class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
     private val mainArguments: List<String>?,
-    private val moduleToName: Map<IrModuleFragment, String> = emptyMap(),
+    private val moduleToName: ModuleFragmentToNameMapper = emptyModuleFragmentToNameMapper(),
     private val removeUnusedAssociatedObjects: Boolean = true,
 ) {
     private val shouldGeneratePolyfills = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_POLYFILLS)
@@ -215,8 +215,8 @@ class IrModuleToJsTransformer(
         }
     }
 
-    private fun IrModuleFragment.externalModuleName(): String {
-        return moduleToName[this] ?: sanitizeName(safeName)
+    private fun IrModuleFragment.externalModuleName(mode: TranslationMode): String {
+        return moduleToName.getNameForModule(this, mode.granularity) ?: sanitizeName(safeName)
     }
 
     private fun makeJsCodeGeneratorFromIr(exportData: List<IrAndExportedDeclarations>, mode: TranslationMode): JsCodeGenerator {
@@ -229,7 +229,7 @@ class IrModuleToJsTransformer(
             exportData.map { data ->
                 JsIrModule(
                     data.fragment.safeName,
-                    data.fragment.externalModuleName(),
+                    data.fragment.externalModuleName(mode),
                     data.files.map {
                         generateProgramFragment(it, mode.minimizedMemberNames)
                     }
@@ -437,14 +437,14 @@ fun generateMultiFileModuleBody(
         .filter { it.nameBindings.isNotEmpty() }
         .withIndex()
         .associate {
-            val fileModuleName = "$moduleName/${it.index}.js"
+            val fileModuleName = it.index.toString()
             fileModuleName to generateSingleWrappedModuleBody(
                 fileModuleName,
                 moduleKind,
                 listOf(it.value),
                 sourceMapsInfo,
                 generateCallToMain,
-                crossModuleReferences.withOnlyImported(it.value.nameBindings),
+                crossModuleReferences.withImportsAndExportsPerFile(it.value.nameBindings, it.value.definitions),
                 outJsProgram
             )
         }
@@ -459,9 +459,7 @@ fun generateMultiFileModuleBody(
         outJsProgram
     )
 
-    indexFile.dependencies = files.toList()
-
-    return indexFile
+    return indexFile.asCompilationOutputsBuiltPerFile(files.toList())
 }
 
 fun generateMultiModuleWrappedBody(
@@ -493,7 +491,7 @@ fun generateMultiModuleWrappedBody(
         )
     }
 
-    mainModule.dependencies += buildList(moduleToRef.size) {
+    mainModule.dependencies = buildList(moduleToRef.size) {
         while (moduleToRef.isNotEmpty()) {
             moduleToRef.removeFirst().let { (module, moduleRef) ->
                 val moduleName = module.externalModuleName
@@ -506,8 +504,7 @@ fun generateMultiModuleWrappedBody(
                     moduleRef,
                     outJsProgram
                 )
-                add(moduleName to moduleCompilationOutput)
-                addAll(moduleCompilationOutput.dependencies)
+                add(CompilationOutputs.ModuleDependency(module.moduleName, module.externalModuleName) to moduleCompilationOutput)
             }
         }
     }

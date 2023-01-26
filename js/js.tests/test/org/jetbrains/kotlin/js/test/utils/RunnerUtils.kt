@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
-import org.jetbrains.kotlin.js.test.converters.extension
 import org.jetbrains.kotlin.js.test.converters.kind
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.js.testOld.*
@@ -160,7 +160,7 @@ fun getAllFilesForRunner(
             val additionalMainFiles = getAdditionalMainFilePathes(testServices, mode)
 
             outputs.dependencies.forEach { (moduleId, _) ->
-                paths += outputFile.augmentWithModuleName(moduleId)
+                paths += outputFile.augmentWithModuleName(moduleId.externalModuleName)
             }
             paths += outputFile
 

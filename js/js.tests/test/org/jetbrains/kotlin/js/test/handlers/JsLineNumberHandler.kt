@@ -53,7 +53,7 @@ class JsLineNumberHandler(testServices: TestServices) : JsBinaryArtifactHandler(
                     compilationOutputs: CompilationOutputs,
                 ) {
                     for ((moduleId, dependencyOutputs) in compilationOutputs.dependencies) {
-                        moduleId2TestModule[moduleId]?.let {
+                        moduleId2TestModule[moduleId.externalModuleName]?.let {
                             verifyModulesRecursively(it, dependencyOutputs)
                         }
                     }

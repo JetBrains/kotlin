@@ -9,11 +9,21 @@ import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 import java.nio.file.Files
 
+const val REGULAR_EXTENSION = ".js"
+const val ESM_EXTENSION = ".mjs"
+const val MAIN_MODULE_FILE_NAME = "index"
+
+val ModuleKind.extension: String
+    get() = when (this) {
+        ModuleKind.ES -> ESM_EXTENSION
+        else -> REGULAR_EXTENSION
+    }
 abstract class CompilationOutputs {
-    var dependencies: Collection<Pair<String, CompilationOutputs>> = emptyList()
+    var dependencies: Collection<Pair<ModuleDependency, CompilationOutputs>> = emptyList()
 
     abstract val tsDefinitions: TypeScriptFragment?
 
@@ -21,7 +31,9 @@ abstract class CompilationOutputs {
 
     abstract fun writeJsCode(outputJsFile: File, outputJsMapFile: File)
 
-    fun writeAll(outputDir: File, outputName: String, genDTS: Boolean, moduleName: String, moduleKind: ModuleKind): Collection<File> {
+    open val generateModuleAsDirectory: Boolean = false
+
+    open fun writeAll(outputDir: File, outputName: String, genDTS: Boolean, moduleName: String, moduleKind: ModuleKind): Collection<File> {
         val writtenFiles = LinkedHashSet<File>(2 * (dependencies.size + 1) + 1)
 
         fun File.writeAsJsFile(out: CompilationOutputs) {
@@ -34,11 +46,11 @@ abstract class CompilationOutputs {
             writtenFiles += jsMapFile
         }
 
-        dependencies.forEach { (name, content) ->
-            outputDir.resolve("$name.js").writeAsJsFile(content)
+        dependencies.forEach { (module, content) ->
+            content.resolveOutputFile(module.externalModuleName, outputDir, moduleKind).writeAsJsFile(content)
         }
 
-        val outputJsFile = outputDir.resolve("$outputName.js")
+        val outputJsFile = resolveOutputFile(outputName, outputDir, moduleKind)
         outputJsFile.writeAsJsFile(this)
 
         if (genDTS) {
@@ -52,19 +64,25 @@ abstract class CompilationOutputs {
         return writtenFiles
     }
 
+    open fun resolveOutputFile(outputName: String, outputDir: File, moduleKind: ModuleKind): File {
+        return outputDir.resolve("$outputName${moduleKind.extension}")
+    }
+
     fun getFullTsDefinition(moduleName: String, moduleKind: ModuleKind): String {
         val allTsDefinitions = dependencies.mapNotNull { it.second.tsDefinitions } + listOfNotNull(tsDefinitions)
         return allTsDefinitions.toTypeScript(moduleName, moduleKind)
     }
 
-    private val File.mapForJsFile
+    protected val File.mapForJsFile
         get() = resolveSibling("$name.map").canonicalFile
 
-    private val File.dtsForJsFile
+    protected val File.dtsForJsFile
         get() = resolveSibling("$nameWithoutExtension.d.ts").canonicalFile
+
+    class ModuleDependency(val moduleName: String, val externalModuleName: String)
 }
 
-class CompilationOutputsBuilt(
+open class CompilationOutputsBuilt(
     private val rawJsCode: String,
     private val sourceMap: String?,
     override val tsDefinitions: TypeScriptFragment?,
@@ -78,6 +96,47 @@ class CompilationOutputsBuilt(
             jsCodeWithSourceMap = "$jsCodeWithSourceMap\n//# sourceMappingURL=${outputJsMapFile.name}\n"
         }
         outputJsFile.writeText(jsCodeWithSourceMap)
+    }
+
+    fun asCompilationOutputsBuiltPerFile(files: List<Pair<String, CompilationOutputsBuilt>>) =
+        CompilationOutputsBuiltPerFile(rawJsCode, sourceMap, tsDefinitions, jsProgram, files)
+}
+
+class CompilationOutputsBuiltPerFile(
+    rawJsCode: String,
+    sourceMap: String?,
+    tsDefinitions: TypeScriptFragment?,
+    jsProgram: JsProgram?,
+    val files: List<Pair<String, CompilationOutputsBuilt>>
+) : CompilationOutputsBuilt(rawJsCode, sourceMap, tsDefinitions, jsProgram) {
+    override val generateModuleAsDirectory = true
+
+    override fun writeAll(
+        outputDir: File,
+        outputName: String,
+        genDTS: Boolean,
+        moduleName: String,
+        moduleKind: ModuleKind
+    ): Collection<File> {
+        val moduleOutputDir = outputDir.resolve(outputName)
+        val savedDependencies = dependencies.also { dependencies = emptyList() }
+        val moduleIndexFiles = super.writeAll(moduleOutputDir, outputName, genDTS, moduleName, moduleKind).also { dependencies = savedDependencies }
+        val moduleRestFiles = files.flatMap { (name, output) ->
+            val outputFile = output.resolveOutputFile(name, moduleOutputDir, moduleKind)
+            val sourceMapFile = outputFile.mapForJsFile.also { output.writeJsCode(outputFile, it) }
+            val dtsFile = runIf(genDTS) {
+                outputFile.dtsForJsFile.apply { writeText(getFullTsDefinition(moduleName, moduleKind)) }
+            }
+            listOfNotNull(outputFile, sourceMapFile, dtsFile)
+        }
+        val moduleDependenciesFiles = savedDependencies.flatMap { (module, output) ->
+            output.writeAll(outputDir, module.moduleName, genDTS, module.moduleName, moduleKind)
+        }
+        return moduleRestFiles + moduleDependenciesFiles + moduleIndexFiles
+    }
+
+    override fun resolveOutputFile(outputName: String, outputDir: File, moduleKind: ModuleKind): File {
+        return outputDir.resolve("$MAIN_MODULE_FILE_NAME${moduleKind.extension}")
     }
 }
 

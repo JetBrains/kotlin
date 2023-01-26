@@ -221,10 +221,10 @@ class CrossModuleReferences(
     var jsImports = emptyMap<String, JsVars.JsVar>() // tag -> import statement
         private set
 
-    fun withOnlyImported(nameBindings: Map<String, *>): CrossModuleReferences {
+    fun withImportsAndExportsPerFile(nameBindings: Map<String, *>, definitions: Set<String>): CrossModuleReferences {
         val newImports = imports.filterKeys { it in nameBindings }
         val newJsImports = jsImports.filterKeys { it in nameBindings }
-        val newExports = exports.filterKeys { it in nameBindings }
+        val newExports = exports.filterKeys { it in definitions }
         return CrossModuleReferences(
             moduleKind,
             importedModules,

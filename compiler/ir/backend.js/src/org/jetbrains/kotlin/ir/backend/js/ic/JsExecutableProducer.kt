@@ -94,7 +94,10 @@ class JsExecutableProducer(
 
         val cachedOtherModules = cachedProgram.dropLast(1)
         mainModule.dependencies = cachedOtherModules.map {
-            it.jsIrHeader.externalModuleName to it.compileModule(it.jsIrHeader.externalModuleName, false)
+            CompilationOutputs.ModuleDependency(
+                it.jsIrHeader.moduleName,
+                it.jsIrHeader.externalModuleName
+            ) to it.compileModule(it.jsIrHeader.externalModuleName, false)
         }
         stopwatch.stop()
         return BuildResult(mainModule, rebuildModules)
