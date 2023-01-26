@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.Abstra
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnTypesTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractMultiModuleResolveCallTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCallTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.callResolver.AbstractResolveCandidatesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compileTimeConstantProvider.AbstractCompileTimeConstantEvaluatorTest
@@ -202,6 +203,17 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             AbstractResolveCandidatesTest::class
         ) {
             model("resolveCandidates")
+        }
+    }
+
+    component("multiModuleCallResolver", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+        test(AbstractMultiModuleResolveCallTest::class, filter = frontendIs(FrontendKind.Fir)) {
+            when (it.analysisApiMode) {
+                AnalysisApiMode.Ide ->
+                    model("resolveCall")
+                AnalysisApiMode.Standalone ->
+                    model("resolveCall")
+            }
         }
     }
 

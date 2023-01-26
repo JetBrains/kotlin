@@ -1,0 +1,41 @@
+Module: lib
+FILE: module_lib_implicitTypeSubstituteOverrideFromOtherModule.kt
+    package dependency
+
+    public abstract class A<T> : R|kotlin/Any| {
+        public constructor<T>(): R|dependency/A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(): R|kotlin/String| {
+            ^foo String()
+        }
+
+    }
+Module: main
+FILE: B.kt
+    package main
+
+    public abstract class B : R|dependency/A<c/C>| {
+        public constructor(): R|main/B| {
+            super<R|dependency/A<c/C>|>()
+        }
+
+    }
+    public final fun usage(b: R|main/B?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/b|, Null(null)) ->  {
+                R|<local>/b|.R|SubstitutionOverride<main/B.foo: R|kotlin/String|>|()
+            }
+        }
+
+    }
+FILE: C.kt
+    package c
+
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|c/C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

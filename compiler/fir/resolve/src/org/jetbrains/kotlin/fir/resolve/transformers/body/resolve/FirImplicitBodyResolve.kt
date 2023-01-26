@@ -285,9 +285,13 @@ private class ReturnTypeCalculatorWithJump(
 
     @OptIn(PrivateForInline::class)
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {
+        (declaration.returnTypeRef as? FirResolvedTypeRef)?.let { return it }
         // To properly transform and resolve declaration's type, we need to use its module's session
         val session = declaration.moduleData.session
         val symbol = declaration.symbol
+        require(!symbol.isSubstitutionOrIntersectionOverride) {
+            "fakeOverrideSubstitution was not calculated for substitution or intersection override: $symbol with ${declaration.returnTypeRef}"
+        }
 
         val (designation, outerBodyResolveContext) = if (declaration in designationMapForLocalClasses) {
             designationMapForLocalClasses.getValue(declaration) to outerBodyResolveContext

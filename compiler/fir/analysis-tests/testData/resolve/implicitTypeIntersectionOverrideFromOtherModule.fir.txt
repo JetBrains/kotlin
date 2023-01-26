@@ -1,0 +1,34 @@
+Module: lib
+FILE: module_lib_implicitTypeIntersectionOverrideFromOtherModule.kt
+    package dependency
+
+    public abstract class A : R|kotlin/Any| {
+        public constructor(): R|dependency/A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract interface I : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+Module: main
+FILE: B.kt
+    package main
+
+    public abstract class B : R|dependency/A|, R|dependency/I| {
+        public constructor(): R|main/B| {
+            super<R|dependency/A|>()
+        }
+
+    }
+    public final fun usage(b: R|main/B?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/b|, Null(null)) ->  {
+                R|<local>/b|.R|dependency/A.foo|()
+            }
+        }
+
+    }

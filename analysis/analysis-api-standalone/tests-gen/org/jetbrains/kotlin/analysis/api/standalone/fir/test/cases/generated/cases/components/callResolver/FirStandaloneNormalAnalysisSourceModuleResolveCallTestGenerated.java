@@ -785,6 +785,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("substituteOverrideResolution.kt")
+    public void testSubstituteOverrideResolution() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/substituteOverrideResolution.kt");
+    }
+
+    @Test
     @TestMetadata("superTypeCallEntryResolveToCallInfo.kt")
     public void testSuperTypeCallEntryResolveToCallInfo() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/superTypeCallEntryResolveToCallInfo.kt");

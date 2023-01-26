@@ -279,6 +279,24 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         }
 
         @Test
+        @TestMetadata("implicitTypeIntersectionOverrideFromOtherModule.kt")
+        public void testImplicitTypeIntersectionOverrideFromOtherModule() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeIntersectionOverrideFromOtherModule.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitTypeSubstituteOverrideFromOtherModule.kt")
+        public void testImplicitTypeSubstituteOverrideFromOtherModule() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeSubstituteOverrideFromOtherModule.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitTypeSubstituteOverrideInNestedClassFromOtherModule.kt")
+        public void testImplicitTypeSubstituteOverrideInNestedClassFromOtherModule() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeSubstituteOverrideInNestedClassFromOtherModule.kt");
+        }
+
+        @Test
         @TestMetadata("implicitTypeWithTypeBound.kt")
         public void testImplicitTypeWithTypeBound() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/implicitTypeWithTypeBound.kt");
@@ -636,6 +654,18 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
         @TestMetadata("typesInLocalFunctions.kt")
         public void testTypesInLocalFunctions() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/typesInLocalFunctions.kt");
+        }
+
+        @Test
+        @TestMetadata("unitTypeFromOtherModule.kt")
+        public void testUnitTypeFromOtherModule() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/unitTypeFromOtherModule.kt");
+        }
+
+        @Test
+        @TestMetadata("unitTypeSubstituteOverrideInNestedClassFromOtherModule.kt")
+        public void testUnitTypeSubstituteOverrideInNestedClassFromOtherModule() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/unitTypeSubstituteOverrideInNestedClassFromOtherModule.kt");
         }
 
         @Test

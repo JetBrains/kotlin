@@ -1,0 +1,46 @@
+Module: lib
+FILE: module_lib_unitTypeSubstituteOverrideInNestedClassFromOtherModule.kt
+    package dependency
+
+    public abstract class A<T> : R|kotlin/Any| {
+        public constructor<T>(): R|dependency/A<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+Module: main
+FILE: B.kt
+    package main
+
+    public final class D : R|kotlin/Any| {
+        public constructor(): R|main/D| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract class B : R|dependency/A<c/C>| {
+            public constructor(): R|main/D.B| {
+                super<R|dependency/A<c/C>|>()
+            }
+
+        }
+
+    }
+    public final fun usage(b: R|main/D.B?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/b|, Null(null)) ->  {
+                R|<local>/b|.R|SubstitutionOverride<main/D.B.foo: R|kotlin/Unit|>|()
+            }
+        }
+
+    }
+FILE: C.kt
+    package c
+
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|c/C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

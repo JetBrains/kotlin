@@ -1,0 +1,19 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtSmartCastedReceiverValue:
+        original = KtExplicitReceiverValue:
+          expression = b
+          isSafeNavigation = false
+          type = main.B?
+        type = main.B
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = kotlin/collections/MutableList.clear(<dispatch receiver>: kotlin.collections.MutableList<E>): kotlin.Unit
+        valueParameters = []
+        callableIdIfNonLocal = kotlin/collections/MutableList.clear
+    typeArgumentsMapping = {}
+    argumentMapping = {}

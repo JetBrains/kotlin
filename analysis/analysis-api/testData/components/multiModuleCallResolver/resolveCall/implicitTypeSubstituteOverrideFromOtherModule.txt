@@ -1,0 +1,19 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtSmartCastedReceiverValue:
+        original = KtExplicitReceiverValue:
+          expression = b
+          isSafeNavigation = false
+          type = main.B?
+        type = main.B
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.String
+        symbol = dependency/A.foo(<dispatch receiver>: dependency.A<T>): kotlin.String
+        valueParameters = []
+        callableIdIfNonLocal = dependency/A.foo
+    typeArgumentsMapping = {}
+    argumentMapping = {}
