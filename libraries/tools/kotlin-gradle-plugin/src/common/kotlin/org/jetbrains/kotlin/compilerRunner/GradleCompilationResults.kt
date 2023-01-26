@@ -22,6 +22,7 @@ internal class GradleCompilationResults(
     ) {
 
     var icLogLines: List<String> = emptyList()
+    private val compiledSources: MutableList<String> = ArrayList()
     private val buildMetricsReporter = BuildMetricsReporterImpl()
     val buildMetrics: BuildMetrics
         get() = buildMetricsReporter.getMetrics()
@@ -35,6 +36,7 @@ internal class GradleCompilationResults(
                 if (compileIterationResult != null) {
                     val sourceFiles = compileIterationResult.sourceFiles
                     if (sourceFiles.any()) {
+                        compiledSources.add(sourceFiles.pathsAsStringRelativeTo(projectRootFile))
                         log.kotlinDebug { "compile iteration: ${sourceFiles.pathsAsStringRelativeTo(projectRootFile)}" }
                         buildMetrics.buildPerformanceMetrics.add(BuildPerformanceMetric.COMPILE_ITERATION)
                     }
@@ -49,6 +51,10 @@ internal class GradleCompilationResults(
             }
             CompilationResultCategory.BUILD_METRICS.code -> {
                 (value as? BuildMetrics)?.let { buildMetricsReporter.addMetrics(it) }
+            }
+            CompilationResultCategory.COMPILED_SOURCES.code -> {
+                @Suppress("UNCHECKED_CAST")
+                (value as? List<String>)?.let { compiledSources.addAll(it) }
             }
         }
     }
