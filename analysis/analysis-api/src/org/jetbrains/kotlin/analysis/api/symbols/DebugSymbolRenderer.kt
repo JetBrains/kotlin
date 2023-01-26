@@ -281,7 +281,7 @@ public class DebugSymbolRenderer(
                 .renderKtContractEffectDeclaration(value, endWithNewLine = false)
             is KtNamedAnnotationValue -> renderNamedConstantValue(value)
             is KtInitializerValue -> renderKtInitializerValue(value)
-            is KtContextReceiver -> rendeContextReceiver(value)
+            is KtContextReceiver -> renderContextReceiver(value)
             is KtAnnotationApplication -> renderAnnotationApplication(value)
             is KtAnnotationsList -> renderAnnotationsList(value)
             is KtModule -> renderKtModule(value)
@@ -325,14 +325,16 @@ public class DebugSymbolRenderer(
     }
 
     context(KtAnalysisSession)
-    private fun PrettyPrinter.rendeContextReceiver(receiver: KtContextReceiver) {
-        append("ContextReceiver(")
-        receiver.label?.let { label ->
-            renderValue(label, renderSymbolsFully = false)
-            append("@")
+    private fun PrettyPrinter.renderContextReceiver(receiver: KtContextReceiver) {
+        append("KtContextReceiver:")
+        withIndent {
+            appendLine()
+            append("label: ")
+            renderValue(receiver.label, renderSymbolsFully = false)
+            appendLine()
+            append("type: ")
+            renderType(receiver.type)
         }
-        renderType(receiver.type)
-        append(")")
     }
 
     context(KtAnalysisSession)

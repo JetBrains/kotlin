@@ -2,14 +2,18 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /y
   contextReceivers: [
-    ContextReceiver(KtUsualClassType:
-      type: kotlin/Int
-      annotationsList: []
-      ownTypeArguments: [])
-    ContextReceiver(s@KtUsualClassType:
-      type: kotlin/String
-      annotationsList: []
-      ownTypeArguments: [])
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        type: kotlin/Int
+        annotationsList: []
+        ownTypeArguments: []
+    KtContextReceiver:
+      label: s
+      type: KtUsualClassType:
+        type: kotlin/String
+        annotationsList: []
+        ownTypeArguments: []
   ]
   contractEffects: []
   hasStableParameterNames: true

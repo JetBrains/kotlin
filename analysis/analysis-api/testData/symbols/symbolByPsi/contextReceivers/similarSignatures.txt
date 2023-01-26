@@ -56,10 +56,12 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /tooo
   contextReceivers: [
-    ContextReceiver(KtUsualClassType:
-      type: A
-      annotationsList: []
-      ownTypeArguments: [])
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        type: A
+        annotationsList: []
+        ownTypeArguments: []
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -91,10 +93,12 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /tooo
   contextReceivers: [
-    ContextReceiver(KtUsualClassType:
-      type: B
-      annotationsList: []
-      ownTypeArguments: [])
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        type: B
+        annotationsList: []
+        ownTypeArguments: []
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -126,14 +130,18 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /tooo
   contextReceivers: [
-    ContextReceiver(KtUsualClassType:
-      type: A
-      annotationsList: []
-      ownTypeArguments: [])
-    ContextReceiver(KtUsualClassType:
-      type: B
-      annotationsList: []
-      ownTypeArguments: [])
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        type: A
+        annotationsList: []
+        ownTypeArguments: []
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        type: B
+        annotationsList: []
+        ownTypeArguments: []
   ]
   contractEffects: []
   hasStableParameterNames: true
@@ -165,14 +173,18 @@ KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: /tooo
   contextReceivers: [
-    ContextReceiver(KtUsualClassType:
-      type: B
-      annotationsList: []
-      ownTypeArguments: [])
-    ContextReceiver(KtUsualClassType:
-      type: A
-      annotationsList: []
-      ownTypeArguments: [])
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        type: B
+        annotationsList: []
+        ownTypeArguments: []
+    KtContextReceiver:
+      label: null
+      type: KtUsualClassType:
+        type: A
+        annotationsList: []
+        ownTypeArguments: []
   ]
   contractEffects: []
   hasStableParameterNames: true
