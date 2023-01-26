@@ -1,67 +1,69 @@
-apply plugin: 'base'
+plugins {
+    base
+}
 
-final boolean isTeamcityBuild = project.hasProperty("teamcity.version")
+val isTeamcityBuild = project.hasProperty("teamcity.version")
 
 // kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
-final String kotlinRootDir = rootProject.file("../../../").absolutePath.replace('\\', '/')
-final String kotlinLibsDir = "$buildDir/libs"
+val kotlinRootDir = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
+val kotlinLibsDir = "$buildDir/libs"
 
-final String githubRevision = isTeamcityBuild ? project.property("githubRevision") : "master"
-final String kotlinVersion = isTeamcityBuild ? project.property("deployVersion") : "1.8.255-SNAPSHOT"
-final String repo = isTeamcityBuild ? project.property("kotlinLibsRepo") : "$kotlinRootDir/build/repo"
+val githubRevision = if (isTeamcityBuild) project.property("githubRevision") else "master"
+val kotlinVersion = if (isTeamcityBuild) project.property("deployVersion") as String else "1.8.255-SNAPSHOT"
+val repo = if (isTeamcityBuild) project.property("kotlinLibsRepo") as String else "$kotlinRootDir/build/repo"
 
-println("# Extracting info:")
+println("# Parameters summary:")
 println("    isTeamcityBuild: $isTeamcityBuild")
 println("    githubRevision: $githubRevision")
 println("    kotlinVersion: $kotlinVersion")
+println("    dokkaVersion: ${property("dokka_version")}")
 println("    repo: $repo")
 
 repositories {
-  maven { url = repo }
-  mavenCentral()
+    maven(url = repo)
+    mavenCentral()
 }
 
-final List<String> modules = [
-        "kotlin-stdlib",
-        "kotlin-stdlib-common",
-        "kotlin-stdlib-jdk7",
-        "kotlin-stdlib-jdk8",
-        "kotlin-stdlib-js",
-        "kotlin-test",
-        "kotlin-test-js",
-        "kotlin-test-junit5",
-        "kotlin-test-junit",
-        "kotlin-test-testng",
-        "kotlin-test-common",
-]
+val modules = listOf(
+    "kotlin-stdlib",
+    "kotlin-stdlib-common",
+    "kotlin-stdlib-jdk7",
+    "kotlin-stdlib-jdk8",
+    "kotlin-stdlib-js",
+    "kotlin-test",
+    "kotlin-test-js",
+    "kotlin-test-junit5",
+    "kotlin-test-junit",
+    "kotlin-test-testng",
+    "kotlin-test-common",
+)
 
 
-task extractLibs() { }
+val extractLibs by tasks.registering(Task::class)
 
 
 modules.forEach { module ->
-  final String lib = "kotlin_lib_$module"
 
-  final Configuration  lib_src = configurations.create(lib)
+    val library = configurations.create("kotlin_lib_$module")
 
-  if (module == "kotlin-test-js") {
-    lib_src.attributes {attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, "kotlin-runtime")) }
-  }
+    if (module == "kotlin-test-js") {
+        library.attributes { attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class, "kotlin-runtime")) }
+    }
 
-  dependencies {
-    "$lib"(group: 'org.jetbrains.kotlin', name: module, version: kotlinVersion)
-  }
+    dependencies {
+        library(group = "org.jetbrains.kotlin", name = module, version = kotlinVersion)
+    }
 
-  final Task libsTask = tasks.create("extract_lib_$module", Sync) {
-    dependsOn lib_src
+    val libsTask = tasks.register<Sync>("extract_lib_$module") {
+        dependsOn(library)
 
-    from { lib_src }
-    into "$kotlinLibsDir/$module"
-  }
+        from({ library })
+        into("$kotlinLibsDir/$module")
+    }
 
-  extractLibs.dependsOn libsTask
+    extractLibs.configure { dependsOn(libsTask) }
 }
 
-project.extensions.github_revision = githubRevision
-project.extensions.kotlin_root = kotlinRootDir
-project.extensions.kotlin_libs = kotlinLibsDir
+project.ext["github_revision"] = githubRevision
+project.ext["kotlin_root"] = kotlinRootDir
+project.ext["kotlin_libs"] = kotlinLibsDir
