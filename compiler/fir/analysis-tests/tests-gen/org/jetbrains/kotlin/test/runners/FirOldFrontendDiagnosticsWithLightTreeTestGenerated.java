@@ -33087,6 +33087,18 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("typeParameterChainInReceiver.kt")
+            public void testTypeParameterChainInReceiver() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/typeParameterChainInReceiver.kt");
+            }
+
+            @Test
+            @TestMetadata("typeParameterChainInReturnType.kt")
+            public void testTypeParameterChainInReturnType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/typeParameters/typeParameterChainInReturnType.kt");
+            }
+
+            @Test
             @TestMetadata("upperBoundCannotBeArray.kt")
             public void testUpperBoundCannotBeArray() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/typeParameters/upperBoundCannotBeArray.kt");

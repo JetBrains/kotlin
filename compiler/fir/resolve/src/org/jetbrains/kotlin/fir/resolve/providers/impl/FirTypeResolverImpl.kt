@@ -73,10 +73,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                         ?: qualifierResolver.resolveEnumEntrySymbol(qualifier, symbol.classId)
                 }
             }
-            is FirTypeParameterSymbol -> {
-                assert(qualifier.size == 1)
-                symbol
-            }
+            is FirTypeParameterSymbol -> symbol.takeIf { qualifier.size == 1 }
             else -> error("!")
         }
     }

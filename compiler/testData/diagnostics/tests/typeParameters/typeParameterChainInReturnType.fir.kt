@@ -1,0 +1,2 @@
+// ISSUE: KT-56212
+fun <F> foo(): <!UNRESOLVED_REFERENCE!>F.X<!> = TODO()
