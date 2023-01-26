@@ -397,10 +397,8 @@ enum class WasmOp(
     REF_TEST_DEPRECATED("ref.test", 0xFB_44, STRUCT_TYPE_IDX),
     REF_CAST_DEPRECATED("ref.cast", 0xFB_45, STRUCT_TYPE_IDX),
 
-    REF_IS_DATA_DEPRECATED("ref.is_data", 0xFB_51),
-    REF_AS_DATA_DEPRECATED("ref.as_data", 0xFB_59),
-
     BR_ON_CAST_FAIL_DEPRECATED("br_on_cast_fail", 0xFB_47, listOf(LABEL_IDX, STRUCT_TYPE_IDX)),
+    BR_ON_NON_DATA_DEPRECATED("br_on_non_data_fail", 0xFB_64, listOf(LABEL_IDX)),
 
     // ============================================================
     // Pseudo-instruction, just alias for a normal call. It's used to easily spot get_unit on the wasm level.

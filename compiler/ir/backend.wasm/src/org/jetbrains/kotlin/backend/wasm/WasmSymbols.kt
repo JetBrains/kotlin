@@ -211,6 +211,7 @@ class WasmSymbols(
     val nullableDoubleIeee754Equals = getInternalFunction("nullableDoubleIeee754Equals")
 
     val unsafeGetScratchRawMemory = getInternalFunction("unsafeGetScratchRawMemory")
+    val returnArgumentIfItIsKotlinAny = getInternalFunction("returnArgumentIfItIsKotlinAny")
 
     val newJsArray = getInternalFunction("newJsArray")
     val jsArrayPush = getInternalFunction("jsArrayPush")

@@ -387,9 +387,3 @@ internal external fun wasm_i64_ctz(a: Long): Long
 
 @WasmOp(WasmOp.REF_IS_NULL)
 internal external fun wasm_externref_is_null(a: ExternalInterfaceType?): Boolean
-
-@WasmOp(WasmOp.REF_AS_DATA_DEPRECATED)
-internal external fun wasm_ref_as_data_deprecated(x: anyref): dataref
-
-@WasmOp(WasmOp.REF_IS_DATA_DEPRECATED)
-internal external fun wasm_ref_is_data_deprecated(x: anyref): Boolean
