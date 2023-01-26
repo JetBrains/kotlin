@@ -132,7 +132,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
     implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
-    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion") { isTransitive = false }
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("com.google.code.gson:gson:2.8.9") // Workaround for Gradle dependency resolution error
 
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
