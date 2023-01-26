@@ -33873,6 +33873,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             runTest("compiler/testData/codegen/box/sam/kt17765.kt");
         }
 
+        @Test
+        @TestMetadata("kt56188.kt")
+        public void testKt56188() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt56188.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/sam/adapters")
         @TestDataPath("$PROJECT_ROOT")

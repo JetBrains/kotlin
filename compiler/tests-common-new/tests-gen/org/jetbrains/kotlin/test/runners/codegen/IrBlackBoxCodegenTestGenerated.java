@@ -47120,6 +47120,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt56188.kt")
+        public void testKt56188() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/kt56188.kt");
+        }
+
+        @Test
         @TestMetadata("nonInlinedSamWrapper.kt")
         public void testNonInlinedSamWrapper() throws Exception {
             runTest("compiler/testData/codegen/box/sam/nonInlinedSamWrapper.kt");
