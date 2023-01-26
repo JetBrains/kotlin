@@ -1299,6 +1299,47 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `hierarchy of dependant pods compiles successfully`() = with(getProjectByName("native-cocoapods-dependant-pods")) {
+        build(
+            ":compileKotlinIosX64",
+            "-Pkotlin.native.cocoapods.generate.wrapper=true",
+        ) {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun `configuration fails when trying to depend on non-declared pod`() = with(getProjectByName("native-cocoapods-dependant-pods")) {
+        gradleBuildScript().appendToCocoapodsBlock("""
+            pod("Foo") { useInteropBindingFrom("JBNonExistent") }
+        """.trimIndent())
+
+        build(
+            ":help",
+            "-Pkotlin.native.cocoapods.generate.wrapper=true",
+        ) {
+            assertFailed()
+            assertContains("Couldn't find declaration of pod 'JBNonExistent' (interop-binding dependency of pod 'Foo')")
+        }
+    }
+
+    @Test
+    fun `configuration fails when dependant pods are in the wrong order`() = with(getProjectByName("native-cocoapods-dependant-pods")) {
+        gradleBuildScript().appendToCocoapodsBlock("""
+            pod("Foo") { useInteropBindingFrom("Bar") }
+            pod("Bar")
+        """.trimIndent())
+
+        build(
+            ":help",
+            "-Pkotlin.native.cocoapods.generate.wrapper=true",
+        ) {
+            assertFailed()
+            assertContains("Couldn't find declaration of pod 'Bar' (interop-binding dependency of pod 'Foo')")
+        }
+    }
+
     // test configuration phase
 
     private class CustomHooks {

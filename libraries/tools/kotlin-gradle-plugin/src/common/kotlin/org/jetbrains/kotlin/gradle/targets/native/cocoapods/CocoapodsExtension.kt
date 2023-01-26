@@ -20,7 +20,7 @@ import java.io.File
 import java.net.URI
 import javax.inject.Inject
 
-@Suppress("unused") // Public API
+@Suppress("unused", "MemberVisibilityCanBePrivate") // Public API
 abstract class CocoapodsExtension @Inject constructor(private val project: Project) {
     /**
      * Configure version of the pod
@@ -291,6 +291,27 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
          */
         @get:Input
         var linkOnly: Boolean = false
+
+        /**
+         * Contains a list of dependencies to other pods. This list will be used while building an interop Kotlin-binding for the pod.
+         *
+         * @see useInteropBindingFrom
+         */
+        @get:Input
+        val interopBindingDependencies: MutableList<String> = mutableListOf()
+
+        /**
+         * Specify that the pod depends on another pod **podName** and a Kotlin-binding for **podName** should be used while building
+         * a binding for the pod. This is necessary if you need to operate entities from **podName** and from the pod together, for
+         * instance pass an object from **podName** to the pod in Kotlin.
+         *
+         * A pod with the exact name must be declared before calling this function.
+         *
+         * @see interopBindingDependencies
+         */
+        fun useInteropBindingFrom(podName: String) {
+            interopBindingDependencies.add(podName)
+        }
 
         @Input
         override fun getName(): String = name
