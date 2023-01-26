@@ -9,6 +9,9 @@ package org.jetbrains.kotlin
 import com.google.gson.GsonBuilder
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
+import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.konan.properties.loadProperties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.properties.saveProperties
@@ -453,3 +456,11 @@ internal val Project.testTargetConfigurables: Configurables
     }
 
 internal val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()!!
+
+internal val Project.ext: ExtraPropertiesExtension
+    get() = extensions.getByName("ext") as ExtraPropertiesExtension
+
+internal val FileCollection.isNotEmpty: Boolean
+    get() = !isEmpty
+
+internal fun Provider<File>.resolve(child: String): Provider<File> = map { it.resolve(child) }
