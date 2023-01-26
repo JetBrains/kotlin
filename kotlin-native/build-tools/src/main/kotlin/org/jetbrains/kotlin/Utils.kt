@@ -313,37 +313,6 @@ fun Array<String>.runCommand(
     }
 }
 
-fun String.splitCommaSeparatedOption(optionName: String) =
-    split("\\s*,\\s*".toRegex()).map {
-        if (it.isNotEmpty()) listOf(optionName, it) else listOf(null)
-    }.flatten().filterNotNull()
-
-data class Commit(val revision: String, val developer: String, val webUrlWithDescription: String)
-
-val teamCityUrl = "https://buildserver.labs.intellij.net"
-
-fun buildsUrl(buildLocator: String) =
-    "$teamCityUrl/app/rest/builds/?locator=$buildLocator"
-
-fun getBuild(buildLocator: String, user: String, password: String) =
-    try {
-        sendGetRequest(buildsUrl(buildLocator), user, password)
-    } catch (t: Throwable) {
-        error("Try to get build! TeamCity is unreachable!")
-    }
-
-fun sendGetRequest(url: String, username: String? = null, password: String? = null): String {
-    val connection = URL(url).openConnection() as HttpURLConnection
-    if (username != null && password != null) {
-        val auth = Base64.getEncoder().encode(("$username:$password").toByteArray()).toString(Charsets.UTF_8)
-        connection.addRequestProperty("Authorization", "Basic $auth")
-    }
-    connection.setRequestProperty("Accept", "application/json");
-    connection.connect()
-    return connection.inputStream.use { it.reader().use { reader -> reader.readText() } }
-}
-
-
 @JvmOverloads
 fun compileSwift(
     project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
