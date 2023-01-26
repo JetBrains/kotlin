@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// DIAGNOSTICS: +UNCHECKED_CAST_TO_EXTERNAL_INTERFACE
+
 external interface I
 
 fun box(a: Any, b: Any): Pair<I, I?> {

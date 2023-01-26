@@ -16,6 +16,7 @@ object JsExpressionCheckers : ExpressionCheckers() {
 
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
-            FirJsDefinedExternallyCallChecker
+            FirJsDefinedExternallyCallChecker,
+            FirJsNativeRttiChecker,
         )
 }
