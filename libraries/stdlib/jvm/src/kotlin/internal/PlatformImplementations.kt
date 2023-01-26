@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -47,22 +47,8 @@ internal open class PlatformImplementations {
 
 
 @JvmField
-internal val IMPLEMENTATIONS: PlatformImplementations = run {
-    try {
-        return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.jdk8.JDK8PlatformImplementations").newInstance())
-    } catch (e: ClassNotFoundException) { }
-    try {
-        return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.JRE8PlatformImplementations").newInstance())
-    } catch (e: ClassNotFoundException) { }
-    try {
-        return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.jdk7.JDK7PlatformImplementations").newInstance())
-    } catch (e: ClassNotFoundException) { }
-    try {
-        return@run castToBaseType<PlatformImplementations>(Class.forName("kotlin.internal.JRE7PlatformImplementations").newInstance())
-    } catch (e: ClassNotFoundException) { }
-
-    PlatformImplementations()
-}
+internal val IMPLEMENTATIONS: PlatformImplementations =
+    castToBaseType<PlatformImplementations>(kotlin.internal.jdk8.JDK8PlatformImplementations())
 
 @kotlin.internal.InlineOnly
 private inline fun <reified T : Any> castToBaseType(instance: Any): T {

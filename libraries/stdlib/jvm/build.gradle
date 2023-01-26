@@ -15,6 +15,11 @@ configurations {
 }
 
 sourceSets {
+    compileOnlyDeclarations {
+        java {
+            srcDir 'compileOnly'
+        }
+    }
     main {
         java {
             srcDir "${rootDir}/core/builtins/src"
@@ -74,6 +79,7 @@ dependencies {
 
     api group: 'org.jetbrains', name: 'annotations', version:'13.0'
 
+    compileOnly sourceSets.compileOnlyDeclarations.output
     mainJdk7Api sourceSets.main.output
     mainJdk8Api sourceSets.main.output
     mainJdk8Api sourceSets.mainJdk7.output
@@ -174,6 +180,14 @@ compileMainJdk8Kotlin {
             "-Xno-new-java-annotation-targets",
     ]
     kotlinOptions.moduleName = "kotlin-stdlib-jdk8"
+}
+
+compileCompileOnlyDeclarationsKotlin {
+    kotlinOptions {
+        freeCompilerArgs = [
+                "-Xallow-kotlin-package",
+        ]
+    }
 }
 
 compileTestKotlin {
