@@ -19,7 +19,7 @@ internal class SymbolLightAnnotationForAnnotationCall(
     parent: PsiModifierList,
 ) : SymbolLightAbstractAnnotation(parent) {
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
-        SymbolLightLazyAnnotationParameterList(this, lazyOf(annotationCall.arguments))
+        symbolLightAnnotationParameterList(annotationCall.arguments)
     }
 
     override fun getParameterList(): PsiAnnotationParameterList = _parameterList

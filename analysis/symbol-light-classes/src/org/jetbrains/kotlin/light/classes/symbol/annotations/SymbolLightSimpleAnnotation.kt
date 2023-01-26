@@ -29,9 +29,8 @@ internal class SymbolLightSimpleAnnotation(
     override fun hashCode(): Int = fqName.hashCode()
 
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
-        SymbolLightLazyAnnotationParameterList(this, lazyOf(arguments))
+        symbolLightAnnotationParameterList(arguments)
     }
 
     override fun getParameterList(): PsiAnnotationParameterList = _parameterList
-
 }
