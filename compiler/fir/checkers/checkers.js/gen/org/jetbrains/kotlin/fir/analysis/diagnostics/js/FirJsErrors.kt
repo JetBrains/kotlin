@@ -80,6 +80,9 @@ object FirJsErrors {
 
     // Export
     val NESTED_JS_EXPORT by error0<KtElement>()
+    val WRONG_EXPORTED_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val NON_EXPORTABLE_TYPE by warning2<KtElement, String, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val NON_CONSUMABLE_EXPORTED_IDENTIFIER by warning1<KtElement, String>()
 
     // Dynamics
     val DELEGATION_BY_DYNAMIC by error0<KtElement>()

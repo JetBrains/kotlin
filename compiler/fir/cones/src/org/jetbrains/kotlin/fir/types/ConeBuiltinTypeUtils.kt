@@ -19,13 +19,17 @@ val ConeKotlinType.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, fa
 val ConeKotlinType.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)
 val ConeKotlinType.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, false)
 val ConeKotlinType.isNullableNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, true)
+val ConeKotlinType.isNothingOrNullableNothing: Boolean get() = isAnyOfBuiltinType(setOf(StandardClassIds.Nothing))
 
 val ConeKotlinType.isUnit: Boolean get() = isBuiltinType(StandardClassIds.Unit, false)
 val ConeKotlinType.isBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, false)
 val ConeKotlinType.isNullableBoolean: Boolean get() = isBuiltinType(StandardClassIds.Boolean, true)
 val ConeKotlinType.isBooleanOrNullableBoolean: Boolean get() = isAnyOfBuiltinType(setOf(StandardClassIds.Boolean))
 
+val ConeKotlinType.isThrowableOrNullableThrowable: Boolean get() = isAnyOfBuiltinType(setOf(StandardClassIds.Throwable))
+
 val ConeKotlinType.isChar: Boolean get() = isBuiltinType(StandardClassIds.Char, false)
+val ConeKotlinType.isCharOrNullableChar: Boolean get() = isAnyOfBuiltinType(setOf(StandardClassIds.Char))
 val ConeKotlinType.isString: Boolean get() = isBuiltinType(StandardClassIds.String, false)
 
 val ConeKotlinType.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
@@ -34,6 +38,8 @@ val ConeKotlinType.isUInt: Boolean get() = isBuiltinType(StandardClassIds.UInt, 
 val ConeKotlinType.isULong: Boolean get() = isBuiltinType(StandardClassIds.ULong, false)
 val ConeKotlinType.isPrimitiveOrNullablePrimitive: Boolean get() = isAnyOfBuiltinType(StandardClassIds.primitiveTypes)
 val ConeKotlinType.isPrimitive: Boolean get() = isPrimitiveOrNullablePrimitive && nullability == ConeNullability.NOT_NULL
+val ConeKotlinType.isPrimitiveNumberOrNullableType: Boolean
+    get() = isPrimitiveOrNullablePrimitive && !isBooleanOrNullableBoolean && !isCharOrNullableChar
 val ConeKotlinType.isArrayType: Boolean
     get() {
         return isBuiltinType(StandardClassIds.Array, false) ||

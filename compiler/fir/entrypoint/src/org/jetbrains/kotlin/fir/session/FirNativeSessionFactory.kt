@@ -83,5 +83,6 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
         register(ConeCallConflictResolverFactory::class, NativeCallConflictResolverFactory)
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
         register(FirOverridesBackwardCompatibilityHelper::class, FirOverridesBackwardCompatibilityHelper.Default())
+        register(FirPlatformStatusProvider::class, FirPlatformStatusProvider.Default)
     }
 }

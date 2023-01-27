@@ -137,6 +137,7 @@ fun FirSession.registerJavaSpecificResolveComponents() {
     register(FirPlatformClassMapper::class, FirJavaClassMapper(this))
     register(FirSyntheticNamesProvider::class, FirJavaSyntheticNamesProvider)
     register(FirOverridesBackwardCompatibilityHelper::class, FirJvmOverridesBackwardCompatibilityHelper)
+    register(FirPlatformStatusProvider::class, FirPlatformStatusProvider.Default)
 }
 
 @OptIn(SessionConfiguration::class)

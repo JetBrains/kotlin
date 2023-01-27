@@ -14,6 +14,7 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
     SEALED_CLASS_INHERITORS,
     TYPES,
     STATUS,
+    PLATFORM_STATUS,
     ARGUMENTS_OF_ANNOTATIONS,
     CONTRACTS,
     IMPLICIT_TYPES_BODY_RESOLVE,

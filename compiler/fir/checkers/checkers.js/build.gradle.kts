@@ -7,6 +7,8 @@ plugins {
 
 dependencies {
     api(project(":core:compiler.common.js"))
+    api(project(":js:js.ast"))
+    api(project(":compiler:fir:js"))
     api(project(":compiler:fir:checkers"))
 
     /*

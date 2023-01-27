@@ -8,22 +8,22 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenFunctions
-import org.jetbrains.kotlin.fir.analysis.checkers.getAnnotationStringParameter
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.analysis.checkers.hasAnnotationOrInsideAnnotatedClass
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
-import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
+import org.jetbrains.kotlin.fir.js.jsStatusProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.js.PredefinedAnnotation
+import org.jetbrains.kotlin.js.common.isES5IdentifierPart
+import org.jetbrains.kotlin.js.common.isES5IdentifierStart
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 private val FirBasedSymbol<*>.isExternal
@@ -70,6 +70,13 @@ fun FirFunctionSymbol<*>.isOverridingExternalWithOptionalParams(context: Checker
 
 fun FirBasedSymbol<*>.getJsName(session: FirSession): String? {
     return getAnnotationStringParameter(JsStandardClassIds.Annotations.JsName, session)
+}
+
+fun sanitizeName(name: String): String {
+    if (name.isEmpty()) return "_"
+
+    val first = name.first().let { if (it.isES5IdentifierStart()) it else '_' }
+    return first.toString() + name.drop(1).map { if (it.isES5IdentifierPart()) it else '_' }.joinToString("")
 }
 
 fun FirBasedSymbol<*>.isNativeObject(session: FirSession): Boolean {

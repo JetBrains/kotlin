@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_JS_EXPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_CONSUMABLE_EXPORTED_IDENTIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXPORTABLE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE
@@ -53,6 +55,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_BODY_OF_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXPORTED_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_JS_QUALIFIER
@@ -164,6 +167,18 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(EXTERNAL_INTERFACE_AS_CLASS_LITERAL, "Can't refer to external interface from class literal")
         map.put(NESTED_JS_EXPORT, "@JsExport is only allowed on files and top-level declarations")
+        map.put(WRONG_EXPORTED_DECLARATION, "Declaration of such kind ({0}) can''t be exported to JS", CommonRenderers.STRING)
+        map.put(
+            NON_EXPORTABLE_TYPE,
+            "Exported declaration uses non-exportable {0} type: {1}",
+            CommonRenderers.STRING,
+            FirDiagnosticRenderers.RENDER_TYPE,
+        )
+        map.put(
+            NON_CONSUMABLE_EXPORTED_IDENTIFIER,
+            "Exported declaration contains non-consumable identifier '${0}', that can't be represented inside TS definitions and ESM",
+            CommonRenderers.STRING,
+        )
 
         map.checkMissingMessages(FirJsErrors)
     }

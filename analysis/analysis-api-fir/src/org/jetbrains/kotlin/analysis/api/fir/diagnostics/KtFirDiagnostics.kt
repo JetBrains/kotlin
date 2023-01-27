@@ -3421,6 +3421,22 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = NestedJsExport::class
     }
 
+    abstract class WrongExportedDeclaration : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = WrongExportedDeclaration::class
+        abstract val kind: String
+    }
+
+    abstract class NonExportableType : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NonExportableType::class
+        abstract val kind: String
+        abstract val type: KtType
+    }
+
+    abstract class NonConsumableExportedIdentifier : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = NonConsumableExportedIdentifier::class
+        abstract val name: String
+    }
+
     abstract class DelegationByDynamic : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = DelegationByDynamic::class
     }

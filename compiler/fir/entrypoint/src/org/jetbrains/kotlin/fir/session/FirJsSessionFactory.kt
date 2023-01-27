@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.js.FirJsStatusProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.providers.impl.*
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -88,5 +89,6 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
         register(FirOverridesBackwardCompatibilityHelper::class, FirOverridesBackwardCompatibilityHelper.Default())
+        register(FirPlatformStatusProvider::class, FirJsStatusProvider(this))
     }
 }

@@ -97,6 +97,16 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
 
     val EXPORT by object : DiagnosticGroup("Export") {
         val NESTED_JS_EXPORT by error<KtElement>()
+        val WRONG_EXPORTED_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("kind")
+        }
+        val NON_EXPORTABLE_TYPE by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("kind")
+            parameter<ConeKotlinType>("type")
+        }
+        val NON_CONSUMABLE_EXPORTED_IDENTIFIER by warning<KtElement>(PositioningStrategy.DEFAULT) {
+            parameter<String>("name")
+        }
     }
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {
