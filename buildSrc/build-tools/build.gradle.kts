@@ -8,7 +8,7 @@ import java.util.Properties
 
 plugins {
     groovy
-//    `kotlin-dsl`
+    id("org.gradle.kotlin.kotlin-dsl")
     id("org.jetbrains.kotlin.plugin.sam.with.receiver")
 }
 
@@ -24,11 +24,9 @@ buildscript {
 val kotlinVersion = project.bootstrapKotlinVersion
 val metadataVersion = "0.0.1-dev-10"
 
-group = "org.jetbrains.kotlin"
-version = kotlinVersion
-
 repositories {
     maven("https://cache-redirector.jetbrains.com/maven-central")
+    maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     mavenCentral()
     gradlePluginPortal()
 }
@@ -36,15 +34,15 @@ repositories {
 dependencies {
     api(gradleApi())
 
-    api(kotlinStdlib())
-    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    api("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") { isTransitive = false }
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
 
     val versionProperties = Properties()
-    project.rootProject.projectDir.resolve("gradle/versions.properties").inputStream().use { propInput ->
+    project.rootProject.projectDir.resolve("../gradle/versions.properties").inputStream().use { propInput ->
         versionProperties.load(propInput)
     }
-    implementation(commonDependency("com.google.code.gson:gson"))
+    implementation("com.google.code.gson:gson:2.8.9")
     configurations.all {
         resolutionStrategy.eachDependency {
             if (requested.group == "com.google.code.gson" && requested.name == "gson") {
@@ -54,12 +52,17 @@ dependencies {
         }
     }
 
-    implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-coroutines-core"))
-
-    implementation(commonDependency("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"))
-    implementation(commonDependency("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+    implementation("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 
     api(project(":kotlin-native-shared"))
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
 }
 
 val compileKotlin: KotlinCompile by tasks
@@ -67,7 +70,6 @@ val compileGroovy: GroovyCompile by tasks
 
 compileKotlin.apply {
     kotlinOptions {
-        jvmTarget = "1.8"
         freeCompilerArgs += listOf(
                 "-Xskip-prerelease-check",
                 "-Xsuppress-version-warnings",
