@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.ir.util.IdSignature.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
 
-internal fun PartialLinkageCase.renderErrorMessage(): String = buildString {
-    when (this@renderErrorMessage) {
+internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
+    when (this@renderLinkageError) {
         is UnusableClassifier -> unusableClassifier(cause, CauseRendering.Standalone, printIntermediateCause = false)
         is MissingDeclaration -> noDeclarationForSymbol(missingDeclarationSymbol)
 

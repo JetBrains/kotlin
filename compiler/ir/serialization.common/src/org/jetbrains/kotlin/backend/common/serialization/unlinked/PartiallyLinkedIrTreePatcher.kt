@@ -166,7 +166,10 @@ internal class PartiallyLinkedIrTreePatcher(
                 anonInitializer.body.statements.clear()
 
                 // Generate IR call that throws linkage error. Report compiler warning.
-                anonInitializer.body.statements += partialLinkageCase.throwLinkageError(anonInitializer)
+                anonInitializer.body.statements += partialLinkageCase.throwLinkageError(
+                    anonInitializer,
+                    suppressWarningInCompilerOutput = false
+                )
 
                 // Finish processing of the current class.
                 declaration.typeParameters.forEach { tp ->
@@ -190,8 +193,10 @@ internal class PartiallyLinkedIrTreePatcher(
                  * The removal of class of any other type is not performed: Such class may have nested classes that do not share
                  * their state with the containing class and not necessarily become unusable together with the containing class.
                  */
-                if (declaration.isLocal || declaration.isInner || declaration.declarations.none { (it as? IrClass)?.isInner == false })
-                    declaration.scheduleForRemoval()
+                if (declaration.isLocal || declaration.isInner || declaration.declarations.none { (it as? IrClass)?.isInner == false }) {
+                    declaration.scheduleForRemoval() // Don't process underlying declarations.
+                    return declaration
+                }
             }
 
             // Process underlying declarations. Collect declarations to remove.
@@ -219,7 +224,10 @@ internal class PartiallyLinkedIrTreePatcher(
                 blockBody.statements.clear()
 
                 // Generate IR call that throws linkage error. Report compiler warning.
-                blockBody.statements += partialLinkageCase.throwLinkageError(declaration)
+                blockBody.statements += partialLinkageCase.throwLinkageError(
+                    declaration,
+                    suppressWarningInCompilerOutput = declaration.isDirectMemberOf(unusableClassifierInSignature)
+                )
 
                 // Don't remove inline functions, this may harm linkage in K/N backend with enabled static caches.
                 if (!declaration.isInline) {
@@ -323,8 +331,8 @@ internal class PartiallyLinkedIrTreePatcher(
             }
         }
 
-        private fun PartialLinkageCase.throwLinkageError(declaration: IrDeclaration): IrCall =
-            throwLinkageError(declaration, currentFile)
+        private fun PartialLinkageCase.throwLinkageError(declaration: IrDeclaration, suppressWarningInCompilerOutput: Boolean): IrCall =
+            throwLinkageError(declaration, currentFile, suppressWarningInCompilerOutput)
     }
 
     private inner class ExpressionTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
@@ -447,7 +455,7 @@ internal class PartiallyLinkedIrTreePatcher(
             val directChildren = if (!hasBranches())
                 DirectChildrenStatementsCollector().also(::acceptChildrenVoid).getResult() else DirectChildren.EMPTY
 
-            val linkageError = partialLinkageCase.throwLinkageError(element = this, currentFile)
+            val linkageError = partialLinkageCase.throwLinkageError(element = this, currentFile, suppressWarningInCompilerOutput = false)
 
             return if (directChildren.statements.isNotEmpty())
                 IrCompositeImpl(startOffset, endOffset, builtIns.nothingType, PARTIAL_LINKAGE_RUNTIME_ERROR).apply {
@@ -607,7 +615,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     } ?: return@filterTo true
 
                     // Just log a warning. Do not throw a linkage error as this would produce broken IR.
-                    partialLinkageCase.logLinkageErrorAsWarning(this, currentFile)
+                    partialLinkageCase.renderAndLogLinkageError(this, currentFile)
 
                     false // Drop it.
                 }.compact()
@@ -637,8 +645,8 @@ internal class PartiallyLinkedIrTreePatcher(
     private fun List<IrType>.toPartiallyLinkedMarkerTypeOrNull(): PartiallyLinkedMarkerType? =
         firstNotNullOfOrNull { it.toPartiallyLinkedMarkerTypeOrNull() }
 
-    private fun PartialLinkageCase.logLinkageErrorAsWarning(element: IrElement, file: PLFile): String {
-        val errorMessage = renderErrorMessage()
+    private fun PartialLinkageCase.renderAndLogLinkageError(element: IrElement, file: PLFile): String {
+        val errorMessage = renderLinkageError()
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
         messageLogger.report(Severity.WARNING, errorMessage, locationInSourceCode) // It's OK. We log it as a warning.
@@ -646,8 +654,11 @@ internal class PartiallyLinkedIrTreePatcher(
         return errorMessage
     }
 
-    private fun PartialLinkageCase.throwLinkageError(element: IrElement, file: PLFile): IrCall {
-        val errorMessage = logLinkageErrorAsWarning(element, file)
+    private fun PartialLinkageCase.throwLinkageError(element: IrElement, file: PLFile, suppressWarningInCompilerOutput: Boolean): IrCall {
+        val errorMessage = if (suppressWarningInCompilerOutput)
+            renderLinkageError()
+        else
+            renderAndLogLinkageError(element, file)
 
         return IrCallImpl(
             startOffset = element.startOffset,
@@ -695,6 +706,12 @@ internal class PartiallyLinkedIrTreePatcher(
     }
 
     companion object {
+        private fun IrDeclaration.isDirectMemberOf(unusableClassifier: ExploredClassifier.Unusable?): Boolean {
+            val unusableClassifierSymbol = unusableClassifier?.symbol ?: return false
+            val containingClassSymbol = parentClassOrNull?.symbol ?: return false
+            return unusableClassifierSymbol == containingClassSymbol
+        }
+
         private fun IrExpression.hasBranches(): Boolean = when (this) {
             is IrWhen, is IrLoop, is IrTry, is IrSuspensionPoint, is IrSuspendableExpression -> true
             else -> false
