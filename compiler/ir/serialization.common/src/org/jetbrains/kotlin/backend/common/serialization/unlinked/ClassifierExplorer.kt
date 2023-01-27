@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable.*
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Usable
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.DeclarationId
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.DeclarationId.Companion.declarationId
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -231,62 +228,8 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val 
                     return InvalidInheritance(symbol, superClassSymbols) // Invalid inheritance.
             }
 
-            // Check delegating constructor calls.
-            val ownConstructors: Map<IrConstructorSymbol, IrConstructor> = declarations
-                .filterIsInstance<IrConstructor>()
-                .associateBy { it.symbol }
-
-            ownConstructors.forEach { (_, constructor) ->
-                var unexpectedSuperClassConstructorSymbol: IrConstructorSymbol? = null
-
-                constructor.acceptChildrenVoid(object : IrElementVisitorVoid {
-                    override fun visitElement(element: IrElement) {
-                        if (unexpectedSuperClassConstructorSymbol != null)
-                            return // Break.
-
-                        element.acceptChildrenVoid(this)
-                    }
-
-                    override fun visitClass(declaration: IrClass) {
-                        // Skip nested
-                    }
-
-                    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-                        if (unexpectedSuperClassConstructorSymbol != null)
-                            return // Break.
-
-                        val calledConstructorSymbol = expression.symbol
-                        if (calledConstructorSymbol in ownConstructors) return // OK, just calling another constructor of the same class
-
-                        if (calledConstructorSymbol.isBound) {
-                            val calledConstructor = calledConstructorSymbol.owner
-                            if (calledConstructor.origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION) {
-                                val constructedSuperClassSymbol = calledConstructor.parentAsClass.symbol
-                                if (constructedSuperClassSymbol != superClassSymbol) {
-                                    // Wrong delegating constructor call.
-                                    unexpectedSuperClassConstructorSymbol = calledConstructorSymbol
-                                }
-                            }
-                        } else {
-                            // Fallback to signatures.
-                            (calledConstructorSymbol.signature as? IdSignature.CommonSignature)?.let { constructorSignature ->
-                                val constructedSuperClassId = DeclarationId(
-                                    constructorSignature.packageFqName,
-                                    constructorSignature.declarationFqName.substringBeforeLast('.')
-                                )
-
-                                if (superClassSymbol.owner.declarationId != constructedSuperClassId) {
-                                    // Wrong delegating constructor call.
-                                    unexpectedSuperClassConstructorSymbol = calledConstructorSymbol
-                                }
-                            }
-                        }
-                    }
-                })
-
-                if (unexpectedSuperClassConstructorSymbol != null)
-                    return InvalidInheritance(symbol, superClassSymbol, unexpectedSuperClassConstructorSymbol!!)
-            }
+            // IMPORTANT: Constructor delegation is intentionally not performed here.
+            // For details see [InvalidInheritance].
         }
 
         return null

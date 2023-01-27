@@ -6,7 +6,13 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 
 internal enum class PartiallyLinkedStatementOrigin : IrStatementOrigin {
-    PARTIAL_LINKAGE_RUNTIME_ERROR
+    /** An [IrExpression] that represents an PL runtime error. */
+    PARTIAL_LINKAGE_RUNTIME_ERROR,
+
+    /** An [IrDelegatingConstructorCall] that restores the correct constructor delegation. */
+    FIXED_CONSTRUCTOR_DELEGATION
 }

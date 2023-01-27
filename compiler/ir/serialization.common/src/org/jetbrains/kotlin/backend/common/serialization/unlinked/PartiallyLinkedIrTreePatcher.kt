@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageCase.*
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.DeclarationId
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.DeclarationId.Companion.declarationId
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartiallyLinkedStatementOrigin.FIXED_CONSTRUCTOR_DELEGATION
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartiallyLinkedStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -14,12 +17,11 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
@@ -203,8 +205,38 @@ internal class PartiallyLinkedIrTreePatcher(
             return declaration.transformChildrenWithRemoval()
         }
 
-        override fun visitFunction(declaration: IrFunction): IrStatement {
-            (declaration as? IrOverridableDeclaration<*>)?.filterOverriddenSymbols()
+        override fun visitConstructor(declaration: IrConstructor): IrStatement {
+            // IMPORTANT: It's necessary to overwrite types. Please don't remove this statement or move it somewhere else.
+            val unusableClassifierInSignature = declaration.rewriteTypesInFunction()
+
+            // IMPORTANT: It's necessary to fix constructor delegation. Please don't remove this statement or move it somewhere else.
+            val inheritanceIssue = declaration.fixConstructorDelegation()
+
+            // Compute the linkage case.
+            val partialLinkageCase = if (declaration.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
+                MissingDeclaration(declaration.symbol)
+            else
+                (unusableClassifierInSignature ?: inheritanceIssue)?.let { DeclarationWithUnusableClassifier(declaration.symbol, it) }
+
+            if (partialLinkageCase != null) {
+                // Note: Block body is missing for MISSING_DECLARATION.
+                val blockBody = declaration.body as? IrBlockBody
+                    ?: builtIns.irFactory.createBlockBody(declaration.startOffset, declaration.endOffset).apply { declaration.body = this }
+
+                // IMPORTANT: Unlike it's done for IrSimpleFunction don't clean-up statements. Insert PL linkage as the first one.
+                blockBody.statements.add(
+                    0, partialLinkageCase.throwLinkageError(
+                        declaration,
+                        suppressWarningInCompilerOutput = declaration.isDirectMemberOf(unusableClassifierInSignature)
+                    )
+                )
+            }
+
+            return declaration.transformChildren()
+        }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+            declaration.filterOverriddenSymbols()
 
             // IMPORTANT: It's necessary to overwrite types. Please don't move the statement below.
             val unusableClassifierInSignature = declaration.rewriteTypesInFunction()
@@ -217,6 +249,7 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             if (partialLinkageCase != null) {
+                // Note: Block body is missing for UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER and MISSING_DECLARATION.
                 val blockBody = declaration.body as? IrBlockBody
                     ?: builtIns.irFactory.createBlockBody(declaration.startOffset, declaration.endOffset).apply { declaration.body = this }
 
@@ -234,7 +267,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     if (declaration.isTopLevelDeclaration) {
                         // Optimization: Remove unlinked top-level functions.
                         declaration.scheduleForRemoval()
-                    } else if (declaration is IrSimpleFunction) {
+                    } else {
                         // Optimization: Remove unlinked top-level properties.
                         val property = declaration.correspondingPropertySymbol?.owner
                         if (property?.isTopLevelDeclaration == true)
@@ -283,6 +316,106 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             return result
+        }
+
+        /**
+         * Check and fix constructor delegation. Note: This particular case of class exploration is intentionally performed
+         * outside of [ClassifierExplorer]. For details see [ExploredClassifier.Unusable.InvalidInheritance].
+         */
+        private fun IrConstructor.fixConstructorDelegation(): ExploredClassifier.Unusable.InvalidInheritance? {
+            if (origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
+                return null
+
+            val blockBody = body as? IrBlockBody
+            if (blockBody == null || blockBody.statements.isEmpty())
+                return null
+
+            val constructedClass = parentAsClass
+            val constructedClassSymbol = constructedClass.symbol
+
+            val actualSuperClassSymbol = constructedClass.superTypes
+                .firstNotNullOfOrNull { (it as? IrSimpleType)?.classifier as? IrClassSymbol }
+                ?: builtIns.anyClass
+            val actualSuperClass = actualSuperClassSymbol.owner
+
+            var inheritanceIssue: ExploredClassifier.Unusable.InvalidInheritance? = null
+
+            blockBody.statements.transformInPlace { statement ->
+                if (statement !is IrDelegatingConstructorCall)
+                    return@transformInPlace statement
+
+                val calledConstructorSymbol = statement.symbol
+                val calledConstructor = calledConstructorSymbol.owner
+
+                val invalidConstructorDelegationFound =
+                    if (calledConstructor.origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION) {
+                        val constructedSuperClassSymbol = calledConstructor.parentAsClass.symbol
+                        constructedSuperClassSymbol != constructedClassSymbol && constructedSuperClassSymbol != actualSuperClassSymbol
+                    } else {
+                        // Fallback to signatures.
+                        (calledConstructorSymbol.signature as? IdSignature.CommonSignature)?.let { constructorSignature ->
+                            val constructedSuperClassId = DeclarationId(
+                                constructorSignature.packageFqName,
+                                constructorSignature.declarationFqName.substringBeforeLast('.')
+                            )
+
+                            actualSuperClass.declarationId != constructedSuperClassId
+                        } ?: false
+                    }
+
+                if (!invalidConstructorDelegationFound)
+                    return@transformInPlace statement
+
+                inheritanceIssue = ExploredClassifier.Unusable.InvalidInheritance(
+                    symbol = constructedClassSymbol,
+                    superClassSymbol = actualSuperClassSymbol,
+                    unexpectedSuperClassConstructorSymbol = calledConstructorSymbol
+                )
+
+                val actualSuperClassConstructors = actualSuperClass.constructors.toMutableList()
+                val actualSuperClassConstructor = when (actualSuperClassConstructors.size) {
+                    0 -> error("Class without constructors: $actualSuperClass") // Normally, should not happen.
+                    1 -> actualSuperClassConstructors.first()
+                    else -> {
+                        // Try to find the best match.
+                        actualSuperClassConstructors.sortWith(Comparator<IrConstructor> { a, b ->
+                            val visibilitiesDiff = a.visibility.compareTo(b.visibility) ?: 0
+                            if (visibilitiesDiff != 0) visibilitiesDiff else a.isPrimary.compareTo(b.isPrimary)
+                        }.reversed())
+                        actualSuperClassConstructors.first()
+                    }
+                }
+
+                // An attempt to restore constructor delegation to avoid errors in subsequent lowerings and codegenerator phases.
+                IrDelegatingConstructorCallImpl(
+                    statement.startOffset,
+                    statement.endOffset,
+                    actualSuperClass.defaultType,
+                    actualSuperClassConstructor.symbol,
+                    actualSuperClassConstructor.allTypeParameters.size,
+                    actualSuperClassConstructor.valueParameters.size,
+                    origin = FIXED_CONSTRUCTOR_DELEGATION
+                ).apply {
+                    // Supply fake arguments. Anyway the super class constructor will never be called from here.
+                    for (i in 0 until typeArgumentsCount) {
+                        putTypeArgument(i, builtIns.anyNType)
+                    }
+                    for (i in 0 until valueArgumentsCount) {
+                        putValueArgument(
+                            i,
+                            throwThrowable(
+                                statement.startOffset,
+                                statement.endOffset,
+                                builtIns.throwIseSymbol,
+                                FIXED_CONSTRUCTOR_DELEGATION,
+                                "Not expected to be executed during the runtime"
+                            )
+                        )
+                    }
+                }
+            }
+
+            return inheritanceIssue
         }
 
         override fun visitProperty(declaration: IrProperty): IrStatement {
@@ -660,16 +793,33 @@ internal class PartiallyLinkedIrTreePatcher(
         else
             renderAndLogLinkageError(element, file)
 
+        return throwThrowable(
+            element.startOffset,
+            element.endOffset,
+            builtIns.linkageErrorSymbol,
+            PARTIAL_LINKAGE_RUNTIME_ERROR,
+            errorMessage
+        )
+    }
+
+    // Just a shortcut.
+    private fun throwThrowable(
+        startOffset: Int,
+        endOffset: Int,
+        throwingFunctionSymbol: IrSimpleFunctionSymbol,
+        origin: PartiallyLinkedStatementOrigin,
+        message: String
+    ): IrCall {
         return IrCallImpl(
-            startOffset = element.startOffset,
-            endOffset = element.endOffset,
+            startOffset = startOffset,
+            endOffset = endOffset,
             type = builtIns.nothingType,
-            symbol = builtIns.linkageErrorSymbol,
+            symbol = throwingFunctionSymbol,
             typeArgumentsCount = 0,
             valueArgumentsCount = 1,
-            origin = PARTIAL_LINKAGE_RUNTIME_ERROR
+            origin = origin
         ).apply {
-            putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, errorMessage))
+            putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, message))
         }
     }
 

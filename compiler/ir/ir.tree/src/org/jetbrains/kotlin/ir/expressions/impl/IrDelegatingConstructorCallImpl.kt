@@ -32,9 +32,8 @@ class IrDelegatingConstructorCallImpl(
     override val symbol: IrConstructorSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
+    override val origin: IrStatementOrigin? = null
 ) : IrDelegatingConstructorCall() {
-    override val origin: IrStatementOrigin?
-        get() = null
 
     override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
 
