@@ -13,7 +13,7 @@ import kotlin.collections.LinkedHashMap
  * Flushes all the changes to the [origin] on [flush] invocation.
  * [resetInMemoryChanges] should be called to reset in-memory changes of this wrapper.
  */
-class InMemoryStorageWrapper<K, V>(val origin: LazyStorage<K, V>) : LazyStorage<K, V> {
+class InMemoryStorageWrapper<K, V>(private val origin: LazyStorage<K, V>) : LazyStorage<K, V> {
     private val inMemoryStorage = LinkedHashMap<K, ValueWrapper<V>>()
     private val removedKeys = hashSetOf<K>()
     private var isCleanRequested = false
