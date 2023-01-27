@@ -228,9 +228,7 @@ fun convertAnalyzedFirToIr(
         input.configuration,
         extensions,
         irModuleFragment,
-        components.symbolTable,
         components,
-        analysisResults.platformOutput.session,
         pluginContext
     )
 }
@@ -272,10 +270,10 @@ fun generateCodeFromIr(
     codegenFactory.generateModuleInFrontendIRMode(
         generationState,
         input.irModuleFragment,
-        input.symbolTable,
+        input.components.symbolTable,
         input.components.irProviders,
         input.extensions,
-        FirJvmBackendExtension(input.firSession, input.components),
+        FirJvmBackendExtension(input.components),
         input.pluginContext
     ) {
         performanceManager?.notifyIRLoweringFinished()

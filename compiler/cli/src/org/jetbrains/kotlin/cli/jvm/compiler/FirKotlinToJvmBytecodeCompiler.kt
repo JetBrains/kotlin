@@ -171,7 +171,6 @@ object FirKotlinToJvmBytecodeCompiler {
             allSources,
             fir2IrResult,
             fir2IrExtensions,
-            firResult.platformOutput.session,
             diagnosticsReporter
         )
 
@@ -310,7 +309,6 @@ object FirKotlinToJvmBytecodeCompiler {
         ktFiles: List<KtFile>,
         fir2IrResult: Fir2IrResult,
         extensions: JvmGeneratorExtensions,
-        session: FirSession,
         diagnosticsReporter: BaseDiagnosticsCollector
     ): GenerationState {
         val (moduleFragment, components) = fir2IrResult
@@ -342,7 +340,7 @@ object FirKotlinToJvmBytecodeCompiler {
         generationState.oldBEInitTrace(ktFiles)
         codegenFactory.generateModuleInFrontendIRMode(
             generationState, moduleFragment, components.symbolTable, components.irProviders,
-            extensions, FirJvmBackendExtension(session, components), fir2IrResult.pluginContext
+            extensions, FirJvmBackendExtension(components), fir2IrResult.pluginContext
         ) {
             performanceManager?.notifyIRLoweringFinished()
             performanceManager?.notifyIRGenerationStarted()

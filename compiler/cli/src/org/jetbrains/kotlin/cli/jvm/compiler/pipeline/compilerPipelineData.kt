@@ -10,15 +10,11 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.platform.TargetPlatform
 
@@ -48,8 +44,6 @@ data class ModuleCompilerIrBackendInput(
     val configuration: CompilerConfiguration,
     val extensions: JvmFir2IrExtensions,
     val irModuleFragment: IrModuleFragment,
-    val symbolTable: SymbolTable,
     val components: Fir2IrComponents,
-    val firSession: FirSession,
     val pluginContext: Fir2IrPluginContext
 )

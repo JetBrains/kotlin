@@ -284,9 +284,7 @@ class IncrementalFirJvmCompilerRunner(
                 configuration,
                 extensions,
                 platformIrOutput.irModuleFragment,
-                platformIrOutput.components.symbolTable,
                 platformIrOutput.components,
-                cycleResult.platformOutput.session,
                 platformIrOutput.pluginContext
             )
 

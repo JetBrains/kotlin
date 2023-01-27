@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendExtension
 import org.jetbrains.kotlin.backend.jvm.metadata.MetadataSerializer
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.config.JvmAbiStability
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.org.objectweb.asm.Type
 
-class FirJvmBackendExtension(private val session: FirSession, private val components: Fir2IrComponents) : JvmBackendExtension {
+class FirJvmBackendExtension(private val components: Fir2IrComponents) : JvmBackendExtension {
     override fun createSerializer(
         context: JvmBackendContext,
         klass: IrClass,
@@ -24,7 +23,7 @@ class FirJvmBackendExtension(private val session: FirSession, private val compon
         bindings: JvmSerializationBindings,
         parentSerializer: MetadataSerializer?
     ): MetadataSerializer {
-        return makeFirMetadataSerializerForIrClass(session, context, klass, bindings, components, parentSerializer)
+        return makeFirMetadataSerializerForIrClass(components.session, context, klass, bindings, components, parentSerializer)
     }
 
     override fun generateMetadataExtraFlags(abiStability: JvmAbiStability?): Int =
