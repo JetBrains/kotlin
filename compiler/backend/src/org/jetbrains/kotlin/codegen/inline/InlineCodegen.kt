@@ -61,7 +61,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
             )
         } catch (e: Exception) {
             throw CompilationException(
-                "Couldn't inline method call: ${sourceCompiler.callElementText}\nMethod: ${nodeAndSmap?.node?.nodeText}",
+                "Couldn't inline method call: ${sourceCompiler.callElementText}\nMethod: ${nodeAndSmap?.node?.nodeText}\nSMAP: ${nodeAndSmap?.classSMAP}",
                 e, sourceCompiler.callElement as? PsiElement
             )
         }

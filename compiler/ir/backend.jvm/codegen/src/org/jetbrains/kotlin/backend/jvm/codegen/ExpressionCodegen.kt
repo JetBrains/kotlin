@@ -195,7 +195,9 @@ class ExpressionCodegen(
         if (offset < 0) return
 
         val lineNumber = getLineNumberForOffset(offset)
-        assert(lineNumber > 0)
+        require(lineNumber > 0) {
+            "Line number cannot be non-positive: $lineNumber"
+        }
         if (lastLineNumber != lineNumber) {
             lastLineNumber = lineNumber
             mv.visitLineNumber(lineNumber, markNewLabel())

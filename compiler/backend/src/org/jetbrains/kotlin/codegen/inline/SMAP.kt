@@ -46,8 +46,13 @@ object SMAPBuilder {
                 "${SMAP.FILE_SECTION}\n${mapIndexed { id, file -> file.toSMAPFile(id + 1) }.joinToString("")}" +
                 "${SMAP.LINE_SECTION}\n${mapIndexed { id, file -> file.toSMAPMapping(id + 1, mapToFirstLine) }.joinToString("")}"
 
-    private fun RangeMapping.toSMAP(fileId: Int, oneLine: Boolean): String =
-        if (range == 1) "$source#$fileId:$dest\n" else if (oneLine) "$source#$fileId:$dest,$range\n" else "$source#$fileId,$range:$dest\n"
+    private fun RangeMapping.toSMAP(fileId: Int, oneLine: Boolean): String {
+        if (source <= 0) {
+            // FIXME: HACK: Do not put lines starting with -1 to SMAP, otherwise, the debugger just crashes
+            return ""
+        }
+        return if (range == 1) "$source#$fileId:$dest\n" else if (oneLine) "$source#$fileId:$dest,$range\n" else "$source#$fileId,$range:$dest\n"
+    }
 
     private fun FileMapping.toSMAPFile(id: Int): String =
         "+ $id $name\n$path\n"
@@ -128,6 +133,8 @@ class SMAP(val fileMappings: List<FileMapping>) {
         val index = intervals.binarySearch { if (lineNumber in it) 0 else it.dest - lineNumber }
         return if (index < 0) null else intervals[index]
     }
+
+    override fun toString(): String = SMAPBuilder.build(fileMappings, false) ?: ""
 
     companion object {
         const val FILE_SECTION = "*F"

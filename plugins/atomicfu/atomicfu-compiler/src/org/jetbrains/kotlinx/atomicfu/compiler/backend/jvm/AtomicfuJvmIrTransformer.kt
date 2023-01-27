@@ -190,7 +190,7 @@ class AtomicfuJvmIrTransformer(
                         val volatileField = atomicProperty.backingField!!
                         backingField = null
                         if (atomicProperty.isTopLevel()) {
-                            with(atomicSymbols.createBuilder(symbol)) {
+                            with(atomicSymbols.createBuilder(symbol, startOffset, endOffset)) {
                                 val wrapper = getStaticVolatileWrapperInstance(atomicProperty)
                                 getter?.transformAccessor(volatileField, getProperty(wrapper, null))
                                 setter?.transformAccessor(volatileField, getProperty(wrapper, null))
@@ -222,7 +222,7 @@ class AtomicfuJvmIrTransformer(
 
         private fun IrFunction.transformAccessor(volatileField: IrField, parent: IrExpression?) {
             val accessor = this
-            with(atomicSymbols.createBuilder(symbol)) {
+            with(atomicSymbols.createBuilder(symbol, startOffset, endOffset)) {
                 body = irExprBody(
                     irReturn(
                         if (accessor.isGetter) {
@@ -261,7 +261,7 @@ class AtomicfuJvmIrTransformer(
                         // if lateinit field -> initialize it in IrAnonymousInitializer
                         transformLateInitializer(backingField, parent) { init ->
                             val value = (init as IrCall).getAtomicFactoryValueArgument()
-                            with(atomicSymbols.createBuilder(this.symbol)) {
+                            with(atomicSymbols.createBuilder(this.symbol, startOffset, endOffset)) {
                                 irSetField((parent as? IrClass)?.thisReceiver?.capture(), this@apply, value)
                             }
                         }
@@ -287,7 +287,7 @@ class AtomicfuJvmIrTransformer(
                     isStatic = true
                 }.apply {
                     initializer = IrExpressionBodyImpl(
-                        with(atomicSymbols.createBuilder(symbol)) {
+                        with(atomicSymbols.createBuilder(symbol, startOffset, endOffset)) {
                             newUpdater(fuClass, parentClass, irBuiltIns.anyNType, fieldName)
                         }
                     )
@@ -309,7 +309,7 @@ class AtomicfuJvmIrTransformer(
                 }.apply {
                     if (init != null) {
                         this.initializer = IrExpressionBodyImpl(
-                            with(atomicSymbols.createBuilder(symbol)) {
+                            with(atomicSymbols.createBuilder(symbol, startOffset, endOffset)) {
                                 val size = init.getArraySizeArgument()
                                 newJucaAtomicArray(atomicArrayClass, size, init.dispatchReceiver)
                             }
@@ -319,7 +319,7 @@ class AtomicfuJvmIrTransformer(
                         transformLateInitializer(atomicfuArray, parent) { init ->
                             init as IrFunctionAccessExpression
                             val size = init.getArraySizeArgument()
-                            with(atomicSymbols.createBuilder(this.symbol)) {
+                            with(atomicSymbols.createBuilder(this.symbol, startOffset, endOffset)) {
                                 irSetField(
                                     (parent as? IrClass)?.thisReceiver?.capture(),
                                     this@apply,
@@ -455,9 +455,8 @@ class AtomicfuJvmIrTransformer(
                     object : IrElementTransformerVoid() {
                         override fun visitReturn(expression: IrReturn): IrExpression = super.visitReturn(
                             if (expression.returnTargetSymbol == atomicExtension.symbol) {
-                                with(atomicSymbols.createBuilder(newDeclaration.symbol)) {
-                                    irReturn(expression.value)
-                                }
+                                atomicSymbols.createBuilder(newDeclaration.symbol, newDeclaration.startOffset, newDeclaration.endOffset)
+                                    .irReturn(expression.value)
                             } else {
                                 expression
                             }
@@ -479,7 +478,7 @@ class AtomicfuJvmIrTransformer(
 
         override fun visitCall(expression: IrCall, data: IrFunction?): IrElement {
             (expression.extensionReceiver ?: expression.dispatchReceiver)?.transform(this, data)?.let {
-                with(atomicSymbols.createBuilder(expression.symbol)) {
+                with(atomicSymbols.createBuilder(expression.symbol, expression.startOffset, expression.endOffset)) {
                     val receiver = if (it is IrTypeOperatorCallImpl) it.argument else it
                     if (receiver.type.isAtomicValueType()) {
                         val valueType = if (it is IrTypeOperatorCallImpl) {
@@ -790,7 +789,7 @@ class AtomicfuJvmIrTransformer(
             addValueParameter(ATOMIC_HANDLER, atomicSymbols.getFieldUpdaterType(valueType))
             addValueParameter(ACTION, atomicSymbols.function1Type(valueType, irBuiltIns.unitType))
             addValueParameter(DISPATCH_RECEIVER, irBuiltIns.anyNType)
-            body = with(atomicSymbols.createBuilder(symbol)) {
+            body = with(atomicSymbols.createBuilder(symbol, startOffset, endOffset)) {
                 atomicfuLoopBody(valueType, valueParameters)
             }
             returnType = irBuiltIns.unitType
@@ -801,7 +800,7 @@ class AtomicfuJvmIrTransformer(
             addValueParameter(ATOMIC_HANDLER, atomicfuArrayClass.defaultType)
             addValueParameter(INDEX, irBuiltIns.intType)
             addValueParameter(ACTION, atomicSymbols.function1Type(valueType, irBuiltIns.unitType))
-            body = with(atomicSymbols.createBuilder(symbol)) {
+            body = with(atomicSymbols.createBuilder(symbol, startOffset, endOffset)) {
                 atomicfuArrayLoopBody(atomicfuArrayClass, valueParameters)
             }
             returnType = irBuiltIns.unitType
@@ -811,7 +810,7 @@ class AtomicfuJvmIrTransformer(
             addValueParameter(ATOMIC_HANDLER, atomicSymbols.getFieldUpdaterType(valueType))
             addValueParameter(ACTION, atomicSymbols.function1Type(valueType, valueType))
             addValueParameter(DISPATCH_RECEIVER, irBuiltIns.anyNType)
-            body = with(atomicSymbols.createBuilder(symbol)) {
+            body = with(atomicSymbols.createBuilder(symbol, startOffset, endOffset)) {
                 atomicfuUpdateBody(functionName, valueParameters, valueType)
             }
             returnType = if (functionName == UPDATE) irBuiltIns.unitType else valueType
@@ -822,7 +821,7 @@ class AtomicfuJvmIrTransformer(
             addValueParameter(ATOMIC_HANDLER, atomicfuArrayClass.defaultType)
             addValueParameter(INDEX, irBuiltIns.intType)
             addValueParameter(ACTION, atomicSymbols.function1Type(valueType, valueType))
-            body = with(atomicSymbols.createBuilder(symbol)) {
+            body = with(atomicSymbols.createBuilder(symbol, startOffset, endOffset)) {
                 atomicfuArrayUpdateBody(functionName, atomicfuArrayClass, valueParameters)
             }
             returnType = if (functionName == UPDATE) irBuiltIns.unitType else valueType

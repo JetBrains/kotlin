@@ -202,7 +202,11 @@ class ClassCodegen private constructor(
         generateKotlinMetadataAnnotation()
 
         if (withinInline || !smap.isTrivial) {
-            visitor.visitSMAP(smap, !context.state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+            try {
+                visitor.visitSMAP(smap, !context.state.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax))
+            } catch (e: Exception) {
+                throw IllegalStateException("Incorrect SMAP for class ${irClass.dump()}", e)
+            }
         } else {
             smap.sourceInfo!!.sourceFileName?.let {
                 visitor.visitSource(it, null)

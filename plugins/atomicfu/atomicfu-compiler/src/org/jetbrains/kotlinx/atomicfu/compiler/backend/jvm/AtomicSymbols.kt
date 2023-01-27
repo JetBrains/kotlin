@@ -548,7 +548,7 @@ class AtomicSymbols(
         addConstructor {
             isPrimary = true
         }.apply {
-            body = createBuilder(symbol).irBlockBody(startOffset, endOffset) {
+            body = createBuilder(symbol, startOffset, endOffset).irBlockBody(startOffset, endOffset) {
                 +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
                 +IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, context.irBuiltIns.unitType)
             }
@@ -599,7 +599,7 @@ class AtomicSymbols(
 
     fun createBuilder(
         symbol: IrSymbol,
-        startOffset: Int = UNDEFINED_OFFSET,
-        endOffset: Int = UNDEFINED_OFFSET
+        startOffset: Int,
+        endOffset: Int
     ) = AtomicfuIrBuilder(this, symbol, startOffset, endOffset)
 }
