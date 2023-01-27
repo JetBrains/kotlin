@@ -518,13 +518,16 @@ class LocalDeclarationsLowering(
 
             // NOTE: if running before InitializersLowering, we can instead look for constructors that have
             //   IrInstanceInitializerCall. However, Native runs these two lowerings in opposite order.
-            val constructorsCallingSuper = constructors
+            val constructorsByDelegationKinds: Map<ConstructorDelegationKind, List<LocalClassConstructorContext>> = constructors
                 .asSequence()
                 .map { localClassConstructors[it]!! }
-                .filter { it.declaration.callsSuper(context.irBuiltIns) }
-                .toList()
+                .groupBy { it.declaration.delegationKind(context.irBuiltIns) }
 
-            assert(constructorsCallingSuper.any()) { "Expected at least one constructor calling super; class: $irClass" }
+            val constructorsCallingSuper = constructorsByDelegationKinds[ConstructorDelegationKind.CALLS_SUPER].orEmpty()
+
+            assert(constructorsCallingSuper.isNotEmpty() || constructorsByDelegationKinds[ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR] != null) {
+                "Expected at least one constructor calling super; class: $irClass"
+            }
 
             val usedCaptureFields = createFieldsForCapturedValues(localClassContext)
             irClass.declarations += usedCaptureFields
@@ -1011,7 +1014,7 @@ class LocalDeclarationsLowering(
                     //   other restrictions on IR (e.g. after the initializers are moved you can no longer create fields
                     //   with initializers) which makes that hard to implement.
                     val constructorContext = declaration.constructors.mapNotNull { localClassConstructors[it] }
-                        .singleOrNull { it.declaration.callsSuper(context.irBuiltIns) }
+                        .singleOrNull { it.declaration.delegationKind(context.irBuiltIns) == ConstructorDelegationKind.CALLS_SUPER }
                     localClasses[declaration] = LocalClassContext(declaration, data.inInlineFunctionScope, constructorContext)
                 }
 

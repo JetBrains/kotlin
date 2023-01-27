@@ -49,6 +49,12 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
             inaccessibleDeclaration(referencedDeclarationSymbol, declaringModule, useSiteModule)
         }
 
+        is InvalidConstructorDelegation -> invalidConstructorDelegation(
+            constructorSymbol,
+            superClassSymbol,
+            unexpectedSuperClassConstructorSymbol
+        )
+
         is UnimplementedAbstractCallable -> unimplementedAbstractCallable(callable)
     }
 }
@@ -287,35 +293,9 @@ private fun Appendable.unusableClassifier(
 
         // Case: Invalid inheritance.
         is Unusable.InvalidInheritance -> {
-            when {
-                // Subcase: An error in constructor delegation.
-                rootCause.unexpectedSuperClassConstructorSymbol != null -> {
-                    when (rendering) {
-                        CauseRendering.Standalone -> subject(capitalized = true).append(" has invalid constructor delegation:")
-
-                        is CauseRendering.UsedFromSomewhere -> with(rendering) {
-                            when {
-                                objectSymbol == rootCause.symbol -> {
-                                    // object == class itself
-                                    `object`().append(" has invalid constructor delegation:")
-                                }
-                                (objectSymbol as? IrConstructorSymbol)?.owner?.parentClassOrNull?.symbol == rootCause.symbol -> {
-                                    // object == class constructor
-                                    `object`().append(" has invalid delegation:")
-                                }
-                                else -> objectUses().subject(capitalized = false).via().append(" that has invalid constructor delegation:")
-                            }
-                        }
-                    }
-
-                    // remainder (explanation):
-                    append(" A call of a constructor of direct super class ")
-                        .declarationName(rootCause.superClassSymbols.single()).append(" is expected instead of ")
-                        .declarationName(rootCause.unexpectedSuperClassConstructorSymbol)
-                }
-
+            when (rootCause.superClassSymbols.size) {
                 // Subcase: Invalid super class.
-                rootCause.superClassSymbols.size == 1 -> {
+                1 -> {
                     fun Appendable.inheritsFromSuperClass(): Appendable {
                         val superClassSymbol = rootCause.superClassSymbols.single()
                         if (superClassSymbol.owner.modality == Modality.FINAL)
@@ -399,14 +379,7 @@ private fun Appendable.declarationWithUnusableClassifier(
     forExpression: Boolean
 ): Appendable {
     val functionDeclaration = declarationSymbol.owner as? IrFunction
-
-    val functionIsUnusableDueToContainingClass = if (functionDeclaration != null) {
-        val rootCause = (cause as? Unusable.DueToOtherClassifier)?.rootCause ?: cause
-        // If the root cause is InvalidInheritance due to invalid constructor delegation, then strictly speaking it's the problem
-        // of a particular constructor than the containing class. And this should be reflected properly in the error message.
-        (rootCause !is Unusable.InvalidInheritance || rootCause.unexpectedSuperClassConstructorSymbol == null)
-                && (functionDeclaration.parent as? IrClass)?.symbol == cause.symbol
-    } else false
+    val functionIsUnusableDueToContainingClass = (functionDeclaration?.parent as? IrClass)?.symbol == cause.symbol
 
     // The user (object) of the unusable classifier. In case the current declaration is a function with its own parent class being
     // the dispatch receiver, the class is the "object".
@@ -509,6 +482,16 @@ private fun Appendable.inaccessibleDeclaration(
     useSiteModule: PLModule
 ): Appendable = append("Private ").declarationKind(referencedDeclarationSymbol, capitalized = false)
     .append(" declared in ").module(declaringModule).append(" can not be accessed in ").module(useSiteModule)
+
+private fun Appendable.invalidConstructorDelegation(
+    constructorSymbol: IrConstructorSymbol,
+    superClassSymbol: IrClassSymbol,
+    unexpectedSuperClassConstructorSymbol: IrConstructorSymbol
+): Appendable = declarationKind(constructorSymbol.owner.parentAsClass.symbol, capitalized = true).append(" initialization error: ")
+    .declarationKindName(constructorSymbol, capitalized = true)
+    .append(" should call a constructor of direct super class ")
+    .declarationName(superClassSymbol).append(" but calls ")
+    .declarationName(unexpectedSuperClassConstructorSymbol).append(" instead")
 
 private fun Appendable.unimplementedAbstractCallable(callable: IrOverridableDeclaration<*>): Appendable =
     append("Abstract ").declarationKindName(callable.symbol, capitalized = false)

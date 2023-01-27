@@ -6,20 +6,23 @@
 package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageCase.*
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.DeclarationId
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.DeclarationId.Companion.declarationId
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartiallyLinkedStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
@@ -203,20 +206,57 @@ internal class PartiallyLinkedIrTreePatcher(
             return declaration.transformChildrenWithRemoval()
         }
 
-        override fun visitFunction(declaration: IrFunction): IrStatement {
-            (declaration as? IrOverridableDeclaration<*>)?.filterOverriddenSymbols()
+        override fun visitConstructor(declaration: IrConstructor): IrStatement {
+            // IMPORTANT: It's necessary to overwrite types. Please don't move the statement below.
+            val unusableClassifierInSignature = declaration.rewriteTypesInFunction()
+
+            val invalidConstructorDelegation = declaration.checkConstructorDelegation()
+
+            // Compute the linkage case.
+            val partialLinkageCase = if (declaration.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
+                MissingDeclaration(declaration.symbol)
+            else
+                unusableClassifierInSignature?.let { DeclarationWithUnusableClassifier(declaration.symbol, it) }
+                    ?: invalidConstructorDelegation
+
+            if (partialLinkageCase != null) {
+                // Note: Block body is missing for MISSING_DECLARATION.
+                val blockBody = declaration.body as? IrBlockBody
+                    ?: builtIns.irFactory.createBlockBody(declaration.startOffset, declaration.endOffset).apply { declaration.body = this }
+
+                if (invalidConstructorDelegation != null) {
+                    // Drop invalid delegating constructor call. Otherwise it may break some lowerings.
+                    blockBody.statements.removeIf { it is IrDelegatingConstructorCall }
+                }
+
+                // IMPORTANT: Unlike it's done for IrSimpleFunction don't clean-up statements. Insert PL linkage as the first one.
+                // This is necessary to preserve anonymous initializer call and delegating constructor call in place.
+                blockBody.statements.add(
+                    0, partialLinkageCase.throwLinkageError(
+                        declaration,
+                        suppressWarningInCompilerOutput = declaration.isDirectMemberOf(unusableClassifierInSignature)
+                    )
+                )
+            }
+
+            return declaration.transformChildren()
+        }
+
+        override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+            declaration.filterOverriddenSymbols()
 
             // IMPORTANT: It's necessary to overwrite types. Please don't move the statement below.
             val unusableClassifierInSignature = declaration.rewriteTypesInFunction()
 
             // Compute the linkage case.
             val partialLinkageCase = when (declaration.origin) {
-                PartiallyLinkedDeclarationOrigin.UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER -> UnimplementedAbstractCallable(declaration as IrOverridableDeclaration<*>)
+                PartiallyLinkedDeclarationOrigin.UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER -> UnimplementedAbstractCallable(declaration)
                 PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION -> MissingDeclaration(declaration.symbol)
                 else -> unusableClassifierInSignature?.let { DeclarationWithUnusableClassifier(declaration.symbol, it) }
             }
 
             if (partialLinkageCase != null) {
+                // Note: Block body is missing for UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER and MISSING_DECLARATION.
                 val blockBody = declaration.body as? IrBlockBody
                     ?: builtIns.irFactory.createBlockBody(declaration.startOffset, declaration.endOffset).apply { declaration.body = this }
 
@@ -234,7 +274,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     if (declaration.isTopLevelDeclaration) {
                         // Optimization: Remove unlinked top-level functions.
                         declaration.scheduleForRemoval()
-                    } else if (declaration is IrSimpleFunction) {
+                    } else {
                         // Optimization: Remove unlinked top-level properties.
                         val property = declaration.correspondingPropertySymbol?.owner
                         if (property?.isTopLevelDeclaration == true)
@@ -248,6 +288,57 @@ internal class PartiallyLinkedIrTreePatcher(
 
             // Process underlying declarations. Collect declarations to remove.
             return declaration.transformChildren()
+        }
+
+        /**
+         * Checks if there is an issue with constructor delegation.
+         */
+        private fun IrConstructor.checkConstructorDelegation(): InvalidConstructorDelegation? {
+            if (origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
+                return null
+
+            val statements = (body as? IrBlockBody)?.statements ?: return null
+
+            val constructedClass = parentAsClass
+            val constructedClassSymbol = constructedClass.symbol
+
+            val actualSuperClassSymbol = constructedClass.superTypes.firstNotNullOfOrNull { superType ->
+                val superClassSymbol = (superType as? IrSimpleType)?.classifier as? IrClassSymbol ?: return@firstNotNullOfOrNull null
+                if (superClassSymbol.owner.isClass) superClassSymbol else null
+            } ?: builtIns.anyClass
+            val actualSuperClass = actualSuperClassSymbol.owner
+
+            statements.forEach { statement ->
+                if (statement !is IrDelegatingConstructorCall) return@forEach
+
+                val calledConstructorSymbol = statement.symbol
+                val calledConstructor = calledConstructorSymbol.owner
+
+                val invalidConstructorDelegationFound =
+                    if (calledConstructor.origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION) {
+                        val constructedSuperClassSymbol = calledConstructor.parentAsClass.symbol
+                        constructedSuperClassSymbol != constructedClassSymbol && constructedSuperClassSymbol != actualSuperClassSymbol
+                    } else {
+                        // Fallback to signatures.
+                        (calledConstructorSymbol.signature as? IdSignature.CommonSignature)?.let { constructorSignature ->
+                            val constructedSuperClassId = DeclarationId(
+                                constructorSignature.packageFqName,
+                                constructorSignature.declarationFqName.substringBeforeLast('.')
+                            )
+
+                            actualSuperClass.declarationId != constructedSuperClassId
+                        } ?: false
+                    }
+
+                if (invalidConstructorDelegationFound)
+                    return InvalidConstructorDelegation(
+                        constructorSymbol = symbol,
+                        superClassSymbol = actualSuperClassSymbol,
+                        unexpectedSuperClassConstructorSymbol = calledConstructorSymbol
+                    )
+            }
+
+            return null
         }
 
         /**
@@ -351,9 +442,9 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         override fun visitBlockBody(body: IrBlockBody): IrBody {
-            super.visitBlockBody(body)
-            body.statements.eliminateDeadCodeStatements()
-            return body
+            return super.visitBlockBody(body).apply {
+                (this as? IrStatementContainer)?.statements?.eliminateDeadCodeStatements()
+            }
         }
 
         override fun visitReturn(expression: IrReturn) = expression.maybeThrowLinkageError {
@@ -434,9 +525,8 @@ internal class PartiallyLinkedIrTreePatcher(
                 ?: checkExpressionTypeArguments()
         }
 
-        override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression.maybeThrowLinkageError {
-            checkReferencedDeclaration(classSymbol)
-        }
+        // Never patch instance initializers. Otherwise this will break a lot of lowerings.
+        override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression
 
         override fun visitExpression(expression: IrExpression) = expression.maybeThrowLinkageError { null }
 
@@ -449,7 +539,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
             val partialLinkageCase = computePartialLinkageCase()
                 ?: checkExpressionType(type) // Check something that is always present in every expression.
-                ?: return apply { if (this is IrContainerExpression) statements.eliminateDeadCodeStatements() }
+                ?: return apply { (this as? IrContainerExpression)?.statements?.eliminateDeadCodeStatements() }
 
             // Collect direct children if `this` isn't an expression with branches.
             val directChildren = if (!hasBranches())
@@ -628,9 +718,14 @@ internal class PartiallyLinkedIrTreePatcher(
          */
         private fun MutableList<IrStatement>.eliminateDeadCodeStatements() {
             var hasPartialLinkageRuntimeError = false
-            removeIf {
-                val needToRemove = hasPartialLinkageRuntimeError
-                hasPartialLinkageRuntimeError = hasPartialLinkageRuntimeError || it.isPartialLinkageRuntimeError()
+            removeIf { statement ->
+                val needToRemove = when (statement) {
+                    is IrInstanceInitializerCall,
+                    is IrDelegatingConstructorCall,
+                    is IrEnumConstructorCall -> false // Don't remove essential constructor statements.
+                    else -> hasPartialLinkageRuntimeError
+                }
+                hasPartialLinkageRuntimeError = hasPartialLinkageRuntimeError || statement.isPartialLinkageRuntimeError()
                 needToRemove
             }
         }
@@ -670,14 +765,6 @@ internal class PartiallyLinkedIrTreePatcher(
             origin = PARTIAL_LINKAGE_RUNTIME_ERROR
         ).apply {
             putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, errorMessage))
-        }
-    }
-
-    private fun IrStatement.isPartialLinkageRuntimeError(): Boolean {
-        return when (this) {
-            is IrCall -> origin == PARTIAL_LINKAGE_RUNTIME_ERROR || symbol == builtIns.linkageErrorSymbol
-            is IrComposite -> origin == PARTIAL_LINKAGE_RUNTIME_ERROR || statements.any { it.isPartialLinkageRuntimeError() }
-            else -> false
         }
     }
 

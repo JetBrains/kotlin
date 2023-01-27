@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization.unlinked
 
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import kotlin.reflect.KClass
 
 /**
@@ -31,19 +30,7 @@ internal sealed interface ExploredClassifier {
          * There is an issue with inheritance: interface inherits from a class, class inherits from a final class, etc.
          * On practice, such class can't be instantiated and used anywhere.
          */
-        class InvalidInheritance private constructor(
-            override val symbol: IrClassSymbol,
-            val superClassSymbols: Collection<IrClassSymbol>,
-            val unexpectedSuperClassConstructorSymbol: IrConstructorSymbol?
-        ) : CanBeRootCause {
-            constructor(symbol: IrClassSymbol, superClassSymbols: Collection<IrClassSymbol>) : this(symbol, superClassSymbols, null)
-
-            constructor(
-                symbol: IrClassSymbol,
-                superClassSymbol: IrClassSymbol,
-                unexpectedSuperClassConstructorSymbol: IrConstructorSymbol
-            ) : this(symbol, listOf(superClassSymbol), unexpectedSuperClassConstructorSymbol)
-
+        class InvalidInheritance(override val symbol: IrClassSymbol, val superClassSymbols: Collection<IrClassSymbol>) : CanBeRootCause {
             init {
                 // Just a sanity check to avoid creating invalid [InvalidInheritance]s.
                 check(superClassSymbols.isNotEmpty())

@@ -112,6 +112,16 @@ internal sealed interface PartialLinkageCase {
     ) : PartialLinkageCase
 
     /**
+     * An [IrConstructor] delegates call to [unexpectedSuperClassConstructorSymbol] while should delegate to
+     * one of constructors of [superClassSymbol].
+     */
+    class InvalidConstructorDelegation(
+        val constructorSymbol: IrConstructorSymbol,
+        val superClassSymbol: IrClassSymbol,
+        val unexpectedSuperClassConstructorSymbol: IrConstructorSymbol
+    ) : PartialLinkageCase
+
+    /**
      * Unimplemented abstract callable member in non-abstract class.
      *
      * Applicable to: Declarations (functions, properties).
