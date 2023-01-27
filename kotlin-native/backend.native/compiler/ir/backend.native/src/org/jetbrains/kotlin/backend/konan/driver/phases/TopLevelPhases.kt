@@ -121,56 +121,55 @@ private data class BackendFragments(
 
 private fun PhaseEngine<out Context>.splitIntoFragments(
         input: IrModuleFragment,
-): Sequence<BackendFragments> = if (context.config.producePerFileCache) {
+): Sequence<BackendFragments> {
     val config = context.config
-    val module = input
-    val files = module.files.toList()
-    val stdlibIsBeingCached = module.descriptor == context.stdlibModule
-    val functionInterfaceFiles = files.takeIf { stdlibIsBeingCached }
-            ?.filter { it.isFunctionInterfaceFile }.orEmpty()
-    val filesReferencedByNativeRuntime = files.takeIf { stdlibIsBeingCached }
-            ?.filter { isReferencedByNativeRuntime(it.declarations) }.orEmpty()
-
-    files.asSequence().filter { !it.isFunctionInterfaceFile }.map { file ->
-        val cacheDeserializationStrategy = CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
+    return if (context.config.producePerFileCache) {
+        val files = input.files.toList()
         val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
-        val llvmModuleSpecification = CacheLlvmModuleSpecification(
-                config.cachedLibraries,
-                PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy),
-                cacheDeserializationStrategy,
-                containsStdlib = containsStdlib
-                )
-        val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, context.config, context)
-        val fragment = IrModuleFragmentImpl(input.descriptor, input.irBuiltins, listOf(file))
-        if (containsStdlib && cacheDeserializationStrategy.containsKFunctionImpl)
-            fragment.files += functionInterfaceFiles
 
-        if (containsStdlib && cacheDeserializationStrategy.containsRuntime) {
-            filesReferencedByNativeRuntime.forEach {
-                dependenciesTracker.add(it)
+        files.asSequence().filter { !it.isFunctionInterfaceFile }.map { file ->
+            val cacheDeserializationStrategy = CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
+            val llvmModuleSpecification = CacheLlvmModuleSpecification(
+                    config.cachedLibraries,
+                    PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy),
+                    containsStdlib = containsStdlib
+            )
+            val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, context.config, context)
+            val fragment = IrModuleFragmentImpl(input.descriptor, input.irBuiltins, listOf(file))
+            if (containsStdlib && cacheDeserializationStrategy.containsKFunctionImpl)
+                fragment.files += files.filter { it.isFunctionInterfaceFile }
+
+            if (containsStdlib && cacheDeserializationStrategy.containsRuntime) {
+                files.filter { isReferencedByNativeRuntime(it.declarations) }
+                        .forEach { dependenciesTracker.add(it) }
             }
-        }
 
-        fragment.files.filterIsInstance<IrFileImpl>().forEach {
-            it.module = fragment
+            fragment.files.filterIsInstance<IrFileImpl>().forEach {
+                it.module = fragment
+            }
+            BackendFragments(
+                    fragment,
+                    cacheDeserializationStrategy,
+                    dependenciesTracker,
+                    llvmModuleSpecification,
+            )
         }
-        BackendFragments(
-                fragment,
-                cacheDeserializationStrategy,
-                dependenciesTracker,
-                llvmModuleSpecification,
+    } else {
+        val llvmModuleSpecification = if (config.produce.isCache) {
+            val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
+            CacheLlvmModuleSpecification(config.cachedLibraries, context.config.libraryToCache!!, containsStdlib = containsStdlib)
+        } else {
+            DefaultLlvmModuleSpecification(config.cachedLibraries)
+        }
+        sequenceOf(
+                BackendFragments(
+                        input,
+                        context.config.libraryToCache?.strategy,
+                        DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
+                        llvmModuleSpecification
+                )
         )
     }
-} else {
-    val llvmModuleSpecification = DefaultLlvmModuleSpecification(context.config.cachedLibraries)
-    sequenceOf(
-            BackendFragments(
-                    input,
-                    context.config.libraryToCache?.strategy,
-                    DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
-                    llvmModuleSpecification
-            )
-    )
 }
 
 /**
