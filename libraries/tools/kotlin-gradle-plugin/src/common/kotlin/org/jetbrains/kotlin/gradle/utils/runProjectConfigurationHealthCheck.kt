@@ -60,15 +60,12 @@ import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
  */
 internal inline fun Project.runProjectConfigurationHealthCheck(check: Project.() -> Unit) {
     /* Running configuration checks on a failed project will only lead to false positive error messages */
-    if (project.hasSyncErrors()) {
+    if (state.failure != null || (inLenientMode() && syncExceptionsAreNotEmpty())) {
         return
     }
 
     check()
 }
-
-internal fun Project.hasSyncErrors(): Boolean =
-    state.failure != null || (inLenientMode() && syncExceptionsAreNotEmpty())
 
 // ClassPathModeExceptionCollector is available only via 'gradleKotlinDsl()' dependency which brings in full Gradle jar
 private fun Project.syncExceptionsAreNotEmpty(): Boolean {
