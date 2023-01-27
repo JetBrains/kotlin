@@ -87,7 +87,7 @@ internal fun createObjCFramework(
             frameworkDirectory,
             frameworkName,
             exportedInterface.headerLines,
-            moduleDependencies = emptySet()
+            moduleDependencies = setOf("Foundation")
     )
 }
 
