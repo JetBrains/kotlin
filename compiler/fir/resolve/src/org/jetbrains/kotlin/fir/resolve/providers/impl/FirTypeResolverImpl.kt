@@ -279,7 +279,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         if (symbol is FirRegularClassSymbol) {
 
             val withAddedSelfTypeStar =
-                symbol.hasAnnotation(StandardClassIds.Annotations.Self, session) && allTypeArguments.size != symbol.fir.typeParameters.size
+                (symbol.getAnnotationByClassId(
+                    StandardClassIds.Annotations.Self,
+                    session
+                ) != null) && allTypeArguments.size != symbol.fir.typeParameters.size
             if (withAddedSelfTypeStar) {
                 allTypeArguments.add(ConeStarProjection)
                 typeArgumentsCount++
