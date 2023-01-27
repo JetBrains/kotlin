@@ -1,0 +1,32 @@
+KtSuccessCallInfo:
+  call = KtCompoundVariableAccessCall:
+    compoundAccess = IncOrDecOperation:
+      kind = INC
+      precedence = PREFIX
+      operationPartiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+        dispatchReceiver = KtExplicitReceiverValue:
+          expression = foo.value
+          isSafeNavigation = false
+          type = kotlin.Int
+        extensionReceiver = null
+        signature = KtFunctionLikeSignature:
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = kotlin/Int.inc(<dispatch receiver>: kotlin.Int): kotlin.Int
+          valueParameters = []
+          callableIdIfNonLocal = kotlin/Int.inc
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = CInt32VarX<kotlin.Int>
+      signature = KtVariableLikeSignature:
+        name = value
+        receiverType = CInt32VarX<kotlin.Int>
+        returnType = kotlin.Int
+        symbol = var value: T
+        callableIdIfNonLocal = /value
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }

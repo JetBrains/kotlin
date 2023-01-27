@@ -263,6 +263,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("compoundAssignOnGenericVar.kt")
+    public void testCompoundAssignOnGenericVar() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignOnGenericVar.kt");
+    }
+
+    @Test
     @TestMetadata("compoundAssignOnVal.kt")
     public void testCompoundAssignOnVal() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/compoundAssignOnVal.kt");
@@ -635,6 +641,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     }
 
     @Test
+    @TestMetadata("kotlinPropertySetterGeneric.kt")
+    public void testKotlinPropertySetterGeneric() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/kotlinPropertySetterGeneric.kt");
+    }
+
+    @Test
     @TestMetadata("kotlinPropertySetter_unqualified.kt")
     public void testKotlinPropertySetter_unqualified() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/kotlinPropertySetter_unqualified.kt");
@@ -674,6 +686,12 @@ public class FirIdeNormalAnalysisSourceModuleResolveCallTestGenerated extends Ab
     @TestMetadata("postfixUnaryOperatorWithArrayAccessConvention_complexDispatcher.kt")
     public void testPostfixUnaryOperatorWithArrayAccessConvention_complexDispatcher() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/postfixUnaryOperatorWithArrayAccessConvention_complexDispatcher.kt");
+    }
+
+    @Test
+    @TestMetadata("prefixUnaryOperatorOnGenericVar.kt")
+    public void testPrefixUnaryOperatorOnGenericVar() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/prefixUnaryOperatorOnGenericVar.kt");
     }
 
     @Test

@@ -1,0 +1,19 @@
+KtSuccessCallInfo:
+  call = KtSimpleVariableAccessCall:
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = null
+      extensionReceiver = KtExplicitReceiverValue:
+        expression = foo
+        isSafeNavigation = false
+        type = CInt32VarX<kotlin.Int>
+      signature = KtVariableLikeSignature:
+        name = value
+        receiverType = CInt32VarX<kotlin.Int>
+        returnType = kotlin.Int
+        symbol = var value: T
+        callableIdIfNonLocal = /value
+    simpleAccess = Read:
+
+    typeArgumentsMapping = {
+      T -> (kotlin.Int)
+    }
