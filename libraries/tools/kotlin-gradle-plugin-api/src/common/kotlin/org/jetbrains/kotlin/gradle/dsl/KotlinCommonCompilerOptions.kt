@@ -29,6 +29,7 @@ interface KotlinCommonCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCo
      * Compile using experimental K2. K2 is a new compiler pipeline, no compatibility guarantees are yet provided
      * Default value: false
      */
+    @Deprecated(message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead", level = DeprecationLevel.WARNING)
     @get:org.gradle.api.tasks.Input
     val useK2: org.gradle.api.provider.Property<kotlin.Boolean>
 }
