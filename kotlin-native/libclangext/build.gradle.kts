@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import org.jetbrains.gradle.plugins.tools.lib
-import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.konan.target.Family.*
-import java.io.ByteArrayOutputStream
 
-plugins{
-    `native`
+import org.jetbrains.kotlin.tools.lib
+import org.jetbrains.kotlin.*
+
+plugins {
+    id("kotlin.native.build-tools-conventions")
+    id("native")
 }
 val libclangextEnabled = org.jetbrains.kotlin.konan.target.HostManager.hostIsMac
 extra["isEnabled"] = libclangextEnabled

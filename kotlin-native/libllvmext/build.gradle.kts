@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import org.jetbrains.gradle.plugins.tools.lib
+import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
-    `native`
+    id("kotlin.native.build-tools-conventions")
+    id("native")
 }
 
 native {

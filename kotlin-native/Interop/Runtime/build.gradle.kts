@@ -16,8 +16,6 @@
 import org.jetbrains.gradle.plugins.tools.lib
 import org.jetbrains.gradle.plugins.tools.solib
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.konan.target.HostManager
-import java.io.ByteArrayOutputStream
 
 val kotlinVersion = project.bootstrapKotlinVersion
 plugins {

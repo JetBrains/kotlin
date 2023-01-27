@@ -105,11 +105,11 @@ gradlePlugin {
         }
         create("compileToBitcode") {
             id = "compile-to-bitcode"
-            implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
+            implementationClass = "CompileToBitcodePlugin"
         }
         create("runtimeTesting") {
             id = "runtime-testing"
-            implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
+            implementationClass = "RuntimeTestingPlugin"
         }
     }
 }

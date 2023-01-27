@@ -21,17 +21,11 @@ buildscript {
             url project.bootstrapKotlinRepo
         }
     }
-    ext.useCustomDist = UtilsKt.getUseCustomDist(project)
-    ext.kotlinNativeDist = UtilsKt.getKotlinNativeDist(project)
-    if (!useCustomDist) {
-        ext.setProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
-        ext.setProperty("org.jetbrains.kotlin.native.home", kotlinNativeDist.absolutePath)
-        ext.setProperty("konan.home", kotlinNativeDist.absolutePath)
-    }
 }
 
 apply plugin: 'konan'
 apply plugin: 'kotlin'
+apply plugin: 'kotlin.native.build-tools-conventions'
 
 configurations {
     cli_bc
@@ -56,6 +50,13 @@ ext.testLibraryDir = "${ext.testOutputRoot}/klib/platform/${project.target.name}
 // NOTE: If this persists in a gradle daemon, environment update (e.g. an Xcode update) may lead to execution failures.
 project.extensions.executor = ExecutorServiceKt.create(project)
 
+ext.useCustomDist = UtilsKt.getUseCustomDist(project)
+ext.kotlinNativeDist = UtilsKt.getKotlinNativeDist(project)
+if (!useCustomDist) {
+    ext.setProperty("kotlin.native.home", kotlinNativeDist.absolutePath)
+    ext.setProperty("org.jetbrains.kotlin.native.home", kotlinNativeDist.absolutePath)
+    ext.setProperty("konan.home", kotlinNativeDist.absolutePath)
+}
 
 compileTestKotlin {
     kotlinOptions {

@@ -20,14 +20,11 @@ import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.internal.file.FileOperations
-import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.model.ObjectFactory
 import org.gradle.process.ExecOperations
 import org.gradle.process.ExecResult
 import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.konan.file.*
-import org.jetbrains.kotlin.konan.file.File as KFile
 import java.io.File
 import javax.inject.Inject
 
