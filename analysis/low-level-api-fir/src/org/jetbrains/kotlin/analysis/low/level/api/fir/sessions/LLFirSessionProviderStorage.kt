@@ -61,7 +61,7 @@ class LLFirSessionProviderStorage(val project: Project) {
                 project,
                 useSiteKtModule,
                 globalComponents,
-                libraryAsUseSiteSessionCache.sessionInvalidator,
+                sourceAsUseSiteSessionCache.sessionInvalidator,
                 sessions,
                 librariesSessionFactory,
                 configureSession = configureSession,
@@ -101,7 +101,7 @@ class LLFirSessionProviderStorage(val project: Project) {
             val session = LLFirSessionFactory.createNotUnderContentRootResolvableSession(
                 project,
                 useSiteKtModule,
-                libraryAsUseSiteSessionCache.sessionInvalidator,
+                notUnderContentRootSessionCache.sessionInvalidator,
                 sessions,
                 configureSession = configureSession,
             )
