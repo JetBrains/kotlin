@@ -55,8 +55,8 @@ private val FirExpression.callableNameOfMetaAnnotationArgument: Name?
 
 private val sourceName = Name.identifier("SOURCE")
 
-fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
-    annotations.filter { annotation ->
+fun List<FirAnnotation>.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
+    this.filter { annotation ->
         val firAnnotationClass = annotation.toAnnotationClass(session)
         firAnnotationClass != null && firAnnotationClass.annotations.none { meta ->
             meta.toAnnotationClassId(session) == StandardClassIds.Annotations.Retention &&
@@ -64,6 +64,8 @@ fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAn
                         ?.callableNameOfMetaAnnotationArgument == sourceName
         }
     }
+fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =
+    annotations.nonSourceAnnotations(session)
 
 @Suppress("NOTHING_TO_INLINE")
 inline fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean = annotations.any { it.isJvmFieldAnnotation(session) }
