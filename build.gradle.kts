@@ -112,7 +112,8 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.8.20-dev-5812"
+    // BEWARE! Bumping this version doesn't take an immediate effect on TeamCity: KTI-1107
+    extra["versions.kotlin-native"] = "1.9.0-dev-693"
 }
 
 val irCompilerModules = arrayOf(
