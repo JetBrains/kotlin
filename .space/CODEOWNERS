@@ -242,6 +242,7 @@
 /jps/ "Kotlin Build Tools"
 
 /js/ "Kotlin JS"
+/js/js.translator/testData/ "Kotlin JS" "Kotlin Wasm"
 
 /kotlin-js-store/ "Kotlin JS"
 
@@ -266,6 +267,7 @@
 /libraries/stdlib/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /libraries/stdlib/wasm/builtins/ "Kotlin Wasm"
 /libraries/stdlib/wasm/internal/ "Kotlin Wasm"
+/libraries/stdlib/wasm/src/generated/wasm/internal/ "Kotlin Wasm"
 
 /libraries/tools/atomicfu/ "Kotlin Libraries"
 /libraries/tools/binary-compatibility-validator/ "Kotlin Libraries"
