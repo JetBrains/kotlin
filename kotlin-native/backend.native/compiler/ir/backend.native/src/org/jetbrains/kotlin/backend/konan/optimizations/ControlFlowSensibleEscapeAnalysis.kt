@@ -1266,16 +1266,16 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            val forbidToRemove = BitSet(graph.nodes.size)
+            val forbiddenToRemove = BitSet(graph.nodes.size)
             val removed = BitSet(graph.nodes.size)
-            forbidToRemove.set(Node.UNIT_ID)
-            forbidToRemove.set(Node.GLOBAL_ID)
-            forbidToRemove.set(value.id)
-            graph.parameterNodes.values.forEach { forbidToRemove.set(it.id) }
+            forbiddenToRemove.set(Node.UNIT_ID)
+            forbiddenToRemove.set(Node.GLOBAL_ID)
+            forbiddenToRemove.set(value.id)
+            graph.parameterNodes.values.forEach { forbiddenToRemove.set(it.id) }
             while (leaves.isNotEmpty()) {
                 val leafNode = leaves.pop()
                 val leafNodeId = leafNode.id
-                if (forbidToRemove.get(leafNodeId)) continue
+                if (forbiddenToRemove.get(leafNodeId)) continue
                 val singleNodePointingAtLeaf = singleNodesPointingAt[leafNodeId] ?: continue
                 removed.set(leafNodeId)
                 val hasBecomeALeaf = when (singleNodePointingAtLeaf) {
