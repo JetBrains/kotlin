@@ -30,7 +30,6 @@ apply {
 plugins {
     `kotlin-dsl`
     `java-gradle-plugin`
-    `groovy`
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.sam.with.receiver")
 }
@@ -81,18 +80,6 @@ repositories {
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(8))
-    }
-}
-
-sourceSets["main"].withConvention(org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet::class) {
-    kotlin.srcDir("src/main/kotlin")
-    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        kotlin.srcDir("../kotlin-native/shared/src/library/kotlin")
-        kotlin.srcDir("../kotlin-native/shared/src/main/kotlin")
-        kotlin.srcDir("../kotlin-native/build-tools/src/main/kotlin")
-        kotlin.srcDir("../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
-        kotlin.srcDir("../compiler/util-klib/src")
-        kotlin.srcDir("../native/utils/src")
     }
 }
 
@@ -161,58 +148,6 @@ compileKotlin.apply {
     }
 }
 
-if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-    sourceSets["main"].extensions
-        .getByType(GroovySourceDirectorySet::class.java)
-        .srcDir("../kotlin-native/build-tools/src/main/groovy")
-}
-
-tasks.withType<GroovyCompile>().configureEach {
-    classpath += project.files(compileKotlin.outputs)
-    dependsOn(compileKotlin)
-}
-
 allprojects {
     tasks.register("checkBuild")
-}
-
-gradlePlugin {
-    plugins {
-        create("compileToBitcode") {
-            id = "compile-to-bitcode"
-            implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
-        }
-        create("runtimeTesting") {
-            id = "runtime-testing"
-            implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
-        }
-        create("compilationDatabase") {
-            id = "compilation-database"
-            implementationClass = "org.jetbrains.kotlin.cpp.CompilationDatabasePlugin"
-        }
-        create("konan") {
-            id = "konan"
-            implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
-        }
-        // We bundle a shaded version of kotlinx-serialization plugin
-        create("kotlinx-serialization-native") {
-            id = "kotlinx-serialization-native"
-            implementationClass = "shadow.org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin"
-        }
-
-        create("org.jetbrains.kotlin.konan") {
-            id = "org.jetbrains.kotlin.konan"
-            implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
-        }
-
-        create("native") {
-            id = "native"
-            implementationClass = "org.jetbrains.gradle.plugins.tools.NativePlugin"
-        }
-
-        create("native-interop-plugin") {
-            id = "native-interop-plugin"
-            implementationClass = "org.jetbrains.kotlin.NativeInteropPlugin"
-        }
-    }
 }
