@@ -1814,7 +1814,9 @@ open class RawFirBuilder(
                                 buildOrLazyExpression(expression.toFirSourceElement()) {
                                     expression.toFirExpression("Should have delegate")
                                 }
-                            } ?: buildErrorExpression { ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.ExpressionExpected) }
+                            } ?: buildErrorExpression {
+                                diagnostic = ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.ExpressionExpected)
+                            }
 
                             val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
                                 val delegateExpression = extractDelegateExpression()

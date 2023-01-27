@@ -580,6 +580,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("delegatedProperty.kt")
+        public void testDelegatedProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/delegatedProperty.kt");
+        }
+
+        @Test
         @TestMetadata("javaClassLiteral.kt")
         public void testJavaClassLiteral() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/invalidCode/javaClassLiteral.kt");
