@@ -81,12 +81,17 @@ constructor(
                     irTarget?.let { targetName.removeJsCompilerSuffix(LEGACY) } ?: targetName
                 else PRIMARY_SINGLE_COMPONENT_NAME
 
-            configureSourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCaseAsciiOnly()))
+            val (sourcesJarTaskProvider, _) = configureSourcesJarArtifact(
+                mainCompilation,
+                componentName,
+                dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+            )
             usageContexts += DefaultKotlinUsageContext(
                 compilation = mainCompilation,
                 mavenScope = KotlinUsageContext.MavenScope.RUNTIME,
                 dependencyConfigurationName = sourcesElementsConfigurationName,
                 includeIntoProjectStructureMetadata = false,
+                publishOnlyIf = sourcesJarTaskEnabled(sourcesJarTaskProvider),
             )
 
             val result = createKotlinVariant(componentName, mainCompilation, usageContexts)

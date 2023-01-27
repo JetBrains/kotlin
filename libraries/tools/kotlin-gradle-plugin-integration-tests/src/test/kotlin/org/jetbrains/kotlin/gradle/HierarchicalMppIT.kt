@@ -28,6 +28,7 @@ import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
@@ -917,6 +918,51 @@ class HierarchicalMppIT : KGPBaseTest() {
             build("help") { // evaluate only
                 val actualReports = SourcesVariantResolutionReport.parse(output, expectedReports.keys)
                 assertEquals(expectedReports, actualReports)
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Sources shouldn't be published when their producing tasks are disabled")
+    fun testDisableSourcesPublication(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        project(
+            "mpp-sources-publication/producer",
+            gradleVersion = gradleVersion,
+            localRepoDir = tempDir
+        ).run {
+            fun disableTask(name: String) {
+                buildGradleKts.appendText(
+                    """
+                    tasks.getByName("$name").enabled = false
+                    
+                """.trimIndent()
+                )
+            }
+
+            // Publish sources only for JVM target
+            disableTask("sourcesJar") // produces jar of common sources
+            disableTask("linuxX64SourcesJar")
+            disableTask("linuxArm64SourcesJar")
+            disableTask("iosX64SourcesJar")
+            disableTask("iosArm64SourcesJar")
+
+            build("publish")
+
+            val gradleModuleFileContent = tempDir.resolve("test/lib/1.0/lib-1.0.module").toFile().readText()
+            fun assertNoSourcesPublished(expectedJarLocation: String, variantName: String) {
+                val jarFile = tempDir.resolve(expectedJarLocation).toFile()
+                assertFalse("Sources jar '$expectedJarLocation' should not be published") { jarFile.exists() }
+                assertFalse("Variant '$variantName' should not be published") {
+                    gradleModuleFileContent.contains(variantName)
+                }
+            }
+
+            assertNoSourcesPublished("test/lib/1.0/lib-1.0-sources.jar", "metadataSourcesElements")
+            assertNoSourcesPublished("test/lib-linuxx64/1.0/lib-linuxx64-1.0-sources.jar", "linuxX64SourcesElements-published")
+            assertNoSourcesPublished("test/lib-linuxarm64/1.0/lib-linuxarm64-1.0-sources.jar", "linuxArm64SourcesElements-published")
+            if (OS.MAC.isCurrentOs) {
+                assertNoSourcesPublished("test/lib-iosx64/1.0/lib-iosx64-1.0-sources.jar", "iosX64SourcesElements-published")
+                assertNoSourcesPublished("test/lib-iosarm64/1.0/lib-iosarm64-1.0-sources.jar", "iosArm64SourcesElements-published")
             }
         }
     }

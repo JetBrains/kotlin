@@ -188,17 +188,6 @@ abstract class KotlinAndroidTarget @Inject constructor(
             apiElementsConfigurationName,
             sourcesElementsConfigurationName
         )
-        configureSourcesJarArtifact(
-            compilation,
-            compilation.disambiguateName(""),
-            dashSeparatedName(
-                compilation.target.name.toLowerCaseAsciiOnly(),
-                *flavorNames.map { it.toLowerCaseAsciiOnly() }.toTypedArray(),
-                buildTypeName.takeIf { it != "release" }?.toLowerCaseAsciiOnly()
-            ),
-            classifierPrefix = artifactClassifier,
-            sourcesElementsConfigurationName = sourcesElementsConfigurationName
-        )
 
         fun AttributeContainer.filterOutAndroidVariantAttributes(): AttributeContainer =
             HierarchyAttributeContainer(this) {
@@ -210,12 +199,24 @@ abstract class KotlinAndroidTarget @Inject constructor(
                         filterOutAndroidBuildTypeAttribute(it, valueString, isSingleBuildType) &&
                         filterOutAndroidAgpVersionAttribute(it)
             }
+        val (sourcesJarTaskProvider, _) = configureSourcesJarArtifact(
+            compilation,
+            compilation.disambiguateName(""),
+            dashSeparatedName(
+                compilation.target.name.toLowerCaseAsciiOnly(),
+                *flavorNames.map { it.toLowerCaseAsciiOnly() }.toTypedArray(),
+                buildTypeName.takeIf { it != "release" }?.toLowerCaseAsciiOnly()
+            ),
+            classifierPrefix = artifactClassifier,
+            sourcesElementsConfigurationName = sourcesElementsConfigurationName,
+        )
 
         val sourcesUsageContext = DefaultKotlinUsageContext(
             compilation = compilation,
             dependencyConfigurationName = sourcesElementsConfigurationName,
             overrideConfigurationAttributes = sourcesElementsConfiguration.attributes.filterOutAndroidVariantAttributes(),
-            includeIntoProjectStructureMetadata = false
+            includeIntoProjectStructureMetadata = false,
+            publishOnlyIf = sourcesJarTaskEnabled(sourcesJarTaskProvider)
         )
 
         return listOf(

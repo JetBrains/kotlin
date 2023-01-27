@@ -18,6 +18,8 @@ import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.internal.component.UsageContext
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -77,7 +79,7 @@ abstract class AbstractKotlinTarget(
                 targetName
             else PRIMARY_SINGLE_COMPONENT_NAME
 
-        val sourcesArtifact = configureSourcesJarArtifact(
+        val (sourcesJarTaskProvider, sourcesArtifact) = configureSourcesJarArtifact(
             mainCompilation,
             componentName,
             dashSeparatedName(targetName.toLowerCaseAsciiOnly())
@@ -87,6 +89,7 @@ abstract class AbstractKotlinTarget(
                 compilation = mainCompilation,
                 dependencyConfigurationName = sourcesElementsConfigurationName,
                 includeIntoProjectStructureMetadata = false,
+                publishOnlyIf = sourcesJarTaskEnabled(sourcesJarTaskProvider)
             )
         }
 
@@ -141,17 +144,17 @@ abstract class AbstractKotlinTarget(
         artifactNameAppendix: String,
         classifierPrefix: String? = null,
         sourcesElementsConfigurationName: String = this.sourcesElementsConfigurationName,
-    ): PublishArtifact? {
+    ): Pair<TaskProvider<Jar>, PublishArtifact?> {
         val sourcesJarTask = sourcesJarTask(producingCompilation, componentName, artifactNameAppendix)
 
         // If sourcesElements configuration not found, don't create artifact.
         // This can happen in pure JVM plugin where source publication is delegated to Java Gradle Plugin.
         // But we still want to have sourcesJarTask be registered
-        project.configurations.findByName(sourcesElementsConfigurationName) ?: return null
+        project.configurations.findByName(sourcesElementsConfigurationName) ?: return sourcesJarTask to null
 
         val artifact = project.artifacts.add(sourcesElementsConfigurationName, sourcesJarTask) as ConfigurablePublishArtifact
         artifact.classifier = dashSeparatedName(classifierPrefix, "sources")
-        return artifact
+        return sourcesJarTask to artifact
     }
 
     @Suppress("UNCHECKED_CAST")

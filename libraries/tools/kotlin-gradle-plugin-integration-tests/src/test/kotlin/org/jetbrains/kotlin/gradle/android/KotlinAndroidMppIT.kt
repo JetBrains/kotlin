@@ -419,6 +419,43 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Sources shouldn't be published when their producing tasks are disabled")
+    @GradleAndroidTest
+    fun testDisableSourcesPublication(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        project(
+            "new-mpp-android",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            subProject("lib").buildGradle.appendText(
+                //language=Gradle
+                """
+                    
+                kotlin.android('androidLib').publishLibraryVariants = ['release']
+                // afterEvaluate can't be used because KGP-AGP integration also happens in afterEvaluate
+                // so pre-regestering sources task is the only way
+                tasks.register('androidLibReleaseSourcesJar', Jar) { enabled = false }
+                """.trimIndent()
+            )
+
+            val groupDir = subProject("lib").projectPath.resolve("build/repo/com/example")
+            build("publish") {
+                val sourcesJarFile = groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0-sources.jar").toFile()
+                assertFalse("Release sources jar should not be published") { sourcesJarFile.exists() }
+
+                val gradleMetadataFileContent = groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.module").readText()
+                assertFalse("'releaseSourcesElements-published' variant should not be published") {
+                    gradleMetadataFileContent.contains("releaseSourcesElements-published")
+                }
+            }
+        }
+    }
+
     @DisplayName("android mpp lib dependencies are properly rewritten")
     @GradleAndroidTest
     fun testMppAndroidLibDependenciesRewriting(

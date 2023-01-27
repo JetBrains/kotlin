@@ -102,11 +102,16 @@ abstract class KotlinNativeTarget @Inject constructor(
             }
         }
 
-        configureSourcesJarArtifact(mainCompilation, targetName, dashSeparatedName(targetName.toLowerCaseAsciiOnly()))
+        val (sourcesJarTaskProvider, _) = configureSourcesJarArtifact(
+            mainCompilation,
+            targetName,
+            dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+        )
         val sourcesUsage = DefaultKotlinUsageContext(
             compilation = mainCompilation,
             dependencyConfigurationName = sourcesElementsConfigurationName,
             includeIntoProjectStructureMetadata = false,
+            publishOnlyIf = sourcesJarTaskEnabled(sourcesJarTaskProvider)
         )
         mutableUsageContexts += sourcesUsage
 
