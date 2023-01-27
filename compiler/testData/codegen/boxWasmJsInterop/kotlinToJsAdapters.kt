@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR, JS
+// WASM_FAILS_IN: SM
 
 @JsFun("(x) => { if (x !== 'abc') throw 'error' }")
 external fun notNullString(x: String)
