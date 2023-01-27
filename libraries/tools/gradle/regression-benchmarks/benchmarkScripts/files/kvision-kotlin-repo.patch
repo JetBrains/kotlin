@@ -1,0 +1,95 @@
+diff --git a/build.gradle.kts b/build.gradle.kts
+index bb80d4cbc0..9020570e83 100644
+--- a/build.gradle.kts
++++ b/build.gradle.kts
+@@ -1,6 +1,5 @@
+ plugins {
+-    val kotlinVersion: String by System.getProperties()
+-    kotlin("plugin.serialization") version kotlinVersion
++    kotlin("plugin.serialization")
+     kotlin("js")
+     id("maven-publish")
+     id("signing")
+@@ -17,7 +16,7 @@ allprojects {
+ }
+
+ // Versions
+-val kotlinVersion: String by System.getProperties()
++val kotlinVersion: String by extra
+ val serializationVersion: String by project
+ val coroutinesVersion: String by project
+ val snabbdomKotlinVersion: String by project
+diff --git a/buildSrc/build.gradle.kts b/buildSrc/build.gradle.kts
+index 9f429bd18d..3204cec9cb 100644
+--- a/buildSrc/build.gradle.kts
++++ b/buildSrc/build.gradle.kts
+@@ -3,12 +3,15 @@ plugins {
+ }
+
+ repositories {
++    mavenLocal()
+     mavenCentral()
+     gradlePluginPortal()
+ }
+
++val kotlinVersion: String by extra
++
+ dependencies {
+-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.0")
++    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+     implementation("de.marcphilipp.gradle:nexus-publish-plugin:0.4.0")
+     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.7.20")
+     implementation(gradleApi())
+diff --git a/buildSrc/gradle.properties b/buildSrc/gradle.properties
+new file mode 100644
+index 0000000000..b67c10f362
+--- /dev/null
++++ b/buildSrc/gradle.properties
+@@ -0,0 +1 @@
++kotlinVersion=<kotlin_version>
+diff --git a/buildSrc/src/main/kotlin/Shared.kt b/buildSrc/src/main/kotlin/Shared.kt
+index 28ead2b4ec..7eca72163f 100644
+--- a/buildSrc/src/main/kotlin/Shared.kt
++++ b/buildSrc/src/main/kotlin/Shared.kt
+@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
+
+ fun Project.repositories() {
+     repositories {
+-        mavenCentral()
+         mavenLocal()
++        mavenCentral()
+     }
+ }
+
+diff --git a/gradle.properties b/gradle.properties
+index bc5d1d2286..852cc018b5 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -1,7 +1,7 @@
+ group=io.kvision
+ versionNumber=6.0.6
+
+-systemProp.kotlinVersion=1.8.0
++kotlinVersion=<kotlin_version>
+ javaVersion=17
+ coroutinesVersion=1.6.4
+ serializationVersion=1.4.1
+diff --git a/settings.gradle.kts b/settings.gradle.kts
+index 901058aae2..7c338f6ba2 100644
+--- a/settings.gradle.kts
++++ b/settings.gradle.kts
+@@ -1,8 +1,13 @@
+ pluginManagement {
+     repositories {
++        mavenLocal()
+         gradlePluginPortal()
+         mavenCentral()
+-        mavenLocal()
++    }
++
++    val kotlinVersion: String by settings
++    plugins {
++        id("org.jetbrains.kotlin.plugin.serialization") version kotlinVersion
+     }
+ }
+ rootProject.name = "kvision"
