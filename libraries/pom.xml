@@ -350,6 +350,18 @@
                 <jdk_9_0>${env.JDK_9}</jdk_9_0>
             </properties>
         </profile>
+        <profile>
+            <id>jdk_17_0_new</id>
+            <activation>
+                <property>
+                    <name>env.JDK_17_0</name>
+                </property>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <jdk_17_0>${env.JDK_17_0}</jdk_17_0>
+            </properties>
+        </profile>
 
         <profile>
             <id>sign-artifacts</id>

@@ -173,6 +173,18 @@
                                     <goal>run</goal>
                                 </goals>
                             </execution>
+                            <execution>
+                                <id>integration-test-java17</id>
+                                <configuration>
+                                    <projectsDirectory>src/it/java17</projectsDirectory>
+                                    <cloneProjectsTo>${project.build.directory}/it/java17</cloneProjectsTo>
+                                    <javaHome>${jdk_17_0}</javaHome>
+                                </configuration>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
