@@ -21,9 +21,6 @@ buildscript {
     }
 }
 
-val kotlinVersion = project.bootstrapKotlinVersion
-val metadataVersion = "0.0.1-dev-10"
-
 repositories {
     maven("https://cache-redirector.jetbrains.com/maven-central")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
@@ -34,9 +31,10 @@ repositories {
 dependencies {
     api(gradleApi())
 
-    api("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion") { isTransitive = false }
+    api("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}") { isTransitive = false }
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 
     val versionProperties = Properties()
     project.rootProject.projectDir.resolve("../gradle/versions.properties").inputStream().use { propInput ->
@@ -53,10 +51,10 @@ dependencies {
     }
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
-    implementation("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion")
+    val metadataVersion = "0.0.1-dev-10"
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 
-    api(project(":kotlin-native-shared"))
+//    api(project(":kotlin-native-shared"))
 }
 
 java {
@@ -71,9 +69,10 @@ val compileGroovy: GroovyCompile by tasks
 compileKotlin.apply {
     kotlinOptions {
         freeCompilerArgs += listOf(
-                "-Xskip-prerelease-check",
-                "-Xsuppress-version-warnings",
-                "-opt-in=kotlin.ExperimentalStdlibApi")
+            "-Xskip-prerelease-check",
+            "-Xsuppress-version-warnings",
+            "-opt-in=kotlin.ExperimentalStdlibApi"
+        )
     }
 }
 
@@ -83,6 +82,19 @@ compileGroovy.apply {
     dependsOn(compileKotlin)
 }
 
+kotlin {
+    sourceSets {
+        main {
+            kotlin.srcDir("src/main/kotlin")
+            kotlin.srcDir("../../kotlin-native/shared/src/library/kotlin")
+            kotlin.srcDir("../../kotlin-native/shared/src/main/kotlin")
+            kotlin.srcDir("../../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
+            kotlin.srcDir("../../compiler/util-klib/src")
+            kotlin.srcDir("../../native/utils/src")
+
+        }
+    }
+}
 
 gradlePlugin {
     plugins {
