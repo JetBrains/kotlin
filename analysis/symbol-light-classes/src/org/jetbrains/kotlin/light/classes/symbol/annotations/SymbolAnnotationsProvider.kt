@@ -11,40 +11,35 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 internal class SymbolAnnotationsProvider<T : KtAnnotatedSymbol>(
     private val ktModule: KtModule,
     private val annotatedSymbolPointer: KtSymbolPointer<T>,
-    private val annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    private val acceptAnnotationsWithoutSite: Boolean = false,
+    private val annotationUseSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ) : AnnotationsProvider {
     private inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
     override fun annotationInfos(): List<KtAnnotationApplicationInfo> = withAnnotatedSymbol { annotatedSymbol ->
         annotatedSymbol.annotationInfos.filter {
-            it.useSiteTarget == annotationUseSiteTarget || acceptAnnotationsWithoutSite && it.useSiteTarget == null
+            annotationUseSiteTargetFilter.isAllowed(it.useSiteTarget)
         }
     }
 
     override fun get(classId: ClassId): Collection<KtAnnotationApplicationWithArgumentsInfo> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotationsByClassId(classId).filter {
-            it.useSiteTarget == annotationUseSiteTarget || acceptAnnotationsWithoutSite && it.useSiteTarget == null
-        }
+        annotatedSymbol.annotationsByClassId(classId, annotationUseSiteTargetFilter)
     }
 
     override fun contains(classId: ClassId): Boolean = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.hasAnnotation(classId, annotationUseSiteTarget, acceptAnnotationsWithoutSite)
+        annotatedSymbol.hasAnnotation(classId, annotationUseSiteTargetFilter)
     }
 
     override fun isTheSameAs(other: Any?): Boolean = other === this ||
             other is SymbolAnnotationsProvider<*> &&
             other.ktModule == ktModule &&
-            other.annotationUseSiteTarget == annotationUseSiteTarget &&
-            other.acceptAnnotationsWithoutSite == acceptAnnotationsWithoutSite &&
+            other.annotationUseSiteTargetFilter == annotationUseSiteTargetFilter &&
             annotatedSymbolPointer.pointsToTheSameSymbolAs(other.annotatedSymbolPointer)
 
     override fun ownerClassId(): ClassId? = withAnnotatedSymbol { annotatedSymbol ->

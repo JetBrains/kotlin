@@ -128,9 +128,8 @@ internal abstract class SymbolLightMethod<FType : KtFunctionLikeSymbol> private 
         withFunctionSymbol { functionSymbol ->
             functionSymbol.computeThrowsList(
                 builder,
-                annotationUseSiteTarget = null,
                 this@SymbolLightMethod,
-                containingClass
+                containingClass,
             )
         }
     }

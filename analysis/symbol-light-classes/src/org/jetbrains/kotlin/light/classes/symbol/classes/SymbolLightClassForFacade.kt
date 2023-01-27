@@ -71,8 +71,7 @@ class SymbolLightClassForFacade(
                     annotationsProvider = SymbolAnnotationsProvider(
                         ktModule = this.ktModule,
                         annotatedSymbolPointer = firstFileInFacade.symbolPointerOfType<KtFileSymbol>(),
-                        annotationUseSiteTarget = AnnotationUseSiteTarget.FILE,
-                        acceptAnnotationsWithoutSite = true,
+                        annotationUseSiteTargetFilter = AnnotationUseSiteTarget.FILE.toFilterWithAdditionalNull(),
                     )
                 )
             },

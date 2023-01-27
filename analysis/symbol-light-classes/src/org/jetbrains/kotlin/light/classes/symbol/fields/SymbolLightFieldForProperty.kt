@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
@@ -90,7 +87,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         withPropertySymbol { propertySymbol ->
-            propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD, acceptAnnotationsWithoutUseSite = true)
+            propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD.toFilterWithAdditionalNull())
         }
     }
 
@@ -126,12 +123,20 @@ internal class SymbolLightFieldForProperty private constructor(
         }
 
         PsiModifier.VOLATILE -> withPropertySymbol { propertySymbol ->
-            val hasAnnotation = propertySymbol.hasAnnotation(VOLATILE_ANNOTATION_CLASS_ID, null)
+            val hasAnnotation = propertySymbol.hasAnnotation(
+                VOLATILE_ANNOTATION_CLASS_ID,
+                AnnotationUseSiteTarget.FIELD.toFilterWithAdditionalNull(),
+            )
+
             mapOf(modifier to hasAnnotation)
         }
 
         PsiModifier.TRANSIENT -> withPropertySymbol { propertySymbol ->
-            val hasAnnotation = propertySymbol.hasAnnotation(TRANSIENT_ANNOTATION_CLASS_ID, null)
+            val hasAnnotation = propertySymbol.hasAnnotation(
+                TRANSIENT_ANNOTATION_CLASS_ID,
+                AnnotationUseSiteTarget.FIELD.toFilterWithAdditionalNull(),
+            )
+
             mapOf(modifier to hasAnnotation)
         }
 
@@ -152,8 +157,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = propertySymbolPointer,
-                    annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
-                    acceptAnnotationsWithoutSite = true,
+                    annotationUseSiteTargetFilter = AnnotationUseSiteTarget.FIELD.toFilterWithAdditionalNull(),
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->

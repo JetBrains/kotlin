@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
+import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
@@ -13,10 +14,8 @@ import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.resolvedAnnotationsWithArguments
@@ -45,24 +44,21 @@ internal class KtFirAnnotationListForType private constructor(
             }
         }
 
-    override fun hasAnnotation(
-        classId: ClassId,
-        useSiteTarget: AnnotationUseSiteTarget?,
-        acceptAnnotationsWithoutUseSite: Boolean,
-    ): Boolean = withValidityAssertion {
+    override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
         coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).any {
-            (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) &&
-                    it.toAnnotationClassId(useSiteSession) == classId
+            useSiteTargetFilter.isAllowed(it.useSiteTarget) && it.toAnnotationClassId(useSiteSession) == classId
         }
     }
 
-    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
-        coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).hasAnnotation(classId, useSiteSession)
-    }
-
-    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+    override fun annotationsByClassId(
+        classId: ClassId,
+        useSiteTargetFilter: AnnotationUseSiteTargetFilter,
+    ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
         coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).mapIndexedNotNull { index, annotation ->
-            if (annotation.toAnnotationClassId(useSiteSession) != classId) return@mapIndexedNotNull null
+            if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
+                return@mapIndexedNotNull null
+            }
+
             annotation.toKtAnnotationApplication(useSiteSession, index)
         }
     }

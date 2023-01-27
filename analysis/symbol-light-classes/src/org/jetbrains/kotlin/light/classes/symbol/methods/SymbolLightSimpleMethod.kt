@@ -50,7 +50,6 @@ internal class SymbolLightSimpleMethod(
             functionSymbol.computeJvmMethodName(
                 functionSymbol.name.asString(),
                 this@SymbolLightSimpleMethod.containingClass,
-                annotationUseSiteTarget = null,
             )
         }
     }

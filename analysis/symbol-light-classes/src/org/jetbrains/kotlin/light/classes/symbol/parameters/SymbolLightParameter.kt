@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.toFilterWithAdditionalNull
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
@@ -34,10 +35,9 @@ internal class SymbolLightParameter(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = parameterSymbolPointer,
-                    annotationUseSiteTarget = isConstructorParameterSymbol.ifTrue {
+                    annotationUseSiteTargetFilter = isConstructorParameterSymbol.ifTrue {
                         AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER
-                    },
-                    acceptAnnotationsWithoutSite = true,
+                    }.toFilterWithAdditionalNull(),
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider(::nullabilityType),
             ),

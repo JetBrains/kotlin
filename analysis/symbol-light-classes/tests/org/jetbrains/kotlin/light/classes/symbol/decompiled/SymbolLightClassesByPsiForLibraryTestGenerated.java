@@ -121,6 +121,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
     }
 
     @Test
+    @TestMetadata("fieldModifiers.kt")
+    public void testFieldModifiers() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/fieldModifiers.kt");
+    }
+
+    @Test
     @TestMetadata("generics.kt")
     public void testGenerics() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/generics.kt");

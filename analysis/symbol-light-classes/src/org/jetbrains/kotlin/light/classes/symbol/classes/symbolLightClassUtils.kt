@@ -34,10 +34,7 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmFieldAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmOverloadsAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.isHiddenOrSynthetic
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
@@ -311,15 +308,16 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     if (this !is SymbolLightClassForFacade && propertyTypeIsValueClass) return
 
     fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
+        val useSiteTargetFilterForPropertyAccessor = siteTarget.toFilterWithAdditionalNull()
         if (onlyJvmStatic &&
-            !hasJvmStaticAnnotation(siteTarget, acceptAnnotationsWithoutUseSite = true) &&
-            !declaration.hasJvmStaticAnnotation(siteTarget, acceptAnnotationsWithoutUseSite = true)
+            !hasJvmStaticAnnotation(useSiteTargetFilterForPropertyAccessor) &&
+            !declaration.hasJvmStaticAnnotation(useSiteTargetFilterForPropertyAccessor)
         ) return false
 
         if (declaration.hasReifiedParameters) return false
         if (!hasBody && visibility.isPrivateOrPrivateToThis()) return false
         if (declaration.isHiddenOrSynthetic(siteTarget)) return false
-        return !isHiddenOrSynthetic(siteTarget, acceptAnnotationsWithoutUseSite = true)
+        return !isHiddenOrSynthetic(siteTarget, useSiteTargetFilterForPropertyAccessor)
     }
 
     val originalElement = declaration.sourcePsiSafe<KtDeclaration>()
@@ -403,8 +401,9 @@ private fun hasBackingField(property: KtPropertySymbol): Boolean {
         return hasBackingFieldByPsi
     }
 
+    val fieldUseSite = AnnotationUseSiteTarget.FIELD
     if (property.modality == Modality.ABSTRACT ||
-        property.isHiddenOrSynthetic(AnnotationUseSiteTarget.FIELD, acceptAnnotationsWithoutUseSite = true)
+        property.isHiddenOrSynthetic(fieldUseSite, fieldUseSite.toFilterWithAdditionalNull())
     ) return false
 
     return hasBackingFieldByPsi ?: property.hasBackingField

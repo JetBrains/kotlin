@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
+import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -31,20 +31,15 @@ internal class KtFirAnnotationListForDeclaration private constructor(
             annotationInfos(firSymbol, useSiteSession)
         }
 
-    override fun hasAnnotation(
+    override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
+        hasAnnotation(firSymbol, classId, useSiteTargetFilter, useSiteSession)
+    }
+
+    override fun annotationsByClassId(
         classId: ClassId,
-        useSiteTarget: AnnotationUseSiteTarget?,
-        acceptAnnotationsWithoutUseSite: Boolean,
-    ): Boolean = withValidityAssertion {
-        hasAnnotation(firSymbol, classId, useSiteSession, useSiteTarget, acceptAnnotationsWithoutUseSite)
-    }
-
-    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
-        hasAnnotation(firSymbol, classId, useSiteSession)
-    }
-
-    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
-        annotationsByClassId(firSymbol, classId, useSiteSession)
+        useSiteTargetFilter: AnnotationUseSiteTargetFilter,
+    ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+        annotationsByClassId(firSymbol, classId, useSiteTargetFilter, useSiteSession)
     }
 
     override val annotationClassIds: Collection<ClassId>

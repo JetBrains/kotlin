@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
+import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
@@ -12,10 +13,12 @@ import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.resolved
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassIdSafe
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
@@ -43,17 +46,24 @@ internal fun mapAnnotationParameters(annotation: FirAnnotation): Map<Name, FirEx
 internal fun annotationsByClassId(
     firSymbol: FirBasedSymbol<*>,
     classId: ClassId,
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KtAnnotationApplicationWithArgumentsInfo> =
     if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId)) {
         annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).mapIndexedNotNull { index, annotation ->
-            if (annotation.toAnnotationClassIdSafe(useSiteSession) != classId) return@mapIndexedNotNull null
+            if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassIdSafe(useSiteSession) != classId) {
+                return@mapIndexedNotNull null
+            }
+
             annotation.toKtAnnotationApplication(useSiteSession, index)
         }
     } else {
         annotationContainer.resolvedAnnotationsWithArguments(firSymbol).mapIndexedNotNull { index, annotation ->
-            if (annotation.toAnnotationClassId(useSiteSession) != classId) return@mapIndexedNotNull null
+            if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassId(useSiteSession) != classId) {
+                return@mapIndexedNotNull null
+            }
+
             annotation.toKtAnnotationApplication(useSiteSession, index)
         }
     }
@@ -86,33 +96,18 @@ internal fun annotationClassIds(
 internal fun hasAnnotation(
     firSymbol: FirBasedSymbol<*>,
     classId: ClassId,
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     useSiteSession: FirSession,
-    useSiteTarget: AnnotationUseSiteTarget?,
-    acceptAnnotationsWithoutUseSite: Boolean,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): Boolean =
     if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId)) {
         annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).any {
-            (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) &&
-                    it.toAnnotationClassIdSafe(useSiteSession) == classId
+            useSiteTargetFilter.isAllowed(it.useSiteTarget) && it.toAnnotationClassIdSafe(useSiteSession) == classId
         }
     } else {
         annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).any {
-            (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) &&
-                    it.toAnnotationClassId(useSiteSession) == classId
+            useSiteTargetFilter.isAllowed(it.useSiteTarget) && it.toAnnotationClassId(useSiteSession) == classId
         }
-    }
-
-internal fun hasAnnotation(
-    firSymbol: FirBasedSymbol<*>,
-    classId: ClassId,
-    useSiteSession: FirSession,
-    annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): Boolean =
-    if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId)) {
-        annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).hasAnnotationSafe(classId, useSiteSession)
-    } else {
-        annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).hasAnnotation(classId, useSiteSession)
     }
 
 private fun FirBasedSymbol<*>.isFromCompilerRequiredAnnotationsPhase(classId: ClassId): Boolean =

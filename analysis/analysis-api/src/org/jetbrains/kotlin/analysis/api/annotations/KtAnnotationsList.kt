@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.annotations
 
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 
 /**
@@ -34,49 +33,40 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
     public abstract val annotationInfos: List<KtAnnotationApplicationInfo>
 
     /**
-     * Checks if entity contains annotation with specified [classId].
+     * Checks if entity contains annotation with specified [classId] and filtered by [useSiteTargetFilter].
      *
      * The semantic is equivalent to
      * ```
-     * annotationsList.hasAnnotation(classId) == annotationsList.annotations.any { it.classId == classId }
-     * ```
-     */
-    public abstract fun hasAnnotation(classId: ClassId): Boolean
-
-    /**
-     * Checks if entity contains annotation with specified [classId] and [useSiteTarget].
-     * If [useSiteTarget] is **null** [acceptAnnotationsWithoutUseSite] effectively unused.
-     *
-     * The semantic is equivalent to
-     * ```
-     * annotationsList.hasAnnotation(classId, useSiteTarget, strictUseSite) == annotationsList.annotations.any {
-     *      (it.useSiteTarget == useSiteTarget || acceptAnnotationsWithoutUseSite && it.useSiteTarget == null) && it.classId == classId
+     * annotationsList.hasAnnotation(classId, useSiteTargetFilter) == annotationsList.annotations.any {
+     *   it.classId == classId && useSiteTargetFilter.isAllowed(it.useSiteTarget)
      * }
      * ```
-     *
      * @param classId [ClassId] to search
-     * @param useSiteTarget specific [AnnotationUseSiteTarget]
-     * @param acceptAnnotationsWithoutUseSite add [ClassId] without specified [AnnotationUseSiteTarget] to search
+     * @param useSiteTargetFilter specific [AnnotationUseSiteTargetFilter]
      */
     public abstract fun hasAnnotation(
         classId: ClassId,
-        useSiteTarget: AnnotationUseSiteTarget?,
-        acceptAnnotationsWithoutUseSite: Boolean = false,
+        useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
     ): Boolean
 
     /**
-     * A list of annotations applied with specified [classId].
+     * A list of annotations applied with specified [classId] and filtered by [useSiteTargetFilter].
      *
      * To check if annotation is present, please use [hasAnnotation].
      *
      * The semantic is equivalent to
      * ```
-     * annotationsList.annotationsByClassId(classId) == annotationsList.annotations.filter { it.classId == classId }
+     * annotationsList.annotationsByClassId(classId) == annotationsList.annotations.filter {
+     *   it.classId == classId && useSiteTargetFilter.isAllowed(it.useSiteTarget)
+     * }
      * ```
      *
      * @see KtAnnotationApplicationWithArgumentsInfo
      */
-    public abstract fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplicationWithArgumentsInfo>
+    public abstract fun annotationsByClassId(
+        classId: ClassId,
+        useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
+    ): List<KtAnnotationApplicationWithArgumentsInfo>
 
     /**
      * A list of annotations [ClassId].

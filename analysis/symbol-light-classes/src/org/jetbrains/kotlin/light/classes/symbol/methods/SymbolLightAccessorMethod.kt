@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.KtConstantInitializerValue
 import org.jetbrains.kotlin.analysis.api.KtConstantValueForAnnotation
 import org.jetbrains.kotlin.analysis.api.KtNonConstantInitializerValue
+import org.jetbrains.kotlin.analysis.api.annotations.toFilter
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
@@ -90,7 +91,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private val _name: String by lazyPub {
         analyzeForLightClasses(ktModule) {
-            propertyAccessorSymbol().getJvmNameFromAnnotation(accessorSite) ?: run {
+            propertyAccessorSymbol().getJvmNameFromAnnotation(accessorSite.toFilterWithAdditionalNull()) ?: run {
                 val symbol = propertySymbol()
                 val defaultName = symbol.name.identifier.let {
                     if (this@SymbolLightAccessorMethod.containingClass.isAnnotationType) it else it.abiName()
@@ -133,10 +134,9 @@ internal class SymbolLightAccessorMethod private constructor(
         propertyAccessorSymbolPointer.withSymbol(ktModule) { accessorSymbol ->
             accessorSymbol.computeThrowsList(
                 builder,
-                accessorSite,
                 this@SymbolLightAccessorMethod,
                 containingClass,
-                acceptAnnotationsWithoutUseSite = true,
+                accessorSite.toFilterWithAdditionalNull(),
             )
         }
     }
@@ -171,9 +171,12 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private fun isStatic(): Boolean = analyzeForLightClasses(ktModule) {
         val propertySymbol = propertySymbol()
-        propertySymbol.isStatic ||
-                propertySymbol.hasJvmStaticAnnotation(accessorSite, acceptAnnotationsWithoutUseSite = true) ||
-                propertyAccessorSymbol().hasJvmStaticAnnotation(accessorSite, acceptAnnotationsWithoutUseSite = true)
+        if (propertySymbol.isStatic) {
+            return@analyzeForLightClasses true
+        }
+
+        val filter = accessorSite.toFilterWithAdditionalNull()
+        propertySymbol.hasJvmStaticAnnotation(filter) || propertyAccessorSymbol().hasJvmStaticAnnotation(filter)
     }
 
     private val _modifierList: PsiModifierList by lazyPub {
@@ -185,13 +188,12 @@ internal class SymbolLightAccessorMethod private constructor(
                     SymbolAnnotationsProvider(
                         ktModule = ktModule,
                         annotatedSymbolPointer = propertyAccessorSymbolPointer,
-                        annotationUseSiteTarget = accessorSite,
-                        acceptAnnotationsWithoutSite = true,
+                        annotationUseSiteTargetFilter = accessorSite.toFilterWithAdditionalNull(),
                     ),
                     SymbolAnnotationsProvider(
                         ktModule = ktModule,
                         annotatedSymbolPointer = containingPropertySymbolPointer,
-                        annotationUseSiteTarget = accessorSite,
+                        annotationUseSiteTargetFilter = accessorSite.toFilter(),
                     ),
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
@@ -217,8 +219,8 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         analyzeForLightClasses(ktModule) {
-            propertySymbol().hasDeprecatedAnnotation(accessorSite, acceptAnnotationsWithoutUseSite = true) ||
-                    propertyAccessorSymbol().hasDeprecatedAnnotation(accessorSite, acceptAnnotationsWithoutUseSite = true)
+            val filter = accessorSite.toFilterWithAdditionalNull()
+            propertySymbol().hasDeprecatedAnnotation(filter) || propertyAccessorSymbol().hasDeprecatedAnnotation(filter)
         }
     }
 

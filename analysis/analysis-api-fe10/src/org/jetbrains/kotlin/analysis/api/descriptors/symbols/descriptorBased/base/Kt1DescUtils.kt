@@ -630,7 +630,7 @@ internal fun AnnotationDescriptor.toKtAnnotationInfo(index: Int): KtAnnotationAp
 
 private val AnnotationDescriptor.psi: KtCallElement? get() = (source as? PsiSourceElement)?.psi as? KtCallElement
 private val AnnotationDescriptor.classIdIfNonLocal: ClassId? get() = annotationClass?.maybeLocalClassId
-private val AnnotationDescriptor.useSiteTarget: AnnotationUseSiteTarget?
+internal val AnnotationDescriptor.useSiteTarget: AnnotationUseSiteTarget?
     get() = (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget()
 
 internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext): List<KtNamedAnnotationValue> =

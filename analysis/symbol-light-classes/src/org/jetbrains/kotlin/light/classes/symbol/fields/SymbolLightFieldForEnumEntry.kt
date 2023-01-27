@@ -7,14 +7,17 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.annotations.FieldAnnotationUseSiteTargetFilter
+import org.jetbrains.kotlin.analysis.api.annotations.NullAnnotationUseSiteTargetFilter
+import org.jetbrains.kotlin.analysis.api.annotations.PropertyAnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
 import org.jetbrains.kotlin.asJava.classes.cannotModify
 import org.jetbrains.kotlin.asJava.classes.lazyPub
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.annotationUseSiteTargetFilterOf
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
@@ -42,8 +45,11 @@ internal class SymbolLightFieldForEnumEntry(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = enumEntry.symbolPointerOfType<KtEnumEntrySymbol>(),
-                    annotationUseSiteTarget = AnnotationUseSiteTarget.FIELD,
-                    acceptAnnotationsWithoutSite = true,
+                    annotationUseSiteTargetFilter = annotationUseSiteTargetFilterOf(
+                        NullAnnotationUseSiteTargetFilter,
+                        FieldAnnotationUseSiteTargetFilter,
+                        PropertyAnnotationUseSiteTargetFilter,
+                    ),
                 )
             ),
         )

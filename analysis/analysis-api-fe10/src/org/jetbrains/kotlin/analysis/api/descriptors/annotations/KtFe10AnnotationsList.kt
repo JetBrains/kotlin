@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.annotations
 
+import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
@@ -12,10 +13,10 @@ import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationInfo
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.useSiteTarget
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
@@ -63,21 +64,21 @@ internal class KtFe10AnnotationsList private constructor(
             }
         }
 
-    override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion {
+    override fun hasAnnotation(classId: ClassId, useSiteTargetFilter: AnnotationUseSiteTargetFilter): Boolean = withValidityAssertion {
         fe10Annotations.hasAnnotation(classId.asSingleFqName())
     }
 
-    override fun hasAnnotation(
+    override fun annotationsByClassId(
         classId: ClassId,
-        useSiteTarget: AnnotationUseSiteTarget?,
-        acceptAnnotationsWithoutUseSite: Boolean,
-    ): Boolean = hasAnnotation(classId)
-
-    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+        useSiteTargetFilter: AnnotationUseSiteTargetFilter,
+    ): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
         if (classId in annotationsToIgnore) return@withValidityAssertion emptyList()
 
         fe10Annotations.mapIndexedNotNull { index, annotation ->
-            if (annotation.annotationClass?.maybeLocalClassId != classId) return@mapIndexedNotNull null
+            if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.annotationClass?.maybeLocalClassId != classId) {
+                return@mapIndexedNotNull null
+            }
+
             annotation.toKtAnnotationApplication(analysisContext, index)
         }
     }

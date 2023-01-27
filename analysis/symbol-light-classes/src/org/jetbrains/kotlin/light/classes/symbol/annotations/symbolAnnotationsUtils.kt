@@ -24,13 +24,26 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(
-    annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    acceptAnnotationsWithoutUseSite: Boolean = false,
-): Boolean = hasAnnotation(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)
+internal fun AnnotationUseSiteTarget?.toFilterWithAdditionalNull(): AnnotationUseSiteTargetFilter {
+    if (this == null) return NullAnnotationUseSiteTargetFilter
 
-internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): String? {
-    val annotation = findAnnotation(StandardClassIds.Annotations.JvmName, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite = true)
+    return annotationUseSiteTargetFilterOf(NullAnnotationUseSiteTargetFilter, toFilter())
+}
+
+internal fun annotationUseSiteTargetFilterOf(
+    vararg filters: AnnotationUseSiteTargetFilter,
+): AnnotationUseSiteTargetFilter = AnnotationUseSiteTargetFilter { useSiteTarget ->
+    filters.any { filter -> filter.isAllowed(useSiteTarget) }
+}
+
+internal fun KtAnnotatedSymbol.hasJvmSyntheticAnnotation(
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
+): Boolean = hasAnnotation(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, useSiteTargetFilter)
+
+internal fun KtAnnotatedSymbol.getJvmNameFromAnnotation(
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
+): String? {
+    val annotation = findAnnotation(StandardClassIds.Annotations.JvmName, useSiteTargetFilter)
     return annotation?.let {
         (it.arguments.firstOrNull()?.expression as? KtConstantAnnotationValue)?.constantValue?.value as? String
     }
@@ -45,56 +58,49 @@ internal fun isHiddenByDeprecation(
 context(KtAnalysisSession)
 internal fun KtAnnotatedSymbol.isHiddenOrSynthetic(
     annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    acceptAnnotationsWithoutUseSite: Boolean = false,
-) = isHiddenByDeprecation(this, annotationUseSiteTarget) ||
-        hasJvmSyntheticAnnotation(annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter = annotationUseSiteTarget.toFilter(),
+) = isHiddenByDeprecation(this, annotationUseSiteTarget) || hasJvmSyntheticAnnotation(useSiteTargetFilter)
 
 internal fun KtAnnotatedSymbol.hasJvmFieldAnnotation(): Boolean = hasAnnotation(StandardClassIds.Annotations.JvmField)
 
-internal fun KtAnnotatedSymbol.hasPublishedApiAnnotation(annotationUseSiteTarget: AnnotationUseSiteTarget? = null): Boolean =
-    hasAnnotation(StandardClassIds.Annotations.PublishedApi, annotationUseSiteTarget)
+internal fun KtAnnotatedSymbol.hasPublishedApiAnnotation(
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
+): Boolean = hasAnnotation(StandardClassIds.Annotations.PublishedApi, useSiteTargetFilter)
 
 internal fun KtAnnotatedSymbol.hasDeprecatedAnnotation(
-    annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    acceptAnnotationsWithoutUseSite: Boolean = false,
-): Boolean = hasAnnotation(StandardClassIds.Annotations.Deprecated, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
+): Boolean = hasAnnotation(StandardClassIds.Annotations.Deprecated, useSiteTargetFilter)
 
 internal fun KtAnnotatedSymbol.hasJvmOverloadsAnnotation(): Boolean = hasAnnotation(JVM_OVERLOADS_CLASS_ID)
 
 internal fun KtAnnotatedSymbol.hasJvmStaticAnnotation(
-    annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
-    acceptAnnotationsWithoutUseSite: Boolean = false,
-): Boolean = hasAnnotation(StandardClassIds.Annotations.JvmStatic, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
+): Boolean = hasAnnotation(StandardClassIds.Annotations.JvmStatic, useSiteTargetFilter)
 
 internal fun KtAnnotatedSymbol.hasInlineOnlyAnnotation(): Boolean = hasAnnotation(StandardClassIds.Annotations.InlineOnly)
 
 internal fun KtAnnotatedSymbol.findAnnotation(
     classId: ClassId,
-    annotationUseSiteTarget: AnnotationUseSiteTarget?,
-    acceptAnnotationsWithoutUseSite: Boolean = false,
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ): KtAnnotationApplicationWithArgumentsInfo? {
-    if (!hasAnnotation(classId, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)) return null
+    if (!hasAnnotation(classId, useSiteTargetFilter)) return null
 
-    return annotations.find {
-        val useSiteTarget = it.useSiteTarget
-        (useSiteTarget == annotationUseSiteTarget || acceptAnnotationsWithoutUseSite && useSiteTarget == null) && it.classId == classId
-    }
+    return annotationsByClassId(classId, useSiteTargetFilter).firstOrNull()
 }
 
 context(KtAnalysisSession)
 internal fun KtAnnotatedSymbol.computeThrowsList(
     builder: LightReferenceListBuilder,
-    annotationUseSiteTarget: AnnotationUseSiteTarget?,
     useSitePosition: PsiElement,
     containingClass: SymbolLightClassBase,
-    acceptAnnotationsWithoutUseSite: Boolean = false,
+    useSiteTargetFilter: AnnotationUseSiteTargetFilter = AnyAnnotationUseSiteTargetFilter,
 ) {
     if (containingClass.isEnum && this is KtFunctionSymbol && name == StandardNames.ENUM_VALUE_OF && isStatic) {
         builder.addReference(java.lang.IllegalArgumentException::class.qualifiedName)
         builder.addReference(java.lang.NullPointerException::class.qualifiedName)
     }
 
-    val annoApp = findAnnotation(StandardClassIds.Annotations.Throws, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite) ?: return
+    val annoApp = findAnnotation(StandardClassIds.Annotations.Throws, useSiteTargetFilter) ?: return
 
     fun handleAnnotationValue(annotationValue: KtAnnotationValue) = when (annotationValue) {
         is KtArrayAnnotationValue -> {

@@ -7,15 +7,13 @@ package org.jetbrains.kotlin.light.classes.symbol.parameters
 
 import com.intellij.psi.PsiModifierList
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
+import org.jetbrains.kotlin.analysis.api.annotations.SetterParameterAnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
-import org.jetbrains.kotlin.light.classes.symbol.annotations.CompositeAnnotationsProvider
-import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
-import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
-import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
@@ -48,13 +46,12 @@ internal class SymbolLightSetterParameter(
                     SymbolAnnotationsProvider(
                         ktModule = ktModule,
                         annotatedSymbolPointer = parameterSymbolPointer,
-                        annotationUseSiteTarget = AnnotationUseSiteTarget.SETTER_PARAMETER,
-                        acceptAnnotationsWithoutSite = true,
+                        annotationUseSiteTargetFilter = AnnotationUseSiteTarget.SETTER_PARAMETER.toFilterWithAdditionalNull(),
                     ),
                     SymbolAnnotationsProvider(
                         ktModule = ktModule,
                         annotatedSymbolPointer = containingPropertySymbolPointer,
-                        annotationUseSiteTarget = AnnotationUseSiteTarget.SETTER_PARAMETER,
+                        annotationUseSiteTargetFilter = SetterParameterAnnotationUseSiteTargetFilter,
                     ),
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider(::nullabilityType),

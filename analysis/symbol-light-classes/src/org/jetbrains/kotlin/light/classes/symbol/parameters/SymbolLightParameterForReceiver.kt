@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.NullabilityAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.toFilterWithAdditionalNull
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.psi.KtParameter
@@ -71,8 +72,7 @@ internal class SymbolLightParameterForReceiver private constructor(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = receiverPointer,
-                    annotationUseSiteTarget = AnnotationUseSiteTarget.RECEIVER,
-                    acceptAnnotationsWithoutSite = true,
+                    annotationUseSiteTargetFilter = AnnotationUseSiteTarget.RECEIVER.toFilterWithAdditionalNull(),
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withReceiverSymbol { receiver ->
