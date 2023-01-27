@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
-import org.jetbrains.kotlin.gradle.utils.hasSyncErrors
+import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.UnsafeApi
@@ -49,12 +49,8 @@ internal fun checkAndReportDeprecatedMppProperties(project: Project) {
         projectProperties.property(propertyName)?.let { getMppDeprecationWarningMessageForProperty(propertyName) }
     }
 
-    project.whenEvaluated {
-        if (!project.hasSyncErrors()) {
-            warnings.forEach { message ->
-                SingleWarningPerBuild.show(project, message)
-            }
-        }
+    warnings.forEach { message ->
+        SingleWarningPerBuild.show(project, message)
     }
 }
 
