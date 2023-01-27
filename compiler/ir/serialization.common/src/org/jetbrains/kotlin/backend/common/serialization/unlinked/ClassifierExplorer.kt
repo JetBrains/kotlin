@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
 
