@@ -11,14 +11,46 @@ import java.io.InputStreamReader
 import java.lang.Boolean.getBoolean
 import kotlin.test.fail
 
+private val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
 
-val toolLogsEnabled: Boolean = getBoolean("kotlin.js.test.verbose")
+internal sealed class WasmVM(val shortName: String) {
+    val name: String = javaClass.simpleName
+    protected val tool = ExternalTool(System.getProperty("javascript.engine.path.$name"))
 
-class ExternalTool(val path: String) {
+    abstract fun run(entryMjs: String, jsFilesBefore: List<String>, jsFilesAfter: List<String>, workingDirectory: File?)
+
+    object V8 : WasmVM("V8") {
+        override fun run(entryMjs: String, jsFilesBefore: List<String>, jsFilesAfter: List<String>, workingDirectory: File?) {
+            tool.run(
+                "--experimental-wasm-gc",
+                *jsFilesBefore.toTypedArray(),
+                "--module",
+                entryMjs,
+                *jsFilesAfter.toTypedArray(),
+                workingDirectory = workingDirectory
+            )
+        }
+    }
+
+    object SpiderMonkey : WasmVM("SM") {
+        override fun run(entryMjs: String, jsFilesBefore: List<String>, jsFilesAfter: List<String>, workingDirectory: File?) {
+            tool.run(
+                "--wasm-verbose",
+                "--wasm-gc",
+                "--wasm-function-references",
+                *jsFilesBefore.flatMap { listOf("-f", it) }.toTypedArray(),
+                "--module=$entryMjs",
+                *jsFilesAfter.flatMap { listOf("-f", it) }.toTypedArray(),
+                workingDirectory = workingDirectory
+            )
+        }
+    }
+}
+
+internal class ExternalTool(val path: String) {
     fun run(vararg arguments: String, workingDirectory: File? = null) {
         val command = arrayOf(path, *arguments)
-        val processBuilder = ProcessBuilder(*command)
-            .redirectErrorStream(true)
+        val processBuilder = ProcessBuilder(*command).redirectErrorStream(true)
 
         if (workingDirectory != null) {
             processBuilder.directory(workingDirectory)
@@ -51,13 +83,3 @@ class ExternalTool(val path: String) {
 
 private fun escapeShellArgument(arg: String): String =
     "'${arg.replace("'", "'\\''")}'"
-
-class SpiderMonkeyEngine(
-    jsShellPath: String = System.getProperty("javascript.engine.path.SpiderMonkey")
-) {
-    private val jsShell = ExternalTool(jsShellPath)
-
-    fun runFile(file: String) {
-        jsShell.run("--wasm-gc", file)
-    }
-}

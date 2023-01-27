@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR, JS
+// WASM_FAILS_IN: SM
 
 inline fun checkNPE(body: () -> Unit) {
     var throwed = false

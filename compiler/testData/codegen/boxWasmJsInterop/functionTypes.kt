@@ -1,5 +1,6 @@
 // Char issues
 // IGNORE_BACKEND: JS_IR
+// WASM_FAILS_IN: SM 
 
 // MODULE: main
 // FILE: externals.js

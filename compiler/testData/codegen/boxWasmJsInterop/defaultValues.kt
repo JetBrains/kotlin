@@ -1,3 +1,4 @@
+// WASM_FAILS_IN: SM
 // FILE: defaultValues.js
 function foo(x1 = "d1", x2 = "d2", x3 = "d3", x4 = "d4", x5 = "d5") {
     return `${x1} ${x2} ${x3} ${x4} ${x5}`;

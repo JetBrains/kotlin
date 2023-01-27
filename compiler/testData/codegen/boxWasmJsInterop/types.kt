@@ -1,3 +1,4 @@
+// WASM_FAILS_IN: SM
 // FILE: externals.js
 
 // -- Strings --
