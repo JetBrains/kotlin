@@ -491,6 +491,10 @@ private class JsIrAstSerializer {
                 writeExpression(x.constructorExpression)
                 writeCollection(x.arguments) { writeExpression(it) }
             }
+
+            override fun visitElement(node: JsNode) {
+                error("Unknown expression type: ${expression::class.qualifiedName}")
+            }
         }
 
         withComments(expression) {
