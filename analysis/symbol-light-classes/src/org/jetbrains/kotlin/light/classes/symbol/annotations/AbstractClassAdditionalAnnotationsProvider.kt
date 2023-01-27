@@ -118,7 +118,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToRetentionJavaAnnotation(
 )
 
 private fun SymbolLightJavaAnnotation.computeJavaRetentionArguments(): List<KtNamedAnnotationValue> {
-    val argumentWithKotlinRetention = originalLightAnnotation.annotationApplication
+    val argumentWithKotlinRetention = originalLightAnnotation.annotationApplicationWithArgumentsInfo
         .value
         .arguments
         .firstOrNull {
@@ -203,7 +203,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToTargetJavaAnnotation(
 )
 
 private fun SymbolLightJavaAnnotation.computeTargetJavaAnnotationArguments(): List<KtNamedAnnotationValue> {
-    val allowedKotlinTargets = originalLightAnnotation.annotationApplication
+    val allowedKotlinTargets = originalLightAnnotation.annotationApplicationWithArgumentsInfo
         .value
         .arguments
         .firstOrNull()

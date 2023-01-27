@@ -22,16 +22,16 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
      *
      * @see KtAnnotationApplication
      */
-    public abstract val annotations: List<KtAnnotationApplication>
+    public abstract val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
 
     /**
      * A list of annotation overviews.
      *
      * Can be used instead of [annotations] if applicable to reduce resolve.
      *
-     * @see KtAnnotationOverview
+     * @see KtAnnotationApplicationInfo
      */
-    public abstract val annotationOverviews: List<KtAnnotationOverview>
+    public abstract val annotationInfos: List<KtAnnotationApplicationInfo>
 
     /**
      * Checks if entity contains annotation with specified [classId].
@@ -74,9 +74,9 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
      * annotationsList.annotationsByClassId(classId) == annotationsList.annotations.filter { it.classId == classId }
      * ```
      *
-     * @see KtAnnotationApplication
+     * @see KtAnnotationApplicationWithArgumentsInfo
      */
-    public abstract fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication>
+    public abstract fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplicationWithArgumentsInfo>
 
     /**
      * A list of annotations [ClassId].

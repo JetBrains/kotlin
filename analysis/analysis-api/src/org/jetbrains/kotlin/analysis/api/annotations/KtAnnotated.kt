@@ -20,16 +20,16 @@ public interface KtAnnotated {
  *
  * @see [KtAnnotationsList.annotations]
  */
-public val KtAnnotated.annotations: List<KtAnnotationApplication>
+public val KtAnnotated.annotations: List<KtAnnotationApplicationWithArgumentsInfo>
     get() = annotationsList.annotations
 
 /**
  * A list of annotation overviews.
  *
- * @see [KtAnnotationsList.annotationOverviews]
+ * @see [KtAnnotationsList.annotationInfos]
  */
-public val KtAnnotated.annotationOverviews: List<KtAnnotationOverview>
-    get() = annotationsList.annotationOverviews
+public val KtAnnotated.annotationInfos: List<KtAnnotationApplicationInfo>
+    get() = annotationsList.annotationInfos
 
 /**
  * Checks if entity has annotation with specified [classId].
@@ -54,7 +54,7 @@ public fun KtAnnotated.hasAnnotation(
  *
  * @see [KtAnnotationsList.annotationClassIds]
  */
-public fun KtAnnotated.annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> =
+public fun KtAnnotated.annotationsByClassId(classId: ClassId): List<KtAnnotationApplicationWithArgumentsInfo> =
     annotationsList.annotationsByClassId(classId)
 
 /**

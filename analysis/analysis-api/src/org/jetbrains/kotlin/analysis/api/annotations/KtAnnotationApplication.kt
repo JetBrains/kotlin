@@ -17,33 +17,33 @@ import org.jetbrains.kotlin.psi.KtCallElement
  * - For types: `fun foo(x: List<@A Int>){}`
  * - Inside other annotation (`B` is annotation here): `@A(B()) fun foo(){}
  */
-public data class KtAnnotationApplication(
+public sealed interface KtAnnotationApplication {
     /**
      * The [ClassId] of applied annotation. [ClassId] is a fully qualified name on annotation class.
      */
-    public val classId: ClassId?,
+    public val classId: ClassId?
 
     /**
      * PsiElement which was used to apply annotation to declaration/type.
      *
      * Present only for declarations from sources. For declarations from other places (libraries, stdlib) it's `null`
      */
-    public val psi: KtCallElement?,
+    public val psi: KtCallElement?
 
     /**
      * [AnnotationUseSiteTarget] to which annotation was applied. May be not-null only for annotation applications for declarations.
      *
      * See in more details in [Kotlin Documentation](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets) for more information about annotation targets.
      */
-    public val useSiteTarget: AnnotationUseSiteTarget?,
+    public val useSiteTarget: AnnotationUseSiteTarget?
 
     /**
-     * A list of annotation arguments which were applied when constructing annotation. Every argument is [KtAnnotationValue]
+     * **true** if the annotation is a call with arguments
      */
-    public val arguments: List<KtNamedAnnotationValue>,
+    public val isCallWithArguments: Boolean
 
     /**
      * An index of the annotation in an owner. Can be `-1` in case of annotation arguments
      */
-    public val index: Int,
-)
+    public val index: Int
+}

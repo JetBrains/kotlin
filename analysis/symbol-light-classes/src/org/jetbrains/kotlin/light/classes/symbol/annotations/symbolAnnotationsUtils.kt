@@ -72,7 +72,7 @@ internal fun KtAnnotatedSymbol.findAnnotation(
     classId: ClassId,
     annotationUseSiteTarget: AnnotationUseSiteTarget?,
     acceptAnnotationsWithoutUseSite: Boolean = false,
-): KtAnnotationApplication? {
+): KtAnnotationApplicationWithArgumentsInfo? {
     if (!hasAnnotation(classId, annotationUseSiteTarget, acceptAnnotationsWithoutUseSite)) return null
 
     return annotations.find {

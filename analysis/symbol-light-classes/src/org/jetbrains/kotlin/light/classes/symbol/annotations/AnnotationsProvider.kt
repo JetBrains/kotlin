@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.name.ClassId
 
 internal sealed interface AnnotationsProvider {
-    fun annotationOverviews(): List<KtAnnotationOverview>
-    operator fun get(classId: ClassId): Collection<KtAnnotationApplication>
+    fun annotationInfos(): List<KtAnnotationApplicationInfo>
+    operator fun get(classId: ClassId): Collection<KtAnnotationApplicationWithArgumentsInfo>
     operator fun contains(classId: ClassId): Boolean
     fun isTheSameAs(other: Any?): Boolean
     fun ownerClassId(): ClassId?

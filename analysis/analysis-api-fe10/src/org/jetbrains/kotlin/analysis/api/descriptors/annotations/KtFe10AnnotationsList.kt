@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationOverview
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -29,7 +29,7 @@ internal class KtFe10AnnotationsList private constructor(
     override val token: KtLifetimeToken
         get() = analysisContext.token
 
-    override val annotations: List<KtAnnotationApplication>
+    override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
             fe10Annotations.mapIndexedNotNull { index, annotation ->
                 if (annotation.annotationClass.classId in annotationsToIgnore)
@@ -39,13 +39,13 @@ internal class KtFe10AnnotationsList private constructor(
             }
         }
 
-    override val annotationOverviews: List<KtAnnotationOverview>
+    override val annotationInfos: List<KtAnnotationApplicationInfo>
         get() = withValidityAssertion {
             fe10Annotations.mapIndexedNotNull { index, annotation ->
                 if (annotation.annotationClass.classId in annotationsToIgnore)
                     null
                 else
-                    annotation.toKtAnnotationOverview(index)
+                    annotation.toKtAnnotationInfo(index)
             }
         }
 
@@ -73,7 +73,7 @@ internal class KtFe10AnnotationsList private constructor(
         acceptAnnotationsWithoutUseSite: Boolean,
     ): Boolean = hasAnnotation(classId)
 
-    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
+    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
         if (classId in annotationsToIgnore) return@withValidityAssertion emptyList()
 
         fe10Annotations.mapIndexedNotNull { index, annotation ->

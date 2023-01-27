@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -23,14 +23,14 @@ internal class KtFirAnnotationListForReceiverParameter private constructor(
     private val useSiteSession: FirSession,
     override val token: KtLifetimeToken,
 ) : KtAnnotationsList() {
-    override val annotations: List<KtAnnotationApplication>
+    override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
             annotations(firCallableSymbol, useSiteSession, receiverParameter)
         }
 
-    override val annotationOverviews: List<KtAnnotationOverview>
+    override val annotationInfos: List<KtAnnotationApplicationInfo>
         get() = withValidityAssertion {
-            annotationOverviews(firCallableSymbol, useSiteSession, receiverParameter)
+            annotationInfos(firCallableSymbol, useSiteSession, receiverParameter)
         }
 
     override fun hasAnnotation(
@@ -45,7 +45,7 @@ internal class KtFirAnnotationListForReceiverParameter private constructor(
         hasAnnotation(firCallableSymbol, classId, useSiteSession, receiverParameter)
     }
 
-    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
+    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
         annotationsByClassId(firCallableSymbol, classId, useSiteSession, receiverParameter)
     }
 

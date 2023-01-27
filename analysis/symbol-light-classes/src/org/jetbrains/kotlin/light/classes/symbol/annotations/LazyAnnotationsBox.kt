@@ -24,9 +24,9 @@ internal class LazyAnnotationsBox(
     override fun annotations(owner: PsiModifierList): Array<PsiAnnotation> {
         annotationsArray.get()?.let { return it }
 
-        val annotations = annotationsProvider.annotationOverviews().mapNotNullTo(SmartList<PsiAnnotation>()) {
-            it.classId?.let { classId ->
-                SymbolLightLazyAnnotation(classId, annotationsProvider, it, owner)
+        val annotations = annotationsProvider.annotationInfos().mapNotNullTo(SmartList<PsiAnnotation>()) { applicationInfo ->
+            applicationInfo.classId?.let { _ ->
+                SymbolLightLazyAnnotation(annotationsProvider, applicationInfo, owner)
             }
         }
 
@@ -73,13 +73,7 @@ internal class LazyAnnotationsBox(
         val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
         val specialAnnotation = if (specialAnnotationClassId != null) {
             val annotationApplication = annotationsProvider[specialAnnotationClassId].firstOrNull() ?: return null
-
-            SymbolLightLazyAnnotation(
-                specialAnnotationClassId,
-                annotationsProvider,
-                annotationApplication,
-                owner,
-            )
+            SymbolLightLazyAnnotation(annotationsProvider, annotationApplication, owner)
         } else if (withAdditionalAnnotations) {
             additionalAnnotationsProvider.findAdditionalAnnotation(this, qualifiedName, owner)
         } else {

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationOverview
+import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
@@ -45,7 +45,7 @@ internal fun annotationsByClassId(
     classId: ClassId,
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KtAnnotationApplication> =
+): List<KtAnnotationApplicationWithArgumentsInfo> =
     if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId)) {
         annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).mapIndexedNotNull { index, annotation ->
             if (annotation.toAnnotationClassIdSafe(useSiteSession) != classId) return@mapIndexedNotNull null
@@ -62,16 +62,17 @@ internal fun annotations(
     firSymbol: FirBasedSymbol<*>,
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KtAnnotationApplication> = annotationContainer.resolvedAnnotationsWithArguments(firSymbol).mapIndexed { index, annotation ->
-    annotation.toKtAnnotationApplication(useSiteSession, index)
-}
+): List<KtAnnotationApplicationWithArgumentsInfo> =
+    annotationContainer.resolvedAnnotationsWithArguments(firSymbol).mapIndexed { index, annotation ->
+        annotation.toKtAnnotationApplication(useSiteSession, index)
+    }
 
-internal fun annotationOverviews(
+internal fun annotationInfos(
     firSymbol: FirBasedSymbol<*>,
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): List<KtAnnotationOverview> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapIndexed { index, annotation ->
-    annotation.toKtAnnotationOverview(useSiteSession, index)
+): List<KtAnnotationApplicationInfo> = annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).mapIndexed { index, annotation ->
+    annotation.toKtAnnotationInfo(useSiteSession, index)
 }
 
 internal fun annotationClassIds(

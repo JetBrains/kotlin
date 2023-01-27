@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -14,11 +14,9 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 
 class KtEmptyAnnotationsList(override val token: KtLifetimeToken) : KtAnnotationsList() {
-    override val annotations: List<KtAnnotationApplication>
-        get() = withValidityAssertion { emptyList() }
+    override val annotations: List<KtAnnotationApplicationWithArgumentsInfo> get() = withValidityAssertion { emptyList() }
 
-    override val annotationOverviews: List<KtAnnotationOverview>
-        get() = withValidityAssertion { emptyList() }
+    override val annotationInfos: List<KtAnnotationApplicationInfo> get() = withValidityAssertion { emptyList() }
 
     override fun hasAnnotation(
         classId: ClassId,
@@ -28,9 +26,9 @@ class KtEmptyAnnotationsList(override val token: KtLifetimeToken) : KtAnnotation
 
     override fun hasAnnotation(classId: ClassId): Boolean = withValidityAssertion { false }
 
-    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> =
-        withValidityAssertion { emptyList() }
+    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
+        emptyList()
+    }
 
-    override val annotationClassIds: Collection<ClassId>
-        get() = withValidityAssertion { emptyList() }
+    override val annotationClassIds: Collection<ClassId> get() = withValidityAssertion { emptyList() }
 }

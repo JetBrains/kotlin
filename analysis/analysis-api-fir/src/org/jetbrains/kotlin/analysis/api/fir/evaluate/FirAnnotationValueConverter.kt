@@ -112,7 +112,7 @@ internal object FirAnnotationValueConverter {
                             }
 
                             KtAnnotationApplicationValue(
-                                KtAnnotationApplication(
+                                KtAnnotationApplicationWithArgumentsInfo(
                                     resolvedSymbol.callableId.classId,
                                     psi as? KtCallElement,
                                     useSiteTarget = null,

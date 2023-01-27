@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.analysis.api.contracts.description.KtContractEffectD
 import org.jetbrains.kotlin.analysis.api.contracts.description.renderKtContractEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
-import org.jetbrains.kotlin.analysis.api.types.*
+import org.jetbrains.kotlin.analysis.api.types.KtClassErrorType
+import org.jetbrains.kotlin.analysis.api.types.KtClassTypeQualifier
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
+import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
@@ -246,11 +249,15 @@ public class DebugSymbolRenderer(
     private fun PrettyPrinter.renderAnnotationApplication(call: KtAnnotationApplication) {
         renderValue(call.classId, renderSymbolsFully = false)
         append('(')
-        call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
-            if (index > 0) {
-                append(", ")
+        if (call is KtAnnotationApplicationWithArgumentsInfo) {
+            call.arguments.sortedBy { it.name }.forEachIndexed { index, value ->
+                if (index > 0) {
+                    append(", ")
+                }
+                renderValue(value, renderSymbolsFully = false)
             }
-            renderValue(value, renderSymbolsFully = false)
+        } else {
+            append("isCallWithArguments=${call.isCallWithArguments}")
         }
         append(')')
 

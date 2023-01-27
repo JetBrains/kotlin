@@ -24,13 +24,13 @@ internal class SymbolAnnotationsProvider<T : KtAnnotatedSymbol>(
     private inline fun <T> withAnnotatedSymbol(crossinline action: context(KtAnalysisSession) (KtAnnotatedSymbol) -> T): T =
         annotatedSymbolPointer.withSymbol(ktModule, action)
 
-    override fun annotationOverviews(): List<KtAnnotationOverview> = withAnnotatedSymbol { annotatedSymbol ->
-        annotatedSymbol.annotationOverviews.filter {
+    override fun annotationInfos(): List<KtAnnotationApplicationInfo> = withAnnotatedSymbol { annotatedSymbol ->
+        annotatedSymbol.annotationInfos.filter {
             it.useSiteTarget == annotationUseSiteTarget || acceptAnnotationsWithoutSite && it.useSiteTarget == null
         }
     }
 
-    override fun get(classId: ClassId): Collection<KtAnnotationApplication> = withAnnotatedSymbol { annotatedSymbol ->
+    override fun get(classId: ClassId): Collection<KtAnnotationApplicationWithArgumentsInfo> = withAnnotatedSymbol { annotatedSymbol ->
         annotatedSymbol.annotationsByClassId(classId).filter {
             it.useSiteTarget == annotationUseSiteTarget || acceptAnnotationsWithoutSite && it.useSiteTarget == null
         }

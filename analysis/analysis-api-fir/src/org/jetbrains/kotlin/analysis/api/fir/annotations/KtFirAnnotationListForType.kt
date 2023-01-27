@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationOverview
+import org.jetbrains.kotlin.analysis.api.fir.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -31,17 +31,17 @@ internal class KtFirAnnotationListForType private constructor(
     private val useSiteSession: FirSession,
     override val token: KtLifetimeToken,
 ) : KtAnnotationsList() {
-    override val annotations: List<KtAnnotationApplication>
+    override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
             coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).mapIndexed { index, annotation ->
                 annotation.toKtAnnotationApplication(useSiteSession, index)
             }
         }
 
-    override val annotationOverviews: List<KtAnnotationOverview>
+    override val annotationInfos: List<KtAnnotationApplicationInfo>
         get() = withValidityAssertion {
             coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).mapIndexed { index, annotation ->
-                annotation.toKtAnnotationOverview(useSiteSession, index)
+                annotation.toKtAnnotationInfo(useSiteSession, index)
             }
         }
 
@@ -60,7 +60,7 @@ internal class KtFirAnnotationListForType private constructor(
         coneType.customAnnotationsWithLazyResolve(FirResolvePhase.TYPES).hasAnnotation(classId, useSiteSession)
     }
 
-    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplication> = withValidityAssertion {
+    override fun annotationsByClassId(classId: ClassId): List<KtAnnotationApplicationWithArgumentsInfo> = withValidityAssertion {
         coneType.customAnnotationsWithLazyResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING).mapIndexedNotNull { index, annotation ->
             if (annotation.toAnnotationClassId(useSiteSession) != classId) return@mapIndexedNotNull null
             annotation.toKtAnnotationApplication(useSiteSession, index)

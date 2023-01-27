@@ -16,33 +16,33 @@ import org.jetbrains.kotlin.psi.KtCallElement
  * - For declarations: `@Deprecated("Should not be used") fun foo(){}`
  * - For types: `fun foo(x: List<@A Int>){}`
  */
-public data class KtAnnotationOverview(
+public data class KtAnnotationApplicationInfo(
     /**
      * The [ClassId] of applied annotation. [ClassId] is a fully qualified name on annotation class.
      */
-    public val classId: ClassId?,
+    public override val classId: ClassId?,
 
     /**
-     * PsiElement which was used to apply annotation to declaration/type.
+     * [com.intellij.psi.PsiElement] which was used to apply annotation to declaration/type.
      *
      * Present only for declarations from sources. For declarations from other places (libraries, stdlib) it's `null`
      */
-    public val psi: KtCallElement?,
+    public override val psi: KtCallElement?,
 
     /**
      * [AnnotationUseSiteTarget] to which annotation was applied. May be not-null only for annotation applications for declarations.
      *
      * See in more details in [Kotlin Documentation](https://kotlinlang.org/docs/annotations.html#annotation-use-site-targets) for more information about annotation targets.
      */
-    public val useSiteTarget: AnnotationUseSiteTarget?,
+    public override val useSiteTarget: AnnotationUseSiteTarget?,
 
     /**
      * **true** if the annotation has any arguments
      */
-    public val hasArguments: Boolean,
+    public override val isCallWithArguments: Boolean,
 
     /**
      * An index of the annotation in an owner
      */
-    public val index: Int,
-)
+    public override val index: Int,
+) : KtAnnotationApplication

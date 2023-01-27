@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir
 
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplication
-import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationOverview
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -71,7 +71,7 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
 internal fun FirAnnotation.toKtAnnotationApplication(
     useSiteSession: FirSession,
     index: Int,
-): KtAnnotationApplication = KtAnnotationApplication(
+): KtAnnotationApplicationWithArgumentsInfo = KtAnnotationApplicationWithArgumentsInfo(
     classId = toAnnotationClassId(useSiteSession),
     psi = psi as? KtCallElement,
     useSiteTarget = useSiteTarget,
@@ -82,10 +82,13 @@ internal fun FirAnnotation.toKtAnnotationApplication(
     index = index,
 )
 
-internal fun FirAnnotation.toKtAnnotationOverview(useSiteSession: FirSession, index: Int): KtAnnotationOverview = KtAnnotationOverview(
+internal fun FirAnnotation.toKtAnnotationInfo(
+    useSiteSession: FirSession,
+    index: Int,
+): KtAnnotationApplicationInfo = KtAnnotationApplicationInfo(
     classId = toAnnotationClassId(useSiteSession),
     psi = psi as? KtCallElement,
     useSiteTarget = useSiteTarget,
-    hasArguments = this is FirAnnotationCall && arguments.isNotEmpty(),
+    isCallWithArguments = this is FirAnnotationCall && arguments.isNotEmpty(),
     index = index,
 )
