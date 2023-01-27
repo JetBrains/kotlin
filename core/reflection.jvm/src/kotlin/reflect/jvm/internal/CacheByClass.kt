@@ -5,6 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import java.lang.ref.SoftReference
 import java.util.concurrent.ConcurrentHashMap
 
 /*
@@ -26,7 +27,7 @@ internal abstract class CacheByClass<V> {
 }
 
 /**
- * Creates a **strongly referenced** cache of values associated with [Class].
+ * Creates a **softly referenced** cache of values associated with [Class].
  * Values are computed using provided [compute] function.
  *
  * `null` values are not supported, though there aren't any technical limitations.
@@ -35,25 +36,46 @@ internal fun <V : Any> createCache(compute: (Class<*>) -> V): CacheByClass<V> {
     return if (useClassValue) ClassValueCache(compute) else ConcurrentHashMapCache(compute)
 }
 
-private class ClassValueCache<V>(private val compute: (Class<*>) -> V) : CacheByClass<V>() {
-
-    @Volatile
-    private var classValue = initClassValue()
-
-    private fun initClassValue() = object : ClassValue<V>() {
-        override fun computeValue(type: Class<*>): V {
-            return compute(type)
-        }
+/*
+ * We can only cache SoftReference instances in our own classvalue to avoid classloader-based leak.
+ *
+ * In short, the following uncollectable cycle is possible otherwise:
+ * ClassValue -> KPackageImpl.getClass() -> UrlClassloader -> all loaded classes by this CL ->
+ *  -> kotlin.reflect.jvm.internal.ClassValueCache -> ClassValue
+ */
+private class ComputableClassValue<V>(@JvmField val compute: (Class<*>) -> V) : ClassValue<SoftReference<V>>() {
+    override fun computeValue(type: Class<*>): SoftReference<V> {
+        return SoftReference(compute(type))
     }
 
-    override fun get(key: Class<*>): V = classValue[key]
+    fun createNewCopy() = ComputableClassValue(compute)
+}
+
+private class ClassValueCache<V>(compute: (Class<*>) -> V) : CacheByClass<V>() {
+
+    @Volatile
+    private var classValue = ComputableClassValue(compute)
+
+    override fun get(key: Class<*>): V {
+        val classValue = classValue
+        classValue[key].get()?.let { return it }
+        // Clean stale value if it was collected at some point
+        classValue.remove(key)
+        /*
+         * Optimistic assumption: the value was invalidated at some point of time,
+         * but now we do not have a memory pressure and can recompute the value
+         */
+        classValue[key].get()?.let { return it }
+        // Assumption failed, do not retry to avoid any non-trivial GC-dependent loops and deliberately create a separate copy
+        return classValue.compute(key)
+    }
 
     override fun clear() {
         /*
          * ClassValue does not have a proper `clear()` method but is properly weak-referenced,
          * thus abandoning ClassValue instance will eventually clear all associated values.
          */
-        classValue = initClassValue()
+        classValue = classValue.createNewCopy()
     }
 }
 
