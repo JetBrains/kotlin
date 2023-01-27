@@ -122,11 +122,17 @@ private fun collectDesignationPathWithContainingClass(target: FirDeclaration, co
             ?: useSiteSession.nullableJavaSymbolProvider?.getClassLikeSymbolByClassId(classId)?.fir
             ?: findKotlinStdlibClass(classId, target)
 
-        check(declaration != null)
-
-        checkWithAttachmentBuilder(declaration is FirRegularClass, { "'FirRegularClass' expected as a containing declaration" }) {
-            withFirEntry("containingClassFir", declaration)
-        }
+        checkWithAttachmentBuilder(
+            declaration is FirRegularClass,
+            message = { "'FirRegularClass' expected as a containing declaration, got '${declaration?.javaClass?.name}'" },
+            buildAttachment = {
+                withEntry("chunk", "$classId in $containingClassId")
+                withFirEntry("target", target)
+                if (declaration != null) {
+                    withFirEntry("foundDeclaration", declaration)
+                }
+            }
+        )
 
         return declaration
     }
