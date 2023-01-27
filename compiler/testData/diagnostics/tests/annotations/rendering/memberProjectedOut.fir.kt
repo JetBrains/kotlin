@@ -11,5 +11,5 @@ class C<T> {
 }
 
 fun test(a: C<out CharSequence>) {
-    a[1] = <!ARGUMENT_TYPE_MISMATCH!>25<!>
+    a[1] = <!ARGUMENT_TYPE_MISMATCH("@R|A|()  CapturedType(out kotlin/CharSequence); kotlin/Int")!>25<!>
 }

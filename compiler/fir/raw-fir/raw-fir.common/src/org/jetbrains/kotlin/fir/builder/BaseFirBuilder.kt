@@ -233,7 +233,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     fun constructorTypeParametersFromConstructedClass(ownerTypeParameters: List<FirTypeParameterRef>): List<FirTypeParameterRef> {
         return ownerTypeParameters.mapNotNull {
             val declaredTypeParameter = (it as? FirTypeParameter) ?: return@mapNotNull null
-            buildConstructedClassTypeParameterRef { symbol = declaredTypeParameter.symbol }
+            buildConstructedClassTypeParameterRef {
+                source = declaredTypeParameter.symbol.source?.fakeElement(KtFakeSourceElementKind.ConstructorTypeParameter)
+                symbol = declaredTypeParameter.symbol
+            }
         }
     }
 

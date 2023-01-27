@@ -70,6 +70,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
             val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in currentModule.directives
             val lightTreeEnabled = currentModule.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.LightTree
+            val forceRenderArguments = FirDiagnosticsDirectives.RENDER_DIAGNOSTICS_MESSAGES in currentModule.directives
 
             for (file in currentModule.files) {
                 val firFile = info.mainFirFiles[file] ?: continue
@@ -84,10 +85,11 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     diagnostics.diagnosticCodeMetaInfos(
                         currentModule, file,
                         diagnosticsService, globalMetadataInfoHandler,
-                        lightTreeEnabled, lightTreeComparingModeEnabled
+                        lightTreeEnabled, lightTreeComparingModeEnabled,
+                        forceRenderArguments,
                     )
                 globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
-                collectSyntaxDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                collectSyntaxDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments)
                 collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
             }
         }
@@ -99,7 +101,8 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         testFile: TestFile,
         firFile: FirFile,
         lightTreeEnabled: Boolean,
-        lightTreeComparingModeEnabled: Boolean
+        lightTreeComparingModeEnabled: Boolean,
+        forceRenderArguments: Boolean,
     ) {
         val metaInfos = if (firFile.psi != null) {
             AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
@@ -109,7 +112,8 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                         testFile,
                         globalMetadataInfoHandler1 = globalMetadataInfoHandler,
                         lightTreeEnabled,
-                        lightTreeComparingModeEnabled
+                        lightTreeComparingModeEnabled,
+                        forceRenderArguments,
                     )
             }
         } else {
@@ -120,7 +124,8 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                         testFile,
                         globalMetadataInfoHandler1 = globalMetadataInfoHandler,
                         lightTreeEnabled,
-                        lightTreeComparingModeEnabled
+                        lightTreeComparingModeEnabled,
+                        forceRenderArguments,
                     )
             }
         }
@@ -323,7 +328,8 @@ fun List<KtDiagnostic>.diagnosticCodeMetaInfos(
     diagnosticsService: DiagnosticsService,
     globalMetadataInfoHandler: GlobalMetadataInfoHandler,
     lightTreeEnabled: Boolean,
-    lightTreeComparingModeEnabled: Boolean
+    lightTreeComparingModeEnabled: Boolean,
+    forceRenderArguments: Boolean = false,
 ): List<FirDiagnosticCodeMetaInfo> = flatMap { diagnostic ->
     if (!diagnosticsService.shouldRenderDiagnostic(
             module,
@@ -339,7 +345,8 @@ fun List<KtDiagnostic>.diagnosticCodeMetaInfos(
         file,
         globalMetadataInfoHandler,
         lightTreeEnabled,
-        lightTreeComparingModeEnabled
+        lightTreeComparingModeEnabled,
+        forceRenderArguments,
     )
 }
 
