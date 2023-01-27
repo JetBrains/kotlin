@@ -15,6 +15,7 @@ internal abstract class KotlinCommonCompilerOptionsDefault @javax.inject.Inject 
     override val languageVersion: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.KotlinVersion> =
         objectFactory.property(org.jetbrains.kotlin.gradle.dsl.KotlinVersion::class.java)
 
+    @Deprecated(message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead", level = DeprecationLevel.WARNING)
     override val useK2: org.gradle.api.provider.Property<kotlin.Boolean> =
         objectFactory.property(kotlin.Boolean::class.java).convention(false)
 
