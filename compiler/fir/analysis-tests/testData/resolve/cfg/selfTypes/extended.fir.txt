@@ -53,3 +53,44 @@ FILE: extended.kt
         }
 
     }
+    @R|kotlin/Self|() public open class SelfClassWithNested<out <Self> : R|SelfClassWithNested<<Self>>|> : R|kotlin/Any| {
+        public constructor<out <Self> : R|SelfClassWithNested<<Self>>|>(): R|SelfClassWithNested<<Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final class NestedClassExtendingOuterSelf : R|SelfClassWithNested<SelfClassWithNested.NestedClassExtendingOuterSelf>| {
+            public constructor(): R|SelfClassWithNested.NestedClassExtendingOuterSelf| {
+                super<R|SelfClassWithNested<SelfClassWithNested.NestedClassExtendingOuterSelf>|>()
+            }
+
+            public final fun foo(): R|SelfClassWithNested.NestedClassExtendingOuterSelf| {
+                ^foo this@R|/SelfClassWithNested.NestedClassExtendingOuterSelf|
+            }
+
+        }
+
+    }
+    public final class OuterClassWithNested : R|kotlin/Any| {
+        public constructor(): R|OuterClassWithNested| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Self|() public open class SelfNested<out <Self> : R|OuterClassWithNested.SelfNested<<Self>>|> : R|kotlin/Any| {
+            public constructor<out <Self> : R|OuterClassWithNested.SelfNested<<Self>>|>(): R|OuterClassWithNested.SelfNested<<Self>>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+        public final class NestedExtendingSelfNested : R|OuterClassWithNested.SelfNested<OuterClassWithNested.NestedExtendingSelfNested>| {
+            public constructor(): R|OuterClassWithNested.NestedExtendingSelfNested| {
+                super<R|OuterClassWithNested.SelfNested<OuterClassWithNested.NestedExtendingSelfNested>|>()
+            }
+
+            public final fun foo(): R|OuterClassWithNested.NestedExtendingSelfNested| {
+                ^foo this@R|/OuterClassWithNested.NestedExtendingSelfNested|
+            }
+
+        }
+
+    }

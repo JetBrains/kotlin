@@ -40,3 +40,25 @@ class ExtendingAbstractClassWithSelf<T> : AbstractClassWithSelf<T, ExtendingAbst
         return this
     }
 }
+
+@Self
+open class SelfClassWithNested {
+    class NestedClassExtendingOuterSelf : SelfClassWithNested<NestedClassExtendingOuterSelf>() {
+        fun foo(): NestedClassExtendingOuterSelf {
+            return this
+        }
+    }
+}
+
+class OuterClassWithNested {
+    @Self
+    open class SelfNested {
+
+    }
+
+    class NestedExtendingSelfNested : SelfNested<NestedExtendingSelfNested>() {
+        fun foo(): NestedExtendingSelfNested {
+            return this
+        }
+    }
+}
