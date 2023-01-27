@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.Name
 
 val FirTypeAlias.expandedConeType: ConeClassLikeType? get() = expandedTypeRef.coneTypeSafe()
 
@@ -45,3 +46,13 @@ val FirDeclaration.isNonLocal
     }
 
 val FirCallableDeclaration.isExtension get() = receiverParameter != null
+
+val FirMemberDeclaration.name: Name
+    get() = when (this) {
+        is FirCallableDeclaration ->
+            this.symbol.callableId.callableName
+        is FirClass ->
+            this.classId.shortClassName
+        is FirTypeAlias ->
+            this.name
+    }

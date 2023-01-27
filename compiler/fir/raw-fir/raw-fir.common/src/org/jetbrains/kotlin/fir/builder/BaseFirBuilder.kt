@@ -102,6 +102,26 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         context.dispatchReceiverTypesStack.add(selfType.type as ConeClassLikeType)
     }
 
+    fun registerCurrentFile(symbol: FirFileSymbol) {
+        context.containingFileSymbol = symbol
+    }
+
+    fun FirCallableDeclaration.initContainingFileAttr() {
+        if (dispatchReceiverType == null) {
+            context.containingFileSymbol?.let { fileSymbol ->
+                containingFileAttr = fileSymbol
+            }
+        }
+    }
+
+    fun FirRegularClass.initContainingFileAttr() {
+        if (symbol.getContainingClassLookupTag() == null) {
+            context.containingFileSymbol?.let { fileSymbol ->
+                containingFileAttr = fileSymbol
+            }
+        }
+    }
+
     protected inline fun <T> withCapturedTypeParameters(
         status: Boolean,
         declarationSource: KtSourceElement? = null,
@@ -235,7 +255,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     fun constructorTypeParametersFromConstructedClass(ownerTypeParameters: List<FirTypeParameterRef>): List<FirTypeParameterRef> {
         return ownerTypeParameters.mapNotNull {
             val declaredTypeParameter = (it as? FirTypeParameter) ?: return@mapNotNull null
-            buildConstructedClassTypeParameterRef { symbol = declaredTypeParameter.symbol }
+            buildConstructedClassTypeParameterRef {
+                source = declaredTypeParameter.symbol.source?.fakeElement(KtFakeSourceElementKind.ConstructorTypeParameter)
+                symbol = declaredTypeParameter.symbol
+            }
         }
     }
 

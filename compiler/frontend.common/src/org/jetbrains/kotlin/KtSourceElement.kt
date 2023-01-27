@@ -45,6 +45,10 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // with a fake source which refers to containing class
     object ImplicitConstructor : KtFakeSourceElementKind()
 
+    // for constructor type parameters, because they refer to the same source
+    // as the class type parameters themselves
+    object ConstructorTypeParameter : KtFakeSourceElementKind()
+
     // for constructors which do not have delegated constructor call the fake one is generated
     // with a fake sources which refers to the original constructor
     object DelegatingConstructorCall : KtFakeSourceElementKind()

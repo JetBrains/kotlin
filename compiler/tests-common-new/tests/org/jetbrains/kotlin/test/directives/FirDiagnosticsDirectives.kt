@@ -40,6 +40,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         description = "Enables light tree parser instead of PSI"
     )
 
+    val RENDER_DIAGNOSTICS_MESSAGES by directive(
+        description = "Forces diagnostic arguments to be rendered"
+    )
+
     val FIR_DISABLE_LAZY_RESOLVE_CHECKS by directive(
         description = "Temporary disables lazy resolve checks until the lazy resolve contract violation is fixed"
     )

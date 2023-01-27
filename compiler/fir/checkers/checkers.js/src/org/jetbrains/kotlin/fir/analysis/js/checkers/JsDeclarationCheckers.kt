@@ -28,6 +28,7 @@ object JsDeclarationCheckers : DeclarationCheckers() {
             FirJsExternalFileChecker,
             FirJsNameChecker,
             FirJsExportAnnotationChecker,
+            FirJsExportDeclarationChecker,
         )
 
     override val classCheckers: Set<FirClassChecker>

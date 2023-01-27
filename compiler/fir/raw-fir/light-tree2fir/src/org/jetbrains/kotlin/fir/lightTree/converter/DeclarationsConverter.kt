@@ -104,7 +104,9 @@ class DeclarationsConverter(
             throw Exception()
         }
 
-        val fileSymbol = FirFileSymbol()
+        val fileSymbol = FirFileSymbol().also {
+            registerCurrentFile(it)
+        }
         var fileAnnotationContainer: FirFileAnnotationsContainer? = null
         val importList = mutableListOf<FirImport>()
         val firDeclarationList = mutableListOf<FirDeclaration>()
@@ -654,6 +656,7 @@ class DeclarationsConverter(
                 it.initContainingClassForLocalAttr()
             }
             fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
+            it.initContainingFileAttr()
         }
     }
 
@@ -1318,6 +1321,7 @@ class DeclarationsConverter(
             contextReceivers.addAll(convertContextReceivers(property))
         }.also {
             fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
+            it.initContainingFileAttr()
         }
     }
 
@@ -1749,6 +1753,7 @@ class DeclarationsConverter(
             if (it is FirSimpleFunction) {
                 fillDanglingConstraintsTo(firTypeParameters, typeConstraints, it)
             }
+            it.initContainingFileAttr()
         }
         return if (function is FirAnonymousFunction) {
             buildAnonymousFunctionExpression {

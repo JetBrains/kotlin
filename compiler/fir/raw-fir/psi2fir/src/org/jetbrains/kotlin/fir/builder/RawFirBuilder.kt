@@ -1026,7 +1026,9 @@ open class RawFirBuilder(
                 BodyBuildingMode.LAZY_BODIES -> file.packageFqName
             }
             return buildFile {
-                symbol = FirFileSymbol()
+                symbol = FirFileSymbol().also {
+                    registerCurrentFile(it)
+                }
                 source = file.toFirSourceElement()
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Source
@@ -1342,6 +1344,7 @@ open class RawFirBuilder(
                     it.initContainingClassForLocalAttr()
                 }
                 classOrObject.fillDanglingConstraintsTo(it)
+                it.initContainingFileAttr()
             }
         }
 
@@ -1506,6 +1509,7 @@ open class RawFirBuilder(
                 if (it is FirSimpleFunction) {
                     function.fillDanglingConstraintsTo(it)
                 }
+                it.initContainingFileAttr()
             }
             return if (firFunction is FirAnonymousFunction) {
                 buildAnonymousFunctionExpression {
@@ -1843,6 +1847,7 @@ open class RawFirBuilder(
                 if (!isLocal) {
                     fillDanglingConstraintsTo(it)
                 }
+                it.initContainingFileAttr()
             }
         }
 

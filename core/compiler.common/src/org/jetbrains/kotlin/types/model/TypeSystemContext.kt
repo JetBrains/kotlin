@@ -458,6 +458,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.isNullableType(): Boolean
 
+    fun KotlinTypeMarker.isAnyOrNullableAny() = this.typeConstructor().isAnyConstructor()
     fun KotlinTypeMarker.isNullableAny() = this.typeConstructor().isAnyConstructor() && this.isNullableType()
     fun KotlinTypeMarker.isNothing() = this.typeConstructor().isNothingConstructor() && !this.isNullableType()
     fun KotlinTypeMarker.isFlexibleNothing() =

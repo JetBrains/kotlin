@@ -4142,6 +4142,25 @@ internal class NestedJsExportImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.NestedJsExport(), KtAbstractFirDiagnostic<KtElement>
 
+internal class WrongExportedDeclarationImpl(
+    override val kind: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.WrongExportedDeclaration(), KtAbstractFirDiagnostic<KtElement>
+
+internal class NonExportableTypeImpl(
+    override val kind: String,
+    override val type: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NonExportableType(), KtAbstractFirDiagnostic<KtElement>
+
+internal class NonConsumableExportedIdentifierImpl(
+    override val name: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.NonConsumableExportedIdentifier(), KtAbstractFirDiagnostic<KtElement>
+
 internal class DelegationByDynamicImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
