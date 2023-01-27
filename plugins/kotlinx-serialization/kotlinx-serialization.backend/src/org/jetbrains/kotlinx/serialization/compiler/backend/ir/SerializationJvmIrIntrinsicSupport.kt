@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIn
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -116,9 +117,21 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
 
     }
 
+    /**
+     * Method for intrinsification `kotlinx.serialization.serializer` is a top-level function.
+     * For the rest of the world, it is located in the facade `kotlinx.serialization.SerializersKt`.
+     * However, when we compile `kotlinx-serialization-core` itself, facade contains only synthetic bridges.
+     * Real function is contained in IR class with `SerializersKt__SerializersKt` name.
+     * (as we have `@file:JvmMultifileClass @file:JvmName("SerializersKt")` on both common Serializers.kt and a platform-specific SerializersJvm.kt files)
+     */
+    private fun IrFunction.isTargetMethod(): Boolean {
+        val fqName = fqNameWhenAvailable?.asString() ?: return false
+        return fqName == "kotlinx.serialization.SerializersKt.serializer" || fqName == "kotlinx.serialization.SerializersKt__SerializersKt.serializer"
+    }
+
     override fun getIntrinsic(symbol: IrFunctionSymbol): IntrinsicMethod? {
         val method = symbol.owner
-        if (method.fqNameWhenAvailable?.asString() != "kotlinx.serialization.SerializersKt.serializer"
+        if (!method.isTargetMethod()
             || method.dispatchReceiverParameter != null
             || method.typeParameters.size != 1
             || method.valueParameters.isNotEmpty()
