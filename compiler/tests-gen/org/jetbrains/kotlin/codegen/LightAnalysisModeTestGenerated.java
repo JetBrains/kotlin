@@ -13830,11 +13830,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/evaluate/intrinsics.kt");
         }
 
-        @TestMetadata("kt55912.kt")
-        public void testKt55912() throws Exception {
-            runTest("compiler/testData/codegen/box/evaluate/kt55912.kt");
-        }
-
         @TestMetadata("kt9443.kt")
         public void testKt9443() throws Exception {
             runTest("compiler/testData/codegen/box/evaluate/kt9443.kt");
@@ -22880,6 +22875,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
 
         public void testAllFilesPresentInInvolvesIrInterpreter() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+
+        @TestMetadata("kt55912.kt")
+        public void testKt55912() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55912.kt");
         }
 
         @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck")
