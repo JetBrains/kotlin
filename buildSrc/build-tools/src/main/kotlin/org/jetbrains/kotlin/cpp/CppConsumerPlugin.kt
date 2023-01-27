@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.cpp
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeDisambiguationRule
 import org.gradle.api.attributes.MultipleCandidatesDetails
 import org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin

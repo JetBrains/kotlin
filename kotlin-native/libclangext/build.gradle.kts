@@ -15,8 +15,6 @@
  */
 import org.jetbrains.gradle.plugins.tools.lib
 import org.jetbrains.kotlin.*
-import org.jetbrains.kotlin.konan.target.Family.*
-import java.io.ByteArrayOutputStream
 
 plugins{
     `native`

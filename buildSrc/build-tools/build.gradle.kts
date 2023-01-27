@@ -7,9 +7,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
 plugins {
-    kotlin
     groovy
-    `kotlin-dsl`
+//    `kotlin-dsl`
     id("org.jetbrains.kotlin.plugin.sam.with.receiver")
 }
 
@@ -18,16 +17,12 @@ buildscript {
 
     apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
     dependencies {
-        classpath(commonDependency("com.google.code.gson:gson"))
+        classpath("com.google.code.gson:gson:2.8.9")
     }
 }
 
-val rootProperties = Properties().apply {
-    project(":kotlin-native").projectDir.resolve("gradle.properties").reader().use(::load)
-}
-
 val kotlinVersion = project.bootstrapKotlinVersion
-val metadataVersion: String by rootProperties
+val metadataVersion = "0.0.1-dev-10"
 
 group = "org.jetbrains.kotlin"
 version = kotlinVersion
@@ -84,4 +79,46 @@ compileKotlin.apply {
 compileGroovy.apply {
     classpath += project.files(compileKotlin.destinationDirectory)
     dependsOn(compileKotlin)
+}
+
+
+gradlePlugin {
+    plugins {
+        create("compileToBitcode") {
+            id = "compile-to-bitcode"
+            implementationClass = "CompileToBitcodePlugin"
+        }
+        create("runtimeTesting") {
+            id = "runtime-testing"
+            implementationClass = "RuntimeTestingPlugin"
+        }
+        create("compilationDatabase") {
+            id = "compilation-database"
+            implementationClass = "CompilationDatabasePlugin"
+        }
+        create("konan") {
+            id = "konan"
+            implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
+        }
+        // We bundle a shaded version of kotlinx-serialization plugin
+        create("kotlinx-serialization-native") {
+            id = "kotlinx-serialization-native"
+            implementationClass = "shadow.org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin"
+        }
+
+        create("org.jetbrains.kotlin.konan") {
+            id = "org.jetbrains.kotlin.konan"
+            implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
+        }
+
+        create("native") {
+            id = "native"
+            implementationClass = "org.jetbrains.gradle.plugins.tools.NativePlugin"
+        }
+
+        create("native-interop-plugin") {
+            id = "native-interop-plugin"
+            implementationClass = "org.jetbrains.kotlin.NativeInteropPlugin"
+        }
+    }
 }

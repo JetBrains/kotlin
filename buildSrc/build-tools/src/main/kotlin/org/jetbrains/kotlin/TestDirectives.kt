@@ -9,7 +9,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.regex.Matcher
 import java.util.regex.Pattern
-import java.io.File
 
 private const val MODULE_DELIMITER = ",\\s*"
 // These patterns are copies from

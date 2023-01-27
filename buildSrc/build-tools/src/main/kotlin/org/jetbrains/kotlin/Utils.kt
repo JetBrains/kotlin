@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.konan.properties.saveProperties
 import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 import java.util.concurrent.TimeUnit
-import java.net.HttpURLConnection
-import java.net.URL
 import java.nio.file.Path
 import org.jetbrains.kotlin.konan.file.File as KFile
 import org.gradle.api.tasks.TaskProvider

@@ -13,7 +13,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
-import org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin
 import org.jetbrains.kotlin.resolve
 import java.io.File
 import java.net.URL
