@@ -1,0 +1,37 @@
+FILE: extended.kt
+    @R|kotlin/Self|() public abstract interface SelfTypeParameterInterface<out <Self> : R|SelfTypeParameterInterface<<Self>>|> : R|kotlin/Any| {
+    }
+    @R|kotlin/Self|() public final class SelfTypeAsTypeParameterInExtends<out <Self> : R|SelfTypeAsTypeParameterInExtends<<Self>>|> : R|SelfTypeParameterInterface<<Self>>| {
+        public constructor<out <Self> : R|SelfTypeAsTypeParameterInExtends<<Self>>|>(): R|SelfTypeAsTypeParameterInExtends<<Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun returnType(): R|<Self>| {
+            ^returnType (this@R|/SelfTypeAsTypeParameterInExtends| as R|<Self>|)
+        }
+
+    }
+    @R|kotlin/Self|() public final class SelfTypeWithSelfFunction<out <Self> : R|SelfTypeWithSelfFunction<<Self>>|> : R|kotlin/Any| {
+        public constructor<out <Self> : R|SelfTypeWithSelfFunction<<Self>>|>(): R|SelfTypeWithSelfFunction<<Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun Self(): R|<Self>| {
+            ^Self (this@R|/SelfTypeWithSelfFunction| as R|<Self>|)
+        }
+
+    }
+    public abstract interface ClassWithTypeParameter<out T> : R|kotlin/Any| {
+        public abstract fun foo(): R|T|
+
+    }
+    @R|kotlin/Self|() public final class ClassExtendingInterfaceWithTypeParameter<out <Self> : R|ClassExtendingInterfaceWithTypeParameter<<Self>>|> : R|ClassWithTypeParameter<<Self>>| {
+        public constructor<out <Self> : R|ClassExtendingInterfaceWithTypeParameter<<Self>>|>(): R|ClassExtendingInterfaceWithTypeParameter<<Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open override fun foo(): R|<Self>| {
+            ^foo (this@R|/ClassExtendingInterfaceWithTypeParameter| as R|<Self>|)
+        }
+
+    }

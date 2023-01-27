@@ -1,0 +1,98 @@
+FILE: innerAndNested.kt
+    public final class InnerClass : R|kotlin/Any| {
+        public constructor(): R|InnerClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Self|() public final inner class Inner<out <Self> : R|InnerClass.Inner<<Self>>|> : R|kotlin/Any| {
+            public InnerClass.constructor<out <Self> : R|InnerClass.Inner<<Self>>|>(): R|InnerClass.Inner<<Self>>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun returnType(): R|<Self>| {
+                ^returnType (this@R|/InnerClass.Inner| as R|<Self>|)
+            }
+
+        }
+
+    }
+    public final class NestedClass : R|kotlin/Any| {
+        public constructor(): R|NestedClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Self|() public final class Nested<out <Self> : R|NestedClass.Nested<<Self>>|> : R|kotlin/Any| {
+            public constructor<out <Self> : R|NestedClass.Nested<<Self>>|>(): R|NestedClass.Nested<<Self>>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun returnType(): R|<Self>| {
+                ^returnType (this@R|/NestedClass.Nested| as R|<Self>|)
+            }
+
+        }
+
+    }
+    @R|kotlin/Self|() public final class InnerSelfClass<out <Self> : R|InnerSelfClass<<Self>>|> : R|kotlin/Any| {
+        public constructor<out <Self> : R|InnerSelfClass<<Self>>|>(): R|InnerSelfClass<<Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Self : R|kotlin/Any| {
+            public InnerSelfClass.constructor(): R|InnerSelfClass.Self| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun returnSelf(): R|InnerSelfClass.Self| {
+                ^returnSelf this@R|/InnerSelfClass.Self|
+            }
+
+        }
+
+        public final fun returnType(): R|<Self>| {
+            ^returnType (this@R|/InnerSelfClass| as R|<Self>|)
+        }
+
+        public final fun returnSelfClassType(): R|InnerSelfClass.Self| {
+            ^returnSelfClassType R|/InnerSelfClass.InnerSelfClass|<R|InnerSelfClass<*>|>().R|/InnerSelfClass.Self.Self|()
+        }
+
+    }
+    public final class InnerClassWithSelfAnnotation<S : R|InnerClassWithSelfAnnotation<S>|> : R|kotlin/Any| {
+        public constructor<S : R|InnerClassWithSelfAnnotation<S>|>(): R|InnerClassWithSelfAnnotation<S>| {
+            super<R|kotlin/Any|>()
+        }
+
+        @R|kotlin/Self|() public final inner class SelfAnnotated<S : R|InnerClassWithSelfAnnotation<S>|, out <Self> : R|InnerClassWithSelfAnnotation.SelfAnnotated<S, <Self>>|> : R|kotlin/Any| {
+            public InnerClassWithSelfAnnotation<S>.constructor<out <Self> : R|InnerClassWithSelfAnnotation.SelfAnnotated<S, <Self>>|>(): R|InnerClassWithSelfAnnotation.SelfAnnotated<S, <Self>>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun returnType(): R|<Self>| {
+                ^returnType (this@R|/InnerClassWithSelfAnnotation.SelfAnnotated| as R|<Self>|)
+            }
+
+        }
+
+        @R|kotlin/Suppress|(names = vararg(String(UNCHECKED_CAST))) public final fun returnType(): R|S| {
+            ^returnType (this@R|/InnerClassWithSelfAnnotation| as R|S|)
+        }
+
+    }
+    @R|kotlin/Self|() public final class QualifiedThisClass<out <Self> : R|QualifiedThisClass<<Self>>|> : R|kotlin/Any| {
+        public constructor<out <Self> : R|QualifiedThisClass<<Self>>|>(): R|QualifiedThisClass<<Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner : R|kotlin/Any| {
+            public QualifiedThisClass.constructor(): R|QualifiedThisClass.Inner| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|<Self>| {
+                ^foo (this@R|/QualifiedThisClass| as R|<Self>|)
+            }
+
+        }
+
+    }

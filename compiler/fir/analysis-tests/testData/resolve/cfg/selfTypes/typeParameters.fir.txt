@@ -1,0 +1,31 @@
+FILE: typeParameters.kt
+    @R|kotlin/Self|() public final class ReturnTypeWithTypeParameter<T, out <Self> : R|ReturnTypeWithTypeParameter<T, <Self>>|> : R|kotlin/Any| {
+        public constructor<T, out <Self> : R|ReturnTypeWithTypeParameter<T, <Self>>|>(): R|ReturnTypeWithTypeParameter<T, <Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun returnType(): R|<Self>| {
+            ^returnType (this@R|/ReturnTypeWithTypeParameter| as R|<Self>|)
+        }
+
+        public final fun functionWithImplicitConstructor(): R|<Self>| {
+            lval s: R|ReturnTypeWithTypeParameter<kotlin/Int, ReturnTypeWithTypeParameter<kotlin/Int, *>>| = R|/ReturnTypeWithTypeParameter.ReturnTypeWithTypeParameter|<R|kotlin/Int|, R|ReturnTypeWithTypeParameter<kotlin/Int, *>|>()
+            ^functionWithImplicitConstructor (this@R|/ReturnTypeWithTypeParameter| as R|<Self>|)
+        }
+
+        public final fun functionWithManualConstructor(): R|<Self>| {
+            lval s: R|ReturnTypeWithTypeParameter<kotlin/Int, ReturnTypeWithTypeParameter<kotlin/Int, *>>| = R|/ReturnTypeWithTypeParameter.ReturnTypeWithTypeParameter|<R|kotlin/Int|, R|ReturnTypeWithTypeParameter<kotlin/Int, *>|>()
+            ^functionWithManualConstructor (this@R|/ReturnTypeWithTypeParameter| as R|<Self>|)
+        }
+
+    }
+    @R|kotlin/Self|() public final class ReturnTypeWithMultipleTypeParameters<T, A, F, out <Self> : R|ReturnTypeWithMultipleTypeParameters<T, A, F, <Self>>|> : R|kotlin/Any| {
+        public constructor<T, A, F, out <Self> : R|ReturnTypeWithMultipleTypeParameters<T, A, F, <Self>>|>(): R|ReturnTypeWithMultipleTypeParameters<T, A, F, <Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun returnType(): R|<Self>| {
+            ^returnType (this@R|/ReturnTypeWithMultipleTypeParameters| as R|<Self>|)
+        }
+
+    }

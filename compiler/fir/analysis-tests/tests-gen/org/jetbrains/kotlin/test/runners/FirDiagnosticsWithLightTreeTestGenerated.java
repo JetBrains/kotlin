@@ -1278,12 +1278,6 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
-            @TestMetadata("selfTypes.kt")
-            public void testSelfTypes() throws Exception {
-                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes.kt");
-            }
-
-            @Test
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/cfg/simple.kt");
@@ -1305,6 +1299,46 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             @TestMetadata("when.kt")
             public void testWhen() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/cfg/when.kt");
+            }
+
+            @Nested
+            @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes")
+            @TestDataPath("$PROJECT_ROOT")
+            public class SelfTypes {
+                @Test
+                public void testAllFilesPresentInSelfTypes() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+                }
+
+                @Test
+                @TestMetadata("basic.kt")
+                public void testBasic() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes/basic.kt");
+                }
+
+                @Test
+                @TestMetadata("extended.kt")
+                public void testExtended() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes/extended.kt");
+                }
+
+                @Test
+                @TestMetadata("innerAndNested.kt")
+                public void testInnerAndNested() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes/innerAndNested.kt");
+                }
+
+                @Test
+                @TestMetadata("typeParameters.kt")
+                public void testTypeParameters() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes/typeParameters.kt");
+                }
+
+                @Test
+                @TestMetadata("typealias.kt")
+                public void testTypealias() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes/typealias.kt");
+                }
             }
         }
 

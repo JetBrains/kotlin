@@ -1104,11 +1104,6 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/safeCalls.kt");
         }
 
-        @TestMetadata("selfTypes.kt")
-        public void testSelfTypes() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes.kt");
-        }
-
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/simple.kt");
@@ -1127,6 +1122,44 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("when.kt")
         public void testWhen() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/cfg/when.kt");
+        }
+
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class SelfTypes extends AbstractLazyBodyIsNotTouchedTilContractsPhaseTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInSelfTypes() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("basic.kt")
+            public void testBasic() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes/basic.kt");
+            }
+
+            @TestMetadata("extended.kt")
+            public void testExtended() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes/extended.kt");
+            }
+
+            @TestMetadata("innerAndNested.kt")
+            public void testInnerAndNested() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes/innerAndNested.kt");
+            }
+
+            @TestMetadata("typeParameters.kt")
+            public void testTypeParameters() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes/typeParameters.kt");
+            }
+
+            @TestMetadata("typealias.kt")
+            public void testTypealias() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/cfg/selfTypes/typealias.kt");
+            }
         }
     }
 
