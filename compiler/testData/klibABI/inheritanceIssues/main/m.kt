@@ -14,16 +14,19 @@ fun box() = abiTest {
     expectFailure(linkage("Constructor '<init>' can not be called: Constructor has invalid delegation: A call of a constructor of direct super class 'InterfaceToAbstractClass' is expected instead of 'Any.<init>'")) { getInterfaceToAbstractClassInline() }
     expectFailure(linkage("Constructor '<init>' can not be called: Constructor has invalid delegation: A call of a constructor of direct super class 'InterfaceToAbstractClass' is expected instead of 'Any.<init>'")) { getInterfaceToAbstractClassAsAny() }
     expectFailure(linkage("Constructor '<init>' can not be called: Constructor has invalid delegation: A call of a constructor of direct super class 'InterfaceToAbstractClass' is expected instead of 'Any.<init>'")) { getInterfaceToAbstractClassAsAnyInline() }
+    expectFailure(linkage("Constructor 'Local.<init>' can not be called: Constructor has invalid delegation: A call of a constructor of direct super class 'InterfaceToAbstractClass' is expected instead of 'Any.<init>'")) { getInterfaceToAbstractClassAsAny2() }
 
     expectFailure(linkage("Constructor '<init>' can not be called: Constructor has invalid delegation: A call of a constructor of direct super class 'InterfaceToOpenClass' is expected instead of 'Any.<init>'")) { getInterfaceToOpenClass() }
     expectFailure(linkage("Constructor '<init>' can not be called: Constructor has invalid delegation: A call of a constructor of direct super class 'InterfaceToOpenClass' is expected instead of 'Any.<init>'")) { getInterfaceToOpenClassInline() }
     expectFailure(linkage("Constructor '<init>' can not be called: Constructor has invalid delegation: A call of a constructor of direct super class 'InterfaceToOpenClass' is expected instead of 'Any.<init>'")) { getInterfaceToOpenClassAsAny() }
     expectFailure(linkage("Constructor '<init>' can not be called: Constructor has invalid delegation: A call of a constructor of direct super class 'InterfaceToOpenClass' is expected instead of 'Any.<init>'")) { getInterfaceToOpenClassAsAnyInline() }
+    expectFailure(linkage("Constructor 'Local.<init>' can not be called: Constructor has invalid delegation: A call of a constructor of direct super class 'InterfaceToOpenClass' is expected instead of 'Any.<init>'")) { getInterfaceToOpenClassAsAny2() }
 
     expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClass() }
     expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassInline() }
     expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassAsAny() }
     expectFailure(linkage("Constructor '<init>' can not be called: Anonymous object inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassAsAnyInline() }
+    expectFailure(linkage("Constructor 'Local.<init>' can not be called: Class 'Local' inherits from final class 'InterfaceToFinalClass'")) { getInterfaceToFinalClassAsAny2() }
 
     expectFailure(linkage("Function 'getInterfaceToAbstractClassImpl' can not be called: Function uses class 'InterfaceToAbstractClassImpl' that has invalid constructor delegation: A call of a constructor of direct super class 'InterfaceToAbstractClass' is expected instead of 'Any.<init>'")) { getInterfaceToAbstractClassImpl() }
     expectFailure(linkage("Function 'getInterfaceToAbstractClassImplInline' can not be called: Function uses class 'InterfaceToAbstractClassImpl' that has invalid constructor delegation: A call of a constructor of direct super class 'InterfaceToAbstractClass' is expected instead of 'Any.<init>'")) { getInterfaceToAbstractClassImplInline() }

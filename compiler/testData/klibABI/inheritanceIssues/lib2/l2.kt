@@ -2,16 +2,19 @@ fun getInterfaceToAbstractClass() = object : InterfaceToAbstractClass {}
 inline fun getInterfaceToAbstractClassInline() = object : InterfaceToAbstractClass {}
 fun getInterfaceToAbstractClassAsAny(): Any = object : InterfaceToAbstractClass {}
 inline fun getInterfaceToAbstractClassAsAnyInline(): Any = object : InterfaceToAbstractClass {}
+fun getInterfaceToAbstractClassAsAny2(): Any { class Local : InterfaceToAbstractClass; return Local() }
 
 fun getInterfaceToOpenClass() = object : InterfaceToOpenClass {}
 inline fun getInterfaceToOpenClassInline() = object : InterfaceToOpenClass {}
 fun getInterfaceToOpenClassAsAny(): Any = object : InterfaceToOpenClass {}
 inline fun getInterfaceToOpenClassAsAnyInline(): Any = object : InterfaceToOpenClass {}
+fun getInterfaceToOpenClassAsAny2(): Any { class Local : InterfaceToOpenClass; return Local() }
 
 fun getInterfaceToFinalClass() = object : InterfaceToFinalClass {}
 inline fun getInterfaceToFinalClassInline() = object : InterfaceToFinalClass {}
 fun getInterfaceToFinalClassAsAny(): Any = object : InterfaceToFinalClass {}
 inline fun getInterfaceToFinalClassAsAnyInline(): Any = object : InterfaceToFinalClass {}
+fun getInterfaceToFinalClassAsAny2(): Any { class Local : InterfaceToFinalClass; return Local() }
 
 open class InterfaceToAbstractClassImpl : InterfaceToAbstractClass
 class InterfaceToAbstractClassImpl2 : InterfaceToAbstractClassImpl()
