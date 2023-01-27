@@ -51,3 +51,13 @@ FILE: basic.kt
         }
 
     }
+    @R|kotlin/Self|() public final class SelfWithFunctionReturningItselfAndTypeParameter<T, out <Self> : R|SelfWithFunctionReturningItselfAndTypeParameter<T, <Self>>|> : R|kotlin/Any| {
+        public constructor<T, out <Self> : R|SelfWithFunctionReturningItselfAndTypeParameter<T, <Self>>|>(): R|SelfWithFunctionReturningItselfAndTypeParameter<T, <Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun ret(): R|SelfWithFunctionReturningItselfAndTypeParameter<T, *>| {
+            ^ret this@R|/SelfWithFunctionReturningItselfAndTypeParameter|
+        }
+
+    }

@@ -35,3 +35,10 @@ class SelfWithFunctionReturningItself {
         return this
     }
 }
+
+@Self
+class SelfWithFunctionReturningItselfAndTypeParameter<T> {
+    fun ret(): SelfWithFunctionReturningItselfAndTypeParameter<T> {
+        return this
+    }
+}
