@@ -6,6 +6,7 @@
 #include <cstdint>
 #include <random>
 
+#include "CustomAllocConstants.hpp"
 #include "CustomAllocator.hpp"
 #include "GCScheduler.hpp"
 #include "Memory.h"
@@ -52,6 +53,32 @@ TEST(CustomAllocTest, SmallAllocSameSmallPage) {
             uint64_t dist = abs(obj - first);
             EXPECT_TRUE(dist < SMALL_PAGE_SIZE);
         }
+    }
+}
+
+TEST(CustomAllocTest, SmallPageThreshold) {
+    Heap heap;
+    kotlin::gc::GCSchedulerConfig config;
+    kotlin::gc::GCSchedulerThreadData schedulerData(config, [](auto&) {});
+    CustomAllocator ca(heap, schedulerData);
+    const int FROM = SMALL_PAGE_MAX_BLOCK_SIZE - 10;
+    const int TO = SMALL_PAGE_MAX_BLOCK_SIZE + 10;
+    for (int blocks = FROM; blocks <= TO; ++blocks) {
+        TypeInfo fakeType = {.instanceSize_ = 8 * blocks, .flags_ = 0};
+        ca.CreateObject(&fakeType);
+    }
+}
+
+TEST(CustomAllocTest, MediumPageThreshold) {
+    Heap heap;
+    kotlin::gc::GCSchedulerConfig config;
+    kotlin::gc::GCSchedulerThreadData schedulerData(config, [](auto&) {});
+    CustomAllocator ca(heap, schedulerData);
+    const int FROM = MEDIUM_PAGE_MAX_BLOCK_SIZE - 10;
+    const int TO = MEDIUM_PAGE_MAX_BLOCK_SIZE + 10;
+    for (int blocks = FROM; blocks <= TO; ++blocks) {
+        TypeInfo fakeType = {.instanceSize_ = 8 * blocks, .flags_ = 0};
+        ca.CreateObject(&fakeType);
     }
 }
 

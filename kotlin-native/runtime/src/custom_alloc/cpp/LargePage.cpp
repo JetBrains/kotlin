@@ -16,7 +16,7 @@ namespace kotlin::alloc {
 
 LargePage* LargePage::Create(uint64_t cellCount) noexcept {
     CustomAllocInfo("LargePage::Create(%" PRIu64 ")", cellCount);
-    RuntimeAssert(cellCount > LARGE_PAGE_SIZE_THRESHOLD, "blockSize too small for large page");
+    RuntimeAssert(cellCount > MEDIUM_PAGE_MAX_BLOCK_SIZE, "blockSize too small for large page");
     uint64_t size = sizeof(LargePage) + cellCount * sizeof(uint64_t);
     return new (SafeAlloc(size)) LargePage();
 }

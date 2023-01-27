@@ -24,7 +24,8 @@ inline constexpr const size_t MEDIUM_PAGE_SIZE = (256 * KiB);
 inline constexpr const size_t MEDIUM_PAGE_CELL_COUNT =
         ((MEDIUM_PAGE_SIZE - sizeof(kotlin::alloc::MediumPage)) / sizeof(kotlin::alloc::Cell));
 
-inline constexpr const size_t LARGE_PAGE_SIZE_THRESHOLD = (MEDIUM_PAGE_CELL_COUNT - 1);
+// MEDIUM_PAGE_CELL_COUNT minus one cell for header minus another for the 0-sized dummy block at cells_[0]
+inline constexpr const size_t MEDIUM_PAGE_MAX_BLOCK_SIZE = (MEDIUM_PAGE_CELL_COUNT - 2);
 
 inline constexpr const size_t EXTRA_OBJECT_PAGE_SIZE = 64 * KiB;
 inline constexpr const int EXTRA_OBJECT_COUNT =

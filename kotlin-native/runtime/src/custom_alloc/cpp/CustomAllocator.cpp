@@ -12,6 +12,7 @@
 #include <new>
 
 #include "ConcurrentMarkAndSweep.hpp"
+#include "CustomAllocConstants.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
@@ -126,7 +127,7 @@ uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     uint8_t* ptr;
     if (cellCount <= SMALL_PAGE_MAX_BLOCK_SIZE) {
         ptr = AllocateInSmallPage(cellCount);
-    } else if (cellCount > LARGE_PAGE_SIZE_THRESHOLD) {
+    } else if (cellCount > MEDIUM_PAGE_MAX_BLOCK_SIZE) {
         ptr = AllocateInLargePage(cellCount);
     } else {
         ptr = AllocateInMediumPage(cellCount);
