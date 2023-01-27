@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.junit.jupiter.api.Assumptions
 import org.junit.jupiter.api.Tag
 import java.io.File
 
@@ -23,6 +24,7 @@ abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testPath: String) {
         val testPathFull = getAbsoluteFile(testPath)
+        muteTestIfNecessary(testPathFull)
 
         val testCase: TestCase = generateTestCaseWithSingleSource(testPathFull, listOf())
         val testCompilationResult: TestCompilationResult.Success<out KLIB> = compileToLibrary(testCase)

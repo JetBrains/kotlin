@@ -1,0 +1,7 @@
+    class A constructor() {
+        @Ann val @receiver:Ann Int.bar: Int
+        @Ann fun @receiver:Ann Int.foo(@Ann arg: Int): Int
+    }
+    annotation class Ann constructor() : Annotation
+    @Ann val @receiver:Ann Int.bar: Int
+    @Ann fun @receiver:Ann Int.foo(@Ann arg: Int): Int

@@ -1,0 +1,15 @@
+    @anno(x = "top level class") class C1 @anno(x = "constructor") constructor() {
+        @anno(x = "member property") val p3: Nothing?
+        @anno(x = "member extension property") val Int.v4: Int
+        @anno(x = "member function") fun f3(@anno(x = "member function parameter") p: Int)
+        @anno(x = "member extension function") fun String.f4()
+        @anno(x = "nested class") class C2 constructor()
+        @anno(x = "companion object") companion object
+    }
+    annotation class anno constructor(x: String) : Annotation {
+        val x: String
+    }
+    @anno(x = "top level function") fun f1(@anno(x = "top level function parameter") p: Int)
+    @anno(x = "extension function") fun Long.f2(@anno(x = "extension function parameter") p: Int)
+    @anno(x = "top level property") val p1: Nothing?
+    @anno(x = "extension property") val Double.p2: Double

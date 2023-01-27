@@ -1,0 +1,9 @@
+    annotation class AnnotationArray constructor(annotationArray: Array<JustAnnotation>) : Annotation {
+        val annotationArray: Array<JustAnnotation>
+    }
+    @JustAnnotation(annotation = Empty) @AnnotationArray(annotationArray = {}) class C1 constructor()
+    @AnnotationArray(annotationArray = {JustAnnotation(annotation = Empty), JustAnnotation(annotation = Empty)}) class C2 constructor()
+    annotation class Empty constructor() : Annotation
+    annotation class JustAnnotation constructor(annotation: Empty) : Annotation {
+        val annotation: Empty
+    }

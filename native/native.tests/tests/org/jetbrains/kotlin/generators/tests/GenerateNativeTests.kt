@@ -105,7 +105,7 @@ fun main() {
             testClass<AbstractNativeKlibContentsTest>(
                 suiteTestClassName = "NativeK1LibContentsTestGenerated"
             ) {
-                model("klibContents", pattern = "^([^_](.+)).kt$", recursive = false)
+                model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
@@ -113,7 +113,7 @@ fun main() {
                 suiteTestClassName = "NativeK2LibContentsTestGenerated",
                 annotations = listOf(provider<K2Pipeline>())
             ) {
-                model("klibContents", pattern = "^([^_](.+)).kt$", recursive = false)
+                model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 

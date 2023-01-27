@@ -133,6 +133,13 @@ internal object TestDirectives : SimpleDirectivesContainer() {
             Specify a filename containing the LLDB commands and the patterns that
              the output should match""".trimIndent(),
     )
+
+    // TODO "MUTED_WHEN" directive should be supported not only in AbstractNativeSimpleTest, but also in other hierarchies
+    val MUTED_WHEN by enumDirective<MutedOption>(
+        description = """
+        Usage: // MUTED_WHEN: [K1, K2]
+        In native simple tests, specify the pipeline types to mute the test""".trimIndent(),
+    )
 }
 
 internal enum class TestKind {
@@ -146,6 +153,11 @@ internal enum class TestRunnerType {
     DEFAULT,
     WORKER,
     NO_EXIT
+}
+
+internal enum class MutedOption {
+    K1,
+    K2
 }
 
 internal class TestCompilerArgs(val compilerArgs: List<String>) {

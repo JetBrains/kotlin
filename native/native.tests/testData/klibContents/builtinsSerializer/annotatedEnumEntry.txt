@@ -1,0 +1,11 @@
+    annotation class Anno constructor(value: String = ..., x: Int = ...) : Annotation {
+        val value: String
+        val x: Int
+    }
+    annotation class Bnno constructor() : Annotation
+    enum class Eee private constructor() : Enum<Eee> {
+        @Anno enum entry Entry1
+        enum entry Entry2
+        @Anno(value = "3") @Bnno enum entry Entry3
+        @Anno(value = "4", x = 4) enum entry Entry4
+    }

@@ -1,0 +1,12 @@
+    @PrimitiveArrays(booleanArray = {true, false, true}, byteArray = {-7.toByte(), 7.toByte()}, charArray = {\u0025 ('%'), \u007A ('z')}, doubleArray = {-3.14.toDouble()}, floatArray = {2.72.toFloat(), 0.0.toFloat()}, intArray = {239017, -1}, longArray = {123456789123456789.toLong()}, shortArray = {239.toShort()}) class C1 constructor()
+    @PrimitiveArrays(booleanArray = {}, byteArray = {}, charArray = {}, doubleArray = {}, floatArray = {}, intArray = {}, longArray = {}, shortArray = {}) class C2 constructor()
+    annotation class PrimitiveArrays constructor(byteArray: ByteArray, charArray: CharArray, shortArray: ShortArray, intArray: IntArray, longArray: LongArray, floatArray: FloatArray, doubleArray: DoubleArray, booleanArray: BooleanArray) : Annotation {
+        val booleanArray: BooleanArray
+        val byteArray: ByteArray
+        val charArray: CharArray
+        val doubleArray: DoubleArray
+        val floatArray: FloatArray
+        val intArray: IntArray
+        val longArray: LongArray
+        val shortArray: ShortArray
+    }

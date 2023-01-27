@@ -1,0 +1,7 @@
+    @Retention(value = AnnotationRetention.BINARY) @Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER, AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER}) annotation class A constructor() : Annotation
+    enum class Enum private constructor() : Enum<Enum> {
+        @A enum entry ENTRY
+    }
+    @A class Klass @A constructor()
+    @A fun <@A T> function(@A param: Unit)
+    @A val property: Unit

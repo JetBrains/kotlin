@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest
 
+import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilerArgs
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestFile
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestKind
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule
@@ -23,9 +25,12 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.PipelineType
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestDirectories
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.LAUNCHER_MODULE_NAME
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
+import org.junit.jupiter.api.Assumptions
 import java.io.File
 
 private val DEFAULT_EXTRAS = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT)
@@ -125,3 +130,17 @@ private fun getLibraryArtifact(testCase: TestCase, dir: File) =
 
 private fun AbstractNativeSimpleTest.getExecutableArtifact() =
     TestCompilationArtifact.Executable(buildDir.resolve("app." + testRunSettings.get<KotlinNativeTargets>().testTarget.family.exeSuffix))
+
+private fun directiveValues(testDataFileContents: String, directive: String) =
+    InTextDirectivesUtils.findListWithPrefixes(testDataFileContents, "// $directive: ")
+
+internal fun AbstractNativeSimpleTest.muteTestIfNecessary(testDataFile: File) = muteTestIfNecessary(FileUtil.loadFile(testDataFile))
+internal fun AbstractNativeSimpleTest.muteTestIfNecessary(testDataFileContents: String) {
+    val pipelineType = testRunSettings.get<PipelineType>()
+    val mutedWhenValues = directiveValues(testDataFileContents, TestDirectives.MUTED_WHEN.name)
+    Assumptions.assumeFalse(mutedWhenValues.any { it == pipelineType.mutedOption.name })
+}
+
+internal fun AbstractNativeSimpleTest.freeCompilerArgs(testDataFile: File) = freeCompilerArgs(FileUtil.loadFile(testDataFile))
+internal fun AbstractNativeSimpleTest.freeCompilerArgs(testDataFileContents: String) =
+    directiveValues(testDataFileContents, TestDirectives.FREE_COMPILER_ARGS.name)

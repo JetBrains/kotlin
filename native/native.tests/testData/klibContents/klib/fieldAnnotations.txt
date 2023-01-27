@@ -1,0 +1,7 @@
+    class A constructor() {
+        @field:Ann var x: Int
+        @delegate:Ann var y: Int
+    }
+    annotation class Ann constructor() : Annotation
+    @field:Ann var x: Int
+    @delegate:Ann var y: Int

@@ -1,0 +1,6 @@
+    class Class constructor() {
+        fun member(): Nothing?
+    }
+    fun <T> T.extension(): T?
+    fun function(int: Int, string: String = ...): Class
+    val property: Unit

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
+import org.jetbrains.kotlin.konan.blackboxtest.support.MutedOption
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestKind
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.LocalTestRunner
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.NoopTestRunner
@@ -239,9 +240,9 @@ internal sealed interface CacheMode {
     }
 }
 
-internal enum class PipelineType(val compilerFlags: List<String>) {
-    K1(emptyList()),
-    K2(listOf("-language-version", "2.0"));
+internal enum class PipelineType(val mutedOption: MutedOption, val compilerFlags: List<String>) {
+    K1(MutedOption.K1, emptyList()),
+    K2(MutedOption.K2, listOf("-language-version", "2.0"));
 
     override fun toString() = if (compilerFlags.isEmpty()) "" else compilerFlags.joinToString(prefix = "(", postfix = ")", separator = " ")
 }

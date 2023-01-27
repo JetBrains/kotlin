@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class NativeK1LibContentsTestGenerated extends AbstractNativeKlibContentsTest {
     @Test
     public void testAllFilesPresentInKlibContents() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klibContents"), Pattern.compile("^([^_](.+)).kt$"), null, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klibContents"), Pattern.compile("^([^_](.+)).kt$"), null, true);
     }
 
     @Test
@@ -52,5 +52,137 @@ public class NativeK1LibContentsTestGenerated extends AbstractNativeKlibContents
     @TestMetadata("type_annotations.kt")
     public void testType_annotations() throws Exception {
         runTest("native/native.tests/testData/klibContents/type_annotations.kt");
+    }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/klibContents/builtinsSerializer")
+    @TestDataPath("$PROJECT_ROOT")
+    public class BuiltinsSerializer {
+        @Test
+        public void testAllFilesPresentInBuiltinsSerializer() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klibContents/builtinsSerializer"), Pattern.compile("^([^_](.+)).kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("annotatedEnumEntry.kt")
+        public void testAnnotatedEnumEntry() throws Exception {
+            runTest("native/native.tests/testData/klibContents/builtinsSerializer/annotatedEnumEntry.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationTargets.kt")
+        public void testAnnotationTargets() throws Exception {
+            runTest("native/native.tests/testData/klibContents/builtinsSerializer/annotationTargets.kt");
+        }
+
+        @Test
+        @TestMetadata("binaryRetainedAnnotation.kt")
+        public void testBinaryRetainedAnnotation() throws Exception {
+            runTest("native/native.tests/testData/klibContents/builtinsSerializer/binaryRetainedAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("compileTimeConstants.kt")
+        public void testCompileTimeConstants() throws Exception {
+            runTest("native/native.tests/testData/klibContents/builtinsSerializer/compileTimeConstants.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedClassesAndObjects.kt")
+        public void testNestedClassesAndObjects() throws Exception {
+            runTest("native/native.tests/testData/klibContents/builtinsSerializer/nestedClassesAndObjects.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyAccessorAnnotations.kt")
+        public void testPropertyAccessorAnnotations() throws Exception {
+            runTest("native/native.tests/testData/klibContents/builtinsSerializer/propertyAccessorAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("native/native.tests/testData/klibContents/builtinsSerializer/simple.kt");
+        }
+
+        @Test
+        @TestMetadata("sourceRetainedAnnotation.kt")
+        public void testSourceRetainedAnnotation() throws Exception {
+            runTest("native/native.tests/testData/klibContents/builtinsSerializer/sourceRetainedAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("typeParameterAnnotation.kt")
+        public void testTypeParameterAnnotation() throws Exception {
+            runTest("native/native.tests/testData/klibContents/builtinsSerializer/typeParameterAnnotation.kt");
+        }
+
+        @Nested
+        @TestMetadata("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments")
+        @TestDataPath("$PROJECT_ROOT")
+        public class AnnotationArguments {
+            @Test
+            public void testAllFilesPresentInAnnotationArguments() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments"), Pattern.compile("^([^_](.+)).kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("annotation.kt")
+            public void testAnnotation() throws Exception {
+                runTest("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments/annotation.kt");
+            }
+
+            @Test
+            @TestMetadata("enum.kt")
+            public void testEnum() throws Exception {
+                runTest("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments/enum.kt");
+            }
+
+            @Test
+            @TestMetadata("primitiveArrays.kt")
+            public void testPrimitiveArrays() throws Exception {
+                runTest("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments/primitiveArrays.kt");
+            }
+
+            @Test
+            @TestMetadata("primitives.kt")
+            public void testPrimitives() throws Exception {
+                runTest("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments/primitives.kt");
+            }
+
+            @Test
+            @TestMetadata("string.kt")
+            public void testString() throws Exception {
+                runTest("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments/string.kt");
+            }
+
+            @Test
+            @TestMetadata("varargs.kt")
+            public void testVarargs() throws Exception {
+                runTest("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments/varargs.kt");
+            }
+        }
+    }
+
+    @Nested
+    @TestMetadata("native/native.tests/testData/klibContents/klib")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Klib {
+        @Test
+        public void testAllFilesPresentInKlib() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klibContents/klib"), Pattern.compile("^([^_](.+)).kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("fieldAnnotations.kt")
+        public void testFieldAnnotations() throws Exception {
+            runTest("native/native.tests/testData/klibContents/klib/fieldAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("receiverAnnotations.kt")
+        public void testReceiverAnnotations() throws Exception {
+            runTest("native/native.tests/testData/klibContents/klib/receiverAnnotations.kt");
+        }
     }
 }

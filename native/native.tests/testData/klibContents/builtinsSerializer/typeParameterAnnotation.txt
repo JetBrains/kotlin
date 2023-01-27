@@ -1,0 +1,4 @@
+    @Retention(value = AnnotationRetention.BINARY) @Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) annotation class Ann constructor(value: String) : Annotation {
+        val value: String
+    }
+    inline fun <reified @Ann(value = "abc") T> foo()

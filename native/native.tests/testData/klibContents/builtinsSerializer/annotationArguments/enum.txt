@@ -1,0 +1,13 @@
+    @JustEnum(weapon = Weapon.SCISSORS) @EnumArray(enumArray = {}) class C1 constructor()
+    @EnumArray(enumArray = {Weapon.PAPER, Weapon.ROCK}) class C2 constructor()
+    annotation class EnumArray constructor(enumArray: Array<Weapon>) : Annotation {
+        val enumArray: Array<Weapon>
+    }
+    annotation class JustEnum constructor(weapon: Weapon) : Annotation {
+        val weapon: Weapon
+    }
+    enum class Weapon private constructor() : Enum<Weapon> {
+        enum entry ROCK
+        enum entry PAPER
+        enum entry SCISSORS
+    }
