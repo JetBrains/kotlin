@@ -2,16 +2,19 @@ fun getInterfaceToAbstractClass() = object : InterfaceToAbstractClass {}
 inline fun getInterfaceToAbstractClassInline() = object : InterfaceToAbstractClass {}
 fun getInterfaceToAbstractClassAsAny(): Any = object : InterfaceToAbstractClass {}
 inline fun getInterfaceToAbstractClassAsAnyInline(): Any = object : InterfaceToAbstractClass {}
+fun getInterfaceToAbstractClassAsAny2(): Any { class Local : InterfaceToAbstractClass; return Local() }
 
 fun getInterfaceToOpenClass() = object : InterfaceToOpenClass {}
 inline fun getInterfaceToOpenClassInline() = object : InterfaceToOpenClass {}
 fun getInterfaceToOpenClassAsAny(): Any = object : InterfaceToOpenClass {}
 inline fun getInterfaceToOpenClassAsAnyInline(): Any = object : InterfaceToOpenClass {}
+fun getInterfaceToOpenClassAsAny2(): Any { class Local : InterfaceToOpenClass; return Local() }
 
 fun getInterfaceToFinalClass() = object : InterfaceToFinalClass {}
 inline fun getInterfaceToFinalClassInline() = object : InterfaceToFinalClass {}
 fun getInterfaceToFinalClassAsAny(): Any = object : InterfaceToFinalClass {}
 inline fun getInterfaceToFinalClassAsAnyInline(): Any = object : InterfaceToFinalClass {}
+fun getInterfaceToFinalClassAsAny2(): Any { class Local : InterfaceToFinalClass; return Local() }
 
 open class InterfaceToAbstractClassImpl : InterfaceToAbstractClass
 class InterfaceToAbstractClassImpl2 : InterfaceToAbstractClassImpl()
@@ -23,14 +26,17 @@ class InterfaceToFinalClassImpl2 : InterfaceToFinalClassImpl()
 class InterfaceToAbstractClassContainer {
     open class InterfaceToAbstractClassImpl : InterfaceToAbstractClass
     class InterfaceToAbstractClassImpl2 : InterfaceToAbstractClassImpl()
+    inner class InterfaceToAbstractClassInnerImpl : InterfaceToAbstractClass
 }
 class InterfaceToOpenClassContainer {
     open class InterfaceToOpenClassImpl : InterfaceToOpenClass
     class InterfaceToOpenClassImpl2 : InterfaceToOpenClassImpl()
+    inner class InterfaceToOpenClassInnerImpl : InterfaceToOpenClass
 }
 class InterfaceToFinalClassContainer {
     open class InterfaceToFinalClassImpl : InterfaceToFinalClass
     class InterfaceToFinalClassImpl2 : InterfaceToFinalClassImpl()
+    inner class InterfaceToFinalClassInnerImpl : InterfaceToFinalClass
 }
 
 fun getInterfaceToAbstractClassImpl() = InterfaceToAbstractClassImpl()
@@ -73,6 +79,11 @@ inline fun getInterfaceToAbstractClassNestedImpl2Inline() = InterfaceToAbstractC
 fun getInterfaceToAbstractClassNestedImpl2AsAny(): Any = InterfaceToAbstractClassContainer.InterfaceToAbstractClassImpl2()
 inline fun getInterfaceToAbstractClassNestedImpl2AsAnyInline(): Any = InterfaceToAbstractClassContainer.InterfaceToAbstractClassImpl2()
 
+fun getInterfaceToAbstractClassInnerImpl() = InterfaceToAbstractClassContainer().InterfaceToAbstractClassInnerImpl()
+inline fun getInterfaceToAbstractClassInnerImplInline() = InterfaceToAbstractClassContainer().InterfaceToAbstractClassInnerImpl()
+fun getInterfaceToAbstractClassInnerImplAsAny(): Any = InterfaceToAbstractClassContainer().InterfaceToAbstractClassInnerImpl()
+inline fun getInterfaceToAbstractClassInnerImplAsAnyInline(): Any = InterfaceToAbstractClassContainer().InterfaceToAbstractClassInnerImpl()
+
 fun getInterfaceToOpenClassNestedImpl() = InterfaceToOpenClassContainer.InterfaceToOpenClassImpl()
 inline fun getInterfaceToOpenClassNestedImplInline() = InterfaceToOpenClassContainer.InterfaceToOpenClassImpl()
 fun getInterfaceToOpenClassNestedImplAsAny(): Any = InterfaceToOpenClassContainer.InterfaceToOpenClassImpl()
@@ -82,6 +93,11 @@ fun getInterfaceToOpenClassNestedImpl2() = InterfaceToOpenClassContainer.Interfa
 inline fun getInterfaceToOpenClassNestedImpl2Inline() = InterfaceToOpenClassContainer.InterfaceToOpenClassImpl2()
 fun getInterfaceToOpenClassNestedImpl2AsAny(): Any = InterfaceToOpenClassContainer.InterfaceToOpenClassImpl2()
 inline fun getInterfaceToOpenClassNestedImpl2AsAnyInline(): Any = InterfaceToOpenClassContainer.InterfaceToOpenClassImpl2()
+
+fun getInterfaceToOpenClassInnerImpl() = InterfaceToOpenClassContainer().InterfaceToOpenClassInnerImpl()
+inline fun getInterfaceToOpenClassInnerImplInline() = InterfaceToOpenClassContainer().InterfaceToOpenClassInnerImpl()
+fun getInterfaceToOpenClassInnerImplAsAny(): Any = InterfaceToOpenClassContainer().InterfaceToOpenClassInnerImpl()
+inline fun getInterfaceToOpenClassInnerImplAsAnyInline(): Any = InterfaceToOpenClassContainer().InterfaceToOpenClassInnerImpl()
 
 fun getInterfaceToFinalClassNestedImpl() = InterfaceToFinalClassContainer.InterfaceToFinalClassImpl()
 inline fun getInterfaceToFinalClassNestedImplInline() = InterfaceToFinalClassContainer.InterfaceToFinalClassImpl()
@@ -93,10 +109,15 @@ inline fun getInterfaceToFinalClassNestedImpl2Inline() = InterfaceToFinalClassCo
 fun getInterfaceToFinalClassNestedImpl2AsAny(): Any = InterfaceToFinalClassContainer.InterfaceToFinalClassImpl2()
 inline fun getInterfaceToFinalClassNestedImpl2AsAnyInline(): Any = InterfaceToFinalClassContainer.InterfaceToFinalClassImpl2()
 
-fun referenceToInterfaceToAbstractClassImpl() = check(InterfaceToAbstractClassImpl::class.simpleName != null)
-inline fun referenceToInterfaceToAbstractClassImplInline() = check(InterfaceToAbstractClassImpl::class.simpleName != null)
-fun referenceToInterfaceToAbstractClassImpl2() = check(InterfaceToAbstractClassImpl2::class.simpleName != null)
-inline fun referenceToInterfaceToAbstractClassImpl2Inline() = check(InterfaceToAbstractClassImpl2::class.simpleName != null)
+fun getInterfaceToFinalClassInnerImpl() = InterfaceToFinalClassContainer().InterfaceToFinalClassInnerImpl()
+inline fun getInterfaceToFinalClassInnerImplInline() = InterfaceToFinalClassContainer().InterfaceToFinalClassInnerImpl()
+fun getInterfaceToFinalClassInnerImplAsAny(): Any = InterfaceToFinalClassContainer().InterfaceToFinalClassInnerImpl()
+inline fun getInterfaceToFinalClassInnerImplAsAnyInline(): Any = InterfaceToFinalClassContainer().InterfaceToFinalClassInnerImpl()
+
+fun referenceToInterfaceToAbstractClassImpl() = InterfaceToAbstractClassImpl::class.simpleName.orEmpty()
+inline fun referenceToInterfaceToAbstractClassImplInline() = InterfaceToAbstractClassImpl::class.simpleName.orEmpty()
+fun referenceToInterfaceToAbstractClassImpl2() = InterfaceToAbstractClassImpl2::class.simpleName.orEmpty()
+inline fun referenceToInterfaceToAbstractClassImpl2Inline() = InterfaceToAbstractClassImpl2::class.simpleName.orEmpty()
 
 fun referenceToInterfaceToFinalClassImpl() = check(InterfaceToFinalClassImpl::class.simpleName != null)
 inline fun referenceToInterfaceToFinalClassImplInline() = check(InterfaceToFinalClassImpl::class.simpleName != null)
