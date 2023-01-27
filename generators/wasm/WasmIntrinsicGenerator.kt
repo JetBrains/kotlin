@@ -9,7 +9,13 @@ import org.jetbrains.kotlin.wasm.ir.WasmOp
 import java.io.File
 import java.io.FileWriter
 
-fun FileWriter.generateStandardWasmInternalHeader() {
+fun main() {
+    val targetDir = File("libraries/stdlib/wasm/src/generated/wasm/internal/")
+    generateWasmOps(targetDir)
+    generateWasmArrays(targetDir)
+}
+
+private fun FileWriter.generateStandardWasmInternalHeader() {
     appendLine(File("license/COPYRIGHT_HEADER.txt").readText())
     appendLine()
     appendLine("package kotlin.wasm.internal")
@@ -20,7 +26,7 @@ fun FileWriter.generateStandardWasmInternalHeader() {
     appendLine()
 }
 
-fun generateWasmOps(targetDir: File) {
+private fun generateWasmOps(targetDir: File) {
     FileWriter(targetDir.resolve("_WasmOp.kt")).use { writer ->
         writer.generateStandardWasmInternalHeader()
         writer.appendLine(
@@ -45,7 +51,7 @@ fun generateWasmOps(targetDir: File) {
     }
 }
 
-fun generateWasmArrays(targetDir: File) {
+private fun generateWasmArrays(targetDir: File) {
     FileWriter(targetDir.resolve("_WasmArrays.kt")).use { writer ->
         writer.generateStandardWasmInternalHeader()
 
@@ -78,7 +84,7 @@ fun generateWasmArrays(targetDir: File) {
     }
 }
 
-fun wasmArrayForType(
+private fun wasmArrayForType(
     klass: String,
     isNullable: Boolean,
     isPacked: Boolean = false,
@@ -122,10 +128,4 @@ fun wasmArrayForType(
             }
             
             """.trimIndent()
-}
-
-fun main() {
-    val targetDir = File("libraries/stdlib/wasm/src/generated")
-    generateWasmOps(targetDir)
-    generateWasmArrays(targetDir)
 }
