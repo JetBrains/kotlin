@@ -1,0 +1,22 @@
+package
+
+public fun main(): kotlin.Unit
+internal inline fun </*0*/ reified T> kotlin.collections.Iterable<T>.ggplot4(/*0*/ x: T.() -> kotlin.reflect.KProperty0<*>, /*1*/ y: T.() -> kotlin.reflect.KProperty0<*>): kotlin.Unit
+
+public final data class MyPattern {
+    public constructor MyPattern(/*0*/ name: kotlin.String, /*1*/ conservation: kotlin.String?, /*2*/ awake: kotlin.Double, /*3*/ brainwt: kotlin.Double?, /*4*/ bodywt: kotlin.Double)
+    public final val awake: kotlin.Double
+    public final val bodywt: kotlin.Double
+    public final val brainwt: kotlin.Double?
+    public final val conservation: kotlin.String?
+    public final val name: kotlin.String
+    public final operator /*synthesized*/ fun component1(): kotlin.String
+    public final operator /*synthesized*/ fun component2(): kotlin.String?
+    public final operator /*synthesized*/ fun component3(): kotlin.Double
+    public final operator /*synthesized*/ fun component4(): kotlin.Double?
+    public final operator /*synthesized*/ fun component5(): kotlin.Double
+    public final /*synthesized*/ fun copy(/*0*/ name: kotlin.String = ..., /*1*/ conservation: kotlin.String? = ..., /*2*/ awake: kotlin.Double = ..., /*3*/ brainwt: kotlin.Double? = ..., /*4*/ bodywt: kotlin.Double = ...): MyPattern
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
