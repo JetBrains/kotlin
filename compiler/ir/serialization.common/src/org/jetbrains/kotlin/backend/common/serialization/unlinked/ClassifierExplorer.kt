@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkage
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.UnsignedType
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -27,7 +29,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil.OPTIONAL_EXPECTATION_FQ_NAME
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
 
 internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val stubGenerator: MissingDeclarationStubGenerator) {
     private val exploredSymbols = ExploredClassifiers()
@@ -54,6 +58,8 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val 
             }
         }
     }
+
+    private val stdlibModule by lazy { PLModule.determineModuleFor(builtIns.anyClass.owner) }
 
     fun exploreType(type: IrType): Unusable? = type.exploreType(visitedSymbols = hashSetOf()).asUnusable()
     fun exploreSymbol(symbol: IrClassifierSymbol): Unusable? = symbol.exploreSymbol(visitedSymbols = hashSetOf()).asUnusable()
@@ -102,22 +108,24 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val 
         }
 
         val cause: Unusable? = when (val classifier = owner) {
-            is IrClass -> {
-                if (classifier.origin == PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION)
-                    return exploredSymbols.registerUnusable(this, MissingClassifier(this))
+            is IrClass -> when (PLModule.determineModuleFor(owner as IrClass)) {
+                is PLModule.MissingDeclarations -> return exploredSymbols.registerUnusable(this, MissingClassifier(this))
+                stdlibModule, PLModule.SyntheticBuiltInFunctions -> {
+                    // Don't run any additional checks if the class is from stdlib.
+                    null
+                }
+                else -> {
+                    val directSuperTypeSymbols = hashSetOf<IrClassSymbol>()
 
-                // TODO: if the class is from stdlib, don't run all the checks below
-
-                val directSuperTypeSymbols = hashSetOf<IrClassSymbol>()
-
-                classifier.annotationConstructorsIfApplicable?.firstUnusable { it.exploreAnnotationConstructor(visitedSymbols) }
-                    ?: classifier.outerClassSymbolIfApplicable?.exploreSymbol(visitedSymbols).asUnusable()
-                    ?: classifier.typeParameters.firstUnusable { it.symbol.exploreSymbol(visitedSymbols) }
-                    ?: classifier.superTypes.firstUnusable { superType ->
-                        directSuperTypeSymbols.addIfNotNull(superType.asSimpleType()?.classifier as? IrClassSymbol)
-                        superType.exploreType(visitedSymbols)
-                    }
-                    ?: classifier.exploreSuperClasses(directSuperTypeSymbols) // Check them all at once.
+                    classifier.annotationConstructorsIfApplicable?.firstUnusable { it.exploreAnnotationConstructor(visitedSymbols) }
+                        ?: classifier.outerClassSymbolIfApplicable?.exploreSymbol(visitedSymbols).asUnusable()
+                        ?: classifier.typeParameters.firstUnusable { it.symbol.exploreSymbol(visitedSymbols) }
+                        ?: classifier.superTypes.firstUnusable { superType ->
+                            directSuperTypeSymbols.addIfNotNull(superType.asSimpleType()?.classifier as? IrClassSymbol)
+                            superType.exploreType(visitedSymbols)
+                        }
+                        ?: classifier.exploreSuperClasses(directSuperTypeSymbols) // Check them all at once.
+                }
             }
 
             is IrTypeParameter -> classifier.superTypes.firstUnusable { it.exploreType(visitedSymbols) }
@@ -187,6 +195,9 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val 
     }
 
     private fun IrClass.exploreSuperClasses(superTypeSymbols: Set<IrClassSymbol>): Unusable? {
+        if (isAnnotationClass && isExpect && hasAnnotation(OPTIONAL_EXPECTATION_FQ_NAME))
+            return null // No need to check unactualized optional expectations which might happen in platform-specific code.
+
         if (isInterface) {
             // Can inherit only from other interfaces.
             val realSuperClassSymbols = superTypeSymbols.filter { it != builtIns.anyClass && !it.owner.isInterface }
