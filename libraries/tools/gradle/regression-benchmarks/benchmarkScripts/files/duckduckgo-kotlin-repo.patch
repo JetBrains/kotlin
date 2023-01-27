@@ -1,0 +1,70 @@
+diff --git a/build.gradle b/build.gradle
+index 738db1cd9..a79b8a479 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -3,9 +3,8 @@
+ buildscript {
+
+     ext {
+-        kotlin_version = '1.7.10'
+         spotless = "6.1.2"
+-        anvil_version = "2.4.1"
++        anvil_version = "2.4.4"
+         gradle_plugin = "7.2.2" // When updating, also update lint_version
+         lint_version = "30.2.2" // This value must always be gradle_plugin + 23
+         min_sdk = 23
+@@ -16,6 +15,7 @@ buildscript {
+     }
+
+     repositories {
++        mavenLocal()
+         google()
+         mavenCentral()
+         maven { url "https://plugins.gradle.org/m2/" }
+@@ -24,7 +24,7 @@ buildscript {
+         classpath "com.android.tools.build:gradle:$gradle_plugin"
+         classpath "com.diffplug.spotless:spotless-plugin-gradle:$spotless"
+         classpath "com.squareup.anvil:gradle-plugin:$anvil_version"
+-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
++        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+
+         // NOTE: Do not place your application dependencies here; they belong
+         // in the individual module build.gradle files
+@@ -38,6 +38,7 @@ plugins {
+
+ allprojects {
+     repositories {
++        mavenLocal()
+         google()
+         mavenCentral()
+     }
+@@ -139,4 +140,4 @@ fladle {
+     }
+ }
+
+-apply plugin: 'android-reporting'
+\ No newline at end of file
++apply plugin: 'android-reporting'
+diff --git a/gradle.properties b/gradle.properties
+index 709ee46cd..272c1dd8f 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -21,3 +21,4 @@ org.gradle.caching=true
+ org.gradle.parallel=true
+ org.gradle.configureondemand=true
+
++kotlinVersion=<current_version>
+diff --git a/versions.properties b/versions.properties
+index 8cdd45631..dd1f42aaf 100644
+--- a/versions.properties
++++ b/versions.properties
+@@ -77,7 +77,8 @@ version.jakewharton.rxrelay2=2.0.0
+
+ version.jakewharton.timber=5.0.1
+
+-version.kotlin=1.7.10
++version.kotlin=1.8.0
++## # available=1.8.255-SNAPSHOT
+
+ version.kotlinx.coroutines=1.6.4
+
