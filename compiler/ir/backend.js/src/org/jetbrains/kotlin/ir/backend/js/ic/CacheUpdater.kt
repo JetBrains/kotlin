@@ -88,8 +88,7 @@ class CacheUpdater(
 
         // libraries in topological order: [stdlib, ..., main]
         val libraryDependencies = stopwatch.measure("Resolving and loading klib dependencies") {
-            val repositories = compilerConfiguration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
-            val allResolvedDependencies = jsResolveLibraries(allModules, repositories, compilerConfiguration.resolverLogger)
+            val allResolvedDependencies = jsResolveLibraries(allModules, compilerConfiguration.resolverLogger)
 
             val libraries = allResolvedDependencies.getFullList(TopologicalLibraryOrder).let { resolvedLibraries ->
                 val mainLibraryIndex = resolvedLibraries.indexOfLast {

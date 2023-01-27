@@ -40,7 +40,6 @@ where advanced options include:
   -Xlegacy-deprecated-no-warn Disable warnings of deprecation of legacy compiler
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
   -Xpartial-linkage          Allow unlinked symbols
-  -Xrepositories=<path>      Paths to additional places where libraries could be found
   -Xstrict-implicit-export-types Generate strict types for implicitly exported entities inside d.ts files. Available in IR backend only.
   -Xtyped-arrays             Translate primitive arrays to JS typed arrays
   -Xuse-deprecated-legacy-compiler

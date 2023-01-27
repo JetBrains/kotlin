@@ -66,6 +66,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
     internal val createTestCompilation: Boolean
 ) : KotlinTargetConfigurator<KotlinTargetType> {
 
+    protected open val runtimeIncludesCompilationOutputs = true
+
     protected open fun setupCompilationDependencyFiles(compilation: KotlinCompilation<KotlinCommonOptions>) {
         val project = compilation.target.project
 
@@ -87,7 +89,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             target.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
                 associateWith(main)
 
-                if (this is KotlinCompilationToRunnableFiles) {
+                if (runtimeIncludesCompilationOutputs && this is KotlinCompilationToRunnableFiles) {
                     // TODO: fix inconsistency? KT-27272
                     runtimeDependencyFiles += project.files(output.allOutputs)
                 }

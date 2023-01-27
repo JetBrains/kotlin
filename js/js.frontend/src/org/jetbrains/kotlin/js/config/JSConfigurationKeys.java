@@ -100,9 +100,6 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<ErrorTolerancePolicy> ERROR_TOLERANCE_POLICY =
             CompilerConfigurationKey.create("set up policy to ignore compilation errors");
 
-    public static final CompilerConfigurationKey<Collection<String>> REPOSITORIES =
-            CompilerConfigurationKey.create("set up additional repository paths");
-
     public static final CompilerConfigurationKey<Boolean> PARTIAL_LINKAGE =
             CompilerConfigurationKey.create("allows some symbols in klibs be missed");
 

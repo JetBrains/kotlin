@@ -128,7 +128,7 @@ fun generateKLib(
 ) {
     val files = (depsDescriptors.mainModule as MainModule.SourceFiles).files.map(::KtPsiSourceFile)
     val configuration = depsDescriptors.compilerConfiguration
-    val allDependencies = depsDescriptors.allDependencies.map { it.library }
+    val allDependencies = depsDescriptors.allDependencies
     val messageLogger = configuration.irMessageLogger
 
     serializeModuleIntoKlib(
@@ -202,7 +202,7 @@ fun loadIr(
     val project = depsDescriptors.project
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
-    val allDependencies = depsDescriptors.allDependencies.map { it.library }
+    val allDependencies = depsDescriptors.allDependencies
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.irMessageLogger
     val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
@@ -215,7 +215,7 @@ fun loadIr(
             assert(filesToLoad == null)
             val psi2IrContext = preparePsi2Ir(depsDescriptors, errorPolicy, symbolTable, partialLinkageEnabled)
             val friendModules =
-                mapOf(psi2IrContext.moduleDescriptor.name.asString() to depsDescriptors.friendDependencies.map { it.library.uniqueName })
+                mapOf(psi2IrContext.moduleDescriptor.name.asString() to depsDescriptors.friendDependencies.map { it.uniqueName })
 
             return getIrModuleInfoForSourceFiles(
                 psi2IrContext,
@@ -236,7 +236,7 @@ fun loadIr(
                 ?: error("No module with ${mainModule.libPath} found")
             val moduleDescriptor = depsDescriptors.getModuleDescriptor(mainModuleLib)
             val sortedDependencies = sortDependencies(depsDescriptors.moduleDependencies)
-            val friendModules = mapOf(mainModuleLib.uniqueName to depsDescriptors.friendDependencies.map { it.library.uniqueName })
+            val friendModules = mapOf(mainModuleLib.uniqueName to depsDescriptors.friendDependencies.map { it.uniqueName })
 
             return getIrModuleInfoForKlib(
                 moduleDescriptor,
@@ -474,29 +474,29 @@ class ModulesStructure(
     friendDependenciesPaths: Collection<String>,
 ) {
 
-    val allResolvedDependencies = jsResolveLibraries(
+    val allDependenciesResolution = jsResolveLibrariesWithoutDependencies(
         dependencies,
-        compilerConfiguration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
         compilerConfiguration.resolverLogger
     )
 
-    val allDependencies = allResolvedDependencies.getFullResolvedList()
+    val allDependencies: List<KotlinLibrary>
+        get() = allDependenciesResolution.libraries
 
     val friendDependencies = allDependencies.run {
         val friendAbsolutePaths = friendDependenciesPaths.map { File(it).canonicalPath }
         filter {
-            it.library.libraryFile.absolutePath in friendAbsolutePaths
+            it.libraryFile.absolutePath in friendAbsolutePaths
         }
     }
 
-    val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> = run {
-        val transitives = allDependencies
+    val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> by lazy {
+        val transitives = allDependenciesResolution.resolveWithDependencies().getFullResolvedList()
         transitives.associate { klib ->
             klib.library to klib.resolvedDependencies.map { d -> d.library }
         }.toMap()
     }
 
-    private val builtInsDep = allDependencies.find { it.library.isBuiltIns }
+    private val builtInsDep = allDependencies.find { it.isBuiltIns }
 
     class JsFrontEndResult(val jsAnalysisResult: AnalysisResult, val hasErrors: Boolean) {
         val moduleDescriptor: ModuleDescriptor
@@ -508,7 +508,11 @@ class ModulesStructure(
 
     lateinit var jsFrontEndResult: JsFrontEndResult
 
-    fun runAnalysis(errorPolicy: ErrorTolerancePolicy, analyzer: AbstractAnalyzerWithCompilerReport, analyzerFacade: AbstractTopDownAnalyzerFacadeForJS) {
+    fun runAnalysis(
+        errorPolicy: ErrorTolerancePolicy,
+        analyzer: AbstractAnalyzerWithCompilerReport,
+        analyzerFacade: AbstractTopDownAnalyzerFacadeForJS
+    ) {
         require(mainModule is MainModule.SourceFiles)
         val files = mainModule.files
 
@@ -517,8 +521,8 @@ class ModulesStructure(
                 files,
                 project,
                 compilerConfiguration,
-                allModuleDescriptors,
-                friendDependencies.map { getModuleDescriptor(it.library) },
+                descriptors.values.toList(),
+                friendDependencies.map { getModuleDescriptor(it) },
                 analyzer.targetEnvironment,
                 thisIsBuiltInsModule = builtInModuleDescriptor == null,
                 customBuiltInsModule = builtInModuleDescriptor
@@ -550,22 +554,23 @@ class ModulesStructure(
     private val storageManager: LockBasedStorageManager = LockBasedStorageManager("ModulesStructure")
     private var runtimeModule: ModuleDescriptorImpl? = null
 
-    // TODO: these are roughly equivalent to KlibResolvedModuleDescriptorsFactoryImpl. Refactor me.
-    val descriptors = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
+    private val _descriptors: MutableMap<KotlinLibrary, ModuleDescriptorImpl> = mutableMapOf()
 
-    val allModuleDescriptors = run {
-        val descriptors = allDependencies.map { getModuleDescriptor(it.library) }
+    init {
+        val descriptors = allDependencies.map { getModuleDescriptorImpl(it) }
 
         descriptors.forEach { descriptor ->
             descriptor.setDependencies(descriptors)
         }
-
-        descriptors
     }
 
-    fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptorImpl {
-        if (current in descriptors) {
-            return descriptors.getValue(current)
+    // TODO: these are roughly equivalent to KlibResolvedModuleDescriptorsFactoryImpl. Refactor me.
+    val descriptors: Map<KotlinLibrary, ModuleDescriptor>
+        get() = _descriptors
+
+    private fun getModuleDescriptorImpl(current: KotlinLibrary): ModuleDescriptorImpl {
+        if (current in _descriptors) {
+            return _descriptors.getValue(current)
         }
 
         val isBuiltIns = current.unresolvedDependencies.isEmpty()
@@ -581,14 +586,17 @@ class ModulesStructure(
         )
         if (isBuiltIns) runtimeModule = md
 
-        descriptors[current] = md
+        _descriptors[current] = md
 
         return md
     }
 
+    fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptor =
+        getModuleDescriptorImpl(current)
+
     val builtInModuleDescriptor =
         if (builtInsDep != null)
-            getModuleDescriptor(builtInsDep.library)
+            getModuleDescriptor(builtInsDep)
         else
             null // null in case compiling builtInModule itself
 }

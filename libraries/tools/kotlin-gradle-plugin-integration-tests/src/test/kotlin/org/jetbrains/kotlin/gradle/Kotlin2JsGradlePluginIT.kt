@@ -425,6 +425,22 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
         }
     }
+
+    @DisplayName("JS IR implementation dependency")
+    @GradleTest
+    fun testJsIrImplementationDependency(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("assemble")
+
+            projectPath.resolve("app/src/main/kotlin/App.kt").modify {
+                it.replace("sheldon()", "best()")
+            }
+
+            buildAndFail("assemble")
+        }
+    }
 }
 
 @JsGradlePluginTests

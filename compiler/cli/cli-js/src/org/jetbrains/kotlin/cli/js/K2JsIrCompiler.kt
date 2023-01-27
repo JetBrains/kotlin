@@ -193,11 +193,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val libraries: List<String> = configureLibraries(arguments.libraries) + listOfNotNull(arguments.includes)
         val friendLibraries: List<String> = configureLibraries(arguments.friendModules)
-        val repositories: List<String> = configureLibraries(arguments.repositries)
 
         configuration.put(JSConfigurationKeys.LIBRARIES, libraries)
         configuration.put(JSConfigurationKeys.TRANSITIVE_LIBRARIES, libraries)
-        configuration.put(JSConfigurationKeys.REPOSITORIES, repositories)
 
         configuration.put(JSConfigurationKeys.PARTIAL_LINKAGE, arguments.partialLinkage)
 
@@ -449,7 +447,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 moduleSourceFiles,
                 environmentForJS.configuration,
                 sourceModule.jsFrontEndResult.jsAnalysisResult,
-                sortDependencies(sourceModule.moduleDependencies),
+                sourceModule.allDependencies,
                 icData,
                 expectDescriptorToSymbol,
                 IrFactoryImpl,
@@ -514,9 +512,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             // TODO: !!! dependencies module data?
         }
 
-        val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
         val logger = configuration.resolverLogger
-        val resolvedLibraries = jsResolveLibraries(libraries + friendLibraries, repositories, logger).getFullResolvedList()
+        val resolvedLibraries = jsResolveLibraries(libraries + friendLibraries, logger).getFullResolvedList()
 
         FirJsSessionFactory.createJsLibrarySession(
             mainModuleName,

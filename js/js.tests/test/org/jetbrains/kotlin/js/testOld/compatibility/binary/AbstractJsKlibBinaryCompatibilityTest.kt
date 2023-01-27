@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.library.KLIB_FILE_EXTENSION
+import org.jetbrains.kotlin.test.KotlinBaseTest
 import java.io.File
 
 abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompatibilityTest() {
@@ -32,7 +33,22 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
     }
 
     private fun TestModule.dependenciesToLibrariesArg(version: Int): String =
-        this.dependencies.map { it as? TestModule ?: error("Unexpected dependency kind: $it") }.toLibrariesArg(version)
+        this.dependencies
+            .flatMap { it.transitiveDependencies() }
+            .map { it as? TestModule ?: error("Unexpected dependency kind: $it") }
+            .toLibrariesArg(version)
+
+    private fun KotlinBaseTest.TestModule.transitiveDependencies(): Set<KotlinBaseTest.TestModule> {
+        val uniqueDependencies = mutableSetOf(this)
+        dependencies.forEach { testModule ->
+            if (testModule !in uniqueDependencies) {
+                val transitiveDependencies = testModule.transitiveDependencies()
+                uniqueDependencies.addAll(transitiveDependencies)
+            }
+        }
+
+        return uniqueDependencies
+    }
 
     private val TestModule.jsPath get() = File(workingDir, "${this.name}.js").absolutePath
 
@@ -58,7 +74,6 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
             irProduceKlibFile = true
             irOnly = true
             irModuleName = module.name
-            repositries = "$workingDir${File.pathSeparator}$workingDir/version$version"
         }
         K2JSCompiler().exec(TestMessageCollector(), Services.EMPTY, args)
     }
@@ -73,7 +88,6 @@ abstract class AbstractJsKlibBinaryCompatibilityTest : AbstractKlibBinaryCompati
             irProduceJs = true
             irOnly = true
             irModuleName = module.name
-            repositries = "$workingDir${File.pathSeparator}$workingDir/version2"
         }
         K2JSCompiler().exec(TestMessageCollector(), Services.EMPTY, args)
     }

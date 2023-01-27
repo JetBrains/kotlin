@@ -256,7 +256,6 @@ class ClassicFrontendFacade(
     private fun loadKlib(names: List<String>, configuration: CompilerConfiguration): List<ModuleDescriptor> {
         val resolvedLibraries = jsResolveLibraries(
             names,
-            configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
             configuration.resolverLogger
         ).getFullResolvedList()
 

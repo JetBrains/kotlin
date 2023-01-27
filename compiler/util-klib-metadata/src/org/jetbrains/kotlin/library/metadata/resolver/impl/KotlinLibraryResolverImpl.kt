@@ -32,16 +32,14 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
         override val searchPathResolver: SearchPathResolver<L>,
         val resolveManifestDependenciesLenient: Boolean
 ): KotlinLibraryResolver<L>, WithLogger by searchPathResolver {
-
-    override fun resolveWithDependencies(
+    override fun resolveWithoutDependencies(
         unresolvedLibraries: List<UnresolvedLibrary>,
         noStdLib: Boolean,
         noDefaultLibs: Boolean,
         noEndorsedLibs: Boolean
     ) = findLibraries(unresolvedLibraries, noStdLib, noDefaultLibs, noEndorsedLibs)
-            .leaveDistinct()
-            .omitDuplicateNames()
-            .resolveDependencies()
+        .leaveDistinct()
+        .omitDuplicateNames()
 
     /**
      * Returns the list of libraries based on [libraryNames], [noStdLib], [noDefaultLibs] and [noEndorsedLibs] criteria.
@@ -102,7 +100,7 @@ class KotlinLibraryResolverImpl<L: KotlinLibrary> internal constructor(
      * 2. Wraps each [KotlinLibrary] into a [KotlinResolvedLibrary] with information about dependencies on other libraries.
      * 3. Creates resulting [KotlinLibraryResolveResult] object.
      */
-    private fun List<KotlinLibrary>.resolveDependencies(): KotlinLibraryResolveResult {
+    override fun List<KotlinLibrary>.resolveDependencies(): KotlinLibraryResolveResult {
 
         val rootLibraries = this.map { KotlinResolvedLibraryImpl(it) }
 

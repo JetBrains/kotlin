@@ -102,7 +102,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
     private fun File.md5(): Long = readBytes().md5()
 
     private fun File.loadKlibFilePaths(): List<String> {
-        val libs = jsResolveLibraries(listOf(runtimeKlibPath, canonicalPath), emptyList(), DummyLogger).getFullList()
+        val libs = jsResolveLibraries(listOf(runtimeKlibPath, canonicalPath), DummyLogger).getFullList()
         val lib = libs.last()
         val fileSize = lib.fileCount()
         val extReg = ExtensionRegistryLite.newInstance()

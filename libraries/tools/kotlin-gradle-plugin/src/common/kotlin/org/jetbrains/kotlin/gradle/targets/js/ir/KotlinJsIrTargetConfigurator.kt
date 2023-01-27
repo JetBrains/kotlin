@@ -23,6 +23,8 @@ open class KotlinJsIrTargetConfigurator() :
     KotlinOnlyTargetConfigurator<KotlinJsIrCompilation, KotlinJsIrTarget>(true),
     KotlinTargetWithTestsConfigurator<KotlinJsReportAggregatingTestRun, KotlinJsIrTarget> {
 
+    override val runtimeIncludesCompilationOutputs: Boolean = false
+
     override val testRunClass: Class<KotlinJsReportAggregatingTestRun> get() = KotlinJsReportAggregatingTestRun::class.java
 
     override val archiveType: String
@@ -104,7 +106,6 @@ open class KotlinJsIrTargetConfigurator() :
 
     override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {
         super.defineConfigurationsForTarget(target)
-        implementationToApiElements(target)
 
         if (target.isMpp!!) return
 

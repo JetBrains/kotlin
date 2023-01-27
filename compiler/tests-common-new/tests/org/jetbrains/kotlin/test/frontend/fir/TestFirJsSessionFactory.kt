@@ -37,10 +37,9 @@ object TestFirJsSessionFactory {
         languageVersionSettings: LanguageVersionSettings,
         registerExtraComponents: ((FirSession) -> Unit),
     ): FirSession {
-        val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
         val logger = configuration.resolverLogger
         val libraries = getAllJsDependenciesPaths(module, testServices)
-        val resolvedLibraries = jsResolveLibraries(libraries, repositories, logger).getFullResolvedList()
+        val resolvedLibraries = jsResolveLibraries(libraries, logger).getFullResolvedList()
 
         return FirJsSessionFactory.createJsLibrarySession(
             mainModuleName,
@@ -75,9 +74,8 @@ fun resolveJsLibraries(
     configuration: CompilerConfiguration
 ): List<KotlinResolvedLibrary> {
     val paths = getAllJsDependenciesPaths(module, testServices)
-    val repositories = configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList()
     val logger = configuration.resolverLogger
-    return jsResolveLibraries(paths, repositories, logger).getFullResolvedList()
+    return jsResolveLibraries(paths, logger).getFullResolvedList()
 }
 
 fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {

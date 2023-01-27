@@ -71,7 +71,6 @@ class JsKlibBackendFacade(
         val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices).toList()
         val lib = jsResolveLibraries(
             dependencies.map { testServices.jsLibraryProvider.getPathByDescriptor(it) } + listOf(outputFile),
-            configuration[JSConfigurationKeys.REPOSITORIES] ?: emptyList(),
             configuration.resolverLogger
         ).getFullResolvedList().last().library
 

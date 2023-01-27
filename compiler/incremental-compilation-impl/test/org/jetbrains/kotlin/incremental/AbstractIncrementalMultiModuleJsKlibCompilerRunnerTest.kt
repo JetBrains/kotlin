@@ -25,7 +25,6 @@ abstract class AbstractIncrementalMultiModuleJsKlibCompilerRunnerTest :
             irProduceKlibDir = false
             irProduceKlibFile = true
             irOnly = true
-            repositries = repository.absolutePath
         }
 
     override val buildLogFinder: BuildLogFinder

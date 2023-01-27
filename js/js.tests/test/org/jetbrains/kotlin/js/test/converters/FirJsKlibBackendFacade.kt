@@ -77,7 +77,6 @@ class FirJsKlibBackendFacade(
         // TODO: consider avoiding repeated libraries resolution
         val lib = jsResolveLibraries(
             getAllJsDependenciesPaths(module, testServices) + listOf(outputFile),
-            emptyList(),
             configuration.resolverLogger
         ).getFullResolvedList().last().library
 
