@@ -476,7 +476,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
             supertypeSupplier
         ).any { superType ->
             // Note: We check just classId here, so type substitution isn't needed   ^ (we aren't interested in type arguments)
-            superType?.fullyExpandedType(session)?.lookupTag?.classId?.isSame(ownerLookupTag.classId) == true
+            superType.fullyExpandedType(session).lookupTag.classId.isSame(ownerLookupTag.classId)
         }
     }
 
