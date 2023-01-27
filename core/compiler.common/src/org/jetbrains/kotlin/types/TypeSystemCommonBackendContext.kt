@@ -40,7 +40,6 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 
     fun KotlinTypeMarker.makeNullable(): KotlinTypeMarker =
         asSimpleType()?.withNullability(true) ?: this
-
     fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType?
     fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType?
 

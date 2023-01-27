@@ -7,5 +7,5 @@ annotation class Ann(val s: String = "")
 fun foo() {}
 
 val bar = foo(
-    <!TOO_MANY_ARGUMENTS!>15<!>
+    <!TOO_MANY_ARGUMENTS("public final fun /foo(): R|kotlin/Unit|")!>15<!>
 )

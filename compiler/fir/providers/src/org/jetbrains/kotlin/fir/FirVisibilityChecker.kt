@@ -540,15 +540,6 @@ fun FirBasedSymbol<*>.getOwnerLookupTag(): ConeClassLikeLookupTag? {
     }
 }
 
-fun FirClassLikeSymbol<*>.getContainingClassLookupTag(): ConeClassLikeLookupTag? {
-    return if (classId.isLocal) {
-        (fir as? FirRegularClass)?.containingClassForLocal()
-    } else {
-        val ownerId = classId.outerClassId
-        ownerId?.let { it.toLookupTag() }
-    }
-}
-
 fun FirBasedSymbol<*>.isVariableOrNamedFunction(): Boolean {
     return this is FirVariableSymbol || this is FirNamedFunctionSymbol || this is FirPropertyAccessorSymbol
 }
