@@ -195,9 +195,6 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val 
     }
 
     private fun IrClass.exploreSuperClasses(superTypeSymbols: Set<IrClassSymbol>): Unusable? {
-        if (isAnnotationClass && isExpect && hasAnnotation(OPTIONAL_EXPECTATION_FQ_NAME))
-            return null // No need to check unactualized optional expectations which might happen in platform-specific code.
-
         if (isInterface) {
             // Can inherit only from other interfaces.
             val realSuperClassSymbols = superTypeSymbols.filter { it != builtIns.anyClass && !it.owner.isInterface }
