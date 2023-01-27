@@ -1,6 +1,7 @@
 package
 
 public fun </*0*/ T> bar(): kotlin.Unit
+public fun baz(/*0*/ a: kotlin.Any): kotlin.Unit
 public fun test(): kotlin.Unit
 
 public interface A {

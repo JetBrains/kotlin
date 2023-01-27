@@ -27,10 +27,14 @@ object FirTypeParameterInQualifiedAccessChecker : FirQualifiedAccessExpressionCh
         context: CheckerContext,
         reporter: DiagnosticReporter
     ) {
-        // Make sure the current qualified access is not part of another qualified access or class literals.
+        // Ignore T::class where our expression is T
+        if (context.getClassCalls.lastOrNull()?.argument == expression) return
+
+        // Make sure the current expression is not the receiver of a qualified access expression.
         // E.g., for `T::toString`, which is a callable reference (a subtype of qualified access), type parameter T is checked once as an
-        // explicit receiver (or LHS). When we visit `T` (as a qualified access), we should not regard it as an expression here.
-        if (context.qualifiedAccessOrAnnotationCalls.size > 1 || context.getClassCalls.isNotEmpty()) return
+        // explicit receiver. When we visit `T` (as a qualified access expression), we should not regard it as an expression here.
+        val secondLast = context.qualifiedAccessOrAnnotationCalls.elementAtOrNull(context.qualifiedAccessOrAnnotationCalls.size - 2)
+        if (secondLast is FirQualifiedAccessExpression && secondLast.explicitReceiver == expression) return
 
         val diagnostic = expression.typeRef.coneTypeParameterInQualifiedAccess ?: return
         val source = expression.source ?: return

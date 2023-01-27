@@ -16,4 +16,15 @@ fun test() {
 fun <T> bar() {
     val typeParameter_as_val = <!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>
     val typeParameter_as_fun = <!UNRESOLVED_REFERENCE!>T<!>()
+
+    baz(<!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>)
+    baz("$<!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>")
+
+    1 <!OVERLOAD_RESOLUTION_AMBIGUITY!>+<!> <!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>
+
+    B::class.equals(<!TYPE_PARAMETER_IS_NOT_AN_EXPRESSION!>T<!>)
+
+    T = ""
 }
+
+fun baz(a: Any) {}
