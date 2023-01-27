@@ -27039,6 +27039,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/enumEntryNameCall.kt");
             }
 
+            @TestMetadata("expectActualDifferentExtensionReceiversOnOverloads.kt")
+            public void testExpectActualDifferentExtensionReceiversOnOverloads() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualDifferentExtensionReceiversOnOverloads.kt");
+            }
+
             @TestMetadata("expectActualMultiCommon.kt")
             public void testExpectActualMultiCommon() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualMultiCommon.kt");

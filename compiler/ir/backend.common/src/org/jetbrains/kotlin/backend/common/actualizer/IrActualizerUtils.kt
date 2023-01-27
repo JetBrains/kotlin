@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.render
@@ -18,14 +19,33 @@ fun checkParameters(
     actualFunction: IrFunction,
     expectActualTypesMap: Map<IrSymbol, IrSymbol>
 ): Boolean {
-    if (expectFunction.valueParameters.size != actualFunction.valueParameters.size) return false
-    for ((expectParameter, actualParameter) in expectFunction.valueParameters.zip(actualFunction.valueParameters)) {
+    fun checkParameter(expectParameter: IrValueParameter?, actualParameter: IrValueParameter?): Boolean {
+        if (expectParameter == null) {
+            return actualParameter == null
+        }
+        if (actualParameter == null) {
+            return false
+        }
+
         val expectParameterTypeSymbol = expectParameter.type.classifierOrFail
         val actualizedParameterTypeSymbol = expectActualTypesMap[expectParameterTypeSymbol] ?: expectParameterTypeSymbol
         if (actualizedParameterTypeSymbol != actualParameter.type.classifierOrFail) {
             return false
         }
+        return true
     }
+
+    if (expectFunction.valueParameters.size != actualFunction.valueParameters.size ||
+        !checkParameter(expectFunction.extensionReceiverParameter, actualFunction.extensionReceiverParameter)
+    ) {
+        return false
+    }
+    for ((expectParameter, actualParameter) in expectFunction.valueParameters.zip(actualFunction.valueParameters)) {
+        if (!checkParameter(expectParameter, actualParameter)) {
+            return false
+        }
+    }
+
     return true
 }
 

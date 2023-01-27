@@ -33029,6 +33029,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("expectActualDifferentExtensionReceiversOnOverloads.kt")
+            public void testExpectActualDifferentExtensionReceiversOnOverloads() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualDifferentExtensionReceiversOnOverloads.kt");
+            }
+
+            @Test
             @TestMetadata("expectActualDifferentPackages.kt")
             public void testExpectActualDifferentPackages() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualDifferentPackages.kt");

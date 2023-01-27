@@ -31763,6 +31763,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("expectActualDifferentExtensionReceiversOnOverloads.kt")
+            public void testExpectActualDifferentExtensionReceiversOnOverloads() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualDifferentExtensionReceiversOnOverloads.kt");
+            }
+
+            @Test
             @TestMetadata("expectActualMultiCommon.kt")
             public void testExpectActualMultiCommon() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/expectActualMultiCommon.kt");
