@@ -114,6 +114,7 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val 
                     null
                 }
                 else -> {
+                    // Class from non-stdlib module.
                     val directSuperTypeSymbols = hashSetOf<IrClassSymbol>()
 
                     classifier.annotationConstructorsIfApplicable?.firstUnusable { it.exploreAnnotationConstructor(visitedSymbols) }
