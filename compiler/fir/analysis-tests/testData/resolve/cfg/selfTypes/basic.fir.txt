@@ -41,3 +41,13 @@ FILE: basic.kt
         }
 
     }
+    @R|kotlin/Self|() public final class SelfWithFunctionReturningItself<out <Self> : R|SelfWithFunctionReturningItself<<Self>>|> : R|kotlin/Any| {
+        public constructor<out <Self> : R|SelfWithFunctionReturningItself<<Self>>|>(): R|SelfWithFunctionReturningItself<<Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun ret(): R|SelfWithFunctionReturningItself<*>| {
+            ^ret this@R|/SelfWithFunctionReturningItself|
+        }
+
+    }

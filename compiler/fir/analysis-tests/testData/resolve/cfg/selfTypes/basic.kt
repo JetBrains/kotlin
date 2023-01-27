@@ -28,3 +28,10 @@ class SelfTypeWithSelfFunction {
         return this as Self
     }
 }
+
+@Self
+class SelfWithFunctionReturningItself {
+    fun ret(): SelfWithFunctionReturningItself {
+        return this
+    }
+}
