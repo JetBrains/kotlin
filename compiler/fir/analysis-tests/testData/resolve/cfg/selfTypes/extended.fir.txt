@@ -21,17 +21,35 @@ FILE: extended.kt
         }
 
     }
-    public abstract interface ClassWithTypeParameter<out T> : R|kotlin/Any| {
+    public abstract interface WithTypeParameter<out T> : R|kotlin/Any| {
         public abstract fun foo(): R|T|
 
     }
-    @R|kotlin/Self|() public final class ClassExtendingInterfaceWithTypeParameter<out <Self> : R|ClassExtendingInterfaceWithTypeParameter<<Self>>|> : R|ClassWithTypeParameter<<Self>>| {
-        public constructor<out <Self> : R|ClassExtendingInterfaceWithTypeParameter<<Self>>|>(): R|ClassExtendingInterfaceWithTypeParameter<<Self>>| {
+    @R|kotlin/Self|() public final class ExtendingInterfaceWithTypeParameter<out <Self> : R|ExtendingInterfaceWithTypeParameter<<Self>>|> : R|WithTypeParameter<<Self>>| {
+        public constructor<out <Self> : R|ExtendingInterfaceWithTypeParameter<<Self>>|>(): R|ExtendingInterfaceWithTypeParameter<<Self>>| {
             super<R|kotlin/Any|>()
         }
 
         public open override fun foo(): R|<Self>| {
-            ^foo (this@R|/ClassExtendingInterfaceWithTypeParameter| as R|<Self>|)
+            ^foo (this@R|/ExtendingInterfaceWithTypeParameter| as R|<Self>|)
+        }
+
+    }
+    @R|kotlin/Self|() public abstract class AbstractClassWithSelf<T, out <Self> : R|AbstractClassWithSelf<T, <Self>>|> : R|kotlin/Any| {
+        public constructor<T, out <Self> : R|AbstractClassWithSelf<T, <Self>>|>(): R|AbstractClassWithSelf<T, <Self>>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public abstract fun self(): R|<Self>|
+
+    }
+    public final class ExtendingAbstractClassWithSelf<T> : R|AbstractClassWithSelf<T, ExtendingAbstractClassWithSelf<T>>| {
+        public constructor<T>(): R|ExtendingAbstractClassWithSelf<T>| {
+            super<R|AbstractClassWithSelf<T, ExtendingAbstractClassWithSelf<T>>|>()
+        }
+
+        public open override fun self(): R|ExtendingAbstractClassWithSelf<T>| {
+            ^self this@R|/ExtendingAbstractClassWithSelf|
         }
 
     }

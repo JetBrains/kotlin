@@ -19,13 +19,24 @@ class SelfTypeWithSelfFunction {
     }
 }
 
-interface ClassWithTypeParameter<out T> {
+interface WithTypeParameter<out T> {
     fun foo(): T
 }
 
 @Self
-class ClassExtendingInterfaceWithTypeParameter : ClassWithTypeParameter<Self> {
+class ExtendingInterfaceWithTypeParameter : WithTypeParameter<Self> {
     override fun foo(): Self {
         return this as Self
+    }
+}
+
+@Self
+abstract class AbstractClassWithSelf<T> {
+    abstract fun self(): Self
+}
+
+class ExtendingAbstractClassWithSelf<T> : AbstractClassWithSelf<T, ExtendingAbstractClassWithSelf<T>>() {
+    override fun self(): ExtendingAbstractClassWithSelf<T> {
+        return this
     }
 }
