@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.io.PrintStream
 import kotlin.reflect.KAnnotatedElement
@@ -557,7 +558,7 @@ private fun Printer.generateImpl(
                     val defaultValue = it.gradleValues
                     var value = defaultValue.defaultValue
                     if (value != "null" && defaultValue.toArgumentConverter != null) {
-                       value = "$value${defaultValue.toArgumentConverter.substringAfter("this")}"
+                        value = "$value${defaultValue.toArgumentConverter.substringAfter("this")}"
                     }
                     println("args.${it.name} = $value")
                 }
@@ -615,7 +616,7 @@ private fun Printer.generatePropertyProvider(
     modifiers: String = ""
 ) {
     if (property.gradleDefaultValue == "null" &&
-        property.gradleInputType == GradleInputTypes.INPUT
+        property.gradleInputTypeAsEnum == GradleInputTypes.INPUT
     ) {
         println("@get:org.gradle.api.tasks.Optional")
     }
@@ -746,7 +747,6 @@ private val KProperty1<*, *>.gradleValues: DefaultValues
             DefaultValue.JS_MODULE_KINDS -> DefaultValues.JsModuleKinds
             DefaultValue.JS_SOURCE_MAP_CONTENT_MODES -> DefaultValues.JsSourceMapContentModes
             DefaultValue.JS_SOURCE_MAP_NAMES_POLICY -> DefaultValues.JsSourceMapNamesPolicies
-            else -> throw IllegalArgumentException("Unknown GradleOption value type: $this")
         }
     }
 
@@ -793,14 +793,17 @@ private val KProperty1<*, *>.gradleLazyReturnTypeInstantiator: String
         }
     }
 
-private val KProperty1<*, *>.gradleInputType: String get() =
-    findAnnotation<GradleOption>()!!.gradleInputType
+private val KProperty1<*, *>.gradleInputTypeAsEnum: GradleInputTypes
+    get() = findAnnotation<GradleOption>()!!.gradleInputType
+
+private val KProperty1<*, *>.gradleInputType: String
+    get() = findAnnotation<GradleOption>()!!.gradleInputType.gradleType
 
 private val KProperty1<*, *>.generateDeprecatedKotlinOption: Boolean
     get() = findAnnotation<GradleOption>()!!.shouldGenerateDeprecatedKotlinOptions
 
 private inline fun <reified T> KAnnotatedElement.findAnnotation(): T? =
-    annotations.filterIsInstance<T>().firstOrNull()
+    annotations.firstIsInstanceOrNull()
 
 object DeprecatedOptionAnnotator {
     fun generateOptionAnnotation(annotation: GradleDeprecatedOption): String {

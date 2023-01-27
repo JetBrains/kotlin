@@ -20,36 +20,32 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KVisibility
 
 /**
- * @param value should be one of [DefaultValue] constants
- * @param gradleInputType should be one of [GradleInputTypes] constants
+ * @param value should be one of [DefaultValue] enum values
+ * @param gradleInputType should be one of [GradleInputTypes] enum values
  */
 @Retention(AnnotationRetention.RUNTIME)
 annotation class GradleOption(
-    val value: Int,
-    val gradleInputType: String,
+    val value: DefaultValue,
+    val gradleInputType: GradleInputTypes,
     val shouldGenerateDeprecatedKotlinOptions: Boolean = false
 )
 
-// Enum class here is not possible due to bug in K2 compiler:
-// https://youtrack.jetbrains.com/issue/KT-54079
-object DefaultValue {
-    const val BOOLEAN_FALSE_DEFAULT = 0
-    const val BOOLEAN_TRUE_DEFAULT = 1
-    const val STRING_NULL_DEFAULT = 2
-    const val EMPTY_STRING_LIST_DEFAULT = 3
-    const val LANGUAGE_VERSIONS = 4
-    const val API_VERSIONS = 5
-    const val JVM_TARGET_VERSIONS = 6
-    const val JS_ECMA_VERSIONS = 7
-    const val JS_MODULE_KINDS = 8
-    const val JS_SOURCE_MAP_CONTENT_MODES = 9
-    const val JS_MAIN = 10
-    const val JS_SOURCE_MAP_NAMES_POLICY = 11
+enum class DefaultValue {
+    BOOLEAN_FALSE_DEFAULT,
+    BOOLEAN_TRUE_DEFAULT,
+    STRING_NULL_DEFAULT,
+    EMPTY_STRING_LIST_DEFAULT,
+    LANGUAGE_VERSIONS,
+    API_VERSIONS,
+    JVM_TARGET_VERSIONS,
+    JS_ECMA_VERSIONS,
+    JS_MODULE_KINDS,
+    JS_SOURCE_MAP_CONTENT_MODES,
+    JS_MAIN,
+    JS_SOURCE_MAP_NAMES_POLICY,
 }
 
-// Enum class here is not possible due to bug in K2 compiler:
-// https://youtrack.jetbrains.com/issue/KT-54079
-object GradleInputTypes {
-    const val INPUT = "org.gradle.api.tasks.Input"
-    const val INTERNAL = "org.gradle.api.tasks.Internal"
+enum class GradleInputTypes(val gradleType: String) {
+    INPUT("org.gradle.api.tasks.Input"),
+    INTERNAL("org.gradle.api.tasks.Internal")
 }
