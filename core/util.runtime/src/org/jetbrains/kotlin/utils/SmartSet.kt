@@ -45,7 +45,7 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
         size == 0 -> Collections.emptySet<T>().iterator()
         size == 1 -> SingletonIterator(data as T)
         size < ARRAY_THRESHOLD -> ArrayIterator(data as Array<T>)
-        else -> (data as MutableSet<T>).iterator()
+        else -> (data as LinkedHashSet<T>).iterator()
     }
 
     override fun add(element: T): Boolean {
@@ -64,7 +64,7 @@ class SmartSet<T> private constructor() : AbstractSet<T>() {
                 else arr.copyOf(size + 1).apply { set(size - 1, element) }
             }
             else -> {
-                val set = data as MutableSet<T>
+                val set = data as LinkedHashSet<T>
                 if (!set.add(element)) return false
             }
         }
