@@ -1,15 +1,4 @@
-expect enum class MyEnum : Enum<MyEnum> {
-  private expect constructor() /* primary */
-  FOO = MyEnum()
-
-  BAR = MyEnum()
-
-  expect fun values(): Array<MyEnum>
-  expect fun valueOf(value: String): MyEnum
-  expect val entries: EnumEntries
-    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
-
-}
+// FILE: main.kt
 
 enum class MyEnum : Enum<MyEnum> {
   private constructor() /* primary */ {
@@ -32,4 +21,3 @@ enum class MyEnum : Enum<MyEnum> {
     get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
 
 }
-

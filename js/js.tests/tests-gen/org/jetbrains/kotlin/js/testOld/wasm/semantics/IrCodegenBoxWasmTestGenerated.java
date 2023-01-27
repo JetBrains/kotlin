@@ -20543,6 +20543,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias.kt");
             }
 
+            @TestMetadata("typeAlias2.kt")
+            public void testTypeAlias2() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias2.kt");
+            }
+
             @TestMetadata("withTypeParameter.kt")
             public void testWithTypeParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/withTypeParameter.kt");

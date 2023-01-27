@@ -998,6 +998,12 @@ public class IrTextTestGenerated extends AbstractIrTextTest {
             }
 
             @Test
+            @TestMetadata("expectedEnumClass2.kt")
+            public void testExpectedEnumClass2() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectedEnumClass2.kt");
+            }
+
+            @Test
             @TestMetadata("expectedSealedClass.kt")
             public void testExpectedSealedClass() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/multiplatform/expectedSealedClass.kt");

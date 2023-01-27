@@ -7356,6 +7356,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("expectClassActualTypeAlias2.kt")
+        public void testExpectClassActualTypeAlias2() throws Exception {
+            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/expectClassActualTypeAlias2.kt");
+        }
+
+        @Test
         @TestMetadata("fakeOverridesForIntersectionTypes.kt")
         public void testFakeOverridesForIntersectionTypes() throws Exception {
             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fakeOverridesForIntersectionTypes.kt");
@@ -32726,6 +32732,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("annotationsViaActualTypeAliasFromBinary2.kt")
+        public void testAnnotationsViaActualTypeAliasFromBinary2() throws Exception {
+            runTest("compiler/testData/codegen/box/multiplatform/annotationsViaActualTypeAliasFromBinary2.kt");
+        }
+
+        @Test
         @TestMetadata("commonInternal.kt")
         public void testCommonInternal() throws Exception {
             runTest("compiler/testData/codegen/box/multiplatform/commonInternal.kt");
@@ -32918,6 +32930,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("typeAlias.kt")
             public void testTypeAlias() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias.kt");
+            }
+
+            @Test
+            @TestMetadata("typeAlias2.kt")
+            public void testTypeAlias2() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias2.kt");
             }
 
             @Test

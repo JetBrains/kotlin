@@ -104,6 +104,15 @@ open class AbstractIrTextTest : AbstractIrTextTestBase<ClassicFrontendOutputArti
         get() = ::ClassicFrontendFacade
     override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
         get() = ::ClassicFrontend2IrConverter
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with(builder) {
+            useAfterAnalysisCheckers(
+                ::BlackBoxCodegenSuppressor,
+            )
+        }
+    }
 }
 
 open class AbstractFir2IrTextTest : AbstractIrTextTestBase<FirOutputArtifact>() {

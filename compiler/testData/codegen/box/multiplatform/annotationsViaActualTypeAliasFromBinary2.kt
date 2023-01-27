@@ -1,10 +1,9 @@
 // TARGET_BACKEND: JVM
 // !LANGUAGE: +MultiPlatformProjects
 // WITH_REFLECT
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
-// FIR status: In FIR, declaring the same `expect` and `actual` classes in one compiler module is not possible (see KT-55177).
+// IGNORE_BACKEND_K1: ANY
 
-// MODULE: lib
+// MODULE: lib1
 // FILE: Jnno.java
 
 import java.lang.annotation.Retention;
@@ -40,8 +39,8 @@ public @interface Jnno {
     // TODO: A[] aa() default {@A("2"), @A("3")};
 }
 
-// MODULE: main(lib)
-// FILE: main.kt
+// MODULE: lib2
+// FILE: Anno.kt
 
 // See compiler/testData/diagnostics/tests/multiplatform/defaultArguments/annotationsViaActualTypeAlias2.kt
 
@@ -86,6 +85,9 @@ annotation class A(val value: String)
 
 @Anno
 fun test() {}
+
+// MODULE: main(lib1)()(lib2)
+// FILE: main.kt
 
 actual typealias Anno = Jnno
 

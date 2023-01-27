@@ -26778,6 +26778,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/multiplatform/annotationsViaActualTypeAliasFromBinary.kt");
         }
 
+        @TestMetadata("annotationsViaActualTypeAliasFromBinary2.kt")
+        public void testAnnotationsViaActualTypeAliasFromBinary2() throws Exception {
+            runTest("compiler/testData/codegen/box/multiplatform/annotationsViaActualTypeAliasFromBinary2.kt");
+        }
+
         @TestMetadata("commonInternal.kt")
         public void testCommonInternal() throws Exception {
             runTest("compiler/testData/codegen/box/multiplatform/commonInternal.kt");
@@ -26943,6 +26948,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestMetadata("typeAlias.kt")
             public void testTypeAlias() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias.kt");
+            }
+
+            @TestMetadata("typeAlias2.kt")
+            public void testTypeAlias2() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/defaultArguments/typeAlias2.kt");
             }
 
             @TestMetadata("withTypeParameter.kt")

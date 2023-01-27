@@ -727,6 +727,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/multiplatform/expectedEnumClass.kt");
             }
 
+            @TestMetadata("expectedEnumClass2.kt")
+            public void testExpectedEnumClass2() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectedEnumClass2.kt");
+            }
+
             @TestMetadata("expectedSealedClass.kt")
             public void testExpectedSealedClass() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/multiplatform/expectedSealedClass.kt");
