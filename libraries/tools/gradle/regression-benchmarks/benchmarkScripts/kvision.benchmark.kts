@@ -9,14 +9,14 @@
 @file:BenchmarkProject(
     name = "kvision",
     gitUrl = "https://github.com/rjaros/kvision.git",
-    gitCommitSha = "3fe69bf6db9a3650b026630d857862f3cee6485b",
-    stableKotlinVersion = "1.7.20",
+    gitCommitSha = "6849861bf8c1e24ccdbdaf54606271c355d5ef9c",
+    stableKotlinVersion = "1.8.0",
 )
 
 import java.io.File
 
 val repoPatch = {
-    "kvision-kotlin-current.patch" to File("benchmarkScripts/files/kvision-kotlin-current.patch")
+    "kvision-kotlin-current.patch" to File("benchmarkScripts/files/kvision-kotlin-repo.patch")
         .readText()
         .run { replace("<kotlin_version>", currentKotlinVersion) }
         .byteInputStream()
@@ -26,44 +26,23 @@ runBenchmarks(
     repoPatch,
     suite {
         scenario {
-            title = "Build Js IR clean build"
+            title = "Build Js clean build"
 
-            runTasks("jsIrJar")
+            runTasks("jsJar")
             runCleanupTasks("clean")
         }
 
         scenario {
             title = "Build Js IR with ABI change in ObservableList"
 
-            runTasks("jsIrJar")
+            runTasks("jsJar")
             applyAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
         }
 
         scenario {
             title = "Build Js IR with non-ABI change in ObservableList"
 
-            runTasks("jsIrJar")
-            applyNonAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
-        }
-
-        scenario {
-            title = "Build Js Legacy clean build"
-
-            runTasks("jsLegacyJar")
-            runCleanupTasks("clean")
-        }
-
-        scenario {
-            title = "Build Js Legacy with ABI change in ObservableList"
-
-            runTasks("jsLegacyJar")
-            applyAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
-        }
-
-        scenario {
-            title = "Build Js Legacy with non-ABI change in ObservableList"
-
-            runTasks("jsLegacyJar")
+            runTasks("jsJar")
             applyNonAbiChangeTo("kvision-modules/kvision-state/src/main/kotlin/io/kvision/state/ObservableList.kt")
         }
 
@@ -71,22 +50,19 @@ runBenchmarks(
             title = "Dry run configuration time"
             useGradleArgs("-m")
 
-            iterations = 20
-            runTasks("jsIrJar")
+            runTasks("jsJar")
         }
 
         scenario {
             title = "No-op configuration time"
 
-            iterations = 20
             runTasks("help")
         }
 
         scenario {
             title = "UP-TO-DATE configuration time"
 
-            iterations = 20
-            runTasks("jsIrJar")
+            runTasks("jsJar")
         }
     }
 )
