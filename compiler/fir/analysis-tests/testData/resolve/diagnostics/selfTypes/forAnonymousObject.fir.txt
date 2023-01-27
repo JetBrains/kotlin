@@ -1,0 +1,23 @@
+FILE: forAnonymousObject.kt
+    public abstract class AbstractClass : R|kotlin/Any| {
+        public constructor(): R|AbstractClass| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val abstractClassObject: R|AbstractClass| = @R|kotlin/Self|() object : R|AbstractClass| {
+        private constructor(): R|<anonymous>| {
+            super<R|AbstractClass|>()
+        }
+
+    }
+
+        public get(): R|AbstractClass|
+    public final val obj: R|kotlin/Any| = @R|kotlin/Self|() object : R|kotlin/Any| {
+        private constructor(): R|<anonymous>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+
+        public get(): R|kotlin/Any|

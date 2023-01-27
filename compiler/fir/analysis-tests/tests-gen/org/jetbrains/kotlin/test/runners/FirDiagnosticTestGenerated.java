@@ -1837,6 +1837,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("forAnonymousObject.kt")
+                public void testForAnonymousObject() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes/forAnonymousObject.kt");
+                }
+
+                @Test
                 @TestMetadata("forEnumClass.kt")
                 public void testForEnumClass() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes/forEnumClass.kt");

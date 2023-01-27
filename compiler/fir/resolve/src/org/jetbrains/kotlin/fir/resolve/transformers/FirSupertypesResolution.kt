@@ -451,7 +451,7 @@ open class FirSupertypeResolverVisitor(
     private fun addSelfToTypeParameters(firClass: FirClassLikeDeclaration, session: FirSession) {
         val isSelf = firClass.getAnnotationByClassId(StandardClassIds.Annotations.Self, session) != null
         val params = firClass.typeParameters
-        if (params is MutableList && isSelf && params.find { it.symbol.name == SpecialNames.SELF_TYPE } == null) {
+        if (params is MutableList && isSelf && params.find { it.symbol.name == SpecialNames.SELF_TYPE } == null && firClass is FirRegularClass) {
             val selfSymbol = FirTypeParameterSymbol()
             val firTypeParameterBuilder = FirTypeParameterBuilder()
             firTypeParameterBuilder.bounds.add(buildResolvedTypeRef {
@@ -482,13 +482,11 @@ open class FirSupertypeResolverVisitor(
 
             firClass.replaceTypeParameters(params + selfTypeParameter)
 
-            if (firClass is FirClass) {
-                firClass.declarations.filterIsInstance<FirConstructor>().forEach {
-                    val constructorTypeParams = it.typeParameters
-                    it.replaceTypeParameters(constructorTypeParams + selfTypeParameter)
-                    val firClassTypeRef = it.returnTypeRef.resolvedTypeFromPrototype(firClass.defaultType())
-                    it.replaceReturnTypeRef(firClassTypeRef)
-                }
+            firClass.declarations.filterIsInstance<FirConstructor>().forEach {
+                val constructorTypeParams = it.typeParameters
+                it.replaceTypeParameters(constructorTypeParams + selfTypeParameter)
+                val firClassTypeRef = it.returnTypeRef.resolvedTypeFromPrototype(firClass.defaultType())
+                it.replaceReturnTypeRef(firClassTypeRef)
             }
         }
     }

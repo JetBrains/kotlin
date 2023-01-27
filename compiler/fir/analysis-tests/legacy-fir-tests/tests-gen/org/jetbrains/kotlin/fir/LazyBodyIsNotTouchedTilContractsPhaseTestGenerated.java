@@ -1607,6 +1607,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes/forAnnotation.kt");
             }
 
+            @TestMetadata("forAnonymousObject.kt")
+            public void testForAnonymousObject() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes/forAnonymousObject.kt");
+            }
+
             @TestMetadata("forEnumClass.kt")
             public void testForEnumClass() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/selfTypes/forEnumClass.kt");
