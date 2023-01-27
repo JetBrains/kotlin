@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
 private class ContextCollectingDiagnosticCollectorVisitor private constructor(
     sessionHolder: SessionHolder,
@@ -69,6 +70,11 @@ internal object PersistenceContextCollector {
             "Cannot collect context for local declaration ${declaration.renderWithType()}"
         }
         val designation = declaration.collectDesignation(firFile)
+
+        designation.path.forEach { firClass ->
+            firClass.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+        }
+
         return ContextCollectingDiagnosticCollectorVisitor.collect(sessionHolder, designation)
     }
 }
