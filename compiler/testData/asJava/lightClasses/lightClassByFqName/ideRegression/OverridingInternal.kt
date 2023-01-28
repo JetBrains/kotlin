@@ -1,4 +1,6 @@
 // p.C
+// COMPILATION_ERRORS
+// FILE: C.kt
 package p
 
 class C : A(), I {
@@ -13,4 +15,15 @@ class C : A(), I {
     override fun if() = 5
 }
 
-// COMPILATION_ERRORS
+// FILE: A.kt
+package p
+
+abstract class A {
+    open internal val ap: Int = 4
+    abstract internal fun af(): Int
+}
+
+interface I {
+    internal val ip: Int
+    internal fun if(): Int
+}

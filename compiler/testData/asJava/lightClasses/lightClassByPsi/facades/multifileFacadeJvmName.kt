@@ -1,6 +1,11 @@
+// FILE: MultifileFacadeJvmName.kt
 @file:JvmMultifileClass
 @file:JvmName("multifileFacade")
 
 fun foo() = 42
 
-// FIR_COMPARISON
+// FILE: OtherMultifileFacadeJvmName.kt
+@file:JvmMultifileClass
+@file:JvmName("otherMultifileFacade")
+
+fun bar() = 24
