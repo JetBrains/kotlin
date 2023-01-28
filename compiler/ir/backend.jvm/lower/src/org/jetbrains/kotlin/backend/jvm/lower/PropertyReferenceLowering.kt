@@ -352,14 +352,17 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         call.putValueArgument(index++, computeSignatureString(expression))
         if (useOptimizedSuperClass) {
             val isPackage = (container is IrClass && container.isFileClass) || container is IrPackageFragment
-            val isJavaSynthetic = (expression.symbol.owner as? IrProperty)?.let {
-                it.backingField == null &&
-                        (it.origin == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE
-                                || it.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
-            } ?: false
-            call.putValueArgument(index, irInt((if (isPackage) 1 else 0) or (if (isJavaSynthetic) 2 else 0)))
+            call.putValueArgument(index, irInt((if (isPackage) 1 else 0) or (if (expression.isJavaSyntheticPropertyReference) 2 else 0)))
         }
     }
+
+    private val IrCallableReference<*>.isJavaSyntheticPropertyReference: Boolean
+        get() =
+            symbol.owner.let {
+                it is IrProperty && it.backingField == null &&
+                        (it.origin == IrDeclarationOrigin.SYNTHETIC_JAVA_PROPERTY_DELEGATE
+                                || it.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB)
+            }
 
     // Create an instance of KProperty that overrides the get() and set() methods to directly call getX() and setX() on the object.
     // This is (relatively) fast, but space-inefficient. Also, the instances can store bound receivers in their fields. Example:
@@ -419,7 +422,11 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         if (field == null) {
             fun IrBuilderWithScope.setCallArguments(call: IrCall, arguments: List<IrValueParameter>) {
                 val receiverFromField = boundReceiver?.let { irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type) }
-                call.copyTypeArgumentsFrom(expression)
+                if (expression.isJavaSyntheticPropertyReference) {
+                    assert(call.typeArgumentsCount == 0) { "Unexpected type arguments: ${call.typeArgumentsCount}" }
+                } else {
+                    call.copyTypeArgumentsFrom(expression)
+                }
                 call.dispatchReceiver = call.symbol.owner.dispatchReceiverParameter?.let {
                     receiverFromField ?: irImplicitCast(irGet(arguments[1]), expression.receiverType)
                 }

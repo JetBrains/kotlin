@@ -49598,6 +49598,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("kt56154.kt")
+        public void testKt56154() throws Exception {
+            runTest("compiler/testData/codegen/box/syntheticExtensions/kt56154.kt");
+        }
+
+        @Test
         @TestMetadata("overrideKotlinPropertyByJavaMethod.kt")
         public void testOverrideKotlinPropertyByJavaMethod() throws Exception {
             runTest("compiler/testData/codegen/box/syntheticExtensions/overrideKotlinPropertyByJavaMethod.kt");
