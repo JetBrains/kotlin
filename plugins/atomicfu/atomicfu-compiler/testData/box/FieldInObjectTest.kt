@@ -3,7 +3,7 @@ import kotlin.test.*
 import kotlin.random.*
 
 object Provider {
-    val port = atomic(Random.nextInt(20, 90) * 100)
+    private val port = atomic(Random.nextInt(20, 90) * 100)
     fun next(): Int = port.incrementAndGet()
 
     private val _l = atomic(2424920024888888848)

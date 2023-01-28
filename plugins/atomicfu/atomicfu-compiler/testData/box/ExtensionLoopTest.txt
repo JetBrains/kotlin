@@ -1,7 +1,7 @@
 @kotlin.Metadata
 public final class ExtensionLoopTestKt {
     // source: 'ExtensionLoopTest.kt'
-    public final static @org.jetbrains.annotations.NotNull field ref$ExtensionLoopTest$VolatileWrapper: Ref$ExtensionLoopTest$VolatileWrapper
+    private final static @org.jetbrains.annotations.NotNull field ref$ExtensionLoopTest$VolatileWrapper: Ref$ExtensionLoopTest$VolatileWrapper
     static method <clinit>(): void
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     private final static method loop$atomicfu$array(p0: java.util.concurrent.atomic.AtomicReferenceArray, p1: int, p2: kotlin.jvm.functions.Function1): void
@@ -70,11 +70,12 @@ public final class LoopTest {
 }
 
 @kotlin.Metadata
-public final class Ref$ExtensionLoopTest$VolatileWrapper {
+final class Ref$ExtensionLoopTest$VolatileWrapper {
     // source: 'ExtensionLoopTest.kt'
     private final static @org.jetbrains.annotations.NotNull field ref$FU: java.util.concurrent.atomic.AtomicReferenceFieldUpdater
     private volatile @kotlin.jvm.Volatile @org.jetbrains.annotations.Nullable field ref: java.lang.Object
     static method <clinit>(): void
-    public method <init>(): void
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic final static method access$getRef$FU$p(): java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 }

@@ -103,20 +103,24 @@ class AtomicfuJvmIrTransformer(
         }
 
         private fun IrProperty.transformAtomicfuProperty(parent: IrDeclarationContainer) {
+            val atomicfuProperty = this
             val isTopLevel = parent is IrFile || (parent is IrClass && parent.kind == ClassKind.OBJECT)
             when {
                 isAtomic() -> {
                     if (isTopLevel) {
-                        val parentClass = generateWrapperClass(this, parent)
-                        transformAtomicProperty(parentClass)
-                        moveFromFileToClass(parent, parentClass)
+                        val wrapperClass = buildWrapperClass(atomicfuProperty, parent).also {
+                            // add a static instance of the generated wrapper class to the parent container
+                            context.buildClassInstance(it, parent, atomicfuProperty.visibility, true)
+                        }
+                        transformAtomicProperty(wrapperClass)
+                        moveFromFileToClass(parent, wrapperClass)
                     } else {
                         transformAtomicProperty(parent as IrClass)
                     }
                 }
                 isDelegatedToAtomic() -> transformDelegatedProperty(parent)
                 isAtomicArray() -> transformAtomicArrayProperty(parent)
-                isTrace() -> parent.declarations.remove(this)
+                isTrace() -> parent.declarations.remove(atomicfuProperty)
                 else -> {}
             }
         }
@@ -240,9 +244,9 @@ class AtomicfuJvmIrTransformer(
         }
 
         private fun buildVolatileRawField(property: IrProperty, parent: IrDeclarationContainer): IrField =
-        // Generate a new backing field for the given property:
-        // a volatile variable of the atomic value type
-        // val a = atomic(0)
+            // Generate a new backing field for the given property:
+            // a volatile variable of the atomic value type
+            // val a = atomic(0)
             // volatile var a: Int = 0
             property.backingField?.let { backingField ->
                 val init = backingField.initializer?.expression
@@ -250,9 +254,9 @@ class AtomicfuJvmIrTransformer(
                 context.irFactory.buildField {
                     name = property.name
                     type = if (valueType.isBoolean()) irBuiltIns.intType else valueType
-                    visibility = backingField.visibility // private
                     isFinal = false
                     isStatic = parent is IrFile
+                    visibility = DescriptorVisibilities.PRIVATE
                 }.apply {
                     if (init != null) {
                         val value = (init as IrCall).getAtomicFactoryValueArgument()
@@ -272,9 +276,9 @@ class AtomicfuJvmIrTransformer(
             } ?: error("Backing field of the atomic property ${property.render()} is null")
 
         private fun addJucaAFUProperty(atomicProperty: IrProperty, parentClass: IrClass): IrProperty =
-        // Generate an atomic field updater for the volatile backing field of the given property:
-        // val a = atomic(0)
-        // volatile var a: Int = 0
+            // Generate an atomic field updater for the volatile backing field of the given property:
+            // val a = atomic(0)
+            // volatile var a: Int = 0
             // val a$FU = AtomicIntegerFieldUpdater.newUpdater(parentClass, "a")
             atomicProperty.backingField?.let { volatileField ->
                 val fuClass = atomicSymbols.getJucaAFUClass(volatileField.type)
@@ -282,9 +286,9 @@ class AtomicfuJvmIrTransformer(
                 val fuField = context.irFactory.buildField {
                     name = Name.identifier(mangleFUName(fieldName))
                     type = fuClass.defaultType
-                    visibility = volatileField.visibility // private
                     isFinal = true
                     isStatic = true
+                    visibility = DescriptorVisibilities.PRIVATE
                 }.apply {
                     initializer = IrExpressionBodyImpl(
                         with(atomicSymbols.createBuilder(symbol)) {
@@ -293,7 +297,7 @@ class AtomicfuJvmIrTransformer(
                     )
                     parent = parentClass
                 }
-                return context.addProperty(fuField, parentClass, atomicProperty.visibility, true)
+                return context.buildPropertyForBackingField(fuField, parentClass, atomicProperty.visibility, true)
             } ?: error("Atomic property ${atomicProperty.render()} should have a non-null generated volatile backingField")
 
         private fun buildJucaArrayField(atomicfuArrayProperty: IrProperty, parent: IrDeclarationContainer) =
@@ -303,9 +307,9 @@ class AtomicfuJvmIrTransformer(
                 context.irFactory.buildField {
                     name = atomicfuArray.name
                     type = atomicArrayClass.defaultType
-                    visibility = atomicfuArray.visibility // private
                     isFinal = atomicfuArray.isFinal
                     isStatic = atomicfuArray.isStatic
+                    visibility = DescriptorVisibilities.PRIVATE
                 }.apply {
                     if (init != null) {
                         this.initializer = IrExpressionBodyImpl(
@@ -333,20 +337,24 @@ class AtomicfuJvmIrTransformer(
                 }
             } ?: error("Atomic property does not have backingField")
 
-        private fun generateWrapperClass(atomicProperty: IrProperty, parentContainer: IrDeclarationContainer): IrClass {
-            val wrapperClassName = getVolatileWrapperClassName(atomicProperty)
-            val volatileWrapperClass = parentContainer.declarations.singleOrNull { it is IrClass && it.name.asString() == wrapperClassName }
-                ?: atomicSymbols.buildClassWithPrimaryConstructor(wrapperClassName, parentContainer)
-            // add a static instance of the generated wrapper class to the parent container
-            return (volatileWrapperClass as IrClass).also {
-                context.addProperty(
-                    field = context.buildClassInstance(it, parentContainer),
-                    parent = parentContainer,
-                    visibility = atomicProperty.visibility,
-                    isStatic = true
-                )
+        private fun buildWrapperClass(atomicProperty: IrProperty, parentContainer: IrDeclarationContainer): IrClass =
+            atomicSymbols.buildClass(
+                FqName(getVolatileWrapperClassName(atomicProperty)),
+                ClassKind.CLASS,
+                parentContainer
+            ).apply {
+                val irClass = this
+                irClass.visibility = atomicProperty.visibility
+                addConstructor {
+                    isPrimary = true
+                }.apply {
+                    body = atomicSymbols.createBuilder(symbol).irBlockBody(startOffset, endOffset) {
+                        +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
+                        +IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, context.irBuiltIns.unitType)
+                    }
+                    this.visibility = DescriptorVisibilities.PRIVATE // constructor of the wrapper class should be private
+                }
             }
-        }
 
         private fun transformLateInitializer(
             field: IrField,
