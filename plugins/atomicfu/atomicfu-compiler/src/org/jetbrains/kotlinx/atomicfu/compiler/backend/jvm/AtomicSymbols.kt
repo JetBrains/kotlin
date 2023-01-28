@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
-import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -30,7 +29,7 @@ class AtomicSymbols(
     private val javaLang: IrPackageFragment = createPackage("java.lang")
     private val javaUtilConcurrent: IrPackageFragment = createPackage("java.util.concurrent.atomic")
     private val kotlinJvm: IrPackageFragment = createPackage("kotlin.jvm")
-    val javaLangClass: IrClassSymbol = createClass(javaLang, "Class", ClassKind.CLASS, Modality.FINAL)
+    private val javaLangClass: IrClassSymbol = createClass(javaLang, "Class", ClassKind.CLASS, Modality.FINAL)
 
     // AtomicIntegerFieldUpdater
     val atomicIntFieldUpdaterClass: IrClassSymbol =
@@ -535,25 +534,6 @@ class AtomicSymbols(
     private val volatileConstructor = buildAnnotationConstructor(buildClass(JvmNames.VOLATILE_ANNOTATION_FQ_NAME, ClassKind.ANNOTATION_CLASS, kotlinJvm))
     val volatileAnnotationConstructorCall =
         IrConstructorCallImpl.fromSymbolOwner(volatileConstructor.returnType, volatileConstructor.symbol)
-
-    fun buildClassWithPrimaryConstructor(
-        name: String,
-        parent: IrDeclarationContainer
-    ) = buildClass(
-        FqName(name),
-        ClassKind.CLASS,
-        parent
-    ).apply {
-        val irClass = this
-        addConstructor {
-            isPrimary = true
-        }.apply {
-            body = createBuilder(symbol).irBlockBody(startOffset, endOffset) {
-                +irDelegatingConstructorCall(context.irBuiltIns.anyClass.owner.constructors.single())
-                +IrInstanceInitializerCallImpl(startOffset, endOffset, irClass.symbol, context.irBuiltIns.unitType)
-            }
-        }
-    }
 
     fun buildClass(
         fqName: FqName,

@@ -304,7 +304,7 @@ internal fun IrPluginContext.getArrayConstructorSymbol(
     }
 }
 
-internal fun IrPluginContext.addProperty(
+internal fun IrPluginContext.buildPropertyForBackingField(
     field: IrField,
     parent: IrDeclarationContainer,
     visibility: DescriptorVisibility,
@@ -386,12 +386,27 @@ internal fun IrPluginContext.addStaticGetter(property: IrProperty) {
     }
 }
 
-internal fun IrPluginContext.buildClassInstance(irClass: IrClass, parentClass: IrDeclarationContainer) =
+internal fun IrPluginContext.buildClassInstance(
+    irClass: IrClass,
+    parent: IrDeclarationContainer,
+    visibility: DescriptorVisibility,
+    isStatic: Boolean
+): IrProperty =
+    buildPropertyForBackingField(
+        field = buildClassInstanceField(irClass, parent),
+        parent = parent,
+        visibility = visibility,
+        isStatic = isStatic
+    )
+
+private fun IrPluginContext.buildClassInstanceField(irClass: IrClass, parent: IrDeclarationContainer) =
+    // build a backing field for the wrapper class instance property
     irFactory.buildField {
         this.name = Name.identifier(irClass.name.asString().decapitalizeAsciiOnly())
         type = irClass.defaultType
         isFinal = true
         isStatic = true
+        visibility = DescriptorVisibilities.PRIVATE
     }.apply {
         initializer = IrExpressionBodyImpl(
             IrConstructorCallImpl.fromSymbolOwner(
@@ -399,7 +414,7 @@ internal fun IrPluginContext.buildClassInstance(irClass: IrClass, parentClass: I
                 irClass.primaryConstructor!!.symbol
             )
         )
-        this.parent = parentClass
+        this.parent = parent
     }
 
 private fun IrSimpleType.getArrayClassFqName(): FqName =
