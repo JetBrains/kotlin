@@ -241,7 +241,7 @@ fun IrContainerExpression.unwrapBlock(): IrExpression = statements.singleOrNull(
 fun IrBuilderWithScope.savableStandaloneVariable(
     type: IrType,
     name: String? = null,
-    isMutable: Boolean = false,
+    isVar: Boolean,
     origin: IrDeclarationOrigin,
     isTemporary: Boolean = origin == IrDeclarationOrigin.IR_TEMPORARY_VARIABLE
             || origin == JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE
@@ -249,7 +249,7 @@ fun IrBuilderWithScope.savableStandaloneVariable(
     saveVariable: (IrVariable) -> Unit,
 ): IrVariable {
     val variable = if (isTemporary || name == null) scope.createTemporaryVariableDeclaration(
-        type, name, isMutable,
+        type, name, isVar,
         startOffset = startOffset,
         endOffset = endOffset,
         origin = origin,
@@ -260,7 +260,7 @@ fun IrBuilderWithScope.savableStandaloneVariable(
         symbol = IrVariableSymbolImpl(),
         name = Name.identifier(name),
         type = type,
-        isVar = isMutable,
+        isVar = isVar,
         isConst = false,
         isLateinit = false
     ).apply {

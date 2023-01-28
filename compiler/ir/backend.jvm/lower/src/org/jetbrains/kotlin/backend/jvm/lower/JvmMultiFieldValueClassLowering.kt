@@ -894,7 +894,11 @@ internal class JvmMultiFieldValueClassLowering(
                 context.createJvmIrBuilder(currentScope.symbol, expression).irBlock {
                     val rootNode = replacements.getRootMfvcNode(function.constructedClass)
                     val instance = rootNode.createInstanceFromValueDeclarationsAndBoxType(
-                        this, function.constructedClassType as IrSimpleType, Name.identifier("constructor_tmp"), ::variablesSaver
+                        scope = this,
+                        type = function.constructedClassType as IrSimpleType,
+                        name = Name.identifier("constructor_tmp"),
+                        saveVariable = ::variablesSaver,
+                        isVar = false,
                     )
                     for (valueDeclaration in instance.valueDeclarations) {
                         valueDeclaration.origin = JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE
@@ -1175,7 +1179,7 @@ internal class JvmMultiFieldValueClassLowering(
             val rootNode = replacements.getRootMfvcNode(irClass)
             return context.createJvmIrBuilder(getCurrentScopeSymbol(), declaration).irBlock {
                 val instance = rootNode.createInstanceFromValueDeclarationsAndBoxType(
-                    this, declaration.type as IrSimpleType, declaration.name, ::variablesSaver
+                    this, declaration.type as IrSimpleType, declaration.name, ::variablesSaver, declaration.isVar
                 )
                 valueDeclarationsRemapper.registerReplacement(declaration, instance)
                 initializer?.let {
@@ -1201,7 +1205,8 @@ internal class JvmMultiFieldValueClassLowering(
             savableStandaloneVariable(
                 type = it.type.substitute(typeArguments),
                 origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                saveVariable = ::variablesSaver
+                saveVariable = ::variablesSaver,
+                isVar = false,
             )
         }
         val instance = ValueDeclarationMfvcNodeInstance(rootMfvcNode, typeArguments, variables)

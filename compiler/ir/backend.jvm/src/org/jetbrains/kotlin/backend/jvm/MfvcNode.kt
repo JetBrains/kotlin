@@ -48,18 +48,19 @@ fun MfvcNode.createInstanceFromBox(
     createInstanceFromBox(scope, makeTypeArgumentsFromType(receiver.type as IrSimpleType), receiver, accessType, saveVariable)
 
 fun MfvcNode.createInstanceFromValueDeclarationsAndBoxType(
-    scope: IrBuilderWithScope, type: IrSimpleType, name: Name, saveVariable: (IrVariable) -> Unit,
-): ValueDeclarationMfvcNodeInstance = createInstanceFromValueDeclarations(scope, makeTypeArgumentsFromType(type), name, saveVariable)
+    scope: IrBuilderWithScope, type: IrSimpleType, name: Name, saveVariable: (IrVariable) -> Unit, isVar: Boolean
+): ValueDeclarationMfvcNodeInstance = createInstanceFromValueDeclarations(scope, makeTypeArgumentsFromType(type), name, saveVariable, isVar)
 
 fun MfvcNode.createInstanceFromValueDeclarations(
-    scope: IrBuilderWithScope, typeArguments: TypeArguments, name: Name, saveVariable: (IrVariable) -> Unit,
+    scope: IrBuilderWithScope, typeArguments: TypeArguments, name: Name, saveVariable: (IrVariable) -> Unit, isVar: Boolean
 ): ValueDeclarationMfvcNodeInstance {
     val valueDeclarations = mapLeaves {
         scope.savableStandaloneVariable(
             type = it.type,
             name = listOf(name, it.fullFieldName).joinToString("-"),
             origin = JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_REPRESENTATION_VARIABLE,
-            saveVariable = saveVariable
+            saveVariable = saveVariable,
+            isVar = isVar,
         )
     }
     return ValueDeclarationMfvcNodeInstance(this, typeArguments, valueDeclarations)
