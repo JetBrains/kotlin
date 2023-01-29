@@ -141,7 +141,7 @@ abstract class AbstractSymbolLightClassesParentingTest(
                 lastDeclaration
             } else {
                 (lastDeclaration as PsiModifierList).parent
-            }
+            } as PsiModifierListOwner
 
             when (psiModifierListOwner) {
                 is PsiClass,
@@ -155,6 +155,16 @@ abstract class AbstractSymbolLightClassesParentingTest(
                 else ->
                     throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class.java}")
             }
+
+            val modifierList = psiModifierListOwner.modifierList!!
+            assertions.assertTrue(modifierList.annotations.any { it == annotation })
+
+            val qualifiedName = annotation.qualifiedName!!
+            assertions.assertTrue(modifierList.hasAnnotation(qualifiedName))
+
+            val anno = modifierList.findAnnotation(qualifiedName)
+            assertions.assertNotNull(anno)
+            assertions.assertTrue(annotation == anno || modifierList.annotations.count { it.qualifiedName == qualifiedName } > 1)
         }
     }
 }
