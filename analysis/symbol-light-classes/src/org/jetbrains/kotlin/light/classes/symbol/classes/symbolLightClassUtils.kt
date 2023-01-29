@@ -287,7 +287,8 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility.isPrivateOrPrivateToThis()) return
 
     if (declaration.hasJvmFieldAnnotation()) return
-    val propertyTypeIsValueClass = declaration.returnType.typeForValueClass
+    val propertyTypeIsValueClass = declaration.hasTypeForValueClassInSignature()
+
     /*
      * For top-level properties with value class in return type compiler mangles only setter
      *
@@ -619,6 +620,21 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
     propertyGroups[true]?.forEach(::addPropertyBackingField)
     // Then, regular member properties
     propertyGroups[false]?.forEach(::addPropertyBackingField)
+}
+
+context(KtAnalysisSession)
+internal fun KtCallableSymbol.hasTypeForValueClassInSignature(ignoreReturnType: Boolean = false): Boolean {
+    if (!ignoreReturnType) {
+        val psiDeclaration = sourcePsiSafe<KtCallableDeclaration>()
+        if (psiDeclaration?.typeReference != null && returnType.typeForValueClass) return true
+    }
+
+    if (receiverType?.typeForValueClass == true) return true
+    if (this is KtFunctionLikeSymbol) {
+        return valueParameters.any { it.returnType.typeForValueClass }
+    }
+
+    return false
 }
 
 context(KtAnalysisSession)

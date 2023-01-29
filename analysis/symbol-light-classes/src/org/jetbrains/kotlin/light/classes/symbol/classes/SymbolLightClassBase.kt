@@ -18,10 +18,6 @@ import com.intellij.psi.scope.PsiScopeProcessor
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
@@ -194,15 +190,5 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
         } else {
             visitor.visitElement(this)
         }
-    }
-
-    context(KtAnalysisSession)
-    protected fun KtCallableSymbol.hasTypeForValueClassInSignature(ignoreReturnType: Boolean = false): Boolean {
-        if (!ignoreReturnType && returnType.typeForValueClass) return true
-        if (receiverType?.typeForValueClass == true) return true
-        if (this is KtFunctionLikeSymbol) {
-            return valueParameters.any { it.returnType.typeForValueClass }
-        }
-        return false
     }
 }
