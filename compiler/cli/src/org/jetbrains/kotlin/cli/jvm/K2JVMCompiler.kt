@@ -157,7 +157,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 val dumpModelDir = environment.configuration.get(CommonConfigurationKeys.DUMP_MODEL)
                 if (dumpModelDir != null) {
-                    KotlinToJVMBytecodeCompiler.dumpModel(dumpModelDir, chunk, environment.configuration)
+                    KotlinToJVMBytecodeCompiler.dumpModel(dumpModelDir, chunk, environment.configuration, arguments)
                 }
 
                 KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)

@@ -23,6 +23,8 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiJavaModule
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.xmlb.SkipDefaultsSerializationFilter
+import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Attribute
 import org.jdom.Document
 import org.jdom.Element
@@ -33,6 +35,7 @@ import org.jetbrains.kotlin.asJava.FilteredJvmDiagnostics
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.CONTENT_ROOTS
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
@@ -57,9 +60,20 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import java.io.File
 
 object KotlinToJVMBytecodeCompiler {
-    fun dumpModel(dir: String, chunk: List<Module>, configuration: CompilerConfiguration) {
-
+    fun dumpModel(
+        dir: String, chunk: List<Module>,
+        configuration: CompilerConfiguration,
+        arguments: K2JVMCompilerArguments
+    ) {
         val modules = Element("modules").apply {
+            // Just write out all compiler arguments as is
+            addContent(
+                Element("compilerArguments").apply {
+                    val skipDefaultsFilter = SkipDefaultsSerializationFilter()
+                    val element = XmlSerializer.serialize(arguments, skipDefaultsFilter)
+                    addContent(element)
+                }
+            )
             for (module in chunk) {
                 addContent(Element("module").apply {
                     attributes.add(
