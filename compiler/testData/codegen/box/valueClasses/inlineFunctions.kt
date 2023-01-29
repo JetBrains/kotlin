@@ -42,6 +42,25 @@ import kotlin.math.sqrt
 
 fun supply(x: Any?) = Unit
 
+object InfiniteDPoints {
+    class DPointsIterator {
+        @PublishedApi
+        internal var i = 1.0
+        inline operator fun next() = DPoint(i, -i).also { i++ }
+        inline operator fun hasNext() = true
+    }
+    operator fun iterator() = DPointsIterator()
+}
+
+fun forStatement() {
+    var i = 1.0
+    for (x in InfiniteDPoints) {
+        require(x == DPoint(i, -i))
+        i++
+        if (i == 5.0) break
+    }
+}
+
 fun box(): String {
     val point = DPoint(1.0, 2.0)
     val pointX2 = DPoint(2.0, 4.0)
@@ -95,6 +114,7 @@ fun box(): String {
     require(segment.middle1.x == 1.5)
     require(segment.middle1.y == 3.0)
     supply("v")
+    forStatement()
     
     return "OK"
 }
