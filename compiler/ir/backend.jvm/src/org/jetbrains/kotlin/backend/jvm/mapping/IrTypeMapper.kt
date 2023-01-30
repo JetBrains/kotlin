@@ -130,7 +130,7 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
         mode: TypeMappingMode = TypeMappingMode.DEFAULT,
         sw: JvmSignatureWriter? = null,
         materialized: Boolean = true
-    ): Type = AbstractTypeMapper.mapType(this, type, mode, sw)
+    ): Type = AbstractTypeMapper.mapType(this, type, mode, sw, materialized)
 
     override fun JvmSignatureWriter.writeGenericType(type: KotlinTypeMarker, asmType: Type, mode: TypeMappingMode) {
         if (type is IrErrorType) {
