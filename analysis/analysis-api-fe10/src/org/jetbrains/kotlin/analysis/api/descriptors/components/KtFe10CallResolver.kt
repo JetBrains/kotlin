@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
@@ -28,10 +29,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters1
-import org.jetbrains.kotlin.diagnostics.DiagnosticWithParameters2
-import org.jetbrains.kotlin.diagnostics.Errors
-import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
@@ -98,7 +96,8 @@ internal class KtFe10CallResolver(
             Errors.REDUNDANT_SPREAD_OPERATOR_IN_NAMED_FORM_IN_ANNOTATION,
             *Errors.TYPE_MISMATCH_ERRORS.toTypedArray(),
         )
-        private val resolutionFailureErrors = setOf(
+
+        private val resolutionFailureErrors: Set<DiagnosticFactoryWithPsiElement<*, *>> = setOf(
             Errors.INVISIBLE_MEMBER,
             Errors.NO_VALUE_FOR_PARAMETER,
             Errors.MISSING_RECEIVER,
@@ -122,6 +121,7 @@ internal class KtFe10CallResolver(
             Errors.PARENTHESIZED_COMPANION_LHS_DEPRECATION,
             Errors.RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS,
             Errors.UNRESOLVED_REFERENCE,
+            *Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.factories,
         )
 
         private val syntaxErrors = setOf(
@@ -143,6 +143,9 @@ internal class KtFe10CallResolver(
             Errors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
             Errors.DELEGATE_PD_METHOD_NONE_APPLICABLE,
         )
+
+        private val DiagnosticFactoryForDeprecation<*, *, *>.factories: Array<DiagnosticFactoryWithPsiElement<*, *>>
+            get() = arrayOf(warningFactory, errorFactory)
     }
 
     override val token: KtLifetimeToken

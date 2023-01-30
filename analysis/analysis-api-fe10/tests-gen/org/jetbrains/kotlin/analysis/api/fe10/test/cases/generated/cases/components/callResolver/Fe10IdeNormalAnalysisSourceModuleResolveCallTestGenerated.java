@@ -773,6 +773,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("typecheckerRecursiveError.kt")
+    public void testTypecheckerRecursiveError() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/typecheckerRecursiveError.kt");
+    }
+
+    @Test
     @TestMetadata("unresolvableOperator_elvis_1.kt")
     public void testUnresolvableOperator_elvis_1() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/unresolvableOperator_elvis_1.kt");
