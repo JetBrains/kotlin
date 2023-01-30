@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toSingleKpmModuleIdentifier
+import org.jetbrains.kotlin.gradle.utils.compositeBuildRootProject
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 
 internal val Project.kotlinMppDependencyProjectStructureMetadataExtractorFactory: MppDependencyProjectStructureMetadataExtractorFactory
@@ -56,7 +57,7 @@ private constructor(
     companion object {
         private val extensionName = MppDependencyProjectStructureMetadataExtractorFactory::class.java.simpleName
         fun getOrCreate(project: Project): MppDependencyProjectStructureMetadataExtractorFactory =
-            project.extraProperties.getOrPut(extensionName) {
+            project.compositeBuildRootProject.extraProperties.getOrPut(extensionName) {
                 MppDependencyProjectStructureMetadataExtractorFactory(
                     lazy { GlobalProjectStructureMetadataStorage.getProjectStructureMetadataProvidersFromAllGradleBuilds(project) },
                     collectAllProjectStructureMetadataInCurrentBuild(project)
