@@ -63,6 +63,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             IncrementalModuleInfoBuildService.registerIfAbsent(project, objectFactory.providerWithLazyConvention {
                 GradleCompilerRunner.buildModulesInfo(project.gradle)
             })
+        val buildFinishedListenerService = BuildFinishedListenerService.registerIfAbsent(project)
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
 
@@ -106,6 +107,10 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.taskOutputsBackupExcludes.addAll(task.keepIncrementalCompilationCachesInMemory.map {
                 if (it) listOf(task.taskBuildCacheableOutputDirectory.get().asFile) else emptyList()
             })
+            task.suppressExperimentalIcOptimizationsWarning
+                .convention(propertiesProvider.suppressExperimentalICOptimizationsWarning)
+                .finalizeValueOnRead()
+            task.buildFinishedListenerService.value(buildFinishedListenerService).disallowChanges()
 
             task.incremental = false
             task.useModuleDetection.convention(false)
