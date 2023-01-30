@@ -2679,6 +2679,12 @@ public class LightTreeFir2IrTextTestGenerated extends AbstractLightTreeFir2IrTex
         }
 
         @Test
+        @TestMetadata("kt55458.kt")
+        public void testKt55458() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/kt55458.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaInEnumEntryConstructorCall.kt")
         public void testLambdaInEnumEntryConstructorCall() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/lambdaInEnumEntryConstructorCall.kt");
