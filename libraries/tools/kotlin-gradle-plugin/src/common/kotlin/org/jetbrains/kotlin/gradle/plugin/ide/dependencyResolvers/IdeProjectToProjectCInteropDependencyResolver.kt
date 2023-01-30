@@ -28,6 +28,7 @@ internal object IdeProjectToProjectCInteropDependencyResolver : IdeDependencyRes
         val configuration = project.locateOrCreateCInteropDependencyConfiguration(compilation)
 
         val cinteropFiles = configuration.incoming.artifactView {
+            it.isLenient = true
             it.componentFilter { identifier -> identifier is ProjectComponentIdentifier }
         }.files
 
