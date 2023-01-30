@@ -7,11 +7,13 @@
 
 package test.coroutines
 
+import com.google.gson.Gson
 import kotlin.test.Test
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.jvm.internal.*
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 /*
  * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -60,4 +62,73 @@ class DebugMetadataTest {
         )
         assertEquals(listOf("L$1", "c"), myContinuation.getSpilledVariableFieldMapping()!!.toList())
     }
+
+    @Test
+    fun testGetStackTraceInfoAsJsonAndReferences() {
+        val myContinuation = MyContinuation()
+        val stackTraceInfo = myContinuation.getStackTraceInfoAsJsonAndReferences()
+        assertEquals(stackTraceInfo.size, 4)
+
+        val continuationRefs = stackTraceInfo[0]
+        val stackTraceElementsAsJson = stackTraceInfo[1]
+        val spilledVariableFieldMappingsAsJson = stackTraceInfo[2]
+        val nextContinuationRefs = stackTraceInfo[3]
+        assertTrue(continuationRefs is Array<*>)
+        assertTrue(stackTraceElementsAsJson is String)
+        assertTrue(spilledVariableFieldMappingsAsJson is String)
+        assertTrue(nextContinuationRefs is Array<*>)
+
+        val gson = Gson()
+        val stackTraceElements = gson.fromJson(stackTraceElementsAsJson, Array<StackTraceElementInfo>::class.java)
+        val spilledVariableFieldMappings = gson.fromJson(
+            spilledVariableFieldMappingsAsJson, Array<Array<FieldVariable>>::class.java
+        )
+
+        var i = 0
+        var continuation: BaseContinuationImpl? = myContinuation
+        while (continuation != null) {
+            val nextContinuation = continuation.completion as? BaseContinuationImpl
+            val element = continuation.getStackTraceElement()
+            if (element != null) {
+                assertEquals(continuation, continuationRefs[i])
+                assertEquals(nextContinuation, nextContinuationRefs[i])
+                checkStackTraceElements(element, stackTraceElements[i])
+                checkSpilledVariableFieldMapping(continuation, spilledVariableFieldMappings[i])
+            }
+
+            continuation = nextContinuation
+            i++
+        }
+
+        assertEquals(i, continuationRefs.size)
+        assertEquals(i, stackTraceElements.size)
+        assertEquals(i, spilledVariableFieldMappings.size)
+        assertEquals(i, nextContinuationRefs.size)
+    }
+
+    private fun checkStackTraceElements(element: StackTraceElement, elementInfo: StackTraceElementInfo) {
+        assertEquals(element.className, elementInfo.className)
+        assertEquals(element.methodName, elementInfo.methodName)
+        assertEquals(element.fileName, elementInfo.fileName)
+        assertEquals(element.lineNumber, elementInfo.lineNumber)
+    }
+
+    private fun checkSpilledVariableFieldMapping(continuation: BaseContinuationImpl, mapping: Array<FieldVariable>) {
+        val currentMapping = continuation.getSpilledVariableFieldMapping()!!
+        val length = currentMapping.size / 2
+        assertEquals(length, mapping.size)
+        for (i in 0 until length) {
+            assertEquals(currentMapping[2 * i], mapping[i].fieldName)
+            assertEquals(currentMapping[2 * i + 1], mapping[i].variableName)
+        }
+    }
+
+    private data class FieldVariable(val fieldName: String, val variableName: String)
+
+    private data class StackTraceElementInfo(
+        val className: String,
+        val methodName: String,
+        val fileName: String?,
+        val lineNumber: Int?
+    )
 }

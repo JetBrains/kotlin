@@ -131,4 +131,66 @@ internal fun BaseContinuationImpl.getSpilledVariableFieldMapping(): Array<String
     return res.toTypedArray()
 }
 
+/**
+ * This method optimises the number of packages sent by the IDEA debugger
+ * to a client VM to speed up fetching of a coroutine stack trace.
+ *
+ * The return value is an array of objects, which consists of four elements:
+ * 1) An array of continuation references.
+ * 2) A string in the JSON format that stores an array with information about each stack frame.
+ * 3) A string in the JSON format that stores an array of spilled variables field mappings.
+ * 4) An array of completion references.
+ */
+@JvmName("getStackTraceInfoAsJsonAndReferences")
+internal fun BaseContinuationImpl.getStackTraceInfoAsJsonAndReferences(): Array<Any> {
+    val continuationRefs = mutableListOf<BaseContinuationImpl>()
+    val nextContinuationRefs = mutableListOf<BaseContinuationImpl?>()
+    val stackTraceElementsAsJson = mutableListOf<String>()
+    val spilledVariableFieldMappingsAsJson = mutableListOf<String>()
+    var continuation: BaseContinuationImpl? = this
+    while (continuation != null) {
+        val nextContinuation = continuation.completion as? BaseContinuationImpl
+        val element = continuation.getStackTraceElement()
+        if (element != null) {
+            continuationRefs += continuation
+            spilledVariableFieldMappingsAsJson += continuation.getSpilledVariableFieldMappingAsJson()
+            nextContinuationRefs += nextContinuation
+            stackTraceElementsAsJson +=
+                """
+                    {
+                        "className": "${element.className}",
+                        "methodName": "${element.methodName}",
+                        "fileName": ${element.fileName?.toStringWithQuotes()},
+                        "lineNumber": ${element.lineNumber}
+                    }
+                """.trimIndent()
+        }
+        continuation = nextContinuation
+    }
+    return arrayOf(
+        continuationRefs.toTypedArray(),
+        "[${stackTraceElementsAsJson.joinToString(",")}]",
+        "[${spilledVariableFieldMappingsAsJson.joinToString(",")}]",
+        nextContinuationRefs.toTypedArray()
+    )
+}
+
+private fun Any.toStringWithQuotes() = "\"$this\""
+
+private fun BaseContinuationImpl.getSpilledVariableFieldMappingAsJson(): String {
+    val spilledVariableFieldMapping = getSpilledVariableFieldMapping() ?: return "[]"
+    val length = spilledVariableFieldMapping.size / 2
+    val result = ArrayList<String>(length)
+    for (i in 0 until length) {
+        result +=
+            """
+                {
+                  "fieldName": "${spilledVariableFieldMapping[2 * i]}",
+                  "variableName": "${spilledVariableFieldMapping[2 * i + 1]}"
+                }
+            """.trimMargin()
+    }
+    return "[${result.joinToString(",")}]"
+}
+
 private const val COROUTINES_DEBUG_METADATA_VERSION = 1
