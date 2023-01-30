@@ -126,6 +126,12 @@ abstract class BaseCompilationTransaction : CompilationTransaction {
         executionThrowable?.addSuppressed(exception)
         executionThrowable ?: exception
     }
+
+    protected fun checkForExecutionException() {
+        if (executionThrowable != null) {
+            isSuccessful = false
+        }
+    }
 }
 
 /**
@@ -143,6 +149,7 @@ class NonRecoverableCompilationTransaction : CompilationTransaction, BaseCompila
     }
 
     override fun close() {
+        checkForExecutionException()
         closeCachesManager()?.let {
             throw it
         }
@@ -239,6 +246,7 @@ class RecoverableCompilationTransaction(
     }
 
     override fun close() {
+        checkForExecutionException()
         val mainException = closeCachesManager()
         val exceptionToThrow = runCatching {
             if (isSuccessful) {
