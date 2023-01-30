@@ -57,9 +57,6 @@ constructor(
 
     final override val toolOptions: KotlinCommonCompilerToolOptions = objectFactory
         .newInstance<KotlinCommonCompilerToolOptionsDefault>()
-        .apply {
-            freeCompilerArgs.addAll(PropertiesProvider(project).nativeLinkArgs)
-        }
 
     init {
         @Suppress("DEPRECATION")
