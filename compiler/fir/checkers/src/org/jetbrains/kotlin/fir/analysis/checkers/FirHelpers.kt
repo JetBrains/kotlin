@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
@@ -225,32 +224,23 @@ fun FirClass.modality(): Modality? {
  * returns implicit modality by FirMemberDeclaration<*>
  */
 fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
-    if (this is FirRegularClass && (this.classKind == ClassKind.CLASS || this.classKind == ClassKind.OBJECT)) {
-        if (this.classKind == ClassKind.INTERFACE) return Modality.ABSTRACT
-        return Modality.FINAL
-    }
-
-    val klass = context.findClosestClassOrObject() ?: return Modality.FINAL
-    val source = source ?: return Modality.FINAL
-    val tree = source.treeStructure
-    if (tree.overrideModifier(source.lighterASTNode) != null) {
-        val klassModalityTokenType = klass.source?.let { tree.modalityModifier(it.lighterASTNode)?.tokenType }
-        if (klassModalityTokenType == KtTokens.ABSTRACT_KEYWORD ||
-            klassModalityTokenType == KtTokens.OPEN_KEYWORD ||
-            klassModalityTokenType == KtTokens.SEALED_KEYWORD
-        ) {
-            return Modality.OPEN
+    if (this is FirRegularClass) {
+        return when (classKind) {
+            ClassKind.INTERFACE -> Modality.ABSTRACT
+            else -> Modality.FINAL
         }
     }
 
-    if (klass is FirRegularClass
-        && klass.classKind == ClassKind.INTERFACE
-        && tree.visibilityModifier(source.lighterASTNode)?.tokenType != KtTokens.PRIVATE_KEYWORD
-    ) {
-        return if (this.hasBody()) Modality.OPEN else Modality.ABSTRACT
-    }
+    val containingClass = context.findClosestClassOrObject() ?: return Modality.FINAL
 
-    return Modality.FINAL
+    return when {
+        isOverride && !containingClass.isFinal -> Modality.OPEN
+        containingClass.isInterface -> when {
+            hasBody() -> Modality.OPEN
+            else -> Modality.ABSTRACT
+        }
+        else -> Modality.FINAL
+    }
 }
 
 private fun FirDeclaration.hasBody(): Boolean = when (this) {

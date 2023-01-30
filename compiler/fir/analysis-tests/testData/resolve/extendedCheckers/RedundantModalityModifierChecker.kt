@@ -55,6 +55,8 @@ open class OpenDerived : Base() {
     override final fun bar() {}
     // Redundant open
     override <!REDUNDANT_MODALITY_MODIFIER!>open<!> val gav = 13
+
+    private <!REDUNDANT_MODALITY_MODIFIER!>final<!> fun fan() {}
 }
 // Redundant final
 <!REDUNDANT_MODALITY_MODIFIER!>final<!> class Final
@@ -78,8 +80,12 @@ abstract class AbstractDerived2 : Interface {
     override <!REDUNDANT_MODALITY_MODIFIER!>open<!> val gav = 13
 }
 // Redundant abstract interface
-abstract interface AbstractInterface
+<!REDUNDANT_MODALITY_MODIFIER!>abstract<!> interface AbstractInterface
 // Redundant final object
 <!REDUNDANT_MODALITY_MODIFIER!>final<!> object FinalObject
 // Open interface
 <!REDUNDANT_MODIFIER_FOR_TARGET!>open<!> interface OpenInterface
+
+class FinalDerived2(override <!REDUNDANT_MODALITY_MODIFIER!>final<!> val gav: Int) : Base() {
+    override fun bar() {}
+}

@@ -83,6 +83,9 @@ FILE: RedundantModalityModifierChecker.kt
         public open override val gav: R|kotlin/Int| = Int(13)
             public get(): R|kotlin/Int|
 
+        private final fun fan(): R|kotlin/Unit| {
+        }
+
     }
     public final class Final : R|kotlin/Any| {
         public constructor(): R|Final| {
@@ -135,4 +138,16 @@ FILE: RedundantModalityModifierChecker.kt
 
     }
     public open interface OpenInterface : R|kotlin/Any| {
+    }
+    public final class FinalDerived2 : R|Base| {
+        public constructor(gav: R|kotlin/Int|): R|FinalDerived2| {
+            super<R|Base|>()
+        }
+
+        public final override val gav: R|kotlin/Int| = R|<local>/gav|
+            public get(): R|kotlin/Int|
+
+        public open override fun bar(): R|kotlin/Unit| {
+        }
+
     }
