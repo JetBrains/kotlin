@@ -2753,13 +2753,16 @@ __attribute__((swift_name("TestDeprecation.NormalOverride")))
 - (instancetype)initWithNormal:(int64_t)normal __attribute__((swift_name("init(normal:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
-- (void)openError __attribute__((swift_name("openError()"))) __attribute__((unavailable("Overrides deprecated member in 'conversions.TestDeprecation'. error")));
-- (void)openWarning __attribute__((swift_name("openWarning()"))) __attribute__((deprecated("Overrides deprecated member in 'conversions.TestDeprecation'. warning")));
+- (void)openHidden __attribute__((swift_name("openHidden()")));
+- (void)openError __attribute__((swift_name("openError()")));
+- (void)openWarning __attribute__((swift_name("openWarning()")));
 - (int32_t)openNormal __attribute__((swift_name("openNormal()")));
-@property (readonly) id _Nullable openErrorVal __attribute__((swift_name("openErrorVal"))) __attribute__((unavailable("Overrides deprecated member in 'conversions.TestDeprecation'. error")));
-@property id _Nullable openErrorVar __attribute__((swift_name("openErrorVar"))) __attribute__((unavailable("Overrides deprecated member in 'conversions.TestDeprecation'. error")));
-@property (readonly) id _Nullable openWarningVal __attribute__((swift_name("openWarningVal"))) __attribute__((deprecated("Overrides deprecated member in 'conversions.TestDeprecation'. warning")));
-@property id _Nullable openWarningVar __attribute__((swift_name("openWarningVar"))) __attribute__((deprecated("Overrides deprecated member in 'conversions.TestDeprecation'. warning")));
+@property (readonly) id _Nullable openHiddenVal __attribute__((swift_name("openHiddenVal")));
+@property id _Nullable openHiddenVar __attribute__((swift_name("openHiddenVar")));
+@property (readonly) id _Nullable openErrorVal __attribute__((swift_name("openErrorVal")));
+@property id _Nullable openErrorVar __attribute__((swift_name("openErrorVar")));
+@property (readonly) id _Nullable openWarningVal __attribute__((swift_name("openWarningVal")));
+@property id _Nullable openWarningVar __attribute__((swift_name("openWarningVar")));
 @property (readonly) id _Nullable openNormalVal __attribute__((swift_name("openNormalVal")));
 @property id _Nullable openNormalVar __attribute__((swift_name("openNormalVar")));
 @end
