@@ -10,9 +10,21 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.io.TempDir
+import java.io.Closeable
 import java.nio.file.Files
 import java.nio.file.Path
+
+private class CacheMock(private val throwsException: Boolean = false) : Closeable {
+    var closed = false
+    override fun close() {
+        if (throwsException) {
+            throw Exception()
+        }
+        closed = true
+    }
+}
 
 abstract class BaseCompilationTransactionTest {
     @TempDir
@@ -23,12 +35,53 @@ abstract class BaseCompilationTransactionTest {
 
     abstract fun createTransaction(): CompilationTransaction
 
-    protected fun useTransaction(block: CompilationTransaction.() -> Unit) = createTransaction().also { it.use(block) }
+    protected fun useTransaction(block: CompilationTransaction.() -> Unit) = createTransaction().also { it.runWithin(body = block) }
 
     @Test
     fun testNoOp() {
-        useTransaction() {
+        useTransaction {
             // do nothing
+        }
+    }
+
+    @Test
+    fun testCachesClosedOnSuccessfulTransaction() {
+        val cacheMock = CacheMock()
+        useTransaction {
+            cachesManager = cacheMock
+            markAsSuccessful()
+        }
+        assertTrue(cacheMock.closed)
+    }
+
+    @Test
+    fun testCachesClosedOnNonSuccessfulTransaction() {
+        val cacheMock = CacheMock()
+        useTransaction {
+            cachesManager = cacheMock
+        }
+        assertTrue(cacheMock.closed)
+    }
+
+    @Test
+    fun testCachesClosedOnExceptionInsideTransaction() {
+        val cacheMock = CacheMock()
+        assertThrows<Exception> {
+            useTransaction {
+                cachesManager = cacheMock
+                throw Exception()
+            }
+        }
+        assertTrue(cacheMock.closed)
+    }
+
+    @Test
+    fun testCachesCloseExceptionIsWrapped() {
+        val cacheMock = CacheMock(true)
+        assertThrows<CachesManagerCloseException> {
+            useTransaction {
+                cachesManager = cacheMock
+            }
         }
     }
 }
@@ -206,5 +259,43 @@ class RecoverableCompilationTransactionTest : BaseCompilationTransactionTest() {
             deleteFile(file)
         }
         assertFalse(Files.exists(file))
+    }
+
+    @Test
+    fun testChangesAreRevertedOnExecutionException() {
+        val file1 = workingDir.resolve("1.txt")
+        val file2 = workingDir.resolve("2.txt")
+        Files.write(file1, "something".toByteArray())
+        assertThrows<Exception> {
+            useTransaction {
+                registerAddedOrChangedFile(file1)
+                Files.write(file1, "other".toByteArray())
+                registerAddedOrChangedFile(file2)
+                Files.write(file2, "other".toByteArray())
+                markAsSuccessful()
+                throw Exception()
+            }
+        }
+        assertEquals("something", String(Files.readAllBytes(file1)))
+        assertFalse(Files.exists(file2))
+    }
+
+    @Test
+    fun testChangesAreRevertedOnCachesCloseException() {
+        val file1 = workingDir.resolve("1.txt")
+        val file2 = workingDir.resolve("2.txt")
+        Files.write(file1, "something".toByteArray())
+        assertThrows<CachesManagerCloseException> {
+            useTransaction {
+                cachesManager = CacheMock(true)
+                registerAddedOrChangedFile(file1)
+                Files.write(file1, "other".toByteArray())
+                registerAddedOrChangedFile(file2)
+                Files.write(file2, "other".toByteArray())
+                markAsSuccessful()
+            }
+        }
+        assertEquals("something", String(Files.readAllBytes(file1)))
+        assertFalse(Files.exists(file2))
     }
 }
