@@ -65,11 +65,17 @@ abstract class AbstractSymbolLightClassesTestBase(
         val project = ktFile.project
 
         ignoreExceptionIfIgnoreFirPresent(module) {
-            val actual = getRenderResult(ktFile, ktFiles, testDataPath, module, project).cleanup()
-            compareResults(testServices, actual)
-            removeIgnoreFir(module)
-            removeDuplicatedFirJava(testServices)
+            compareResults(module, testServices) {
+                getRenderResult(ktFile, ktFiles, testDataPath, module, project)
+            }
         }
+    }
+
+    protected fun compareResults(module: TestModule, testServices: TestServices, computeActual: () -> String) {
+        val actual = computeActual().cleanup()
+        compareResults(testServices, actual)
+        removeIgnoreFir(module)
+        removeDuplicatedFirJava(testServices)
     }
 
     private fun String.cleanup(): String {

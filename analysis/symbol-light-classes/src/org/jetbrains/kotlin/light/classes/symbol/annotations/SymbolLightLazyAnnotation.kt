@@ -51,7 +51,10 @@ internal class SymbolLightLazyAnnotation(
     override fun equals(other: Any?): Boolean = this === other ||
             other is SymbolLightLazyAnnotation &&
             other.fqName == fqName &&
-            other.annotationApplication == annotationApplication &&
+            other.annotationApplication.classId == annotationApplication.classId &&
+            other.annotationApplication.index == annotationApplication.index &&
+            other.annotationApplication.useSiteTarget == annotationApplication.useSiteTarget &&
+            other.annotationApplication.isCallWithArguments == annotationApplication.isCallWithArguments &&
             annotationsProvider.isTheSameAs(other.annotationsProvider) &&
             other.parent == parent
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -90,7 +90,7 @@ class RegisteredDirectivesImpl(
         return buildString {
             simpleDirectives.forEach { appendLine("  $it") }
             stringDirectives.forEach { (d, v) -> appendLine("  $d: ${v.joinToArrayString()}") }
-            valueDirectives.forEach { (d, v) -> appendLine("  $d: ${v.joinToArrayString()}")}
+            valueDirectives.forEach { (d, v) -> appendLine("  $d: ${v.joinToArrayString()}") }
         }
     }
 
@@ -154,6 +154,10 @@ fun RegisteredDirectives.singleOrZeroValue(directive: StringDirective): String? 
     }
 }
 
+fun RegisteredDirectives.notEmptyValues(directive: StringDirective): List<String> = this[directive].ifEmpty {
+    error("No values passed to $directive")
+}
+
 fun <T : Any> RegisteredDirectives.singleValue(directive: ValueDirective<T>): T {
     return singleOrZeroValue(directive) ?: error("No values passed to $directive")
 }
@@ -165,4 +169,8 @@ fun <T : Any> RegisteredDirectives.singleOrZeroValue(directive: ValueDirective<T
         1 -> values.single()
         else -> error("Too many values passed to $directive: ${values.joinToArrayString()}")
     }
+}
+
+fun <T : Any> RegisteredDirectives.notEmptyValues(directive: ValueDirective<T>): List<T> = this[directive].ifEmpty {
+    error("No values passed to $directive")
 }

@@ -18,8 +18,6 @@ internal class LazyAnnotationsBox(
     private val annotationFilter: AnnotationFilter = AlwaysAllowedAnnotationFilter,
 ) : AnnotationsBox {
     private val annotationsArray: AtomicReference<Array<PsiAnnotation>?> = AtomicReference()
-    private var specialAnnotations: SmartList<PsiAnnotation>? = null
-    private val monitor = Any()
 
     override fun annotations(owner: PsiModifierList): Array<PsiAnnotation> {
         annotationsArray.get()?.let { return it }
@@ -30,25 +28,13 @@ internal class LazyAnnotationsBox(
             }
         }
 
-        val valueToReturn = synchronized(monitor) {
-            specialAnnotations?.forEach { specialAnnotation ->
-                val index = annotations.indexOfFirst { it.qualifiedName == specialAnnotation.qualifiedName }
-                if (index != -1) {
-                    annotations[index] = specialAnnotation
-                } else {
-                    annotations += specialAnnotation
-                }
-            }
+        val foundQualifiers = annotations.mapNotNullTo(hashSetOf()) { it.qualifiedName }
+        additionalAnnotationsProvider.addAllAnnotations(annotations, foundQualifiers, owner)
 
-            val foundQualifiers = annotations.mapNotNullTo(hashSetOf()) { it.qualifiedName }
-            additionalAnnotationsProvider.addAllAnnotations(annotations, foundQualifiers, owner)
-
-            val resultAnnotations = annotationFilter.filtered(annotations)
-            specialAnnotations = null
-            setAnnotationsArray(if (resultAnnotations.isNotEmpty()) resultAnnotations.toTypedArray() else PsiAnnotation.EMPTY_ARRAY)
-        }
-
-        return valueToReturn
+        val resultAnnotations = annotationFilter.filtered(annotations)
+        return setAnnotationsArray(
+            if (resultAnnotations.isNotEmpty()) resultAnnotations.toTypedArray<PsiAnnotation>() else PsiAnnotation.EMPTY_ARRAY
+        )
     }
 
     private fun setAnnotationsArray(array: Array<PsiAnnotation>): Array<PsiAnnotation> =
@@ -80,29 +66,7 @@ internal class LazyAnnotationsBox(
             null
         }
 
-        if (specialAnnotation == null) {
-            return annotations(owner).find { it.qualifiedName == qualifiedName }
-        }
-
-        return synchronized(monitor) {
-            annotationsArray.get()?.let { array ->
-                return array.find { it.qualifiedName == qualifiedName }
-            }
-
-            if (specialAnnotations != null) {
-                val specialAnnotations = specialAnnotations!!
-                val oldAnnotation = specialAnnotations.find { it.qualifiedName == specialAnnotation.qualifiedName }
-                if (oldAnnotation != null) {
-                    oldAnnotation
-                } else {
-                    specialAnnotations += specialAnnotation
-                    specialAnnotation
-                }
-            } else {
-                specialAnnotations = SmartList(specialAnnotation)
-                specialAnnotation
-            }
-        }
+        return specialAnnotation ?: annotations(owner).find { it.qualifiedName == qualifiedName }
     }
 
     override fun hasAnnotation(owner: PsiModifierList, qualifiedName: String): Boolean {
