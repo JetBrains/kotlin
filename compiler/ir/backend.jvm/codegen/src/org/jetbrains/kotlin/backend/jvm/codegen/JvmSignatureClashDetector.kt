@@ -42,7 +42,7 @@ class JvmSignatureClashDetector(
     }
 
     private fun mapRawSignature(irFunction: IrFunction): RawSignature {
-        val jvmSignature = classCodegen.methodSignatureMapper.mapSignatureSkipGeneric(irFunction)
+        val jvmSignature = classCodegen.methodSignatureMapper.mapFakeOverrideSignatureSkipGeneric(irFunction)
         return RawSignature(jvmSignature.asmMethod.name, jvmSignature.asmMethod.descriptor, MemberKind.METHOD)
     }
 

@@ -151,10 +151,10 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
     private fun IrSimpleFunction.isPublishedApi(): Boolean =
         propertyIfAccessor.annotations.hasAnnotation(StandardNames.FqNames.publishedApi)
 
-    fun mapReturnType(declaration: IrDeclaration, sw: JvmSignatureWriter? = null): Type {
+    fun mapReturnType(declaration: IrDeclaration, sw: JvmSignatureWriter? = null, materialized: Boolean = true): Type {
         if (declaration !is IrFunction) {
             require(declaration is IrField) { "Unsupported declaration: $declaration" }
-            return mapReturnType(declaration, declaration.type, sw)
+            return mapReturnType(declaration, declaration.type, sw, materialized)
         }
 
         return when {
@@ -163,16 +163,16 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                 Type.VOID_TYPE
             }
             forceBoxedReturnType(declaration) -> {
-                typeMapper.mapType(declaration.returnType, TypeMappingMode.RETURN_TYPE_BOXED, sw)
+                typeMapper.mapType(declaration.returnType, TypeMappingMode.RETURN_TYPE_BOXED, sw, materialized)
             }
-            else -> mapReturnType(declaration, declaration.returnType, sw)
+            else -> mapReturnType(declaration, declaration.returnType, sw, materialized)
         }
     }
 
-    private fun mapReturnType(declaration: IrDeclaration, returnType: IrType, sw: JvmSignatureWriter?): Type {
+    private fun mapReturnType(declaration: IrDeclaration, returnType: IrType, sw: JvmSignatureWriter?, materialized: Boolean = true): Type {
         val isAnnotationMethod = declaration.parent.let { it is IrClass && it.isAnnotationClass }
         if (sw == null || sw.skipGenericSignature()) {
-            return typeMapper.mapType(returnType, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod), sw)
+            return typeMapper.mapType(returnType, TypeMappingMode.getModeForReturnTypeNoGeneric(isAnnotationMethod), sw, materialized)
         }
 
         val typeMappingModeFromAnnotation =
@@ -180,12 +180,12 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                 declaration.suppressWildcardsMode(), returnType, isAnnotationMethod, mapTypeAliases = false
             )
         if (typeMappingModeFromAnnotation != null) {
-            return typeMapper.mapType(returnType, typeMappingModeFromAnnotation, sw)
+            return typeMapper.mapType(returnType, typeMappingModeFromAnnotation, sw, materialized)
         }
 
         val mappingMode = typeSystem.getOptimalModeForReturnType(returnType, isAnnotationMethod)
 
-        return typeMapper.mapType(returnType, mappingMode, sw)
+        return typeMapper.mapType(returnType, mappingMode, sw, materialized)
     }
 
     private fun hasVoidReturnType(function: IrFunction): Boolean =
@@ -214,13 +214,21 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                 function.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_INLINE_CLASS_MEMBER &&
                 function.name.asString() == "box-impl"
 
+    fun mapFakeOverrideSignatureSkipGeneric(function: IrFunction): JvmMethodSignature =
+        mapSignature(function, skipGenericSignature = true, materialized = false)
+
     fun mapSignatureSkipGeneric(function: IrFunction): JvmMethodSignature =
         mapSignature(function, true)
 
     fun mapSignatureWithGeneric(function: IrFunction): JvmMethodGenericSignature =
         mapSignature(function, false)
 
-    private fun mapSignature(function: IrFunction, skipGenericSignature: Boolean, skipSpecial: Boolean = false): JvmMethodGenericSignature {
+    private fun mapSignature(
+        function: IrFunction,
+        skipGenericSignature: Boolean,
+        skipSpecial: Boolean = false,
+        materialized: Boolean = true
+    ): JvmMethodGenericSignature {
         if (function is IrLazyFunctionBase &&
             (!function.isFakeOverride || function.parentAsClass.isFromJava()) &&
             function.initialSignatureFunction != null
@@ -261,11 +269,11 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                 if (shouldBoxSingleValueParameterForSpecialCaseOfRemove(function))
                     parameter.type.makeNullable()
                 else parameter.type
-            writeParameter(sw, kind, type, function)
+            writeParameter(sw, kind, type, function, materialized)
         }
 
         sw.writeReturnType()
-        mapReturnType(function, sw)
+        mapReturnType(function, sw, materialized)
         sw.writeReturnTypeEnd()
 
         val signature = sw.makeJvmMethodSignature(mapFunctionName(function, skipSpecial))
@@ -327,19 +335,20 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
         sw: JvmSignatureWriter,
         kind: JvmMethodParameterKind,
         type: IrType,
-        function: IrFunction
+        function: IrFunction,
+        materialized: Boolean = true
     ) {
         sw.writeParameterType(kind)
-        writeParameterType(sw, type, function)
+        writeParameterType(sw, type, function, materialized)
         sw.writeParameterTypeEnd()
     }
 
-    private fun writeParameterType(sw: JvmSignatureWriter, type: IrType, declaration: IrDeclaration) {
+    private fun writeParameterType(sw: JvmSignatureWriter, type: IrType, declaration: IrDeclaration, materialized: Boolean = true) {
         if (sw.skipGenericSignature()) {
             if (type.isInlineClassType() && declaration.isFromJava()) {
-                typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT, sw)
+                typeMapper.mapType(type, TypeMappingMode.GENERIC_ARGUMENT, sw, materialized)
             } else {
-                typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw)
+                typeMapper.mapType(type, TypeMappingMode.DEFAULT, sw, materialized)
             }
             return
         }
@@ -355,7 +364,7 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
                 }
         }
 
-        typeMapper.mapType(type, mode, sw)
+        typeMapper.mapType(type, mode, sw, materialized)
     }
 
     private val IrDeclaration.isMethodWithDeclarationSiteWildcards: Boolean

@@ -4137,6 +4137,12 @@ public class FirBytecodeTextTestGenerated extends AbstractFirBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("kt56104.kt")
+        public void testKt56104() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/innerClasses/kt56104.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClassInAnnotationArgument.kt")
         public void testNestedClassInAnnotationArgument() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/innerClasses/nestedClassInAnnotationArgument.kt");
