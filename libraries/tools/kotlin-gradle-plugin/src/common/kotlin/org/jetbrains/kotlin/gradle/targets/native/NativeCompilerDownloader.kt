@@ -19,10 +19,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionType
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionTypeProvider
 import org.jetbrains.kotlin.gradle.targets.native.internal.PlatformLibrariesGenerator
-import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.CompilerVersionImpl
-import org.jetbrains.kotlin.konan.MetaVersion
-import org.jetbrains.kotlin.konan.isAtLeast
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.DependencyDirectories
@@ -31,12 +27,12 @@ import java.nio.file.Files
 
 class NativeCompilerDownloader(
     val project: Project,
-    private val compilerVersion: CompilerVersion = project.konanVersion
+    private val compilerVersion: String = project.konanVersion
 ) {
 
     companion object {
-        val DEFAULT_KONAN_VERSION: CompilerVersion by lazy {
-            CompilerVersion.fromString(loadPropertyFromResources("project.properties", "kotlin.native.version"))
+        val DEFAULT_KONAN_VERSION: String by lazy {
+            loadPropertyFromResources("project.properties", "kotlin.native.version")
         }
 
         internal const val BASE_DOWNLOAD_URL = "https://download.jetbrains.com/kotlin/native/builds"
@@ -55,13 +51,7 @@ class NativeCompilerDownloader(
         get() = NativeDistributionTypeProvider(project).getDistributionType(compilerVersion)
 
     private val simpleOsName: String
-        get() {
-            return if (compilerVersion.isAtLeast(CompilerVersionImpl(major = 1, minor = 5, maintenance = 30, build = 1466))) {
-                HostManager.platformName()
-            } else {
-                HostManager.simpleOsName()
-            }
-        }
+        get() = HostManager.platformName()
 
     private val dependencyName: String
         get() {
@@ -115,7 +105,7 @@ class NativeCompilerDownloader(
     private val repoUrl by lazy {
         buildString {
             append("${kotlinProperties.nativeBaseDownloadUrl}/")
-            append(if (compilerVersion.meta == MetaVersion.DEV) "dev/" else "releases/")
+            append(if (compilerVersion.contains("-dev-")) "dev/" else "releases/")
             append("$compilerVersion/")
             append(simpleOsName)
         }

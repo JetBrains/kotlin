@@ -32,7 +32,7 @@ buildscript {
 
     dependencies {
         classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
-        classpath "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+        classpath "org.jetbrains.kotlin:kotlin-native-shared:$kotlinVersion"
     }
 }
 
@@ -71,7 +71,7 @@ dependencies {
     bundleDependencies "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-gradle-plugin-api:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"
-    bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
+    bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-util-io:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion"
 

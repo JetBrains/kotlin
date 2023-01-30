@@ -36,7 +36,8 @@ open class KonanCompilerDownloadTask : DefaultTask() {
     /**
      * If true the task will also download dependencies for targets specified by the konan.targets project extension.
      */
-    @Internal var downloadDependencies: Boolean = false
+    @Internal
+    var downloadDependencies: Boolean = false
 
     @TaskAction
     fun downloadAndExtract() {
@@ -48,10 +49,7 @@ open class KonanCompilerDownloadTask : DefaultTask() {
                 val downloadUrlDirectory = buildString {
                     append("$BASE_DOWNLOAD_URL/")
                     val version = project.konanVersion
-                    when (version.meta) {
-                        MetaVersion.DEV -> append("dev/")
-                        else -> append("releases/")
-                    }
+                    if (version.contains("-dev-")) append("dev/") else append("releases/")
                     append("$version/")
                     append(project.simpleOsName)
                 }

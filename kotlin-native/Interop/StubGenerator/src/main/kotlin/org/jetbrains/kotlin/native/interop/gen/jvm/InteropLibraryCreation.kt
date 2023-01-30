@@ -11,8 +11,7 @@ import kotlinx.metadata.klib.KlibModuleMetadata
 import kotlinx.metadata.klib.className
 import kotlinx.metadata.klib.fqName
 import org.jetbrains.kotlin.backend.common.serialization.KlibIrVersion
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryLayoutForWriter
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryWriterImpl
@@ -41,7 +40,7 @@ fun createInteropLibrary(
     val version = KotlinLibraryVersioning(
             libraryVersion = libraryVersion,
             abiVersion = KotlinAbiVersion.CURRENT,
-            compilerVersion = CompilerVersion.CURRENT.toString(),
+            compilerVersion = KotlinCompilerVersion.VERSION,
             metadataVersion = KlibMetadataVersion.INSTANCE.toString(),
             irVersion = KlibIrVersion.INSTANCE.toString()
     )

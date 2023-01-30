@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.CompilerVersion
-import org.jetbrains.kotlin.konan.MetaVersion
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
@@ -171,8 +169,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         get() = configuration.get(KonanConfigKeys.VERIFY_IR) == true
 
     val needCompilerVerification: Boolean
-        get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER) ?:
-            (optimizationsEnabled || CompilerVersion.CURRENT.meta != MetaVersion.RELEASE)
+        get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER)
+                ?: (optimizationsEnabled || !KotlinCompilerVersion.VERSION.isRelease())
 
     val appStateTracking: AppStateTracking by lazy {
         configuration.get(BinaryOptions.appStateTracking) ?: AppStateTracking.DISABLED
@@ -508,3 +506,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
 fun CompilerConfiguration.report(priority: CompilerMessageSeverity, message: String)
     = this.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY).report(priority, message)
+
+private fun String.isRelease(): Boolean {
+    // major.minor.patch-meta-build where patch, meta and build are optional.
+    val versionPattern = "(\\d+)\\.(\\d+)(?:\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}|[\\p{Alpha}-]*))?(?:-(\\d+))?".toRegex()
+    val (_, _, _, metaString, build) = versionPattern.matchEntire(this)?.destructured
+            ?: throw IllegalStateException("Cannot parse Kotlin/Native version: $this")
+
+    return metaString.isEmpty() && build.isEmpty()
+}

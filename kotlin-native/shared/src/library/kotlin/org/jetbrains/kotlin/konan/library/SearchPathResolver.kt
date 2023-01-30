@@ -1,6 +1,5 @@
 package org.jetbrains.kotlin.konan.library
 
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.library.impl.createKonanLibraryComponents

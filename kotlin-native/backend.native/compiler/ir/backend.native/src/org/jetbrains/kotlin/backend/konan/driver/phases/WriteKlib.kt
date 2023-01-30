@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.CompilerVersion
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
@@ -28,7 +27,7 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, Seria
     val libraryName = config.moduleId
     val shortLibraryName = config.shortModuleName
     val abiVersion = KotlinAbiVersion.CURRENT
-    val compilerVersion = CompilerVersion.CURRENT.toString()
+    val compilerVersion = KotlinCompilerVersion.getVersion().toString()
     val libraryVersion = configuration.get(KonanConfigKeys.LIBRARY_VERSION)
     val metadataVersion = KlibMetadataVersion.INSTANCE.toString()
     val irVersion = KlibIrVersion.INSTANCE.toString()

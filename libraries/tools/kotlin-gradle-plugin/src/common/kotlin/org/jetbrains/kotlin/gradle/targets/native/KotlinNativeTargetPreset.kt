@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -119,9 +118,3 @@ internal val KonanTarget.isCurrentHost: Boolean
 
 internal val KonanTarget.enabledOnCurrentHost
     get() = HostManager().isEnabled(this)
-
-// KonanVersion doesn't provide an API to compare versions,
-// so we have to transform it to KotlinVersion first.
-// Note: this check doesn't take into account the meta version (release, eap, dev).
-internal fun CompilerVersion.isAtLeast(major: Int, minor: Int, patch: Int): Boolean =
-    KotlinVersion(this.major, this.minor, this.maintenance).isAtLeast(major, minor, patch)

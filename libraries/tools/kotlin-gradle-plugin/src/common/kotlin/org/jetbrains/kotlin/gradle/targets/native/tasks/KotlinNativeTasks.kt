@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.library.KLIB_INTEROP_IR_PROVIDER_IDENTIFIER
 import org.jetbrains.kotlin.konan.properties.saveToFile
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -522,17 +521,11 @@ internal class ExternalDependenciesBuilder(
         get() = KonanPropertiesBuildService.registerIfAbsent(project).get()
 
     fun buildCompilerArgs(): List<String> {
-        val compilerVersion = Distribution.getCompilerVersion(konanPropertiesService.compilerVersion, project.konanHome)
-        val konanVersion = compilerVersion?.let(CompilerVersion.Companion::fromString)
-            ?: project.konanVersion
-
-        if (konanVersion.isAtLeast(1, 6, 0)) {
-            val dependenciesFile = writeDependenciesFile(buildDependencies(), deleteOnExit = true)
-            if (dependenciesFile != null)
-                return listOf("-Xexternal-dependencies=${dependenciesFile.path}")
-        }
-
-        return emptyList()
+        val dependenciesFile = writeDependenciesFile(buildDependencies(), deleteOnExit = true)
+        return if (dependenciesFile != null)
+            listOf("-Xexternal-dependencies=${dependenciesFile.path}")
+        else
+            emptyList()
     }
 
     private fun buildDependencies(): Collection<KResolvedDependency> {
@@ -989,7 +982,7 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
     val konanTarget: KonanTarget = params.konanTarget
 
     @get:Input
-    val konanVersion: CompilerVersion = project.konanVersion
+    val konanVersion: String = project.konanVersion
 
     @Suppress("unused")
     @get:Input
@@ -1092,10 +1085,7 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
 
             addArgs("-compiler-option", allHeadersDirs.map { "-I${it.absolutePath}" })
             addArgs("-headerFilterAdditionalSearchPrefix", headerFilterDirs.map { it.absolutePath })
-
-            if (konanVersion.isAtLeast(1, 4, 0)) {
-                addArg("-Xmodule-name", moduleName)
-            }
+            addArg("-Xmodule-name", moduleName)
 
             // TODO: uncomment after advancing bootstrap.
             //addArg("-libraryVersion", libraryVersion)

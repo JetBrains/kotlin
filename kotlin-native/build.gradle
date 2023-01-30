@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.CopySamples
 import org.jetbrains.kotlin.CopyCommonSources
 import org.jetbrains.kotlin.PlatformInfo
-import org.jetbrains.kotlin.KotlinBuildPusher
 import org.jetbrains.kotlin.cpp.CompilationDatabasePlugin
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.cpp.GitClangFormatPlugin
@@ -83,9 +82,6 @@ ext {
     kotlinStdLibModule= project(":kotlin-stdlib")
     kotlinScriptRuntimeModule= project(":kotlin-script-runtime")
     kotlinUtilKliMetadatabModule= project(":kotlin-util-klib-metadata")
-
-    konanVersionFull = ext.kotlinNativeVersion
-    gradlePluginVersion = konanVersionFull
 
     // A separate map for each build for automatic cleaning the daemon after the build have finished.
     toolClassLoadersMap = new ConcurrentHashMap<Object, URLClassLoader>()
@@ -314,7 +310,7 @@ task distCompiler(type: Copy) {
     from(project.file('konan')) {
         into('konan')
         include('**/*.properties')
-        filter(ReplaceTokens, tokens: [compilerVersion: konanVersionFull.toString()])
+        filter(ReplaceTokens, tokens: [compilerVersion: kotlinVersion])
         // Set LLVM variant that will be used by default in the distribution.
         // `user` - smaller, includes only necessary components.
         // `dev` - bigger, includes (almost) every possible component. Use this one,
@@ -559,7 +555,7 @@ task bundle {
 task bundleRegular(type: (isWindows()) ? Zip : Tar) {
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-$simpleOsName")
-    archiveVersion.set(konanVersionFull.toString())
+    archiveVersion.set(kotlinVersion)
     from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
         exclude 'dependencies'
@@ -576,7 +572,7 @@ task bundlePrebuilt(type: (isWindows()) ? Zip : Tar) {
     dependsOn("crossDistPlatformLibs")
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-prebuilt-$simpleOsName")
-    archiveVersion.set(konanVersionFull.toString())
+    archiveVersion.set(kotlinVersion)
     from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
         exclude 'dependencies'
@@ -631,7 +627,7 @@ task 'tc-dist'(type: (isWindows()) ? Zip : Tar) {
     dependsOn('distSources')
     def simpleOsName = HostManager.platformName()
     archiveBaseName.set("kotlin-native-dist-$simpleOsName")
-    archiveVersion.set(konanVersionFull.toString())
+    archiveVersion.set(kotlinVersion)
     from(UtilsKt.getKotlinNativeDist(project)) {
         include '**'
         exclude 'dependencies'
@@ -659,7 +655,7 @@ task samplesTar(type: Tar) {
 }
 
 configure([samplesZip, samplesTar]) {
-    baseName "kotlin-native-samples-$konanVersionFull"
+    baseName "kotlin-native-samples-$kotlinVersion"
     destinationDir = projectDir
     into(baseName)
 
@@ -692,54 +688,6 @@ project.tasks.register("copy_samples") {
 }
 project.tasks.register("copySamples", CopySamples) {
     destinationDir file('build/samples-under-test')
-}
-
-task uploadBundle {
-    dependsOn ':kotlin-native:bundle'
-    if (isMac()) {
-        dependsOn ':kotlin-native:bundleRestricted'
-    }
-    doLast {
-        def kind = (konanVersionFull.meta == MetaVersion.DEV) ? "dev" : "releases"
-        def ftpSettings = [
-                server: project.findProperty("cdnUrl") ?: System.getenv("CDN_URL"),
-                userid: project.findProperty("cdnUser") ?: System.getenv("CDN_USER"),
-                password: project.findProperty("cdnPass") ?: System.getenv("CDN_PASS"),
-                remoteDir: "/builds/$kind/$konanVersion/${HostManager.platformName()}"
-        ]
-        ant {
-            taskdef(name: 'ftp',
-                    classname: 'org.apache.tools.ant.taskdefs.optional.net.FTP',
-                    classpath: configurations.ftpAntTask.asPath)
-            ftp([action: "mkdir"] + ftpSettings)
-            ftp(ftpSettings) {
-                fileset(file: bundle.archivePath)
-            }
-            if (isMac()) {
-                ftp(ftpSettings) {
-                    fileset(file: bundleRestricted.archivePath)
-                }
-            }
-        }
-    }
-}
-
-task teamcityCompilerVersion {
-    doLast {
-        println("##teamcity[setParameter name='kotlin.native.version.base' value='$konanVersion']")
-        println("##teamcity[setParameter name='kotlin.native.version.full' value='$konanVersionFull']")
-        println("##teamcity[setParameter name='kotlin.native.version.meta' value='${konanVersionFull.meta.toString().toLowerCase()}']")
-        println("##teamcity[buildNumber '${konanVersionFull.toString(true, true)}']")
-    }
-}
-
-task pusher(type: KotlinBuildPusher){
-    kotlinVersion = project.kotlinVersion
-    konanVersion = project.ext.kotlinNativeVersion
-    buildServer = "buildserver.labs.intellij.net"
-    compilerConfigurationId = System.getenv("TEAMCITY_COMPILER_ID") ?: "Kotlin_KotlinDev_Compiler"
-    overrideConfigurationId = System.getenv("TEAMCITY_OVERRIDE_NATIVE_ID") ?: "Kotlin_KotlinDev_DeployMavenArtifacts_OverrideNative"
-    token = project.findProperty("teamcityBearToken") ?: System.getenv("TEAMCITY_BEAR_TOKEN")
 }
 
 compilationDatabase {
@@ -812,7 +760,7 @@ Map<KonanTarget, File> createConfigurations(List<File> bundles) {
         throw new IllegalArgumentException("Bundle archives are missing for $missingBundles")
     }
     result.each { target, file ->
-        if (!file.name.contains(konanVersionFull.toString())) {
+        if (!file.name.contains(kotlinVersion)) {
             throw new IllegalArgumentException("Incorrect version specified for the publish: ${file.name}")
         }
     }
@@ -844,7 +792,7 @@ publishing {
         register("Bundle", MavenPublication) { mvn ->
             mvn.groupId = project.group.toString()
             mvn.artifactId = project.name
-            mvn.version = konanVersionFull
+            mvn.version = kotlinVersion
 
             if (publishBundlesFromLocation) {
                 def bundleArchives = bundlesLocationFiles
@@ -873,7 +821,7 @@ publishing {
         register("BundlePrebuilt", MavenPublication) { mvn ->
             mvn.groupId = project.group.toString()
             mvn.artifactId = project.name + "-prebuilt"
-            mvn.version = konanVersionFull
+            mvn.version = kotlinVersion
 
             if (publishBundlesFromLocation) {
                 def prebuiltBundleArchives = bundlesLocationFiles
