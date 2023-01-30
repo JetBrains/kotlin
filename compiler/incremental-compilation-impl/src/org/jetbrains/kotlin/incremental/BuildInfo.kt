@@ -57,9 +57,11 @@ data class BuildInfo(val startTS: Long, val dependencyToAbiSnapshot: Map<String,
             }
         }
 
-        fun write(buildInfo: BuildInfo, file: File) {
-            ObjectOutputStream(FileOutputStream(file)).use {
-                it.writeBuildInfo(buildInfo)
+        fun write(icContext: IncrementalCompilationContext, buildInfo: BuildInfo, file: File) {
+            icContext.transaction.write(file.toPath()) {
+                ObjectOutputStream(FileOutputStream(file)).use {
+                    it.writeBuildInfo(buildInfo)
+                }
             }
         }
     }

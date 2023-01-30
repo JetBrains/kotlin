@@ -558,7 +558,7 @@ abstract class IncrementalCompilerRunner<
 
         if (exitCode == ExitCode.OK) {
             reporter.measure(BuildTime.STORE_BUILD_INFO) {
-                BuildInfo.write(currentBuildInfo, lastBuildInfoFile)
+                BuildInfo.write(icContext, currentBuildInfo, lastBuildInfoFile)
 
                 //write abi snapshot
                 if (withAbiSnapshot) {
