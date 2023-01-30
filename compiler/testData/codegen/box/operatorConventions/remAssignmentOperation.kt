@@ -4,6 +4,7 @@ class A() {
     var x = 5
 }
 
+@Suppress("DEPRECATED_BINARY_MOD")
 operator fun A.modAssign(y: Int) { throw RuntimeException("mod has been called instead of rem") }
 operator fun A.remAssign(y: Int) { x %= y + 1 }
 

@@ -387,6 +387,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.FORBIDDEN_BINARY_MOD) { firDiagnostic ->
+        ForbiddenBinaryModImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DEPRECATED_BINARY_MOD) { firDiagnostic ->
+        DeprecatedBinaryModImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SUPER_IS_NOT_AN_EXPRESSION) { firDiagnostic ->
         SuperIsNotAnExpressionImpl(
             firDiagnostic as KtPsiDiagnostic,

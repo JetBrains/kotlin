@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.isSupertypeOf
 import org.jetbrains.kotlin.fir.analysis.checkers.overriddenFunctions
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
@@ -32,6 +31,8 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.isSubpackageOf
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.ASSIGNMENT_OPERATIONS
 import org.jetbrains.kotlin.util.OperatorNameConventions.BINARY_OPERATION_NAMES
 import org.jetbrains.kotlin.util.OperatorNameConventions.COMPARE_TO
@@ -76,8 +77,24 @@ object FirOperatorModifierChecker : FirSimpleFunctionChecker() {
                 return
             }
         }
+
+        checkReplaceableLegacyOperators(declaration, context, reporter)
     }
 
+    private fun checkReplaceableLegacyOperators(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
+        val replacement = OperatorNameConventions.MOD_OPERATORS_REPLACEMENT[declaration.name] ?: return
+
+        val diagnostic = if (
+            declaration.symbol.callableId.packageName.isSubpackageOf(StandardClassIds.BASE_KOTLIN_PACKAGE) ||
+            !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOperatorMod)
+        ) {
+            FirErrors.DEPRECATED_BINARY_MOD
+        } else {
+            FirErrors.FORBIDDEN_BINARY_MOD
+        }
+
+        reporter.reportOn(declaration.source, diagnostic, declaration.symbol, replacement.asString(), context)
+    }
 }
 
 private interface Check : (CheckerContext, FirSimpleFunction) -> String? {

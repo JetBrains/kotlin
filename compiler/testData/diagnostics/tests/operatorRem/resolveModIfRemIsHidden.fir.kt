@@ -6,7 +6,7 @@ object A {
     @Deprecated("Use mod instead", ReplaceWith("mod"), DeprecationLevel.HIDDEN)
     operator fun rem(x: Int) = 0
 
-    operator fun mod(x: Int) = ""
+    <!DEPRECATED_BINARY_MOD!>operator<!> fun mod(x: Int) = ""
 }
 
 fun test() {

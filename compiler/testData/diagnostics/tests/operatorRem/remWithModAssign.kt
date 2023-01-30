@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: -ProhibitOperatorMod
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 

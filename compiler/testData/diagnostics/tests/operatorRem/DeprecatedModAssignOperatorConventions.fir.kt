@@ -2,12 +2,12 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 class OldAndNew {
-    operator fun modAssign(x: Int) {}
+    <!DEPRECATED_BINARY_MOD!>operator<!> fun modAssign(x: Int) {}
     operator fun remAssign(x: Int) {}
 }
 
 class OnlyOld {
-    operator fun modAssign(x: Int) {}
+    <!DEPRECATED_BINARY_MOD!>operator<!> fun modAssign(x: Int) {}
 }
 
 class OnlyNew {
@@ -16,11 +16,11 @@ class OnlyNew {
 
 class Sample
 
-operator fun Sample.modAssign(x: Int) {}
+<!DEPRECATED_BINARY_MOD!>operator<!> fun Sample.modAssign(x: Int) {}
 operator fun Sample.remAssign(x: Int) {}
 
 class ModAndRemAssign {
-    operator fun mod(x: Int): ModAndRemAssign = ModAndRemAssign()
+    <!DEPRECATED_BINARY_MOD!>operator<!> fun mod(x: Int): ModAndRemAssign = ModAndRemAssign()
     operator fun remAssign(x: Int) {}
 }
 

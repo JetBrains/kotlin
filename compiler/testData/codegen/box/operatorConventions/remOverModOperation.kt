@@ -3,6 +3,7 @@
 class A() {
     var x = 5
 
+    @Suppress("DEPRECATED_BINARY_MOD")
     operator fun mod(y: Int) { throw RuntimeException("mod has been called instead of rem") }
     operator fun rem(y: Int) { x -= y }
 }

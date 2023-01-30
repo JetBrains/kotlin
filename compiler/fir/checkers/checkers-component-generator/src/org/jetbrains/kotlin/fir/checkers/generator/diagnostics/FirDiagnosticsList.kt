@@ -152,6 +152,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val AMBIGUOUS_ALTERED_ASSIGN by error<PsiElement> {
             parameter<List<String?>>("altererNames")
         }
+        val FORBIDDEN_BINARY_MOD by error<PsiElement>(PositioningStrategy.OPERATOR_MODIFIER) {
+            parameter<FirBasedSymbol<*>>("forbiddenFunction")
+            parameter<String>("suggestedFunction")
+        }
+        val DEPRECATED_BINARY_MOD by error<PsiElement>(PositioningStrategy.OPERATOR_MODIFIER) {
+            parameter<FirBasedSymbol<*>>("forbiddenFunction")
+            parameter<String>("suggestedFunction")
+        }
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

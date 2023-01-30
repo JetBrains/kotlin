@@ -355,6 +355,20 @@ internal class AmbiguousAlteredAssignImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.AmbiguousAlteredAssign(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class ForbiddenBinaryModImpl(
+    override val forbiddenFunction: KtSymbol,
+    override val suggestedFunction: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ForbiddenBinaryMod(), KtAbstractFirDiagnostic<PsiElement>
+
+internal class DeprecatedBinaryModImpl(
+    override val forbiddenFunction: KtSymbol,
+    override val suggestedFunction: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.DeprecatedBinaryMod(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class SuperIsNotAnExpressionImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
