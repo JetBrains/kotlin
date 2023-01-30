@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet.Companion.COMMON_MAIN_SOURCE_SET_NAME
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_COMPATIBILITY_METADATA_VARIANT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_GRANULAR_SOURCE_SETS_METADATA
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_HIERARCHICAL_STRUCTURE_SUPPORT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheckWhenEvaluated
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -23,9 +25,9 @@ import org.jetbrains.kotlin.tooling.core.UnsafeApi
 internal fun runDeprecationDiagnostics(project: Project) {
     checkAndReportDeprecatedMppProperties(project)
     handleHierarchicalStructureFlagsMigration(project)
+    checkAndReportDeprecatedSourceSetsLayouts(project)
     project.runProjectConfigurationHealthCheckWhenEvaluated {
         checkAndReportDeprecatedNativeTargets(project)
-        checkAndReportDeprecatedSourceSetsLayouts(project)
     }
 }
 
@@ -65,12 +67,15 @@ private fun checkAndReportDeprecatedSourceSetsLayouts(project: Project) {
 }
 
 private fun Project.reportCommonMainDependsOnOtherSourceSets() {
-    val commonMain = multiplatformExtensionOrNull?.sourceSets?.getByName("commonMain") ?: return
-    if (commonMain.dependsOn.isNotEmpty()) {
-        SingleWarningPerBuild.show(
-            project,
-            "w: 'commonMain' source set can't depend on other source sets."
-        )
+    multiplatformExtensionOrNull?.sourceSets?.all {
+        if (it.name == COMMON_MAIN_SOURCE_SET_NAME) {
+            it.internal.dependsOn.forAll {
+                SingleWarningPerBuild.show(
+                    project,
+                    "w: 'commonMain' source set can't depend on other source sets."
+                )
+            }
+        }
     }
 }
 
