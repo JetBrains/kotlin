@@ -66,6 +66,8 @@ dependencies {
     testImplementation(kotlinGradlePluginTest)
     testImplementation(project(":kotlin-gradle-subplugin-example"))
     testImplementation(project(":kotlin-test:kotlin-test-jvm"))
+    testImplementation(project(":kotlin-util-klib"))
+
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
 

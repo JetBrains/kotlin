@@ -48,20 +48,28 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, Seria
         }
     }
 
+    /*
+    metadata libraries do not have 'link' dependencies, as there are several reasons
+    why a consumer might not be able to provide the same compile classpath as the producer
+    (e.g. commonized cinterops, host vs client environment differences).
+    */
+    val linkDependencies = if (context.config.metadataKlib) emptyList()
+    else input.neededLibraries
+
     buildLibrary(
-            config.nativeLibraries,
-            config.includeBinaries,
-            input.neededLibraries,
-            input.serializedMetadata!!,
-            input.serializedIr,
-            versions,
-            target,
-            output,
-            libraryName,
-            nopack,
-            shortLibraryName,
-            manifestProperties,
-            input.dataFlowGraph
+            natives = config.nativeLibraries,
+            included = config.includeBinaries,
+            linkDependencies = linkDependencies,
+            metadata = input.serializedMetadata!!,
+            ir = input.serializedIr,
+            versions = versions,
+            target = target,
+            output = output,
+            moduleName = libraryName,
+            nopack = nopack,
+            shortName = shortLibraryName,
+            manifestProperties = manifestProperties,
+            dataFlowGraph = input.dataFlowGraph
     )
 }
 
