@@ -85,8 +85,3 @@ fun FirElement.unwrapElement(): FirElement = when (this) {
     else -> this
 }
 
-fun FirExpression.unwrapSmartcastExpression(): FirExpression =
-    when (this) {
-        is FirSmartCastExpression -> originalExpression
-        else -> this
-    }
