@@ -392,5 +392,5 @@ open class KaptIncrementalWithAggregatingApt : KaptIncrementalIT() {
 
 @DisplayName("Kapt incremental tests with aggregating apt with precise compilation outputs backup")
 class KaptIncrementalWithAggregatingAptAndPreciseBackup : KaptIncrementalWithAggregatingApt() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true)
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
 }
