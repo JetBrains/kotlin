@@ -261,6 +261,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                 when (typeArgument) {
                     is IrTypeProjection -> typeParameterRemapper.remapType(typeArgument.type)
                     is IrStarProjection -> (classifier as IrClassSymbol).owner.typeParameters[index].defaultType.erasure()
+                    else -> error("Unexpected type argument kind: ${typeArgument::class}, $typeArgument")
                 }
             }
         }
