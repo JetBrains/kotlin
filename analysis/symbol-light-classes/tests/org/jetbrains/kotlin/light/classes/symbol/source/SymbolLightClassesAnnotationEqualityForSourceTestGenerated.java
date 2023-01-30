@@ -25,9 +25,45 @@ public class SymbolLightClassesAnnotationEqualityForSourceTestGenerated extends 
     }
 
     @Test
+    @TestMetadata("ExplicitRetension.kt")
+    public void testExplicitRetension() throws Exception {
+        runTest("analysis/symbol-light-classes/testData/annotationsEquality/ExplicitRetension.kt");
+    }
+
+    @Test
+    @TestMetadata("ImplicitRetension.kt")
+    public void testImplicitRetension() throws Exception {
+        runTest("analysis/symbol-light-classes/testData/annotationsEquality/ImplicitRetension.kt");
+    }
+
+    @Test
+    @TestMetadata("JavaRepeatable.kt")
+    public void testJavaRepeatable() throws Exception {
+        runTest("analysis/symbol-light-classes/testData/annotationsEquality/JavaRepeatable.kt");
+    }
+
+    @Test
+    @TestMetadata("JvmRepeatable.kt")
+    public void testJvmRepeatable() throws Exception {
+        runTest("analysis/symbol-light-classes/testData/annotationsEquality/JvmRepeatable.kt");
+    }
+
+    @Test
     @TestMetadata("OverrideMethod.kt")
     public void testOverrideMethod() throws Exception {
         runTest("analysis/symbol-light-classes/testData/annotationsEquality/OverrideMethod.kt");
+    }
+
+    @Test
+    @TestMetadata("Repeatable.kt")
+    public void testRepeatable() throws Exception {
+        runTest("analysis/symbol-light-classes/testData/annotationsEquality/Repeatable.kt");
+    }
+
+    @Test
+    @TestMetadata("Target.kt")
+    public void testTarget() throws Exception {
+        runTest("analysis/symbol-light-classes/testData/annotationsEquality/Target.kt");
     }
 
     @Test
