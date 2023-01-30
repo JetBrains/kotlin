@@ -21,10 +21,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveProcessor
-import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sourceFiles.LightTreeFile
 
@@ -36,9 +34,7 @@ abstract class AbstractFirAnalyzerFacade {
 
     abstract fun convertToIr(
         fir2IrExtensions: Fir2IrExtensions,
-        signatureComposer: FirBasedSignatureComposer,
-        symbolTable: SymbolTable,
-        dependentComponents: List<Fir2IrComponents>,
+        commonMemberStorage: Fir2IrCommonMemberStorage,
         irBuiltIns: IrBuiltInsOverFir?
     ): Fir2IrResult
 }
@@ -107,9 +103,7 @@ class FirAnalyzerFacade(
 
     override fun convertToIr(
         fir2IrExtensions: Fir2IrExtensions,
-        signatureComposer: FirBasedSignatureComposer,
-        symbolTable: SymbolTable,
-        dependentComponents: List<Fir2IrComponents>,
+        commonMemberStorage: Fir2IrCommonMemberStorage,
         irBuiltIns: IrBuiltInsOverFir?
     ): Fir2IrResult {
         if (_scopeSession == null) runResolution()
@@ -124,9 +118,7 @@ class FirAnalyzerFacade(
             irGeneratorExtensions,
             generateSignatures,
             kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
-            signatureComposer = signatureComposer,
-            symbolTable = symbolTable,
-            dependentComponents = dependentComponents,
+            commonMemberStorage = commonMemberStorage,
             initializedIrBuiltIns = irBuiltIns
         )
     }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.ir.declarations.IrClass
 
-class Fir2IrLocalClassStorage(internal val localClassCache: MutableMap<FirClass, IrClass> = mutableMapOf()) {
+class Fir2IrLocalClassStorage(private val localClassCache: MutableMap<FirClass, IrClass> = mutableMapOf()) {
     operator fun get(localClass: FirClass): IrClass? {
         return localClassCache[localClass]
     }

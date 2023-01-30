@@ -17,11 +17,9 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
 
 data class FirResult(
     val platformOutput: ModuleCompilerAnalyzedOutput,
@@ -41,7 +39,7 @@ fun FirResult.convertToIrAndActualize(
 ): Fir2IrResult {
     val result: Fir2IrResult
 
-    val (signatureComposer, symbolTable) = Fir2IrConverter.createSignatureComposerAndSymbolTable(
+    val commonMemberStorage = Fir2IrCommonMemberStorage(
         generateSignatures = linkViaSignatures,
         signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
         manglerCreator = { FirJvmKotlinMangler() }
@@ -52,18 +50,14 @@ fun FirResult.convertToIrAndActualize(
             fir2IrExtensions,
             irGeneratorExtensions,
             linkViaSignatures = linkViaSignatures,
-            signatureComposer = signatureComposer,
-            symbolTable = symbolTable,
-            dependentComponents = emptyList(),
+            commonMemberStorage = commonMemberStorage,
             irBuiltIns = null
         )
         result = platformOutput.convertToIr(
             fir2IrExtensions,
             irGeneratorExtensions,
             linkViaSignatures = linkViaSignatures,
-            signatureComposer = signatureComposer,
-            symbolTable = symbolTable,
-            dependentComponents = listOf(commonIrOutput.components),
+            commonMemberStorage = commonMemberStorage,
             irBuiltIns = commonIrOutput.components.irBuiltIns
         )
         IrActualizer.actualize(
@@ -75,9 +69,7 @@ fun FirResult.convertToIrAndActualize(
             fir2IrExtensions,
             irGeneratorExtensions,
             linkViaSignatures = linkViaSignatures,
-            signatureComposer = signatureComposer,
-            symbolTable = symbolTable,
-            dependentComponents = emptyList(),
+            commonMemberStorage = commonMemberStorage,
             irBuiltIns = null
         )
     }
@@ -89,9 +81,7 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
     fir2IrExtensions: Fir2IrExtensions,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
     linkViaSignatures: Boolean,
-    signatureComposer: FirBasedSignatureComposer,
-    symbolTable: SymbolTable,
-    dependentComponents: List<Fir2IrComponents>,
+    commonMemberStorage: Fir2IrCommonMemberStorage,
     irBuiltIns: IrBuiltInsOverFir?
 ): Fir2IrResult {
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
@@ -102,9 +92,7 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
         irGeneratorExtensions,
         kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally
         generateSignatures = linkViaSignatures,
-        signatureComposer = signatureComposer,
-        symbolTable = symbolTable,
-        dependentComponents = dependentComponents,
+        commonMemberStorage = commonMemberStorage,
         initializedIrBuiltIns = irBuiltIns
     )
 }

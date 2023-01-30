@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
-import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
+import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
@@ -128,7 +128,7 @@ object GenerationUtils {
         )
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
 
-        val (signatureComposer, symbolTable) = Fir2IrConverter.createSignatureComposerAndSymbolTable(
+        val commonMemberStorage = Fir2IrCommonMemberStorage(
             generateSignatures = firAnalyzerFacade.generateSignatures,
             signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
             manglerCreator = { FirJvmKotlinMangler() }
@@ -136,9 +136,7 @@ object GenerationUtils {
 
         val (moduleFragment, components, pluginContext) = firAnalyzerFacade.convertToIr(
             fir2IrExtensions,
-            signatureComposer = signatureComposer,
-            symbolTable = symbolTable,
-            dependentComponents = emptyList(),
+            commonMemberStorage,
             irBuiltIns = null
         )
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext

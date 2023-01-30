@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 internal val KlibFactories = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer, PlatformDependentTypeTransformer.None)
@@ -71,7 +70,7 @@ internal fun PhaseContext.fir2Ir(
         moduleDescriptor.setDependencies(ArrayList(dependencies))
     }
 
-    val (signatureComposer, symbolTable) = Fir2IrConverter.createSignatureComposerAndSymbolTable(
+    val commonMemberStorage = Fir2IrCommonMemberStorage(
         generateSignatures = false,
         signatureComposerCreator = null,
         manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
@@ -87,9 +86,7 @@ internal fun PhaseContext.fir2Ir(
             IrGenerationExtension.getInstances(config.project),
             generateSignatures = false,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance, // TODO: consider passing externally
-            signatureComposer = signatureComposer,
-            symbolTable = symbolTable,
-            dependentComponents = emptyList(),
+            commonMemberStorage = commonMemberStorage,
             initializedIrBuiltIns = null
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }

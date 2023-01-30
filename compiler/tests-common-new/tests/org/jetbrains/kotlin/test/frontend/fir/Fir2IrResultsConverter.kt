@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
+import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
-import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.backend.IrBuiltInsOverFir
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
@@ -48,8 +47,6 @@ class Fir2IrResultsConverter(
         module: TestModule,
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
-        val isMppSupported = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
-
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
@@ -69,14 +66,14 @@ class Fir2IrResultsConverter(
 
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
 
-        val componentsMap = mutableMapOf<String, Fir2IrComponents>()
         val dependentIrParts = mutableListOf<JvmIrCodegenFactory.JvmIrBackendInput>()
         lateinit var mainIrPart: JvmIrCodegenFactory.JvmIrBackendInput
+        lateinit var mainModuleComponents: Fir2IrComponents
 
         val generateSignatures =
             (inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade as? FirAnalyzerFacade)?.generateSignatures == true
 
-        val (signatureComposer, symbolTable) = Fir2IrConverter.createSignatureComposerAndSymbolTable(
+        val commonMemberStorage = Fir2IrCommonMemberStorage(
             generateSignatures = generateSignatures,
             signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
             manglerCreator = { FirJvmKotlinMangler() }
@@ -84,17 +81,9 @@ class Fir2IrResultsConverter(
         var irBuiltIns: IrBuiltInsOverFir? = null
 
         for ((index, firOutputPart) in inputArtifact.partsForDependsOnModules.withIndex()) {
-            val dependentComponents = mutableListOf<Fir2IrComponents>()
-            if (isMppSupported) {
-                for (dependency in firOutputPart.module.dependsOnDependencies) {
-                    dependentComponents.add(componentsMap[dependency.moduleName]!!)
-                }
-            }
-
             val (irModuleFragment, components, pluginContext) = firOutputPart.firAnalyzerFacade.convertToIr(
-                fir2IrExtensions, signatureComposer, symbolTable, dependentComponents, irBuiltIns
+                fir2IrExtensions, commonMemberStorage, irBuiltIns
             )
-            componentsMap[firOutputPart.module.name] = components
             irBuiltIns = components.irBuiltIns
 
             val irPart = JvmIrCodegenFactory.JvmIrBackendInput(
@@ -111,11 +100,10 @@ class Fir2IrResultsConverter(
             if (index < inputArtifact.partsForDependsOnModules.size - 1) {
                 dependentIrParts.add(irPart)
             } else {
+                mainModuleComponents = components
                 mainIrPart = irPart
             }
         }
-
-        val mainModuleComponents = componentsMap[module.name]!!
 
         val codegenFactory = JvmIrCodegenFactory(configuration, phaseConfig)
         val generationState = GenerationState.Builder(

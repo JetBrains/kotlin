@@ -40,11 +40,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 class Fir2IrClassifierStorage(
     private val components: Fir2IrComponents,
-    private val dependentStorages: List<Fir2IrClassifierStorage>
+    commonMemberStorage: Fir2IrCommonMemberStorage
 ) : Fir2IrComponents by components {
     private val firProvider = session.firProvider
 
-    private val classCache: MutableMap<FirRegularClass, IrClass> = merge { it.classCache }
+    private val classCache: MutableMap<FirRegularClass, IrClass> = commonMemberStorage.classCache
 
     private val localClassesCreatedOnTheFly: MutableMap<FirClass, IrClass> = mutableMapOf()
 
@@ -52,28 +52,18 @@ class Fir2IrClassifierStorage(
 
     private val typeAliasCache: MutableMap<FirTypeAlias, IrTypeAlias> = mutableMapOf()
 
-    private val typeParameterCache: MutableMap<FirTypeParameter, IrTypeParameter> = merge { it.typeParameterCache }
+    private val typeParameterCache: MutableMap<FirTypeParameter, IrTypeParameter> = commonMemberStorage.typeParameterCache
 
     private val typeParameterCacheForSetter: MutableMap<FirTypeParameter, IrTypeParameter> = mutableMapOf()
 
-    private val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntry> = merge { it.enumEntryCache }
+    private val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntry> = commonMemberStorage.enumEntryCache
 
     private val fieldsForContextReceivers: MutableMap<IrClass, List<IrField>> = mutableMapOf()
 
     private val localStorage: Fir2IrLocalClassStorage = Fir2IrLocalClassStorage(
-        // Merge is necessary here to be able to serialize local classes from common code in expression codegen
-        dependentStorages.map { it.localStorage }.fold(mutableMapOf()) { result, storage ->
-            result.putAll(storage.localClassCache)
-            result
-        }
+        // Using existing cache is necessary here to be able to serialize local classes from common code in expression codegen
+        commonMemberStorage.localClassCache
     )
-
-    private fun <K, V> merge(mapFunc: (Fir2IrClassifierStorage) -> MutableMap<K, V>): MutableMap<K, V> {
-        return dependentStorages.map { mapFunc(it) }.fold(mutableMapOf()) { result, map ->
-            result.putAll(map)
-            result
-        }
-    }
 
     private fun FirTypeRef.toIrType(typeContext: ConversionTypeContext = ConversionTypeContext.DEFAULT): IrType =
         with(typeConverter) { toIrType(typeContext) }

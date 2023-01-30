@@ -65,7 +65,7 @@ import java.util.concurrent.ConcurrentHashMap
 class Fir2IrDeclarationStorage(
     private val components: Fir2IrComponents,
     private val moduleDescriptor: FirModuleDescriptor,
-    dependentStorages: List<Fir2IrDeclarationStorage>
+    commonMemberStorage: Fir2IrCommonMemberStorage
 ) : Fir2IrComponents by components {
 
     private val firProvider = session.firProvider
@@ -78,13 +78,13 @@ class Fir2IrDeclarationStorage(
 
     private val scriptCache: ConcurrentHashMap<FirScript, IrScript> = ConcurrentHashMap()
 
-    private val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunction> = merge(dependentStorages) { it.functionCache }
+    private val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunction> = commonMemberStorage.functionCache
 
     private val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructor> = ConcurrentHashMap()
 
     private val initializerCache: ConcurrentHashMap<FirAnonymousInitializer, IrAnonymousInitializer> = ConcurrentHashMap()
 
-    private val propertyCache: ConcurrentHashMap<FirProperty, IrProperty> = merge(dependentStorages) { it.propertyCache }
+    private val propertyCache: ConcurrentHashMap<FirProperty, IrProperty> = commonMemberStorage.propertyCache
 
     // interface A { /* $1 */ fun foo() }
     // interface B : A {
@@ -101,13 +101,11 @@ class Fir2IrDeclarationStorage(
     // so remember that in class B there's a fake override $2 for real $1.
     //
     // Thus, we may obtain it by fakeOverridesInClass[ir(B)][fir(A::foo)] -> fir(B::foo)
+    //
+    // Note: reusing is necessary here, because sometimes (see testFakeOverridesInPlatformModule)
+    // we have to match fake override in platform class with overridden fake overrides in common class
     private val fakeOverridesInClass: MutableMap<IrClass, MutableMap<FirCallableDeclaration, FirCallableDeclaration>> =
-        dependentStorages.map { it.fakeOverridesInClass }.fold(mutableMapOf()) { result, map ->
-            // Note: merge is necessary here, because sometimes (see testFakeOverridesInPlatformModule)
-            // we have to match fake override in platform class with overridden fake overrides in common class
-            result.putAll(map)
-            result
-        }
+        commonMemberStorage.fakeOverridesInClass
 
     // For pure fields (from Java) only
     private val fieldToPropertyCache: ConcurrentHashMap<Pair<FirField, IrDeclarationParent>, IrProperty> = ConcurrentHashMap()
@@ -121,16 +119,6 @@ class Fir2IrDeclarationStorage(
     private val fieldStaticOverrideCache: ConcurrentHashMap<FieldStaticOverrideKey, IrField> = ConcurrentHashMap()
 
     private val localStorage: Fir2IrLocalCallableStorage by threadLocal { Fir2IrLocalCallableStorage() }
-
-    private fun <K, V> merge(
-        dependentStorages: List<Fir2IrDeclarationStorage>,
-        mapFunc: (Fir2IrDeclarationStorage) -> ConcurrentHashMap<K, V>
-    ): ConcurrentHashMap<K, V> {
-        return dependentStorages.map { mapFunc(it) }.fold(ConcurrentHashMap()) { result, map ->
-            result.putAll(map)
-            result
-        }
-    }
 
     private fun areCompatible(firFunction: FirFunction, irFunction: IrFunction): Boolean {
         if (firFunction is FirSimpleFunction && irFunction is IrSimpleFunction) {
