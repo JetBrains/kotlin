@@ -453,15 +453,11 @@ class Fir2IrConverter(
             val converter = Fir2IrConverter(moduleDescriptor, components)
 
             components.converter = converter
-
-            val classifierStorage = Fir2IrClassifierStorage(components, commonMemberStorage)
-            components.classifierStorage = classifierStorage
+            components.classifierStorage = Fir2IrClassifierStorage(components, commonMemberStorage)
             components.delegatedMemberGenerator = DelegatedMemberGenerator(components)
-            val declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor, commonMemberStorage)
-            components.declarationStorage = declarationStorage
+            components.declarationStorage = Fir2IrDeclarationStorage(components, moduleDescriptor, commonMemberStorage)
             components.visibilityConverter = visibilityConverter
-            val typeConverter = Fir2IrTypeConverter(components)
-            components.typeConverter = typeConverter
+            components.typeConverter = Fir2IrTypeConverter(components)
             val irBuiltIns = initializedIrBuiltIns ?: IrBuiltInsOverFir(
                 components, languageVersionSettings, moduleDescriptor, irMangler,
                 languageVersionSettings.getFlag(AnalysisFlags.builtInsFromSources) || kotlinBuiltIns !== DefaultBuiltIns.Instance
@@ -469,16 +465,11 @@ class Fir2IrConverter(
             components.irBuiltIns = irBuiltIns
             val conversionScope = Fir2IrConversionScope()
             val fir2irVisitor = Fir2IrVisitor(components, conversionScope)
-            val builtIns = Fir2IrBuiltIns(components, specialSymbolProvider)
-            val annotationGenerator = AnnotationGenerator(components)
-            components.builtIns = builtIns
-            components.annotationGenerator = annotationGenerator
-            val fakeOverrideGenerator = FakeOverrideGenerator(components, conversionScope)
-            components.fakeOverrideGenerator = fakeOverrideGenerator
-            val callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
-            components.callGenerator = callGenerator
-            val irProvider = FirIrProvider(components)
-            components.irProviders = listOf(irProvider)
+            components.builtIns = Fir2IrBuiltIns(components, specialSymbolProvider)
+            components.annotationGenerator = AnnotationGenerator(components)
+            components.fakeOverrideGenerator = FakeOverrideGenerator(components, conversionScope)
+            components.callGenerator = CallAndReferenceGenerator(components, fir2irVisitor, conversionScope)
+            components.irProviders = listOf(FirIrProvider(components))
 
             fir2IrExtensions.registerDeclarations(commonMemberStorage.symbolTable)
 

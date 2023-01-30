@@ -95,16 +95,8 @@ open class FirFrontendFacade(
         )
 
         val targetPlatform = module.targetPlatform
-        val firOutputPartForDependsOnModules = mutableListOf<FirOutputPartForDependsOnModule>()
-        for (testModule in sortedModules) {
-            firOutputPartForDependsOnModules.add(
-                analyze(
-                    testModule,
-                    moduleDataMap[testModule]!!,
-                    targetPlatform,
-                    projectEnvironment
-                )
-            )
+        val firOutputPartForDependsOnModules = sortedModules.map {
+            analyze(it, moduleDataMap[it]!!, targetPlatform, projectEnvironment)
         }
 
         return FirOutputArtifactImpl(firOutputPartForDependsOnModules)
