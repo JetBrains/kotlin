@@ -70,9 +70,8 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             it.enabled = binary.konanTarget.enabledOnCurrentHost
             it.konanPropertiesService.set(konanPropertiesBuildService)
             it.usesService(konanPropertiesBuildService)
-            it.toolOptions.freeCompilerArgs.convention(
-                compilationCompilerOptions.options.freeCompilerArgs
-            )
+            it.toolOptions.freeCompilerArgs.value(compilationCompilerOptions.options.freeCompilerArgs)
+            it.toolOptions.freeCompilerArgs.addAll(providers.provider { PropertiesProvider(project).nativeLinkArgs })
         }
 
 
@@ -90,7 +89,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         tasks.named(binary.linkTaskName, KotlinNativeLink::class.java).configure {
             // We propagate compilation free args to the link task for now (see KT-33717).
             val defaultLanguageSettings = binary.compilation.defaultSourceSet.languageSettings as? DefaultLanguageSettingsBuilder
-            if (defaultLanguageSettings != null) {
+            if (defaultLanguageSettings != null && defaultLanguageSettings.freeCompilerArgs.isNotEmpty()) {
                 it.toolOptions.freeCompilerArgs.addAll(
                     defaultLanguageSettings.freeCompilerArgs
                 )
