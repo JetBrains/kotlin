@@ -32,7 +32,7 @@ abstract class BasicMap<K : Comparable<K>, V>(
 ) {
     protected val storage: LazyStorage<K, V> = CachingLazyStorage(storageFile, keyDescriptor, valueExternalizer).let {
         if (icContext.keepIncrementalCompilationCachesInMemory) {
-            InMemoryStorageWrapper(it).also { wrapper ->
+            DefaultInMemoryStorageWrapper(it).also { wrapper ->
                 icContext.transaction.registerInMemoryStorageWrapper(wrapper)
             }
         } else {

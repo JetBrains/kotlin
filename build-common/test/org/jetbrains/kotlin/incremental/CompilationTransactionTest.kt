@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.report.DoNothingBuildReporter
+import org.jetbrains.kotlin.incremental.storage.InMemoryStorageWrapper
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -24,6 +25,32 @@ private class CacheMock(private val throwsException: Boolean = false) : Closeabl
         }
         closed = true
     }
+}
+
+private class InMemoryStorageWrapperMock : InMemoryStorageWrapper<Any, Any> {
+    var reset = false
+
+    override fun resetInMemoryChanges() {
+        reset = true
+    }
+
+    override val keys: Collection<Any> = emptyList()
+
+    override fun clean() {}
+
+    override fun flush(memoryCachesOnly: Boolean) {}
+
+    override fun close() {}
+
+    override fun append(key: Any, value: Any) {}
+
+    override fun remove(key: Any) {}
+
+    override fun set(key: Any, value: Any) {}
+
+    override fun get(key: Any) = null
+
+    override fun contains(key: Any) = false
 }
 
 abstract class BaseCompilationTransactionTest {
@@ -83,6 +110,38 @@ abstract class BaseCompilationTransactionTest {
                 cachesManager = cacheMock
             }
         }
+    }
+
+    @Test
+    fun testInMemoryWrappersAreResetOnUnsuccessfulTransaction() {
+        val inMemoryStorageWrapperMock = InMemoryStorageWrapperMock()
+        useTransaction {
+            registerInMemoryStorageWrapper(inMemoryStorageWrapperMock)
+        }
+        assertTrue(inMemoryStorageWrapperMock.reset)
+    }
+
+    @Test
+    fun testInMemoryWrappersAreResetOnExecutionException() {
+        val inMemoryStorageWrapperMock = InMemoryStorageWrapperMock()
+        assertThrows<Exception> {
+            useTransaction {
+                registerInMemoryStorageWrapper(inMemoryStorageWrapperMock)
+                markAsSuccessful()
+                throw Exception()
+            }
+        }
+        assertTrue(inMemoryStorageWrapperMock.reset)
+    }
+
+    @Test
+    fun testInMemoryWrappersAreNotResetOnSuccessfulTransaction() {
+        val inMemoryStorageWrapperMock = InMemoryStorageWrapperMock()
+        useTransaction {
+            registerInMemoryStorageWrapper(inMemoryStorageWrapperMock)
+            markAsSuccessful()
+        }
+        assertFalse(inMemoryStorageWrapperMock.reset)
     }
 }
 

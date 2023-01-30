@@ -8,12 +8,16 @@ package org.jetbrains.kotlin.incremental.storage
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
+interface InMemoryStorageWrapper<K, V> : LazyStorage<K, V> {
+    fun resetInMemoryChanges()
+}
+
 /**
  * An in-memory wrapper for [origin] that keeps all the write operations in-memory.
  * Flushes all the changes to the [origin] on [flush] invocation.
  * [resetInMemoryChanges] should be called to reset in-memory changes of this wrapper.
  */
-class InMemoryStorageWrapper<K, V>(private val origin: LazyStorage<K, V>) : LazyStorage<K, V> {
+class DefaultInMemoryStorageWrapper<K, V>(private val origin: LazyStorage<K, V>) : InMemoryStorageWrapper<K, V> {
     private val inMemoryStorage = LinkedHashMap<K, ValueWrapper<V>>()
     private val removedKeys = hashSetOf<K>()
     private var isCleanRequested = false
@@ -21,7 +25,7 @@ class InMemoryStorageWrapper<K, V>(private val origin: LazyStorage<K, V>) : Lazy
     override val keys: Collection<K>
         get() = if (isCleanRequested) inMemoryStorage.keys else (origin.keys - removedKeys) + inMemoryStorage.keys
 
-    fun resetInMemoryChanges() {
+    override fun resetInMemoryChanges() {
         isCleanRequested = false
         inMemoryStorage.clear()
         removedKeys.clear()
