@@ -277,18 +277,23 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
 
     private fun mavenUrl(): String = when (currentCompilerVersion.meta) {
         MetaVersion.DEV -> KOTLIN_SPACE_DEV
-        MetaVersion.RELEASE, MetaVersion.RC, MetaVersion("RC2"), MetaVersion.BETA -> MAVEN_CENTRAL
+        MetaVersion.RELEASE, MetaVersion.RC, MetaVersion("RC2"), MetaVersion.BETA ->
+            if (currentCompilerVersion.build != -1) KOTLIN_SPACE_DEV else MAVEN_CENTRAL
         else -> throw IllegalStateException("Not a published version $currentCompilerVersion")
     }
 
     @Test
     fun `download prebuilt Native bundle with maven`() {
+        val maven = mavenUrl()
+        // Don't run this test for build that are not yet published to central
+        Assume.assumeTrue(maven != MAVEN_CENTRAL)
+
         with(transformNativeTestProjectWithPluginDsl("native-download-maven")) {
             gradleProperties().appendText(
                 "kotlin.native.distribution.downloadFromMaven=true"
             )
             gradleBuildScript().let {
-                val text = it.readText().replaceFirst("// <MavenPlaceholder>", "maven(\"${mavenUrl()}\")")
+                val text = it.readText().replaceFirst("// <MavenPlaceholder>", "maven(\"${maven}\")")
                 it.writeText(text)
             }
             build("assemble") {
@@ -301,6 +306,10 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
 
     @Test
     fun `download light Native bundle with maven`() {
+        val maven = mavenUrl()
+        // Don't run this test for build that are not yet published to central
+        Assume.assumeTrue(maven != MAVEN_CENTRAL)
+
         if (HostManager.hostIsMac) {
             val xcodeVersion = Xcode!!.currentVersion
             val versionSplit = xcodeVersion.split("(\\s+|\\.|-)".toRegex())
@@ -318,7 +327,7 @@ class NativeDownloadAndPlatformLibsIT : BaseGradleIT() {
                 "kotlin.native.distribution.downloadFromMaven=true"
             )
             gradleBuildScript().let {
-                val text = it.readText().replaceFirst("// <MavenPlaceholder>", "maven(\"${mavenUrl()}\")")
+                val text = it.readText().replaceFirst("// <MavenPlaceholder>", "maven(\"${maven}\")")
                 it.writeText(text)
             }
             build("assemble", "-Pkotlin.native.distribution.type=light") {
