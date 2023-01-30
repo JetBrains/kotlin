@@ -23,10 +23,10 @@ internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: L
         addSimpleAnnotationIfMissing(qualifier, currentRawAnnotations, foundQualifiers, owner)
     }
 
-    override fun findAdditionalAnnotation(
+    override fun findSpecialAnnotation(
         annotationsBox: LazyAnnotationsBox,
         qualifiedName: String,
-        owner: PsiModifierList
+        owner: PsiModifierList,
     ): PsiAnnotation? {
         if (qualifiedName != JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString() &&
             qualifiedName != JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString()
@@ -37,7 +37,13 @@ internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: L
         val expectedQualifier = lazyNullabilityType.qualifier ?: return null
         return createSimpleAnnotationIfMatches(qualifiedName, expectedQualifier, owner)
     }
+
+    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
+
+private val String.isNullOrNotNullQualifiedName: Boolean
+    get() = this == JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString() ||
+            this == JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString()
 
 private val Lazy<NullabilityType>.qualifier: String?
     get() = when (value) {

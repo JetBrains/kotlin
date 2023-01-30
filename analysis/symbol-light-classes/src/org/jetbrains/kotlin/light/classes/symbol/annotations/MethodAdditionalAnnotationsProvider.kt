@@ -22,7 +22,7 @@ internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvi
         }
     }
 
-    override fun findAdditionalAnnotation(
+    override fun findSpecialAnnotation(
         annotationsBox: LazyAnnotationsBox,
         qualifiedName: String,
         owner: PsiModifierList,
@@ -34,6 +34,8 @@ internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvi
         )
     else
         null
+
+    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
 
 private fun PsiElement.isMethodWithOverride(): Boolean = this is SymbolLightMethod<*> && (isDelegated || isOverride())

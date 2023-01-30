@@ -10,7 +10,13 @@ import com.intellij.psi.PsiModifierList
 
 internal sealed interface AdditionalAnnotationsProvider {
     fun addAllAnnotations(currentRawAnnotations: MutableList<in PsiAnnotation>, foundQualifiers: MutableSet<String>, owner: PsiModifierList)
-    fun findAdditionalAnnotation(annotationsBox: LazyAnnotationsBox, qualifiedName: String, owner: PsiModifierList): PsiAnnotation?
+
+    /**
+     * @return **true** if this qualifier should be treated as a **special** in [LazyAnnotationsBox.findAnnotation]
+     * (should be processed without [LazyAnnotationsBox.getOrComputeCachedAnnotations] call)
+     */
+    fun isSpecialQualifier(qualifiedName: String): Boolean
+    fun findSpecialAnnotation(annotationsBox: LazyAnnotationsBox, qualifiedName: String, owner: PsiModifierList): PsiAnnotation?
 
     fun addSimpleAnnotationIfMissing(
         qualifier: String,
@@ -22,6 +28,9 @@ internal sealed interface AdditionalAnnotationsProvider {
         currentRawAnnotations += SymbolLightSimpleAnnotation(qualifier, owner)
     }
 
-    fun createSimpleAnnotationIfMatches(qualifier: String, expectedQualifier: String, owner: PsiModifierList): PsiAnnotation? =
-        if (qualifier == expectedQualifier) SymbolLightSimpleAnnotation(expectedQualifier, owner) else null
+    fun createSimpleAnnotationIfMatches(
+        qualifier: String,
+        expectedQualifier: String,
+        owner: PsiModifierList,
+    ): PsiAnnotation? = if (qualifier == expectedQualifier) SymbolLightSimpleAnnotation(expectedQualifier, owner) else null
 }

@@ -29,14 +29,16 @@ internal object AbstractClassAdditionalAnnotationsProvider : AdditionalAnnotatio
         addAllAnnotationsFromAnnotationClass(currentRawAnnotations, foundQualifiers, owner)
     }
 
-    override fun findAdditionalAnnotation(
+    override fun findSpecialAnnotation(
         annotationsBox: LazyAnnotationsBox,
         qualifiedName: String,
-        owner: PsiModifierList
+        owner: PsiModifierList,
     ): PsiAnnotation? = if (owner.parent.isAnnotationClass())
         findAdditionalAnnotationFromAnnotationClass(annotationsBox, qualifiedName, owner)
     else
         null
+
+    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
 
 private fun PsiElement.isAnnotationClass(): Boolean = this is PsiClass && isAnnotationType

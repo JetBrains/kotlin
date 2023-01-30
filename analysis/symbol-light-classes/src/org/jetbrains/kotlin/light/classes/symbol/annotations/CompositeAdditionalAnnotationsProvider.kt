@@ -16,14 +16,16 @@ internal class CompositeAdditionalAnnotationsProvider(val providers: List<Additi
         foundQualifiers: MutableSet<String>,
         owner: PsiModifierList,
     ) {
-        for (provider in providers) {
+        providers.forEach { provider ->
             provider.addAllAnnotations(currentRawAnnotations, foundQualifiers, owner)
         }
     }
 
-    override fun findAdditionalAnnotation(
+    override fun findSpecialAnnotation(
         annotationsBox: LazyAnnotationsBox,
         qualifiedName: String,
-        owner: PsiModifierList
-    ): PsiAnnotation? = providers.firstNotNullOfOrNull { it.findAdditionalAnnotation(annotationsBox, qualifiedName, owner) }
+        owner: PsiModifierList,
+    ): PsiAnnotation? = providers.firstNotNullOfOrNull { provider -> provider.findSpecialAnnotation(annotationsBox, qualifiedName, owner) }
+
+    override fun isSpecialQualifier(qualifiedName: String): Boolean = providers.any { it.isSpecialQualifier(qualifiedName) }
 }

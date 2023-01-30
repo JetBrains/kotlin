@@ -12,12 +12,14 @@ internal object EmptyAdditionalAnnotationsProvider : AdditionalAnnotationsProvid
     override fun addAllAnnotations(
         currentRawAnnotations: MutableList<in PsiAnnotation>,
         foundQualifiers: MutableSet<String>,
-        owner: PsiModifierList
+        owner: PsiModifierList,
     ) = Unit
 
-    override fun findAdditionalAnnotation(
+    override fun findSpecialAnnotation(
         annotationsBox: LazyAnnotationsBox,
         qualifiedName: String,
-        owner: PsiModifierList
+        owner: PsiModifierList,
     ): PsiAnnotation? = null
+
+    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }

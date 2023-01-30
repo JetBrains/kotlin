@@ -54,17 +54,16 @@ internal class LazyAnnotationsBox(
             return annotations.find { it.qualifiedName == qualifiedName }
         }
 
-        val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
-        val specialAnnotation = if (specialAnnotationClassId != null) {
+        specialAnnotationsList[qualifiedName]?.let { specialAnnotationClassId ->
             val annotationApplication = annotationsProvider[specialAnnotationClassId].firstOrNull() ?: return null
-            SymbolLightLazyAnnotation(annotationsProvider, annotationApplication, owner)
-        } else if (withAdditionalAnnotations) {
-            additionalAnnotationsProvider.findAdditionalAnnotation(this, qualifiedName, owner)
-        } else {
-            null
+            return SymbolLightLazyAnnotation(annotationsProvider, annotationApplication, owner)
         }
 
-        return specialAnnotation ?: getOrComputeCachedAnnotations(owner).find { it.qualifiedName == qualifiedName }
+        if (withAdditionalAnnotations && additionalAnnotationsProvider.isSpecialQualifier(qualifiedName)) {
+            return additionalAnnotationsProvider.findSpecialAnnotation(this, qualifiedName, owner)
+        }
+
+        return getOrComputeCachedAnnotations(owner).find { it.qualifiedName == qualifiedName }
     }
 
     override fun hasAnnotation(owner: PsiModifierList, qualifiedName: String): Boolean {

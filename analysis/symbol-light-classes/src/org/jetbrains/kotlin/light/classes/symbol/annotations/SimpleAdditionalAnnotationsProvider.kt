@@ -16,20 +16,22 @@ internal class SimpleAdditionalAnnotationsProvider(
     override fun addAllAnnotations(
         currentRawAnnotations: MutableList<in PsiAnnotation>,
         foundQualifiers: MutableSet<String>,
-        owner: PsiModifierList
+        owner: PsiModifierList,
     ) {
-        for (qualifiedName in additionalAnnotationQualifiers) {
+        additionalAnnotationQualifiers.forEach { qualifiedName ->
             addSimpleAnnotationIfMissing(qualifiedName, currentRawAnnotations, foundQualifiers, owner)
         }
     }
 
-    override fun findAdditionalAnnotation(
+    override fun findSpecialAnnotation(
         annotationsBox: LazyAnnotationsBox,
         qualifiedName: String,
-        owner: PsiModifierList
+        owner: PsiModifierList,
     ): PsiAnnotation? {
         if (qualifiedName !in additionalAnnotationQualifiers) return null
 
         return createSimpleAnnotationIfMatches(qualifiedName, qualifiedName, owner)
     }
+
+    override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
