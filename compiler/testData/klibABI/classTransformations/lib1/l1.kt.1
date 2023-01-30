@@ -136,3 +136,8 @@ value class ClassToValue(val x: Int)
 /*fun*/ interface FunctionalInterfaceToInterface {
     fun work()
 }
+
+abstract class ClassToAbstractClass {
+    abstract var name: String
+    fun getGreeting() = "Hello, $name!"
+}

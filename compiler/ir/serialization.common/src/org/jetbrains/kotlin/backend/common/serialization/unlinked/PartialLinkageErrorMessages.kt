@@ -55,6 +55,8 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
             unexpectedSuperClassConstructorSymbol
         )
 
+        is AbstractClassInstantiation -> expression(constructorCall) { cantInstantiateAbstractClass(classSymbol) }
+
         is UnimplementedAbstractCallable -> unimplementedAbstractCallable(callable)
     }
 }
@@ -492,6 +494,10 @@ private fun Appendable.invalidConstructorDelegation(
     .append(" should call a constructor of direct super class ")
     .declarationName(superClassSymbol).append(" but calls ")
     .declarationName(unexpectedSuperClassConstructorSymbol).append(" instead")
+
+private fun Appendable.cantInstantiateAbstractClass(classSymbol: IrClassSymbol): Appendable =
+    append("Can not instantiate ").append(classSymbol.owner.modality.name.lowercase()).append(" ")
+        .declarationKindName(classSymbol, capitalized = false)
 
 private fun Appendable.unimplementedAbstractCallable(callable: IrOverridableDeclaration<*>): Appendable =
     append("Abstract ").declarationKindName(callable.symbol, capitalized = false)

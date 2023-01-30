@@ -205,4 +205,6 @@ fun box() = abiTest {
     expectFailure(linkage("Function 'component1' can not be called: No function found for symbol '/DataToClass.component1'")) { getSumFromDataClass() }
 
     expectSuccess { getFunctionalInterfaceToInterface(); "OK" }
+
+    expectFailure(linkage("Constructor 'ClassToAbstractClass.<init>' can not be called: Can not instantiate abstract class 'ClassToAbstractClass'")) { instantiationOfAbstractClass() }
 }

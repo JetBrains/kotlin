@@ -122,6 +122,11 @@ internal sealed interface PartialLinkageCase {
     ) : PartialLinkageCase
 
     /**
+     * An attempt to instantiate an abstract class from outside its inheritance hierarchy.
+     */
+    class AbstractClassInstantiation(val constructorCall: IrConstructorCall, val classSymbol: IrClassSymbol) : PartialLinkageCase
+
+    /**
      * Unimplemented abstract callable member in non-abstract class.
      *
      * Applicable to: Declarations (functions, properties).

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkage
 import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
@@ -488,6 +489,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
         override fun visitConstructorCall(expression: IrConstructorCall) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
+                ?: checkNotAbstractClass()
                 ?: checkExpressionTypeArguments()
                 ?: checkReferencedDeclarationType(expression.symbol.owner.parentAsClass, "regular class") { constructedClass ->
                     constructedClass.kind == ClassKind.CLASS || constructedClass.kind == ClassKind.ANNOTATION_CLASS
@@ -689,6 +691,14 @@ internal class PartiallyLinkedIrTreePatcher(
 
             return if (expressionHasDispatchReceiver != declarationHasDispatchReceiver)
                 ExpressionDispatchReceiverMismatch(this, expressionHasDispatchReceiver)
+            else
+                null
+        }
+
+        private fun IrConstructorCall.checkNotAbstractClass(): PartialLinkageCase? {
+            val createdClass = symbol.owner.parentAsClass
+            return if (createdClass.modality == Modality.ABSTRACT || createdClass.modality == Modality.SEALED)
+                AbstractClassInstantiation(this, createdClass.symbol)
             else
                 null
         }

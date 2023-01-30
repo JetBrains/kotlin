@@ -214,3 +214,9 @@ fun getFunctionalInterfaceToInterface(): FunctionalInterfaceToInterface {
     worker.work()
     return worker
 }
+
+fun instantiationOfAbstractClass() {
+    // Accessing uninitialized members of abstract class is an UB. We shall not allow instantiating
+    // abstract classes except for from their direct inheritors.
+    ClassToAbstractClass().getGreeting()
+}

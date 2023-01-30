@@ -136,3 +136,8 @@ data class DataToClass(val x: Int, val y: Int)
 fun interface FunctionalInterfaceToInterface {
     fun work()
 }
+
+class ClassToAbstractClass {
+    var name: String = "Alice"
+    fun getGreeting() = "Hello, $name!"
+}
