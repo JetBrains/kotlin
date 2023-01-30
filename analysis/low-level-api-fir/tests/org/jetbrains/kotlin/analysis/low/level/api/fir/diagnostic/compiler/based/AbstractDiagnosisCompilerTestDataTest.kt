@@ -6,13 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.AbstractCompilerBasedTestForFir
-import org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based.addIdeTestIgnoreHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.runners.baseFirDiagnosticTestConfiguration
 
 abstract class AbstractDiagnosisCompilerTestDataTest : AbstractCompilerBasedTestForFir() {
     override fun TestConfigurationBuilder.configureTest() {
         baseFirDiagnosticTestConfiguration(frontendFacade = ::LowLevelFirFrontendFacade)
-        addIdeTestIgnoreHandler()
     }
 }
