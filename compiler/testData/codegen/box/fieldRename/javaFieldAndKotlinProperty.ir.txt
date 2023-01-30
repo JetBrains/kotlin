@@ -1,0 +1,88 @@
+FILE fqName:<root> fileName:/Derived.kt
+  CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.BaseJava]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.BaseJava'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.BaseJava]'
+    PROPERTY name:a visibility:public modality:FINAL [var]
+      FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private
+        EXPRESSION_BODY
+          CONST String type=kotlin.String value="OK"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-a> (): kotlin.String declared in <root>.Derived'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-a>' type=<root>.Derived origin=null
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<set-a> visibility:public modality:FINAL <> ($this:<root>.Derived, <set-?>:kotlin.String) returnType:kotlin.Unit
+        correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+        VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
+        BLOCK_BODY
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:private' type=kotlin.Unit origin=null
+            receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<set-a>' type=<root>.Derived origin=null
+            value: GET_VAR '<set-?>: kotlin.String declared in <root>.Derived.<set-a>' type=kotlin.String origin=null
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,var]
+      overridden:
+        public final a: @[FlexibleNullability] kotlin.String? [var]
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.BaseJava
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.BaseJava
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.BaseJava
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:first type:@[FlexibleNullability] kotlin.String? [val]
+        GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
+          receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Derived' type=<root>.Derived origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_VAR 'val first: @[FlexibleNullability] kotlin.String? [val] declared in <root>.box' type=@[FlexibleNullability] kotlin.String? origin=null
+              arg1: CONST String type=kotlin.String value="OK"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+              GET_VAR 'val first: @[FlexibleNullability] kotlin.String? [val] declared in <root>.box' type=@[FlexibleNullability] kotlin.String? origin=null
+      VAR name:d type:<root>.Derived [val]
+        CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Derived' type=<root>.Derived origin=null
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 [expect,fake_override] declared in kotlin.reflect.KMutableProperty0' type=@[FlexibleNullability] kotlin.String? origin=null
+                $this: PROPERTY_REFERENCE 'public final a [fake_override,var]' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] kotlin.String? visibility:public' getter=null setter=null type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+                  $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+              arg1: CONST String type=kotlin.String value="OK"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
+              CALL 'public abstract fun get (): V of kotlin.reflect.KMutableProperty0 [expect,fake_override] declared in kotlin.reflect.KMutableProperty0' type=@[FlexibleNullability] kotlin.String? origin=null
+                $this: PROPERTY_REFERENCE 'public final a [fake_override,var]' field='FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] kotlin.String? visibility:public' getter=null setter=null type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
+                  $this: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+      SET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] kotlin.String? visibility:public' type=kotlin.Unit origin=EQ
+        receiver: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+        value: CONST String type=kotlin.String value="12"
+      WHEN type=kotlin.Unit origin=IF
+        BRANCH
+          if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+            $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+              arg0: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
+                receiver: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+              arg1: CONST String type=kotlin.String value="12"
+          then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+            STRING_CONCATENATION type=kotlin.String
+              CONST String type=kotlin.String value="Error writing: "
+              GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:a type:@[FlexibleNullability] kotlin.String? visibility:public' type=@[FlexibleNullability] kotlin.String? origin=GET_PROPERTY
+                receiver: GET_VAR 'val d: <root>.Derived [val] declared in <root>.box' type=<root>.Derived origin=null
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CONST String type=kotlin.String value="OK"

@@ -1,12 +1,10 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
-// Field VS property: case 4.1
-// See KT-50082
-// DUMP_IR
+// Field VS property: case 2.1
+// See KT-54393 for details
 
 // FILE: BaseJava.java
 public class BaseJava {
-    public String a = "FAIL";
+    private String a = "FAIL";
 }
 
 // FILE: Derived.kt
