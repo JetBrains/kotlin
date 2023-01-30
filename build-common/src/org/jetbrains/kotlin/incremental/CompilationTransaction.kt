@@ -240,17 +240,21 @@ class RecoverableCompilationTransaction(
 
     override fun close() {
         val mainException = closeCachesManager()
-
-        try {
+        val exceptionToThrow = runCatching {
             if (isSuccessful) {
                 cleanupStash()
             } else {
                 revertChanges()
                 cleanupStash()
             }
-        } catch (t: Throwable) {
-            mainException?.addSuppressed(t)
-            throw mainException ?: t
+        }.exceptionOrNull().run {
+            if (this != null) {
+                mainException?.addSuppressed(this)
+            }
+            mainException ?: this
+        }
+        if (exceptionToThrow != null) {
+            throw exceptionToThrow
         }
     }
 }
