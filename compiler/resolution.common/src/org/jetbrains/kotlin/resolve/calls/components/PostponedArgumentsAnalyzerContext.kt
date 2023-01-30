@@ -25,4 +25,5 @@ interface PostponedArgumentsAnalyzerContext : TypeSystemInferenceExtensionContex
     fun addOtherSystem(otherSystem: ConstraintStorage)
 
     fun getBuilder(): ConstraintSystemBuilder
+    fun resolveForkPointsConstraints()
 }

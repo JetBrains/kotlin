@@ -29945,6 +29945,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("smartcastToStarProjection.kt")
+            public void testSmartcastToStarProjection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastToStarProjection.kt");
+            }
+
+            @Test
             @TestMetadata("thisWithLabel.kt")
             public void testThisWithLabel() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/thisWithLabel.kt");
