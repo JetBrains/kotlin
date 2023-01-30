@@ -82,7 +82,8 @@ class IdeSourcesAndDocumentationResolutionTest {
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:3.0.2:jsNativeMain"),
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:0.4.2:commonMain"),
                 binaryCoordinates("com.arkivanov.essenty:instance-keeper:0.4.2:commonMain"),
-                IdeNativeStdlibDependencyResolver.nativeStdlibCoordinates(project)
+                IdeNativeStdlibDependencyResolver.nativeStdlibCoordinates(project),
+                binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
             )
 
             val resolvedDependencies = resolveDependencySources(nativeMain)

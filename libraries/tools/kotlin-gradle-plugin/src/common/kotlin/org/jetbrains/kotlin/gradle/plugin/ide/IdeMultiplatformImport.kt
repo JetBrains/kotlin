@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Default
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
@@ -175,6 +176,12 @@ interface IdeMultiplatformImport {
             val unconstrained = SourceSetConstraint { true }
 
             val isNative = SourceSetConstraint { isNativeSourceSet(it) }
+
+            val isSharedNative = isNative and SourceSetConstraint { sourceSet ->
+                sourceSet.internal.compilations.filterIsInstance<KotlinNativeCompilation>()
+                    .map { compilation -> compilation.konanTarget }
+                    .toSet().size > 1
+            }
 
             val isSinglePlatformType = SourceSetConstraint { isSinglePlatformTypeSourceSet(it) }
 
