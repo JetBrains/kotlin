@@ -4,9 +4,6 @@ public enum AnnotationsOnEnumEntry /* two.AnnotationsOnEnumEntry*/ {
   EntryWithConstructor2;
 
   @org.jetbrains.annotations.NotNull()
-  public static kotlin.enums.EnumEntries<two.AnnotationsOnEnumEntry> getEntries();//  getEntries()
-
-  @org.jetbrains.annotations.NotNull()
   public static two.AnnotationsOnEnumEntry valueOf(java.lang.String) throws java.lang.IllegalArgumentException, java.lang.NullPointerException;//  valueOf(java.lang.String)
 
   @org.jetbrains.annotations.NotNull()
