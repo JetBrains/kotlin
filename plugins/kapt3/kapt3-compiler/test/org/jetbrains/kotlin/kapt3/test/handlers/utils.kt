@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 fun Assertions.checkTxtAccordingToBackend(module: TestModule, actual: String, fileSuffix: String = "") {
     val testDataFile = module.files.first().originalFile
     val txtFile = testDataFile.withExtension("$fileSuffix.txt")
-    val irTxtFile = testDataFile.withSuffixAndExtension("${fileSuffix}_ir", ".txt")
+    val irTxtFile = testDataFile.withSuffixAndExtension("$fileSuffix.ir", ".txt")
     val isIr = module.targetBackend?.isIR == true
     val expectedFile = if (isIr && irTxtFile.exists()) {
         irTxtFile
