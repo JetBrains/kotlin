@@ -10,8 +10,11 @@ import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetVisibilityProvider.PlatformCompilationData
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
 import org.jetbrains.kotlin.gradle.utils.dependencyArtifactsOrNull
+import org.jetbrains.kotlin.gradle.utils.getOrPut
 import java.io.File
 
 private typealias KotlinSourceSetName = String
@@ -29,7 +32,11 @@ internal data class SourceSetVisibilityResult(
     val hostSpecificMetadataArtifactBySourceSet: Map<String, File>
 )
 
-private fun Project.collectAllPlatformCompilationData(): List<SourceSetVisibilityProvider.PlatformCompilationData> {
+private val Project.allPlatformCompilationData: List<PlatformCompilationData>
+    get() = extraProperties
+    .getOrPut("all${PlatformCompilationData::class.java.simpleName}") { collectAllPlatformCompilationData() }
+
+private fun Project.collectAllPlatformCompilationData(): List<PlatformCompilationData> {
     val multiplatformExtension = multiplatformExtensionOrNull ?: return emptyList()
     return multiplatformExtension
         .targets
@@ -37,7 +44,7 @@ private fun Project.collectAllPlatformCompilationData(): List<SourceSetVisibilit
         .flatMap { target -> target.compilations.map { it.toPlatformCompilationData() } }
 }
 
-private fun KotlinCompilation<*>.toPlatformCompilationData() = SourceSetVisibilityProvider.PlatformCompilationData(
+private fun KotlinCompilation<*>.toPlatformCompilationData() = PlatformCompilationData(
     allSourceSets = allKotlinSourceSets.map { it.name }.toSet(),
     resolvedDependenciesConfiguration = LazyResolvedConfiguration(internal.configurations.compileDependencyConfiguration),
     hostSpecificMetadataConfiguration = internal
@@ -50,7 +57,7 @@ internal class SourceSetVisibilityProvider(
     private val platformCompilations: List<PlatformCompilationData>,
 ) {
     constructor(project: Project) : this(
-        platformCompilations = project.collectAllPlatformCompilationData()
+        platformCompilations = project.allPlatformCompilationData
     )
 
     class PlatformCompilationData(

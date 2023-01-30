@@ -18,9 +18,11 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.gradle.utils.getOrPut
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -109,7 +111,7 @@ internal class GranularMetadataTransformation(
             resolvedMetadataConfiguration = LazyResolvedConfiguration(kotlinSourceSet.internal.resolvableMetadataConfiguration),
             sourceSetVisibilityProvider = SourceSetVisibilityProvider(project),
             projectStructureMetadataExtractorFactory = project.kotlinMppDependencyProjectStructureMetadataExtractorFactory,
-            projectData = project.collectAllProjectsData(),
+            projectData = project.allProjectsData,
             platformCompilationSourceSets = project.multiplatformExtension.platformCompilationSourceSets
         )
     }
@@ -324,6 +326,9 @@ internal val ResolvedComponentResult.currentBuildProjectIdOrNull
             else -> null
         }
     }
+
+private val Project.allProjectsData: Map<String, GranularMetadataTransformation.ProjectData> get() = extraProperties
+    .getOrPut("all${GranularMetadataTransformation.ProjectData::class.java.simpleName}") { collectAllProjectsData() }
 
 private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransformation.ProjectData> {
     return rootProject.allprojects.associateBy { it.path }.mapValues { (path, subProject) ->
