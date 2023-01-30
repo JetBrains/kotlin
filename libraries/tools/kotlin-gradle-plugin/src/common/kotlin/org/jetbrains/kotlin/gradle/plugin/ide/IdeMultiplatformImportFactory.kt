@@ -150,7 +150,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyTransformer(
             transformer = IdePlatformStdlibCommonDependencyFilter,
-            constraint = SourceSetConstraint.isSinglePlatformType,
+            constraint = SourceSetConstraint.isSinglePlatformType and !SourceSetConstraint.isSharedNative,
             phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase,
         )
 
