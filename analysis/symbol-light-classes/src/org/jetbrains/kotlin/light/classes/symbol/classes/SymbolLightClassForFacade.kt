@@ -236,8 +236,7 @@ class SymbolLightClassForFacade(
         return JavaPsiFacade.getInstance(project).findClass(CommonClassNames.JAVA_LANG_OBJECT, resolveScope)
     }
 
-    override fun getSupers(): Array<PsiClass> =
-        superClass?.let { arrayOf(it) } ?: arrayOf()
+    override fun getSupers(): Array<PsiClass> = superClass?.let { arrayOf(it) } ?: PsiClass.EMPTY_ARRAY
 
     override fun getSuperTypes(): Array<PsiClassType> =
         arrayOf(PsiType.getJavaLangObject(manager, resolveScope))

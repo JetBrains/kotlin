@@ -9,6 +9,6 @@ import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
 
 internal object EmptyAnnotationsBox : AnnotationsBox {
-    override fun annotations(owner: PsiModifierList): Array<PsiAnnotation> = PsiAnnotation.EMPTY_ARRAY
+    override fun annotationsArray(owner: PsiModifierList): Array<PsiAnnotation> = PsiAnnotation.EMPTY_ARRAY
     override fun findAnnotation(owner: PsiModifierList, qualifiedName: String): PsiAnnotation? = null
 }

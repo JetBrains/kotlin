@@ -63,7 +63,7 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun getContainingClass(): PsiClass = enumClass
 
-    override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
+    override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getTypeParameterList(): PsiTypeParameterList? = null
 
     override fun getQualifiedName(): String = "${enumConstant.containingClass.qualifiedName}.${enumConstant.name}"

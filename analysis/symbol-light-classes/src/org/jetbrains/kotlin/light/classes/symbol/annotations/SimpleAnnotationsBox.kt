@@ -7,24 +7,23 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
+import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import java.util.concurrent.atomic.AtomicReference
 
 internal class SimpleAnnotationsBox(private val annotationsComputer: (PsiModifierList) -> Collection<PsiAnnotation>) : AnnotationsBox {
-    private val annotations: AtomicReference<Array<PsiAnnotation>?> = AtomicReference()
+    private val cachedCollection: AtomicReference<Collection<PsiAnnotation>?> = AtomicReference()
 
-    private fun getOrComputeAnnotations(owner: PsiModifierList): Array<PsiAnnotation> {
-        annotations.get()?.let { return it }
+    private fun getOrComputeAnnotations(owner: PsiModifierList): Collection<PsiAnnotation> {
+        cachedCollection.get()?.let { return it }
 
         val nonCachedAnnotations = annotationsComputer(owner)
-        val resultArray = if (nonCachedAnnotations.isEmpty()) PsiAnnotation.EMPTY_ARRAY else nonCachedAnnotations.toTypedArray()
-        return if (annotations.compareAndSet(null, resultArray)) {
-            resultArray
-        } else {
-            getOrComputeAnnotations(owner)
-        }
+        cachedCollection.compareAndSet(null, nonCachedAnnotations)
+        return getOrComputeAnnotations(owner)
     }
 
-    override fun annotations(owner: PsiModifierList): Array<PsiAnnotation> = getOrComputeAnnotations(owner)
+    override fun annotationsArray(
+        owner: PsiModifierList,
+    ): Array<PsiAnnotation> = getOrComputeAnnotations(owner).toArrayIfNotEmptyOrDefault(PsiAnnotation.EMPTY_ARRAY)
 
     override fun findAnnotation(
         owner: PsiModifierList,

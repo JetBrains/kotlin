@@ -36,7 +36,7 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
     override fun hashCode(): Int = containingClass.hashCode()
 
     override fun getTypeParameterList(): PsiTypeParameterList? = null
-    override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
+    override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
 
     override fun computeModifierList(): PsiModifierList = SymbolLightClassModifierList(
         containingDeclaration = this,

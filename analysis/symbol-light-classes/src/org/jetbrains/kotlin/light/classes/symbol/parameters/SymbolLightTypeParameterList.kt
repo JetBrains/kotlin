@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
+import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
 
@@ -39,7 +40,7 @@ internal class SymbolLightTypeParameterList(
         place: PsiElement
     ): Boolean = typeParameters.all { processor.execute(it, state) }
 
-    private val _typeParameters: Array<PsiTypeParameter> by lazyPub {
+    private val _typeParameters: Collection<PsiTypeParameter> by lazyPub {
         symbolWithTypeParameterPointer.withSymbol(ktModule) {
             it.typeParameters.mapIndexed { index, parameter ->
                 SymbolLightTypeParameter(
@@ -48,11 +49,11 @@ internal class SymbolLightTypeParameterList(
                     index = index,
                     typeParameterSymbol = parameter,
                 )
-            }.toTypedArray()
+            }
         }
     }
 
-    override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameters
+    override fun getTypeParameters(): Array<PsiTypeParameter> = _typeParameters.toArrayIfNotEmptyOrDefault(PsiTypeParameter.EMPTY_ARRAY)
 
     override fun getTypeParameterIndex(typeParameter: PsiTypeParameter?): Int = _typeParameters.indexOf(typeParameter)
 

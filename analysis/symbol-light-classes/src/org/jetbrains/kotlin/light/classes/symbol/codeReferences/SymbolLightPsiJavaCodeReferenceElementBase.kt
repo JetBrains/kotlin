@@ -12,12 +12,11 @@ internal abstract class SymbolLightPsiJavaCodeReferenceElementBase(private val k
     PsiElement by ktElement,
     PsiJavaCodeReferenceElement {
 
-    override fun multiResolve(incompleteCode: Boolean): Array<JavaResolveResult> = emptyArray()
+    override fun multiResolve(incompleteCode: Boolean): Array<JavaResolveResult> = JavaResolveResult.EMPTY_ARRAY
 
     override fun processVariants(processor: PsiScopeProcessor) {}
 
-    override fun advancedResolve(incompleteCode: Boolean): JavaResolveResult =
-        JavaResolveResult.EMPTY
+    override fun advancedResolve(incompleteCode: Boolean): JavaResolveResult = JavaResolveResult.EMPTY
 
     override fun getQualifier(): PsiElement? = null
 
@@ -27,7 +26,7 @@ internal abstract class SymbolLightPsiJavaCodeReferenceElementBase(private val k
 
     override fun getParameterList(): PsiReferenceParameterList? = null
 
-    override fun getTypeParameters(): Array<PsiType> = emptyArray()
+    override fun getTypeParameters(): Array<PsiType> = PsiType.EMPTY_ARRAY
 
     override fun isQualified(): Boolean = false
 

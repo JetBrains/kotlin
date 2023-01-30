@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
+import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.SmartList
@@ -17,10 +18,10 @@ internal class LazyAnnotationsBox(
     private val additionalAnnotationsProvider: AdditionalAnnotationsProvider = EmptyAdditionalAnnotationsProvider,
     private val annotationFilter: AnnotationFilter = AlwaysAllowedAnnotationFilter,
 ) : AnnotationsBox {
-    private val annotationsArray: AtomicReference<Array<PsiAnnotation>?> = AtomicReference()
+    private val cachedCollection: AtomicReference<Collection<PsiAnnotation>?> = AtomicReference()
 
-    override fun annotations(owner: PsiModifierList): Array<PsiAnnotation> {
-        annotationsArray.get()?.let { return it }
+    private fun getOrComputeCachedAnnotations(owner: PsiModifierList): Collection<PsiAnnotation> {
+        cachedCollection.get()?.let { return it }
 
         val annotations = annotationsProvider.annotationInfos().mapNotNullTo(SmartList<PsiAnnotation>()) { applicationInfo ->
             applicationInfo.classId?.let { _ ->
@@ -32,17 +33,14 @@ internal class LazyAnnotationsBox(
         additionalAnnotationsProvider.addAllAnnotations(annotations, foundQualifiers, owner)
 
         val resultAnnotations = annotationFilter.filtered(annotations)
-        return setAnnotationsArray(
-            if (resultAnnotations.isNotEmpty()) resultAnnotations.toTypedArray<PsiAnnotation>() else PsiAnnotation.EMPTY_ARRAY
-        )
+        cachedCollection.compareAndSet(null, resultAnnotations)
+
+        return getOrComputeCachedAnnotations(owner)
     }
 
-    private fun setAnnotationsArray(array: Array<PsiAnnotation>): Array<PsiAnnotation> =
-        if (annotationsArray.compareAndSet(null, array)) {
-            array
-        } else {
-            annotationsArray.get() ?: error("Unexpected state")
-        }
+    override fun annotationsArray(owner: PsiModifierList): Array<PsiAnnotation> {
+        return getOrComputeCachedAnnotations(owner).toArrayIfNotEmptyOrDefault(PsiAnnotation.EMPTY_ARRAY)
+    }
 
     override fun findAnnotation(
         owner: PsiModifierList,
@@ -52,8 +50,8 @@ internal class LazyAnnotationsBox(
     fun findAnnotation(owner: PsiModifierList, qualifiedName: String, withAdditionalAnnotations: Boolean): PsiAnnotation? {
         if (!annotationFilter.isAllowed(qualifiedName)) return null
 
-        annotationsArray.get()?.let { array ->
-            return array.find { it.qualifiedName == qualifiedName }
+        cachedCollection.get()?.let { annotations ->
+            return annotations.find { it.qualifiedName == qualifiedName }
         }
 
         val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
@@ -66,21 +64,21 @@ internal class LazyAnnotationsBox(
             null
         }
 
-        return specialAnnotation ?: annotations(owner).find { it.qualifiedName == qualifiedName }
+        return specialAnnotation ?: getOrComputeCachedAnnotations(owner).find { it.qualifiedName == qualifiedName }
     }
 
     override fun hasAnnotation(owner: PsiModifierList, qualifiedName: String): Boolean {
         if (!annotationFilter.isAllowed(qualifiedName)) return false
 
-        annotationsArray.get()?.let { array ->
-            return array.any { it.qualifiedName == qualifiedName }
+        cachedCollection.get()?.let { annotations ->
+            return annotations.any { it.qualifiedName == qualifiedName }
         }
 
         val specialAnnotationClassId = specialAnnotationsList[qualifiedName]
         return if (specialAnnotationClassId != null) {
             specialAnnotationClassId in annotationsProvider
         } else {
-            annotations(owner).any { it.qualifiedName == qualifiedName }
+            getOrComputeCachedAnnotations(owner).any { it.qualifiedName == qualifiedName }
         }
     }
 

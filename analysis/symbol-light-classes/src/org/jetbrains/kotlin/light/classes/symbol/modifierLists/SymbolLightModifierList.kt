@@ -46,7 +46,7 @@ internal sealed class SymbolLightModifierList<out T : KtLightElement<KtModifierL
     override fun hasExplicitModifier(name: String) = hasModifierProperty(name)
     override fun hasModifierProperty(name: String): Boolean = modifiersBox.hasModifier(name)
 
-    override fun getAnnotations(): Array<PsiAnnotation> = annotationsBox.annotations(this)
+    override fun getAnnotations(): Array<PsiAnnotation> = annotationsBox.annotationsArray(this)
     override fun getApplicableAnnotations(): Array<PsiAnnotation> = annotations
     override fun findAnnotation(qualifiedName: String): PsiAnnotation? = annotationsBox.findAnnotation(this, qualifiedName)
     override fun hasAnnotation(qualifiedName: String): Boolean = annotationsBox.hasAnnotation(this, qualifiedName)
