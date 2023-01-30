@@ -5,6 +5,7 @@
 
 #include "GCApi.hpp"
 
+#include <atomic>
 #include <limits>
 
 #include "ConcurrentMarkAndSweep.hpp"
@@ -12,6 +13,12 @@
 #include "FinalizerHooks.hpp"
 #include "KAssert.h"
 #include "ObjectFactory.hpp"
+
+namespace {
+
+std::atomic<size_t> allocatedBytesCounter;
+
+}
 
 namespace kotlin::alloc {
 
@@ -84,7 +91,17 @@ void* SafeAlloc(uint64_t size) noexcept {
         konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes. Aborting.\n", size);
         konan::abort();
     }
+    allocatedBytesCounter.fetch_add(static_cast<size_t>(size), std::memory_order_relaxed);
     return memory;
+}
+
+void Free(void* ptr, size_t size) noexcept {
+    std_support::free(ptr);
+    allocatedBytesCounter.fetch_sub(static_cast<size_t>(size), std::memory_order_relaxed);
+}
+
+size_t GetAllocatedBytes() noexcept {
+    return allocatedBytesCounter.load(std::memory_order_relaxed);
 }
 
 } // namespace kotlin::alloc

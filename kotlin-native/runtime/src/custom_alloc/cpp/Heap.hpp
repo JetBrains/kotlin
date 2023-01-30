@@ -30,7 +30,7 @@ public:
     // Sweep through all remaining pages, freeing those blocks where CanReclaim
     // returns true. If multiple sweepers are active, each page will only be
     // seen by one sweeper.
-    void Sweep() noexcept;
+    void Sweep(gc::GCHandle gcHandle) noexcept;
 
     AtomicStack<ExtraObjectCell> SweepExtraObjects(gc::GCHandle gcHandle) noexcept;
 

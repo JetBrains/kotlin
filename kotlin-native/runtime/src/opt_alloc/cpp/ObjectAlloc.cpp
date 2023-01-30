@@ -44,7 +44,7 @@ void* kotlin::allocateInObjectPool(size_t size) noexcept {
     return mi_calloc_aligned(1, size, kObjectAlignment);
 }
 
-void kotlin::freeInObjectPool(void* ptr) noexcept {
+void kotlin::freeInObjectPool(void* ptr, size_t size) noexcept {
     mi_free(ptr);
 }
 
@@ -67,4 +67,8 @@ void kotlin::compactObjectPoolInMainThread() noexcept {
         scheduledCompactOnMainThread.clear();
     });
 #endif
+}
+
+size_t kotlin::allocatedBytes() noexcept {
+    return mi_allocated_size();
 }

@@ -36,7 +36,7 @@ TEST(CustomAllocTest, ExtraObjectPageConsequtiveAlloc) {
         EXPECT_EQ(prev + sizeof(Cell), cur);
         prev = cur;
     }
-    free(page);
+    page->Destroy();
 }
 
 TEST(CustomAllocTest, ExtraObjectPageSweepEmptyPage) {
@@ -44,7 +44,7 @@ TEST(CustomAllocTest, ExtraObjectPageSweepEmptyPage) {
     Queue finalizerQueue;
     EXPECT_FALSE(page->Sweep(finalizerQueue));
     EXPECT_EQ(finalizerQueue.size(), size_t(0));
-    free(page);
+    page->Destroy();
 }
 
 TEST(CustomAllocTest, ExtraObjectPageSweepFullFinalizedPage) {
@@ -59,7 +59,7 @@ TEST(CustomAllocTest, ExtraObjectPageSweepFullFinalizedPage) {
     Queue finalizerQueue;
     EXPECT_FALSE(page->Sweep(finalizerQueue));
     EXPECT_EQ(finalizerQueue.size(), size_t(0));
-    free(page);
+    page->Destroy();
 }
 
 } // namespace

@@ -58,6 +58,7 @@ void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
 }
 
 void gc::SameThreadMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     auto didGC = gc_.PerformFullGC();
 
     if (!didGC) {
@@ -129,7 +130,7 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
 
         gc::Mark<internal::MarkTraits>(gcHandle, markQueue_);
         auto markStats = gcHandle.getMarked();
-        scheduler.gcData().UpdateAliveSetBytes(markStats.totalObjectsSize);
+        scheduler.gcData().UpdateAliveSetBytes(markStats.markedSizeBytes);
         gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectsDataFactory);
         finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, objectFactory_);
 

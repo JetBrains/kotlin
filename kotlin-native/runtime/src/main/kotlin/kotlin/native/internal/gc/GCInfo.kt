@@ -16,14 +16,12 @@ import kotlin.system.*
 /**
  * This class represents statistics of memory usage in one memory pool.
  *
- * @property objectsCount The number of allocated objects.
  * @property totalObjectsSizeBytes The total size of allocated objects. System allocator overhead is not included,
  *                                 so it can not perfectly match the value received by os tools.
  *                                 All alignment and auxiliary object headers are included.
  */
 @ExperimentalStdlibApi
 public class MemoryUsage(
-        val objectsCount: Long,
         val totalObjectsSizeBytes: Long,
 )
 
@@ -138,16 +136,16 @@ private class GCInfoBuilder() {
     }
 
     @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore")
-    private fun setMemoryUsageBefore(name: NativePtr, objectsCount: Long, totalObjectsSize: Long) {
+    private fun setMemoryUsageBefore(name: NativePtr, totalObjectsSize: Long) {
         val nameString = interpretCPointer<ByteVar>(name)!!.toKString()
-        val memoryUsage = MemoryUsage(objectsCount, totalObjectsSize)
+        val memoryUsage = MemoryUsage(totalObjectsSize)
         memoryUsageBefore[nameString] = memoryUsage
     }
 
     @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter")
-    private fun setMemoryUsageAfter(name: NativePtr, objectsCount: Long, totalObjectsSize: Long) {
+    private fun setMemoryUsageAfter(name: NativePtr, totalObjectsSize: Long) {
         val nameString = interpretCPointer<ByteVar>(name)!!.toKString()
-        val memoryUsage = MemoryUsage(objectsCount, totalObjectsSize)
+        val memoryUsage = MemoryUsage(totalObjectsSize)
         memoryUsageAfter[nameString] = memoryUsage
     }
 

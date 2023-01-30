@@ -21,7 +21,7 @@ MediumPage* MediumPage::Create(uint32_t cellCount) noexcept {
 }
 
 void MediumPage::Destroy() noexcept {
-    std_support::free(this);
+    Free(this, MEDIUM_PAGE_SIZE);
 }
 
 MediumPage::MediumPage(uint32_t cellCount) noexcept : curBlock_(cells_) {
@@ -39,7 +39,7 @@ uint8_t* MediumPage::TryAllocate(uint32_t blockSize) noexcept {
     return curBlock_->TryAllocate(cellsNeeded);
 }
 
-bool MediumPage::Sweep() noexcept {
+bool MediumPage::Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
     CustomAllocDebug("MediumPage@%p::Sweep()", this);
     Cell* end = cells_ + MEDIUM_PAGE_CELL_COUNT;
     bool alive = false;
@@ -47,8 +47,10 @@ bool MediumPage::Sweep() noexcept {
         if (block->isAllocated_) {
             if (TryResetMark(block->data_)) {
                 alive = true;
+                sweepHandle.addKeptObject();
             } else {
                 block->Deallocate();
+                sweepHandle.addSweptObject();
             }
         }
     }

@@ -18,11 +18,13 @@ LargePage* LargePage::Create(uint64_t cellCount) noexcept {
     CustomAllocInfo("LargePage::Create(%" PRIu64 ")", cellCount);
     RuntimeAssert(cellCount > MEDIUM_PAGE_MAX_BLOCK_SIZE, "blockSize too small for large page");
     uint64_t size = sizeof(LargePage) + cellCount * sizeof(uint64_t);
-    return new (SafeAlloc(size)) LargePage();
+    auto* page = new (SafeAlloc(size)) LargePage();
+    page->size_ = size;
+    return page;
 }
 
 void LargePage::Destroy() noexcept {
-    std_support::free(this);
+    Free(this, size_);
 }
 
 uint8_t* LargePage::Data() noexcept {
@@ -35,12 +37,14 @@ uint8_t* LargePage::TryAllocate() noexcept {
     return Data();
 }
 
-bool LargePage::Sweep() noexcept {
+bool LargePage::Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
     CustomAllocDebug("LargePage@%p::Sweep()", this);
     if (!TryResetMark(Data())) {
         isAllocated_ = false;
+        sweepHandle.addKeptObject();
         return false;
     }
+    sweepHandle.addSweptObject();
     return true;
 }
 

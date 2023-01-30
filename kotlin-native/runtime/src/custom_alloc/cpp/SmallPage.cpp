@@ -23,7 +23,7 @@ SmallPage* SmallPage::Create(uint32_t blockSize) noexcept {
 }
 
 void SmallPage::Destroy() noexcept {
-    std_support::free(this);
+    Free(this, SMALL_PAGE_SIZE);
 }
 
 SmallPage::SmallPage(uint32_t blockSize) noexcept : blockSize_(blockSize) {
@@ -46,7 +46,7 @@ uint8_t* SmallPage::TryAllocate() noexcept {
     return freeBlock->data;
 }
 
-bool SmallPage::Sweep() noexcept {
+bool SmallPage::Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
     CustomAllocInfo("SmallPage(%p)::Sweep()", this);
     // `end` is after the last legal allocation of a block, but does not
     // necessarily match an actual block starting point.
@@ -62,6 +62,7 @@ bool SmallPage::Sweep() noexcept {
         // If the current cell was marked, it's alive, and the whole page is alive.
         if (TryResetMark(cell)) {
             alive = true;
+            sweepHandle.addKeptObject();
             continue;
         }
         CustomAllocInfo("SmallPage(%p)::Sweep: reclaim %p", this, cell);
@@ -69,6 +70,7 @@ bool SmallPage::Sweep() noexcept {
         cell->nextFree = *nextFree;
         *nextFree = cell;
         nextFree = &cell->nextFree;
+        sweepHandle.addSweptObject();
     }
     return alive;
 }

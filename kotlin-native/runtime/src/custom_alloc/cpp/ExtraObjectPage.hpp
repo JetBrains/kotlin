@@ -11,6 +11,7 @@
 
 #include "AtomicStack.hpp"
 #include "ExtraObjectData.hpp"
+#include "GCStatistics.hpp"
 
 namespace kotlin::alloc {
 
@@ -34,7 +35,7 @@ public:
     // Tries to allocate in current page, returns null if no free block in page
     mm::ExtraObjectData* TryAllocate() noexcept;
 
-    bool Sweep(AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept;
+    bool Sweep(gc::GCHandle::GCSweepExtraObjectsScope& sweepHandle, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept;
 
 private:
     friend class AtomicStack<ExtraObjectPage>;

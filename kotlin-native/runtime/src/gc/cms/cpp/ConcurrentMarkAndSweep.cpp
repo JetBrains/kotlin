@@ -58,17 +58,20 @@ void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::Schedule() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     ThreadStateGuard guard(ThreadState::kNative);
     gc_.state_.schedule();
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     ThreadStateGuard guard(ThreadState::kNative);
     auto scheduled_epoch = gc_.state_.schedule();
     gc_.state_.waitEpochFinished(scheduled_epoch);
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     ThreadStateGuard guard(ThreadState::kNative);
     auto scheduled_epoch = gc_.state_.schedule();
     gc_.state_.waitEpochFinalized(scheduled_epoch);
@@ -95,20 +98,20 @@ NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendFo
     gc::Mark<internal::MarkTraits>(handle, markQueue);
 }
 
+#ifndef CUSTOM_ALLOCATOR
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
-#ifndef CUSTOM_ALLOCATOR
     objectFactory_(objectFactory),
     gcScheduler_(gcScheduler),
     finalizerProcessor_(std_support::make_unique<FinalizerProcessor>([this](int64_t epoch) {
 #else
+gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(GCScheduler& gcScheduler) noexcept :
     gcScheduler_(gcScheduler), finalizerProcessor_(std_support::make_unique<alloc::CustomFinalizerProcessor>([this](int64_t epoch) {
 #endif
         GCHandle::getByEpoch(epoch).finalizersDone();
         state_.finalized(epoch);
     })) {
     gcScheduler_.SetScheduleGC([this]() NO_INLINE {
-        RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
         // This call acquires a lock, so we need to ensure that we're in the safe state.
         NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
         state_.schedule();
@@ -177,7 +180,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     mm::WaitForThreadsSuspension();
     auto markStats = gcHandle.getMarked();
-    scheduler.gcData().UpdateAliveSetBytes(markStats.totalObjectsSize);
+    scheduler.gcData().UpdateAliveSetBytes(markStats.markedSizeBytes);
 
 #ifndef CUSTOM_ALLOCATOR
     mm::ExtraObjectDataFactory& extraObjectDataFactory = mm::GlobalData::Instance().extraObjectDataFactory();
@@ -193,7 +196,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();
-    heap_.Sweep();
+    heap_.Sweep(gcHandle);
 #endif
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());

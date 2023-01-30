@@ -21,6 +21,7 @@ using string_view = std::experimental::string_view;
 #error "No <string_view>"
 #endif
 
+#include "Clock.hpp"
 #include "CompilerConstants.hpp"
 #include "std_support/Memory.hpp"
 #include "std_support/Span.hpp"
@@ -60,6 +61,8 @@ std_support::span<char> FormatLogEntry(
         std_support::span<char> buffer,
         Level level,
         std_support::span<const char* const> tags,
+        int threadId,
+        kotlin::nanoseconds timestamp,
         const char* format,
         std::va_list args) noexcept;
 
@@ -68,6 +71,8 @@ void Log(
         const Logger& logger,
         Level level,
         std_support::span<const char* const> tags,
+        int threadId,
+        kotlin::nanoseconds timestamp,
         const char* format,
         std::va_list args) noexcept;
 

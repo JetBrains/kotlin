@@ -20,14 +20,22 @@ using GCImpl = ConcurrentMarkAndSweep;
 
 class GC::Impl : private Pinned {
 public:
+#ifdef CUSTOM_ALLOCATOR
+    Impl() noexcept : gc_(gcScheduler_) {}
+#else
     Impl() noexcept : gc_(objectFactory_, gcScheduler_) {}
+#endif
 
+#ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<gc::GCImpl>& objectFactory() noexcept { return objectFactory_; }
+#endif
     GCScheduler& gcScheduler() noexcept { return gcScheduler_; }
     GCImpl& gc() noexcept { return gc_; }
 
 private:
+#ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<gc::GCImpl> objectFactory_;
+#endif
     GCScheduler gcScheduler_;
     GCImpl gc_;
 };
