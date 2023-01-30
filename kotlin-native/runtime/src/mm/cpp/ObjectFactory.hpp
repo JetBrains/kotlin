@@ -390,7 +390,6 @@ public:
     Iterable LockForIter() noexcept { return Iterable(*this); }
 
     size_t GetSizeUnsafe() const noexcept { return size_; }
-    size_t GetTotalObjectsSizeUnsafe() const noexcept { return totalObjectsSizeBytes_; }
 
     void ClearForTests() {
         root_.reset();
@@ -458,7 +457,7 @@ class ObjectFactory : private Pinned {
         size_t membersSize = typeInfo->instanceSize_ - sizeof(ObjHeader);
         return AlignUp(sizeof(HeapObjHeader) + membersSize, kObjectAlignment);
     }
- 
+
     static uint64_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexcept {
         // -(int32_t min) * uint32_t max cannot overflow uint64_t. And are capped
         // at about half of uint64_t max.
@@ -466,7 +465,7 @@ class ObjectFactory : private Pinned {
         // Note: array body is aligned, but for size computation it is enough to align the sum.
         return AlignUp<uint64_t>(sizeof(HeapArrayHeader) + membersSize, kObjectAlignment);
     }
- 
+
     struct DataSizeProvider {
         static size_t GetDataSize(void* data) noexcept {
             ObjHeader* object = &static_cast<HeapObjHeader*>(data)->object;
@@ -700,9 +699,6 @@ public:
 
     // Lock ObjectFactory for safe iteration.
     Iterable LockForIter() noexcept { return Iterable(*this); }
-
-    size_t GetObjectsCountUnsafe() const noexcept { return storage_.GetSizeUnsafe(); }
-    size_t GetTotalObjectsSizeUnsafe() const noexcept { return storage_.GetTotalObjectsSizeUnsafe(); }
 
     void ClearForTests() { storage_.ClearForTests(); }
 

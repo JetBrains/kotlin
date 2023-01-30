@@ -95,36 +95,6 @@ size_t gc::GC::GetAllocatedHeapSize(ObjHeader* object) noexcept {
 #endif
 }
 
-
-size_t gc::GC::GetHeapObjectsCountUnsafe() const noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    return impl_->objectFactory().GetObjectsCountUnsafe();
-#else
-    return 0;
-#endif
-}
-size_t gc::GC::GetTotalHeapObjectsSizeUnsafe() const noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    return impl_->objectFactory().GetTotalObjectsSizeUnsafe();
-#else
-    return 0;
-#endif
-}
-size_t gc::GC::GetExtraObjectsCountUnsafe() const noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    return mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
-#else
-    return 0;
-#endif
-}
-size_t gc::GC::GetTotalExtraObjectsSizeUnsafe() const noexcept {
-#ifndef CUSTOM_ALLOCATOR
-    return mm::GlobalData::Instance().extraObjectDataFactory().GetTotalObjectsSizeUnsafe();
-#else
-    return 0;
-#endif
-}
-
 size_t gc::GC::GetTotalHeapObjectsSizeBytes() const noexcept {
     return allocatedBytes();
 }

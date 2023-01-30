@@ -16,7 +16,6 @@ import kotlin.system.*
 /**
  * This class represents statistics of memory usage in one memory pool.
  *
- * @property objectsCount The number of allocated objects.
  * @property totalObjectsSizeBytes The total size of allocated objects. System allocator overhead is not included,
  *                                 so it can not perfectly match the value received by os tools.
  *                                 All alignment and auxiliary object headers are included.
@@ -24,8 +23,20 @@ import kotlin.system.*
 @NativeRuntimeApi
 @SinceKotlin("1.9")
 public class MemoryUsage(
-        val objectsCount: Long,
         val totalObjectsSizeBytes: Long,
+)
+
+/**
+ * This class represents statistics of sweeping in one memory pool.
+ *
+ * @property sweptCount The of objects that were freed.
+ * @property keptCount The number of objects that were processed but kept alive.
+ */
+@NativeRuntimeApi
+@SinceKotlin("1.9")
+public class SweepStatistics(
+    val sweptCount: Long,
+    val keptCount: Long,
 )
 
 /**
@@ -64,12 +75,16 @@ public class RootSetStatistics(
  * @property postGcCleanupTimeNs Time, when all memory is reclaimed, measured by [kotlin.system.getTimeNanos].
  *                                If null, memory reclamation is still in progress.
  * @property rootSet The number of objects in each root set pool. Check [RootSetStatistics] doc for details.
+ * @property markedCount How many objects were processed during marking phase.
+ * @property sweepStatistics Sweeping statistics separated by memory pools.
+ *                           The set of memory pools depends on the collector implementation.
+ *                           Can be empty, if collection is in progress.
  * @property memoryUsageAfter Memory usage at the start of garbage collector run, separated by memory pools.
  *                            The set of memory pools depends on the collector implementation.
- *                            Can be empty, of colelction is in progress.
+ *                            Can be empty, if collection is in progress.
  * @property memoryUsageBefore Memory usage at the end of garbage collector run, separated by memory pools.
  *                            The set of memory pools depends on the collector implementation.
- *                            Can be empty, of colelction is in progress.
+ *                            Can be empty, if collection is in progress.
  */
 @NativeRuntimeApi
 @SinceKotlin("1.9")
@@ -81,6 +96,8 @@ public class GCInfo(
         val pauseEndTimeNs: Long,
         val postGcCleanupTimeNs: Long?,
         val rootSet: RootSetStatistics,
+        val markedCount: Long,
+        val sweepStatistics: Map<String, SweepStatistics>,
         val memoryUsageBefore: Map<String, MemoryUsage>,
         val memoryUsageAfter: Map<String, MemoryUsage>,
 ) {
@@ -102,6 +119,8 @@ private class GCInfoBuilder() {
     var pauseEndTimeNs: Long? = null
     var postGcCleanupTimeNs: Long? = null
     var rootSet: RootSetStatistics? = null
+    var markedCount: Long? = null
+    var sweepStatistics = mutableMapOf<String, SweepStatistics>()
     var memoryUsageBefore = mutableMapOf<String, MemoryUsage>()
     var memoryUsageAfter = mutableMapOf<String, MemoryUsage>()
 
@@ -140,17 +159,29 @@ private class GCInfoBuilder() {
         rootSet = RootSetStatistics(threadLocalReferences, stackReferences, globalReferences, stableReferences)
     }
 
-    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore")
-    private fun setMemoryUsageBefore(name: NativePtr, objectsCount: Long, totalObjectsSize: Long) {
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setMarkStats")
+    private fun setMarkStats(markedCount: Long) {
+        this.markedCount = markedCount
+    }
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setSweepStats")
+    private fun setSweepStats(name: NativePtr, keptCount: Long, sweptCount: Long) {
         val nameString = interpretCPointer<ByteVar>(name)!!.toKString()
-        val memoryUsage = MemoryUsage(objectsCount, totalObjectsSize)
+        val stats = SweepStatistics(sweptCount, keptCount)
+        sweepStatistics[nameString] = stats
+    }
+
+    @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore")
+    private fun setMemoryUsageBefore(name: NativePtr, totalObjectsSize: Long) {
+        val nameString = interpretCPointer<ByteVar>(name)!!.toKString()
+        val memoryUsage = MemoryUsage(totalObjectsSize)
         memoryUsageBefore[nameString] = memoryUsage
     }
 
     @ExportForCppRuntime("Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter")
-    private fun setMemoryUsageAfter(name: NativePtr, objectsCount: Long, totalObjectsSize: Long) {
+    private fun setMemoryUsageAfter(name: NativePtr, totalObjectsSize: Long) {
         val nameString = interpretCPointer<ByteVar>(name)!!.toKString()
-        val memoryUsage = MemoryUsage(objectsCount, totalObjectsSize)
+        val memoryUsage = MemoryUsage(totalObjectsSize)
         memoryUsageAfter[nameString] = memoryUsage
     }
 
@@ -163,6 +194,8 @@ private class GCInfoBuilder() {
                 pauseEndTimeNs ?: return null,
                 postGcCleanupTimeNs,
                 rootSet ?: return null,
+                markedCount ?: return null,
+                sweepStatistics.toMap(),
                 memoryUsageBefore.toMap(),
                 memoryUsageAfter.toMap()
         )

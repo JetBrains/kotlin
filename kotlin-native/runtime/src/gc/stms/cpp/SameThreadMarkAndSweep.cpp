@@ -137,7 +137,7 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
 
         gc::Mark<internal::MarkTraits>(gcHandle, markQueue_);
         auto markStats = gcHandle.getMarked();
-        scheduler.gcData().UpdateAliveSetBytes(markStats.totalObjectsSize);
+        scheduler.gcData().UpdateAliveSetBytes(markStats.markedSizeBytes);
 
         gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
 

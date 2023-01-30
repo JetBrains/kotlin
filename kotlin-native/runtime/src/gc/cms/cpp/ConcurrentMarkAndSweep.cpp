@@ -187,7 +187,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     mm::WaitForThreadsSuspension();
     auto markStats = gcHandle.getMarked();
-    scheduler.gcData().UpdateAliveSetBytes(markStats.totalObjectsSize);
+    scheduler.gcData().UpdateAliveSetBytes(markStats.markedSizeBytes);
 
     gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
 
@@ -207,7 +207,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();
-    heap_.Sweep();
+    heap_.Sweep(gcHandle);
 #endif
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());

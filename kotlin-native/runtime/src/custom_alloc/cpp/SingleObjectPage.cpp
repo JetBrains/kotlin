@@ -37,12 +37,14 @@ uint8_t* SingleObjectPage::TryAllocate() noexcept {
     return Data();
 }
 
-bool SingleObjectPage::Sweep() noexcept {
+bool SingleObjectPage::Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
     CustomAllocDebug("SingleObjectPage@%p::Sweep()", this);
     if (!TryResetMark(Data())) {
         isAllocated_ = false;
+        sweepHandle.addKeptObject();
         return false;
     }
+    sweepHandle.addSweptObject();
     return true;
 }
 

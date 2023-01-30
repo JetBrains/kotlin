@@ -249,6 +249,12 @@ void Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime(KRef thiz, KLong valu
 void Kotlin_Internal_GC_GCInfoBuilder_setRootSet(KRef thiz, KLong threadLocalReferences, KLong stackReferences, KLong globalReferences, KLong stableReferences) {
     throw std::runtime_error("Not implemented for tests");
 }
+void Kotlin_Internal_GC_GCInfoBuilder_setMarkStats(KRef thiz, KLong markedCount) {
+    throw std::runtime_error("Not implemented for tests");
+}
+void Kotlin_Internal_GC_GCInfoBuilder_setSweepStats(KRef thiz, KNativePtr name, KLong sweptCount, KLong keptCount) {
+    throw std::runtime_error("Not implemented for tests");
+}
 void Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore(KRef thiz, KNativePtr name, KLong objectsCount, KLong totalObjectsSize) {
     throw std::runtime_error("Not implemented for tests");
 }

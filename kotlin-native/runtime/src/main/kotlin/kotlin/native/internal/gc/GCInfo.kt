@@ -102,13 +102,13 @@ public class GCInfo(
                         },
                         info.memoryUsageBefore.mapValues { (_, v) ->
                             MemoryUsage(
-                                    v.objectsCount,
+                                    0L,
                                     v.totalObjectsSizeBytes,
                             )
                         },
                         info.memoryUsageAfter.mapValues { (_, v) ->
                             MemoryUsage(
-                                    v.objectsCount,
+                                    0L,
                                     v.totalObjectsSizeBytes,
                             )
                         }

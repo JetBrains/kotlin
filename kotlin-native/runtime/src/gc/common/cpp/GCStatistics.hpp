@@ -11,6 +11,7 @@
 #include "Common.h"
 #include "Porting.h"
 #include "Utils.hpp"
+#include "std_support/Optional.hpp"
 
 #define GCLogInfo(epoch, format, ...) RuntimeLogInfo({kTagGC}, "Epoch #%" PRIu64 ": " format, epoch, ##__VA_ARGS__)
 #define GCLogDebug(epoch, format, ...) RuntimeLogDebug({kTagGC}, "Epoch #%" PRIu64 ": " format, epoch, ##__VA_ARGS__)
@@ -24,9 +25,14 @@ namespace kotlin::gc {
 
 class GCHandle;
 
-struct MemoryUsage {
-    uint64_t objectsCount;
-    uint64_t totalObjectsSize;
+struct SweepStats {
+    uint64_t sweptCount = 0;
+    uint64_t keptCount = 0;
+};
+
+struct MarkStats {
+    uint64_t markedCount = 0;
+    uint64_t markedSizeBytes = 0;
 };
 
 class GCHandle {
@@ -39,20 +45,29 @@ public:
 
     class GCSweepScope : GCStageScopeUsTimer, Pinned {
         GCHandle& handle_;
-        MemoryUsage getUsage();
+        SweepStats stats_;
 
     public:
         explicit GCSweepScope(GCHandle& handle);
         ~GCSweepScope();
+
+        void addSweptObject() noexcept { stats_.sweptCount += 1; }
+        void addKeptObject() noexcept { stats_.keptCount += 1; }
     };
 
     class GCSweepExtraObjectsScope : GCStageScopeUsTimer, Pinned {
         GCHandle& handle_;
-        MemoryUsage getUsage();
+        SweepStats stats_;
+        uint64_t markedCount_ = 0;
 
     public:
         explicit GCSweepExtraObjectsScope(GCHandle& handle);
         ~GCSweepExtraObjectsScope();
+
+        void addSweptObject() noexcept { stats_.sweptCount += 1; }
+        void addKeptObject() noexcept { stats_.keptCount += 1; }
+        // Custom allocator only. To be finalized objects are kept alive.
+        void addMarkedObject() noexcept { markedCount_ += 1; }
     };
 
     class GCGlobalRootSetScope : GCStageScopeUsTimer, Pinned {
@@ -82,15 +97,15 @@ public:
 
     class GCMarkScope : GCStageScopeUsTimer, Pinned {
         GCHandle& handle_;
-        uint64_t objectsCount = 0;
-        uint64_t totalObjectSizeBytes = 0;
+        MarkStats stats_;
 
     public:
         explicit GCMarkScope(GCHandle& handle);
         ~GCMarkScope();
-        void addObject(uint64_t objectSize) {
-            totalObjectSizeBytes += objectSize;
-            objectsCount++;
+
+        void addObject(uint64_t objectSize) noexcept {
+            ++stats_.markedCount;
+            stats_.markedSizeBytes += objectSize;
         }
     };
 
@@ -115,16 +130,15 @@ private:
 
     void threadRootSetCollected(mm::ThreadData& threadData, uint64_t threadLocalReferences, uint64_t stackReferences);
     void globalRootSetCollected(uint64_t globalReferences, uint64_t stableReferences);
-    void heapUsageBefore(MemoryUsage usage);
-    void heapUsageAfter(MemoryUsage usage);
-    void extraObjectsUsageBefore(MemoryUsage usage);
-    void extraObjectsUsageAfter(MemoryUsage usage);
-    void marked(MemoryUsage usage);
+    void swept(SweepStats stats) noexcept;
+    void sweptExtraObjects(SweepStats stats, uint64_t markedCount) noexcept;
+    void marked(MarkStats stats);
 
 public:
     static GCHandle create(uint64_t epoch);
     static GCHandle createFakeForTests();
     static GCHandle getByEpoch(uint64_t epoch);
+    static std::optional<GCHandle> currentEpoch() noexcept;
     static void ClearForTests();
 
     uint64_t getEpoch() { return epoch_; }
@@ -141,6 +155,6 @@ public:
     GCMarkScope mark() { return GCMarkScope(*this); }
     GCProcessWeaksScope processWeaks() noexcept { return GCProcessWeaksScope(*this); }
 
-    MemoryUsage getMarked();
+    MarkStats getMarked();
 };
 }

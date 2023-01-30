@@ -118,12 +118,15 @@ void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory::It
             if (extraObject.HasAssociatedObject()) {
                 extraObject.setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
                 ++it;
+                sweepHandle.addKeptObject();
             } else {
                 extraObject.Uninstall();
                 it.EraseAndAdvance();
+                sweepHandle.addSweptObject();
             }
         } else {
             ++it;
+            sweepHandle.addKeptObject();
         }
     }
 }
@@ -142,8 +145,10 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename T
     for (auto it = objectFactoryIter.begin(); it != objectFactoryIter.end();) {
         if (Traits::TryResetMark(*it)) {
             ++it;
+            sweepHandle.addKeptObject();
             continue;
         }
+        sweepHandle.addSweptObject();
         auto* objHeader = it->GetObjHeader();
         if (HasFinalizers(objHeader)) {
             objectFactoryIter.MoveAndAdvance(finalizerQueue, it);
