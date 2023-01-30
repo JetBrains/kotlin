@@ -58,20 +58,6 @@ fun <F : FirClassLikeDeclaration> F.runStatusResolveForLocalClass(
     return this.transform(transformer, null)
 }
 
-abstract class ResolvedStatusCalculator {
-    abstract fun tryCalculateResolvedStatus(declaration: FirCallableDeclaration): FirResolvedDeclarationStatus
-
-    object Default : ResolvedStatusCalculator() {
-        override fun tryCalculateResolvedStatus(declaration: FirCallableDeclaration): FirResolvedDeclarationStatus {
-            val status = declaration.status
-            require(status is FirResolvedDeclarationStatus) {
-                "Status of ${declaration.render()} is unresolved"
-            }
-            return status
-        }
-    }
-}
-
 open class FirStatusResolveTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
