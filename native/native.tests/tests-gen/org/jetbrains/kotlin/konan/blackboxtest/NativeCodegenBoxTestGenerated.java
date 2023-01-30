@@ -35730,6 +35730,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/reflection/syntheticClasses")
+            @TestDataPath("$PROJECT_ROOT")
+            @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/box/multiplatform/migratedOldTests/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
+            public class SyntheticClasses {
+                @Test
+                public void testAllFilesPresentInSyntheticClasses() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/syntheticClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/typeOf")
             @TestDataPath("$PROJECT_ROOT")
             @UseExtTestCaseGroupProvider()

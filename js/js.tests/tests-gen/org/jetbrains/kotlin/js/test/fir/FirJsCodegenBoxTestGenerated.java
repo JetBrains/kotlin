@@ -32780,6 +32780,16 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/reflection/syntheticClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        public class SyntheticClasses {
+            @Test
+            public void testAllFilesPresentInSyntheticClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/syntheticClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/typeOf")
         @TestDataPath("$PROJECT_ROOT")
         public class TypeOf {

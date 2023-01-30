@@ -46694,6 +46694,22 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/reflection/syntheticClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        public class SyntheticClasses {
+            @Test
+            public void testAllFilesPresentInSyntheticClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/syntheticClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("syntheticClasses.kt")
+            public void testSyntheticClasses() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/syntheticClasses/syntheticClasses.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection/typeOf")
         @TestDataPath("$PROJECT_ROOT")
         public class TypeOf {
