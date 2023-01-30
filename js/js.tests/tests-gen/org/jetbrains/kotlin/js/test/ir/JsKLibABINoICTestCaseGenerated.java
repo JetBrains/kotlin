@@ -95,6 +95,11 @@ public class JsKLibABINoICTestCaseGenerated extends AbstractJsKLibABINoICTestCas
         runTest("compiler/testData/klibABI/nonExhaustivenessOfWhenClause/");
     }
 
+    @TestMetadata("referencingUnusableDeclarations")
+    public void testReferencingUnusableDeclarations() throws Exception {
+        runTest("compiler/testData/klibABI/referencingUnusableDeclarations/");
+    }
+
     @TestMetadata("removeAbstractFunctionFromAbstractClass")
     public void testRemoveAbstractFunctionFromAbstractClass() throws Exception {
         runTest("compiler/testData/klibABI/removeAbstractFunctionFromAbstractClass/");

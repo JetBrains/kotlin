@@ -83,6 +83,7 @@ private enum class DeclarationKind(val displayName: String) {
     PROPERTY_ACCESSOR("property accessor"),
     FUNCTION("function"),
     CONSTRUCTOR("constructor"),
+    TYPE_PARAMETER("type parameter"),
     OTHER_DECLARATION("declaration");
 }
 
@@ -109,6 +110,7 @@ private val IrSymbol.declarationKind: DeclarationKind
         is IrPropertySymbol -> PROPERTY
         is IrSimpleFunctionSymbol -> if (owner.correspondingPropertySymbol != null || signature is AccessorSignature) PROPERTY_ACCESSOR else FUNCTION
         is IrConstructorSymbol -> CONSTRUCTOR
+        is IrTypeParameterSymbol -> TYPE_PARAMETER
         else -> OTHER_DECLARATION
     }
 

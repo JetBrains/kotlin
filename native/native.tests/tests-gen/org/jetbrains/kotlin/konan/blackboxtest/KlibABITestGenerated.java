@@ -103,6 +103,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("referencingUnusableDeclarations")
+    public void testReferencingUnusableDeclarations() throws Exception {
+        runTest("compiler/testData/klibABI/referencingUnusableDeclarations/");
+    }
+
+    @Test
     @TestMetadata("removeAbstractFunctionFromAbstractClass")
     public void testRemoveAbstractFunctionFromAbstractClass() throws Exception {
         runTest("compiler/testData/klibABI/removeAbstractFunctionFromAbstractClass/");
