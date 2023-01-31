@@ -5,13 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.cocoapods
 
-import org.gradle.api.*
 import org.gradle.api.plugins.ExtensionAware
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.findExtension
-import javax.inject.Inject
 
-abstract class KotlinArtifactsPodspecExtension @Inject constructor(private val project: Project) {
+abstract class KotlinArtifactsPodspecExtension {
 
     private val attrs = mutableMapOf<String, String>()
     private val statements = mutableListOf<String>()
@@ -22,14 +20,20 @@ abstract class KotlinArtifactsPodspecExtension @Inject constructor(private val p
     internal val rawStatements: List<String>
         get() = statements
 
+    /**
+     * Appends an attribute to the generated podspec
+     */
     fun attribute(key: String, value: String) {
         attrs[key] = value
     }
 
+    /**
+     * Appends a statement 'as is' to the end of the generated podspec
+     */
     fun rawStatement(statement: String) {
         statements.add(statement)
     }
 }
 
-val ExtensionAware.kotlinArtifactsPodspecExtension: KotlinArtifactsPodspecExtension?
+internal val ExtensionAware.kotlinArtifactsPodspecExtension: KotlinArtifactsPodspecExtension?
     get() = findExtension(KotlinCocoapodsPlugin.ARTIFACTS_PODSPEC_EXTENSION_NAME)

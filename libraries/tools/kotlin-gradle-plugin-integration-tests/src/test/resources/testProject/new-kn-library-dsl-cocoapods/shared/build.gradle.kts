@@ -42,6 +42,16 @@ kotlinArtifacts {
         modes(DEBUG)
         addModule(project(":lib"))
 
+        withPodspec {
+            attribute("version", "111")
+        }
+    }
+    Native.Library("myslibwithoutpodspec") {
+        target = linuxX64
+        isStatic = false
+        modes(DEBUG)
+        addModule(project(":lib"))
+
         withPodspec {} // intentionally empty
     }
     Native.Framework("myframe") {
@@ -83,13 +93,17 @@ kotlinArtifacts {
             attribute("license", "MIT")
             attribute("homepage", "https://github.com/Alpaca/Alpaca")
             attribute("source", "{ :git => 'https://github.com/Alpaca/Alpaca.git', :tag => spec.version }")
+        }
 
+        withPodspec {
             attribute("ios.deployment_target", "10.0")
             attribute("osx.deployment_target", "10.12")
             attribute("watchos.deployment_target", "3.0")
 
             attribute("swift_versions", "['4', '5']")
+        }
 
+        withPodspec {
             rawStatement("    # This is raw statement that is appended 'as is' to the podspec")
             rawStatement("    spec.frameworks = 'CFNetwork'")
         }

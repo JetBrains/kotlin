@@ -412,7 +412,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     ) {
         val artifactName = artifact.artifactName
         val assembleTask = project.tasks.named(artifact.taskName)
-        val podspecTaskName = lowerCamelCaseName("generate", artifactName, "podspec")
+        val podspecTaskName = lowerCamelCaseName("generate", artifact.name, "podspec")
 
         val artifactType = when (artifact) {
             is KotlinNativeLibrary -> when {
@@ -446,16 +446,14 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         cocoapodsExtension: CocoapodsExtension,
     ) {
         artifactsExtension.artifactConfigs.withType(KotlinNativeArtifactConfig::class.java) { artifactConfig ->
-            val podspecExtension = project.objects.newInstance<KotlinArtifactsPodspecExtension>(project)
+            val podspecExtension = project.objects.newInstance<KotlinArtifactsPodspecExtension>()
             artifactConfig.addExtension(ARTIFACTS_PODSPEC_EXTENSION_NAME, podspecExtension)
         }
 
         artifactsExtension.artifacts.withType(KotlinNativeArtifact::class.java) { artifact ->
-            val podspecExtension = artifact.kotlinArtifactsPodspecExtension
+            val podspecExtension = requireNotNull(artifact.kotlinArtifactsPodspecExtension)
 
-            if (podspecExtension != null) {
-                registerPodspecTask(project, artifact, podspecExtension, cocoapodsExtension)
-            }
+            registerPodspecTask(project, artifact, podspecExtension, cocoapodsExtension)
         }
     }
 

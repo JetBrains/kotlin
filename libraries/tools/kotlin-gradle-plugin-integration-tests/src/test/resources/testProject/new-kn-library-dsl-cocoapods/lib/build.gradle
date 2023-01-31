@@ -23,9 +23,21 @@ kotlinArtifacts {
             attribute('homepage', 'https://example.com/lib')
             attribute('ios.deployment_target', '"10.0"')
             attribute('swift_versions', '[\'4\', \'5\']')
+        }
 
+        withPodspec {
             rawStatement('    # This is raw statement that is appended \'as is\' to the podspec')
             rawStatement('    spec.frameworks = \'CFNetwork\'')
         }
+    }
+
+    it.native.XCFramework("grooxcframe") {
+        targets(iosX64, iosArm64, iosSimulatorArm64)
+
+        withPodspec {}
+    }
+
+    it.native.XCFramework("grooxcframewithoutpodspec") {
+        targets(iosX64, iosArm64, iosSimulatorArm64)
     }
 }
