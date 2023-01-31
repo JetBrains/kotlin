@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -103,6 +104,8 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
     }
 
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
+        if (kotlinFile.javaFileFacadeFqName != facadeFqName) return emptyList()
+
         for (declaration in kotlinFile.declarations) {
             if (declaration !is KtClassLikeDeclaration) {
                 return listOf(kotlinFile)
