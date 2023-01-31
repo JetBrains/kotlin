@@ -321,7 +321,11 @@ private val inlinePhase = createFileLoweringPhase(
         lowering = { context: NativeGenerationState ->
             object : FileLoweringPass {
                 override fun lower(irFile: IrFile) {
-                    FunctionInlining(context.context, NativeInlineFunctionResolver(context.context, context)).lower(irFile)
+                    FunctionInlining(
+                            context.context,
+                            NativeInlineFunctionResolver(context.context, context),
+                            alwaysCreateTemporaryVariablesForArguments = context.shouldContainDebugInfo()
+                    ).lower(irFile)
                 }
             }
         },
