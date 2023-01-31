@@ -1,6 +1,7 @@
 package org.jetbrains.dokka
 
 import org.jetbrains.dokka.utilities.DokkaLogger
+import java.util.concurrent.atomic.AtomicInteger
 
 import java.util.function.BiConsumer
 
@@ -11,8 +12,16 @@ import java.util.function.BiConsumer
 class DokkaBootstrapImpl : DokkaBootstrap {
 
     class DokkaProxyLogger(val consumer: BiConsumer<String, String>) : DokkaLogger {
-        override var warningsCount: Int = 0
-        override var errorsCount: Int = 0
+        private val warningsCounter = AtomicInteger()
+        private val errorsCounter = AtomicInteger()
+
+        override var warningsCount: Int
+            get() = warningsCounter.get()
+            set(value) = warningsCounter.set(value)
+
+        override var errorsCount: Int
+            get() = errorsCounter.get()
+            set(value) = errorsCounter.set(value)
 
         override fun debug(message: String) {
             consumer.accept("debug", message)
@@ -27,11 +36,11 @@ class DokkaBootstrapImpl : DokkaBootstrap {
         }
 
         override fun warn(message: String) {
-            consumer.accept("warn", message).also { warningsCount++ }
+            consumer.accept("warn", message).also { warningsCounter.incrementAndGet() }
         }
 
         override fun error(message: String) {
-            consumer.accept("error", message).also { errorsCount++ }
+            consumer.accept("error", message).also { errorsCounter.incrementAndGet() }
         }
     }
 
