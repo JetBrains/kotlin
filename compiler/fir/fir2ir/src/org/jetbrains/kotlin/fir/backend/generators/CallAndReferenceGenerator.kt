@@ -458,7 +458,10 @@ class CallAndReferenceGenerator(
 
                     is IrValueSymbol -> {
                         IrGetValueImpl(
-                            startOffset, endOffset, type, symbol,
+                            // Note: sometimes we change an IR type of local variable
+                            // (see component call case: Fir2IrDeclarationStorage.createIrVariable -> val type = ...)
+                            // That's why we should use here v the IR variable type and not FIR converted type (to prevent IR inconsistency)
+                            startOffset, endOffset, symbol.owner.type, symbol,
                             origin = if (variableAsFunctionMode) IrStatementOrigin.VARIABLE_AS_FUNCTION
                             else calleeReference.statementOrigin()
                         )

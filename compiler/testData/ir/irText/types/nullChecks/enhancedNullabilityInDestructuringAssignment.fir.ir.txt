@@ -142,8 +142,8 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
           CALL 'public final fun component2 (): T2 of <root>.Q [operator] declared in <root>.Q' type=@[EnhancedNullability] kotlin.String origin=COMPONENT_N(index=2)
             $this: GET_VAR 'val tmp_1: @[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? [val] declared in <root>.test2' type=@[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? origin=null
       CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        x: GET_VAR 'val x: @[EnhancedNullability] kotlin.String [val] declared in <root>.test2' type=kotlin.String origin=null
-        y: GET_VAR 'val y: @[EnhancedNullability] kotlin.String [val] declared in <root>.test2' type=kotlin.String origin=null
+        x: GET_VAR 'val x: @[EnhancedNullability] kotlin.String [val] declared in <root>.test2' type=@[EnhancedNullability] kotlin.String origin=null
+        y: GET_VAR 'val y: @[EnhancedNullability] kotlin.String [val] declared in <root>.test2' type=@[EnhancedNullability] kotlin.String origin=null
   FUN name:test2Desugared visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:tmp type:@[FlexibleNullability] <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String>? [val]
@@ -173,8 +173,8 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
           CALL 'public final fun component2 (): T2 of <root>.Q [operator] declared in <root>.Q' type=@[EnhancedNullability] kotlin.String origin=COMPONENT_N(index=2)
             $this: GET_VAR 'val tmp_2: <root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String> [val] declared in <root>.test3' type=<root>.Q<@[EnhancedNullability] kotlin.String, @[EnhancedNullability] kotlin.String> origin=null
       CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        x: GET_VAR 'val x: @[EnhancedNullability] kotlin.String [val] declared in <root>.test3' type=kotlin.String origin=null
-        y: GET_VAR 'val y: @[EnhancedNullability] kotlin.String [val] declared in <root>.test3' type=kotlin.String origin=null
+        x: GET_VAR 'val x: @[EnhancedNullability] kotlin.String [val] declared in <root>.test3' type=@[EnhancedNullability] kotlin.String origin=null
+        y: GET_VAR 'val y: @[EnhancedNullability] kotlin.String [val] declared in <root>.test3' type=@[EnhancedNullability] kotlin.String origin=null
   FUN name:test4 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR IR_TEMPORARY_VARIABLE name:tmp_3 type:kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> [val]
@@ -193,4 +193,4 @@ FILE fqName:<root> fileName:/enhancedNullabilityInDestructuringAssignment.kt
             $this: GET_VAR 'val tmp_3: kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> [val] declared in <root>.test4' type=kotlin.collections.IndexedValue<@[EnhancedNullability] <root>.P> origin=null
       CALL 'public final fun use (x: kotlin.Any, y: kotlin.Any): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         x: GET_VAR 'val x: kotlin.Int [val] declared in <root>.test4' type=kotlin.Int origin=null
-        y: GET_VAR 'val y: @[EnhancedNullability] <root>.P [val] declared in <root>.test4' type=<root>.P origin=null
+        y: GET_VAR 'val y: @[EnhancedNullability] <root>.P [val] declared in <root>.test4' type=@[EnhancedNullability] <root>.P origin=null

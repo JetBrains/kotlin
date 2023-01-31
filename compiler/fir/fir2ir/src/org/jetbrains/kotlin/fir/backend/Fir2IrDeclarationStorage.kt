@@ -1210,6 +1210,9 @@ class Fir2IrDeclarationStorage(
         irParent: IrDeclarationParent,
         givenOrigin: IrDeclarationOrigin? = null
     ): IrVariable = convertCatching(variable) {
+        // Note: for components call, we have to change type here (to original component type) to keep compatibility with PSI2IR
+        // Some backend optimizations related to withIndex() probably depend on this type: index should always be Int
+        // See e.g. forInStringWithIndexWithExplicitlyTypedIndexVariable.kt from codegen box tests
         val type = ((variable.initializer as? FirComponentCall)?.typeRef ?: variable.returnTypeRef).toIrType()
         // Some temporary variables are produced in RawFirBuilder, but we consistently use special names for them.
         val origin = when {

@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // KT-55458
-// IGNORE_BACKEND_K2: NATIVE
 
 val arr = arrayOf("a", "b", "c", "d")
 

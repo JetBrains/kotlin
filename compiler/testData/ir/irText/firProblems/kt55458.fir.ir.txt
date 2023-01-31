@@ -11,4 +11,4 @@ FILE fqName:<root> fileName:/kt55458.kt
         CALL 'public final fun component1 (): A of kotlin.Pair [operator] declared in kotlin.Pair' type=kotlin.Int origin=COMPONENT_N(index=1)
           $this: GET_VAR 'val tmp_0: kotlin.Pair<kotlin.Int, kotlin.Int> [val] declared in <root>.main' type=kotlin.Pair<kotlin.Int, kotlin.Int> origin=null
       CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
-        message: GET_VAR 'val a: kotlin.Int [val] declared in <root>.main' type=kotlin.Any origin=null
+        message: GET_VAR 'val a: kotlin.Int [val] declared in <root>.main' type=kotlin.Int origin=null
