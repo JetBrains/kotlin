@@ -5,14 +5,7 @@
 
 package org.jetbrains.kotlin.fir
 
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
-import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoot
-import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
-import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.w3c.dom.Node
@@ -94,28 +87,6 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
     override fun tearDown() {
         super.tearDown()
         AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true
-    }
-
-    fun createDefaultConfiguration(moduleData: ModuleData): CompilerConfiguration {
-        val configuration = KotlinTestUtils.newConfiguration()
-        moduleData.javaSourceRoots.forEach {
-            configuration.addJavaSourceRoot(it.path, it.packagePrefix)
-        }
-        configuration.addJvmClasspathRoots(moduleData.classpath)
-        configuration.languageVersionSettings = LanguageVersionSettingsImpl(
-            LanguageVersion.LATEST_STABLE,
-            ApiVersion.LATEST_STABLE,
-            analysisFlags = mutableMapOf(AnalysisFlags.optIn to moduleData.optInAnnotations)
-        )
-        configuration.configureJdkClasspathRoots()
-
-        // in case of modular jdk only
-        configuration.putIfNotNull(JVMConfigurationKeys.JDK_HOME, moduleData.modularJdkRoot)
-
-        configuration.addAll(
-            CLIConfigurationKeys.CONTENT_ROOTS,
-            moduleData.sources.filter { it.extension == "kt" || it.isDirectory }.map { KotlinSourceRoot(it.absolutePath, false) })
-        return configuration
     }
 
     private fun loadModule(file: File): ModuleData {

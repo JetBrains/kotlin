@@ -22,7 +22,7 @@ import kotlin.system.measureNanoTime
 
 private val USE_NI = System.getProperty("fir.bench.oldfe.ni", "true") == "true"
 
-class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
+class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
     private var totalTime = 0L
     private var files = 0
     private var lines = 0
