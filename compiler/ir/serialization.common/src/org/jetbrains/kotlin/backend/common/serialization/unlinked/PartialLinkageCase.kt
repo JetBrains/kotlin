@@ -87,16 +87,19 @@ internal sealed interface PartialLinkageCase {
     ) : PartialLinkageCase
 
     /**
-     * Expression that refers to an IR function has an excessive or a missing dispatch receiver parameter.
+     * Expression that refers to an IR function has an excessive or a missing dispatch receiver parameter,
+     * or the number of value arguments in expression does not match the number of value parameters in function
+     * (which may happen, for example, is a default value for a value parameter was removed).
      *
      * Applicable to: Expressions.
      */
-    class ExpressionDispatchReceiverMismatch(
+    class MemberAccessExpressionArgumentsMismatch(
         val expression: IrMemberAccessExpression<IrFunctionSymbol>,
-        val excessiveDispatchReceiver: Boolean
-    ) : PartialLinkageCase {
-        // val missingDispatchReceiver get() = !excessiveDispatchReceiver
-    }
+        val expressionHasDispatchReceiver: Boolean,
+        val functionHasDispatchReceiver: Boolean,
+        val expressionValueArgumentCount: Int,
+        val functionValueParameterCount: Int
+    ) : PartialLinkageCase
 
     /**
      * Expression refers an IR declaration that is not accessible at the use site.

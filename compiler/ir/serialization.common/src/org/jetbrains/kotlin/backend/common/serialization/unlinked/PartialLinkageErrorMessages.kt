@@ -41,8 +41,14 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
             wrongTypeOfDeclaration(actualDeclarationSymbol, expectedDeclarationDescription)
         }
 
-        is ExpressionDispatchReceiverMismatch -> expression(expression) {
-            dispatchReceiverMismatch(expression.symbol, excessiveDispatchReceiver)
+        is MemberAccessExpressionArgumentsMismatch -> expression(expression) {
+            memberAccessExpressionArgumentsMismatch(
+                expression.symbol,
+                expressionHasDispatchReceiver,
+                functionHasDispatchReceiver,
+                expressionValueArgumentCount,
+                functionValueParameterCount
+            )
         }
 
         is ExpressionHasInaccessibleDeclaration -> expression(expression) {
@@ -466,18 +472,26 @@ private fun StringBuilder.expression(expression: IrExpression, continuation: (Ex
 private fun Appendable.wrongTypeOfDeclaration(actualDeclarationSymbol: IrSymbol, expectedDeclarationDescription: String): Appendable =
     declarationNameIsKind(actualDeclarationSymbol).append(" while ").append(expectedDeclarationDescription).append(" is expected")
 
-private fun Appendable.dispatchReceiverMismatch(
-    invokedFunctionSymbol: IrFunctionSymbol,
-    excessiveDispatchReceiver: Boolean
-): Appendable {
-    return if (excessiveDispatchReceiver) {
+private fun Appendable.memberAccessExpressionArgumentsMismatch(
+    functionSymbol: IrFunctionSymbol,
+    expressionHasDispatchReceiver: Boolean,
+    functionHasDispatchReceiver: Boolean,
+    expressionValueArgumentCount: Int,
+    functionValueParameterCount: Int
+): Appendable = when {
+    expressionHasDispatchReceiver && !functionHasDispatchReceiver ->
         append("The call site provides excessive dispatch receiver parameter 'this' that is not needed for the ")
-        declarationKind(invokedFunctionSymbol, capitalized = false)
-    } else {
+            .declarationKind(functionSymbol, capitalized = false)
+
+    !expressionHasDispatchReceiver && functionHasDispatchReceiver ->
         append("The call site does not provide a dispatch receiver parameter 'this' that the ")
-        declarationKind(invokedFunctionSymbol, capitalized = false)
-        append(" requires")
-    }
+            .declarationKind(functionSymbol, capitalized = false).append(" requires")
+
+    else ->
+        append("The call site provides ").append(if (expressionValueArgumentCount > functionValueParameterCount) "more" else "less")
+            .append(" value arguments (").append(expressionValueArgumentCount.toString()).append(") than the ")
+            .declarationKind(functionSymbol, capitalized = false).append(" requires (")
+            .append(functionValueParameterCount.toString()).append(")")
 }
 
 private fun Appendable.inaccessibleDeclaration(

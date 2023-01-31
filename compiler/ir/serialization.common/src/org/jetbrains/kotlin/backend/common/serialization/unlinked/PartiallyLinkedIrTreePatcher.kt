@@ -484,7 +484,7 @@ internal class PartiallyLinkedIrTreePatcher(
             checkReferencedDeclaration(symbol)
                 ?: checkReferencedDeclaration(superQualifierSymbol)
                 ?: checkExpressionTypeArguments()
-                ?: checkDispatchReceiver(symbol.owner)
+                ?: checkArgumentsAndValueParameters(symbol.owner)
         }
 
         override fun visitConstructorCall(expression: IrConstructorCall) = expression.maybeThrowLinkageError {
@@ -494,7 +494,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 ?: checkReferencedDeclarationType(expression.symbol.owner.parentAsClass, "regular class") { constructedClass ->
                     constructedClass.kind == ClassKind.CLASS || constructedClass.kind == ClassKind.ANNOTATION_CLASS
                 }
-                ?: checkDispatchReceiver(symbol.owner)
+                ?: checkArgumentsAndValueParameters(symbol.owner)
         }
 
         override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = expression.maybeThrowLinkageError {
@@ -503,20 +503,20 @@ internal class PartiallyLinkedIrTreePatcher(
                 ?: checkReferencedDeclarationType(expression.symbol.owner.parentAsClass, "enum class") { constructedClass ->
                     constructedClass.kind == ClassKind.ENUM_CLASS || constructedClass.symbol == builtIns.enumClass
                 }
-                ?: checkDispatchReceiver(symbol.owner)
+                ?: checkArgumentsAndValueParameters(symbol.owner)
         }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
                 ?: checkExpressionTypeArguments()
-                ?: checkDispatchReceiver(symbol.owner)
+                ?: checkArgumentsAndValueParameters(symbol.owner)
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
                 ?: checkReferencedDeclaration(reflectionTarget)
                 ?: checkExpressionTypeArguments()
-                ?: checkDispatchReceiver(symbol.owner)
+                ?: checkArgumentsAndValueParameters(symbol.owner)
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference) = expression.maybeThrowLinkageError {
@@ -683,14 +683,33 @@ internal class PartiallyLinkedIrTreePatcher(
             else null
         }
 
-        private fun <D : IrFunction> IrMemberAccessExpression<IrFunctionSymbol>.checkDispatchReceiver(
-            declaration: D
-        ): PartialLinkageCase? {
+        private fun <D : IrFunction> IrMemberAccessExpression<IrFunctionSymbol>.checkArgumentsAndValueParameters(function: D): PartialLinkageCase? {
             val expressionHasDispatchReceiver = dispatchReceiver != null
-            val declarationHasDispatchReceiver = declaration.dispatchReceiverParameter != null
+            val functionHasDispatchReceiver = function.dispatchReceiverParameter != null
 
-            return if (expressionHasDispatchReceiver != declarationHasDispatchReceiver)
-                ExpressionDispatchReceiverMismatch(this, expressionHasDispatchReceiver)
+            if (expressionHasDispatchReceiver != functionHasDispatchReceiver)
+                return MemberAccessExpressionArgumentsMismatch(this, expressionHasDispatchReceiver, functionHasDispatchReceiver, 0, 0)
+
+            if (this is IrFunctionReference) {
+                // Function references don't contain arguments.
+                return null
+            } else if (this is IrEnumConstructorCall && (function.parent as? IrClass)?.symbol == builtIns.enumClass) {
+                // This is a special case. IrEnumConstructorCall don't contain arguments.
+                return null
+            }
+
+            val expressionValueArgumentCount = (0 until valueArgumentsCount)
+                .count { index -> (getValueArgument(index) ?: function.valueParameters.getOrNull(index)?.defaultValue) != null }
+            val functionValueParameterCount = function.valueParameters.size
+
+            return if (expressionValueArgumentCount != functionValueParameterCount)
+                MemberAccessExpressionArgumentsMismatch(
+                    this,
+                    expressionHasDispatchReceiver,
+                    functionHasDispatchReceiver,
+                    expressionValueArgumentCount,
+                    functionValueParameterCount
+                )
             else
                 null
         }
