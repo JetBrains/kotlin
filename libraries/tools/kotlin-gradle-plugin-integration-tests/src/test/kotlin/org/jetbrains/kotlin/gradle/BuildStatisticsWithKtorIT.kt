@@ -246,7 +246,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":lib:compileKotlin", taskData.taskName)
-                assertContentEquals(listOf("ARTIFACT_TRANSFORM", "CONFIGURATION_CACHE", "NON_INCREMENTAL"), taskData.tags.sorted(), )
+                assertContentEquals(listOf("CONFIGURATION_CACHE", "NON_INCREMENTAL"), taskData.tags.sorted())
                 assertEquals(
                     defaultBuildOptions.kotlinVersion, taskData.kotlinVersion,
                     "Unexpected kotlinVersion: ${taskData.kotlinVersion} instead of ${defaultBuildOptions.kotlinVersion}"
@@ -254,7 +254,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.taskName)
-                assertContentEquals(taskData.tags.sorted(), listOf("ARTIFACT_TRANSFORM", "CONFIGURATION_CACHE", "NON_INCREMENTAL"))
+                assertContentEquals(listOf("CONFIGURATION_CACHE", "NON_INCREMENTAL"), taskData.tags.sorted())
                 assertEquals(
                     defaultBuildOptions.kotlinVersion, taskData.kotlinVersion,
                     "Unexpected kotlinVersion: ${taskData.kotlinVersion} instead of ${defaultBuildOptions.kotlinVersion}"
@@ -266,11 +266,11 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             //second build
             validateTaskData(port) { taskData ->
                 assertEquals(":lib:compileKotlin", taskData.taskName)
-                assertContentEquals(taskData.tags.sorted(), listOf("ARTIFACT_TRANSFORM", "CONFIGURATION_CACHE", "INCREMENTAL"))
+                assertContentEquals(listOf("CONFIGURATION_CACHE", "INCREMENTAL"), taskData.tags.sorted())
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.taskName)
-                assertContentEquals(taskData.tags.sorted(), listOf("ARTIFACT_TRANSFORM", "CONFIGURATION_CACHE", "INCREMENTAL"))
+                assertContentEquals(listOf("CONFIGURATION_CACHE", "INCREMENTAL"), taskData.tags.sorted())
             }
         }
     }
