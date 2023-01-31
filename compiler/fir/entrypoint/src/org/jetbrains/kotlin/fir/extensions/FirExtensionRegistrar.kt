@@ -33,6 +33,7 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirAssignExpressionAltererExtension::class,
             FirScriptConfiguratorExtension::class,
             FirFunctionTypeKindExtension::class,
+            FirDeclarationsForMetadataProviderExtension::class,
         )
     }
 
@@ -96,6 +97,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             registerExtension(FirFunctionTypeKindExtension::class, this)
         }
 
+        @JvmName("plusDeclarationForMetadataProviderExtension")
+        operator fun (FirDeclarationsForMetadataProviderExtension.Factory).unaryPlus() {
+            registerExtension(FirDeclarationsForMetadataProviderExtension::class, this)
+        }
+
         // ------------------ reference methods ------------------
 
         @JvmName("plusStatusTransformerExtension")
@@ -151,6 +157,11 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
         @JvmName("plusFunctionTypeKindExtension")
         operator fun ((FirSession) -> FirFunctionTypeKindExtension).unaryPlus() {
             FirFunctionTypeKindExtension.Factory { this.invoke(it) }.unaryPlus()
+        }
+
+        @JvmName("plusDeclarationForMetadataProviderExtension")
+        operator fun ((FirSession) -> FirDeclarationsForMetadataProviderExtension).unaryPlus() {
+            FirDeclarationsForMetadataProviderExtension.Factory { this.invoke(it) }.unaryPlus()
         }
 
         // ------------------ utilities ------------------

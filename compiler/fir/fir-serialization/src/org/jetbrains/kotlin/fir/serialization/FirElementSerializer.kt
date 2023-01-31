@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.extensions.declarationForMetadataProviders
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.resolve.*
@@ -69,22 +70,34 @@ class FirElementSerializer private constructor(
     private val languageVersionSettings: LanguageVersionSettings,
 ) {
     private val contractSerializer = FirContractSerializer()
+    private val extensionDeclarationProviders = session.extensionService.declarationForMetadataProviders
 
     fun packagePartProto(packageFqName: FqName, files: List<FirFile>): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
 
+        fun addDeclaration(declaration: FirDeclaration, onUnsupportedDeclaration: (FirDeclaration) -> Unit) {
+            when (declaration) {
+                is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
+                is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
+                else -> onUnsupportedDeclaration(declaration)
+            }
+        }
+
         for (file in files) {
             for (declaration in file.declarations) {
-                when (declaration) {
-                    is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
-                    is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
-                    is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
-                    else -> {}
-                }
+                addDeclaration(declaration) {}
             }
         }
 
         extension.serializePackage(packageFqName, builder)
+        for (extensionProvider in extensionDeclarationProviders) {
+            for (declaration in extensionProvider.provideTopLevelDeclarations(packageFqName, scopeSession)) {
+                addDeclaration(declaration) {
+                    error("Unsupported top-level declaration type: ${it.render()}")
+                }
+            }
+        }
 
         typeTable.serialize()?.let { builder.typeTable = it }
         versionRequirementTable?.serialize()?.let { builder.versionRequirementTable = it }
@@ -135,15 +148,33 @@ class FirElementSerializer private constructor(
             }
         }
 
+        val providedCallables = mutableListOf<FirCallableDeclaration>()
+        val providedConstructors = mutableListOf<FirConstructor>()
+        val providedNestedClassifiers = mutableListOf<FirClassifierSymbol<*>>()
+
+        for (extensionProvider in extensionDeclarationProviders) {
+            for (declaration in extensionProvider.provideDeclarationsForClass(klass, scopeSession)) {
+                when (declaration) {
+                    is FirConstructor -> providedConstructors += declaration
+                    is FirCallableDeclaration -> providedCallables += declaration
+                    is FirClassLikeDeclaration -> providedNestedClassifiers += declaration.symbol
+                    else -> error("Unsupported declaration type in: ${klass.render()} ${declaration.render()}")
+                }
+            }
+        }
+
         if (regularClass != null && regularClass.classKind != ClassKind.ENUM_ENTRY) {
             for (constructor in regularClass.constructors()) {
+                builder.addConstructor(constructorProto(constructor))
+            }
+            for (constructor in providedConstructors) {
                 builder.addConstructor(constructorProto(constructor))
             }
         }
 
         val callableMembers =
             extension.customClassMembersProducer?.getCallableMembers(klass)
-                ?: klass.declarations()
+                ?: (klass.memberDeclarations() + providedCallables)
                     .sortedWith(FirCallableDeclarationComparator)
 
         for (declaration in callableMembers) {
@@ -160,6 +191,7 @@ class FirElementSerializer private constructor(
             val scope = defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null) ?: return emptyList()
             return buildList {
                 scope.getClassifierNames().mapNotNullTo(this) { scope.getSingleClassifier(it) }
+                addAll(providedNestedClassifiers)
             }
         }
 
