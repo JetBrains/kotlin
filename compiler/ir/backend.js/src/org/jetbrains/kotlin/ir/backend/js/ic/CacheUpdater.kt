@@ -684,7 +684,7 @@ class CacheUpdater(
         )
     }
 
-    fun actualizeCaches(eventCallback: (String) -> Unit = {}): List<ModuleArtifact> {
+    private fun actualizeCachesImpl(eventCallback: (String) -> Unit = {}): List<ModuleArtifact> {
         dirtyFileStats.clear()
 
         val modifiedFiles = loadModifiedFiles()
@@ -731,6 +731,15 @@ class CacheUpdater(
         eventCallback("cache committing")
 
         return artifacts
+    }
+
+    fun actualizeCaches(eventCallback: (String) -> Unit = {}): List<ModuleArtifact> {
+        try {
+            return actualizeCachesImpl(eventCallback)
+        } catch (e: Exception) {
+            cacheMap.values.forEach { cacheDir -> File(cacheDir).deleteRecursively() }
+            throw e
+        }
     }
 }
 

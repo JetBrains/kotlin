@@ -219,6 +219,23 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         }
     }
 
+    @DisplayName("JS IR incremental recompilation after an error")
+    @GradleTest
+    fun testJsIrIncrementalRebuildAfterError(gradleVersion: GradleVersion) {
+        project("kotlin-js-ir-ic-rebuild-after-error", gradleVersion) {
+            for (i in 0..1) {
+                buildAndFail("compileDevelopmentExecutableKotlinJs") {
+                    assertTasksFailed(":app:compileDevelopmentExecutableKotlinJs")
+
+                    projectPath.resolve("app/build/klib/cache/").toFile().walk().forEach { cachedFile ->
+                        // could be empty directories
+                        assertTrue("Cache should be empty") { cachedFile.isDirectory }
+                    }
+                }
+            }
+        }
+    }
+
     @DisplayName("Remove unused dependency from klib")
     @GradleTest
     fun testJsIrIncrementalKlibRemoveUnusedDependency(gradleVersion: GradleVersion) {
