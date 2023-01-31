@@ -17,6 +17,7 @@ class GeneratedDeclarationsIrBodyFiller : IrGenerationExtension {
             TransformerForCompanionGenerator(pluginContext),
             TransformerForAdditionalMembersGenerator(pluginContext),
             TransformerForTopLevelDeclarationsGenerator(pluginContext),
+            AllPropertiesConstructorIrGenerator(pluginContext)
         )
 
         for (transformer in transformers) {
@@ -24,4 +25,3 @@ class GeneratedDeclarationsIrBodyFiller : IrGenerationExtension {
         }
     }
 }
-

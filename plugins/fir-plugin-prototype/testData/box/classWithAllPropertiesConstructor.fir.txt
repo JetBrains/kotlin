@@ -1,0 +1,72 @@
+Module: a
+FILE: module_a_classWithAllPropertiesConstructor.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String|): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(s: R|kotlin/String|): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val s: R|kotlin/String| = R|<local>/s|
+            public get(): R|kotlin/String|
+
+    }
+    @R|org/jetbrains/kotlin/fir/plugin/AllPropertiesConstructor|() public open class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|A| = R|/A.A|(String(a))
+            public get(): R|A|
+
+        public final val b: R|B| = R|/B.B|(String(b))
+            public get(): R|B|
+
+    }
+Module: b
+FILE: Derived.kt
+    @R|org/jetbrains/kotlin/fir/plugin/AllPropertiesConstructor|() public final class Derived : R|Base| {
+        public constructor(): R|Derived| {
+            super<R|Base|>()
+        }
+
+        public final val c: R|C| = R|/C.C|(String(c))
+            public get(): R|C|
+
+    }
+FILE: main.kt
+    public final fun box(): R|kotlin/String| {
+        lval constructor: R|java/lang/reflect/Constructor<Derived>| = <getClass>(Q|Derived|).R|SubstitutionOverride<kotlin/reflect/KClass.constructors: R|kotlin/collections/Collection<kotlin/reflect/KFunction<Derived>>|>|.R|kotlin/collections/first|<R|kotlin/reflect/KFunction<Derived>|>(<L> = first@fun <anonymous>(it: R|kotlin/reflect/KFunction<Derived>|): R|kotlin/Boolean| <inline=Inline, kind=UNKNOWN>  {
+            ^ ==(R|<local>/it|.R|kotlin/reflect/full/valueParameters|.R|SubstitutionOverride<kotlin/collections/List.size: R|kotlin/Int|>|, Int(3))
+        }
+        ).R|kotlin/reflect/jvm/javaConstructor|<R|Derived|>!!
+        lval derived: R|Derived!| = R|<local>/constructor|.R|SubstitutionOverride<java/lang/reflect/Constructor.newInstance: R|Derived!|>|(vararg(R|/A.A|(String(a)), R|/B.B|(String(b)), R|/C.C|(String(c))))
+        ^box R|kotlin/with|<R|Derived!|, R|kotlin/String|>(R|<local>/derived|, <L> = with@fun R|Derived!|.<anonymous>(): R|kotlin/String| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ when () {
+                ==(this@R|special/anonymous|.R|/Base.a|.R|/A.s|, String(a)) && ==(this@R|special/anonymous|.R|/Base.b|.R|/B.s|, String(b)) && ==(this@R|special/anonymous|.R|/Derived.c|.R|/C.s|, String(c)) ->  {
+                    String(OK)
+                }
+                else ->  {
+                    String(Error)
+                }
+            }
+
+        }
+        )
+    }

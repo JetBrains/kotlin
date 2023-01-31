@@ -1,0 +1,277 @@
+Module: a
+FILE fqName:<root> fileName:/module_a_classWithAllPropertiesConstructor.kt
+  CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:public <> (s:kotlin.String) returnType:<root>.A [primary]
+      VALUE_PARAMETER name:s index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:s visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 's: kotlin.String declared in <root>.A.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.A
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-s> (): kotlin.String declared in <root>.A'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-s>' type=<root>.A origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CONSTRUCTOR visibility:public <> (s:kotlin.String) returnType:<root>.B [primary]
+      VALUE_PARAMETER name:s index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:s visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 's: kotlin.String declared in <root>.B.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:<root>.B) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.B
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-s> (): kotlin.String declared in <root>.B'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-s>' type=<root>.B origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    CONSTRUCTOR visibility:public <> (s:kotlin.String) returnType:<root>.C [primary]
+      VALUE_PARAMETER name:s index:0 type:kotlin.String
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:s visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]
+        EXPRESSION_BODY
+          GET_VAR 's: kotlin.String declared in <root>.C.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.String
+        correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.C
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-s> (): kotlin.String declared in <root>.C'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
+              receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-s>' type=<root>.C origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]
+    annotations:
+      AllPropertiesConstructor
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Base
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Base [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:OPEN visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:a visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:a type:<root>.A visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) [primary] declared in <root>.A' type=<root>.A origin=null
+            s: CONST String type=kotlin.String value="a"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-a> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:<root>.A
+        correspondingProperty: PROPERTY name:a visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-a> (): <root>.A declared in <root>.Base'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:a type:<root>.A visibility:private [final]' type=<root>.A origin=null
+              receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-a>' type=<root>.Base origin=null
+    PROPERTY name:b visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:b type:<root>.B visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) [primary] declared in <root>.B' type=<root>.B origin=null
+            s: CONST String type=kotlin.String value="b"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:<root>.B
+        correspondingProperty: PROPERTY name:b visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-b> (): <root>.B declared in <root>.Base'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:b type:<root>.B visibility:private [final]' type=<root>.B origin=null
+              receiver: GET_VAR '<this>: <root>.Base declared in <root>.Base.<get-b>' type=<root>.Base origin=null
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:public <> (a:<root>.A, b:<root>.B) returnType:<root>.Base
+      VALUE_PARAMETER name:a index:0 type:<root>.A
+      VALUE_PARAMETER name:b index:1 type:<root>.B
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+Module: b
+FILE fqName:<root> fileName:/Derived.kt
+  CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]
+    annotations:
+      AllPropertiesConstructor
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Derived
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Derived [primary]
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Base'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]'
+    PROPERTY name:c visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:c type:<root>.C visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) [primary] declared in <root>.C' type=<root>.C origin=null
+            s: CONST String type=kotlin.String value="c"
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-c> visibility:public modality:FINAL <> ($this:<root>.Derived) returnType:<root>.C
+        correspondingProperty: PROPERTY name:c visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Derived
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-c> (): <root>.C declared in <root>.Derived'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:<root>.C visibility:private [final]' type=<root>.C origin=null
+              receiver: GET_VAR '<this>: <root>.Derived declared in <root>.Derived.<get-c>' type=<root>.Derived origin=null
+    PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final a: <root>.A [val]
+      FUN FAKE_OVERRIDE name:<get-a> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:<root>.A [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:a visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-a> (): <root>.A declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base
+    PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,val]
+      overridden:
+        public final b: <root>.B [val]
+      FUN FAKE_OVERRIDE name:<get-b> visibility:public modality:FINAL <> ($this:<root>.Base) returnType:<root>.B [fake_override]
+        correspondingProperty: PROPERTY FAKE_OVERRIDE name:b visibility:public modality:FINAL [fake_override,val]
+        overridden:
+          public final fun <get-b> (): <root>.B declared in <root>.Base
+        $this: VALUE_PARAMETER name:<this> type:<root>.Base
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [fake_override]
+      overridden:
+        public open fun toString (): kotlin.String [fake_override] declared in <root>.Base
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CONSTRUCTOR visibility:public <> (a:<root>.A, b:<root>.B, c:<root>.C) returnType:<root>.Derived
+      VALUE_PARAMETER name:a index:0 type:<root>.A
+      VALUE_PARAMETER name:b index:1 type:<root>.B
+      VALUE_PARAMETER name:c index:2 type:<root>.C
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (a: <root>.A, b: <root>.B) declared in <root>.Base'
+          a: GET_VAR 'a: <root>.A declared in <root>.Derived.<init>' type=<root>.A origin=null
+          b: GET_VAR 'b: <root>.B declared in <root>.Derived.<init>' type=<root>.B origin=null
+FILE fqName:<root> fileName:/main.kt
+  FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
+    BLOCK_BODY
+      VAR name:constructor type:java.lang.reflect.Constructor<<root>.Derived> [val]
+        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.lang.reflect.Constructor<<root>.Derived> origin=EXCLEXCL
+          <T0>: java.lang.reflect.Constructor<<root>.Derived>
+          arg0: CALL 'public final fun <get-javaConstructor> <T> (): java.lang.reflect.Constructor<T of kotlin.reflect.jvm.ReflectJvmMapping.<get-javaConstructor>>? declared in kotlin.reflect.jvm.ReflectJvmMapping' type=java.lang.reflect.Constructor<<root>.Derived>? origin=GET_PROPERTY
+            <T>: <root>.Derived
+            $receiver: CALL 'public final fun first <T> (predicate: kotlin.Function1<T of kotlin.collections.CollectionsKt.first, kotlin.Boolean>): T of kotlin.collections.CollectionsKt.first [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.reflect.KFunction<<root>.Derived> origin=null
+              <T>: kotlin.reflect.KFunction<<root>.Derived>
+              $receiver: CALL 'public abstract fun <get-constructors> (): kotlin.collections.Collection<kotlin.reflect.KFunction<T of kotlin.reflect.KClass>> declared in kotlin.reflect.KClass' type=kotlin.collections.Collection<kotlin.reflect.KFunction<<root>.Derived>> origin=GET_PROPERTY
+                $this: CLASS_REFERENCE 'CLASS CLASS name:Derived modality:FINAL visibility:public superTypes:[<root>.Base]' type=kotlin.reflect.KClass<<root>.Derived>
+              predicate: FUN_EXPR type=kotlin.Function1<kotlin.reflect.KFunction<<root>.Derived>, kotlin.Boolean> origin=LAMBDA
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.reflect.KFunction<<root>.Derived>) returnType:kotlin.Boolean
+                  VALUE_PARAMETER name:it index:0 type:kotlin.reflect.KFunction<<root>.Derived>
+                  BLOCK_BODY
+                    RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.reflect.KFunction<<root>.Derived>): kotlin.Boolean declared in <root>.box'
+                      CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                        arg0: CALL 'public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.List' type=kotlin.Int origin=GET_PROPERTY
+                          $this: CALL 'public final fun <get-valueParameters> (): kotlin.collections.List<kotlin.reflect.KParameter> declared in kotlin.reflect.full.KCallables' type=kotlin.collections.List<kotlin.reflect.KParameter> origin=GET_PROPERTY
+                            $receiver: GET_VAR 'it: kotlin.reflect.KFunction<<root>.Derived> declared in <root>.box.<anonymous>' type=kotlin.reflect.KFunction<<root>.Derived> origin=null
+                        arg1: CONST Int type=kotlin.Int value=3
+      VAR name:derived type:@[FlexibleNullability] <root>.Derived? [val]
+        CALL 'public open fun newInstance (vararg p0: @[FlexibleNullability] kotlin.Any?): @[FlexibleNullability] T of java.lang.reflect.Constructor? declared in java.lang.reflect.Constructor' type=@[FlexibleNullability] <root>.Derived? origin=null
+          $this: GET_VAR 'val constructor: java.lang.reflect.Constructor<<root>.Derived> [val] declared in <root>.box' type=java.lang.reflect.Constructor<<root>.Derived> origin=null
+          p0: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Any?>? varargElementType=@[FlexibleNullability] kotlin.Any?
+            CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) [primary] declared in <root>.A' type=<root>.A origin=null
+              s: CONST String type=kotlin.String value="a"
+            CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) [primary] declared in <root>.B' type=<root>.B origin=null
+              s: CONST String type=kotlin.String value="b"
+            CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) [primary] declared in <root>.C' type=<root>.C origin=null
+              s: CONST String type=kotlin.String value="c"
+      RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
+        CALL 'public final fun with <T, R> (receiver: T of kotlin.StandardKt.with, block: @[ExtensionFunctionType] kotlin.Function1<T of kotlin.StandardKt.with, R of kotlin.StandardKt.with>): R of kotlin.StandardKt.with [inline] declared in kotlin.StandardKt' type=kotlin.String origin=null
+          <T>: @[FlexibleNullability] <root>.Derived?
+          <R>: kotlin.String
+          receiver: GET_VAR 'val derived: @[FlexibleNullability] <root>.Derived? [val] declared in <root>.box' type=@[FlexibleNullability] <root>.Derived? origin=null
+          block: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function1<@[FlexibleNullability] <root>.Derived?, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:@[FlexibleNullability] <root>.Derived?) returnType:kotlin.String
+              $receiver: VALUE_PARAMETER name:$this$with type:@[FlexibleNullability] <root>.Derived?
+              BLOCK_BODY
+                RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
+                  WHEN type=kotlin.String origin=IF
+                    BRANCH
+                      if: WHEN type=kotlin.Boolean origin=ANDAND
+                        BRANCH
+                          if: WHEN type=kotlin.Boolean origin=ANDAND
+                            BRANCH
+                              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                                arg0: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
+                                  $this: CALL 'public final fun <get-a> (): <root>.A [fake_override] declared in <root>.Derived' type=<root>.A origin=GET_PROPERTY
+                                    $this: GET_VAR '$this$with: @[FlexibleNullability] <root>.Derived? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] <root>.Derived? origin=null
+                                arg1: CONST String type=kotlin.String value="a"
+                              then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                                arg0: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.B' type=kotlin.String origin=GET_PROPERTY
+                                  $this: CALL 'public final fun <get-b> (): <root>.B [fake_override] declared in <root>.Derived' type=<root>.B origin=GET_PROPERTY
+                                    $this: GET_VAR '$this$with: @[FlexibleNullability] <root>.Derived? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] <root>.Derived? origin=null
+                                arg1: CONST String type=kotlin.String value="b"
+                            BRANCH
+                              if: CONST Boolean type=kotlin.Boolean value=true
+                              then: CONST Boolean type=kotlin.Boolean value=false
+                          then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                            arg0: CALL 'public final fun <get-s> (): kotlin.String declared in <root>.C' type=kotlin.String origin=GET_PROPERTY
+                              $this: CALL 'public final fun <get-c> (): <root>.C declared in <root>.Derived' type=<root>.C origin=GET_PROPERTY
+                                $this: GET_VAR '$this$with: @[FlexibleNullability] <root>.Derived? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] <root>.Derived? origin=null
+                            arg1: CONST String type=kotlin.String value="c"
+                        BRANCH
+                          if: CONST Boolean type=kotlin.Boolean value=true
+                          then: CONST Boolean type=kotlin.Boolean value=false
+                      then: CONST String type=kotlin.String value="OK"
+                    BRANCH
+                      if: CONST Boolean type=kotlin.Boolean value=true
+                      then: CONST String type=kotlin.String value="Error"

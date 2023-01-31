@@ -37,3 +37,5 @@ annotation class MetaSupertype
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
 annotation class MyComposable
+
+annotation class AllPropertiesConstructor

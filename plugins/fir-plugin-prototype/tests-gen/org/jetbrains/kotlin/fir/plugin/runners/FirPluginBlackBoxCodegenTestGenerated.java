@@ -26,6 +26,12 @@ public class FirPluginBlackBoxCodegenTestGenerated extends AbstractFirPluginBlac
     }
 
     @Test
+    @TestMetadata("classWithAllPropertiesConstructor.kt")
+    public void testClassWithAllPropertiesConstructor() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/classWithAllPropertiesConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("classWithCompanionObject.kt")
     public void testClassWithCompanionObject() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/classWithCompanionObject.kt");
