@@ -827,6 +827,29 @@ class DefaultPsiToDocumentableTranslatorTest : BaseAbstractTest() {
             }
         }
     }
+
+    @Test
+    fun `default constructor should get the package name`() {
+        testInline(
+            """
+            |/src/main/java/org/test/A.java
+            |package org.test;
+            |public class A {
+            |}
+        """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val testedClass = module.findClasslike(packageName = "org.test", "A") as DClass
+
+                assertEquals(1, testedClass.constructors.size, "Expect 1 default constructor")
+
+                val constructorDRI = testedClass.constructors.first().dri
+                assertEquals("org.test", constructorDRI.packageName)
+                assertEquals("A", constructorDRI.classNames)
+            }
+        }
+    }
 }
 
 private fun DFunction.visibility() = visibility.values.first()
