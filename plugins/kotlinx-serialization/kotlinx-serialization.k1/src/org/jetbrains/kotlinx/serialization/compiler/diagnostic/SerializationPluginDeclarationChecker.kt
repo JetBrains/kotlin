@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotated
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory0
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_FQ_NAME
@@ -30,7 +31,11 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.*
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.bodyPropertiesDescriptorsMap
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.primaryConstructorPropertiesDescriptorsMap
+import org.jetbrains.kotlinx.serialization.compiler.diagnostic.SerializationErrors.EXTERNAL_SERIALIZER_USELESS
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.LOAD_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SAVE_NAME
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIAL_DESC_FIELD_NAME
 
 val SERIALIZABLE_PROPERTIES: WritableSlice<ClassDescriptor, SerializableProperties> = Slices.createSimpleSlice()
 
@@ -72,6 +77,31 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         val serializableKType = classDescriptor.serializerForClass ?: return
         val serializableDescriptor = serializableKType.toClassDescriptor ?: return
         val props = SerializableProperties(serializableDescriptor, trace.bindingContext)
+
+        val descriptorOverridden = classDescriptor.unsubstitutedMemberScope
+            .getContributedVariables(SERIAL_DESC_FIELD_NAME, NoLookupLocation.FROM_BACKEND).singleOrNull {
+                it.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
+            } != null
+
+        val serializeOverridden = classDescriptor.unsubstitutedMemberScope
+            .getContributedFunctions(SAVE_NAME, NoLookupLocation.FROM_BACKEND).singleOrNull {
+                it.valueParameters.size == 2
+                        && it.overriddenDescriptors.isNotEmpty()
+                        && it.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
+            } != null
+
+        val deserializeOverridden = classDescriptor.unsubstitutedMemberScope
+            .getContributedFunctions(LOAD_NAME, NoLookupLocation.FROM_BACKEND).singleOrNull {
+                it.valueParameters.size == 1
+                        && it.overriddenDescriptors.isNotEmpty()
+                        && it.kind != CallableMemberDescriptor.Kind.SYNTHESIZED
+            } != null
+
+        if (descriptorOverridden && serializeOverridden && deserializeOverridden) {
+            val entry = classDescriptor.findAnnotationDeclaration(SerializationAnnotations.serializerAnnotationFqName)
+            trace.report(EXTERNAL_SERIALIZER_USELESS.on(entry ?: declaration, classDescriptor.defaultType))
+            return
+        }
 
         if (!props.isExternallySerializable) {
             val entry = classDescriptor.findAnnotationDeclaration(SerializationAnnotations.serializerAnnotationFqName)

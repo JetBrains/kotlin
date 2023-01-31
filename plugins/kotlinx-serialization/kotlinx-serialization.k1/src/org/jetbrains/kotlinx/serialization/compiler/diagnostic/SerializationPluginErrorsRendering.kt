@@ -166,6 +166,12 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
         )
 
         MAP.put(
+            SerializationErrors.EXTERNAL_SERIALIZER_USELESS,
+            "@Serializer annotation is useless for class ''{0}'', because all members of the KSerializer are overridden",
+            Renderers.RENDER_TYPE
+        )
+
+        MAP.put(
             SerializationErrors.EXTERNAL_CLASS_NOT_SERIALIZABLE,
             "Cannot generate external serializer ''{0}'': class ''{1}'' have constructor parameters which are not properties and therefore it is not serializable automatically",
             Renderers.RENDER_TYPE,

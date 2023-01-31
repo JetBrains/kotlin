@@ -157,6 +157,12 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
         )
 
         put(
+            FirSerializationErrors.EXTERNAL_SERIALIZER_USELESS,
+            "@Serializer annotation is useless for class ''{0}'', because all members of the KSerializer are overridden",
+            FirDiagnosticRenderers.SYMBOL,
+        )
+
+        put(
             FirSerializationErrors.EXTERNAL_CLASS_NOT_SERIALIZABLE,
             "Cannot generate external serializer ''{0}'': class ''{1}'' have constructor parameters which are not properties and therefore it is not serializable automatically",
             FirDiagnosticRenderers.SYMBOL,
