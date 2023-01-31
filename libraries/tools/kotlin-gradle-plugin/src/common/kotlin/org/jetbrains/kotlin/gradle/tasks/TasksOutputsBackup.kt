@@ -48,6 +48,9 @@ internal class TaskOutputsBackup(
                     snapshotFile,
                     outputPath
                 )
+            } else if (!outputPath.exists()) {
+                logger.debug("Ignoring $outputPath in making a backup as it does not exist")
+                File(snapshotsDir.get().asFile, index.asNotExistsMarkerFile).createNewFile()
             } else {
                 val snapshotFile = snapshotsDir.map { it.file(index.asSnapshotDirectoryName).asFile }
                 logger.debug("Copying $outputPath as $snapshotFile to make a backup")
@@ -72,6 +75,8 @@ internal class TaskOutputsBackup(
                     spec.from(snapshotDir)
                     spec.into(outputPath.parentFile)
                 }
+            } else if (snapshotsDir.get().file(index.asNotExistsMarkerFile).asFile.exists()) {
+                // do nothing
             } else {
                 val snapshotArchive = snapshotsDir.get().file(index.asSnapshotArchiveName).asFile
                 logger.debug("Unpacking $snapshotArchive into $outputPath to restore from backup")
@@ -152,6 +157,9 @@ internal class TaskOutputsBackup(
 
     private val Int.asSnapshotArchiveName: String
         get() = "$this.zip"
+
+    private val Int.asNotExistsMarkerFile: String
+        get() = "$this.not-exists"
 
     private val Int.asSnapshotDirectoryName: String
         get() = "$this"
