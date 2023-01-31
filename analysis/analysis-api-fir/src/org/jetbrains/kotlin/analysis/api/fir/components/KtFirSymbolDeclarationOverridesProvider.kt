@@ -116,7 +116,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         val firContainer = containingDeclaration.firSymbol.fir
         val firCallableDeclaration = callableSymbol.firSymbol.fir
 
-        val firSession = firContainer.moduleData.session
+        val firSession = callableSymbol.firResolveSession.useSiteFirSession
         val firTypeScope = firContainer.unsubstitutedScope(
             firSession,
             analysisSession.getScopeSessionFor(firSession),
