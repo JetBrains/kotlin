@@ -263,7 +263,11 @@ abstract class DeclarationStubGenerator(
         // return a built-in symbol that hasn't been bound yet (e.g. `OptIn`). If the stub generator calls `declareClass` with the incorrect
         // `descriptor`, a symbol created for `descriptor` will be bound, not the built-in symbol which should be. If `generateClassStub` is
         // called twice for such a `descriptor`, an exception will occur because `descriptor`'s symbol will already have been bound.
-        with(irClassSymbol.descriptor) {
+        //
+        // Note as well that not all symbols have descriptors. For example, `irClassSymbol` might be an `IrClassPublicSymbolImpl` without a
+        // descriptor. For such symbols, the `descriptor` argument needs to be used.
+        val targetDescriptor = if (irClassSymbol.hasDescriptor) irClassSymbol.descriptor else descriptor
+        with(targetDescriptor) {
             val origin = computeOrigin(this)
             return symbolTable.declareClass(this) {
                 IrLazyClass(
