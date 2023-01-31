@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.typeAttributeExtensions
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.getSingleClassifier
-import org.jetbrains.kotlin.fir.scopes.processAllFunctions
-import org.jetbrains.kotlin.fir.scopes.processAllProperties
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
@@ -139,7 +136,7 @@ class FirElementSerializer private constructor(
         }
 
         if (regularClass != null && regularClass.classKind != ClassKind.ENUM_ENTRY) {
-            for (constructor in regularClass.declarations.filterIsInstance<FirConstructor>()) {
+            for (constructor in regularClass.constructors()) {
                 builder.addConstructor(constructorProto(constructor))
             }
         }
@@ -233,26 +230,40 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    private fun FirClass.declarations(): List<FirCallableDeclaration> = buildList {
-        val memberScope =
-            defaultType().scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
-                ?: error("Null scope for $this")
+    private fun FirClass.memberDeclarations(): List<FirCallableDeclaration> {
+        return collectDeclarations<FirCallableDeclaration, FirCallableSymbol<*>> { memberScope, addDeclarationIfNeeded ->
+            memberScope.processAllFunctions { addDeclarationIfNeeded(it) }
+            memberScope.processAllProperties { addDeclarationIfNeeded(it) }
+        }
+    }
 
-        fun addDeclarationIfNeeded(symbol: FirCallableSymbol<*>) {
-            val declaration = symbol.fir
-            if (declaration.isSubstitutionOrIntersectionOverride) return
+    private fun FirClass.constructors(): List<FirConstructor> {
+        return collectDeclarations { memberScope, addDeclarationIfNeeded ->
+            memberScope.processDeclaredConstructors { addDeclarationIfNeeded(it) }
+        }
+    }
+
+    private inline fun <reified T : FirCallableDeclaration, S : FirCallableSymbol<*>> FirClass.collectDeclarations(
+        processScope: (FirTypeScope, ((S) -> Unit)) -> Unit
+    ): List<T> = buildList {
+        val memberScope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+
+        processScope(memberScope) l@{
+            val declaration = it.fir as T
+            if (declaration.isSubstitutionOrIntersectionOverride) return@l
 
             // non-intersection or substitution fake override
-            if (!declaration.isStatic && declaration.dispatchReceiverClassLookupTagOrNull() != this@declarations.symbol.toLookupTag()) return
+            if (!(declaration.isStatic || declaration is FirConstructor)) {
+                if (declaration.dispatchReceiverClassLookupTagOrNull()!= this@collectDeclarations.symbol.toLookupTag()) {
+                    return@l
+                }
+            }
 
             add(declaration)
         }
 
-        memberScope.processAllFunctions(::addDeclarationIfNeeded)
-        memberScope.processAllProperties(::addDeclarationIfNeeded)
-
         for (declaration in declarations) {
-            if (declaration is FirCallableDeclaration && declaration.isStatic) {
+            if (declaration is T && declaration.isStatic) {
                 add(declaration)
             }
         }
