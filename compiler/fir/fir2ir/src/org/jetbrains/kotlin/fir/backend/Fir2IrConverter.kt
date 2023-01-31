@@ -403,7 +403,7 @@ class Fir2IrConverter(
                 null
             }
             is FirEnumEntry -> {
-                classifierStorage.createIrEnumEntry(declaration, parent as IrClass)
+                classifierStorage.getIrEnumEntry(declaration, parent as IrClass)
             }
             is FirAnonymousInitializer -> {
                 declarationStorage.createIrAnonymousInitializer(declaration, parent as IrClass)

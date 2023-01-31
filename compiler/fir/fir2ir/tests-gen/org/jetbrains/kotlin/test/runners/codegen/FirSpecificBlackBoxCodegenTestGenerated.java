@@ -130,6 +130,22 @@ public class FirSpecificBlackBoxCodegenTestGenerated extends AbstractFirBlackBox
         }
 
         @Nested
+        @TestMetadata("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/enum")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Enum {
+            @Test
+            public void testAllFilesPresentInEnum() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/enum"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("k54079.kt")
+            public void testK54079() throws Exception {
+                runTest("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/enum/k54079.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/fir2ir/testData/codegen/boxWithStdLib/properties")
         @TestDataPath("$PROJECT_ROOT")
         public class Properties {
