@@ -498,6 +498,36 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
         }
     }
+
+    @DisplayName("incremental compilation for js works")
+    @GradleTest
+    fun testIncrementalCompilation(gradleVersion: GradleVersion) {
+        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        project("kotlin2JsICProject", gradleVersion, buildOptions = buildOptions) {
+            build("compileKotlinJs", "compileTestKotlinJs") {
+                checkIrCompilationMessage()
+                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+                assertCompiledKotlinSources(projectPath.allKotlinFiles.relativizeTo(projectPath), output)
+            }
+
+            build("compileKotlinJs", "compileTestKotlinJs") {
+                assertCompiledKotlinSources(emptyList(), output)
+            }
+
+            val modifiedFile = subProject("lib").kotlinSourcesDir().resolve("A.kt") ?: error("No A.kt file in test project")
+            modifiedFile.modify {
+                it.replace("val x = 0", "val x = \"a\"")
+            }
+            build("compileKotlinJs", "compileTestKotlinJs") {
+                checkIrCompilationMessage()
+                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+                val affectedFiles = listOf("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt", "useAInLibTest.kt").mapNotNull {
+                    projectPath.findInPath(it)
+                }
+                assertCompiledKotlinSources(affectedFiles.relativizeTo(projectPath), output)
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
@@ -899,36 +929,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                     mapFilePath,
                     "inline fun foo(): String {",
                 )
-            }
-        }
-    }
-
-    @DisplayName("incremental compilation for js works")
-    @GradleTest
-    fun testIncrementalCompilation(gradleVersion: GradleVersion) {
-        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
-        project("kotlin2JsICProject", gradleVersion, buildOptions = buildOptions) {
-            build("compileKotlinJs", "compileTestKotlinJs") {
-                checkIrCompilationMessage()
-                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-                assertCompiledKotlinSources(projectPath.allKotlinFiles.relativizeTo(projectPath), output)
-            }
-
-            build("compileKotlinJs", "compileTestKotlinJs") {
-                assertCompiledKotlinSources(emptyList(), output)
-            }
-
-            val modifiedFile = subProject("lib").kotlinSourcesDir().resolve("A.kt") ?: error("No A.kt file in test project")
-            modifiedFile.modify {
-                it.replace("val x = 0", "val x = \"a\"")
-            }
-            build("compileKotlinJs", "compileTestKotlinJs") {
-                checkIrCompilationMessage()
-                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-                val affectedFiles = listOf("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt").mapNotNull {
-                    projectPath.findInPath(it)
-                }
-                assertCompiledKotlinSources(affectedFiles.relativizeTo(projectPath), output)
             }
         }
     }

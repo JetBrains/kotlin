@@ -39,7 +39,7 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
             gradleBuildScript(innerProject.projectName).appendText("\ndependencies { implementation rootProject }")
 
             testResolveAllConfigurations(subproject = innerProject.projectName) {
-                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> sample-lib-nodejs-1.0.klib")
+                assertContains(">> :${innerProject.projectName}:runtimeClasspath --> main")
             }
 
             @Suppress("DEPRECATION")
@@ -288,24 +288,23 @@ class VariantAwareDependenciesMppIT : BaseGradleIT() {
             val testGradleVersion = chooseWrapperVersionOrFinishTest()
             val isAtLeastGradle75 = GradleVersion.version(testGradleVersion) >= GradleVersion.version("7.5")
 
-            listOf("jvm6" to "Classpath", "nodeJs" to "Classpath").forEach { (target, suffix) ->
-                build("dependencyInsight", "--configuration", "${target}Compile$suffix", "--dependency", "sample-lib") {
+            listOf("jvm6" to null, "nodeJs" to "unpacked").forEach { (target, prefix) ->
+                val variantPrefix = prefix?.let { it + target.capitalize() } ?: target
+                build("dependencyInsight", "--configuration", "${target}CompileClasspath", "--dependency", "sample-lib") {
                     assertSuccessful()
                     if (isAtLeastGradle75) {
-                        assertContains("Variant ${target}ApiElements")
+                        assertContains("Variant ${variantPrefix}ApiElements")
                     } else {
-                        assertContains("variant \"${target}ApiElements\" [")
+                        assertContains("variant \"${variantPrefix}ApiElements\" [")
                     }
                 }
 
-                if (suffix == "Classpath") {
-                    build("dependencyInsight", "--configuration", "${target}Runtime$suffix", "--dependency", "sample-lib") {
-                        assertSuccessful()
-                        if (isAtLeastGradle75) {
-                            assertContains("Variant ${target}RuntimeElements")
-                        } else {
-                            assertContains("variant \"${target}RuntimeElements\" [")
-                        }
+                build("dependencyInsight", "--configuration", "${target}RuntimeClasspath", "--dependency", "sample-lib") {
+                    assertSuccessful()
+                    if (isAtLeastGradle75) {
+                        assertContains("Variant ${variantPrefix}RuntimeElements")
+                    } else {
+                        assertContains("variant \"${variantPrefix}RuntimeElements\" [")
                     }
                 }
             }

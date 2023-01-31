@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
+import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.bundling.Zip
@@ -15,9 +19,12 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.internal.BasePluginConfiguration
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.libsDirectory
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.configuration.BaseKotlinCompileConfig.Companion.ARTIFACT_TYPE_ATTRIBUTE
+import org.jetbrains.kotlin.gradle.tasks.configuration.Kotlin2JsCompileConfig
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 
@@ -69,6 +76,14 @@ open class KotlinJsIrTargetConfigurator :
 
     override fun createArchiveTasks(target: KotlinJsIrTarget): TaskProvider<out Zip> {
         val libsDirectory = target.project.libsDirectory
+        val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
+        target.project.artifacts.add(target.unpackedApiConfigurationName, mainCompilation.compileTaskProvider.flatMap { it.destinationDirectory }) {
+            it.builtBy(mainCompilation.compileTaskProvider)
+        }
+
+        target.project.artifacts.add(target.unpackedRuntimeConfigurationName, mainCompilation.compileTaskProvider.flatMap { it.destinationDirectory }) {
+            it.builtBy(mainCompilation.compileTaskProvider)
+        }
         return super.createArchiveTasks(target).apply {
             configure {
                 it.archiveExtension.set(KLIB_TYPE)
@@ -109,6 +124,45 @@ open class KotlinJsIrTargetConfigurator :
 
     override fun defineConfigurationsForTarget(target: KotlinJsIrTarget) {
         super.defineConfigurationsForTarget(target)
+
+        val mainCompilation = target.compilations.maybeCreate(KotlinCompilation.MAIN_COMPILATION_NAME)
+
+        target.project.configurations.maybeCreate(
+            target.unpackedApiConfigurationName
+        ).apply {
+            description = "Unpacked API elements for main."
+            isVisible = false
+            isCanBeResolved = false
+            isCanBeConsumed = true
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerApiUsage(target))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+            extendsFrom(target.project.configurations.maybeCreate(mainCompilation.apiConfigurationName))
+            val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
+            runtimeConfiguration?.let { extendsFrom(it) }
+            usesPlatformOf(target)
+            attributes.attribute(
+                ARTIFACT_TYPE_ATTRIBUTE,
+                Kotlin2JsCompileConfig.UNPACKED_KLIB_ARTIFACT_TYPE
+            )
+        }
+
+        target.project.configurations.maybeCreate(target.unpackedRuntimeConfigurationName).apply {
+            description = "Unpacked elements of runtime for main."
+            isVisible = false
+            isCanBeConsumed = true
+            isCanBeResolved = false
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.producerRuntimeUsage(target))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, target.project.categoryByName(Category.LIBRARY))
+            val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
+            extendsFrom(mainCompilation.internal.configurations.implementationConfiguration)
+            extendsFrom(mainCompilation.internal.configurations.runtimeOnlyConfiguration)
+            runtimeConfiguration?.let { extendsFrom(it) }
+            usesPlatformOf(target)
+            attributes.attribute(
+                ARTIFACT_TYPE_ATTRIBUTE,
+                Kotlin2JsCompileConfig.UNPACKED_KLIB_ARTIFACT_TYPE
+            )
+        }
 
         if (target.isMpp!!) return
 

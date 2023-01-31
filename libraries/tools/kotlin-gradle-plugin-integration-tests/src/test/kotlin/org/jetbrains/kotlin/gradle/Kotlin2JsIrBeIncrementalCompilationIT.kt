@@ -137,7 +137,7 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                 // 2 for lib.klib + 1 for stdlib + 1 for dom-api-compat + 1 for main
                 assertEquals(5, klibCacheDirs?.size, "cache should contain 5 dirs")
 
-                val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("lib.klib.") }
+                val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("main.") }
                 assertEquals(2, libKlibCacheDirs?.size, "cache should contain 2 dirs for lib.klib")
 
                 var lib = false

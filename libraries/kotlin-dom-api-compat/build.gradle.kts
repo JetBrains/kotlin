@@ -1,5 +1,6 @@
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 
 plugins {
     `maven-publish`
@@ -10,6 +11,25 @@ val jsStdlibSources = "${projectDir}/../stdlib/js/src"
 
 kotlin {
     js(IR) {
+        // it is necessary because standard configuration api is resolved during configuration phase
+        // making unusable unzip it before kotlin-stdlib-js assembled
+        val jsApi = configurations.maybeCreate(
+            "jsApi"
+        ).apply {
+            isVisible = false
+            isCanBeResolved = true
+            isCanBeConsumed = false
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, KotlinUsages.KOTLIN_API))
+        }
+
+        compilations["main"].compileKotlinTaskProvider.configure {
+            libraries.setFrom(jsApi)
+        }
+
+        compilations["test"].compileKotlinTaskProvider.configure {
+            libraries.setFrom(jsApi)
+        }
+
         sourceSets {
             val main by getting {
                 if (!kotlinBuildProperties.isInIdeaSync) {
@@ -24,6 +44,10 @@ kotlin {
             }
         }
     }
+}
+
+dependencies {
+    "jsApi"(project(":kotlin-stdlib-js"))
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEach {

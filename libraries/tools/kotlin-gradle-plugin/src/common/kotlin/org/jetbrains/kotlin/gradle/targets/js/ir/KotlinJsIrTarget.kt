@@ -84,6 +84,18 @@ constructor(
             "commonFakeApiElements"
         )
 
+    val unpackedApiConfigurationName: String
+        get() = lowerCamelCaseName(
+            "unpacked",
+            apiElementsConfigurationName
+        )
+
+    val unpackedRuntimeConfigurationName: String
+        get() = lowerCamelCaseName(
+            "unpacked",
+            runtimeElementsConfigurationName
+        )
+
     val disambiguationClassifierInPlatform: String?
         get() = if (mixedMode) {
             disambiguationClassifier?.removeJsCompilerSuffix(KotlinJsCompilerType.IR)

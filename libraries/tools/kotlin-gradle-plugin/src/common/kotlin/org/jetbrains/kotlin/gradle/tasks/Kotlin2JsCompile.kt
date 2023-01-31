@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.InvalidUserDataException
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
@@ -42,8 +43,10 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.newInstance
+import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.ClasspathChanges
+import org.jetbrains.kotlin.library.KLIB_MANIFEST_FILE_NAME
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.utils.JsLibraryUtils
@@ -275,13 +278,27 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
 
     @get:Internal
+    abstract override val libraries: ConfigurableFileCollection
+
+    @get:InputFiles
+    @get:IgnoreEmptyDirectories
+    @get:NormalizeLineEndings
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Incremental
+    val realLibraries: FileCollection = libraries + friendDependencies
+
+    @get:Internal
     protected val libraryFilter: (File) -> Boolean
         get() = { file ->
             libraryFilterCacheService.get().getOrCompute(file.asLibraryFilterCacheKey, libraryFilterBody)
         }
 
     override val incrementalProps: List<FileCollection>
-        get() = super.incrementalProps + listOf(friendDependencies)
+        get() = listOfNotNull(
+            sources,
+            realLibraries,
+            commonSourceSet
+        ) + listOf(friendDependencies)
 
     protected open fun processArgsBeforeCompile(args: K2JSCompilerArguments) = Unit
 
@@ -300,7 +317,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
             logger.info(USING_JS_IR_BACKEND_MESSAGE)
         }
 
-        val dependencies = libraries
+        val dependencies = realLibraries
             .filter { it.exists() && libraryFilter(it) }
             .map { it.normalize().absolutePath }
 
@@ -322,8 +339,26 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
         val icEnv = if (isIncrementalCompilationEnabled()) {
             logger.info(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
+            val changedFiles = getChangedFiles(inputChanges, incrementalProps)
+                .let {
+                    if (isIrBackendEnabled()) {
+                        when (it) {
+                            is ChangedFiles.Unknown -> it
+                            is ChangedFiles.Known -> {
+                                val predicate: (File) -> Boolean = { if (it.extension == "kt") true else it.name == KLIB_MANIFEST_FILE_NAME }
+                                ChangedFiles.Known(
+                                    it.modified
+                                        .filter(predicate),
+                                    it.removed
+                                        .filter(predicate),
+                                    it.forDependencies
+                                )
+                            }
+                        }
+                    } else it
+                }
             IncrementalCompilationEnvironment(
-                getChangedFiles(inputChanges, incrementalProps),
+                changedFiles,
                 ClasspathChanges.NotAvailableForJSCompiler,
                 taskBuildCacheableOutputDirectory.get().asFile,
                 multiModuleICSettings = multiModuleICSettings,

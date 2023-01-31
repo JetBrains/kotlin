@@ -12,8 +12,10 @@ import org.gradle.api.tasks.*
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
@@ -81,7 +83,13 @@ constructor(
     @get:NormalizeLineEndings
     @get:InputFiles
     val runtimeClasspath: FileCollection by lazy {
-        compilation.runtimeDependencyFiles
+        compilation.let { comp ->
+            if (comp.target.platformType == KotlinPlatformType.js && comp is KotlinJsIrCompilation) {
+                comp.runtimeDirectoryFiles
+            } else {
+                comp.runtimeDependencyFiles
+            }
+        }
     }
 
     @Suppress("unused")

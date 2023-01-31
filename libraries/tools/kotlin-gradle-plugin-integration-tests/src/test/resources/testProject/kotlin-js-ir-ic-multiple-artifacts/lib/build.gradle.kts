@@ -17,7 +17,9 @@ kotlin {
         val runtimeOnly by configurations.getting
         runtimeOnly.extendsFrom(otherDist)
         artifacts {
-            add(otherDist.name, tasks.named("otherKlib").map { it.outputs.files.files.first() })
+            add(otherDist.name, otherCompilation.compileTaskProvider.flatMap { it.destinationDirectory }) {
+                builtBy(otherCompilation.compileTaskProvider)
+            }
         }
         useCommonJs()
         browser {
