@@ -35,6 +35,8 @@ public operator fun String?.plus(other: Any?): String
  */
 public fun <reified @PureReifiable T> arrayOfNulls(size: Int): Array<T?>
 
+public fun <reified @PureReifiable T> vArrayOfNulls(size: Int): VArray<T?>
+
 /**
  * Returns an array containing the specified elements.
  */
@@ -91,3 +93,5 @@ public inline fun <reified T : Enum<T>> enumValues(): Array<T>
  */
 @SinceKotlin("1.1")
 public inline fun <reified T : Enum<T>> enumValueOf(name: String): T
+
+inline operator fun <reified T> VArray<T>.iterator(): VArrayIterator<T>
