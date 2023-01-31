@@ -23,14 +23,14 @@ private const val BACKSLASH = '\\'
  * This is done prior to *any* arguments parsing, and result of preprocessing
  * will be used instead of actual passed arguments.
  */
-fun preprocessCommandLineArguments(args: List<String>, errors: ArgumentParseErrors): List<String> =
+fun preprocessCommandLineArguments(args: List<String>, errors: Lazy<ArgumentParseErrors>): List<String> =
     args.flatMap { arg ->
         if (arg.isArgfileArgument) {
-            File(arg.argfilePath).expand(errors)
+            File(arg.argfilePath).expand(errors.value)
         } else if (arg.isDeprecatedArgfileArgument) {
-            errors.deprecatedArguments[EXPERIMENTAL_ARGFILE_ARGUMENT] = ARGFILE_ARGUMENT
+            errors.value.deprecatedArguments[EXPERIMENTAL_ARGFILE_ARGUMENT] = ARGFILE_ARGUMENT
 
-            File(arg.deprecatedArgfilePath).expand(errors)
+            File(arg.deprecatedArgfilePath).expand(errors.value)
         } else {
             listOf(arg)
         }

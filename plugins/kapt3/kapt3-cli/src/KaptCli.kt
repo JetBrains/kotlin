@@ -39,7 +39,7 @@ fun main(args: Array<String>) {
 @TestOnly
 internal fun transformArgs(args: List<String>, messageCollector: MessageCollector, isTest: Boolean): List<String> {
     val parseErrors = ArgumentParseErrors()
-    val kotlincTransformed = preprocessCommandLineArguments(args, parseErrors)
+    val kotlincTransformed = preprocessCommandLineArguments(args, lazy { parseErrors })
 
     val errorMessage = validateArguments(parseErrors)
     if (errorMessage != null) {

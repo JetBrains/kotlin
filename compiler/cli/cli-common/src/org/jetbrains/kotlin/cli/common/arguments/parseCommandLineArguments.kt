@@ -65,7 +65,7 @@ data class ArgumentParseErrors(
 
 // Parses arguments into the passed [result] object. Errors related to the parsing will be collected into [CommonToolArguments.errors].
 fun <A : CommonToolArguments> parseCommandLineArguments(args: List<String>, result: A, overrideArguments: Boolean = false) {
-    val errors = result.errors ?: ArgumentParseErrors().also { result.errors = it }
+    val errors = lazy { result.errors ?: ArgumentParseErrors().also { result.errors = it } }
     val preprocessed = preprocessCommandLineArguments(args, errors)
     parsePreprocessedCommandLineArguments(preprocessed, result, errors, overrideArguments)
 }
@@ -81,7 +81,7 @@ fun <A : CommonToolArguments> parseCommandLineArgumentsFromEnvironment(arguments
 private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     args: List<String>,
     result: A,
-    errors: ArgumentParseErrors,
+    errors: Lazy<ArgumentParseErrors>,
     overrideArguments: Boolean
 ) {
     data class ArgumentField(val property: KMutableProperty1<A, Any?>, val argument: Argument)
@@ -103,13 +103,13 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
 
         val deprecatedName = argument.deprecatedName
         if (deprecatedName.isNotEmpty() && (deprecatedName == arg || arg.startsWith("$deprecatedName="))) {
-            errors.deprecatedArguments[deprecatedName] = argument.value
+            errors.value.deprecatedArguments[deprecatedName] = argument.value
             return true
         }
 
         if (argument.value == arg) {
             if (argument.isAdvanced && property.returnType.classifier != Boolean::class) {
-                errors.extraArgumentsPassedInObsoleteForm.add(arg)
+                errors.value.extraArgumentsPassedInObsoleteForm.add(arg)
             }
             return true
         }
@@ -140,9 +140,9 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             val parser = matchingParsers.firstOrNull()
 
             if (parser == null) {
-                errors.unknownExtraFlags += arg
+                errors.value.unknownExtraFlags += arg
             } else {
-                val newInternalArgument = parser.parseInternalArgument(arg, errors) ?: continue
+                val newInternalArgument = parser.parseInternalArgument(arg, errors.value) ?: continue
                 // Manual language feature setting overrides the previous value of the same feature setting, if it exists.
                 internalArguments.removeIf {
                     (it as? ManualLanguageFeatureSetting)?.languageFeature ==
@@ -157,8 +157,8 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         val argumentField = properties.firstOrNull { it.matches(arg) }
         if (argumentField == null) {
             when {
-                arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.unknownExtraFlags.add(arg)
-                arg.startsWith("-") -> errors.unknownArgs.add(arg)
+                arg.startsWith(ADVANCED_ARGUMENT_PREFIX) -> errors.value.unknownExtraFlags.add(arg)
+                arg.startsWith("-") -> errors.value.unknownArgs.add(arg)
                 else -> freeArgs.add(arg)
             }
             continue
@@ -172,7 +172,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
                     when (arg.substring(argument.value.length + 1)) {
                         "true" -> true
                         "false" -> false
-                        else -> true.also { errors.booleanArgumentWithValue = arg }
+                        else -> true.also { errors.value.booleanArgumentWithValue = arg }
                     }
                 } else true
             }
@@ -183,7 +183,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
                 arg.substring(argument.deprecatedName.length + 1)
             }
             i == args.size -> {
-                errors.argumentWithoutValue = arg
+                errors.value.argumentWithoutValue = arg
                 break@loop
             }
             else -> {
@@ -194,7 +194,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
         if ((argumentField.property.returnType.classifier as? KClass<*>)?.java?.isArray == false
             && !visitedArgs.add(argument.value) && value is String && property.get(result) != value
         ) {
-            errors.duplicateArguments[argument.value] = value
+            errors.value.duplicateArguments[argument.value] = value
         }
 
         updateField(property, result, value, argument.delimiter, overrideArguments)
