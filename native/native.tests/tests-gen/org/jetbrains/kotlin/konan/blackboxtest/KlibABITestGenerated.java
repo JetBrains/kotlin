@@ -235,8 +235,8 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
-    @TestMetadata("typeAliasRHSTypeChange")
-    public void testTypeAliasRHSTypeChange() throws Exception {
-        runTest("compiler/testData/klibABI/typeAliasRHSTypeChange/");
+    @TestMetadata("typeAliasChanges")
+    public void testTypeAliasChanges() throws Exception {
+        runTest("compiler/testData/klibABI/typeAliasChanges/");
     }
 }

@@ -205,8 +205,8 @@ public class JsKLibABINoICTestCaseGenerated extends AbstractJsKLibABINoICTestCas
         runTest("compiler/testData/klibABI/replaceCallableReturnType/");
     }
 
-    @TestMetadata("typeAliasRHSTypeChange")
-    public void testTypeAliasRHSTypeChange() throws Exception {
-        runTest("compiler/testData/klibABI/typeAliasRHSTypeChange/");
+    @TestMetadata("typeAliasChanges")
+    public void testTypeAliasChanges() throws Exception {
+        runTest("compiler/testData/klibABI/typeAliasChanges/");
     }
 }
