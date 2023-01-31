@@ -127,10 +127,12 @@ class CollectionLiteralResolver(
             return ArrayFqNames.ARRAY_OF_FUNCTION
         }
 
+        val primitiveElementType = KotlinBuiltIns.getPrimitiveArrayElementType(expectedType)
+        if (primitiveElementType != null) return ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY[primitiveElementType]!!
+
         val descriptor = expectedType.constructor.declarationDescriptor ?: return ArrayFqNames.ARRAY_OF_FUNCTION
 
-        return ArrayFqNames.PRIMITIVE_TYPE_TO_ARRAY[KotlinBuiltIns.getPrimitiveArrayType(descriptor)]
-            ?: UnsignedTypes.unsignedArrayTypeToArrayCall[UnsignedTypes.toUnsignedArrayType(descriptor)]
+        return UnsignedTypes.unsignedArrayTypeToArrayCall[UnsignedTypes.toUnsignedArrayType(descriptor)]
             ?: ArrayFqNames.ARRAY_OF_FUNCTION
     }
 }

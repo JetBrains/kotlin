@@ -51,7 +51,6 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
         get() = symbolTable
 
     val iterator = getClass(Name.identifier("Iterator"), "kotlin", "collections")
-    val vArrayIterator = getClass(Name.identifier("VArrayIterator"), "kotlin")
 
     val charSequence = getClass(Name.identifier("CharSequence"), "kotlin")
     val string = getClass(Name.identifier("String"), "kotlin")
@@ -134,14 +133,17 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
     val doubleArray get() = irBuiltIns.doubleArray
     val booleanArray get() = irBuiltIns.booleanArray
 
-    val byteArrayType get() = byteArray.owner.defaultType
-    val charArrayType get() = charArray.owner.defaultType
-    val shortArrayType get() = shortArray.owner.defaultType
-    val intArrayType get() = intArray.owner.defaultType
-    val longArrayType get() = longArray.owner.defaultType
-    val floatArrayType get() = floatArray.owner.defaultType
-    val doubleArrayType get() = doubleArray.owner.defaultType
-    val booleanArrayType get() = booleanArray.owner.defaultType
+    val byteArrayType get() = primitiveArrayType(irBuiltIns.byteType, irBuiltIns.byteArray)
+    val charArrayType get() = primitiveArrayType(irBuiltIns.charType, irBuiltIns.charArray)
+    val shortArrayType get() = primitiveArrayType(irBuiltIns.shortType, irBuiltIns.shortArray)
+    val intArrayType get() = primitiveArrayType(irBuiltIns.intType, irBuiltIns.intArray)
+    val longArrayType get() = primitiveArrayType(irBuiltIns.longType, irBuiltIns.longArray)
+    val floatArrayType get() = primitiveArrayType(irBuiltIns.floatType, irBuiltIns.floatArray)
+    val doubleArrayType get() = primitiveArrayType(irBuiltIns.doubleType, irBuiltIns.doubleArray)
+    val booleanArrayType get() = primitiveArrayType(irBuiltIns.booleanType, irBuiltIns.booleanArray)
+
+    private fun primitiveArrayType(elementType: IrType, arrayClass: IrClassSymbol?) =
+        arrayClass?.owner?.defaultType ?: vArray!!.typeWith(elementType)
 
     val primitiveTypesToPrimitiveArrays get() = irBuiltIns.primitiveTypesToPrimitiveArrays
     val primitiveArraysToPrimitiveTypes get() = irBuiltIns.primitiveArraysToPrimitiveTypes

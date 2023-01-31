@@ -375,14 +375,14 @@ class IrBuiltInsOverDescriptors(
     override val primitiveIrTypesWithComparisons = listOf(charType, byteType, shortType, intType, floatType, longType, doubleType)
     override val primitiveFloatingPointIrTypes = listOf(floatType, doubleType)
 
-    override val byteArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BYTE).toIrSymbol()
-    override val charArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.CHAR).toIrSymbol()
-    override val shortArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.SHORT).toIrSymbol()
-    override val intArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.INT).toIrSymbol()
-    override val longArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.LONG).toIrSymbol()
-    override val floatArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.FLOAT).toIrSymbol()
-    override val doubleArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.DOUBLE).toIrSymbol()
-    override val booleanArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BOOLEAN).toIrSymbol()
+    override val byteArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BYTE)?.toIrSymbol()
+    override val charArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.CHAR)?.toIrSymbol()
+    override val shortArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.SHORT)?.toIrSymbol()
+    override val intArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.INT)?.toIrSymbol()
+    override val longArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.LONG)?.toIrSymbol()
+    override val floatArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.FLOAT)?.toIrSymbol()
+    override val doubleArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.DOUBLE)?.toIrSymbol()
+    override val booleanArray = builtIns.getPrimitiveArrayClassDescriptor(PrimitiveType.BOOLEAN)?.toIrSymbol()
 
     override val primitiveArraysToPrimitiveTypes =
         PrimitiveType.values().associate { builtIns.getPrimitiveArrayClassDescriptor(it).toIrSymbol() to it }
