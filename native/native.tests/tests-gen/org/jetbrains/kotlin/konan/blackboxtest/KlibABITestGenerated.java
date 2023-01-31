@@ -61,6 +61,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("functionTransformations")
+    public void testFunctionTransformations() throws Exception {
+        runTest("compiler/testData/klibABI/functionTransformations/");
+    }
+
+    @Test
     @TestMetadata("inheritanceIssues")
     public void testInheritanceIssues() throws Exception {
         runTest("compiler/testData/klibABI/inheritanceIssues/");

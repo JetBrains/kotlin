@@ -60,6 +60,11 @@ public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTes
         runTest("compiler/testData/klibABI/classTransformations/");
     }
 
+    @TestMetadata("functionTransformations")
+    public void testFunctionTransformations() throws Exception {
+        runTest("compiler/testData/klibABI/functionTransformations/");
+    }
+
     @TestMetadata("inheritanceIssues")
     public void testInheritanceIssues() throws Exception {
         runTest("compiler/testData/klibABI/inheritanceIssues/");
