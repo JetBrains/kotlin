@@ -17,6 +17,7 @@ kotlin {
 kotlinArtifacts {
     Native.Library("mylib") {
         target = linuxX64
+        isStatic = true
 
         withPodspec {
             attribute(

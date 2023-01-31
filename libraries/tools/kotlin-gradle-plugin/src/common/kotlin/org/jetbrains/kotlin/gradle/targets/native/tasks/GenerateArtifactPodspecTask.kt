@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.gradle.utils.appendLine
 abstract class GenerateArtifactPodspecTask : DefaultTask() {
 
     enum class ArtifactType {
-        Library, Framework, FatFramework, XCFramework
+        StaticLibrary, DynamicLibrary, Framework, FatFramework, XCFramework
     }
 
     @get:Input
@@ -126,18 +126,26 @@ abstract class GenerateArtifactPodspecTask : DefaultTask() {
             }
 
             if (vendoredKeys.none { attributes.get().containsKey(it) }) {
-                val vendoredKey = when (artifactTypeValue) {
-                    Library -> vendoredLibrary
+                val key = when (artifactTypeValue) {
+                    StaticLibrary, DynamicLibrary -> vendoredLibrary
                     Framework, FatFramework, XCFramework -> vendoredFrameworks
                 }
 
-                val vendoredValue = specName.get() + "." + when (artifactTypeValue) {
-                    Library -> "dylib"
+                val prefix = when (artifactTypeValue) {
+                    StaticLibrary, DynamicLibrary -> "lib"
+                    else -> ""
+                }
+
+                val suffix = when (artifactTypeValue) {
+                    StaticLibrary -> "a"
+                    DynamicLibrary -> "dylib"
                     Framework, FatFramework -> "framework"
                     XCFramework -> "xcframework"
                 }
 
-                put(vendoredKey, vendoredValue)
+                val value = "$prefix${specName.get()}.$suffix"
+
+                put(key, value)
             }
         }
     }
