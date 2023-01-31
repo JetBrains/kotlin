@@ -117,6 +117,22 @@ public class FirSpecificBlackBoxCodegenTestGenerated extends AbstractFirBlackBox
                     runTest("compiler/fir/fir2ir/testData/codegen/box/properties/backingField/overriddenPropertiesWithExplicitBackingFields.kt");
                 }
             }
+
+            @Nested
+            @TestMetadata("compiler/fir/fir2ir/testData/codegen/box/properties/synthetic")
+            @TestDataPath("$PROJECT_ROOT")
+            public class Synthetic {
+                @Test
+                public void testAllFilesPresentInSynthetic() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/fir2ir/testData/codegen/box/properties/synthetic"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                }
+
+                @Test
+                @TestMetadata("kt56072.kt")
+                public void testKt56072() throws Exception {
+                    runTest("compiler/fir/fir2ir/testData/codegen/box/properties/synthetic/kt56072.kt");
+                }
+            }
         }
     }
 

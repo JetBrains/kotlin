@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.*
@@ -82,6 +83,13 @@ class FakeOverrideGenerator(
             // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
             realDeclarationSymbols = emptySet()
         )
+        FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(session, firClass.defaultType(), useSiteMemberScope)?.let {
+            generateFakeOverridesForName(
+                irClass, it, name, firClass, this,
+                // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
+                realDeclarationSymbols = emptySet()
+            )
+        }
         if (firClass.isEnumClass) return@buildList // F/O for values/valueOf/entries aren't needed, for other members aren't possible
         val staticScope = firClass.scopeProvider.getStaticMemberScopeForCallables(firClass, session, scopeSession)
         if (staticScope != null) {
