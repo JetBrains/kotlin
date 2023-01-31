@@ -47,12 +47,12 @@ class NativeLibraryDslWithCocoapodsIT : BaseGradleIT() {
     }
 
     @Test
-    fun `generate podspec when assembling lib`() {
+    fun `generate podspec when assembling static lib`() {
         project {
-            build(":shared:assembleMylibSharedLibraryLinuxX64") {
+            build(":shared:assembleMylibStaticLibraryLinuxX64") {
                 assertSuccessful()
                 assertTasksExecuted(":shared:generateMylibPodspec")
-                assertFilesContentEqual("podspecs/mylib.podspec", "/shared/build/out/dynamic/mylib.podspec")
+                assertFilesContentEqual("podspecs/mylib.podspec", "/shared/build/out/static/mylib.podspec")
             }
         }
     }

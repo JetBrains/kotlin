@@ -406,7 +406,10 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         val podspecTaskName = lowerCamelCaseName("generate", artifactName, "podspec")
 
         val artifactType = when (artifact) {
-            is KotlinNativeLibrary -> GenerateArtifactPodspecTask.ArtifactType.Library
+            is KotlinNativeLibrary -> when {
+                artifact.isStatic -> GenerateArtifactPodspecTask.ArtifactType.StaticLibrary
+                else -> GenerateArtifactPodspecTask.ArtifactType.DynamicLibrary
+            }
             is KotlinNativeFramework -> GenerateArtifactPodspecTask.ArtifactType.Framework
             is KotlinNativeFatFramework -> GenerateArtifactPodspecTask.ArtifactType.FatFramework
             is KotlinNativeXCFramework -> GenerateArtifactPodspecTask.ArtifactType.XCFramework
