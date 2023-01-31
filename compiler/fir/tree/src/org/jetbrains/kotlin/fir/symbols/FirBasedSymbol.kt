@@ -79,7 +79,17 @@ fun FirAnnotationContainer.resolvedAnnotationsWithArguments(anchorElement: FirBa
 fun List<FirAnnotation>.resolvedAnnotationsWithArguments(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
     if (isEmpty()) return emptyList()
 
-    val phase = if (any { it is FirAnnotationCall && it.arguments.isNotEmpty() }) {
+    // this loop by index is required to avoid possible ConcurrentModificationException
+    var hasAnnotationCallWithArguments = false
+    for (i in indices) {
+        val currentAnnotation = get(i)
+        if (currentAnnotation is FirAnnotationCall && currentAnnotation.arguments.isNotEmpty()) {
+            hasAnnotationCallWithArguments = true
+            break
+        }
+    }
+
+    val phase = if (hasAnnotationCallWithArguments) {
         FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING
     } else {
         FirResolvePhase.TYPES

@@ -51,12 +51,15 @@ internal fun annotationsByClassId(
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
 ): List<KtAnnotationApplicationWithArgumentsInfo> =
     if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId)) {
-        annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).mapIndexedNotNull { index, annotation ->
-            if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.toAnnotationClassIdSafe(useSiteSession) != classId) {
-                return@mapIndexedNotNull null
+        buildList {
+            // this loop by index is required to avoid possible ConcurrentModificationException
+            val annotations = annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol)
+            for (index in annotations.indices) {
+                val annotation = annotations[index]
+                if (useSiteTargetFilter.isAllowed(annotation.useSiteTarget) && annotation.toAnnotationClassIdSafe(useSiteSession) == classId) {
+                    add(annotation.toKtAnnotationApplication(useSiteSession, index))
+                }
             }
-
-            annotation.toKtAnnotationApplication(useSiteSession, index)
         }
     } else {
         annotationContainer.resolvedAnnotationsWithArguments(firSymbol).mapIndexedNotNull { index, annotation ->
@@ -99,16 +102,24 @@ internal fun hasAnnotation(
     useSiteTargetFilter: AnnotationUseSiteTargetFilter,
     useSiteSession: FirSession,
     annotationContainer: FirAnnotationContainer = firSymbol.fir,
-): Boolean =
-    if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId)) {
-        annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol).any {
-            useSiteTargetFilter.isAllowed(it.useSiteTarget) && it.toAnnotationClassIdSafe(useSiteSession) == classId
+): Boolean {
+    return if (firSymbol.isFromCompilerRequiredAnnotationsPhase(classId)) {
+        // this loop by index is required to avoid possible ConcurrentModificationException
+        val annotations = annotationContainer.resolvedCompilerRequiredAnnotations(firSymbol)
+        for (index in annotations.indices) {
+            val annotation = annotations[index]
+            if (useSiteTargetFilter.isAllowed(annotation.useSiteTarget) && annotation.toAnnotationClassIdSafe(useSiteSession) == classId) {
+                return true
+            }
         }
+
+        false
     } else {
         annotationContainer.resolvedAnnotationsWithClassIds(firSymbol).any {
             useSiteTargetFilter.isAllowed(it.useSiteTarget) && it.toAnnotationClassId(useSiteSession) == classId
         }
     }
+}
 
 private fun FirBasedSymbol<*>.isFromCompilerRequiredAnnotationsPhase(classId: ClassId): Boolean =
     fir.resolvePhase < FirResolvePhase.TYPES && classId in CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS
