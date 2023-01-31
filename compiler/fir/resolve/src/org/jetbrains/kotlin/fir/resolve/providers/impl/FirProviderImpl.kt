@@ -38,6 +38,10 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         return state.callableContainerMap[symbol]
     }
 
+    override fun getFirScriptContainerFile(symbol: FirScriptSymbol): FirFile? {
+        return state.scriptContainerMap[symbol]
+    }
+
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return state.classifierContainerFileMap[fqName] ?: error("Couldn't find container for $fqName")
     }
@@ -184,6 +188,11 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             val symbol = enumEntry.symbol
             data.state.callableContainerMap[symbol] = data.file
         }
+
+        override fun visitScript(script: FirScript, data: FirRecorderData) {
+            val symbol = script.symbol
+            data.state.scriptContainerMap[symbol] = data.file
+        }
     }
 
     private val state = State()
@@ -199,6 +208,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         val propertyMap = mutableMapOf<CallableId, List<FirPropertySymbol>>()
         val constructorMap = mutableMapOf<CallableId, List<FirConstructorSymbol>>()
         val callableContainerMap = mutableMapOf<FirCallableSymbol<*>, FirFile>()
+        val scriptContainerMap = mutableMapOf<FirScriptSymbol, FirFile>()
 
         fun setFrom(other: State) {
             fileMap.clear()
@@ -209,6 +219,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             propertyMap.clear()
             constructorMap.clear()
             callableContainerMap.clear()
+            scriptContainerMap.clear()
 
             fileMap.putAll(other.fileMap)
             allSubPackages.addAll(other.allSubPackages)
@@ -218,6 +229,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             propertyMap.putAll(other.propertyMap)
             constructorMap.putAll(other.constructorMap)
             callableContainerMap.putAll(other.callableContainerMap)
+            scriptContainerMap.putAll(other.scriptContainerMap)
             classesInPackage.putAll(other.classesInPackage)
             classifierInPackage.putAll(other.classifierInPackage)
         }
