@@ -320,6 +320,12 @@ public class SymbolLightClassesByFqNameForLibraryTestGenerated extends AbstractS
         }
 
         @Test
+        @TestMetadata("InternalFacadeClass.kt")
+        public void testInternalFacadeClass() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/InternalFacadeClass.kt");
+        }
+
+        @Test
         @TestMetadata("MultiFile.kt")
         public void testMultiFile() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/MultiFile.kt");

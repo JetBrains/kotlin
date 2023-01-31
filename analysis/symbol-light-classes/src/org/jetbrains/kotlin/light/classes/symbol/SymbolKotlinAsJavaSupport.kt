@@ -11,6 +11,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createAllLibrariesModificationTracker
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
@@ -130,8 +132,30 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> = error("Should not be called")
 
-    //TODO Implement if necessary for symbol
-    override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> = emptyList()
+    override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+        val facadeKtFiles = project.createDeclarationProvider(scope).findInternalFilesForFacade(fqName)
+        if (facadeKtFiles.isEmpty()) return emptyList()
+
+        val partShortName = fqName.shortName().asString()
+        val partClassFileShortName = "$partShortName.class"
+
+        return facadeKtFiles.mapNotNull { facadeKtFile ->
+            if (facadeKtFile is KtClsFile) {
+                val partClassFile = facadeKtFile.virtualFile.parent.findChild(partClassFileShortName) ?: return@mapNotNull null
+                val psiFile = facadeKtFile.manager.findFile(partClassFile) as? KtClsFile ?: facadeKtFile
+                val javaClsClass = DecompiledLightClassesFactory.createClsJavaClassFromVirtualFile(
+                    mirrorFile = psiFile,
+                    classFile = partClassFile,
+                    correspondingClassOrObject = null,
+                    project = project,
+                ) ?: return@mapNotNull null
+
+                KtLightClassForDecompiledDeclaration(javaClsClass, javaClsClass.parent, psiFile, null)
+            } else {
+                null
+            }
+        }
+    }
 
     override fun findFilesForFacade(facadeFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
         return project.createDeclarationProvider(searchScope).findFilesForFacade(facadeFqName)

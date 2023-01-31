@@ -407,6 +407,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/AllPrivate.kt");
         }
 
+        @TestMetadata("InternalFacadeClass.kt")
+        public void testInternalFacadeClass() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/InternalFacadeClass.kt");
+        }
+
         @TestMetadata("MultiFile.kt")
         public void testMultiFile() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/facades/MultiFile.kt");
