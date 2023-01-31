@@ -7,17 +7,19 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
+import com.intellij.util.concurrency.AtomicFieldUpdater
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
-import java.util.concurrent.atomic.AtomicReference
 
 internal class SimpleAnnotationsBox(private val annotationsComputer: (PsiModifierList) -> Collection<PsiAnnotation>) : AnnotationsBox {
-    private val cachedCollection: AtomicReference<Collection<PsiAnnotation>?> = AtomicReference()
+    @Volatile
+    private var cachedAnnotations: Collection<PsiAnnotation>? = null
 
     private fun getOrComputeAnnotations(owner: PsiModifierList): Collection<PsiAnnotation> {
-        cachedCollection.get()?.let { return it }
+        cachedAnnotations?.let { return it }
 
         val nonCachedAnnotations = annotationsComputer(owner)
-        cachedCollection.compareAndSet(null, nonCachedAnnotations)
+        fieldUpdater.compareAndSet(this, null, nonCachedAnnotations)
+
         return getOrComputeAnnotations(owner)
     }
 
@@ -29,4 +31,8 @@ internal class SimpleAnnotationsBox(private val annotationsComputer: (PsiModifie
         owner: PsiModifierList,
         qualifiedName: String,
     ): PsiAnnotation? = getOrComputeAnnotations(owner).find { it.qualifiedName == qualifiedName }
+
+    companion object {
+        private val fieldUpdater = AtomicFieldUpdater.forFieldOfType(SimpleAnnotationsBox::class.java, Collection::class.java)
+    }
 }

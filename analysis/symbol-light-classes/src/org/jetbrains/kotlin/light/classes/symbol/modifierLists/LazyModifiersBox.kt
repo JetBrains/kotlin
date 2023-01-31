@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
 import com.intellij.psi.PsiModifier
+import com.intellij.util.concurrency.AtomicFieldUpdater
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.toPersistentHashMap
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.utils.keysToMap
-import java.util.concurrent.atomic.AtomicReference
 
 internal typealias LazyModifiersComputer = (modifier: String) -> Map<String, Boolean>?
 
@@ -24,19 +24,26 @@ internal class LazyModifiersBox(
     initialValue: Map<String, Boolean> = emptyMap(),
     private val computer: LazyModifiersComputer,
 ) : ModifiersBox {
-    private val modifiersMapReference: AtomicReference<PersistentMap<String, Boolean>> = AtomicReference(initialValue.toPersistentHashMap())
+    @Volatile
+    private var modifiersMapReference: PersistentMap<String, Boolean> = initialValue.toPersistentHashMap()
 
     override fun hasModifier(modifier: String): Boolean {
-        modifiersMapReference.get()[modifier]?.let { return it }
+        modifiersMapReference[modifier]?.let { return it }
+
         val newValues = computer(modifier) ?: mapOf(modifier to false)
-        modifiersMapReference.updateAndGet {
-            it.putAll(newValues)
-        }
+        do {
+            val currentMap = modifiersMapReference
+            currentMap[modifier]?.let { return it }
+
+            val newMap = currentMap.putAll(newValues)
+        } while (fieldUpdater.compareAndSet(/* owner = */ this, /* expected = */ currentMap, /* newValue = */ newMap))
 
         return newValues[modifier] ?: error("Inconsistent state: $modifier")
     }
 
     companion object {
+        private val fieldUpdater = AtomicFieldUpdater.forFieldOfType(LazyModifiersBox::class.java, PersistentMap::class.java)
+
         internal val VISIBILITY_MODIFIERS = setOf(PsiModifier.PUBLIC, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PRIVATE)
         internal val VISIBILITY_MODIFIERS_MAP: PersistentMap<String, Boolean> =
             VISIBILITY_MODIFIERS.keysToMap {

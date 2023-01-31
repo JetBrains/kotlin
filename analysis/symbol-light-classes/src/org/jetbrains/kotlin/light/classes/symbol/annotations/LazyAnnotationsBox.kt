@@ -7,21 +7,22 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
+import com.intellij.util.concurrency.AtomicFieldUpdater
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.SmartList
-import java.util.concurrent.atomic.AtomicReference
 
 internal class LazyAnnotationsBox(
     private val annotationsProvider: AnnotationsProvider,
     private val additionalAnnotationsProvider: AdditionalAnnotationsProvider = EmptyAdditionalAnnotationsProvider,
     private val annotationFilter: AnnotationFilter = AlwaysAllowedAnnotationFilter,
 ) : AnnotationsBox {
-    private val cachedCollection: AtomicReference<Collection<PsiAnnotation>?> = AtomicReference()
+    @Volatile
+    private var cachedAnnotations: Collection<PsiAnnotation>? = null
 
     private fun getOrComputeCachedAnnotations(owner: PsiModifierList): Collection<PsiAnnotation> {
-        cachedCollection.get()?.let { return it }
+        cachedAnnotations?.let { return it }
 
         val annotations = annotationsProvider.annotationInfos().mapNotNullTo(SmartList<PsiAnnotation>()) { applicationInfo ->
             applicationInfo.classId?.let { _ ->
@@ -33,7 +34,7 @@ internal class LazyAnnotationsBox(
         additionalAnnotationsProvider.addAllAnnotations(annotations, foundQualifiers, owner)
 
         val resultAnnotations = annotationFilter.filtered(annotations)
-        cachedCollection.compareAndSet(null, resultAnnotations)
+        fieldUpdater.compareAndSet(this, null, resultAnnotations)
 
         return getOrComputeCachedAnnotations(owner)
     }
@@ -50,7 +51,7 @@ internal class LazyAnnotationsBox(
     fun findAnnotation(owner: PsiModifierList, qualifiedName: String, withAdditionalAnnotations: Boolean): PsiAnnotation? {
         if (!annotationFilter.isAllowed(qualifiedName)) return null
 
-        cachedCollection.get()?.let { annotations ->
+        cachedAnnotations?.let { annotations ->
             return annotations.find { it.qualifiedName == qualifiedName }
         }
 
@@ -69,7 +70,7 @@ internal class LazyAnnotationsBox(
     override fun hasAnnotation(owner: PsiModifierList, qualifiedName: String): Boolean {
         if (!annotationFilter.isAllowed(qualifiedName)) return false
 
-        cachedCollection.get()?.let { annotations ->
+        cachedAnnotations?.let { annotations ->
             return annotations.any { it.qualifiedName == qualifiedName }
         }
 
@@ -82,6 +83,8 @@ internal class LazyAnnotationsBox(
     }
 
     companion object {
+        private val fieldUpdater = AtomicFieldUpdater.forFieldOfType(LazyAnnotationsBox::class.java, Collection::class.java)
+
         /**
          * @see org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
          */
