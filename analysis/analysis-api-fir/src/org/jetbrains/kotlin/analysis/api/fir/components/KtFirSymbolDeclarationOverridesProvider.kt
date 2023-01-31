@@ -11,21 +11,23 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirAnonymousObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassOrObjectSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverrideFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionOverridePropertySymbol
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
+import org.jetbrains.kotlin.load.java.propertyNamesByAccessorName
 
 internal class KtFirSymbolDeclarationOverridesProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -124,6 +126,46 @@ internal class KtFirSymbolDeclarationOverridesProvider(
         )
         firTypeScope.processCallableByName(firCallableDeclaration)
         process(firTypeScope, firCallableDeclaration)
+
+        if (firCallableDeclaration is FirSimpleFunction) {
+            processOverridingSyntheticProperty(firCallableDeclaration, firTypeScope, process)
+        }
+    }
+
+    /**
+     * In case of a java method overriding a property inherited from Kotlin (for example:
+     * // A.kt
+     * interface A {
+     *     val foo: Int
+     * }
+     * // B.java
+     * class B implements A {
+     *     public int getFoo() {
+     *         return 0;
+     *     }
+     * }
+     * ), the actual hierarchy is as follows:
+     * B.getFoo (not visible from Kotlin) -> B.foo (synthetic property, visible from Kotlin) -> A.foo
+     * To process the overrides of B.getFoo correctly, we need to get to the B.foo synthetic property declaration.
+     */
+    private inline fun processOverridingSyntheticProperty(
+        firCallableDeclaration: FirSimpleFunction,
+        firTypeScope: FirTypeScope,
+        crossinline process: (FirTypeScope, FirDeclaration) -> Unit
+    ) {
+        val possiblePropertyNames = propertyNamesByAccessorName(firCallableDeclaration.name)
+        for (name in possiblePropertyNames) {
+            firTypeScope.processPropertiesByName(name) { variableSymbol ->
+                val propertyDeclaration = variableSymbol.fir
+                if (propertyDeclaration is FirSyntheticProperty) {
+                    if (propertyDeclaration.getter.delegate.symbol.callableId == firCallableDeclaration.symbol.callableId
+                        || propertyDeclaration.setter?.delegate?.symbol?.callableId == firCallableDeclaration.symbol.callableId
+                    ) {
+                        process(firTypeScope, propertyDeclaration)
+                    }
+                }
+            }
+        }
     }
 
     private fun FirCallableSymbol<*>.collectIntersectionOverridesSymbolsTo(to: MutableCollection<FirCallableSymbol<*>>) {
