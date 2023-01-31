@@ -170,7 +170,11 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         PrimitiveType.NUMBER_TYPES.flatMap { type -> numberConversionMethods(type.symbol) } +
                 numberConversionMethods(irBuiltIns.numberClass)
 
-    private fun vArrayMethods() = arrayMethods(irBuiltIns.vArrayClass.owner.typeParameters.single().symbol, irBuiltIns.vArrayClass)
+    private fun vArrayMethods() = if (irBuiltIns.vArrayClass == null) {
+        emptyList()
+    } else {
+        arrayMethods(irBuiltIns.vArrayClass!!.owner.typeParameters.single().symbol, irBuiltIns.vArrayClass!!)
+    }
 
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
         symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) ->

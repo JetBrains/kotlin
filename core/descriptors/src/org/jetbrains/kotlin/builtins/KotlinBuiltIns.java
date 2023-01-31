@@ -89,10 +89,7 @@ public abstract class KotlinBuiltIns {
             @Override
             public ClassDescriptor invoke(Name name) {
                 ClassifierDescriptor classifier = getBuiltInsPackageScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
-                if (classifier == null) {
-                    throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(name) + " is not found");
-                }
-                if (!(classifier instanceof ClassDescriptor)) {
+                if (classifier != null && !(classifier instanceof ClassDescriptor)) {
                     throw new AssertionError("Must be a class descriptor " + name + ", but was " + classifier);
                 }
                 return (ClassDescriptor) classifier;
@@ -220,6 +217,14 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     private ClassDescriptor getBuiltInClassByName(@NotNull String simpleName) {
+        ClassDescriptor classDescriptor = builtInClassesByName.invoke(Name.identifier(simpleName));
+        if (classDescriptor == null) {
+            throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName)) + " is not found");
+        }
+        return classDescriptor;
+    }
+
+    private ClassDescriptor getBuiltInClassByNameOrNull(@NotNull String simpleName) {
         return builtInClassesByName.invoke(Name.identifier(simpleName));
     }
 
@@ -283,9 +288,8 @@ public abstract class KotlinBuiltIns {
         return getBuiltInClassByName("Array");
     }
 
-    @NotNull
     public ClassDescriptor getVArray() {
-        return getBuiltInClassByName("VArray");
+        return getBuiltInClassByNameOrNull("VArray");
     }
 
     @NotNull

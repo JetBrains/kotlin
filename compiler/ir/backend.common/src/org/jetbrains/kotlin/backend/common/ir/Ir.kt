@@ -120,7 +120,7 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
 
     val arrayOf: IrSimpleFunctionSymbol get() = irBuiltIns.arrayOf
     val arrayOfNulls: IrSimpleFunctionSymbol get() = irBuiltIns.arrayOfNulls
-    val vArrayOfNulls: IrSimpleFunctionSymbol get() = irBuiltIns.vArrayOfNulls
+    val vArrayOfNulls: IrSimpleFunctionSymbol? get() = irBuiltIns.vArrayOfNulls
 
     val array get() = irBuiltIns.arrayClass
     val vArray get() = irBuiltIns.vArrayClass

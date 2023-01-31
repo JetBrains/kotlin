@@ -390,8 +390,8 @@ class IrBuiltInsOverFir(
         }
     }
 
-    override val vArrayOfNulls: IrSimpleFunctionSymbol by lazy {
-        findFunctions(kotlinPackage, Name.identifier("vArrayOfNulls")).first {
+    override val vArrayOfNulls: IrSimpleFunctionSymbol? by lazy {
+        findFunctions(kotlinPackage, Name.identifier("vArrayOfNulls")).firstOrNull {
             it.owner.dispatchReceiverParameter == null && it.owner.valueParameters.size == 1 &&
                     it.owner.valueParameters[0].type == intType
         }

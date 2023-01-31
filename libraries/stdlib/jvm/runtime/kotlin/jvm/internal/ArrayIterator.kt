@@ -5,11 +5,10 @@
 
 package kotlin.jvm.internal
 
-private class ArrayIterator<T>(val array: Array<T>) : VArrayIterator<T> {
+private class ArrayIterator<T>(val array: Array<T>) : Iterator<T> {
     private var index = 0
     override fun hasNext() = index < array.size
     override fun next() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }
 }
 
 public fun <T> iterator(array: Array<T>): Iterator<T> = ArrayIterator(array)
-public fun <T> vArrayIterator(array: Array<T>): VArrayIterator<T> = ArrayIterator(array)
