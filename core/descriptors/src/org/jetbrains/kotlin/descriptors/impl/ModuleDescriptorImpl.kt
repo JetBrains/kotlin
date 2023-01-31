@@ -155,8 +155,12 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     override fun <T> getCapability(capability: ModuleCapability<T>) = capabilities[capability] as? T
 
     override fun toString(): String {
-        val toString = super.toString()
-        return if (isValid) toString else "$toString !isValid"
+        return buildString {
+            append(super.toString())
+            if (!isValid) append(" !isValid")
+            append(" packageFragmentProvider: ")
+            append(packageFragmentProviderForModuleContent?.javaClass?.simpleName)
+        }
     }
 }
 
