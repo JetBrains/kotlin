@@ -664,10 +664,6 @@ open class SymbolTable(
             else IrEnumEntrySymbolImpl()
         }
 
-    fun referenceEnumEntryIfAny(sig: IdSignature): IrEnumEntrySymbol? {
-        return enumEntrySymbolTable.get(sig)
-    }
-
     val unboundEnumEntries: Set<IrEnumEntrySymbol> get() = enumEntrySymbolTable.unboundSymbols
 
     private fun createFieldSymbol(descriptor: PropertyDescriptor, signature: IdSignature?): IrFieldSymbol =

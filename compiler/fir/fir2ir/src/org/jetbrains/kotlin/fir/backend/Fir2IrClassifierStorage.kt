@@ -535,11 +535,6 @@ class Fir2IrClassifierStorage(
     ): IrEnumEntry {
         return enumEntry.convertWithOffsets { startOffset, endOffset ->
             val signature = signatureComposer.composeSignature(enumEntry, forceTopLevelPrivate = forceTopLevelPrivate)
-            if (signature != null) {
-                // Compilation of kotlinx-serialization-protobuf fails with "already bound" exception if this check is removed
-                // TODO: get rid of this check
-                symbolTable.referenceEnumEntryIfAny(signature)?.let { if (it.isBound) return@convertWithOffsets it.owner }
-            }
             val result = declareIrEnumEntry(signature) { symbol ->
                 val origin = enumEntry.computeIrOrigin(predefinedOrigin)
                 irFactory.createEnumEntry(
