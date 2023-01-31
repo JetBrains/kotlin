@@ -112,7 +112,7 @@ class PassEventReporter(private val stream: PrintStream) : AutoCloseable {
     }
 }
 
-class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
+class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
 
     private lateinit var dump: MultiModuleHtmlFirDump
     private lateinit var bench: FirResolveBench
