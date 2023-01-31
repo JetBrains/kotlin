@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.util.LowMemoryWatcher
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
@@ -60,6 +61,10 @@ private class KtAnalysisSessionCache(project: Project) {
             project.createProjectWideOutOfBlockModificationTracker()
         )
     )
+
+    init {
+        LowMemoryWatcher.register({ cache.clearCachedValues() }, project)
+    }
 
     @TestOnly
     fun clear() {
