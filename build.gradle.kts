@@ -108,7 +108,7 @@ rootProject.apply {
 IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
-    extra["versions.kotlin-native"] = "1.9.0-dev-764"
+    extra["versions.kotlin-native"] = "1.9.0-dev-886"
 }
 
 val irCompilerModules = arrayOf(
