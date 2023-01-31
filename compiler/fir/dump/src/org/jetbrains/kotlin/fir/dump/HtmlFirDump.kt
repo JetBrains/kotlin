@@ -1591,6 +1591,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                 is FirCheckedSafeCallSubject -> {
                     +"\$subj\$"
                 }
+                is FirSmartCastExpression -> generate(expression)
                 else -> inlineUnsupported(expression)
             }
         }
@@ -1600,6 +1601,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         generate(comparisonExpression.left)
         +" ${comparisonExpression.operation.operator} "
         generate(comparisonExpression.right)
+    }
+
+    private fun FlowContent.generate(smartCastExpression: FirSmartCastExpression) {
+        span(classes = "smart-cast") {
+            generate(smartCastExpression.originalExpression)
+        }
     }
 
     private fun FlowContent.generate(safeCallExpression: FirSafeCallExpression) {

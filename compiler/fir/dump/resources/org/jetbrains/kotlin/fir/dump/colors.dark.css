@@ -103,3 +103,7 @@ body.dark {
     background-color: #3a3a3a;
     color: #dfdfdf;
 }
+
+.dark .smart-cast {
+    background-color: #223C23;
+}
