@@ -52,6 +52,7 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             is IrConstructorSymbol -> generateConstructor(symbol)
             is IrPropertySymbol -> generateProperty(symbol)
             is IrEnumEntrySymbol -> generateEnumEntry(symbol)
+            is IrTypeAliasSymbol -> generateTypeAlias(symbol)
             else -> throw NotImplementedError("Generation of stubs for ${symbol::class.java} is not supported yet")
         }
     }
@@ -133,6 +134,19 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
             origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
             symbol = symbol,
             name = symbol.guessName()
+        ).setCommonParent()
+    }
+
+    private fun generateTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAlias {
+        return builtIns.irFactory.createTypeAlias(
+            startOffset = UNDEFINED_OFFSET,
+            endOffset = UNDEFINED_OFFSET,
+            symbol = symbol,
+            name = symbol.guessName(),
+            visibility = DescriptorVisibilities.DEFAULT_VISIBILITY,
+            expandedType = builtIns.nothingType,
+            isActual = true,
+            origin = PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION,
         ).setCommonParent()
     }
 
