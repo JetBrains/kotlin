@@ -25,8 +25,7 @@ import sample.pack.*
 fun box() {
     return with(A()) {
         with(B()) {
-            // K1 resolves to A::B.check
-            // K2 - to ::A.check
+            // Both K1 & K2 resolve to A::B.check
             forEach()
         }
     }

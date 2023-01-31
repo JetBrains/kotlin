@@ -1,8 +1,8 @@
 fun foo() = withIntList {
     withStringSequence {
         forEach { line ->
-            line.rem(1)
-            line.<!UNRESOLVED_REFERENCE!>length<!>
+            line.<!UNRESOLVED_REFERENCE!>rem<!>(1)
+            line.length
         }
     }
 }

@@ -26,7 +26,7 @@ FILE: Second.kt
     public final fun box(): R|kotlin/Unit| {
         ^box R|kotlin/with|<R|sample/pack/A|, R|kotlin/Unit|>(R|sample/pack/A.A|(), <L> = with@fun R|sample/pack/A|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
             R|kotlin/with|<R|sample/pack/B|, R|kotlin/Unit|>(R|sample/pack/B.B|(), <L> = with@fun R|sample/pack/B|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
-                this@R|special/anonymous|.R|sample/pack/forEach|()
+                (this@R|special/anonymous|, this@R|special/anonymous|).R|sample/pack/A.forEach|()
             }
             )
         }
