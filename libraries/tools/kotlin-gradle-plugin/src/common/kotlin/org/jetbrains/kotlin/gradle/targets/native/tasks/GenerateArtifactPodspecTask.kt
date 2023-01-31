@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFile
+import org.gradle.api.logging.Logger
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
@@ -21,6 +22,16 @@ abstract class GenerateArtifactPodspecTask : DefaultTask() {
 
     enum class ArtifactType {
         StaticLibrary, DynamicLibrary, Framework, FatFramework, XCFramework
+    }
+
+    init {
+        this.onlyIf {
+            val shouldRun = attributes.get().isNotEmpty() || rawStatements.get().isNotEmpty()
+            if (!shouldRun) {
+                logger.info("Skipping task '$path' because there are no podspec attributes defined")
+            }
+            shouldRun
+        }
     }
 
     @get:Input
