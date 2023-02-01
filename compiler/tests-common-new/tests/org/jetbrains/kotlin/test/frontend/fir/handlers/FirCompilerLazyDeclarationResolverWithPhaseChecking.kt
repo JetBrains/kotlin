@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 
 class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationResolver() {
@@ -19,6 +20,10 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
         exceptions
 
     override fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {
+        checkIfCanLazyResolveToPhase(symbol, toPhase)
+    }
+
+    override fun lazyResolveToPhaseWithCallableMembers(symbol: FirClassSymbol<*>, toPhase: FirResolvePhase) {
         checkIfCanLazyResolveToPhase(symbol, toPhase)
     }
 
