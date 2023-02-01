@@ -156,7 +156,7 @@ interface IFoo {
 
 }
 
-open enum class TestAbstractEnum2 : IFoo, Enum<TestAbstractEnum2> {
+abstract enum class TestAbstractEnum2 : IFoo, Enum<TestAbstractEnum2> {
   private constructor() /* primary */ {
     super/*Enum*/<TestAbstractEnum2>()
     /* <init>() */

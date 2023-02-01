@@ -542,13 +542,13 @@ FILE fqName:<root> fileName:/enumClassModality.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS ENUM_CLASS name:TestAbstractEnum2 modality:OPEN visibility:public superTypes:[<root>.IFoo; kotlin.Enum<<root>.TestAbstractEnum2>]
+  CLASS ENUM_CLASS name:TestAbstractEnum2 modality:ABSTRACT visibility:public superTypes:[<root>.IFoo; kotlin.Enum<<root>.TestAbstractEnum2>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestAbstractEnum2
     CONSTRUCTOR visibility:private <> () returnType:<root>.TestAbstractEnum2 [primary]
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.TestAbstractEnum2
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestAbstractEnum2 modality:OPEN visibility:public superTypes:[<root>.IFoo; kotlin.Enum<<root>.TestAbstractEnum2>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestAbstractEnum2 modality:ABSTRACT visibility:public superTypes:[<root>.IFoo; kotlin.Enum<<root>.TestAbstractEnum2>]'
     ENUM_ENTRY name:X1
       init: EXPRESSION_BODY
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestAbstractEnum2.X1'

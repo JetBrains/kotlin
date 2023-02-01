@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.Fir2IrClassSymbol
 import org.jetbrains.kotlin.fir.symbols.Fir2IrEnumEntrySymbol
@@ -197,13 +198,37 @@ class Fir2IrClassifierStorage(
             declarations.any { it is FirCallableDeclaration && it.modality == Modality.ABSTRACT } -> {
                 Modality.ABSTRACT
             }
-            declarations.any { it is FirEnumEntry && it.initializer != null } -> {
-                Modality.OPEN
-            }
-            else -> {
+            declarations.none { it is FirEnumEntry && it.initializer != null } -> {
                 Modality.FINAL
             }
+            hasAbstractMembersInScope() -> {
+                Modality.ABSTRACT
+            }
+            else -> {
+                Modality.OPEN
+            }
         }
+    }
+
+    private fun FirRegularClass.hasAbstractMembersInScope(): Boolean {
+        val scope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val names = scope.getCallableNames()
+        var hasAbstract = false
+        for (name in names) {
+            scope.processFunctionsByName(name) {
+                if (it.isAbstract) {
+                    hasAbstract = true
+                }
+            }
+            if (hasAbstract) return true
+            scope.processPropertiesByName(name) {
+                if (it.isAbstract) {
+                    hasAbstract = true
+                }
+            }
+            if (hasAbstract) return true
+        }
+        return false
     }
 
     // This function is called when we refer local class earlier than we reach its declaration
