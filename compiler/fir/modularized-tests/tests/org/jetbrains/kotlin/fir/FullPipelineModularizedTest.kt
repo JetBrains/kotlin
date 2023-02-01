@@ -8,11 +8,11 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 
 // This is used for API version configuration for both frontends
-// TODO: rename system property
+// TODO: Deprecated and only used in old FP tests
 internal val API_VERSION: String = System.getProperty("fir.bench.language.version", "1.4")
 
-// This is used for language version configuration for K2 only. K1 always uses default version
-private val LANGUAGE_VERSION_K2: String = System.getProperty("fir.bench.language.version.k2", "2.0")
+// This is used for language version configuration for K2 only. K1 uses LANGUAGE_VERSION_K1
+internal val LANGUAGE_VERSION_K2: String = System.getProperty("fir.bench.language.version.k2", "2.0")
 
 class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
 
@@ -20,16 +20,19 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
         args.useK2 = true
         args.useIR = true
         args.languageVersion = LANGUAGE_VERSION_K2
-        args.apiVersion = API_VERSION
-        args.jvmDefault = "compatibility"
-        args.optIn = moduleData.optInAnnotations.toTypedArray() + arrayOf(
-            "kotlin.RequiresOptIn",
-            "kotlin.contracts.ExperimentalContracts",
-            "kotlin.io.path.ExperimentalPathApi",
-            "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
-        )
-        args.noStdlib = true
-        args.noReflect = true
+        // TODO: Remove when support for old modularized tests is removed
+        if (moduleData.arguments == null) {
+            args.apiVersion = API_VERSION
+            args.jvmDefault = "compatibility"
+            args.optIn = moduleData.optInAnnotations.toTypedArray() + arrayOf(
+                "kotlin.RequiresOptIn",
+                "kotlin.contracts.ExperimentalContracts",
+                "kotlin.io.path.ExperimentalPathApi",
+                "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
+            )
+            args.noStdlib = true
+            args.noReflect = true
+        }
     }
 
     fun testTotalKotlin() {

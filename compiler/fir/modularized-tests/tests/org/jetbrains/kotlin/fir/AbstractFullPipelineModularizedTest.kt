@@ -128,10 +128,27 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
     }
 
     private fun configureBaseArguments(args: K2JVMCompilerArguments, moduleData: ModuleData, tmp: Path) {
+        val originalArguments = moduleData.arguments as? K2JVMCompilerArguments
+        if (originalArguments != null) {
+            args.apiVersion = originalArguments.apiVersion
+            args.noJdk = originalArguments.noJdk
+            args.noStdlib = originalArguments.noStdlib
+            args.noReflect = originalArguments.noReflect
+            args.jvmTarget = originalArguments.jvmTargetIfSupported()?.description
+            args.jsr305 = originalArguments.jsr305
+            args.nullabilityAnnotations = originalArguments.nullabilityAnnotations
+            args.jspecifyAnnotations = originalArguments.jspecifyAnnotations
+            args.jvmDefault = originalArguments.jvmDefault
+            args.jdkRelease = originalArguments.jdkRelease
+            args.progressiveMode = originalArguments.progressiveMode
+            args.optIn = (moduleData.optInAnnotations + (originalArguments.optIn ?: emptyArray())).toTypedArray()
+            args.allowKotlinPackage = originalArguments.allowKotlinPackage
+        } else {
+            args.jvmTarget = JVM_TARGET
+            args.allowKotlinPackage = true
+        }
         args.reportPerf = true
-        args.jvmTarget = JVM_TARGET
-        args.allowKotlinPackage = true
-        args.jdkHome = moduleData.jdkHome?.absolutePath
+        args.jdkHome = moduleData.jdkHome?.absolutePath ?: originalArguments?.jdkHome?.fixPath()?.absolutePath
         args.renderInternalDiagnosticNames = true
         configureArgsUsingBuildFile(args, moduleData, tmp)
     }
