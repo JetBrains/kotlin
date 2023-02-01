@@ -6,7 +6,11 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.openapi.util.JDOMUtil
+import com.intellij.util.xmlb.XmlSerializer
 import org.jdom.Element
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -37,11 +41,16 @@ data class ModuleData(
     val friendDirs = rawFriendDirs.map { it.fixPath() }
     val jdkHome = rawJdkHome?.fixPath()
     val modularJdkRoot = rawModularJdkRoot?.fixPath()
+
+    /**
+     * Raw compiler arguments, as it was passed to original module build
+     */
+    var arguments: CommonCompilerArguments? = null
 }
 
 data class JavaSourceRootData<Path : Any>(val path: Path, val packagePrefix: String?)
 
-private fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("/"))
+internal fun String.fixPath(): File = File(ROOT_PATH_PREFIX, this.removePrefix("/"))
 
 private val ROOT_PATH_PREFIX:String = System.getProperty("fir.bench.prefix", "/")
 private val OUTPUT_DIR_REGEX_FILTER:String = System.getProperty("fir.bench.filter", ".*")
@@ -136,7 +145,16 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
     private fun loadModuleDumpFile(file: File): List<ModuleData> {
         val rootElement = JDOMUtil.load(file)
         val modules = rootElement.getChildren("module")
-        return modules.map { node -> loadModule(node) }
+        val arguments = rootElement.getChild("compilerArguments")?.let { loadCompilerArguments(it) }
+        return modules.map { node -> loadModule(node).also { it.arguments = arguments } }
+    }
+
+    private fun loadCompilerArguments(argumentsRoot: Element): CommonCompilerArguments? {
+        val element = argumentsRoot.children.singleOrNull() ?: return null
+        return when (element.name) {
+            "K2JVMCompilerArguments" -> K2JVMCompilerArguments().also { XmlSerializer.deserializeInto(it, element) }
+            else -> null
+        }
     }
 
     protected abstract fun beforePass(pass: Int)
@@ -171,4 +189,11 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
         afterPass(pass)
     }
+}
+
+
+internal fun K2JVMCompilerArguments.jvmTargetIfSupported(): JvmTarget? {
+    val specified = jvmTarget?.let { JvmTarget.fromString(it) } ?: return null
+    if (specified != JvmTarget.JVM_1_6) return specified
+    return null
 }
