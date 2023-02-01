@@ -66,7 +66,8 @@ class DescriptorSerializer private constructor(
     private fun createChildSerializer(descriptor: DeclarationDescriptor): DescriptorSerializer =
         DescriptorSerializer(
             descriptor, Interner(typeParameters), extension, typeTable, versionRequirementTable,
-            serializeTypeTableToFunction = false, typeAttributeTranslators = typeAttributeTranslators
+            serializeTypeTableToFunction = false, typeAttributeTranslators = typeAttributeTranslators,
+            plugins = plugins,
         )
 
     val stringTable: DescriptorAwareStringTable
@@ -357,6 +358,8 @@ class DescriptorSerializer private constructor(
 
         extension.serializeProperty(descriptor, builder, versionRequirementTable, local)
 
+        plugins.forEach { it.afterProperty(descriptor, builder, versionRequirementTable, this, extension) }
+
         return builder
     }
 
@@ -430,6 +433,8 @@ class DescriptorSerializer private constructor(
 
         extension.serializeFunction(descriptor, builder, versionRequirementTable, local)
 
+        plugins.forEach { it.afterFunction(descriptor, builder, versionRequirementTable, this, extension) }
+
         if (serializeTypeTableToFunction) {
             typeTable.serialize()?.let { builder.typeTable = it }
         }
@@ -491,6 +496,8 @@ class DescriptorSerializer private constructor(
         }
 
         extension.serializeConstructor(descriptor, builder, local)
+
+        plugins.forEach { it.afterConstructor(descriptor, builder, versionRequirementTable, this, extension) }
 
         return builder
     }
@@ -563,6 +570,8 @@ class DescriptorSerializer private constructor(
         }
 
         extension.serializeTypeAlias(descriptor, builder)
+
+        plugins.forEach { it.afterTypealias(descriptor, builder, versionRequirementTable, this, extension) }
 
         return builder
     }
@@ -864,7 +873,8 @@ class DescriptorSerializer private constructor(
         fun createTopLevel(extension: SerializerExtension, project: Project? = null): DescriptorSerializer =
             DescriptorSerializer(
                 null, Interner(), extension, MutableTypeTable(), MutableVersionRequirementTable(), serializeTypeTableToFunction = false,
-                typeAttributeTranslators = project?.let { TypeAttributeTranslatorExtension.createTranslators(it) }
+                typeAttributeTranslators = project?.let { TypeAttributeTranslatorExtension.createTranslators(it) },
+                plugins = project?.let { DescriptorSerializerPlugin.getInstances(it) }.orEmpty(),
             )
 
         @JvmStatic
