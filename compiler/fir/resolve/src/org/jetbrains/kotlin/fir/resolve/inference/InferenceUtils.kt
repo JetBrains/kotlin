@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
@@ -85,9 +84,7 @@ fun extractLambdaInfoFromFunctionType(
         argumentValueParameters.mapIndexed { index, parameter ->
             parameter.returnTypeRef.coneTypeSafe()
                 ?: expectedParameters.getOrNull(index)
-                ?: ConeErrorType(
-                    ConeSimpleDiagnostic("Cannot infer type for parameter ${parameter.name}", DiagnosticKind.CannotInferParameterType)
-                )
+                ?: ConeErrorType(ConeCannotInferValueParameterType(parameter.symbol))
         }
     }
 

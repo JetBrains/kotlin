@@ -332,7 +332,7 @@ class FirCallCompleter(
             lambdaArgument.valueParameters.forEachIndexed { index, parameter ->
                 val newReturnType = parameters[index].approximateLambdaInputType()
                 val newReturnTypeRef = if (parameter.returnTypeRef is FirImplicitTypeRef) {
-                    newReturnType.toFirResolvedTypeRef(parameter.source)
+                    newReturnType.toFirResolvedTypeRef(parameter.source?.fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter))
                 } else parameter.returnTypeRef.resolvedTypeFromPrototype(newReturnType)
                 parameter.replaceReturnTypeRef(newReturnTypeRef)
                 lookupTracker?.recordTypeResolveAsLookup(newReturnTypeRef, parameter.source, fileSource)

@@ -1583,7 +1583,7 @@ open class RawFirBuilder(
                         multiParameter
                     } else {
                         val typeRef = valueParameter.typeReference?.convertSafe() ?: buildImplicitTypeRef {
-                            source = implicitTypeRefSource
+                            source = valueParameter.toFirSourceElement().fakeElement(KtFakeSourceElementKind.ImplicitReturnTypeOfLambdaValueParameter)
                         }
                         convertValueParameter(valueParameter, symbol, typeRef, ValueParameterDeclaration.LAMBDA)
                     }

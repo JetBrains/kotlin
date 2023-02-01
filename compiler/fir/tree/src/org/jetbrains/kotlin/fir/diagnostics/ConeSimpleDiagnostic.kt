@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.diagnostics
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.name.Name
 
@@ -23,9 +24,14 @@ class ConeUnderscoreIsReserved(source: KtSourceElement) : ConeDiagnosticWithSour
     override val reason: String get() = "Names _, __, ___, ..., are reserved in Kotlin"
 }
 
-class ConeCannotInferParameterType(
+class ConeCannotInferTypeParameterType(
     val typeParameter: FirTypeParameterSymbol,
     override val reason: String = "Cannot infer type for parameter ${typeParameter.name}"
+) : ConeDiagnostic
+
+class ConeCannotInferValueParameterType(
+    val valueParameter: FirValueParameterSymbol,
+    override val reason: String = "Cannot infer type for parameter ${valueParameter.name}"
 ) : ConeDiagnostic
 
 class ConeUnderscoreUsageWithoutBackticks(source: KtSourceElement) : ConeDiagnosticWithSource(source) {
@@ -78,7 +84,7 @@ enum class DiagnosticKind {
     Java,
     SuperNotAllowed,
     ValueParameterWithNoTypeAnnotation,
-    CannotInferParameterType,
+    CannotInferParameterType, // TODO: replace this with ConeCannotInferValueParameterType and ConeCannotInferTypeParameterType
     IllegalProjectionUsage,
     MissingStdlibClass,
     NotASupertype,

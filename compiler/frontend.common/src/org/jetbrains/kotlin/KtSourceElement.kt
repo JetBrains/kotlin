@@ -248,6 +248,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
 
     // for when on the LHS of an assignment an error expression appears
     object AssignmentLValueError : KtFakeSourceElementKind()
+
+    // for return type of value parameters in lambdas
+    object ImplicitReturnTypeOfLambdaValueParameter : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -109,7 +108,8 @@ private fun ConeDiagnostic.toKtDiagnostic(
     }
 
     is ConeDestructuringDeclarationsOnTopLevel -> FirSyntaxErrors.SYNTAX.createOn(source)
-    is ConeCannotInferParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
+    is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
+    is ConeCannotInferValueParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeInstanceAccessBeforeSuperCall -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, this.target)
     is ConeStubDiagnostic -> null
     is ConeIntermediateDiagnostic -> null

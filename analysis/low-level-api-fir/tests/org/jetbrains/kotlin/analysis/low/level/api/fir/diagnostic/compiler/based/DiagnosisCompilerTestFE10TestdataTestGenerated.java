@@ -11859,6 +11859,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("kt56138.kt")
+            public void testKt56138() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/functionLiterals/kt56138.kt");
+            }
+
+            @Test
             @TestMetadata("kt6541_extensionForExtensionFunction.kt")
             public void testKt6541_extensionForExtensionFunction() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/functionLiterals/kt6541_extensionForExtensionFunction.kt");
