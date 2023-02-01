@@ -806,7 +806,6 @@ public class DefaultErrorMessages {
         MAP.put(VALUE_CLASS_CANNOT_EXTEND_CLASSES, "Value class cannot extend classes");
         MAP.put(VALUE_CLASS_CANNOT_BE_RECURSIVE, "Value class cannot be recursive");
         MAP.put(MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER, "Default parameters are not supported in the primary constructor of a multi-field value class");
-        MAP.put(SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS, "Secondary constructors with bodies are reserved for for future releases");
         MAP.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", STRING);
         MAP.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must be only star projections");
         MAP.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes");

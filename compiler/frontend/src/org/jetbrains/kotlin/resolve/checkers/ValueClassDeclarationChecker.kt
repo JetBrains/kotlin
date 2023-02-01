@@ -265,7 +265,12 @@ class ReservedMembersAndConstructsForValueClass : DeclarationChecker {
                     val bodyExpression = secondaryConstructor.bodyExpression
                     if (secondaryConstructor.hasBlockBody() && bodyExpression is KtBlockExpression) {
                         val lBrace = bodyExpression.lBrace ?: return
-                        context.trace.report(Errors.SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS.on(lBrace))
+                        context.trace.report(
+                            Errors.UNSUPPORTED_FEATURE.on(
+                                lBrace,
+                                LanguageFeature.ValueClassesSecondaryConstructorWithBody to context.languageVersionSettings
+                            )
+                        )
                     }
                 }
             }

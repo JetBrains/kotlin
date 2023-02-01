@@ -18317,6 +18317,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("reservedConstructorsBodyInKotlinPre19.kt")
+            public void testReservedConstructorsBodyInKotlinPre19() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inlineClasses/reservedConstructorsBodyInKotlinPre19.kt");
+            }
+
+            @Test
             @TestMetadata("reservedMembersAndConstructsInsideInlineClass.kt")
             public void testReservedMembersAndConstructsInsideInlineClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inlineClasses/reservedMembersAndConstructsInsideInlineClass.kt");

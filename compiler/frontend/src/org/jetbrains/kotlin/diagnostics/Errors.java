@@ -426,7 +426,6 @@ public interface Errors {
     DiagnosticFactory0<KtTypeReference> VALUE_CLASS_CANNOT_EXTEND_CLASSES = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtTypeReference> VALUE_CLASS_CANNOT_BE_RECURSIVE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtExpression> MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<PsiElement> SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> RESERVED_MEMBER_INSIDE_VALUE_CLASS = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory0<KtTypeReference> TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> INNER_CLASS_INSIDE_VALUE_CLASS = DiagnosticFactory0.create(ERROR);

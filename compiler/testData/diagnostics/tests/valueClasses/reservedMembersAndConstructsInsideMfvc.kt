@@ -50,7 +50,7 @@ value class IC4(val s: String) : WithBox {
 
 @JvmInline
 value class IC5(val a: String) {
-    constructor(i: Int) : this(i.toString()) <!SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS!>{<!>
+    constructor(i: Int) : this(i.toString()) <!UNSUPPORTED_FEATURE!>{<!>
         TODO("something")
     }
 }
@@ -99,7 +99,7 @@ value class MFVC4(val s: String, val t: String) : WithBox {
 
 @JvmInline
 value class MFVC5(val a: String, val b: String) {
-    constructor(i: Int) : this(i.toString(), "6") <!SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS!>{<!>
+    constructor(i: Int) : this(i.toString(), "6") <!UNSUPPORTED_FEATURE!>{<!>
         TODO("something")
     }
 }
