@@ -34,6 +34,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
         val nonParallelBuild = arrayOf(
             *defaultArguments,
             "--no-parallel",
+            "--max-workers=1",
         )
 
         val nonParallelRerunBuild = arrayOf(
