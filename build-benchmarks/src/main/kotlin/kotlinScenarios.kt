@@ -180,7 +180,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
             arguments(*nonParallelBuild)
             step {
                 changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
-                runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_COMPILE_JAVA)
+                runTasks(":kotlin-gradle-plugin:assemble")
             }
         }
 
@@ -188,7 +188,25 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
             arguments(*nonParallelBuild)
             step {
                 changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PUBLIC_FUNCTION)
-                runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_COMPILE_JAVA)
+                runTasks(":kotlin-gradle-plugin:assemble")
+            }
+        }
+
+        scenario("${prefix}(leaf, kotlin gradle plugin) measure backup outputs without optimizations") {
+            arguments(*nonParallelBuild, "-Pkotlin.compiler.preciseCompilationResultsBackup=false", "-Pkotlin.compiler.keepIncrementalCompilationCachesInMemory=false")
+            step {
+                changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
+                runTasks(":kotlin-gradle-plugin:assemble")
+                repeat = 9U
+            }
+        }
+
+        scenario("${prefix}(leaf, kotlin gradle plugin) measure backup outputs with optimizations") {
+            arguments(*nonParallelBuild, "-Pkotlin.compiler.preciseCompilationResultsBackup=true", "-Pkotlin.compiler.keepIncrementalCompilationCachesInMemory=true")
+            step {
+                changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
+                runTasks(":kotlin-gradle-plugin:assemble")
+                repeat = 9U
             }
         }
     }
