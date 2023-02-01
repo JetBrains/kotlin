@@ -16,7 +16,7 @@ buildscript {
         gradlePluginPortal()
     }
 
-    val buildGradlePluginVersion ="0.0.39"
+    val buildGradlePluginVersion = extra["kotlin.build.gradlePlugin.version"]
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
     }
