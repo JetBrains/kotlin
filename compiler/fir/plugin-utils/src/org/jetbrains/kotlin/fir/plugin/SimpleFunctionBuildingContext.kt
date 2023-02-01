@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.origin
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -89,7 +89,7 @@ public class SimpleFunctionBuildingContext(
  *
  * Type and value parameters can be configured with [config] builder lambda
  */
-public fun FirDeclarationGenerationExtension.createMemberFunction(
+public fun FirExtension.createMemberFunction(
     owner: FirClassSymbol<*>,
     key: GeneratedDeclarationKey,
     name: Name,
@@ -105,7 +105,7 @@ public fun FirDeclarationGenerationExtension.createMemberFunction(
  *
  * Type and value parameters can be configured with [config] builder lambda
  */
-public fun FirDeclarationGenerationExtension.createMemberFunction(
+public fun FirExtension.createMemberFunction(
     owner: FirClassSymbol<*>,
     key: GeneratedDeclarationKey,
     name: Name,
@@ -121,7 +121,7 @@ public fun FirDeclarationGenerationExtension.createMemberFunction(
  *
  * Type and value parameters can be configured with [config] builder lambda
  */
-public fun FirDeclarationGenerationExtension.createTopLevelFunction(
+public fun FirExtension.createTopLevelFunction(
     key: GeneratedDeclarationKey,
     callableId: CallableId,
     returnType: ConeKotlinType,
@@ -136,7 +136,7 @@ public fun FirDeclarationGenerationExtension.createTopLevelFunction(
  *
  * Type and value parameters can be configured with [config] builder lambda
  */
-public fun FirDeclarationGenerationExtension.createTopLevelFunction(
+public fun FirExtension.createTopLevelFunction(
     key: GeneratedDeclarationKey,
     callableId: CallableId,
     returnTypeProvider: (List<FirTypeParameter>) -> ConeKotlinType,

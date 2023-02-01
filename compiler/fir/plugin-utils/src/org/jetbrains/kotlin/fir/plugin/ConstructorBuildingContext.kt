@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.expressions.buildResolvedArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
@@ -115,7 +115,7 @@ public class ConstructorBuildingContext(
  *
  * If you want to create custom delegated constructor call please do it in the [IrGenerationExtension]
  */
-public fun FirDeclarationGenerationExtension.createConstructor(
+public fun FirExtension.createConstructor(
     owner: FirClassSymbol<*>,
     key: GeneratedDeclarationKey,
     isPrimary: Boolean = false,
@@ -140,7 +140,7 @@ public fun FirDeclarationGenerationExtension.createConstructor(
  *
  * If you want to create custom delegated constructor call please do it in the [IrGenerationExtension]
  */
-public fun FirDeclarationGenerationExtension.createDefaultPrivateConstructor(
+public fun FirExtension.createDefaultPrivateConstructor(
     owner: FirClassSymbol<*>,
     key: GeneratedDeclarationKey,
     generateDelegatedNoArgConstructorCall: Boolean = true
@@ -150,7 +150,7 @@ public fun FirDeclarationGenerationExtension.createDefaultPrivateConstructor(
     }
 }
 
-context(FirDeclarationGenerationExtension)
+context(FirExtension)
 private fun FirConstructor.generateNoArgDelegatingConstructorCall() {
     val owner = returnTypeRef.coneType.toSymbol(session) as? FirClassSymbol<*>
     requireNotNull(owner)

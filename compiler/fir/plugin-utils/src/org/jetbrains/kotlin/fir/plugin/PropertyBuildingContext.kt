@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
+import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -117,7 +117,7 @@ public class PropertyBuildingContext(
 /**
  * Creates a member property for [owner] class with [returnType] return type
  */
-public fun FirDeclarationGenerationExtension.createMemberProperty(
+public fun FirExtension.createMemberProperty(
     owner: FirClassSymbol<*>,
     key: GeneratedDeclarationKey,
     name: Name,
@@ -133,7 +133,7 @@ public fun FirDeclarationGenerationExtension.createMemberProperty(
  * Creates a member property for [owner] class with return type provided by [returnTypeProvider]
  * Use this overload when those types use type parameters of constructed property
  */
-public fun FirDeclarationGenerationExtension.createMemberProperty(
+public fun FirExtension.createMemberProperty(
     owner: FirClassSymbol<*>,
     key: GeneratedDeclarationKey,
     name: Name,
@@ -152,7 +152,7 @@ public fun FirDeclarationGenerationExtension.createMemberProperty(
  * If you create top-level extension property don't forget to set [hasBackingField] to false,
  *   since such properties never have backing fields
  */
-public fun FirDeclarationGenerationExtension.createTopLevelProperty(
+public fun FirExtension.createTopLevelProperty(
     key: GeneratedDeclarationKey,
     callableId: CallableId,
     returnType: ConeKotlinType,
@@ -171,7 +171,7 @@ public fun FirDeclarationGenerationExtension.createTopLevelProperty(
  *
  * Use this overload when those types use type parameters of constructed property
  */
-public fun FirDeclarationGenerationExtension.createTopLevelProperty(
+public fun FirExtension.createTopLevelProperty(
     key: GeneratedDeclarationKey,
     callableId: CallableId,
     returnTypeProvider: (List<FirTypeParameterRef>) -> ConeKotlinType,
