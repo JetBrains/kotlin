@@ -231,7 +231,7 @@ fun startCoroutineUninterceptedOrReturn(fn: suspend Any?.() -> Any?, receiver: A
         fn.startCoroutineUninterceptedOrReturn(receiver, ResultHolderCompletion(resultHolder))
 
 @Throws(Throwable::class)
-@Suppress("INVISIBLE_MEMBER")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 fun startCoroutineUninterceptedOrReturn(fn: suspend Any?.(Any?) -> Any?, receiver: Any?, param: Any?, resultHolder: ResultHolder<Any?>) =
         fn.startCoroutineUninterceptedOrReturn(receiver, param, ResultHolderCompletion(resultHolder))
 

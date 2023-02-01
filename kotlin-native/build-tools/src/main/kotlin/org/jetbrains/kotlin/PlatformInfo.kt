@@ -52,6 +52,16 @@ object PlatformInfo {
     }
 
     @JvmStatic
+    fun isK2(project: Project): Boolean {
+        return project.globalTestArgs.contains("-language-version") &&
+                // Enough future versions are specified until K1 will be stopped to test
+                (project.globalTestArgs.contains("2.0")
+                        || project.globalTestArgs.contains("2.1")
+                        || project.globalTestArgs.contains("2.2")
+                        )
+    }
+
+    @JvmStatic
     fun supportsLibBacktrace(project: Project): Boolean {
         return getTarget(project).supportsLibBacktrace()
     }

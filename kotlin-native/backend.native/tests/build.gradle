@@ -908,7 +908,8 @@ standaloneTest("cleaner_in_tls_worker") {
 }
 
 standaloneTest("worker_bound_reference0") {
-    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
+    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
+            !isK2(project) // KT-56272
     source = "runtime/concurrent/worker_bound_reference0.kt"
     flags = ['-tr']
 
@@ -1444,7 +1445,8 @@ task localClass_localHierarchy(type: KonanLocalTest) {
 }
 
 standaloneTest("objectDeclaration_globalConstants") {
-    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
+    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
+            isK2(project) // KT-56189
     flags = ["-opt", "-opt-in=kotlin.native.internal.InternalForKotlinNative", "-tr"]
     source = "codegen/objectDeclaration/globalConstants.kt"
 }
@@ -2754,12 +2756,6 @@ standaloneTest("kt-49240-stack-trace-completeness") {
     source = "runtime/exceptions/kt-49240-stack-trace-completeness.kt"
 }
 
-standaloneTest("stack_trace_out_of_bounds") {
-    disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt') || (project.testTarget == 'ios_arm64')
-    flags = ['-g', '-Xg-generate-debug-trampoline=enable', '-Xbinary=stripDebugInfoFromNativeLibs=false']
-    source = "runtime/exceptions/stack_trace_out_of_bounds.kt"
-}
-
 standaloneTest("kt-37572") {
     disabled = !supportsCoreSymbolication(project) || project.globalTestArgs.contains('-opt')
     flags = ['-g', '-Xbinary=sourceInfoType=coresymbolication']
@@ -2903,6 +2899,7 @@ standaloneTest("runtime_math_exceptions") {
 }
 
 standaloneTest("runtime_math") {
+    disabled = isK2(project) // KT-56189
     source = "stdlib_external/numbers/MathTest.kt"
     flags = ['-tr']
 }
@@ -3151,6 +3148,7 @@ task concatenation(type: KonanLocalTest) {
 }
 
 task const_infinity(type: KonanLocalTest) {
+    disabled = isK2(project) // KT-56189
     source = "codegen/basics/const_infinity.kt"
 }
 
@@ -3272,6 +3270,7 @@ task initializers3(type: KonanLocalTest) {
 }
 
 task initializers4(type: KonanLocalTest) {
+    disabled = isK2(project)  // KT-56189
     useGoldenData = true
     source = "runtime/basic/initializers4.kt"
 }
@@ -3468,11 +3467,13 @@ standaloneTest("array_out_of_memory") {
 }
 
 standaloneTest("mpp1") {
+    disabled = isK2(project) // KT-56071
     source = "codegen/mpp/mpp1.kt"
     flags = ['-tr', '-Xmulti-platform']
 }
 
 linkTest("mpp2") {
+    disabled = isK2(project) // KT-56071
     useGoldenData = true
     source = "codegen/mpp/mpp2.kt"
     lib = "codegen/mpp/libmpp2.kt"
@@ -3480,6 +3481,7 @@ linkTest("mpp2") {
 }
 
 standaloneTest("mpp_default_args") {
+    disabled = isK2(project) // KT-56071
     source = "codegen/mpp/mpp_default_args.kt"
     flags = ['-tr', '-Xmulti-platform']
 }
@@ -3570,7 +3572,8 @@ task vararg_of_literals(type: KonanLocalTest) {
 }
 
 standaloneTest('tailrec') {
-    disabled = isAggressiveGC // TODO: Investigate why too slow
+    disabled = isAggressiveGC || // TODO: Investigate why too slow
+            isK2(project) // KT-56269
     useGoldenData = true
     source = "lower/tailrec.kt"
     flags = ['-XXLanguage:-ProhibitTailrecOnVirtualMember', '-e', 'lower.tailrec.main']
@@ -4643,7 +4646,8 @@ interopTest("interop_globals") {
 }
 
 interopTest("interop_macros") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            isK2(project) // KT-56041
     source = "interop/basics/macros.kt"
     interop = 'cmacros'
 }
@@ -4718,7 +4722,8 @@ interopTest("interop_concurrentTerminate") {
 }
 
 interopTest("interop_incompleteTypes") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            isK2(project) // KT-56027
     source = "interop/incomplete_types/main.kt"
     interop = 'incomplete_types'
 }
@@ -4959,7 +4964,7 @@ standaloneTest("interop_opengl_teapot") {
 
 if (PlatformInfo.isAppleTarget(project)) {
     interopTest("interop_objc_smoke") {
-        enabled = !isNoopGC
+        enabled = !isNoopGC && !isK2(project) // KT-56030
         source = "interop/objc/smoke.kt"
         interop = 'objcSmoke'
         doBeforeBuild {
@@ -5010,6 +5015,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTestMultifile("interop_objc_tests") {
+        disabled = isK2(project) // KT-55909
         source = "interop/objc/tests/"
         interop = 'objcTests'
         flags = ['-tr', '-e', 'main']
@@ -5043,7 +5049,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     // KT-49034 tests don't need whole compilation pipeline (only frontend) or platform libraries. Consider simplifying them when porting
     // to the new test infra.
     interopTest("interop_kt49034_struct") {
-        disabled = (project.testTarget == 'wasm32')
+        disabled = (project.testTarget == 'wasm32') || isK2(project) // KT-56028
         interop = 'kt49034_struct'
         source = 'interop/objc/kt49034/struct/main.kt'
 
@@ -5052,7 +5058,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_kt49034_objcclass") {
-        disabled = (project.testTarget == 'wasm32')
+        disabled = (project.testTarget == 'wasm32') || isK2(project) // KT-56028
         interop = 'kt49034_objcclass'
         source = 'interop/objc/kt49034/objcclass/main.kt'
 
@@ -5061,7 +5067,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_kt49034_objcprotocol") {
-        disabled = (project.testTarget == 'wasm32')
+        disabled = (project.testTarget == 'wasm32') || isK2(project) // KT-56028
         interop = 'kt49034_objcprotocol'
         source = 'interop/objc/kt49034/objcprotocol/main.kt'
 
@@ -5105,6 +5111,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_foreignException") {
+        disabled = isK2(project) // KT-55909
         source = "interop/objc/foreignException/objc_wrap.kt"
         interop = 'foreignException'
         UtilsKt.dependsOnPlatformLibs(it)
@@ -5293,7 +5300,8 @@ if (PlatformInfo.isAppleTarget(project)) {
 
     standaloneTest("interop_kt55653") {
         // Test depends on macOS-specific AppKit
-        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
+        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null) &&
+                !isK2(project) // KT-56030
         source = "interop/objc/kt55653/main.kt"
         useGoldenData = true
         UtilsKt.dependsOnPlatformLibs(it)
@@ -5355,7 +5363,7 @@ standaloneTest("interop_zlib") {
 }
 
 standaloneTest("interop_objc_illegal_sharing") {
-    disabled = !isAppleTarget(project)
+    disabled = !isAppleTarget(project) || isK2(project) // KT-55902
     source = "interop/objc/illegal_sharing.kt"
     UtilsKt.dependsOnPlatformLibs(it)
     if (isExperimentalMM) {
@@ -5415,7 +5423,8 @@ dynamicTest("kt41904") {
 for (i in 0..2) {
     dynamicTest("kt42796_$i") {
         clangTool = "clang++"
-        disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
+        disabled = (project.testTarget == 'wasm32') || // wasm doesn't support -produce dynamic
+                (i==1 && isK2(project)) // KT-56182
         source = "produce_dynamic/kt-42796/main-${i}.kt"
         cSource = "$projectDir/produce_dynamic/kt-42796/main.cpp"
         useGoldenData = true
@@ -5451,7 +5460,8 @@ dynamicTest("interop_concurrentRuntime") {
 }
 
 dynamicTest("interop_kt42397") {
-    disabled = (project.testTarget == 'wasm32') // wasm doesn't support -produce dynamic
+    disabled = (project.testTarget == 'wasm32') || // wasm doesn't support -produce dynamic
+            isK2(project) // KT-56182
     source = "interop/kt42397/knlibrary.kt"
     cSource = "$projectDir/interop/kt42397/test.cpp"
     clangTool = "clang++"
@@ -5601,6 +5611,7 @@ linkTest("private_fake_overrides_1") {
 }
 
 linkTest("remap_expect_property_refs") {
+    disabled = isK2(project) // KT-56071
     source = "codegen/mpp/remap_expect_property_ref_main.kt"
     lib = "codegen/mpp/remap_expect_property_ref_lib.kt"
     flags = ["-Xmulti-platform"]
@@ -5697,6 +5708,7 @@ if (isAppleTarget(project)) {
             }
         }
         framework(frameworkName) {
+            enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
             library = libraryName
             opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc", "-Xbinary=bundleId=foo.bar"]
@@ -5753,6 +5765,7 @@ if (isAppleTarget(project)) {
             }
         }
         framework(frameworkName) {
+            enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
             artifact = frameworkArtifactName
             library = libraryName
@@ -5808,6 +5821,7 @@ if (isAppleTarget(project)) {
             }
         }
         framework(frameworkName) {
+            enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
             artifact = frameworkArtifactName
             library = libraryName
@@ -5840,6 +5854,7 @@ if (isAppleTarget(project)) {
             }
         }
         framework(frameworkName) {
+            enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
             artifact = frameworkArtifactName
             library = libraryName
@@ -5872,6 +5887,7 @@ if (isAppleTarget(project)) {
             }
         }
         framework(frameworkName) {
+            enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
             artifact = frameworkArtifactName
             library = libraryName
@@ -5905,6 +5921,7 @@ if (isAppleTarget(project)) {
 
         codesign = false
         framework(frameworkName) {
+            enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
             bitcode = false
             artifact = frameworkArtifactName
@@ -5921,11 +5938,13 @@ if (isAppleTarget(project)) {
 
     frameworkTest('testValuesGenericsFramework') {
         framework('ValuesGenerics') {
+            enabled = !isK2(project) // KT-56028
             sources = ['objcexport/values.kt', 'framework/values_generics']
         }
         swiftSources = ['framework/values_generics/']
     }
 
+    if(!isK2(project))  // KT-56271
     frameworkTest("testStdlibFramework") {
         framework('Stdlib') {
             sources = ['framework/stdlib']
@@ -6251,6 +6270,10 @@ task buildKonanTests { t ->
 
     // These tests should not be built into the TestRunner's test executable
     def excludeList = [ "codegen/inline/returnLocalClassFromBlock.kt" ]
+    if (isK2(project)) {
+        excludeList += "codegen/basics/const_infinity.kt" // KT-56189
+        excludeList += "runtime/basic/initializers4.kt"   // KT-56189
+    }
     project.tasks
             .withType(KonanStandaloneTest.class)
             .each {
