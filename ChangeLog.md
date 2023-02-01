@@ -1,3 +1,48 @@
+## 1.8.10
+
+### Compiler
+
+- [`KT-55483`](https://youtrack.jetbrains.com/issue/KT-55483) K2: Fir is not initialized for FirRegularClassSymbol java/lang/invoke/LambdaMetafactory
+- [`KT-55729`](https://youtrack.jetbrains.com/issue/KT-55729) "None of the following functions can be called with the arguments supplied:" in 1.8.0
+- [`KT-55769`](https://youtrack.jetbrains.com/issue/KT-55769) "ERROR: Could not find accessor": Android DataBinding fails with Kotlin 1.8.0
+- [`KT-55308`](https://youtrack.jetbrains.com/issue/KT-55308) InnerClass attributes should be sorted (innermost last)
+
+### JavaScript
+
+- [`KT-56282`](https://youtrack.jetbrains.com/issue/KT-56282) KJS: Invalidate incremental cache in case of compiler internal errors
+- [`KT-55852`](https://youtrack.jetbrains.com/issue/KT-55852) JS: "IllegalStateException: Unexpected ir type argument" caused by List with star projection type
+- [`KT-55716`](https://youtrack.jetbrains.com/issue/KT-55716) KJS / IC: "Cannot read properties of undefined" with overriding variables with 1.8.0
+- [`KT-55758`](https://youtrack.jetbrains.com/issue/KT-55758) KJS / IR: Checking implemented interface on a class implementing a @JsExport interface returns the wrong result
+
+### Reflection
+
+- [`KT-56093`](https://youtrack.jetbrains.com/issue/KT-56093) Metaspace leak in a Gradle plugin built with Kotlin 1.8.0
+
+### Tools. Compiler plugins. Serialization
+
+- [`KT-56347`](https://youtrack.jetbrains.com/issue/KT-56347) [Kotlin 1.8] Regression kotlinx.serialization compiler plugin internal error
+- [`KT-55681`](https://youtrack.jetbrains.com/issue/KT-55681) Serialization: NullPointerException after update to 1.8.0 caused by `@Serializer(forClass= ..)`
+- [`KT-56244`](https://youtrack.jetbrains.com/issue/KT-56244) kotlinx.serialization compiler intrinsic does not work with encodeToString function in 1.8.0
+- [`KT-55683`](https://youtrack.jetbrains.com/issue/KT-55683) Serialization: "IllegalStateException: Expected to have a primary constructor" with expect class and companion object
+- [`KT-55682`](https://youtrack.jetbrains.com/issue/KT-55682) Serialization: "IllegalStateException: Function has no body: FUN name:serializer" with 1.8.0
+
+### Tools. Gradle
+
+- [`KT-55697`](https://youtrack.jetbrains.com/issue/KT-55697) KGP 1.8.0 adds compileOnly dependencies to unit test compile classpath
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-55730`](https://youtrack.jetbrains.com/issue/KT-55730) MPP / Gradle: compileKotlinMetadata fails to resolve symbols in additional source sets
+
+### Tools. Gradle. Native
+
+- [`KT-56280`](https://youtrack.jetbrains.com/issue/KT-56280) Gradle: freeCompilerArgs are no longer propagated from compilations to Native binaries
+
+### Tools. Kapt
+
+- [`KT-48013`](https://youtrack.jetbrains.com/issue/KT-48013) Kapt generates illegal stubs for private interface methods
+
+
 ## 1.8.0-RC2
 
 ### Compiler
