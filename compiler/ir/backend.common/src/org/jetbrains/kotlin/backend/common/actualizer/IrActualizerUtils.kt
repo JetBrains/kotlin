@@ -6,55 +6,71 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.name.FqName
 
-fun checkParameters(
-    expectFunction: IrFunction,
-    actualFunction: IrFunction,
-    expectActualTypesMap: Map<IrSymbol, IrSymbol>
-): Boolean {
-    fun checkParameter(expectParameter: IrValueParameter?, actualParameter: IrValueParameter?): Boolean {
-        if (expectParameter == null) {
-            return actualParameter == null
-        }
-        if (actualParameter == null) {
-            return false
-        }
+fun generateIrElementFullName(
+    declaration: IrElement,
+    expectActualTypesMap: Map<IrSymbol, IrSymbol>,
+    typeAliasMap: Map<FqName, FqName>? = null
+): String {
+    return StringBuilder().apply { appendElementFullName(declaration, expectActualTypesMap, this, typeAliasMap) }.toString()
+}
 
-        val expectParameterTypeSymbol = expectParameter.type.classifierOrFail
-        val actualizedParameterTypeSymbol = expectActualTypesMap[expectParameterTypeSymbol] ?: expectParameterTypeSymbol
-        if (actualizedParameterTypeSymbol != actualParameter.type.classifierOrFail) {
-            return false
-        }
-        return true
+private fun appendElementFullName(
+    declaration: IrElement,
+    expectActualTypesMap: Map<IrSymbol, IrSymbol>,
+    result: StringBuilder,
+    typeAliasMap: Map<FqName, FqName>? = null
+) {
+    if (declaration !is IrDeclarationBase) return
+
+    val parentName = declaration.parent.kotlinFqName
+    if (parentName.asString().isNotEmpty()) {
+        result.append(typeAliasMap?.get(parentName) ?: parentName.asString())
+        result.append('.')
     }
 
-    if (expectFunction.valueParameters.size != actualFunction.valueParameters.size ||
-        !checkParameter(expectFunction.extensionReceiverParameter, actualFunction.extensionReceiverParameter)
-    ) {
-        return false
-    }
-    for ((expectParameter, actualParameter) in expectFunction.valueParameters.zip(actualFunction.valueParameters)) {
-        if (!checkParameter(expectParameter, actualParameter)) {
-            return false
-        }
+    if (declaration is IrDeclarationWithName) {
+        result.append(declaration.name)
     }
 
-    return true
+    if (declaration is IrFunction) {
+        fun appendType(type: IrType) {
+            val typeClassifier = type.classifierOrFail
+            val actualizedTypeSymbol = expectActualTypesMap[typeClassifier] ?: typeClassifier
+            appendElementFullName(actualizedTypeSymbol.owner, expectActualTypesMap, result)
+        }
+
+        val extensionReceiverType = declaration.extensionReceiverParameter?.type
+        if (extensionReceiverType != null) {
+            result.append('[')
+            appendType(extensionReceiverType)
+            result.append(']')
+        }
+
+        result.append('(')
+        for ((index, parameter) in declaration.valueParameters.withIndex()) {
+            appendType(parameter.type)
+            if (index < declaration.valueParameters.size - 1) {
+                result.append(',')
+            }
+        }
+        result.append(')')
+    }
 }
 
 fun reportMissingActual(irElement: IrElement) {
-    // TODO: set up diagnostics reporting
+    // TODO: setup diagnostics reporting
     throw AssertionError("Missing actual for ${irElement.render()}")
 }
 
 fun reportManyInterfacesMembersNotImplemented(declaration: IrClass, actualMember: IrDeclarationWithName) {
-    // TODO: set up diagnostics reporting
+    // TODO: setup diagnostics reporting
     throw AssertionError("${declaration.name} must override ${actualMember.name} because it inherits multiple interface methods of it")
 }

@@ -27078,6 +27078,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             public void testGetRidOfDoubleBindingInFir2IrLazyProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/getRidOfDoubleBindingInFir2IrLazyProperty.kt");
             }
+
+            @TestMetadata("kt-56329.kt")
+            public void testKt_56329() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/kt-56329.kt");
+            }
         }
     }
 

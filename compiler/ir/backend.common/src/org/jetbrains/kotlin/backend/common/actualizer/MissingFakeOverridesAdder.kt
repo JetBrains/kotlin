@@ -18,11 +18,15 @@ import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 
-class MissingFakeOverridesAdder(private val expectActualMap: Map<IrSymbol, IrSymbol>) : IrElementVisitorVoid {
+class MissingFakeOverridesAdder(
+    private val expectActualMap: Map<IrSymbol, IrSymbol>,
+    private val typeAliasMap: Map<FqName, FqName>
+) : IrElementVisitorVoid {
     override fun visitClass(declaration: IrClass) {
         if (!declaration.isExpect) {
-            processSupertypes(declaration, expectActualMap)
+            processSupertypes(declaration)
         }
         visitElement(declaration)
     }
@@ -30,48 +34,33 @@ class MissingFakeOverridesAdder(private val expectActualMap: Map<IrSymbol, IrSym
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
-}
 
-private fun processSupertypes(declaration: IrClass, expectActualMap: Map<IrSymbol, IrSymbol>) {
-    val members by lazy(LazyThreadSafetyMode.NONE) {
-        declaration.declarations.filter { !it.isBuiltinMember() }.filterIsInstance<IrDeclarationWithName>()
-            .groupBy { it.name }
-    }
+    private fun processSupertypes(declaration: IrClass) {
+        val members by lazy(LazyThreadSafetyMode.NONE) {
+            declaration.declarations.filter { !it.isBuiltinMember() }.associateBy {
+                generateIrElementFullName(it, expectActualMap, typeAliasMap)
+            }
+        }
 
-    for (superType in declaration.superTypes) {
-        val actualClass = expectActualMap[superType.classifierOrFail]?.owner as? IrClass ?: continue
-        for (actualMember in actualClass.declarations) {
-            if (actualMember.isBuiltinMember()) continue
-            when (actualMember) {
-                is IrFunctionImpl -> {
-                    val existingMembers = members[actualMember.name]
-
-                    var isActualFunctionFound = false
-                    if (existingMembers != null) {
-                        for (existingMember in existingMembers) {
-                            if (existingMember is IrFunction) {
-                                if (checkParameters(existingMember, actualMember, expectActualMap)) {
-                                    isActualFunctionFound = true
-                                    break
-                                }
-                            }
+        for (superType in declaration.superTypes) {
+            val actualClass = expectActualMap[superType.classifierOrFail]?.owner as? IrClass ?: continue
+            for (actualMember in actualClass.declarations) {
+                if (actualMember.isBuiltinMember()) continue
+                when (actualMember) {
+                    is IrFunctionImpl,
+                    is IrPropertyImpl -> {
+                        if (members[generateIrElementFullName(actualMember, expectActualMap, typeAliasMap)] != null) {
+                            reportManyInterfacesMembersNotImplemented(declaration, actualMember as IrDeclarationWithName)
+                            continue
                         }
-                    }
 
-                    if (isActualFunctionFound) {
-                        reportManyInterfacesMembersNotImplemented(declaration, actualMember)
-                        continue
+                        val newMember = if (actualMember is IrFunctionImpl) {
+                            createFakeOverrideFunction(actualMember, declaration)
+                        } else {
+                            createFakeOverrideProperty(actualMember as IrPropertyImpl, declaration)
+                        }
+                        declaration.declarations.add(newMember)
                     }
-
-                    declaration.declarations.add(createFakeOverrideFunction(actualMember, declaration))
-                }
-                is IrPropertyImpl -> {
-                    if (members[actualMember.name] != null) {
-                        reportManyInterfacesMembersNotImplemented(declaration, actualMember)
-                        continue
-                    }
-
-                    declaration.declarations.add(createFakeOverrideProperty(actualMember, declaration))
                 }
             }
         }

@@ -16,21 +16,20 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 
 internal class ExpectActualCollector(private val mainFragment: IrModuleFragment, private val dependentFragments: List<IrModuleFragment>) {
-    fun collect(): Map<IrSymbol, IrSymbol> {
+    fun collect(): Pair<Map<IrSymbol, IrSymbol>, Map<FqName, FqName>> {
         val result = mutableMapOf<IrSymbol, IrSymbol>()
         // Collect and link classifiers at first to make it possible to expand type aliases on the callables linking
         val (allActualDeclarations, typeAliasMap) = result.appendExpectActualClassifiersMap()
         result.appendExpectActualCallablesMap(allActualDeclarations, typeAliasMap, dependentFragments)
-        return result
+        return result to typeAliasMap
     }
 
     private fun MutableMap<IrSymbol, IrSymbol>.appendExpectActualClassifiersMap(): Pair<Set<IrDeclaration>, Map<FqName, FqName>> {
         val actualClassifiers = mutableMapOf<FqName, IrSymbol>()
-        // There is no list for builtins declarations, that's why they are being collected from typealiases
+        // There is no list for builtins declarations; that's why they are being collected from typealiases
         val allActualDeclarations = mutableSetOf<IrDeclaration>()
         val typeAliasMap = mutableMapOf<FqName, FqName>() // It's used to link members from expect class that have typealias actual
 
@@ -78,15 +77,6 @@ internal class ExpectActualCollector(private val mainFragment: IrModuleFragment,
             visitDeclaration(declaration, data)
         }
 
-        override fun visitTypeParameter(declaration: IrTypeParameter, data: Boolean) {
-            if (!data && !declaration.isExpect) {
-                actualClassifiers[FqName.fromSegments(
-                    listOf(declaration.parent.kotlinFqName.asString(), declaration.name.asString())
-                )] = declaration.symbol
-            }
-            visitDeclaration(declaration, data)
-        }
-
         override fun visitDeclaration(declaration: IrDeclarationBase, data: Boolean) {
             if (!data && !declaration.isExpect) {
                 allActualClassifiers.add(declaration)
@@ -128,16 +118,6 @@ internal class ExpectActualCollector(private val mainFragment: IrModuleFragment,
             visitElement(declaration)
         }
 
-        override fun visitTypeParameter(declaration: IrTypeParameter) {
-            if (declaration.isProperExpect) {
-                addLinkOrReportMissing(
-                    declaration,
-                    FqName.fromSegments(listOf(declaration.parent.kotlinFqName.asString(), declaration.name.asString()))
-                )
-            }
-            visitElement(declaration)
-        }
-
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
         }
@@ -148,30 +128,23 @@ internal class ExpectActualCollector(private val mainFragment: IrModuleFragment,
         typeAliasMap: Map<FqName, FqName>,
         dependentFragments: List<IrModuleFragment>
     ) {
-        val actualFunctions = mutableMapOf<CallableId, MutableList<IrFunction>>()
-        val actualProperties = mutableMapOf<CallableId, IrProperty>()
+        val actualMembers = mutableMapOf<String, IrDeclarationBase>()
 
-        collectActualCallables(actualFunctions, actualProperties, allActualDeclarations)
-        val collector = CallablesLinkCollector(this, actualFunctions, actualProperties, typeAliasMap)
+        collectActualCallables(this, actualMembers, allActualDeclarations)
+        val collector = CallablesLinkCollector(this, actualMembers, typeAliasMap)
         dependentFragments.forEach { collector.visitModuleFragment(it) }
     }
 
     private fun collectActualCallables(
-        actualFunctions: MutableMap<CallableId, MutableList<IrFunction>>,
-        actualProperties: MutableMap<CallableId, IrProperty>,
-        allActualDeclarations: Set<IrDeclaration>
+        expectActualMap: MutableMap<IrSymbol, IrSymbol>,
+        actualMembers: MutableMap<String, IrDeclarationBase>,
+        allActualDeclarations: Set<IrDeclaration>,
     ) {
         fun collectActualsCallables(declaration: IrDeclaration) {
             when (declaration) {
-                is IrFunction -> {
-                    actualFunctions.getOrPut(CallableId(declaration.parent.kotlinFqName, declaration.name)) {
-                        mutableListOf()
-                    }.add(declaration)
-                }
+                is IrFunction,
                 is IrProperty -> {
-                    actualProperties.getOrPut(CallableId(declaration.parent.kotlinFqName, declaration.name)) {
-                        declaration
-                    }
+                    actualMembers[generateIrElementFullName(declaration, expectActualMap)] = declaration as IrDeclarationBase
                 }
                 is IrClass -> {
                     for (member in declaration.declarations) {
@@ -188,40 +161,23 @@ internal class ExpectActualCollector(private val mainFragment: IrModuleFragment,
 
     class CallablesLinkCollector(
         private val expectActualMap: MutableMap<IrSymbol, IrSymbol>,
-        private val actualFunctions: MutableMap<CallableId, MutableList<IrFunction>>,
-        private val actualProperties: MutableMap<CallableId, IrProperty>,
+        private val actualMembers: Map<String, IrDeclarationBase>,
         private val typeAliasMap: Map<FqName, FqName>
     ) : IrElementVisitorVoid {
-        private fun actualizeCallable(declaration: IrDeclarationWithName): CallableId {
-            val fullName = declaration.parent.kotlinFqName
-            return CallableId(typeAliasMap[fullName] ?: fullName, declaration.name)
-        }
+        override fun visitFunction(declaration: IrFunction) = addLink(declaration)
 
-        override fun visitFunction(declaration: IrFunction) {
+        override fun visitProperty(declaration: IrProperty) = addLink(declaration)
+
+        private fun addLink(declaration: IrDeclarationBase) {
             if (!declaration.isExpect) return
-            val functions = actualFunctions[actualizeCallable(declaration)]
-            var isActualFunctionFound = false
-            if (functions != null) {
-                for (actualFunction in functions) {
-                    if (checkParameters(declaration, actualFunction, expectActualMap)) {
-                        expectActualMap[declaration.symbol] = actualFunction.symbol
-                        isActualFunctionFound = true
-                        break
-                    }
+            val member = actualMembers[generateIrElementFullName(declaration, expectActualMap, typeAliasMap)]
+            if (member != null) {
+                expectActualMap[declaration.symbol] = member.symbol
+                if (declaration is IrProperty) {
+                    member as IrProperty
+                    declaration.getter?.symbol?.let { expectActualMap[it] = member.getter!!.symbol }
+                    declaration.setter?.symbol?.let { expectActualMap[it] = member.setter!!.symbol }
                 }
-            }
-            if (!isActualFunctionFound) {
-                reportMissingActual(declaration)
-            }
-        }
-
-        override fun visitProperty(declaration: IrProperty) {
-            if (!declaration.isExpect) return
-            val properties = actualProperties[actualizeCallable(declaration)]
-            if (properties != null) {
-                expectActualMap[declaration.symbol] = properties.symbol
-                declaration.getter?.symbol?.let { expectActualMap[it] = properties.getter!!.symbol }
-                declaration.setter?.symbol?.let { expectActualMap[it] = properties.setter!!.symbol }
             } else {
                 reportMissingActual(declaration)
             }

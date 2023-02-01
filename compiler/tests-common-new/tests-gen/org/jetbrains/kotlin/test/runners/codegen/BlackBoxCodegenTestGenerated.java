@@ -31809,6 +31809,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             public void testGetRidOfDoubleBindingInFir2IrLazyProperty() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/getRidOfDoubleBindingInFir2IrLazyProperty.kt");
             }
+
+            @Test
+            @TestMetadata("kt-56329.kt")
+            public void testKt_56329() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/kt-56329.kt");
+            }
         }
     }
 

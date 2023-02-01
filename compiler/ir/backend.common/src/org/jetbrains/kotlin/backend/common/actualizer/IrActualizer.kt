@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.backend.common.actualizer
 import org.jetbrains.kotlin.backend.common.ir.isProperExpect
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.name.FqName
 
 object IrActualizer {
     fun actualize(mainFragment: IrModuleFragment, dependentFragments: List<IrModuleFragment>) {
-        val expectActualMap = ExpectActualCollector(mainFragment, dependentFragments).collect()
+        val (expectActualMap, typeAliasMap) = ExpectActualCollector(mainFragment, dependentFragments).collect()
         removeExpectDeclaration(dependentFragments) // TODO: consider removing this call. See ExpectDeclarationRemover.kt
-        addMissingFakeOverrides(expectActualMap, dependentFragments)
+        addMissingFakeOverrides(expectActualMap, dependentFragments, typeAliasMap)
         linkExpectToActual(expectActualMap, dependentFragments)
         mergeIrFragments(mainFragment, dependentFragments)
     }
@@ -26,8 +27,12 @@ object IrActualizer {
         }
     }
 
-    private fun addMissingFakeOverrides(expectActualMap: Map<IrSymbol, IrSymbol>, dependentFragments: List<IrModuleFragment>) {
-        MissingFakeOverridesAdder(expectActualMap).apply { dependentFragments.forEach { visitModuleFragment(it) } }
+    private fun addMissingFakeOverrides(
+        expectActualMap: Map<IrSymbol, IrSymbol>,
+        dependentFragments: List<IrModuleFragment>,
+        typeAliasMap: Map<FqName, FqName>
+    ) {
+        MissingFakeOverridesAdder(expectActualMap, typeAliasMap).apply { dependentFragments.forEach { visitModuleFragment(it) } }
     }
 
     private fun linkExpectToActual(expectActualMap: Map<IrSymbol, IrSymbol>, dependentFragments: List<IrModuleFragment>) {
