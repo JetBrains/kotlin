@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -112,6 +112,8 @@ object FirFakeOverrideGenerator {
         newVisibility: Visibility? = null,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirSimpleFunction {
+        checkStatusIsResolved(baseFunction)
+
         return buildSimpleFunction {
             source = baseFunction.source
             moduleData = session.nullableModuleData ?: baseFunction.moduleData
@@ -147,6 +149,8 @@ object FirFakeOverrideGenerator {
         isExpect: Boolean,
         fakeOverrideSubstitution: FakeOverrideSubstitution?
     ): FirConstructor {
+        checkStatusIsResolved(baseConstructor)
+
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
@@ -350,6 +354,8 @@ object FirFakeOverrideGenerator {
         newVisibility: Visibility? = null,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirProperty {
+        checkStatusIsResolved(baseProperty)
+
         return buildProperty {
             source = baseProperty.source
             moduleData = session.moduleData
@@ -723,5 +729,13 @@ object FirFakeOverrideGenerator {
     private sealed class Maybe<out A> {
         class Value<out A>(val value: A) : Maybe<A>()
         object Nothing : Maybe<kotlin.Nothing>()
+    }
+
+    private fun checkStatusIsResolved(member: FirCallableDeclaration) {
+        check(member.status is FirResolvedDeclarationStatus) {
+            "Status should be resolved for a declaration to create it fake override, " +
+                    "otherwise the status of the fake override will never be resolved." +
+                    "The status was unresolved for ${member::class.java.simpleName}"
+        }
     }
 }
