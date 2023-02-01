@@ -216,6 +216,8 @@ fun WasmCompiledModuleFragment.generateAsyncJsWrapper(
         }.sorted()
         .joinToString("\n")
 
+    val d = "$"
+
     //language=js
     return """
 export async function instantiate(imports={}, runInitializer=true) {
@@ -263,27 +265,57 @@ $jsCodeBodyIndented
 $imports
     };
     
-    if (isNodeJs) {
-      const module = await import(/* webpackIgnore: true */'node:module');
-      require = module.default.createRequire(import.meta.url);
-      const fs = require('fs');
-      const path = require('path');
-      const url = require('url');
-      const filepath = url.fileURLToPath(import.meta.url);
-      const dirpath = path.dirname(filepath);
-      const wasmBuffer = fs.readFileSync(path.resolve(dirpath, wasmFilePath));
-      const wasmModule = new WebAssembly.Module(wasmBuffer);
-      wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
-    }
-    
-    if (isStandaloneJsVM) {
-      const wasmBuffer = read(wasmFilePath, 'binary');
-      const wasmModule = new WebAssembly.Module(wasmBuffer);
-      wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
-    }
-    
-    if (isBrowser) {
-      wasmInstance = (await WebAssembly.instantiateStreaming(fetch(wasmFilePath), importObject)).instance;
+    try {
+      if (isNodeJs) {
+        const module = await import(/* webpackIgnore: true */'node:module');
+        require = module.default.createRequire(import.meta.url);
+        const fs = require('fs');
+        const path = require('path');
+        const url = require('url');
+        const filepath = url.fileURLToPath(import.meta.url);
+        const dirpath = path.dirname(filepath);
+        const wasmBuffer = fs.readFileSync(path.resolve(dirpath, wasmFilePath));
+        const wasmModule = new WebAssembly.Module(wasmBuffer);
+        wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
+      }
+      
+      if (isStandaloneJsVM) {
+        const wasmBuffer = read(wasmFilePath, 'binary');
+        const wasmModule = new WebAssembly.Module(wasmBuffer);
+        wasmInstance = new WebAssembly.Instance(wasmModule, importObject);
+      }
+      
+      if (isBrowser) {
+        wasmInstance = (await WebAssembly.instantiateStreaming(fetch(wasmFilePath), importObject)).instance;
+      }
+    } catch (e) {
+      if (e instanceof WebAssembly.CompileError) {
+        const styles = [];
+        const styled = (t, css, escSeq) => isBrowser ? (styles.push(css, /* reset */""), `%c$d{t}%c`) : `\x1b[$d{escSeq}m$d{t}\x1b[m`;
+        const name = t => styled(t, "font-weight:bold", 1);
+        const uri = t => styled(t, "text-decoration:underline", 4);
+        const cli = t => styled(t, "font-family:monospace", 2);
+        
+        let text = `Using experimental Kotlin/Wasm may require enabling experimental features in the target environment.
+
+- $d{name("Chrome")}: enable $d{name("WebAssembly Garbage Collection")} at $d{uri("chrome://flags/#enable-webassembly-garbage-collection")} or run the program with the $d{cli("--js-flags=--experimental-wasm-gc")} command line argument.
+- $d{name("Firefox")}: enable $d{name("javascript.options.wasm_function_references")} and $d{name("javascript.options.wasm_gc")} at $d{uri("about:config")}.
+- $d{name("Edge")}: run the program with the $d{cli("--js-flags=--experimental-wasm-gc")} command line argument.
+- $d{name("Node.js")}: run the program with the $d{cli("--experimental-wasm-gc")} command line argument.
+
+For more information see $d{uri("https://kotl.in/wasm_help/")}.
+`;
+        if (isBrowser) {
+          console.error(text, ...styles);
+        } else {
+          const t = "\n" + text;
+          if (typeof console !== "undefined" && console.log !== void 0) 
+            console.log(t);
+          else 
+            print(t);
+        }
+      }
+      throw e;
     }
     
     wasmExports = wasmInstance.exports;
