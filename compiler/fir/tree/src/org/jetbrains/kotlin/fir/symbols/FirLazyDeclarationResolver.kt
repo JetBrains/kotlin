@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.symbols
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 /**
  * A component to lazy resolve [FirBasedSymbol] to the required phase.
@@ -39,9 +41,12 @@ abstract class FirLazyDeclarationResolver : FirSessionComponent {
     }
 
     abstract fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase)
+    abstract fun lazyResolveToPhaseWithCallableMembers(symbol: FirClassSymbol<*>, toPhase: FirResolvePhase)
 }
 
 val FirSession.lazyDeclarationResolver: FirLazyDeclarationResolver by FirSession.sessionComponentAccessor()
+
+private val FirDeclaration.lazyDeclarationResolver get() = moduleData.session.lazyDeclarationResolver
 
 /**
  * Lazy resolve [FirBasedSymbol] to [FirResolvePhase].
@@ -58,9 +63,7 @@ val FirSession.lazyDeclarationResolver: FirLazyDeclarationResolver by FirSession
  * @param toPhase the minimum phase, the declaration should be resolved to after an execution of the [lazyResolveToPhase]
  */
 fun FirBasedSymbol<*>.lazyResolveToPhase(toPhase: FirResolvePhase) {
-    val session = fir.moduleData.session
-    val phaseManager = session.lazyDeclarationResolver
-    phaseManager.lazyResolveToPhase(this, toPhase)
+    fir.lazyDeclarationResolver.lazyResolveToPhase(this, toPhase)
 }
 
 /**
@@ -70,4 +73,13 @@ fun FirBasedSymbol<*>.lazyResolveToPhase(toPhase: FirResolvePhase) {
  */
 fun FirDeclaration.lazyResolveToPhase(toPhase: FirResolvePhase) {
     symbol.lazyResolveToPhase(toPhase)
+}
+
+fun FirClassSymbol<*>.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolvePhase) {
+    fir.lazyDeclarationResolver.lazyResolveToPhaseWithCallableMembers(this, toPhase)
+}
+
+
+fun FirClass.lazyResolveToPhaseWithCallableMembers(toPhase: FirResolvePhase) {
+    symbol.lazyResolveToPhaseWithCallableMembers(toPhase)
 }
