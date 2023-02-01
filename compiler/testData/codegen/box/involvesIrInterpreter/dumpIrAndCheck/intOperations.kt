@@ -1,5 +1,4 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
 
 const val minusOneVal = -1
 const val oneVal = 1
@@ -105,7 +104,7 @@ fun box(): String {
     if (plus3 != 5)     return "Fail 2.3"
     if (plus4 != 4)     return "Fail 2.4"
     if (plus5 != 4)     return "Fail 2.5"
-    if (plus6 != 4)     return "Fail 2.6"
+    if (plus6 != 4L)     return "Fail 2.6"
     if (plus7 != 4.0f)  return "Fail 2.7"
     if (plus8 != 4.0)   return "Fail 2.8"
 
@@ -114,7 +113,7 @@ fun box(): String {
     if (minus3 != 1)        return "Fail 3.3"
     if (minus4 != 0)        return "Fail 3.4"
     if (minus5 != 0)        return "Fail 3.5"
-    if (minus6 != 0)        return "Fail 3.6"
+    if (minus6 != 0L)        return "Fail 3.6"
     if (minus7 != 0.0f)     return "Fail 3.7"
     if (minus8 != 0.0)      return "Fail 3.8"
 
@@ -123,7 +122,7 @@ fun box(): String {
     if (times3 != 6)        return "Fail 4.3"
     if (times4 != 4)        return "Fail 4.4"
     if (times5 != 4)        return "Fail 4.5"
-    if (times6 != 4)        return "Fail 4.6"
+    if (times6 != 4L)        return "Fail 4.6"
     if (times7 != 4.0f)     return "Fail 4.7"
     if (times8 != 4.0)      return "Fail 4.8"
 
@@ -132,7 +131,7 @@ fun box(): String {
     if (div3 != 1)          return "Fail 5.3"
     if (div4 != 1)          return "Fail 5.4"
     if (div5 != 1)          return "Fail 5.5"
-    if (div6 != 1)          return "Fail 5.6"
+    if (div6 != 1L)          return "Fail 5.6"
     if (div7 != 1.0f)       return "Fail 5.7"
     if (div8 != 1.0)        return "Fail 5.8"
 
@@ -141,7 +140,7 @@ fun box(): String {
     if (rem3 != 1)      return "Fail 6.3"
     if (rem4 != 0)      return "Fail 6.4"
     if (rem5 != 0)      return "Fail 6.5"
-    if (rem6 != 0)      return "Fail 6.6"
+    if (rem6 != 0L)      return "Fail 6.6"
     if (rem7 != 0.0f)   return "Fail 6.7"
     if (rem8 != 0.0)    return "Fail 6.8"
 
@@ -150,11 +149,11 @@ fun box(): String {
     if (unaryMinus1 != -1)  return "Fail 7.3"
     if (unaryMinus2 != 1)   return "Fail 7.4"
 
-    if (convert1 != 1)      return "Fail 8.1"
+    if (convert1 != 1.toByte())      return "Fail 8.1"
     if (convert2 != '')  return "Fail 8.2"
-    if (convert3 != 1)      return "Fail 8.3"
+    if (convert3 != 1.toShort())      return "Fail 8.3"
     if (convert4 != 1)      return "Fail 8.4"
-    if (convert5 != 1)      return "Fail 8.5"
+    if (convert5 != 1L)      return "Fail 8.5"
     if (convert6 != 1.0f)   return "Fail 8.6"
     if (convert7 != 1.0)    return "Fail 8.7"
 

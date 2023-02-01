@@ -100,6 +100,7 @@ object EqualityCallChecker : CallChecker {
 
             context.trace.report(diagnostic.on(expression, expression.operationReference, leftType, rightType))
         } else {
+            @Suppress("UNUSED_VARIABLE") val it = TypeIntersector.intersectTypes(listOf(leftType, rightType))
             checkEnumsForCompatibility(context, expression, leftType, rightType)
         }
 

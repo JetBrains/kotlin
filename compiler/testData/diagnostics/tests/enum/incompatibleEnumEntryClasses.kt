@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: -ProhibitComparisonOfIncompatibleEnums
 
 interface I {

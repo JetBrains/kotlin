@@ -26,7 +26,7 @@ fun case_2() {
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         x = x<!UNSAFE_CALL!>.<!>equals(10)
-    } while (<!SENSELESS_COMPARISON!>x !== null<!>)
+    } while (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x !== null<!>)
 }
 
 // TESTCASE NUMBER: 3
@@ -58,7 +58,7 @@ fun case_5() {
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         x = x<!UNSAFE_CALL!>.<!>equals(10)
-    } while (<!SENSELESS_COMPARISON!>x !== null<!>)
+    } while (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x !== null<!>)
 }
 
 /*
@@ -86,7 +86,7 @@ fun case_7() {
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         x = x<!UNSAFE_CALL!>.<!>equals(10)
-    } while (<!SENSELESS_COMPARISON!>x !== null<!>)
+    } while (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x !== null<!>)
 }
 
 /*
@@ -114,7 +114,7 @@ fun case_9() {
     do {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         x = x<!UNSAFE_CALL!>.<!>equals(10)
-    } while (<!SENSELESS_COMPARISON!>x !== null<!>)
+    } while (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x !== null<!>)
 }
 
 /*

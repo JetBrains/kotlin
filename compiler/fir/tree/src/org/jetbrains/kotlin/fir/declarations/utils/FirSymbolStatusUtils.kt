@@ -83,11 +83,17 @@ inline val FirClassSymbol<*>.isLocalClassOrAnonymousObject: Boolean
     get() = classId.isLocal || this is FirAnonymousObjectSymbol
 
 
+inline val FirClassSymbol<*>.isClass: Boolean
+    get() = classKind.isClass
+
 inline val FirClassSymbol<*>.isInterface: Boolean
     get() = classKind.isInterface
 
 inline val FirClassSymbol<*>.isEnumClass: Boolean
     get() = classKind.isEnumClass
+
+inline val FirClassSymbol<*>.isEnumEntry: Boolean
+    get() = classKind.isEnumEntry
 
 // ---------------------- specific callables ----------------------
 

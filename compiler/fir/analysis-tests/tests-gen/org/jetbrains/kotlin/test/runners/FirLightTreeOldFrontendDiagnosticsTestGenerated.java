@@ -10225,6 +10225,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("equalityOfEnumAndParameter.kt")
+            public void testEqualityOfEnumAndParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/equalityOfEnumAndParameter.kt");
+            }
+
+            @Test
             @TestMetadata("ExplicitConstructorCall.kt")
             public void testExplicitConstructorCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/ExplicitConstructorCall.kt");

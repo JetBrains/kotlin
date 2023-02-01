@@ -100,7 +100,7 @@ fun test_9(a: Int, b: Int?) {
     }
     b<!UNSAFE_CALL!>.<!>inc()
 
-    if (a === b) {
+    if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>a === b<!>) {
         b.inc()
     }
     b<!UNSAFE_CALL!>.<!>inc()
@@ -110,7 +110,7 @@ fun test_9(a: Int, b: Int?) {
     }
     b<!UNSAFE_CALL!>.<!>inc()
 
-    if (b === a) {
+    if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>b === a<!>) {
         b.inc()
     }
     b<!UNSAFE_CALL!>.<!>inc()

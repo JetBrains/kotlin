@@ -1,0 +1,93 @@
+package
+
+public fun </*0*/ P : Buffered> processInfo1(/*0*/ info: kotlin.String, /*1*/ printer: P): kotlin.Unit where P : AIPowered
+public fun </*0*/ P : AIPowered> processInfo2(/*0*/ info: kotlin.String, /*1*/ printer: P): kotlin.Unit where P : Buffered
+public fun </*0*/ P : Buffered> processInfo3(/*0*/ info: kotlin.String, /*1*/ printer: P): kotlin.Unit where P : Printer
+
+public interface AIPowered {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun getAvatarReleaseYear(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Buffered {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract fun flush(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final enum class BufferedEnum : kotlin.Enum<BufferedEnum>, Buffered {
+    enum entry A
+
+    enum entry B
+
+    private constructor BufferedEnum()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: BufferedEnum): kotlin.Int
+    public final override /*2*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public open override /*1*/ fun flush(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<BufferedEnum!>!
+    public final override /*2*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): BufferedEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<BufferedEnum>
+}
+
+public final enum class CleverEnum : kotlin.Enum<CleverEnum>, Buffered, AIPowered {
+    enum entry E
+
+    enum entry F
+
+    private constructor CleverEnum()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: CleverEnum): kotlin.Int
+    public final override /*3*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public open override /*1*/ fun flush(): kotlin.Unit
+    public open override /*1*/ fun getAvatarReleaseYear(): kotlin.Int
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<CleverEnum!>!
+    public final override /*3*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*3*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): CleverEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<CleverEnum>
+}
+
+public abstract class Printer {
+    public constructor Printer()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract fun print(/*0*/ command: kotlin.String): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final enum class UsualEnum : kotlin.Enum<UsualEnum> {
+    enum entry C
+
+    enum entry D
+
+    private constructor UsualEnum()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: UsualEnum): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<UsualEnum!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): UsualEnum
+    public final /*synthesized*/ fun values(): kotlin.Array<UsualEnum>
+}

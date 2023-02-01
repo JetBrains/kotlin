@@ -168,7 +168,7 @@ fun case_9(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>) {
 fun case_10() {
     val a = Class()
 
-    if (a.prop_4 === null || <!SENSELESS_COMPARISON!>a.prop_4 === null<!> || true) {
+    if (a.prop_4 === null || <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>a.prop_4 === null<!> || true) {
         if (a.prop_4 != null) {
             a.prop_4
             a.prop_4.equals(null)
@@ -283,14 +283,14 @@ fun case_16() {
     val x: TypealiasNothing? = null
     val y: Nothing? = null
 
-    if (x != null || x !== null || x != y) {
+    if (<!SENSELESS_COMPARISON!>x != null<!> || <!SENSELESS_COMPARISON!>x !== null<!> || <!SENSELESS_COMPARISON!>x != y<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNothing? & kotlin.Nothing")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNothing? & kotlin.Nothing")!>x<!>.hashCode()
     }
 }
 
 // TESTCASE NUMBER: 17
-val case_17 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>if (nullableIntProperty == null || <!SENSELESS_COMPARISON!>nullableNothingProperty === nullableIntProperty<!>) 0 else {
+val case_17 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>if (nullableIntProperty == null || <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>nullableNothingProperty === nullableIntProperty<!>) 0 else {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>nullableIntProperty<!>.equals(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>nullableIntProperty<!>.propT
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>nullableIntProperty<!>.propAny

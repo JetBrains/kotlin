@@ -705,6 +705,7 @@ class PatternMatchingTypingVisitor internal constructor(facade: ExpressionTyping
             return false
         }
 
+        @Suppress("UNUSED_VARIABLE") val it = TypeIntersector.intersectTypes(listOf(type, subjectType))
         checkEnumsForCompatibility(context, reportErrorOn, subjectType, type)
 
         // check if the pattern is essentially a 'null' expression
