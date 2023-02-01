@@ -508,9 +508,7 @@ class FirCallCompletionResultsWriterTransformer(
                     else -> {
                         buildTypeProjectionWithVariance {
                             source = argument?.source
-                            typeRef = buildResolvedTypeRef {
-                                this.type = type
-                            }
+                            typeRef = type.toFirResolvedTypeRef()
                             variance = Variance.INVARIANT
                         }
                     }

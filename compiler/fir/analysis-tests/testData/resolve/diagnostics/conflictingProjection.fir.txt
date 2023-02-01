@@ -148,13 +148,13 @@ FILE: conflictingProjection.kt
         ^test15 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
     }
     public final fun test16(): R|InOuter.OutIntermediate.InInner<out kotlin/Char, kotlin/String, kotlin/Int>| {
-        ^test16 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner><CS errors: /InOuter.OutIntermediate.InInner.InInner>#|<R|ERROR CLASS: Cannot infer argument for type parameter G|>()
+        ^test16 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner><CS errors: /InOuter.OutIntermediate.InInner.InInner>#|<<ERROR TYPE REF: Cannot infer argument for type parameter G>>()
     }
     public final fun test17(): R|InOuter.OutIntermediate.InInner<kotlin/Char, out kotlin/String, in kotlin/Int>| {
         ^test17 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner>|<R|kotlin/Char|>()
     }
     public final fun test18(): R|InOuter.OutIntermediate.InInner<out kotlin/Char, in kotlin/String, kotlin/Int>| {
-        ^test18 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner><CS errors: /InOuter.OutIntermediate.InInner.InInner>#|<R|ERROR CLASS: Cannot infer argument for type parameter G|>()
+        ^test18 R|/InOuter.InOuter|<R|kotlin/Int|>().R|SubstitutionOverride</InOuter.OutIntermediate.OutIntermediate>|<R|kotlin/String|>().R|SubstitutionOverride</InOuter.OutIntermediate.InInner.InInner><CS errors: /InOuter.OutIntermediate.InInner.InInner>#|<<ERROR TYPE REF: Cannot infer argument for type parameter G>>()
     }
     public final class TwoParametersOuter<T, in T1> : R|kotlin/Any| {
         public constructor<T, in T1>(): R|TwoParametersOuter<T, T1>| {

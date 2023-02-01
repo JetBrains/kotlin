@@ -18,5 +18,5 @@ FILE: typeParameters.kt
     }
     public final fun main(fooImpl: R|FooImpl|, bar: R|Bar|): R|kotlin/Unit| {
         lval a: R|FooImpl| = R|/foo|<R|FooImpl|>(R|<local>/fooImpl|)
-        lval b: <ERROR TYPE REF: Cannot infer argument for type parameter T> = R|/foo<Inapplicable(INAPPLICABLE): /foo>#|<R|ERROR CLASS: Cannot infer argument for type parameter T|>(R|<local>/bar|)
+        lval b: <ERROR TYPE REF: Cannot infer argument for type parameter T> = R|/foo<Inapplicable(INAPPLICABLE): /foo>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(R|<local>/bar|)
     }

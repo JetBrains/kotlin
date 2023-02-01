@@ -1,7 +1,7 @@
 FILE: erroneousDelegatedConstructorCall.kt
     public final class A : <ERROR TYPE REF: Symbol not found for Undefined> {
         public constructor(): R|A| {
-            super<<ERROR TYPE REF: Symbol not found for Undefined>>(R|/id|<R|ERROR CLASS: Cannot infer argument for type parameter K|>(R|/materialize|<R|ERROR CLASS: Cannot infer argument for type parameter K|>()))
+            super<<ERROR TYPE REF: Symbol not found for Undefined>>(R|/id|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>(R|/materialize|<<ERROR TYPE REF: Cannot infer argument for type parameter K>>()))
         }
 
     }

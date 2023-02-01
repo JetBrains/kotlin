@@ -6,5 +6,5 @@ FILE: ambiguityWhenNoApplicableCallableReferenceCandidate.kt
     public final fun <T> bar(f: R|(T) -> kotlin/Unit|): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/bar<CS errors: /bar>#|<R|ERROR CLASS: Cannot infer argument for type parameter T|>(::<Ambiguity: foo, [/foo, /foo]>#)
+        R|/bar<CS errors: /bar>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>(::<Ambiguity: foo, [/foo, /foo]>#)
     }

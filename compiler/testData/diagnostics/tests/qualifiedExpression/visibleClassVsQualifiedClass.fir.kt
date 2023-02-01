@@ -26,9 +26,9 @@ fun test(a_: a.b) {
     a_.a_b()
 
     val a_2 = a.<!UNRESOLVED_REFERENCE!>b<!>()
-    a_2.<!UNRESOLVED_REFERENCE!>a_b<!>()
-    a_2.<!UNRESOLVED_REFERENCE!>some_ab<!>()
-    a_2.<!UNRESOLVED_REFERENCE!>a_<!>()
+    a_2.a_b()
+    a_2.some_ab()
+    a_2.a_()
 }
 
 // FILE: c2.kt

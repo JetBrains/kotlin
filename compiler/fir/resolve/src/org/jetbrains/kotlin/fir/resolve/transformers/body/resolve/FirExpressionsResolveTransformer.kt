@@ -113,10 +113,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         source = qualifiedAccessExpression.source
                         diagnostic = ConeInstanceAccessBeforeSuperCall("<this>")
                     }
-                    implicitType != null -> buildResolvedTypeRef {
-                        source = callee.source
-                        type = implicitType
-                    }
+                    implicitType != null -> implicitType.toFirResolvedTypeRef(callee.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef))
                     labelName != null -> buildErrorTypeRef {
                         source = qualifiedAccessExpression.source
                         diagnostic = ConeSimpleDiagnostic("Unresolved this@$labelName", DiagnosticKind.UnresolvedLabel)
@@ -310,10 +307,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         // Report stub error so that it won't surface up. Instead, errors on the callee would be reported.
                         diagnostic = ConeStubDiagnostic(ConeSimpleDiagnostic("Unresolved super method", DiagnosticKind.Other))
                     }
-                    1 -> buildResolvedTypeRef {
-                        source = superReferenceContainer.source?.fakeElement(KtFakeSourceElementKind.SuperCallImplicitType)
-                        type = types.single()
-                    }
+                    1 -> types.single().toFirResolvedTypeRef(superReferenceContainer.source?.fakeElement(KtFakeSourceElementKind.SuperCallImplicitType))
                     else -> buildErrorTypeRef {
                         source = superReferenceContainer.source
                         diagnostic = ConeAmbiguousSuper(types)

@@ -358,11 +358,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: FirBasedSymbol<*>, make
                     KtFakeSourceElementKind.ImplicitTypeRef
                 )
             } else {
-                buildResolvedTypeRef {
-                    source = returnTypeRef.source?.fakeElement(KtFakeSourceElementKind.ImplicitTypeRef)
-                    type = returnTypeRef.type
-                    annotations += returnTypeRef.annotations
-                }
+                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
             }
         }
         is FirClassifierSymbol<*> -> {

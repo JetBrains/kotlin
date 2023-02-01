@@ -8,7 +8,7 @@ annotation class Ann(val x: Int)
 fun foo(i: Inv<@Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) String>) {}
 
 // TESTCASE NUMBER: 2
-fun test(vararg a: @Ann(unresolved_reference) Any) {}
+fun test(vararg a: @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) Any) {}
 
 // TESTCASE NUMBER: 3
 class A<T>(a: @Ann(<!UNRESOLVED_REFERENCE!>unresolved_reference<!>) T)
