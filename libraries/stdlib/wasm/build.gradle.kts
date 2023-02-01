@@ -160,6 +160,7 @@ val apiElements by configurations.creating {}
 
 publish {
     pom.packaging = "klib"
+    org.jetbrains.kotlin.gradle.plugin.VariantImplementationFactories.getProvider(project)
     artifact(tasks.named("wasmJar")) {
         extension = "klib"
     }
