@@ -549,7 +549,8 @@ class FirCallResolver(
         annotationClassSymbol.fir.unsubstitutedScope(
             session,
             components.scopeSession,
-            withForcedTypeCalculator = false
+            withForcedTypeCalculator = false,
+            requiredPhase = null,
         ).processDeclaredConstructors {
             if (it.fir.isPrimary && constructorSymbol == null) {
                 constructorSymbol = it

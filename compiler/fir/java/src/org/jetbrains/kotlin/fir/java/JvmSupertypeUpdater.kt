@@ -98,7 +98,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
             }
 
             val recordConstructorSymbol = recordType.lookupTag.toFirRegularClassSymbol(session)
-                ?.unsubstitutedScope(session, data, withForcedTypeCalculator = false)
+                ?.unsubstitutedScope(session, data, withForcedTypeCalculator = false, requiredPhase = null)
                 ?.getDeclaredConstructors()
                 ?.firstOrNull { it.fir.valueParameters.isEmpty() }
 

@@ -87,7 +87,8 @@ internal class KtFirScopeProvider(
             fir.unsubstitutedScope(
                 firSession,
                 getScopeSession(),
-                withForcedTypeCalculator = false
+                withForcedTypeCalculator = false,
+                requiredPhase = null,
             )
         }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope)
             ?: return getEmptyScope()

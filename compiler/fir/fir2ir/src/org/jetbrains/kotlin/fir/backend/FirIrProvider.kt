@@ -93,7 +93,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
             isTopLevelPrivate = topLevelClass.visibility == Visibilities.Private
             val classId = firClass.classId
             val scope =
-                firClass.unsubstitutedScope(fir2IrComponents.session, fir2IrComponents.scopeSession, withForcedTypeCalculator = true)
+                firClass.unsubstitutedScope(fir2IrComponents.session, fir2IrComponents.scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
             when (kind) {
                 SymbolKind.CLASS_SYMBOL -> {
                     firCandidates = listOf(firClass)

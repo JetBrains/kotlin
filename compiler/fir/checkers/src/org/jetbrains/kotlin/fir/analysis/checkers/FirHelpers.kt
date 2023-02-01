@@ -47,10 +47,20 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
 fun FirClass.unsubstitutedScope(context: CheckerContext): FirTypeScope =
-    this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
+    this.unsubstitutedScope(
+        context.sessionHolder.session,
+        context.sessionHolder.scopeSession,
+        withForcedTypeCalculator = false,
+        requiredPhase = null
+    )
 
 fun FirClassSymbol<*>.unsubstitutedScope(context: CheckerContext): FirTypeScope =
-    this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
+    this.unsubstitutedScope(
+        context.sessionHolder.session,
+        context.sessionHolder.scopeSession,
+        withForcedTypeCalculator = false,
+        requiredPhase = null
+    )
 
 fun FirTypeRef.toClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? {
     return coneTypeSafe<ConeClassLikeType>()?.toSymbol(session)
@@ -192,7 +202,8 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
     val firTypeScope = containingClass.unsubstitutedScope(
         context.sessionHolder.session,
         context.sessionHolder.scopeSession,
-        withForcedTypeCalculator = true
+        withForcedTypeCalculator = true,
+        requiredPhase = null,
     )
 
     val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
@@ -708,7 +719,7 @@ fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlin
 
 fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
     val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
-    val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+    val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = FirResolvePhase.STATUS)
 
     scope.processFunctionsByName(name) { }
     return scope.getDirectOverriddenFunctions(this, true)

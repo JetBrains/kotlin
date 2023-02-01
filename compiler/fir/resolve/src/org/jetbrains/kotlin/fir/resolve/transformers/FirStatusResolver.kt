@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirOuterClassTypeParameterRef
@@ -15,12 +15,17 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
-import org.jetbrains.kotlin.fir.extensions.*
+import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -86,7 +91,7 @@ class FirStatusResolver(
             return emptyList()
         }
 
-        val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null,)
 
         return buildList {
             scope.processPropertiesByName(property.name) {}
@@ -124,7 +129,7 @@ class FirStatusResolver(
         }
 
         return buildList<FirCallableDeclaration> {
-            val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+            val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
             val symbol = function.symbol
             scope.processFunctionsByName(function.name) {}
             scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { overriddenSymbol, _ ->

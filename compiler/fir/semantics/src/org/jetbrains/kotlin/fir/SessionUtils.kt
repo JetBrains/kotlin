@@ -22,7 +22,7 @@ fun FirSimpleFunction.lowestVisibilityAmongOverrides(
     session: FirSession,
     scopeSession: ScopeSession
 ): Visibility {
-    val firTypeScope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+    val firTypeScope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
     var visibility = visibility
 
     // required; otherwise processOverriddenFunctions()

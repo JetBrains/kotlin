@@ -175,7 +175,7 @@ class Fir2IrDeclarationStorage(
                 else -> {}
             }
         }
-        val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
         scope.getCallableNames().forEach { callableName ->
             buildList {
                 fakeOverrideGenerator.generateFakeOverridesForName(

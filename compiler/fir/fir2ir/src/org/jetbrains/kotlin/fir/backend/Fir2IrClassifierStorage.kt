@@ -211,7 +211,7 @@ class Fir2IrClassifierStorage(
     }
 
     private fun FirRegularClass.hasAbstractMembersInScope(): Boolean {
-        val scope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val scope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
         val names = scope.getCallableNames()
         var hasAbstract = false
         for (name in names) {
