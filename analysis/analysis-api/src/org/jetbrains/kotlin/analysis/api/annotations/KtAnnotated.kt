@@ -23,7 +23,7 @@ public val KtAnnotated.annotations: List<KtAnnotationApplicationWithArgumentsInf
     get() = annotationsList.annotations
 
 /**
- * A list of annotation overviews.
+ * A list of annotation infos.
  *
  * @see [KtAnnotationsList.annotationInfos]
  */

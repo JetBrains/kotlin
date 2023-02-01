@@ -24,7 +24,7 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
     public abstract val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
 
     /**
-     * A list of annotation overviews.
+     * A list of annotation infos.
      *
      * Can be used instead of [annotations] if applicable to reduce resolve.
      *
