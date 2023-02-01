@@ -19,7 +19,7 @@ internal object IdeCommonizedCinteropDependencyResolver : IdeDependencyResolver,
 
         val project = sourceSet.project
         val cinteropFiles = project.cinteropCommonizerDependencies(sourceSet)
-        return project.resolveCinteropDependencies(cinteropFiles)
+        return project.resolveCInteropDependencies(cinteropFiles)
     }
 
     override fun dependencies(project: Project): Iterable<Any> {

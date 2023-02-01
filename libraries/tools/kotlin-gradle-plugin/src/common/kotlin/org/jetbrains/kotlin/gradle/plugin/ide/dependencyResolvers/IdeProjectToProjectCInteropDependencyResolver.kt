@@ -32,6 +32,6 @@ internal object IdeProjectToProjectCInteropDependencyResolver : IdeDependencyRes
             it.componentFilter { identifier -> identifier is ProjectComponentIdentifier }
         }.files
 
-        return project.resolveCinteropDependencies(cinteropFiles)
+        return project.resolveCInteropDependencies(cinteropFiles)
     }
 }

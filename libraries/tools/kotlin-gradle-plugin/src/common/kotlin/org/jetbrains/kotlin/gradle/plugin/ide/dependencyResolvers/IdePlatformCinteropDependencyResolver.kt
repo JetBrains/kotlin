@@ -18,6 +18,6 @@ internal object IdePlatformCinteropDependencyResolver : IdeDependencyResolver {
 
         val cinteropFiles = project.getPlatformCinteropDependenciesOrEmpty(sourceSet)
 
-        return project.resolveCinteropDependencies(cinteropFiles)
+        return project.resolveCInteropDependencies(cinteropFiles)
     }
 }
