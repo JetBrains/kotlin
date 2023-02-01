@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -117,8 +118,14 @@ var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 
 private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
-    val classId = getClassId() ?: return null
-    return provider.getFirClassifierByFqName(classId) as? FirRegularClass
+    val declaration = if (provider is LLFirProvider) {
+        provider.getFirClassifierByDeclaration(this)
+    } else {
+        val classId = getClassId() ?: return null
+        provider.getFirClassifierByFqName(classId)
+    }
+
+    return declaration as? FirRegularClass
 }
 
 

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 
 internal class LLFirProviderHelper(
     firSession: FirSession,
@@ -37,14 +38,15 @@ internal class LLFirProviderHelper(
     private val allowKotlinPackage = canContainKotlinPackage ||
             firSession.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
-    private val classifierByClassId = firSession.firCachesFactory.createCache<ClassId, FirClassLikeDeclaration?> { classId ->
-        val ktClass = declarationProvider.getClassLikeDeclarationByClassId(classId)
-            ?: return@createCache null
-        if (ktClass.getClassId() == null) return@createCache null
-        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
-        FirElementFinder.findClassifierWithClassId(firFile, classId)
-            ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
-    }
+    private val classifierByClassId =
+        firSession.firCachesFactory.createCache<ClassId, FirClassLikeDeclaration?, KtClassLikeDeclaration?> { classId, context ->
+            val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return@createCache null
+
+            if (ktClass.getClassId() == null) return@createCache null
+            val firFile = firFileBuilder.buildRawFirFileWithCaching(ktClass.containingKtFile)
+            FirElementFinder.findClassifierWithClassId(firFile, classId)
+                ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
+        }
 
 
     private val callablesByCallableId = firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>> { callableId ->
@@ -57,10 +59,13 @@ internal class LLFirProviderHelper(
         }
     }
 
-    fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
+    fun getFirClassifierByFqNameAndDeclaration(
+        classId: ClassId,
+        classLikeDeclaration: KtClassLikeDeclaration?,
+    ): FirClassLikeDeclaration? {
         if (classId.isLocal) return null
         if (!allowKotlinPackage && classId.isKotlinPackage()) return null
-        return classifierByClassId.getValue(classId)
+        return classifierByClassId.getValue(classId, classLikeDeclaration)
     }
 
     fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {

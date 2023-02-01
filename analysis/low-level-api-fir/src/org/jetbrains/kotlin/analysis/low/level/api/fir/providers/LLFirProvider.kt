@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 
 @ThreadSafeMutableState
 internal class LLFirProvider(
@@ -45,10 +46,19 @@ internal class LLFirProvider(
 
     override val isPhasedFirAllowed: Boolean get() = true
 
-    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? {
-        return SyntheticFirClassProvider.getInstance(session).getFirClassifierByFqName(classId)
-            ?: providerHelper.getFirClassifierByFqName(classId)
+    override fun getFirClassifierByFqName(classId: ClassId): FirClassLikeDeclaration? =
+        getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration = null)
+
+    fun getFirClassifierByDeclaration(classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeDeclaration? {
+        val classId = classLikeDeclaration.getClassId() ?: return null
+        return getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration)
     }
+
+    private fun getFirClassifierByFqNameAndDeclaration(
+        classId: ClassId,
+        classLikeDeclaration: KtClassLikeDeclaration?,
+    ): FirClassLikeDeclaration? = SyntheticFirClassProvider.getInstance(session).getFirClassifierByFqName(classId)
+        ?: providerHelper.getFirClassifierByFqNameAndDeclaration(classId, classLikeDeclaration)
 
     override fun getFirClassifierContainerFile(fqName: ClassId): FirFile {
         return getFirClassifierContainerFileIfAny(fqName)
