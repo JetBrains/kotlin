@@ -608,6 +608,17 @@ public fun String.removePrefix(prefix: CharSequence): String {
 }
 
 /**
+ * If this string starts with the given [prefix], returns a new string with the prefix
+ * replaced with [replacement]. Otherwise, returns this string.
+ */
+public fun String.replacePrefix(prefix: CharSequence, replacement: String): String {
+    if (startsWith(prefix)) {
+        return replacement + substring(prefix.length)
+    }
+    return this
+}
+
+/**
  * If this char sequence ends with the given [suffix], returns a new char sequence
  * with the suffix removed. Otherwise, returns a new char sequence with the same characters.
  */
@@ -817,7 +828,13 @@ public inline infix fun CharSequence.matches(regex: Regex): Boolean = regex.matc
  * Implementation of [regionMatches] for CharSequences.
  * Invoked when it's already known that arguments are not Strings, so that no additional type checks are performed.
  */
-internal fun CharSequence.regionMatchesImpl(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean): Boolean {
+internal fun CharSequence.regionMatchesImpl(
+    thisOffset: Int,
+    other: CharSequence,
+    otherOffset: Int,
+    length: Int,
+    ignoreCase: Boolean
+): Boolean {
     if ((otherOffset < 0) || (thisOffset < 0) || (thisOffset > this.length - length) || (otherOffset > other.length - length)) {
         return false
     }
@@ -1042,7 +1059,11 @@ public fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int =
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
  */
-public fun CharSequence.findLastAnyOf(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Pair<Int, String>? =
+public fun CharSequence.findLastAnyOf(
+    strings: Collection<String>,
+    startIndex: Int = lastIndex,
+    ignoreCase: Boolean = false
+): Pair<Int, String>? =
     findAnyOf(strings, startIndex, ignoreCase, last = true)
 
 /**
@@ -1148,7 +1169,6 @@ public operator fun CharSequence.contains(other: CharSequence, ignoreCase: Boole
         indexOf(other, 0, length, ignoreCase) >= 0
 
 
-
 /**
  * Returns `true` if this char sequence contains the specified character [char].
  *
@@ -1236,7 +1256,12 @@ private class DelimitedRangesSequence(
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
  */
-private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
+private fun CharSequence.rangesDelimitedBy(
+    delimiters: CharArray,
+    startIndex: Int = 0,
+    ignoreCase: Boolean = false,
+    limit: Int = 0
+): Sequence<IntRange> {
     requireNonNegativeLimit(limit)
 
     return DelimitedRangesSequence(this, startIndex, limit, { currentIndex ->
@@ -1259,11 +1284,27 @@ private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: In
  * the beginning to the end of this string, and finds at each position the first element in [delimiters]
  * that matches this string at that position.
  */
-private fun CharSequence.rangesDelimitedBy(delimiters: Array<out String>, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
+private fun CharSequence.rangesDelimitedBy(
+    delimiters: Array<out String>,
+    startIndex: Int = 0,
+    ignoreCase: Boolean = false,
+    limit: Int = 0
+): Sequence<IntRange> {
     requireNonNegativeLimit(limit)
     val delimitersList = delimiters.asList()
 
-    return DelimitedRangesSequence(this, startIndex, limit, { currentIndex -> findAnyOf(delimitersList, currentIndex, ignoreCase = ignoreCase, last = false)?.let { it.first to it.second.length } })
+    return DelimitedRangesSequence(
+        this,
+        startIndex,
+        limit,
+        { currentIndex ->
+            findAnyOf(
+                delimitersList,
+                currentIndex,
+                ignoreCase = ignoreCase,
+                last = false
+            )?.let { it.first to it.second.length }
+        })
 
 }
 
