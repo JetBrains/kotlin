@@ -28,20 +28,32 @@ class K2JSDceArguments : CommonToolArguments() {
             valueDescription = "<path>",
             description = "Output directory"
     )
-    var outputDirectory: String? by NullableStringFreezableVar(null)
+    var outputDirectory: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
             value = "-keep",
             valueDescription = "<fully.qualified.name[,]>",
             description = "List of fully-qualified names of declarations that shouldn't be eliminated"
     )
-    var declarationsToKeep: Array<String>? by FreezableVar(null)
+    var declarationsToKeep: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
             value = "-Xprint-reachability-info",
             description = "Print declarations marked as reachable"
     )
-    var printReachabilityInfo: Boolean by FreezableVar(false)
+    var printReachabilityInfo = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -52,14 +64,22 @@ class K2JSDceArguments : CommonToolArguments() {
             value = "-dev-mode",
             description = "Development mode: don't strip out any code, just copy dependencies"
     )
-    var devMode: Boolean by FreezableVar(false)
+    var devMode = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xdev-mode-overwriting-strategy",
         valueDescription = "{$OLDER|$ALL}",
         description = "Overwriting strategy during copy dependencies in development mode"
     )
-    var devModeOverwritingStrategy: String? by NullableStringFreezableVar(null)
+    var devModeOverwritingStrategy: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 }
 
 object DevModeOverwritingStrategies {

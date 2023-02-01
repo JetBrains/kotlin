@@ -28,10 +28,18 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         removeAfter = "1.9.0"
     )
     @Argument(value = "-output", valueDescription = "<filepath>", description = "Destination *.js file for the compilation result")
-    var outputFile: String? by NullableStringFreezableVar(null)
+    var outputFile: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-ir-output-dir", valueDescription = "<directory>", description = "Destination for generated files")
-    var outputDir: String? by NullableStringFreezableVar(null)
+    var outputDir: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @GradleOption(
         value = DefaultValue.STRING_NULL_DEFAULT,
@@ -39,7 +47,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-ir-output-name", description = "Base name of generated files")
-    var moduleName: String? by NullableStringFreezableVar(null)
+    var moduleName: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
@@ -47,14 +59,22 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-no-stdlib", description = "Don't automatically include the default Kotlin/JS stdlib into compilation dependencies")
-    var noStdlib: Boolean by FreezableVar(false)
+    var noStdlib = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
             value = "-libraries",
             valueDescription = "<path>",
             description = "Paths to Kotlin libraries with .meta.js and .kjsm files, separated by system path separator"
     )
-    var libraries: String? by NullableStringFreezableVar(null)
+    var libraries: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -62,7 +82,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-source-map", description = "Generate source map")
-    var sourceMap: Boolean by FreezableVar(false)
+    var sourceMap = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @GradleOption(
         value = DefaultValue.STRING_NULL_DEFAULT,
@@ -70,7 +94,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-source-map-prefix", description = "Add the specified prefix to paths in the source map")
-    var sourceMapPrefix: String? by NullableStringFreezableVar(null)
+    var sourceMapPrefix: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
             value = "-source-map-base-dirs",
@@ -78,7 +106,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             valueDescription = "<path>",
             description = "Base directories for calculating relative paths to source files in source map"
     )
-    var sourceMapBaseDirs: String? by NullableStringFreezableVar(null)
+    var sourceMapBaseDirs: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     /**
      * SourceMapEmbedSources should be null by default, since it has effect only when source maps are enabled.
@@ -94,7 +126,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             valueDescription = "{always|never|inlining}",
             description = "Embed source files into source map"
     )
-    var sourceMapEmbedSources: String? by NullableStringFreezableVar(null)
+    var sourceMapEmbedSources: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @GradleOption(
         value = DefaultValue.JS_SOURCE_MAP_NAMES_POLICY,
@@ -106,7 +142,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         valueDescription = "{no|simple-names|fully-qualified-names}",
         description = "How to map generated names to original names (IR backend only)"
     )
-    var sourceMapNamesPolicy: String? by NullableStringFreezableVar(null)
+    var sourceMapNamesPolicy: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
@@ -114,7 +154,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-meta-info", description = "Generate .meta.js and .kjsm files with metadata. Use to create a library")
-    var metaInfo: Boolean by FreezableVar(false)
+    var metaInfo = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @GradleOption(
         value = DefaultValue.JS_ECMA_VERSIONS,
@@ -122,14 +166,22 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-target", valueDescription = "{ v5 }", description = "Generate JS files for specific ECMA version")
-    var target: String? by NullableStringFreezableVar(null)
+    var target: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xir-keep",
         description = "Comma-separated list of fully-qualified names to not be eliminated by DCE (if it can be reached), " +
                 "and for which to keep non-minified names."
     )
-    var irKeep: String? by NullableStringFreezableVar(null)
+    var irKeep: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @GradleOption(
         value = DefaultValue.JS_MODULE_KINDS,
@@ -141,7 +193,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             valueDescription = "{plain|amd|commonjs|umd|es}",
             description = "Kind of the JS module generated by the compiler"
     )
-    var moduleKind: String? by NullableStringFreezableVar(K2JsArgumentConstants.MODULE_PLAIN)
+    var moduleKind: String? = MODULE_PLAIN
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) MODULE_PLAIN else value
+        }
 
     @GradleOption(
         value = DefaultValue.JS_MAIN,
@@ -151,22 +207,35 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-main",
         valueDescription = "{$CALL|$NO_CALL}",
-        description = "Define whether the `main` function should be called upon execution")
-    var main: String? by NullableStringFreezableVar(null)
+        description = "Define whether the `main` function should be called upon execution"
+    )
+    var main: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
             value = "-output-prefix",
             valueDescription = "<path>",
             description = "Add the content of the specified file to the beginning of output file"
     )
-    var outputPrefix: String? by NullableStringFreezableVar(null)
+    var outputPrefix: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
             value = "-output-postfix",
             valueDescription = "<path>",
             description = "Add the content of the specified file to the end of output file"
     )
-    var outputPostfix: String? by NullableStringFreezableVar(null)
+    var outputPostfix: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     // Advanced options
 
@@ -175,114 +244,213 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         description = "Generate unpacked KLIB into parent directory of output JS file.\n" +
                 "In combination with -meta-info generates both IR and pre-IR versions of library."
     )
-    var irProduceKlibDir: Boolean by FreezableVar(false)
+    var irProduceKlibDir = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xir-produce-klib-file",
         description = "Generate packed klib into file specified by -output. Disables pre-IR backend"
     )
-    var irProduceKlibFile: Boolean by FreezableVar(false)
+    var irProduceKlibFile = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xir-produce-js", description = "Generates JS file using IR backend. Also disables pre-IR backend")
-    var irProduceJs: Boolean by FreezableVar(false)
+    var irProduceJs = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xir-dce", description = "Perform experimental dead code elimination")
-    var irDce: Boolean by FreezableVar(false)
+    var irDce = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xir-dce-runtime-diagnostic",
         valueDescription = "{$RUNTIME_DIAGNOSTIC_LOG|$RUNTIME_DIAGNOSTIC_EXCEPTION}",
         description = "Enable runtime diagnostics when performing DCE instead of removing declarations"
     )
-    var irDceRuntimeDiagnostic: String? by NullableStringFreezableVar(null)
+    var irDceRuntimeDiagnostic: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
-    @Argument(value = "-Xir-dce-print-reachability-info", description = "Print declarations' reachability info to stdout during performing DCE")
-    var irDcePrintReachabilityInfo: Boolean by FreezableVar(false)
+    @Argument(
+        value = "-Xir-dce-print-reachability-info",
+        description = "Print declarations' reachability info to stdout during performing DCE"
+    )
+    var irDcePrintReachabilityInfo = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xir-property-lazy-initialization", description = "Perform lazy initialization for properties")
-    var irPropertyLazyInitialization: Boolean by FreezableVar(true)
+    var irPropertyLazyInitialization = true
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xir-minimized-member-names", description = "Perform minimization for names of members")
-    var irMinimizedMemberNames: Boolean by FreezableVar(false)
+    var irMinimizedMemberNames = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xir-only", description = "Disables pre-IR backend")
-    var irOnly: Boolean by FreezableVar(false)
+    var irOnly = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xir-module-name",
         valueDescription = "<name>",
         description = "Specify a compilation module name for IR backend"
     )
-    var irModuleName: String? by NullableStringFreezableVar(null)
+    var irModuleName: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xir-base-class-in-metadata", description = "Write base class into metadata")
-    var irBaseClassInMetadata: Boolean by FreezableVar(false)
+    var irBaseClassInMetadata = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xir-safe-external-boolean",
         description = "Safe access via Boolean() to Boolean properties in externals to safely cast falsy values."
     )
-    var irSafeExternalBoolean: Boolean by FreezableVar(false)
+    var irSafeExternalBoolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xir-safe-external-boolean-diagnostic",
         valueDescription = "{$RUNTIME_DIAGNOSTIC_LOG|$RUNTIME_DIAGNOSTIC_EXCEPTION}",
         description = "Enable runtime diagnostics when access safely to boolean in external declarations"
     )
-    var irSafeExternalBooleanDiagnostic: String? by NullableStringFreezableVar(null)
+    var irSafeExternalBooleanDiagnostic: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xir-per-module", description = "Splits generated .js per-module")
-    var irPerModule: Boolean by FreezableVar(false)
+    var irPerModule = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xir-per-module-output-name", description = "Adds a custom output name to the splitted js files")
-    var irPerModuleOutputName: String? by NullableStringFreezableVar(null)
+    var irPerModuleOutputName: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xir-per-file", description = "Splits generated .js per-file")
-    var irPerFile: Boolean by FreezableVar(false)
+    var irPerFile = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xir-new-ir2js", description = "New fragment-based ir2js")
-    var irNewIr2Js: Boolean by FreezableVar(true)
+    var irNewIr2Js = true
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xir-generate-inline-anonymous-functions",
         description = "Lambda expressions that capture values are translated into in-line anonymous JavaScript functions"
     )
-    var irGenerateInlineAnonymousFunctions: Boolean by FreezableVar(false)
+    var irGenerateInlineAnonymousFunctions = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xinclude",
         valueDescription = "<path>",
         description = "A path to an intermediate library that should be processed in the same manner as source files."
     )
-    var includes: String? by NullableStringFreezableVar(null)
+    var includes: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xcache-directory",
         valueDescription = "<path>",
         description = "A path to cache directory"
     )
-    var cacheDirectory: String? by NullableStringFreezableVar(null)
+    var cacheDirectory: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xir-build-cache", description = "Use compiler to build cache")
-    var irBuildCache: Boolean by FreezableVar(false)
+    var irBuildCache = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xgenerate-dts",
         description = "Generate TypeScript declarations .d.ts file alongside JS file. Available in IR backend only."
     )
-    var generateDts: Boolean by FreezableVar(false)
+    var generateDts = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xgenerate-polyfills",
         description = "Generate polyfills for features from the ES6+ standards."
     )
-    var generatePolyfills: Boolean by FreezableVar(true)
+    var generatePolyfills = true
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xstrict-implicit-export-types",
         description = "Generate strict types for implicitly exported entities inside d.ts files. Available in IR backend only."
     )
-    var strictImplicitExportType: Boolean by FreezableVar(false)
+    var strictImplicitExportType = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -293,7 +461,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         value = "-Xes-classes",
         description = "Generated JavaScript will use ES2015 classes."
     )
-    var useEsClasses: Boolean by FreezableVar(false)
+    var useEsClasses = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_TRUE_DEFAULT,
@@ -301,7 +473,11 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-Xtyped-arrays", description = "Translate primitive arrays to JS typed arrays")
-    var typedArrays: Boolean by FreezableVar(true)
+    var typedArrays = true
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @GradleOption(
         value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -309,65 +485,129 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         shouldGenerateDeprecatedKotlinOptions = true,
     )
     @Argument(value = "-Xfriend-modules-disabled", description = "Disable internal declaration export")
-    var friendModulesDisabled: Boolean by FreezableVar(false)
+    var friendModulesDisabled = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
             value = "-Xfriend-modules",
             valueDescription = "<path>",
             description = "Paths to friend modules"
     )
-    var friendModules: String? by NullableStringFreezableVar(null)
+    var friendModules: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(
         value = "-Xenable-extension-functions-in-externals",
         description = "Enable extensions functions members in external interfaces"
     )
-    var extensionFunctionsInExternals: Boolean by FreezableVar(false)
+    var extensionFunctionsInExternals = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xmetadata-only", description = "Generate *.meta.js and *.kjsm files only")
-    var metadataOnly: Boolean by FreezableVar(false)
+    var metadataOnly = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xenable-js-scripting", description = "Enable experimental support of .kts files using K/JS (with -Xir only)")
-    var enableJsScripting: Boolean by FreezableVar(false)
+    var enableJsScripting = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xfake-override-validator", description = "Enable IR fake override validator")
-    var fakeOverrideValidator: Boolean by FreezableVar(false)
+    var fakeOverrideValidator = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xerror-tolerance-policy", description = "Set up error tolerance policy (NONE, SEMANTIC, SYNTAX, ALL)")
-    var errorTolerancePolicy: String? by NullableStringFreezableVar(null)
+    var errorTolerancePolicy: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xpartial-linkage", description = "Allow unlinked symbols")
-    var partialLinkage: Boolean by FreezableVar(false)
+    var partialLinkage = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xwasm", description = "Use experimental WebAssembly compiler backend")
-    var wasm: Boolean by FreezableVar(false)
+    var wasm = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xwasm-debug-info", description = "Add debug info to WebAssembly compiled module")
-    var wasmDebug: Boolean by FreezableVar(true)
+    var wasmDebug = true
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xwasm-kclass-fqn", description = "Enable support for FQ names in KClass")
-    var wasmKClassFqn: Boolean by FreezableVar(false)
+    var wasmKClassFqn = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xwasm-enable-array-range-checks", description = "Turn on range checks for the array access functions")
-    var wasmEnableArrayRangeChecks: Boolean by FreezableVar(false)
+    var wasmEnableArrayRangeChecks = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xwasm-enable-asserts", description = "Turn on asserts")
-    var wasmEnableAsserts: Boolean by FreezableVar(false)
+    var wasmEnableAsserts = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(value = "-Xwasm-generate-wat", description = "Generate wat file")
-    var wasmGenerateWat: Boolean by FreezableVar(false)
+    var wasmGenerateWat = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xuse-deprecated-legacy-compiler",
         description = "Use deprecated legacy compiler without error"
     )
-    var useDeprecatedLegacyCompiler: Boolean by FreezableVar(false)
+    var useDeprecatedLegacyCompiler = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     @Argument(
         value = "-Xlegacy-deprecated-no-warn",
         description = "Disable warnings of deprecation of legacy compiler"
     )
-    var legacyDeprecatedNoWarn: Boolean by FreezableVar(false)
+    var legacyDeprecatedNoWarn = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
 
     private fun MessageCollector.deprecationWarn(value: Boolean, defaultValue: Boolean, name: String) {
         if (value != defaultValue) {
