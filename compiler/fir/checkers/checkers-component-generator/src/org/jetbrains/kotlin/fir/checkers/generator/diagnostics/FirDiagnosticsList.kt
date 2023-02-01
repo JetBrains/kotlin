@@ -1338,6 +1338,26 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("leftType")
             parameter<ConeKotlinType>("rightType")
         }
+        val INCOMPATIBLE_ENUM_COMPARISON by warning<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val FORBIDDEN_IDENTITY_EQUALS by error<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val FORBIDDEN_IDENTITY_EQUALS_WARNING by warning<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val DEPRECATED_IDENTITY_EQUALS by warning<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val IMPLICIT_BOXING_IN_IDENTITY_EQUALS by warning<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
         val INC_DEC_SHOULD_NOT_RETURN_UNIT by error<KtExpression>(PositioningStrategy.OPERATOR)
         val ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT by error<KtExpression>(PositioningStrategy.OPERATOR) {
             parameter<FirNamedFunctionSymbol>("functionSymbol")

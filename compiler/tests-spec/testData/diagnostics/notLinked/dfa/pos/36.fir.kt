@@ -127,7 +127,7 @@ fun case_10(x: Any?, z: Any, b: Boolean?) {
         false -> return
         null -> throw Exception()
     }
-    z === y || if (b == true) return else if (b === false) null!! else throw Exception()
+    z === y || if (b == true) return else if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>b === false<!>) null!! else throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
@@ -137,7 +137,7 @@ fun case_10(x: Any?, z: Any, b: Boolean?) {
 fun case_11(x: Any?, z: Any, b: Boolean?) {
     while (true) {
         var y = x ?: if (b == true) continue<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> else if (!(b != false)) return else break <!USELESS_ELVIS!>?: break::class<!>
-        z !== y && if (b == true) return else if (b === false) null!!else throw Exception()
+        z !== y && if (b == true) return else if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>b === false<!>) null!!else throw Exception()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
@@ -148,7 +148,7 @@ fun case_11(x: Any?, z: Any, b: Boolean?) {
 fun case_12(x: Any?, z: Any, b: Boolean?) {
     while (true) {
         var y = select(x) ?: if (b == true) continue<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!> else if (!(b != false)) return else break <!USELESS_ELVIS!>?: break::class<!>
-        select(z) !== y && if (b == true) return else if (b === false) null!!else throw Exception()
+        select(z) !== y && if (b == true) return else if (<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>b === false<!>) null!!else throw Exception()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)

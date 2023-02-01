@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -605,6 +602,10 @@ fun ConeClassLikeType.toRegularClassSymbol(session: FirSession): FirRegularClass
 
 fun ConeKotlinType.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
     return (this as? ConeClassLikeType)?.toRegularClassSymbol(session)
+}
+
+fun ConeClassLikeType.toClassSymbol(session: FirSession): FirClassSymbol<*>? {
+    return fullyExpandedType(session).toSymbol(session) as? FirClassSymbol<*>
 }
 
 private fun lowerThanBound(context: ConeInferenceContext, argument: ConeKotlinType, typeParameterSymbol: FirTypeParameterSymbol): Boolean {

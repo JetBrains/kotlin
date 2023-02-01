@@ -3235,6 +3235,41 @@ internal class IncompatibleEnumComparisonErrorImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.IncompatibleEnumComparisonError(), KtAbstractFirDiagnostic<KtElement>
 
+internal class IncompatibleEnumComparisonImpl(
+    override val leftType: KtType,
+    override val rightType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.IncompatibleEnumComparison(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ForbiddenIdentityEqualsImpl(
+    override val leftType: KtType,
+    override val rightType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ForbiddenIdentityEquals(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ForbiddenIdentityEqualsWarningImpl(
+    override val leftType: KtType,
+    override val rightType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ForbiddenIdentityEqualsWarning(), KtAbstractFirDiagnostic<KtElement>
+
+internal class DeprecatedIdentityEqualsImpl(
+    override val leftType: KtType,
+    override val rightType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.DeprecatedIdentityEquals(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ImplicitBoxingInIdentityEqualsImpl(
+    override val leftType: KtType,
+    override val rightType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ImplicitBoxingInIdentityEquals(), KtAbstractFirDiagnostic<KtElement>
+
 internal class IncDecShouldNotReturnUnitImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

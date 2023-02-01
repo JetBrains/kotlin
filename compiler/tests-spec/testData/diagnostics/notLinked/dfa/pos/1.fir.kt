@@ -322,7 +322,7 @@ fun case_15(x: EmptyObject) {
 fun case_16() {
     val x: TypealiasNullableNothing = null
 
-    if (x != null) {
+    if (<!SENSELESS_COMPARISON!>x != null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing & kotlin.Nothing")!>x<!>
     }
 }

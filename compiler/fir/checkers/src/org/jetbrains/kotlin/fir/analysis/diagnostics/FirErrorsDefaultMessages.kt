@@ -221,7 +221,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FLOAT_LITERAL_OUT_OF_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_BINARY_MOD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_BINARY_MOD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_IDENTITY_EQUALS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_IDENTITY_EQUALS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
@@ -249,6 +252,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_F
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_PROPERTY_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_BOXING_IN_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
@@ -262,6 +266,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM_COMPARISON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM_COMPARISON_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
@@ -1999,6 +2004,36 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INCOMPATIBLE_ENUM_COMPARISON_ERROR,
             "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            INCOMPATIBLE_ENUM_COMPARISON,
+            "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            FORBIDDEN_IDENTITY_EQUALS,
+            "Identity equality for arguments of types {0} and {1} is forbidden",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            FORBIDDEN_IDENTITY_EQUALS_WARNING,
+            "Identity equality for arguments of types {0} and {1} is forbidden",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            DEPRECATED_IDENTITY_EQUALS,
+            "Identity equality for arguments of types {0} and {1} is deprecated",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            IMPLICIT_BOXING_IN_IDENTITY_EQUALS,
+            "Identity equality for arguments of types {0} and {1} can be unstable because of implicit boxing",
             RENDER_TYPE,
             RENDER_TYPE
         )

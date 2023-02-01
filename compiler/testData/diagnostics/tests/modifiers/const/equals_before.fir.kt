@@ -3,12 +3,12 @@
 const val equalsBoolean1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>true.equals(true)<!>
 const val equalsBoolean2 = false != true
 const val equalsBoolean3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>false.equals(1)<!>
-const val equalsBoolean4 = <!EQUALITY_NOT_APPLICABLE_WARNING!>false == 1<!>
+const val equalsBoolean4 = <!EQUALITY_NOT_APPLICABLE!>false == 1<!>
 
 const val equalsChar1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>'1'.equals('2')<!>
 const val equalsChar2 = '2' == '2'
 const val equalsChar3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>'1'.equals(1)<!>
-const val equalsChar4 = <!EQUALITY_NOT_APPLICABLE_WARNING!>'1' == 1<!>
+const val equalsChar4 = <!EQUALITY_NOT_APPLICABLE!>'1' == 1<!>
 
 const val equalsByte1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>1.toByte().equals(2.toByte())<!>
 const val equalsByte2 = 2.toByte() == 2.toByte()

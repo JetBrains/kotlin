@@ -257,7 +257,7 @@ fun case_22(a: (() -> Unit)) {
 fun case_23(a: ((Float) -> Int), b: Float) {
     if (<!SENSELESS_COMPARISON!>a == null<!> && <!SENSELESS_COMPARISON!>b == null<!>) {
         val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float & kotlin.Nothing")!>b<!>)<!>
-        if (<!SENSELESS_COMPARISON!>x !== null<!>) {
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>x !== null<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>x<!>
         }
     }
@@ -282,7 +282,7 @@ fun case_25(a: (() -> Unit) -> Unit, b: (() -> Unit) -> Unit = if (<!SENSELESS_C
 }
 
 // TESTCASE NUMBER: 26
-fun case_26(a: Int, b: Int = if (<!SENSELESS_COMPARISON!>a === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Nothing")!>a<!> else 0) {
+fun case_26(a: Int, b: Int = if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>a === null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Nothing")!>a<!> else 0) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>
 }

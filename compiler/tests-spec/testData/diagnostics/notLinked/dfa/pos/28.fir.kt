@@ -161,7 +161,7 @@ inline fun <reified T>case_17(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_18(x: Any?) {
-    if (x?.equals(10) === null === true) else {
+    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) === null === true<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -173,7 +173,7 @@ inline fun <reified T>case_18(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_19(x: Any?) {
-    if (x?.equals(10) !== null === true) {
+    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) !== null === true<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -185,7 +185,7 @@ inline fun <reified T>case_19(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_20(x: Any?) {
-    if (x?.equals(10) === null !== false) else {
+    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) === null !== false<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -197,7 +197,7 @@ inline fun <reified T>case_20(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_21(x: Any?) {
-    if (x?.equals(10) !== null !== false) {
+    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) !== null !== false<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -209,7 +209,7 @@ inline fun <reified T>case_21(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_22(x: Any?) {
-    if (x?.equals(10) !== null !== true) else {
+    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) !== null !== true<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -221,7 +221,7 @@ inline fun <reified T>case_22(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_23(x: Any?) {
-    if (x?.equals(10) === null === false) {
+    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) === null === false<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -257,7 +257,7 @@ inline fun <reified T>case_25(x: Any?) {
  * ISSUES: KT-30369, KT-29878
  */
 inline fun <reified T>case_26(x: Any?) {
-    if (x?.equals(10) != null === false) else {
+    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) != null === false<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -269,7 +269,7 @@ inline fun <reified T>case_26(x: Any?) {
  * ISSUES: KT-30369, KT-29878
  */
 inline fun <reified T>case_27(x: Any?) {
-    if (x?.equals(10) == null === false) {
+    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) == null === false<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }

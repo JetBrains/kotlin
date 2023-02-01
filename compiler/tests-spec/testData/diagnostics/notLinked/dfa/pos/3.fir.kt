@@ -181,7 +181,7 @@ fun case_15(x: TypealiasNullableString) {
 fun case_16() {
     val x: TypealiasNullableNothing = null
 
-    if (x == null || false || false || false) {
+    if (<!SENSELESS_COMPARISON!>x == null<!> || false || false || false) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>
     }
 }

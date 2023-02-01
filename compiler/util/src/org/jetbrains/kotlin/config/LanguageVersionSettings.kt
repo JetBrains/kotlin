@@ -307,6 +307,10 @@ enum class LanguageFeature(
     // When this feature is enabled, no such errors are reported.
     NoBuilderInferenceWithoutAnnotationRestriction(sinceVersion = null, kind = OTHER),
 
+    // Disabled for indefinite time. Forces K2 report errors (instead of warnings) for incompatible
+    // equality & identity operators in cases where K1 would report warnings or would not report anything.
+    ReportErrorsForComparisonOperators(sinceVersion = null, kind = BUG_FIX),
+
     // Experimental features
 
     BreakContinueInInlineLambdas(null), // KT-1436

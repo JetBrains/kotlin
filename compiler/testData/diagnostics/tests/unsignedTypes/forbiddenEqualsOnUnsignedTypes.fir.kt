@@ -6,18 +6,18 @@ fun test(
     ui1: UInt, ui2: UInt,
     ul1: ULong, ul2: ULong
 ) {
-    val ub = ub1 === ub2 || ub1 !== ub2
-    val us = us1 === us2 || us1 !== us2
-    val ui = ui1 === ui2 || ui1 !== ui2
-    val ul = ul1 === ul2 || ul1 !== ul2
+    val ub = <!FORBIDDEN_IDENTITY_EQUALS!>ub1 === ub2<!> || <!FORBIDDEN_IDENTITY_EQUALS!>ub1 !== ub2<!>
+    val us = <!FORBIDDEN_IDENTITY_EQUALS!>us1 === us2<!> || <!FORBIDDEN_IDENTITY_EQUALS!>us1 !== us2<!>
+    val ui = <!FORBIDDEN_IDENTITY_EQUALS!>ui1 === ui2<!> || <!FORBIDDEN_IDENTITY_EQUALS!>ui1 !== ui2<!>
+    val ul = <!FORBIDDEN_IDENTITY_EQUALS!>ul1 === ul2<!> || <!FORBIDDEN_IDENTITY_EQUALS!>ul1 !== ul2<!>
 
-    val u = <!EQUALITY_NOT_APPLICABLE!>ub1 === ul1<!>
+    val u = <!FORBIDDEN_IDENTITY_EQUALS!>ub1 === ul1<!>
 
-    val a1 = 1u === 2u || 1u !== 2u
-    val a2 = 0xFFFF_FFFF_FFFF_FFFFu === 0xFFFF_FFFF_FFFF_FFFFu
+    val a1 = <!FORBIDDEN_IDENTITY_EQUALS!>1u === 2u<!> || <!FORBIDDEN_IDENTITY_EQUALS!>1u !== 2u<!>
+    val a2 = <!FORBIDDEN_IDENTITY_EQUALS!>0xFFFF_FFFF_FFFF_FFFFu === 0xFFFF_FFFF_FFFF_FFFFu<!>
 
     val bu1 = 1u
     val bu2 = 1u
 
-    val c1 = bu1 === bu2 || bu1 !== bu2
+    val c1 = <!FORBIDDEN_IDENTITY_EQUALS!>bu1 === bu2<!> || <!FORBIDDEN_IDENTITY_EQUALS!>bu1 !== bu2<!>
 }

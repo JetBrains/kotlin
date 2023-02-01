@@ -160,6 +160,24 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("comparingArbitraryClasses.kt")
+        public void testComparingArbitraryClasses() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/comparingArbitraryClasses.kt");
+        }
+
+        @Test
+        @TestMetadata("comparingCallableReferencesWithInstanceOfJavaClass.kt")
+        public void testComparingCallableReferencesWithInstanceOfJavaClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/comparingCallableReferencesWithInstanceOfJavaClass.kt");
+        }
+
+        @Test
+        @TestMetadata("comparisonOfGenericInterfaceWithGenericClass.kt")
+        public void testComparisonOfGenericInterfaceWithGenericClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/comparisonOfGenericInterfaceWithGenericClass.kt");
+        }
+
+        @Test
         @TestMetadata("Constants.kt")
         public void testConstants() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Constants.kt");
@@ -244,6 +262,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("differentNumericTypesFromSmartCast.kt")
+        public void testDifferentNumericTypesFromSmartCast() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/differentNumericTypesFromSmartCast.kt");
+        }
+
+        @Test
         @TestMetadata("Dollar.kt")
         public void testDollar() throws Exception {
             runTest("compiler/testData/diagnostics/tests/Dollar.kt");
@@ -253,6 +277,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         @TestMetadata("EnumEntryAsType.kt")
         public void testEnumEntryAsType() throws Exception {
             runTest("compiler/testData/diagnostics/tests/EnumEntryAsType.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityComparisonToSelf.kt")
+        public void testEqualityComparisonToSelf() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/equalityComparisonToSelf.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityWithSmartCastInIfBlock.kt")
+        public void testEqualityWithSmartCastInIfBlock() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/equalityWithSmartCastInIfBlock.kt");
         }
 
         @Test
@@ -10390,6 +10426,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             @TestMetadata("enumWithEmptyName.kt")
             public void testEnumWithEmptyName() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/enum/enumWithEmptyName.kt");
+            }
+
+            @Test
+            @TestMetadata("equalityOfEnumAndParameter.kt")
+            public void testEqualityOfEnumAndParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/equalityOfEnumAndParameter.kt");
+            }
+
+            @Test
+            @TestMetadata("equalityOfFlexibleTypeParameters.kt")
+            public void testEqualityOfFlexibleTypeParameters() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/enum/equalityOfFlexibleTypeParameters.kt");
             }
 
             @Test
@@ -35360,6 +35408,30 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("comparingDifferentSubclassesCommonInterface.kt")
+        public void testComparingDifferentSubclassesCommonInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/comparingDifferentSubclassesCommonInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("comparingPlatformTypes.kt")
+        public void testComparingPlatformTypes() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/comparingPlatformTypes.kt");
+        }
+
+        @Test
+        @TestMetadata("comparingSmartCastValueToBoolean.kt")
+        public void testComparingSmartCastValueToBoolean() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/comparingSmartCastValueToBoolean.kt");
+        }
+
+        @Test
+        @TestMetadata("comparingTripleWithPair.kt")
+        public void testComparingTripleWithPair() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/comparingTripleWithPair.kt");
+        }
+
+        @Test
         @TestMetadata("compileTimeUnsignedArray.kt")
         public void testCompileTimeUnsignedArray() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/compileTimeUnsignedArray.kt");
@@ -35381,6 +35453,24 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         @TestMetadata("enumEntryInitialization.kt")
         public void testEnumEntryInitialization() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/enumEntryInitialization.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityCompatibilityCommonCases.kt")
+        public void testEqualityCompatibilityCommonCases() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/equalityCompatibilityCommonCases.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityCompatibilityOldBehavior_Off.kt")
+        public void testEqualityCompatibilityOldBehavior_Off() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/equalityCompatibilityOldBehavior_Off.kt");
+        }
+
+        @Test
+        @TestMetadata("equalityCompatibilityOldBehavior_On.kt")
+        public void testEqualityCompatibilityOldBehavior_On() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/equalityCompatibilityOldBehavior_On.kt");
         }
 
         @Test
