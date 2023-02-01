@@ -21,7 +21,6 @@ import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.internal.plugins.DefaultArtifactPublicationSet
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -30,7 +29,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo.KPM
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.registerEmbedAndSignAppleFrameworkTask
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.targets.native.*
@@ -38,12 +37,16 @@ import org.jetbrains.kotlin.gradle.targets.native.internal.commonizeCInteropTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropApiElementsKlibArtifact
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropApiElementsConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.internal.locateOrCreateCInteropDependencyConfiguration
-import org.jetbrains.kotlin.gradle.targets.native.tasks.*
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeHostTest
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.Xcode
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
@@ -247,9 +250,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 // Register the interop library as a dependency of the compilation to make IDE happy.
                 project.dependencies.add(compileDependencyConfigurationName, interopOutput)
                 if (isMain()) {
-                    // Register the interop library as an outgoing klib to allow depending on projects with cinterops.
-                    project.dependencies.add(target.apiElementsConfigurationName, interopOutput)
-
                     // Add interop library to special CInteropApiElements configuration
                     createCInteropApiElementsKlibArtifact(compilation.target, interop, interopTask)
 
@@ -260,9 +260,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                         artifactFile = interopTask.map { it.outputFile },
                         classifier = "cinterop-${interop.name}",
                         producingTask = interopTask,
-                        copy = true
                     )
-
 
                     // We cannot add the interop library in an compilation output because in this case
                     // IDE doesn't see this library in module dependencies. So we have to manually add
@@ -555,7 +553,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             artifactFile: Provider<File>,
             classifier: String?,
             producingTask: TaskProvider<*>,
-            copy: Boolean = false
         ) {
             val project = compilationInfo.project
             if (!konanTarget.enabledOnCurrentHost) {
@@ -567,30 +564,13 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 is KotlinCompilationInfo.TCS -> compilationInfo.compilation.target.apiElementsConfigurationName
             }
 
-            val apiElements = project.configurations.getByName(apiElementsName)
-
-            val realProducingTask: TaskProvider<*>
-            // TODO: Someone remove this HACK PLEASE!
-            val realArtifactFile = if (copy) {
-                realProducingTask = project.project.registerTask<Copy>("copy${producingTask.name.capitalizeAsciiOnly()}") {
-                    val targetSubDirectory = compilationInfo.targetDisambiguationClassifier?.let { "$it/" }.orEmpty()
-                    it.destinationDir = project.project.buildDir.resolve("libs/$targetSubDirectory${compilationInfo.compilationName}")
-                    it.from(artifactFile)
-                    it.dependsOn(producingTask)
-                }
-                realProducingTask.map { (it as Copy).destinationDir.resolve(artifactFile.get().name) }
-            } else {
-                realProducingTask = producingTask
-                artifactFile
-            }
-
-            with(apiElements) {
-                val klibArtifact = project.project.artifacts.add(apiElements.name, realArtifactFile) { artifact ->
+            with(project.configurations.getByName(apiElementsName)) {
+                val klibArtifact = project.project.artifacts.add(name, artifactFile) { artifact ->
                     artifact.name = compilationInfo.compilationName
                     artifact.extension = "klib"
                     artifact.type = "klib"
                     artifact.classifier = classifier
-                    artifact.builtBy(realProducingTask)
+                    artifact.builtBy(producingTask)
                 }
                 project.project.extensions.getByType(DefaultArtifactPublicationSet::class.java).addCandidate(klibArtifact)
                 artifacts.add(klibArtifact)

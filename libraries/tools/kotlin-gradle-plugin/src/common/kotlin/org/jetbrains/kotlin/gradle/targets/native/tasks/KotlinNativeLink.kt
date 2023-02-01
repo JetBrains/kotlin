@@ -14,7 +14,6 @@ import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
@@ -80,10 +79,7 @@ constructor(
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
             @Suppress("DEPRECATION")
-            if (konanTarget.enabledOnCurrentHost)
-                objectFactory.fileCollection().from(
-                    compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
-                )
+            if (konanTarget.enabledOnCurrentHost) compilation.compileDependencyFiles
             else objectFactory.fileCollection()
         }
     )
