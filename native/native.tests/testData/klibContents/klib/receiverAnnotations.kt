@@ -1,5 +1,3 @@
-// KT-56218: Fix receiver annotations for properties
-// MUTED_WHEN: K2
 package test
 
 annotation class Ann

@@ -169,6 +169,9 @@ class FirNativeKLibSerializerExtension(
             }
             proto.addExtension(extension, annotationSerializer.serializeAnnotation(it))
         }
+        property.receiverParameter?.nonSourceAnnotations(session)?.forEach {
+            proto.addExtension(KlibMetadataProtoBuf.propertyExtensionReceiverAnnotation, annotationSerializer.serializeAnnotation(it))
+        }
         property.getter?.nonSourceAnnotations(session)?.forEach {
             proto.addExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, annotationSerializer.serializeAnnotation(it))
         }
