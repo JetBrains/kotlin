@@ -620,6 +620,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     }
 
     @Test
+    @TestMetadata("suspendFunctionSupertype.kt")
+    public void testSuspendFunctionSupertype() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/suspendFunctionSupertype.kt");
+    }
+
+    @Test
     @TestMetadata("topLevel.kt")
     public void testTopLevel() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/topLevel.kt");
