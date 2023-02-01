@@ -17,7 +17,7 @@ fun test(t: Tr<*>) {
 
 fun test2(t: JavaClass<*>) {
     t.v = null!!
-    t.v = ""
+    t.v = <!TYPE_MISMATCH_WARNING!>""<!>
     t.v = null
     t.v checkType { _<Any?>() }
 }
