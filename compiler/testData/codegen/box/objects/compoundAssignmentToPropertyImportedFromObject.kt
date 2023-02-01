@@ -1,4 +1,4 @@
-// KT-55828
+// KT-56326
 // IGNORE_BACKEND_K2: NATIVE
 import Host.x
 

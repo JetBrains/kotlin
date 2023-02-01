@@ -1,5 +1,3 @@
-// KT-55828
-// IGNORE_BACKEND_K2: NATIVE
 enum class ClassTemplate(
         // var bug: Int = 1,
         var code: Int,

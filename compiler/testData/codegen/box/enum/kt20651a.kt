@@ -1,5 +1,3 @@
-// KT-55828
-// IGNORE_BACKEND_K2: NATIVE
 // SKIP_MANGLE_VERIFICATION
 enum class Foo(
         val x: String,
