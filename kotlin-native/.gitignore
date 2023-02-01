@@ -60,7 +60,7 @@ samples/**/*.kt.bc-build
 tools/performance-server/node_modules
 tools/performance-server/server
 tools/performance-server/ui/js
-runtime/cmake-build-debug/
+cmake-build-debug/
 
 # compilation database
 compile_commands.json
