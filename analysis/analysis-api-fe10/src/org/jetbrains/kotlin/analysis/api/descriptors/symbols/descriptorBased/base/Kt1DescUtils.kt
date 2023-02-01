@@ -429,18 +429,18 @@ internal tailrec fun KotlinBuiltIns.areSameArrayTypeIgnoringProjections(left: Ko
 internal fun List<ConstantValue<*>>.expandArrayAnnotationValue(
     containingArrayType: KotlinType,
     analysisContext: Fe10AnalysisContext,
-): List<KtAnnotationValue> = flatMapIndexed { index: Int, constantValue: ConstantValue<*> ->
+): List<KtAnnotationValue> = flatMap { constantValue: ConstantValue<*> ->
     val constantType = constantValue.getType(analysisContext.resolveSession.moduleDescriptor)
     if (analysisContext.builtIns.areSameArrayTypeIgnoringProjections(containingArrayType, constantType)) {
         // If an element in the array has the same type as the containing array, it's a spread component that needs
         // to be expanded here. (It should have the array element type instead.)
         (constantValue as ArrayValue).value.expandArrayAnnotationValue(containingArrayType, analysisContext)
     } else {
-        listOf(constantValue.toKtAnnotationValue(analysisContext, index))
+        listOf(constantValue.toKtAnnotationValue(analysisContext))
     }
 }
 
-internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisContext, index: Int): KtAnnotationValue {
+internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisContext): KtAnnotationValue {
     return when (this) {
         is ArrayValue -> {
             val arrayType = getType(analysisContext.resolveSession.moduleDescriptor)
@@ -462,7 +462,7 @@ internal fun ConstantValue<*>.toKtAnnotationValue(analysisContext: Fe10AnalysisC
                     psi = null,
                     useSiteTarget = null,
                     arguments = value.getKtNamedAnnotationArguments(analysisContext),
-                    index = index,
+                    index = null,
                 )
             )
         }
@@ -635,7 +635,7 @@ internal val AnnotationDescriptor.useSiteTarget: AnnotationUseSiteTarget?
 
 internal fun AnnotationDescriptor.getKtNamedAnnotationArguments(analysisContext: Fe10AnalysisContext): List<KtNamedAnnotationValue> =
     allValueArguments.map { (name, value) ->
-        KtNamedAnnotationValue(name, value.toKtAnnotationValue(analysisContext, index = -1))
+        KtNamedAnnotationValue(name, value.toKtAnnotationValue(analysisContext))
     }
 
 internal fun CallableDescriptor.createContextReceivers(

@@ -117,7 +117,7 @@ internal object FirAnnotationValueConverter {
                                     psi as? KtCallElement,
                                     useSiteTarget = null,
                                     toNamedConstantValue(resultMap, session),
-                                    index = -1,
+                                    index = null,
                                 )
                             )
                         } else null

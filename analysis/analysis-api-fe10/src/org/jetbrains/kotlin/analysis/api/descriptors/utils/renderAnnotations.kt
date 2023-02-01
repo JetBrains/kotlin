@@ -41,7 +41,7 @@ internal fun PrettyPrinter.renderFe10Annotations(
             printCollectionIfNotEmpty(valueArguments, separator = ", ", prefix = "(", postfix = ")") { (name, value) ->
                 append(name.render())
                 append(" = ")
-                append(value.toKtAnnotationValue(analysisContext, -1).renderAsSourceCode())
+                append(value.toKtAnnotationValue(analysisContext).renderAsSourceCode())
             }
 
             append(separator)

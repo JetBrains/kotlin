@@ -18,7 +18,7 @@ public data class KtAnnotationApplicationWithArgumentsInfo(
      * A list of annotation arguments which were applied when constructing annotation. Every argument is [KtAnnotationValue]
      */
     public val arguments: List<KtNamedAnnotationValue>,
-    override val index: Int,
+    override val index: Int?,
 ) : KtAnnotationApplication {
     override val isCallWithArguments: Boolean get() = arguments.isNotEmpty()
 }
