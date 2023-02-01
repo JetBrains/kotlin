@@ -5998,6 +5998,21 @@ if (isAppleTarget(project)) {
             }
         }
     }
+
+    frameworkTest("testFrameworkUsesFoundationModule") {
+        framework("Bar") {
+            sources = ["framework/use_foundation_module/framework.kt"]
+        }
+        swiftSources = []
+        doLast {
+            def frameworkPath = "$testOutputFramework/testFrameworkUsesFoundationModule/$target/Bar.framework"
+            def moduleMapContent = file("$frameworkPath/Modules/module.modulemap").text
+            def useFoundationPattern = ~"use Foundation"
+            if (!useFoundationPattern.matcher(moduleMapContent).find()) {
+                throw new Error("Expected use of Foundation module:\n$moduleMapContent")
+            }
+        }
+    }
 }
 
 /**
