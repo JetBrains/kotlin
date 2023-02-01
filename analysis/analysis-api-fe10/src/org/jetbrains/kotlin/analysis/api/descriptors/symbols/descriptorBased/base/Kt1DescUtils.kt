@@ -613,7 +613,7 @@ internal fun AnnotationDescriptor.toKtAnnotationApplication(
     analysisContext: Fe10AnalysisContext,
     index: Int,
 ): KtAnnotationApplicationWithArgumentsInfo = KtAnnotationApplicationWithArgumentsInfo(
-    classId = classIdIfNonLocal,
+    classId = classIdForAnnotation,
     psi = psi,
     useSiteTarget = useSiteTarget,
     arguments = getKtNamedAnnotationArguments(analysisContext),
@@ -621,7 +621,7 @@ internal fun AnnotationDescriptor.toKtAnnotationApplication(
 )
 
 internal fun AnnotationDescriptor.toKtAnnotationInfo(index: Int): KtAnnotationApplicationInfo = KtAnnotationApplicationInfo(
-    classId = classIdIfNonLocal,
+    classId = classIdForAnnotation,
     psi = psi,
     useSiteTarget = useSiteTarget,
     isCallWithArguments = allValueArguments.isNotEmpty(),
@@ -629,7 +629,7 @@ internal fun AnnotationDescriptor.toKtAnnotationInfo(index: Int): KtAnnotationAp
 )
 
 private val AnnotationDescriptor.psi: KtCallElement? get() = (source as? PsiSourceElement)?.psi as? KtCallElement
-private val AnnotationDescriptor.classIdIfNonLocal: ClassId? get() = annotationClass?.maybeLocalClassId
+private val AnnotationDescriptor.classIdForAnnotation: ClassId? get() = annotationClass?.maybeLocalClassId
 internal val AnnotationDescriptor.useSiteTarget: AnnotationUseSiteTarget?
     get() = (this as? LazyAnnotationDescriptor)?.annotationEntry?.useSiteTarget?.getAnnotationUseSiteTarget()
 
