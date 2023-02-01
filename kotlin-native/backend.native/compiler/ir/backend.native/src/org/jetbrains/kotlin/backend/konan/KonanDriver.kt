@@ -30,6 +30,8 @@ private val deprecatedTargets = setOf(
         KonanTarget.WASM32
 )
 
+private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
+
 class KonanDriver(
         val project: Project,
         val environment: KotlinCoreEnvironment,
@@ -61,7 +63,8 @@ class KonanDriver(
 
         // Avoid showing warning twice in 2-phase compilation.
         if (konanConfig.produce != CompilerOutputKind.LIBRARY && konanConfig.target in deprecatedTargets) {
-            configuration.report(CompilerMessageSeverity.STRONG_WARNING, "target ${konanConfig.target} is deprecated and will be removed soon.")
+            configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                    "target ${konanConfig.target} is deprecated and will be removed soon. See $DEPRECATION_LINK")
         }
 
         ensureModuleName(konanConfig)

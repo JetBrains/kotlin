@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.konan.target
 import org.jetbrains.kotlin.konan.util.Named
 import java.io.Serializable
 
-const val DEPRECATED_TARGET_MESSAGE = "Target is deprecated and will be removed soon"
+private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
+const val DEPRECATED_TARGET_MESSAGE = "Target is deprecated and will be removed soon. See $DEPRECATION_LINK"
 
 sealed class KonanTarget(override val name: String, val family: Family, val architecture: Architecture) : Named, Serializable {
     object ANDROID_X64 : KonanTarget("android_x64", Family.ANDROID, Architecture.X64)
