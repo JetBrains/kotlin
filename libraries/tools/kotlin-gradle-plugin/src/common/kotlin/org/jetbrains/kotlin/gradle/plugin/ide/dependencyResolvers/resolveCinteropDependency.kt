@@ -6,15 +6,14 @@
 package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.idea.tcs.*
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.klibExtra
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 
-internal fun Project.resolveCInteropDependencies(cinteropFiles: FileCollection): Set<IdeaKotlinDependency> {
-    return cinteropFiles.files
+internal fun Project.resolveCInteropDependencies(cinteropFiles: Iterable<java.io.File>): Set<IdeaKotlinDependency> {
+    return cinteropFiles
         .filter { it.isDirectory || it.extension == KLIB_FILE_EXTENSION }
         .mapNotNull { libraryFile -> this.createCinteropLibraryDependency(libraryFile) }
         .toSet()
