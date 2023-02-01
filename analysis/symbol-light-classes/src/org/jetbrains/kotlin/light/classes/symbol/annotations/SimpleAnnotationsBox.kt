@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
-import com.intellij.util.concurrency.AtomicFieldUpdater
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 internal class SimpleAnnotationsBox(private val annotationsComputer: (PsiModifierList) -> Collection<PsiAnnotation>) : AnnotationsBox {
     @Volatile
@@ -33,6 +33,10 @@ internal class SimpleAnnotationsBox(private val annotationsComputer: (PsiModifie
     ): PsiAnnotation? = getOrComputeAnnotations(owner).find { it.qualifiedName == qualifiedName }
 
     companion object {
-        private val fieldUpdater = AtomicFieldUpdater.forFieldOfType(SimpleAnnotationsBox::class.java, Collection::class.java)
+        private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
+            /* tclass = */ SimpleAnnotationsBox::class.java,
+            /* vclass = */ Collection::class.java,
+            /* fieldName = */ "cachedAnnotations",
+        )
     }
 }

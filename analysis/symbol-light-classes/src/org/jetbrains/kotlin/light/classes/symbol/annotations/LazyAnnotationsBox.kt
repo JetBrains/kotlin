@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
-import com.intellij.util.concurrency.AtomicFieldUpdater
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.SmartList
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 internal class LazyAnnotationsBox(
     private val annotationsProvider: AnnotationsProvider,
@@ -83,7 +83,11 @@ internal class LazyAnnotationsBox(
     }
 
     companion object {
-        private val fieldUpdater = AtomicFieldUpdater.forFieldOfType(LazyAnnotationsBox::class.java, Collection::class.java)
+        private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
+            /* tclass = */ LazyAnnotationsBox::class.java,
+            /* vclass = */ Collection::class.java,
+            /* fieldName = */ "cachedAnnotations",
+        )
 
         /**
          * @see org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper

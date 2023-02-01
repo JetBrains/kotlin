@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.light.classes.symbol.modifierLists
 
 import com.intellij.psi.PsiModifier
-import com.intellij.util.concurrency.AtomicFieldUpdater
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.toPersistentHashMap
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithModality
@@ -17,6 +16,7 @@ import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.utils.keysToMap
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 internal typealias LazyModifiersComputer = (modifier: String) -> Map<String, Boolean>?
 
@@ -36,13 +36,17 @@ internal class LazyModifiersBox(
             currentMap[modifier]?.let { return it }
 
             val newMap = currentMap.putAll(newValues)
-        } while (fieldUpdater.compareAndSet(/* owner = */ this, /* expected = */ currentMap, /* newValue = */ newMap))
+        } while (fieldUpdater.weakCompareAndSet(/* obj = */ this, /* expect = */ currentMap, /* update = */ newMap))
 
         return newValues[modifier] ?: error("Inconsistent state: $modifier")
     }
 
     companion object {
-        private val fieldUpdater = AtomicFieldUpdater.forFieldOfType(LazyModifiersBox::class.java, PersistentMap::class.java)
+        private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
+            /* tclass = */ LazyModifiersBox::class.java,
+            /* vclass = */ PersistentMap::class.java,
+            /* fieldName = */ "modifiersMapReference",
+        )
 
         internal val VISIBILITY_MODIFIERS = setOf(PsiModifier.PUBLIC, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PRIVATE)
         internal val VISIBILITY_MODIFIERS_MAP: PersistentMap<String, Boolean> =
