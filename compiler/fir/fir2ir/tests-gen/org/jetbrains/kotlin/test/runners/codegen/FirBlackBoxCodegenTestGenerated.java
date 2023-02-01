@@ -18429,6 +18429,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             public void testSelfTypeInSealedInterface() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/selfTypes/selfTypeInSealedInterface.kt");
             }
+
+            @Test
+            @TestMetadata("transformationChainLazyContainer.kt")
+            public void testTransformationChainLazyContainer() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/selfTypes/transformationChainLazyContainer.kt");
+            }
         }
     }
 
