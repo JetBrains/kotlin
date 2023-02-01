@@ -53,7 +53,6 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import java.io.File
 import java.nio.file.Files
-import java.nio.file.Path
 import javax.inject.Inject
 import kotlin.collections.associateBy
 import kotlin.collections.component1
@@ -93,20 +92,6 @@ internal fun MutableList<String>.addArgIfNotNull(parameter: String, value: Strin
 internal fun MutableList<String>.addFileArgs(parameter: String, values: FileCollection) {
     values.files.forEach {
         addArg(parameter, it.canonicalPath)
-    }
-}
-
-// We need to filter out interop duplicates because we create copy of them for IDE.
-// TODO: Remove this after interop rework.
-internal fun FileCollection.filterOutPublishableInteropLibs(project: Project): FileCollection =
-    filterOutPublishableInteropLibs(project.buildLibDirectories())
-
-private fun Project.buildLibDirectories(): List<Path> =
-    rootProject.allprojects.map { it.buildDir.resolve("libs").absoluteFile.toPath() }
-
-private fun FileCollection.filterOutPublishableInteropLibs(libDirectories: List<Path>): FileCollection {
-    return filter { file ->
-        !(file.name.contains("-cinterop-") && libDirectories.any { file.toPath().startsWith(it) })
     }
 }
 
@@ -171,9 +156,7 @@ abstract class AbstractKotlinNativeCompile<
         {
             // Avoid resolving these dependencies during task graph construction when we can't build the target:
             if (konanTarget.enabledOnCurrentHost)
-                objectFactory.fileCollection().from(
-                    compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project)
-                )
+                objectFactory.fileCollection().from({ compilation.compileDependencyFiles })
             else objectFactory.fileCollection()
         }
     )
@@ -714,7 +697,7 @@ internal class CacheBuilder(
                 return Settings(
                     runnerSettings = KotlinNativeCompilerRunner.Settings.fromProject(project),
                     konanCacheKind = konanCacheKind,
-                    libraries = binary.compilation.compileDependencyFiles.filterOutPublishableInteropLibs(project),
+                    libraries = binary.compilation.compileDependencyFiles,
                     gradleUserHomeDir = project.gradle.gradleUserHomeDir,
                     binary, konanTarget, toolOptions, externalDependenciesArgs
                 )
@@ -1053,13 +1036,11 @@ open class CInteropProcess @Inject internal constructor(params: Params) : Defaul
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val headerFilterDirs: Set<File> get() = settings.includeDirs.headerFilterDirs.files
 
-    private val libDirectories = project.buildLibDirectories()
-
     @get:IgnoreEmptyDirectories
     @get:InputFiles
     @get:NormalizeLineEndings
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    val libraries: FileCollection get() = settings.dependencyFiles.filterOutPublishableInteropLibs(libDirectories)
+    val libraries: FileCollection get() = settings.dependencyFiles
 
     @get:Input
     val extraOpts: List<String> get() = settings.extraOpts
