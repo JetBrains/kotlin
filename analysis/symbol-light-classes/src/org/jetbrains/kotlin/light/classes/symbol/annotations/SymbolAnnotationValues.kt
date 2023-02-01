@@ -7,22 +7,41 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
+import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.psi.KtElement
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 internal class SymbolPsiArrayInitializerMemberValue(
     override val kotlinOrigin: KtElement?,
     private val lightParent: PsiElement,
     private val arguments: (SymbolPsiArrayInitializerMemberValue) -> List<PsiAnnotationMemberValue>
 ) : KtLightElementBase(lightParent), PsiArrayInitializerMemberValue {
-    override fun getInitializers(): Array<PsiAnnotationMemberValue> {
+    @Volatile
+    private var cachedArguments: List<PsiAnnotationMemberValue>? = null
+
+    override fun getInitializers(): Array<PsiAnnotationMemberValue> =
+        getOrCompareArguments().toArrayIfNotEmptyOrDefault(PsiAnnotationMemberValue.EMPTY_ARRAY)
+
+    private fun getOrCompareArguments(): List<PsiAnnotationMemberValue> {
+        cachedArguments?.let { return it }
+
         val memberValues = arguments(this)
-        return if (memberValues.isEmpty()) PsiAnnotationMemberValue.EMPTY_ARRAY else memberValues.toTypedArray()
+        fieldUpdater.compareAndSet(this, null, memberValues)
+        return getOrCompareArguments()
     }
 
     override fun getParent(): PsiElement = lightParent
     override fun isPhysical(): Boolean = false
 
-    override fun getText(): String = "{" + initializers.joinToString { it.text } + "}"
+    override fun getText(): String = "{" + getOrCompareArguments().joinToString { it.text } + "}"
+
+    companion object {
+        private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
+            /* tclass = */ SymbolPsiArrayInitializerMemberValue::class.java,
+            /* vclass = */ List::class.java,
+            /* fieldName = */ "cachedArguments",
+        )
+    }
 }
 
 internal abstract class SymbolPsiAnnotationMemberValue(
