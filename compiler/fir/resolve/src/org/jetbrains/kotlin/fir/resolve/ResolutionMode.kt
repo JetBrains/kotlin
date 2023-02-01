@@ -86,6 +86,17 @@ sealed class ResolutionMode {
         }
     }
 
+    /**
+     * This resolution mode is used for resolving the LHS of assignments.
+     *
+     * It is generally treated like [ContextIndependent], however it carries the containing assignment which is needed for
+     * call-site-dependant resolution to detect cases where the setter of the called property needs to be considered instead of the getter.
+     *
+     * Examples are:
+     *
+     * - assigning to a property with a setter that has a different visibility than the property
+     * - assigning to a non-deprecated property with a setter that is deprecated
+     */
     class AssignmentLValue(val variableAssignment: FirVariableAssignment) : ResolutionMode() {
         override fun toString(): String = "AssignmentLValue: ${variableAssignment.render()}"
     }

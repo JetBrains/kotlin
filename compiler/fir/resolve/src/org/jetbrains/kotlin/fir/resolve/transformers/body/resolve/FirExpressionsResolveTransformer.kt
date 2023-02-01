@@ -151,7 +151,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 val transformedCallee = resolveQualifiedAccessAndSelectCandidate(
                     qualifiedAccessExpression,
                     isUsedAsReceiver,
-                    when (data) {
+                    // Set the correct call site. For assignment LHSs, it's the assignment, otherwise it's the qualified access itself.
+                    callSite = when (data) {
                         is ResolutionMode.AssignmentLValue -> data.variableAssignment
                         else -> qualifiedAccessExpression
                     }
@@ -168,6 +169,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
             }
         }
+
+        // If we're resolving the LHS of an assignment, skip DFA to prevent the access being treated as a variable read and
+        // smart-casts being applied.
         if (data !is ResolutionMode.AssignmentLValue) {
             when (result) {
                 is FirQualifiedAccessExpression -> {
