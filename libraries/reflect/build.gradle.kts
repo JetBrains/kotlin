@@ -12,7 +12,7 @@ description = "Kotlin Full Reflection Library"
 
 buildscript {
     dependencies {
-        classpath("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
+        classpath("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.6.0")
     }
 }
 
