@@ -347,17 +347,7 @@ class FirSyntheticCallGenerator(
             origin = FirDeclarationOrigin.Synthetic
             this.symbol = symbol
             this.name = name
-            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).apply {
-                isExpect = false
-                isActual = false
-                isOverride = false
-                isOperator = false
-                isInfix = false
-                isInline = false
-                isTailRec = false
-                isExternal = false
-                isSuspend = false
-            }
+            status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
             returnTypeRef = returnType
             resolvePhase = FirResolvePhase.BODY_RESOLVE
         }
