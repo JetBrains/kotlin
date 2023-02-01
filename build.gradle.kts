@@ -39,7 +39,6 @@ plugins {
     signing
     id("org.jetbrains.kotlin.jvm") apply false
     id("org.jetbrains.kotlin.plugin.serialization") apply false
-    id("build.tools-conventions")
 }
 
 pill {
