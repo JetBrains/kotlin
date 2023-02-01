@@ -641,6 +641,17 @@ public fun String.removeSuffix(suffix: CharSequence): String {
 }
 
 /**
+ * If this string starts with the given [suffix], returns a new string with the suffix
+ * replaced with [replacement]. Otherwise, returns this string.
+ */
+public fun String.replaceSuffix(suffix: CharSequence, replacement: String): String {
+    if (endsWith(suffix)) {
+        return substring(0, length - suffix.length) + replacement
+    }
+    return this
+}
+
+/**
  * When this char sequence starts with the given [prefix] and ends with the given [suffix],
  * returns a new char sequence having both the given [prefix] and [suffix] removed.
  * Otherwise returns a new char sequence with the same characters.
