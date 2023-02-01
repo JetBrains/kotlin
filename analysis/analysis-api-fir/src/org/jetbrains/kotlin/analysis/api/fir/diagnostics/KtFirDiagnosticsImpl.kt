@@ -2874,10 +2874,22 @@ internal class SenselessComparisonImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.SenselessComparison(), KtAbstractFirDiagnostic<KtExpression>
 
+internal class SenselessComparisonErrorImpl(
+    override val expression: KtExpression,
+    override val compareResult: Boolean,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.SenselessComparisonError(), KtAbstractFirDiagnostic<KtExpression>
+
 internal class SenselessNullInWhenImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.SenselessNullInWhen(), KtAbstractFirDiagnostic<KtElement>
+
+internal class SenselessNullInWhenErrorImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.SenselessNullInWhenError(), KtAbstractFirDiagnostic<KtElement>
 
 internal class TypecheckerHasRunIntoRecursiveProblemImpl(
     override val firDiagnostic: KtPsiDiagnostic,
@@ -3199,6 +3211,27 @@ internal class IncompatibleEnumComparisonErrorImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.IncompatibleEnumComparisonError(), KtAbstractFirDiagnostic<KtElement>
+
+internal class IncompatibleEnumComparisonImpl(
+    override val leftType: KtType,
+    override val rightType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.IncompatibleEnumComparison(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ForbiddenIdentityEqualsImpl(
+    override val leftType: KtType,
+    override val rightType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ForbiddenIdentityEquals(), KtAbstractFirDiagnostic<KtElement>
+
+internal class ForbiddenIdentityEqualsWarningImpl(
+    override val leftType: KtType,
+    override val rightType: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ForbiddenIdentityEqualsWarning(), KtAbstractFirDiagnostic<KtElement>
 
 internal class IncDecShouldNotReturnUnitImpl(
     override val firDiagnostic: KtPsiDiagnostic,

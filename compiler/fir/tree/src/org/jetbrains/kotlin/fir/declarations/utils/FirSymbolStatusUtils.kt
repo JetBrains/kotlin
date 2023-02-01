@@ -83,6 +83,9 @@ inline val FirClassSymbol<*>.isLocalClassOrAnonymousObject: Boolean
     get() = classId.isLocal || this is FirAnonymousObjectSymbol
 
 
+inline val FirClassSymbol<*>.isClass: Boolean
+    get() = classKind.isClass
+
 inline val FirClassSymbol<*>.isInterface: Boolean
     get() = classKind.isInterface
 

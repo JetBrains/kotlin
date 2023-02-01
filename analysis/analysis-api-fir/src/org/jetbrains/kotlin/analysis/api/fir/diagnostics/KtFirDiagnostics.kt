@@ -2384,8 +2384,18 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val compareResult: Boolean
     }
 
+    abstract class SenselessComparisonError : KtFirDiagnostic<KtExpression>() {
+        override val diagnosticClass get() = SenselessComparisonError::class
+        abstract val expression: KtExpression
+        abstract val compareResult: Boolean
+    }
+
     abstract class SenselessNullInWhen : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = SenselessNullInWhen::class
+    }
+
+    abstract class SenselessNullInWhenError : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = SenselessNullInWhenError::class
     }
 
     abstract class TypecheckerHasRunIntoRecursiveProblem : KtFirDiagnostic<KtExpression>() {
@@ -2650,6 +2660,24 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class IncompatibleEnumComparisonError : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = IncompatibleEnumComparisonError::class
+        abstract val leftType: KtType
+        abstract val rightType: KtType
+    }
+
+    abstract class IncompatibleEnumComparison : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = IncompatibleEnumComparison::class
+        abstract val leftType: KtType
+        abstract val rightType: KtType
+    }
+
+    abstract class ForbiddenIdentityEquals : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ForbiddenIdentityEquals::class
+        abstract val leftType: KtType
+        abstract val rightType: KtType
+    }
+
+    abstract class ForbiddenIdentityEqualsWarning : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ForbiddenIdentityEqualsWarning::class
         abstract val leftType: KtType
         abstract val rightType: KtType
     }
