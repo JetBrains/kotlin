@@ -15,15 +15,20 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 
-sealed class KtSourceElementKind
+sealed class KtSourceElementKind {
+    abstract val shouldSkipErrorTypeReporting: Boolean
+}
 
-object KtRealSourceElementKind : KtSourceElementKind()
+object KtRealSourceElementKind : KtSourceElementKind() {
+    override val shouldSkipErrorTypeReporting: Boolean
+        get() = false
+}
 
-sealed class KtFakeSourceElementKind : KtSourceElementKind() {
+sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeReporting: Boolean = false) : KtSourceElementKind() {
     // for some fir expression implicit return typeRef is generated
     // some of them are: break, continue, return, throw, string concat,
     // destruction parameters, function literals, explicitly boolean expressions
-    object ImplicitTypeRef : KtFakeSourceElementKind()
+    object ImplicitTypeRef : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     // for each class special class self type ref is created
     // and have a fake source referencing it
@@ -35,7 +40,7 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
 
     // for properties without accessors default getter & setter are generated
     // they have a fake source which refers to property
-    object DefaultAccessor : KtFakeSourceElementKind()
+    object DefaultAccessor : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     // for delegated properties, getter & setter calls to the delegate
     // they have a fake source which refers to the call that creates the delegate
@@ -107,7 +112,7 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
 
     // for primary constructor parameter the corresponding class property is generated
     // with a fake sources which refers to this the corresponding parameter
-    object PropertyFromParameter : KtFakeSourceElementKind()
+    object PropertyFromParameter : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     // if (true) 1 --> if(true) { 1 }
     // with a fake sources for the block which refers to the wrapped expression
@@ -132,7 +137,7 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // for data classes fir generates componentN() & copy() functions
     // for componentN() functions the source will refer to the corresponding param and will be marked as a fake one
     // for copy() functions the source will refer class to the param and will be marked as a fake one
-    object DataClassGeneratedMembers : KtFakeSourceElementKind()
+    object DataClassGeneratedMembers : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     // (vararg x: Int) --> (x: Array<out Int>) where array type ref has a fake source kind
     object ArrayTypeFromVarargParameter : KtFakeSourceElementKind()
@@ -143,7 +148,7 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
 
     // when smart casts applied to the expression, it is wrapped into FirSmartCastExpression
     // which type reference will have a fake source refer to a original source element of it
-    object SmartCastedTypeRef : KtFakeSourceElementKind()
+    object SmartCastedTypeRef : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     // when smart casts applied to the expression, it is wrapped into FirSmartCastExpression
     // this kind used for such FirSmartCastExpressions itself
@@ -181,7 +186,7 @@ sealed class KtFakeSourceElementKind : KtSourceElementKind() {
     // Consider `super<Supertype>.foo()`. The source PSI `Supertype` is referenced by both the qualified access expression
     // `super<Supertype>` and the calleeExpression `super<Supertype>`. To avoid having two FIR elements sharing the same source, this fake
     // source is assigned to the qualified access expression.
-    object SuperCallExplicitType : KtFakeSourceElementKind()
+    object SuperCallExplicitType : KtFakeSourceElementKind(shouldSkipErrorTypeReporting = true)
 
     // fun foo(vararg args: Int) {}
     // fun bar(1, 2, 3) --> [resolved] fun bar(VarargArgument(1, 2, 3))
