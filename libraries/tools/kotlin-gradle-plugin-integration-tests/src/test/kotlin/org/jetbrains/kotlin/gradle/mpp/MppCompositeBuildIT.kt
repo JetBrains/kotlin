@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.KOTLIN_VERSION
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceDependency.Type.Regular
@@ -232,6 +233,23 @@ class MppCompositeBuildIT : KGPBaseTest() {
                         Regular, "producerBuild::producerA", FilePathRegex(".*producerA/build/libs/producerA-1.0.0-SNAPSHOT.jar")
                     )
                 )
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test - sample4-KT-37051-withCInterop`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample4-KT-37051-withCInterop/producerBuild", gradleVersion)
+
+        project(
+            "mpp-composite-build/sample4-KT-37051-withCInterop/consumerBuild", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(warningMode = WarningMode.Fail)
+        ) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+
+            build(":consumerA:assemble") {
+                assertTasksExecuted(":consumerA:compileKotlinLinuxX64")
+                assertOutputDoesNotContain("w: duplicate library")
             }
         }
     }
