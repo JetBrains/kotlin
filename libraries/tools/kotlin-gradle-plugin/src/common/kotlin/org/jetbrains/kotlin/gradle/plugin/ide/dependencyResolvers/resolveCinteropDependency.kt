@@ -13,22 +13,28 @@ import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 
-internal fun Project.resolveCinteropDependencies(cinteropFiles: FileCollection): Set<IdeaKotlinDependency> {
+internal fun Project.resolveCInteropDependencies(cinteropFiles: FileCollection): Set<IdeaKotlinDependency> {
     return cinteropFiles.files
         .filter { it.isDirectory || it.extension == KLIB_FILE_EXTENSION }
-        .mapNotNullTo(mutableSetOf()) { libraryFile ->
-            createCinteropLibraryDependency(this, libraryFile)
-        }
+        .mapNotNull { libraryFile -> this.createCinteropLibraryDependency(libraryFile) }
+        .toSet()
 }
 
-private fun createCinteropLibraryDependency(project: Project, libraryFile: java.io.File): IdeaKotlinResolvedBinaryDependency? {
+private fun Project.createCinteropLibraryDependency(libraryFile: java.io.File): IdeaKotlinBinaryDependency? {
+    if (!libraryFile.exists()) {
+        return IdeaKotlinUnresolvedBinaryDependency(
+            cause = "cinterop file: ${libraryFile.path} does not exist",
+            coordinates = null
+        )
+    }
+
     val library = try {
         resolveSingleFileKlib(
             libraryFile = File(libraryFile.absolutePath),
             strategy = ToolingSingleFileKlibResolveStrategy
         )
     } catch (error: Throwable) {
-        project.logger.error("Failed to resolve library ${libraryFile.path}", error)
+        logger.error("Failed to resolve library ${libraryFile.path}", error)
         return null
     }
 
