@@ -117,3 +117,12 @@ internal fun stringGetPoolSize(): Int =
 // This initializer is a special case in FieldInitializersLowering
 @EagerInitialization
 internal val stringPool: Array<String?> = arrayOfNulls(stringGetPoolSize())
+
+@ExcludedFromCodegen
+internal fun initiateHotReload(): Unit =
+    implementedAsIntrinsic
+
+@JsExport
+fun makeHotSwap() {
+    initiateHotReload()
+}

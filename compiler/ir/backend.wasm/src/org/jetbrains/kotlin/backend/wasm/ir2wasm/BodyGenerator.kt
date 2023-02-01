@@ -35,6 +35,7 @@ class BodyGenerator(
     val functionContext: WasmFunctionCodegenContext,
     private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
     private val isGetUnitFunction: Boolean,
+    private val isUserDefinedFunction: Boolean,
 ) : IrElementVisitorVoid {
     val body: WasmExpressionBuilder = functionContext.bodyGen
 
@@ -193,8 +194,17 @@ class BodyGenerator(
                 generateInstanceFieldAccess(field, location)
             }
         } else {
-            body.buildGetGlobal(context.referenceGlobalField(field.symbol), location)
-            body.commentPreviousInstr { "type: ${field.type.render()}" }
+            if (isUserDefinedFunction) {
+                body.buildConstI32Symbol(context.referenceHotswapFieldGetterTableIndex(field.symbol), location)
+                body.buildCallIndirect(
+                    context.referenceHotswapFieldGetterFunctionType(field.symbol),
+                    WasmSymbol(1),
+                    location
+                )
+            } else {
+                body.buildGetGlobal(context.referenceGlobalField(field.symbol), location)
+                body.commentPreviousInstr { "type: ${field.type.render()}" }
+            }
         }
     }
 
@@ -237,8 +247,17 @@ class BodyGenerator(
             body.commentPreviousInstr { "name: ${field.name}, type: ${field.type.render()}" }
         } else {
             generateExpression(expression.value)
-            body.buildSetGlobal(context.referenceGlobalField(expression.symbol), location)
-            body.commentPreviousInstr { "type: ${field.type.render()}" }
+            if (isUserDefinedFunction) {
+                body.buildConstI32Symbol(context.referenceHotswapFieldSetterTableIndex(field.symbol), location)
+                body.buildCallIndirect(
+                    context.referenceHotswapFieldSetterFunctionType(field.symbol),
+                    WasmSymbol(2),
+                    location
+                )
+            } else {
+                body.buildSetGlobal(context.referenceGlobalField(expression.symbol), location)
+                body.commentPreviousInstr { "type: ${field.type.render()}" }
+            }
         }
 
         body.buildGetUnit()
@@ -594,7 +613,7 @@ class BodyGenerator(
             }
 
             wasmSymbols.unsafeGetScratchRawMemory -> {
-                
+
                 body.buildConstI32Symbol(context.scratchMemAddr, location)
             }
 
@@ -616,6 +635,19 @@ class BodyGenerator(
                     context.referenceGcType(call.getTypeArgument(0)!!.getRuntimeClass(irBuiltIns).symbol)
                 )
                 body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(0))
+            }
+
+            wasmSymbols.initiateHotReload -> {
+                val qqq = SourceLocation.NoLocation("hot swap")
+                body.buildConstI32(8372, qqq)
+                body.buildConstI32(0, qqq)
+                body.buildConstI32(0, qqq)
+                body.buildInstr(
+                    WasmOp.TABLE_COPY,
+                    qqq,
+                    WasmImmediate.TableIdx(0),
+                    WasmImmediate.TableIdx(1)
+                )
             }
 
             else -> {

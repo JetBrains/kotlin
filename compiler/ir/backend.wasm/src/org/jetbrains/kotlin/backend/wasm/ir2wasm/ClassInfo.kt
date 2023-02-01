@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.utils.eraseGenerics
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
@@ -42,7 +39,7 @@ data class WasmSignature(
     }
 }
 
-fun IrSimpleFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature =
+fun IrFunction.wasmSignature(irBuiltIns: IrBuiltIns): WasmSignature =
     WasmSignature(
         name,
         extensionReceiverParameter?.type?.eraseGenerics(irBuiltIns),

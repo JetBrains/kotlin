@@ -154,7 +154,7 @@ class WasmIrToBinary(
                 appendVectorSize(definedFunctions.size)
                 definedFunctions.forEach {
                     appendModuleFieldReference(it)
-                    b.writeString(it.name)
+                    b.writeString("${it.name}_${it.id}")
                 }
             }
             appendSection(2u) {
@@ -164,7 +164,7 @@ class WasmIrToBinary(
                     appendVectorSize(it.locals.size)
                     it.locals.forEach { local ->
                         b.writeVarUInt32(local.id)
-                        b.writeString(local.name)
+                        b.writeString("${local.name}_${local.id}")
                     }
                 }
             }

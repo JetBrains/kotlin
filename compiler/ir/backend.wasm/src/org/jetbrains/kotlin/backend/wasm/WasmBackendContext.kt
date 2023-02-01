@@ -109,6 +109,7 @@ class WasmBackendContext(
     }
 
     val fieldInitFunction = createInitFunction("fieldInit")
+    val hotSwapFieldInitFunction = createInitFunction("hotSwapFieldInit")
     val mainCallsWrapperFunction = createInitFunction("mainCallsWrapper")
 
     override val sharedVariablesManager =

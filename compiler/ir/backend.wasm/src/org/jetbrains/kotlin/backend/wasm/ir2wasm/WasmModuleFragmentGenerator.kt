@@ -58,6 +58,7 @@ class WasmModuleFragmentGenerator(
     }
 
     fun generateModule(irModuleFragment: IrModuleFragment) {
+        declarationGenerator.isHotSwapEnabledModule = irModuleFragment.name.asString() == "<main>"
         acceptVisitor(irModuleFragment, declarationGenerator)
     }
 

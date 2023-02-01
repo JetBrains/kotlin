@@ -83,6 +83,10 @@ class WasmModuleCodegenContext(
         wasmFragment.functions.define(irFunction, wasmFunction)
     }
 
+    fun defineHotswapFunction(irFunction: IrFunctionSymbol, wasmFunction: WasmFunction) {
+        wasmFragment.hotswapFunctions.define(irFunction, wasmFunction)
+    }
+
     fun defineGlobalField(irField: IrFieldSymbol, wasmGlobal: WasmGlobal) {
         wasmFragment.globalFields.define(irField, wasmGlobal)
     }
@@ -107,6 +111,20 @@ class WasmModuleCodegenContext(
         wasmFragment.functionTypes.define(irFunction, wasmFunctionType)
     }
 
+    fun defineHotswapFieldGetterFunctionType(irField: IrFieldSymbol, wasmFunctionType: WasmFunctionType) {
+        wasmFragment.hotSwapFieldGetterBridgesFunctionTypes.define(irField, wasmFunctionType)
+    }
+
+    fun defineHotswapFieldSetterFunctionType(irField: IrFieldSymbol, wasmFunctionType: WasmFunctionType) {
+        wasmFragment.hotSwapFieldSetterBridgesFunctionTypes.define(irField, wasmFunctionType)
+    }
+
+    fun defineHotswapFieldGetter(irField: IrFieldSymbol, wasmFunction: WasmFunction) =
+        wasmFragment.hotswapFieldGetter.define(irField, wasmFunction)
+
+    fun defineHotswapFieldSetter(irField: IrFieldSymbol, wasmFunction: WasmFunction) =
+        wasmFragment.hotswapFieldSetter.define(irField, wasmFunction)
+
     private val classMetadataCache = mutableMapOf<IrClassSymbol, ClassMetadata>()
     fun getClassMetadata(irClass: IrClassSymbol): ClassMetadata =
         classMetadataCache.getOrPut(irClass) {
@@ -125,6 +143,15 @@ class WasmModuleCodegenContext(
 
     fun referenceFunction(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunction> =
         wasmFragment.functions.reference(irFunction)
+
+    fun referenceHotswapTableIndex(irFunction: IrFunctionSymbol): WasmSymbol<Int> =
+        wasmFragment.hotswapFunctionIndexes.reference(irFunction)
+
+    fun referenceHotswapFieldGetterTableIndex(irField: IrFieldSymbol): WasmSymbol<Int> =
+        wasmFragment.hotswapFieldGetterIndexes.reference(irField)
+
+    fun referenceHotswapFieldSetterTableIndex(irField: IrFieldSymbol): WasmSymbol<Int> =
+        wasmFragment.hotswapFieldSetterIndexes.reference(irField)
 
     fun referenceGlobalField(irField: IrFieldSymbol): WasmSymbol<WasmGlobal> =
         wasmFragment.globalFields.reference(irField)
@@ -176,6 +203,12 @@ class WasmModuleCodegenContext(
 
     fun referenceFunctionType(irFunction: IrFunctionSymbol): WasmSymbol<WasmFunctionType> =
         wasmFragment.functionTypes.reference(irFunction)
+
+    fun referenceHotswapFieldGetterFunctionType(irField: IrFieldSymbol): WasmSymbol<WasmFunctionType> =
+        wasmFragment.hotSwapFieldGetterBridgesFunctionTypes.reference(irField)
+
+    fun referenceHotswapFieldSetterFunctionType(irField: IrFieldSymbol): WasmSymbol<WasmFunctionType> =
+        wasmFragment.hotSwapFieldSetterBridgesFunctionTypes.reference(irField)
 
     fun referenceClassId(irClass: IrClassSymbol): WasmSymbol<Int> =
         wasmFragment.classIds.reference(irClass)

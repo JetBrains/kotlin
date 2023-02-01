@@ -183,6 +183,7 @@ class WasmSymbols(
     val refCastNull = getInternalFunction("wasm_ref_cast_deprecated")
     val wasmArrayCopy = getInternalFunction("wasm_array_copy")
     val wasmArrayNewData0 = getInternalFunction("array_new_data0")
+    val initiateHotReload = getInternalFunction("initiateHotReload")
 
     val intToLong = getInternalFunction("wasm_i64_extend_i32_s")
 

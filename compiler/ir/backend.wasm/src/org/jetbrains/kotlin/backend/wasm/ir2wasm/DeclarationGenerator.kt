@@ -36,6 +36,9 @@ class DeclarationGenerator(
     private val hierarchyDisjointUnions: DisjointUnions<IrClassSymbol>,
 ) : IrElementVisitorVoid {
 
+    //TODO
+    var isHotSwapEnabledModule = false
+
     // Shortcuts
     private val backendContext: WasmBackendContext = context.backendContext
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
@@ -57,7 +60,7 @@ class DeclarationGenerator(
     private fun jsCodeName(declaration: IrFunction): String {
         require(declaration is IrSimpleFunction)
         val fqName = declaration.fqNameWhenAvailable!!.asString()
-        val hashCode = declaration.wasmSignature(irBuiltIns).hashCode() + declaration.file.path.hashCode()
+        val hashCode = declaration.wasmSignature(irBuiltIns).toString().hashCode() + declaration.file.path.hashCode()
         return "${fqName}_$hashCode"
     }
 
@@ -84,7 +87,7 @@ class DeclarationGenerator(
                 // check(declaration.isExternal) { "Non-external fun with @JsFun ${declaration.fqNameWhenAvailable}"}
                 val jsCodeName = jsCodeName(declaration)
                 context.addJsFun(jsCodeName, jsCode)
-                WasmImportDescriptor("js_code", jsCodeName(declaration))
+                WasmImportDescriptor("js_code", jsCodeName)
             }
             else -> {
                 null
@@ -148,7 +151,8 @@ class DeclarationGenerator(
             context = context,
             functionContext = functionCodegenContext,
             hierarchyDisjointUnions = hierarchyDisjointUnions,
-            isGetUnitFunction = declaration == unitGetInstanceFunction
+            isGetUnitFunction = declaration == unitGetInstanceFunction,
+            isUserDefinedFunction = isHotSwapEnabledModule,
         )
 
         if (declaration is IrConstructor) {
@@ -172,11 +176,29 @@ class DeclarationGenerator(
             exprGen.buildUnreachableForVerifier()
         }
 
-        context.defineFunction(declaration.symbol, function)
+        if (declaration == backendContext.hotSwapFieldInitFunction) {
+            context.addExport(WasmExport.Function("__hotSwapInit", function))
+        }
+
+        val functionToDefine: WasmFunction
+        if (isHotSwapEnabledModule && declaration.kotlinFqName.parentOrNull() != context.backendContext.kotlinWasmInternalPackageFqn) {
+            functionToDefine = wrapFunctionToHotswapBridge(
+                declaration,
+                function,
+                functionTypeSymbol,
+                irParameters,
+                watName
+            )
+        } else {
+            functionToDefine = function
+        }
+
+        context.defineFunction(declaration.symbol, functionToDefine)
 
         val initPriority = when (declaration) {
-            backendContext.fieldInitFunction -> "0"
-            backendContext.mainCallsWrapperFunction -> "1"
+            backendContext.hotSwapFieldInitFunction -> "0"
+            backendContext.fieldInitFunction -> "1"
+            backendContext.mainCallsWrapperFunction -> "2"
             else -> null
         }
         if (initPriority != null)
@@ -190,6 +212,50 @@ class DeclarationGenerator(
                 )
             )
         }
+    }
+
+    private fun wrapFunctionToHotswapBridge(
+        declaration: IrFunction,
+        function: WasmFunction,
+        functionTypeSymbol: WasmSymbol<WasmFunctionType>,
+        irParameters: List<IrValueParameter>,
+        watName: String
+    ): WasmFunction {
+        context.defineHotswapFunction(declaration.symbol, function)
+        val hotswapBridge = WasmFunction.Defined(watName + "_bridge", functionTypeSymbol)
+
+        val hotswapBridgeGenerationContext = WasmFunctionCodegenContext(
+            declaration,
+            hotswapBridge,
+            backendContext,
+            context
+        )
+
+        for (irParameter in irParameters) {
+            hotswapBridgeGenerationContext.defineLocal(irParameter.symbol)
+        }
+
+        val exprGen = hotswapBridgeGenerationContext.bodyGen
+
+        val bridgeLocation = SourceLocation.NoLocation("hotswap bridge")
+
+        for (irParameter in irParameters) {
+            exprGen.buildGetLocal(
+                hotswapBridgeGenerationContext.referenceLocal(irParameter.symbol),
+                bridgeLocation
+            )
+        }
+
+        exprGen.buildConstI32Symbol(context.referenceHotswapTableIndex(declaration.symbol), bridgeLocation)
+
+        exprGen.buildCallIndirect(
+            functionTypeSymbol,
+            WasmSymbol(0),
+            bridgeLocation
+        )
+
+        exprGen.buildInstr(WasmOp.RETURN, bridgeLocation)
+        return hotswapBridge
     }
 
     private fun createDeclarationByInterface(iFace: IrClassSymbol) {
@@ -467,14 +533,47 @@ class DeclarationGenerator(
             generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
         }
 
+        val fieldName = declaration.fqNameWhenAvailable.toString()
+
         val global = WasmGlobal(
-            name = declaration.fqNameWhenAvailable.toString(),
+            name = fieldName,
             type = wasmType,
             isMutable = true,
             init = initBody
         )
 
         context.defineGlobalField(declaration.symbol, global)
+
+        /// GETTER
+        val bridgeLocation = SourceLocation.NoLocation("field hotswap getter bridge")
+        val getterName = "${fieldName}_getter_bridge"
+
+        val wasmGetterFunctionType = WasmFunctionType(parameterTypes = emptyList(), resultTypes = listOf(wasmType))
+        val getterBridgeTypeReference = context.referenceHotswapFieldGetterFunctionType(declaration.symbol)
+        context.defineHotswapFieldGetterFunctionType(declaration.symbol, wasmGetterFunctionType)
+
+        val getterBridgeFunction = WasmFunction.Defined(getterName, getterBridgeTypeReference)
+        with(WasmIrExpressionBuilder(getterBridgeFunction.instructions)) {
+            buildGetGlobal(context.referenceGlobalField(declaration.symbol), bridgeLocation)
+            buildInstr(WasmOp.RETURN, bridgeLocation)
+        }
+        context.defineHotswapFieldGetter(declaration.symbol, getterBridgeFunction)
+
+        /// SETTER
+        val setterName = "${fieldName}_setter_bridge"
+
+        val wasmSetterFunctionType = WasmFunctionType(parameterTypes = listOf(wasmType), resultTypes = emptyList())
+        val setterBridgeTypeReference = context.referenceHotswapFieldSetterFunctionType(declaration.symbol)
+        context.defineHotswapFieldSetterFunctionType(declaration.symbol, wasmSetterFunctionType)
+
+        val setterLocal = WasmLocal(0, "param0", wasmType, true)
+        val setterBridgeFunction = WasmFunction.Defined(setterName, setterBridgeTypeReference, mutableListOf(setterLocal))
+        with(WasmIrExpressionBuilder(setterBridgeFunction.instructions)) {
+            buildGetLocal(setterLocal, bridgeLocation)
+            buildSetGlobal(context.referenceGlobalField(declaration.symbol), bridgeLocation)
+            buildInstr(WasmOp.RETURN, bridgeLocation)
+        }
+        context.defineHotswapFieldSetter(declaration.symbol, setterBridgeFunction)
     }
 }
 

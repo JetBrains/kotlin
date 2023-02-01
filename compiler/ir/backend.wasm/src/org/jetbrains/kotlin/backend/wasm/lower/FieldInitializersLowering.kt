@@ -34,6 +34,7 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
     override fun lower(irFile: IrFile) {
         val builder = context.createIrBuilder(context.fieldInitFunction.symbol)
         val startFunctionBody = context.fieldInitFunction.body as IrBlockBody
+        val hotSwapInitFunctionBody = context.hotSwapFieldInitFunction.body as IrBlockBody
 
         irFile.acceptChildrenVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
@@ -57,7 +58,7 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
                 val initializerStatement = builder.at(initValue).irSetField(null, declaration, initValue)
 
                 when (declaration.fqNameWhenAvailable) {
-                    stringPoolFqName -> startFunctionBody.statements.add(0, initializerStatement)
+                    stringPoolFqName -> hotSwapInitFunctionBody.statements.add(0, initializerStatement)
                     else -> startFunctionBody.statements.add(initializerStatement)
                 }
 

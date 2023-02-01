@@ -621,7 +621,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         }
 
         val hashString: String =
-            functionType.hashCode().absoluteValue.toString(Character.MAX_RADIX)
+            functionType.render().hashCode().absoluteValue.toString(Character.MAX_RADIX)
 
         val originalParameterTypes: List<IrType> =
             functionType.arguments.dropLast(1).map { (it as IrTypeProjection).type }
