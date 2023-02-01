@@ -14,6 +14,6 @@ val kotlinStdlibDependencies = binaryCoordinates(Regex(".*kotlin-stdlib.*"))
 
 val jetbrainsAnnotationDependencies = binaryCoordinates(Regex("org\\.jetbrains:annotations:.*"))
 
-val kotilnNativeDistributionDependencies = IdeaKotlinDependencyMatcher("native distribution") { dependency ->
+val kotlinNativeDistributionDependencies = IdeaKotlinDependencyMatcher("native distribution") { dependency ->
     dependency is IdeaKotlinResolvedBinaryDependency && dependency.isNativeDistribution
 }
