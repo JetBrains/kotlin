@@ -39,6 +39,9 @@ plugins {
     signing
     id("org.jetbrains.kotlin.jvm") apply false
     id("org.jetbrains.kotlin.plugin.serialization") apply false
+    if (kotlinBuildProperties.isKotlinNativeEnabled) {
+        id("build.tools-conventions") apply false
+    }
 }
 
 pill {
