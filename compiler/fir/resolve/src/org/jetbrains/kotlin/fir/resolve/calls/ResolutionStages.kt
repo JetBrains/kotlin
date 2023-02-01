@@ -41,7 +41,8 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind.*
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.DYNAMIC_EXTENSION_FQ_NAME
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.AbstractNullabilityChecker
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 abstract class ResolutionStage {
@@ -574,6 +575,10 @@ internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
         with(candidate.system.asConstraintSystemCompleterContext()) {
             for (variableWithConstraints in candidate.system.notFixedTypeVariables.values) {
                 val upperTypes = variableWithConstraints.constraints.extractUpperTypesToCheckIntersectionEmptiness()
+
+                upperTypes.forEach { type ->
+                    (type as ConeKotlinType).toRegularClassSymbol(context.session)?.lazyResolveToPhase(FirResolvePhase.STATUS)
+                }
 
                 // TODO: consider reporting errors on bounded type variables by incompatible types but with other lower constraints
                 if (upperTypes.size <= 1 || variableWithConstraints.constraints.any { it.kind.isLower() })
