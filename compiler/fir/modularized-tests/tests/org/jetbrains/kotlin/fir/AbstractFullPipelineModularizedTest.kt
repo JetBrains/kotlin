@@ -131,6 +131,8 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         args.reportPerf = true
         args.jvmTarget = JVM_TARGET
         args.allowKotlinPackage = true
+        args.jdkHome = moduleData.jdkHome?.absolutePath
+        args.renderInternalDiagnosticNames = true
         configureArgsUsingBuildFile(args, moduleData, tmp)
     }
 
@@ -153,7 +155,6 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         val modulesFile = tmp.toFile().resolve("modules.xml")
         modulesFile.writeText(builder.asText().toString())
         args.buildFile = modulesFile.absolutePath
-        args.jdkHome = moduleData.jdkHome?.absolutePath
     }
 
     abstract fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData)

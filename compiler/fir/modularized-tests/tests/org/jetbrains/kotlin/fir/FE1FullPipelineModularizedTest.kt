@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
         args.useK2 = false
+        args.useIR = true
         args.jvmDefault = "compatibility"
         args.apiVersion = API_VERSION
         args.optIn = arrayOf(
@@ -19,7 +20,6 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
             "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
         )
         args.multiPlatform = true
-        args.renderInternalDiagnosticNames = true
         args.noStdlib = true
         args.noReflect = true
     }
