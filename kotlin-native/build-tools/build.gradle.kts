@@ -129,5 +129,10 @@ gradlePlugin {
             id = "native-interop-plugin"
             implementationClass = "org.jetbrains.kotlin.NativeInteropPlugin"
         }
+
+        create("native") {
+            id = "native"
+            implementationClass = "org.jetbrains.kotlin.tools.NativePlugin"
+        }
     }
 }

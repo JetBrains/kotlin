@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-import org.jetbrains.gradle.plugins.tools.lib
+import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.target.ClangArgs
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
-    `native`
+    id("native")
 }
 
 val llvmDir = project.findProperty("llvmDir")
