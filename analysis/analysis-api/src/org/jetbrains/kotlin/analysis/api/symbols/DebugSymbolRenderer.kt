@@ -88,7 +88,7 @@ public class DebugSymbolRenderer(
     public fun KtAnalysisSession.renderForSubstitutionOverrideUnwrappingTest(symbol: KtSymbol): String = prettyPrint {
         if (symbol !is KtCallableSymbol) return@prettyPrint
 
-        renderSymbolHeader(symbol)
+        renderFrontendIndependentKClassNameOf(symbol)
 
         withIndent {
             appendLine()
@@ -126,8 +126,8 @@ public class DebugSymbolRenderer(
 
     context(KtAnalysisSession)
     private fun PrettyPrinter.renderSymbolInternals(symbol: KtSymbol) {
-        renderSymbolHeader(symbol)
-        val apiClass = getSymbolApiClass(symbol)
+        renderFrontendIndependentKClassNameOf(symbol)
+        val apiClass = getFrontendIndependentKClassOf(symbol)
         withIndent {
             val members = apiClass.members
                 .filterIsInstance<KProperty<*>>()
@@ -145,8 +145,8 @@ public class DebugSymbolRenderer(
     }
 
     context(KtAnalysisSession)
-    private fun PrettyPrinter.renderSymbolHeader(symbol: Any) {
-        val apiClass = getSymbolApiClass(symbol)
+    private fun PrettyPrinter.renderFrontendIndependentKClassNameOf(instanceOfClassToRender: Any) {
+        val apiClass = getFrontendIndependentKClassOf(instanceOfClassToRender)
         append(apiClass.simpleName).append(':')
     }
 
@@ -178,7 +178,7 @@ public class DebugSymbolRenderer(
             return
         }
 
-        append(getSymbolApiClass(symbol).simpleName)
+        append(getFrontendIndependentKClassOf(symbol).simpleName)
         append("(")
         when (symbol) {
             is KtClassLikeSymbol -> renderId(symbol.classIdIfNonLocal, symbol)
@@ -208,7 +208,7 @@ public class DebugSymbolRenderer(
             return
         }
 
-        renderSymbolHeader(typeToRender)
+        renderFrontendIndependentKClassNameOf(typeToRender)
         withIndent {
             appendLine()
             append("annotationsList: ")
@@ -392,8 +392,8 @@ public class DebugSymbolRenderer(
         renderList(value.annotations, renderSymbolsFully = false)
     }
 
-    private fun getSymbolApiClass(symbol: Any): KClass<*> {
-        var current: Class<*> = symbol.javaClass
+    private fun getFrontendIndependentKClassOf(instanceOfClass: Any): KClass<*> {
+        var current: Class<*> = instanceOfClass.javaClass
 
         while (true) {
             val className = current.name
