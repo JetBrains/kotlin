@@ -13,6 +13,5 @@ internal sealed interface AnnotationsProvider {
     fun annotationInfos(): List<KtAnnotationApplicationInfo>
     operator fun get(classId: ClassId): Collection<KtAnnotationApplicationWithArgumentsInfo>
     operator fun contains(classId: ClassId): Boolean
-    fun isTheSameAs(other: Any?): Boolean
     fun ownerClassId(): ClassId?
 }

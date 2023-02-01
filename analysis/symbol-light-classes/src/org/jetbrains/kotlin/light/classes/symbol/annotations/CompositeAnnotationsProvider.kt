@@ -26,12 +26,11 @@ internal class CompositeAnnotationsProvider(val providers: Collection<Annotation
 
     override fun contains(classId: ClassId): Boolean = providers.any { classId in it }
 
-    override fun isTheSameAs(other: Any?): Boolean = other === this ||
+    override fun equals(other: Any?): Boolean = other === this ||
             other is CompositeAnnotationsProvider &&
-            other.providers.size == providers.size &&
-            other.providers.zip(providers).all { (another, myProvider) ->
-                myProvider.isTheSameAs(another)
-            }
+            other.providers == providers
+
+    override fun hashCode(): Int = providers.hashCode()
 
     override fun ownerClassId(): ClassId? = null
 }

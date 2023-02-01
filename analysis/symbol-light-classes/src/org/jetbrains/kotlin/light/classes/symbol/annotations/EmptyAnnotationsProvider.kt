@@ -13,6 +13,5 @@ internal object EmptyAnnotationsProvider : AnnotationsProvider {
     override fun annotationInfos(): List<KtAnnotationApplicationInfo> = emptyList()
     override fun get(classId: ClassId): Collection<KtAnnotationApplicationWithArgumentsInfo> = emptyList()
     override fun contains(classId: ClassId): Boolean = false
-    override fun isTheSameAs(other: Any?): Boolean = this === other
     override fun ownerClassId(): ClassId? = null
 }

@@ -55,7 +55,7 @@ internal class SymbolLightLazyAnnotation(
             other.annotationApplication.index == annotationApplication.index &&
             other.annotationApplication.useSiteTarget == annotationApplication.useSiteTarget &&
             other.annotationApplication.isCallWithArguments == annotationApplication.isCallWithArguments &&
-            annotationsProvider.isTheSameAs(other.annotationsProvider) &&
+            other.annotationsProvider == annotationsProvider &&
             other.parent == parent
 
     override fun hashCode(): Int = fqName.hashCode()

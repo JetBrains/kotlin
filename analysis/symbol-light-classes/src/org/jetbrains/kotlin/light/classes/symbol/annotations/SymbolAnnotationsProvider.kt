@@ -36,11 +36,13 @@ internal class SymbolAnnotationsProvider<T : KtAnnotatedSymbol>(
         annotatedSymbol.hasAnnotation(classId, annotationUseSiteTargetFilter)
     }
 
-    override fun isTheSameAs(other: Any?): Boolean = other === this ||
+    override fun equals(other: Any?): Boolean = other === this ||
             other is SymbolAnnotationsProvider<*> &&
             other.ktModule == ktModule &&
             other.annotationUseSiteTargetFilter == annotationUseSiteTargetFilter &&
             annotatedSymbolPointer.pointsToTheSameSymbolAs(other.annotatedSymbolPointer)
+
+    override fun hashCode(): Int = annotatedSymbolPointer.hashCode()
 
     override fun ownerClassId(): ClassId? = withAnnotatedSymbol { annotatedSymbol ->
         (annotatedSymbol as? KtClassLikeSymbol)?.classIdIfNonLocal
