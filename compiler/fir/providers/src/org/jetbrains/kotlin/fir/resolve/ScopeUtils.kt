@@ -124,7 +124,7 @@ private fun ConeClassLikeType.classScope(
         )
     }
 
-    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, memberOwnerLookupTag)
+    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, memberOwnerLookupTag, requiredPhase)
 }
 
 private fun ConeClassLikeType.obtainFirOfClass(useSiteSession: FirSession, requiredPhase: FirResolvePhase): FirClass? {

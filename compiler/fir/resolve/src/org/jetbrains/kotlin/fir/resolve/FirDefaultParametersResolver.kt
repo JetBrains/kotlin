@@ -35,7 +35,8 @@ class FirDefaultParametersResolver : FirSessionComponent {
                     ConeSubstitutor.Empty,
                     session,
                     scopeSession,
-                    containingClass.symbol.toLookupTag()
+                    containingClass.symbol.toLookupTag(),
+                    requiredPhase = null,
                 )
             }
             else -> return false

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -16,7 +17,8 @@ object StubFirScopeProvider : FirScopeProvider() {
     override fun getUseSiteMemberScope(
         klass: FirClass,
         useSiteSession: FirSession,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
+        requiredPhase: FirResolvePhase?
     ): FirTypeScope {
         error("Stub")
     }

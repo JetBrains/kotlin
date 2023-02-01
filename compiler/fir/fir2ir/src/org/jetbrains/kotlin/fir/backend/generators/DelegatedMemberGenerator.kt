@@ -96,11 +96,11 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
     fun generate(irField: IrField, firField: FirField, firSubClass: FirClass, subClass: IrClass) {
         val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
-        val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val subClassScope = firSubClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
         val delegateToType = firField.initializer!!.typeRef.coneType.fullyExpandedType(session).lowerBoundIfFlexible()
         val delegateToClass = delegateToType.toSymbol(session).boundClass()
 
-        val delegateToScope = delegateToClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val delegateToScope = delegateToClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
         val delegateToLookupTag = (delegateToType as? ConeClassLikeType)?.lookupTag
 
         subClassScope.processAllFunctions { functionSymbol ->

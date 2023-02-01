@@ -36,7 +36,12 @@ fun wrapScopeWithJvmMapped(
         ?: return declaredMemberScope
     val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass, JavaToKotlinClassMap.isMutable(kotlinUnsafeFqName))
     return if (preparedSignatures.isNotEmpty()) {
-        javaClass.unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false).let { javaClassUseSiteScope ->
+        javaClass.unsubstitutedScope(
+            useSiteSession,
+            scopeSession,
+            withForcedTypeCalculator = false,
+            requiredPhase = null,
+        ).let { javaClassUseSiteScope ->
             val jvmMappedScope = JvmMappedScope(
                 useSiteSession,
                 klass,

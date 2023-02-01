@@ -10,12 +10,13 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildPropertyCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -28,13 +29,13 @@ abstract class FirAbstractImportingScope(
 ) : FirAbstractProviderBasedScope(session, lookupInFir) {
     private val FirClassLikeSymbol<*>.fullyExpandedSymbol: FirClassSymbol<*>?
         get() = when (this) {
-            is FirTypeAliasSymbol -> fir.expandedConeType?.lookupTag?.toSymbol(session)?.fullyExpandedSymbol
+            is FirTypeAliasSymbol -> resolvedExpandedTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag?.toSymbol(session)?.fullyExpandedSymbol
             is FirClassSymbol<*> -> this
         }
 
     private fun FirClassSymbol<*>.getStaticsScope(): FirContainingNamesAwareScope? =
         if (fir.classKind == ClassKind.OBJECT) {
-            unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+            unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = FirResolvePhase.STATUS)
         } else {
             fir.scopeProvider.getStaticScope(fir, session, scopeSession)
         }

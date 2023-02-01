@@ -652,7 +652,7 @@ object FirExpectActualResolver {
         session: FirSession = moduleData.session
     ): Collection<FirConstructorSymbol> {
         return mutableListOf<FirConstructorSymbol>().apply {
-            getConstructorsTo(this, unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false))
+            getConstructorsTo(this, unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null,))
         }
     }
 

@@ -203,7 +203,8 @@ private fun processConstructors(
                         substitutor,
                         session,
                         bodyResolveComponents.scopeSession,
-                        firClass.symbol.toLookupTag()
+                        firClass.symbol.toLookupTag(),
+                        requiredPhase = FirResolvePhase.STATUS,
                     )
                 }
             }

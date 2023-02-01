@@ -32,8 +32,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
+import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
@@ -954,7 +954,8 @@ internal class KtFirCallResolver(
         return classSymbol.unsubstitutedScope(
             analysisSession.useSiteSession,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
-            withForcedTypeCalculator = true
+            withForcedTypeCalculator = true,
+            requiredPhase = null,
         )
             .getConstructors(analysisSession.firSymbolBuilder)
             .toList()
@@ -1194,7 +1195,8 @@ internal class KtFirCallResolver(
         val scope = unsubstitutedScope(
             analysisSession.useSiteSession,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
-            false
+            false,
+            requiredPhase = null,
         )
         var equalsSymbol: FirNamedFunctionSymbol? = null
         scope.processFunctionsByName(EQUALS) { equalsSymbolFromScope ->

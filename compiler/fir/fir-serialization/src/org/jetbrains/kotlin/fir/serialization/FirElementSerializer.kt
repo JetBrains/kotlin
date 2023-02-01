@@ -279,7 +279,7 @@ class FirElementSerializer private constructor(
     private inline fun <reified T : FirCallableDeclaration, S : FirCallableSymbol<*>> FirClass.collectDeclarations(
         processScope: (FirTypeScope, ((S) -> Unit)) -> Unit
     ): List<T> = buildList {
-        val memberScope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+        val memberScope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, requiredPhase = null)
 
         processScope(memberScope) l@{
             val declaration = it.fir as T

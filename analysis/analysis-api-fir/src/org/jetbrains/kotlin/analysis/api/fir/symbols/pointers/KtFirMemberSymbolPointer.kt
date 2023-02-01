@@ -51,6 +51,7 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
                 useSiteSession = firSession,
                 scopeSession = scopeSession,
                 withForcedTypeCalculator = false,
+                requiredPhase = null,
             )
         }
     }

@@ -634,7 +634,7 @@ class CallAndReferenceGenerator(
                         // Fallback for FirReferencePlaceholderForResolvedAnnotations from jar
                         val fir = coneType.lookupTag.toSymbol(session)?.fir as? FirClass
                         var constructorSymbol: FirConstructorSymbol? = null
-                        fir?.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)?.processDeclaredConstructors {
+                        fir?.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, requiredPhase = null)?.processDeclaredConstructors {
                             if (it.fir.isPrimary && constructorSymbol == null) {
                                 constructorSymbol = it
                             }

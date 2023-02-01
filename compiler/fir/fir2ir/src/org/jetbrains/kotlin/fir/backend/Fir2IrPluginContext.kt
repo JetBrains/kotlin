@@ -129,7 +129,7 @@ class Fir2IrPluginContext(
                 ?.fullyExpandedClass(components.session)
                 ?: return emptyList()
             expandedClass
-                .unsubstitutedScope(components.session, components.scopeSession, withForcedTypeCalculator = true)
+                .unsubstitutedScope(components.session, components.scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
                 .getCallablesFromScope()
         } else {
             symbolProvider.getCallablesFromProvider()

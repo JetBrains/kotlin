@@ -7,13 +7,15 @@ package org.jetbrains.kotlin.fir.scopes
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 
 abstract class FirScopeProvider {
     abstract fun getUseSiteMemberScope(
         klass: FirClass,
         useSiteSession: FirSession,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
+        requiredPhase: FirResolvePhase?
     ): FirTypeScope
 
     abstract fun getStaticMemberScopeForCallables(

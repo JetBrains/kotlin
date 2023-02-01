@@ -393,7 +393,7 @@ internal fun FirSimpleFunction.processOverriddenFunctionSymbols(
     containingClass: FirClass,
     processor: (FirNamedFunctionSymbol) -> Unit
 ) {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
     scope.processFunctionsByName(name) {}
     scope.processOverriddenFunctionsFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!session.visibilityChecker.isVisibleForOverriding(
@@ -467,7 +467,7 @@ internal fun FirProperty.processOverriddenPropertySymbols(
     containingClass: FirClass,
     processor: (FirPropertySymbol) -> Unit
 ): List<IrPropertySymbol> {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrPropertySymbol>()
     scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
@@ -501,7 +501,7 @@ internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirC
 
 context(Fir2IrComponents)
 internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirClass, isGetter: Boolean): List<IrSimpleFunctionSymbol> {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, requiredPhase = null)
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
     val superClasses = containingClass.getSuperTypesAsIrClasses() ?: return emptyList()
