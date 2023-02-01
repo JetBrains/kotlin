@@ -165,13 +165,6 @@ class FirSamResolver(
             ).apply {
                 isExpect = firRegularClass.isExpect
                 isActual = firRegularClass.isActual
-                isOverride = false
-                isOperator = false
-                isInfix = false
-                isExternal = false
-                isInline = false
-                isSuspend = false
-                isTailRec = false
             }
             this.symbol = syntheticFunctionSymbol
             typeParameters += newTypeParameters.map { it.build() }

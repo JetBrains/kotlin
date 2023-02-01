@@ -121,14 +121,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                         Visibilities.Public,
                         Modality.ABSTRACT,
                         EffectiveVisibility.Public
-                    ).apply {
-                        isExpect = false
-                        isActual = false
-                        isInner = false
-                        isCompanion = false
-                        isData = false
-                        isInline = false
-                    }
+                    )
                     classKind = ClassKind.INTERFACE
                     scopeProvider = kotlinScopeProvider
                     symbol = this@symbol
@@ -167,14 +160,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                         Modality.ABSTRACT,
                         EffectiveVisibility.Public
                     ).apply {
-                        isExpect = false
-                        isActual = false
-                        isOverride = false
                         isOperator = true
-                        isInfix = false
-                        isInline = false
-                        isTailRec = false
-                        isExternal = false
                         isSuspend = kind.isSuspendOrKSuspendFunction
                     }
                     val typeArguments = typeParameters.map {

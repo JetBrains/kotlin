@@ -261,9 +261,6 @@ class FirSignatureEnhancement(
                         } else {
                             FirDeclarationStatusImpl(firMethod.visibility, Modality.FINAL)
                         }.apply {
-                            isExpect = false
-                            isActual = false
-                            isOverride = false
                             isInner = firMethod.isInner
                         }
                         this.symbol = symbol
