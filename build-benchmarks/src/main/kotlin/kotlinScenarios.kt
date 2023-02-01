@@ -2,10 +2,10 @@ import org.jetbrains.kotlin.build.benchmarks.dsl.*
 
 fun historyFilesBenchmarks() = kotlinBenchmarks(additionalDefaultProperties = arrayOf("-Pkotlin.incremental.useClasspathSnapshot=false"))
 fun abiSnapshotBenchmarks() = kotlinBenchmarks(prefix = "ABI_SNAPSHOT: ", arrayOf("-Pkotlin.incremental.classpath.snapshot.enabled=true"))
-fun artifactTransformBenchmarks() = kotlinBenchmarks(prefix = "TRANSFORMATION: ", arrayOf("-Pkotlin.incremental.useClasspathSnapshot=true"))
+fun artifactTransformBenchmarks() = kotlinBenchmarks(prefix = "TRANSFORMATION: ", arrayOf("-Pkotlin.incremental.useClasspathSnapshot=true"), withLatestLtsJdk = true)
 
 //move prefix to suite
-fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<String> = emptyArray()) =
+fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<String> = emptyArray(), withLatestLtsJdk: Boolean = false) =
     suite {
         val coreUtilStrings = changeableFile("coreUtil/StringsKt")
         val coreUtilCoreLib = changeableFile("coreUtil/CoreLibKt")
@@ -44,171 +44,208 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
 
         defaultArguments(*defaultArguments)
 
-        scenario("parallel clean compile to warmup daemon") {
-            arguments(*parallelRerunBuild)
-            expectSlowBuild("clean build")
-            step {
-                doNotMeasure()
-                runTasks("assemble")
+        fun registerScenarios(withLatestLtsJdk: Boolean = false) {
+            val jdkPrefix = if (withLatestLtsJdk) {
+                "JDK 17 "
+            } else {
+                ""
             }
-        }
+            val jdkPath = if (withLatestLtsJdk) {
+                System.getenv("JDK_17_0")
+            } else {
+                defaultJdk
+            }
 
-        scenario("${prefix}(buildSrc, Kotlin) add public fun") {
-            step {
-                changeFile(buildSrc, TypeOfChange.ADD_PUBLIC_FUNCTION)
-                runTasks(*noArgs)
+            scenario("$jdkPrefix${prefix}parallel clean compile to warmup daemon") {
+                jdk = jdkPath
+                arguments(*parallelRerunBuild)
+                expectSlowBuild("clean build")
+                step {
+                    doNotMeasure()
+                    runTasks("assemble")
+                }
             }
-        }
 
-        scenario("${prefix}(buildSrc, Kotlin) add private fun") {
-            step {
-                changeFile(buildSrc, TypeOfChange.ADD_PRIVATE_FUNCTION)
-                runTasks(*noArgs)
+            scenario("$jdkPrefix${prefix}(buildSrc, Kotlin) add public fun") {
+                jdk = jdkPath
+                step {
+                    changeFile(buildSrc, TypeOfChange.ADD_PUBLIC_FUNCTION)
+                    runTasks(*noArgs)
+                }
             }
-        }
 
-        scenario("${prefix}clean build") {
-            arguments(*nonParallelRerunBuild)
-            expectSlowBuild("clean build")
-            step {
-                doNotMeasure()
-                runTasks(Tasks.CLEAN)
+            scenario("$jdkPrefix${prefix}(buildSrc, Kotlin) add private fun") {
+                jdk = jdkPath
+                step {
+                    changeFile(buildSrc, TypeOfChange.ADD_PRIVATE_FUNCTION)
+                    runTasks(*noArgs)
+                }
             }
-            step {
-                runTasks("assemble")
-            }
-        }
 
-        scenario("${prefix}clean build parallel") {
-            arguments(*parallelRerunBuild)
-            expectSlowBuild("clean build")
-            step {
-                doNotMeasure()
-                runTasks(Tasks.CLEAN)
+            scenario("$jdkPrefix${prefix}clean build") {
+                jdk = jdkPath
+                arguments(*nonParallelRerunBuild)
+                expectSlowBuild("clean build")
+                step {
+                    doNotMeasure()
+                    runTasks(Tasks.CLEAN)
+                }
+                step {
+                    runTasks("assemble")
+                }
             }
-            step {
-                runTasks("assemble")
-            }
-        }
 
-        scenario("${prefix}Run gradle plugin tests") {
-            arguments(*nonParallelBuild)
-            step {
-                runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST)
+            scenario("$jdkPrefix${prefix}clean build parallel") {
+                jdk = jdkPath
+                arguments(*parallelRerunBuild)
+                expectSlowBuild("clean build")
+                step {
+                    doNotMeasure()
+                    runTasks(Tasks.CLEAN)
+                }
+                step {
+                    runTasks("assemble")
+                }
             }
-            step {
-                doNotMeasure()
-                runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST_CLEAN)
-            }
-            repeat = 5U
-        }
 
-        scenario("${prefix}Run gradle plugin tests after changes") {
-            arguments(*nonParallelBuild)
-            step {
-                changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
-                runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST)
+            scenario("$jdkPrefix${prefix}Run gradle plugin tests") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST)
+                }
+                step {
+                    doNotMeasure()
+                    runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST_CLEAN)
+                }
+                repeat = 5U
             }
-            step {
-                doNotMeasure()
-                runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST_CLEAN)
-            }
-            repeat = 5U
-        }
 
-        scenario("${prefix}(non-leaf, core) add private function") {
-            arguments(*nonParallelBuild)
-            step {
-                changeFile(coreUtilStrings, TypeOfChange.ADD_PRIVATE_FUNCTION)
+            scenario("$jdkPrefix${prefix}Run gradle plugin tests after changes") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
+                    runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST)
+                }
+                step {
+                    doNotMeasure()
+                    runTasks(Tasks.KOTLIN_GRADLE_PLUGIN_TEST_CLEAN)
+                }
+                repeat = 5U
             }
-        }
 
-        scenario("${prefix}(non-leaf, core) add public function") {
-            arguments(*nonParallelBuild)
-            step {
-                changeFile(coreUtilStrings, TypeOfChange.ADD_PUBLIC_FUNCTION)
+            scenario("$jdkPrefix${prefix}(non-leaf, core) add private function") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    changeFile(coreUtilStrings, TypeOfChange.ADD_PRIVATE_FUNCTION)
+                }
             }
-        }
 
-        scenario("${prefix}(non-leaf, core) add private class") {
-            arguments(*nonParallelBuild)
-            step {
-                changeFile(coreUtilStrings, TypeOfChange.ADD_PRIVATE_CLASS)
+            scenario("$jdkPrefix${prefix}(non-leaf, core) add public function") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    changeFile(coreUtilStrings, TypeOfChange.ADD_PUBLIC_FUNCTION)
+                }
             }
-        }
 
-        scenario("${prefix}(non-leaf, core) add public class") {
-            arguments(*nonParallelBuild)
-            step {
-                changeFile(coreUtilStrings, TypeOfChange.ADD_PUBLIC_CLASS)
+            scenario("$jdkPrefix${prefix}(non-leaf, core) add private class") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    changeFile(coreUtilStrings, TypeOfChange.ADD_PRIVATE_CLASS)
+                }
             }
-        }
 
-        scenario("${prefix}(non-leaf, core) build after error") {
-            arguments(*nonParallelBuild)
-            step {
-                doNotMeasure()
-                expectBuildToFail()
-                changeFile(coreUtilStrings, TypeOfChange.INTRODUCE_COMPILE_ERROR)
+            scenario("$jdkPrefix${prefix}(non-leaf, core) add public class") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    changeFile(coreUtilStrings, TypeOfChange.ADD_PUBLIC_CLASS)
+                }
             }
-            step {
-                changeFile(coreUtilStrings, TypeOfChange.FIX_COMPILE_ERROR)
-            }
-        }
 
-        scenario("${prefix}(non-leaf, core) change popular inline function") {
-            arguments(*nonParallelBuild)
-            step {
-                changeFile(coreUtilCoreLib, TypeOfChange.CHANGE_INLINE_FUNCTION)
+            scenario("$jdkPrefix${prefix}(non-leaf, core) build after error") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    doNotMeasure()
+                    expectBuildToFail()
+                    changeFile(coreUtilStrings, TypeOfChange.INTRODUCE_COMPILE_ERROR)
+                }
+                step {
+                    changeFile(coreUtilStrings, TypeOfChange.FIX_COMPILE_ERROR)
+                }
             }
-        }
 
-        scenario("${prefix}(non-leaf, compiler) add public function") {
-            arguments(*nonParallelBuild)
-            step {
-                changeFile(compilerCommonBackendContext, TypeOfChange.ADD_PUBLIC_FUNCTION)
+            scenario("$jdkPrefix${prefix}(non-leaf, core) change popular inline function") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    changeFile(coreUtilCoreLib, TypeOfChange.CHANGE_INLINE_FUNCTION)
+                }
             }
-        }
 
-        scenario("${prefix}(non-leaf, compiler) add private function") {
-            arguments(*nonParallelBuild)
-            step {
-                changeFile(compilerCommonBackendContext, TypeOfChange.ADD_PRIVATE_FUNCTION)
+            scenario("$jdkPrefix${prefix}(non-leaf, compiler) add public function") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    changeFile(compilerCommonBackendContext, TypeOfChange.ADD_PUBLIC_FUNCTION)
+                }
             }
-        }
 
-        scenario("${prefix}(leaf, kotlin gradle plugin) add private function") {
-            arguments(*nonParallelBuild)
-            step {
-                changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
-                runTasks(":kotlin-gradle-plugin:assemble")
+            scenario("$jdkPrefix${prefix}(non-leaf, compiler) add private function") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    changeFile(compilerCommonBackendContext, TypeOfChange.ADD_PRIVATE_FUNCTION)
+                }
             }
-        }
 
-        scenario("${prefix}(leaf, kotlin gradle plugin) add public function") {
-            arguments(*nonParallelBuild)
-            step {
-                changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PUBLIC_FUNCTION)
-                runTasks(":kotlin-gradle-plugin:assemble")
+            scenario("$jdkPrefix${prefix}(leaf, kotlin gradle plugin) add private function") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
+                    runTasks(":kotlin-gradle-plugin:assemble")
+                }
             }
-        }
 
-        scenario("${prefix}(leaf, kotlin gradle plugin) measure backup outputs without optimizations") {
-            arguments(*nonParallelBuild, "-Pkotlin.compiler.preciseCompilationResultsBackup=false", "-Pkotlin.compiler.keepIncrementalCompilationCachesInMemory=false")
-            step {
-                changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
-                runTasks(":kotlin-gradle-plugin:assemble")
+            scenario("$jdkPrefix${prefix}(leaf, kotlin gradle plugin) add public function") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild)
+                step {
+                    changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PUBLIC_FUNCTION)
+                    runTasks(":kotlin-gradle-plugin:assemble")
+                }
+            }
+
+            scenario("$jdkPrefix${prefix}(leaf, kotlin gradle plugin) measure backup outputs without optimizations") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild, "-Pkotlin.compiler.preciseCompilationResultsBackup=false", "-Pkotlin.compiler.keepIncrementalCompilationCachesInMemory=false")
+                step {
+                    changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
+                    runTasks(":kotlin-gradle-plugin:assemble")
+                }
+                repeat = 9U
+            }
+
+            scenario("$jdkPrefix${prefix}(leaf, kotlin gradle plugin) measure backup outputs with optimizations") {
+                jdk = jdkPath
+                arguments(*nonParallelBuild, "-Pkotlin.compiler.preciseCompilationResultsBackup=true", "-Pkotlin.compiler.keepIncrementalCompilationCachesInMemory=true")
+                step {
+                    changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
+                    runTasks(":kotlin-gradle-plugin:assemble")
+                }
                 repeat = 9U
             }
         }
 
-        scenario("${prefix}(leaf, kotlin gradle plugin) measure backup outputs with optimizations") {
-            arguments(*nonParallelBuild, "-Pkotlin.compiler.preciseCompilationResultsBackup=true", "-Pkotlin.compiler.keepIncrementalCompilationCachesInMemory=true")
-            step {
-                changeFile(kotlinGradlePluginConfigurationPhaseAware, TypeOfChange.ADD_PRIVATE_FUNCTION)
-                runTasks(":kotlin-gradle-plugin:assemble")
-                repeat = 9U
-            }
+        registerScenarios()
+        if (withLatestLtsJdk) {
+            registerScenarios(withLatestLtsJdk = true)
         }
     }
 

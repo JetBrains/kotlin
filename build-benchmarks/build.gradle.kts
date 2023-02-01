@@ -13,6 +13,7 @@ buildscript {
 
     repositories {
         mavenLocal()
+        mavenCentral()
         maven {
             url = uri(kotlinRepo)
         }
@@ -37,6 +38,7 @@ val kotlinRepo: String by extra
 repositories {
     maven { url = uri("https://repo.gradle.org/gradle/libs-releases") }
     mavenLocal()
+    mavenCentral()
     maven {
         url = uri(kotlinRepo)
     }
