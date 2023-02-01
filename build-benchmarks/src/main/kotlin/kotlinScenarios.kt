@@ -43,14 +43,13 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
 
         defaultArguments(*defaultArguments)
 
-        scenario("${prefix}clean build") {
-            arguments(*nonParallelRerunBuild)
+        scenario("parallel clean compile to warmup daemon") {
+            arguments(*parallelRerunBuild)
             expectSlowBuild("clean build")
             step {
                 doNotMeasure()
-                runTasks(Tasks.CLEAN)
+                runTasks("assemble")
             }
-            step {}
         }
 
         scenario("${prefix}(buildSrc, Kotlin) add public fun") {
@@ -67,6 +66,18 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
             }
         }
 
+        scenario("${prefix}clean build") {
+            arguments(*nonParallelRerunBuild)
+            expectSlowBuild("clean build")
+            step {
+                doNotMeasure()
+                runTasks(Tasks.CLEAN)
+            }
+            step {
+                runTasks("assemble")
+            }
+        }
+
         scenario("${prefix}clean build parallel") {
             arguments(*parallelRerunBuild)
             expectSlowBuild("clean build")
@@ -74,7 +85,9 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
                 doNotMeasure()
                 runTasks(Tasks.CLEAN)
             }
-            step {}
+            step {
+                runTasks("assemble")
+            }
         }
 
         scenario("${prefix}Run gradle plugin tests") {
