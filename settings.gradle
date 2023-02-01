@@ -834,6 +834,7 @@ project(':kotlin-scripting-ide-common').projectDir = "$rootDir/plugins/scripting
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
 if (buildProperties.isKotlinNativeEnabled) {
+    includeBuild("kotlin-native/build-tools")
     include ':kotlin-native:dependencies'
     include ':kotlin-native:endorsedLibraries:kotlinx.cli'
     include ':kotlin-native:endorsedLibraries'
@@ -856,7 +857,6 @@ if (buildProperties.isKotlinNativeEnabled) {
     include ':kotlin-native:backend.native:tests'
     include ":kotlin-native-compiler-embeddable"
     project(":kotlin-native-compiler-embeddable").projectDir = "$rootDir/kotlin-native/prepare/kotlin-native-embeddable-compiler" as File
-    include ':kotlin-native:build-tools'
     include ':kotlin-native-shared'
     project(":kotlin-native-shared").projectDir = "$rootDir/kotlin-native/shared" as File
 }

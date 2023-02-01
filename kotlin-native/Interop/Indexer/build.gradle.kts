@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.konan.target.HostManager.Companion.hostIsMac
 
 plugins {
     `kotlin`
-    `native-interop-plugin`
+    id("build.tools-conventions")
+    id("native-interop-plugin")
     `native`
 }
 

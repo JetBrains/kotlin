@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 buildscript {
     // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
     project.extensions.extraProperties["kotlin.build.report.output"] = null
+    // FIXME: This is to workaround issue with missing runtime KGP dependency
+    project.extensions.extraProperties["_kgp_internal_kotlin_compile_transforms_registered"] = true
 
     val versionPropertiesFile = project.rootProject.projectDir.parentFile.resolve("gradle/versions.properties")
     val versionProperties = java.util.Properties()
@@ -150,4 +152,13 @@ compileKotlin.apply {
 
 allprojects {
     tasks.register("checkBuild")
+}
+
+gradlePlugin {
+    plugins {
+        create("native") {
+            id = "native"
+            implementationClass = "org.jetbrains.gradle.plugins.tools.NativePlugin"
+        }
+    }
 }

@@ -43,4 +43,3 @@ buildscript {
 }
 
 include "prepare-deps"
-include "build-tools"

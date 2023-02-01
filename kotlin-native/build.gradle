@@ -50,6 +50,8 @@ if (isMac()) {
     checkXcodeVersion(project)
 }
 
+apply plugin: "build.tools-conventions"
+
 ext {
     distDir = UtilsKt.getKotlinNativeDist(project)
     dependenciesDir = DependencyProcessor.defaultDependenciesRoot

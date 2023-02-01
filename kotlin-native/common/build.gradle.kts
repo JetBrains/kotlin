@@ -4,6 +4,7 @@
  */
 
 plugins {
+    id("build.tools-conventions")
     id("compile-to-bitcode")
 }
 

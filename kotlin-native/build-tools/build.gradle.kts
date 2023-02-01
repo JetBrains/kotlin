@@ -6,26 +6,27 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
-plugins {
-    groovy
-    id("org.gradle.kotlin.kotlin-dsl")
-    id("org.jetbrains.kotlin.plugin.sam.with.receiver")
-}
-
 buildscript {
     val rootBuildDirectory by extra(project.file("../.."))
 
     apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
+
     dependencies {
         classpath("com.google.code.gson:gson:2.8.9")
     }
 }
 
 repositories {
-    maven("https://cache-redirector.jetbrains.com/maven-central")
     maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
     mavenCentral()
     gradlePluginPortal()
+}
+
+plugins {
+    groovy
+    kotlin("jvm")
+    `kotlin-dsl`
+    id("org.jetbrains.kotlin.plugin.sam.with.receiver")
 }
 
 dependencies {
@@ -36,8 +37,12 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 
+    // To build Konan Gradle plugin
+    implementation("org.jetbrains.kotlin:kotlin-build-common:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+
     val versionProperties = Properties()
-    project.rootProject.projectDir.resolve("../gradle/versions.properties").inputStream().use { propInput ->
+    project.rootProject.projectDir.resolve("../../gradle/versions.properties").inputStream().use { propInput ->
         versionProperties.load(propInput)
     }
     implementation("com.google.code.gson:gson:2.8.9")
@@ -69,14 +74,15 @@ val compileGroovy: GroovyCompile by tasks
 compileKotlin.apply {
     kotlinOptions {
         freeCompilerArgs += listOf(
-            "-Xskip-prerelease-check",
-            "-Xsuppress-version-warnings",
-            "-opt-in=kotlin.ExperimentalStdlibApi"
+                "-Xskip-prerelease-check",
+                "-Xsuppress-version-warnings",
+                "-opt-in=kotlin.ExperimentalStdlibApi",
+                "-opt-in=kotlin.RequiresOptIn"
         )
     }
 }
 
-// Add Kotlin classes to a classpath for the Groovy compiler
+// Add Kotlin classes to a classpath for the Gr§oovy compiler
 compileGroovy.apply {
     classpath += project.files(compileKotlin.destinationDirectory)
     dependsOn(compileKotlin)
@@ -91,7 +97,6 @@ kotlin {
             kotlin.srcDir("../../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
             kotlin.srcDir("../../compiler/util-klib/src")
             kotlin.srcDir("../../native/utils/src")
-
         }
     }
 }
@@ -100,17 +105,17 @@ gradlePlugin {
     plugins {
         create("compileToBitcode") {
             id = "compile-to-bitcode"
-            implementationClass = "CompileToBitcodePlugin"
+            implementationClass = "org.jetbrains.kotlin.bitcode.CompileToBitcodePlugin"
         }
         create("runtimeTesting") {
             id = "runtime-testing"
-            implementationClass = "RuntimeTestingPlugin"
+            implementationClass = "org.jetbrains.kotlin.testing.native.RuntimeTestingPlugin"
         }
         create("compilationDatabase") {
             id = "compilation-database"
-            implementationClass = "CompilationDatabasePlugin"
+            implementationClass = "org.jetbrains.kotlin.cpp.CompilationDatabasePlugin"
         }
-        create("konan") {
+        create("konanPlugin") {
             id = "konan"
             implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
         }
@@ -118,16 +123,6 @@ gradlePlugin {
         create("kotlinx-serialization-native") {
             id = "kotlinx-serialization-native"
             implementationClass = "shadow.org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin"
-        }
-
-        create("org.jetbrains.kotlin.konan") {
-            id = "org.jetbrains.kotlin.konan"
-            implementationClass = "org.jetbrains.kotlin.gradle.plugin.konan.KonanPlugin"
-        }
-
-        create("native") {
-            id = "native"
-            implementationClass = "org.jetbrains.gradle.plugins.tools.NativePlugin"
         }
 
         create("native-interop-plugin") {

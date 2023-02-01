@@ -40,7 +40,17 @@ dependencies {
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
     commonCompileOnly(project(":native:kotlin-native-utils"))
     commonCompileOnly(project(":kotlin-android-extensions"))
-    commonCompileOnly(project(":kotlin-build-common"))
+
+    // TODO: looks like this is incorrect. I see lots of
+    //   > Failed to transform kotlin-util-io-1.8.20-dev-5197.jar to match attributes {artifactType=classpath-entry-snapshot, org.gradle.libraryelements=jar, org.gradle.usage=java-runtime}.
+    //      > Execution failed for ClasspathEntrySnapshotTransform: /Users/ppunegov/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-util-io/1.8.20-dev-5197/ed9ac972a75483937a7a367a8efdd4d639c26e9e/kotlin-util-io-1.8.20-dev-5197.jar.
+    //         > 'byte[] org.jetbrains.kotlin.incremental.storage.ExternalizersKt.toByteArray(org.jetbrains.kotlin.com.intellij.util.io.DataExternalizer, java.lang.Object)'
+    //  due to the
+    //   Caused by: java.lang.NoSuchMethodError: 'byte[] org.jetbrains.kotlin.incremental.storage.ExternalizersKt.toByteArray(org.jetbrains.kotlin.com.intellij.util.io.DataExternalizer, java.lang.Object)'
+    //        at org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotter.snapshotKotlinClass(ClasspathSnapshotter.kt:88)
+//    commonCompileOnly(project(":kotlin-build-common"))
+    commonImplementation(project(":kotlin-build-common"))
+
     commonCompileOnly(project(":kotlin-compiler-runner"))
     commonCompileOnly(project(":kotlin-annotation-processing"))
     commonCompileOnly(project(":kotlin-annotation-processing-gradle"))
