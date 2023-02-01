@@ -85,10 +85,6 @@ java {
     }
 }
 
-tasks.validatePlugins.configure {
-    enabled = false
-}
-
 java {
     disableAutoTargetJvm()
 }
@@ -114,20 +110,11 @@ dependencies {
 
     compileOnly(gradleApi())
 
-    val kotlinVersion = project.bootstrapKotlinVersion
-    val metadataVersion = "0.0.1-dev-10"
-    val coroutinesVersion = "1.5.0"
-
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}")
     implementation("com.google.code.gson:gson:2.8.9") // Workaround for Gradle dependency resolution error
-
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
-    if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
-    }
 }
 
 samWithReceiver {

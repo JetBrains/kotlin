@@ -8,7 +8,6 @@ import java.util.Properties
 
 buildscript {
     val rootBuildDirectory by extra(project.file("../.."))
-
     apply(from = rootBuildDirectory.resolve("kotlin-native/gradle/loadRootProperties.gradle"))
 
     dependencies {
