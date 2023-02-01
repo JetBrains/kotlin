@@ -15,8 +15,6 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.SetProperty
-import org.gradle.api.services.BuildService
-import org.gradle.api.services.BuildServiceParameters
 import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
@@ -55,13 +53,9 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
-import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
-import org.jetbrains.kotlin.gradle.targets.js.ir.DISABLE_PRE_IR
-import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_JS
-import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_UNZIPPED_KLIB
-import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
+import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotDisabled
@@ -73,7 +67,6 @@ import org.jetbrains.kotlin.utils.JsLibraryUtils
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 import java.nio.file.Files.*
-import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
@@ -1125,8 +1118,10 @@ abstract class Kotlin2JsCompile @Inject constructor(
         }
 
         args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
-        args.legacyDeprecatedNoWarn = true
-        args.useDeprecatedLegacyCompiler = true
+        if (!isIrBackendEnabled()) {
+            args.legacyDeprecatedNoWarn = true
+            args.useDeprecatedLegacyCompiler = true
+        }
 
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 
