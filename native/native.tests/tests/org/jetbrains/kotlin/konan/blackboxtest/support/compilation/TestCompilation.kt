@@ -52,7 +52,6 @@ internal abstract class BasicCompilation<A : TestCompilationArtifact>(
         optimizationMode.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         add(
             "-enable-assertions",
-            "-Xskip-prerelease-check",
             "-Xverify-ir=error"
         )
         addFlattened(binaryOptions.entries) { (name, value) -> listOf("-Xbinary=$name=$value") }
