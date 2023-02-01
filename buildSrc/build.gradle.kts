@@ -158,7 +158,7 @@ dependencies {
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.6.0")
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
     if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
         implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
