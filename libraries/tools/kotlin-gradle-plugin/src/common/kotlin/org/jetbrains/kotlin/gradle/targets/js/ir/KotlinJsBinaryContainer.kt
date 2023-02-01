@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinJsSubTarget
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import javax.inject.Inject
@@ -116,7 +117,7 @@ constructor(
                 override val compilation: KotlinJsCompilation = jsCompilation
                 override val name: String = name
                 override val mode: KotlinJsBinaryMode = type
-                override val distribution: Distribution = DefaultDistribution(jsCompilation.target.project)
+                override val distribution: Distribution = createDefaultDistribution(jsCompilation.target.project)
             }
         }
     )

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
 import org.gradle.api.Task
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
@@ -14,6 +15,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
@@ -114,6 +117,8 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 binary as Executable
 
                 val mode = binary.mode
+                val distsDirectory = project.distsDirectory
+                val archivesName = project.archivesName
 
                 val runTask = registerSubTargetTask<KotlinWebpack>(
                     disambiguateCamelCased(
@@ -123,6 +128,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     listOf(compilation)
                 ) { task ->
                     task.dependsOn(binary.linkSyncTask)
+                    task.outputDirectory.convention(distsDirectory).finalizeValueOnRead()
 
                     webpackMajorVersion.choose(
                         { task.args.add(0, "serve") },
@@ -179,7 +185,8 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         inputFilesDirectory = binary.linkSyncTask.map { it.destinationDir },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
-                        nodeJs = nodeJs
+                        nodeJs = nodeJs,
+                        defaultArchivesName = archivesName,
                     )
                 }
 
@@ -206,6 +213,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 binary as Executable
 
                 val mode = binary.mode
+                val archivesName = project.archivesName
 
                 val distributeResourcesTask = registerSubTargetTask<Copy>(
                     disambiguateCamelCased(
@@ -225,7 +233,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     listOf(compilation)
                 ) { task ->
                     task.description = "build webpack ${mode.name.toLowerCaseAsciiOnly()} bundle"
-                    task._destinationDirectory = binary.distribution.directory
+                    task.outputDirectory.fileValue(binary.distribution.directory).finalizeValueOnRead()
 
                     BuildMetricsService.registerIfAbsent(project)?.let {
                         task.buildMetricsService.value(it)
@@ -243,7 +251,8 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         inputFilesDirectory = binary.linkSyncTask.map { it.destinationDir },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
-                        nodeJs = nodeJs
+                        nodeJs = nodeJs,
+                        defaultArchivesName = archivesName,
                     )
                 }
 
@@ -276,7 +285,8 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         inputFilesDirectory: Provider<File>,
         entryModuleName: Provider<String>,
         configurationActions: List<Action<KotlinWebpack>>,
-        nodeJs: NodeJsRootExtension
+        nodeJs: NodeJsRootExtension,
+        defaultArchivesName: Property<String>,
     ) {
         dependsOn(
             nodeJs.npmInstallTaskProvider,
@@ -289,6 +299,8 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         this.inputFilesDirectory.fileProvider(inputFilesDirectory)
 
         this.entryModuleName.set(entryModuleName)
+
+        mainOutputFileName.convention(defaultArchivesName.orElse("main").map { "$it.js" }).finalizeValueOnRead()
 
         configurationActions.forEach { configure ->
             configure.execute(this)

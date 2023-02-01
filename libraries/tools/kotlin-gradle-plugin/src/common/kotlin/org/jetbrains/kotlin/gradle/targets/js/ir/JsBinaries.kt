@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer.Companion.generateBinaryName
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.DefaultDistribution
+import org.jetbrains.kotlin.gradle.targets.js.subtargets.createDefaultDistribution
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -32,7 +33,7 @@ sealed class JsIrBinary(
     override val mode: KotlinJsBinaryMode
 ) : JsBinary {
     override val distribution: Distribution =
-        DefaultDistribution(compilation.target.project, name)
+        createDefaultDistribution(compilation.target.project, name)
 
     val linkTaskName: String = linkTaskName()
 
@@ -93,9 +94,9 @@ class Executable(
     mode
 ) {
     override val distribution: Distribution =
-        DefaultDistribution(
+        createDefaultDistribution(
             compilation.target.project,
-            if (mode == KotlinJsBinaryMode.PRODUCTION) null else super.distribution.name
+            if (mode == KotlinJsBinaryMode.PRODUCTION) null else super.distribution.distributionName
         )
 
     val executeTaskBaseName: String =
