@@ -1,0 +1,3 @@
+@kotlin.Metadata()
+public abstract interface SomeInterface extends kotlin.jvm.functions.Function3<java.util.List<? extends java.lang.String>, java.lang.Boolean, kotlin.coroutines.Continuation<? super java.util.List<? extends java.lang.Integer>>, java.lang.Object> {
+}

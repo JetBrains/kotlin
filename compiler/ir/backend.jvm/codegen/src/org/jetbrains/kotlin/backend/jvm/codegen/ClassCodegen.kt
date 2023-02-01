@@ -110,7 +110,7 @@ class ClassCodegen private constructor(
     private val classOrigin = irClass.descriptorOrigin
 
     private val visitor = state.factory.newVisitor(classOrigin, type, irClass.fileParent.loadSourceFilesInfo()).apply {
-        val signature = typeMapper.mapClassSignature(irClass, type)
+        val signature = typeMapper.mapClassSignature(irClass, type, context.state.classBuilderMode.generateBodies)
         // Ensure that the backend only produces class names that would be valid in the frontend for JVM.
         if (context.state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
             throw IllegalStateException("Generating class with invalid name '${type.className}': ${irClass.dump()}")
