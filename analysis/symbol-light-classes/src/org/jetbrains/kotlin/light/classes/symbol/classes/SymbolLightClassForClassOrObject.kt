@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsPr
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -84,7 +84,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            modifiersBox = LazyModifiersBox(computer = ::computeModifiers),
+            modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = LazyAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(ktModule, classOrObjectSymbolPointer)
             ),

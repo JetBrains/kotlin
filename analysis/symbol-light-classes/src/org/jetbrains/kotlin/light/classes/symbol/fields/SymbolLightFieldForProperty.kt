@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_CLASS_ID
@@ -102,8 +102,8 @@ internal class SymbolLightFieldForProperty private constructor(
     override fun getName(): String = fieldName
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
-        in LazyModifiersBox.VISIBILITY_MODIFIERS -> LazyModifiersBox.computeVisibilityForMember(ktModule, propertySymbolPointer)
-        in LazyModifiersBox.MODALITY_MODIFIERS -> {
+        in GranularModifiersBox.VISIBILITY_MODIFIERS -> GranularModifiersBox.computeVisibilityForMember(ktModule, propertySymbolPointer)
+        in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = withPropertySymbol { propertySymbol ->
                 if (propertySymbol.isVal) {
                     PsiModifier.FINAL
@@ -114,7 +114,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 }
             }
 
-            LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
+            GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
         }
 
         PsiModifier.STATIC -> {
@@ -147,12 +147,12 @@ internal class SymbolLightFieldForProperty private constructor(
         val initializerValue = if (takePropertyVisibility) {
             emptyMap()
         } else {
-            LazyModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
+            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PRIVATE)
         }
 
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            modifiersBox = LazyModifiersBox(initializerValue, ::computeModifiers),
+            modifiersBox = GranularModifiersBox(initializerValue, ::computeModifiers),
             annotationsBox = LazyAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,

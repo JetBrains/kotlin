@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
 internal typealias LazyModifiersComputer = (modifier: String) -> Map<String, Boolean>?
 
-internal class LazyModifiersBox(
+internal class GranularModifiersBox(
     initialValue: Map<String, Boolean> = emptyMap(),
     private val computer: LazyModifiersComputer,
 ) : ModifiersBox {
@@ -43,7 +43,7 @@ internal class LazyModifiersBox(
 
     companion object {
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
-            /* tclass = */ LazyModifiersBox::class.java,
+            /* tclass = */ GranularModifiersBox::class.java,
             /* vclass = */ PersistentMap::class.java,
             /* fieldName = */ "modifiersMapReference",
         )

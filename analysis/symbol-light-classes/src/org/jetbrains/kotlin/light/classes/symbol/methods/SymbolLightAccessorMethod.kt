@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
@@ -142,9 +142,12 @@ internal class SymbolLightAccessorMethod private constructor(
     }
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
-        in LazyModifiersBox.VISIBILITY_MODIFIERS -> LazyModifiersBox.computeVisibilityForMember(ktModule, propertyAccessorSymbolPointer)
+        in GranularModifiersBox.VISIBILITY_MODIFIERS -> GranularModifiersBox.computeVisibilityForMember(
+            ktModule,
+            propertyAccessorSymbolPointer,
+        )
 
-        in LazyModifiersBox.MODALITY_MODIFIERS -> {
+        in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = if (containingClass.isInterface) {
                 PsiModifier.ABSTRACT
             } else {
@@ -153,7 +156,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 }
             }
 
-            LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
+            GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(modality)
         }
 
         PsiModifier.STATIC -> {
@@ -182,7 +185,7 @@ internal class SymbolLightAccessorMethod private constructor(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            modifiersBox = LazyModifiersBox(computer = ::computeModifiers),
+            modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = LazyAnnotationsBox(
                 annotationsProvider = CompositeAnnotationsProvider(
                     SymbolAnnotationsProvider(

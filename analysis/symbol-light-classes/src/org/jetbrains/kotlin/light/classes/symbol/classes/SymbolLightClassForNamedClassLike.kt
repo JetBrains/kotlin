@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObjec
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
 import org.jetbrains.kotlin.light.classes.symbol.isConstOrJvmField
 import org.jetbrains.kotlin.light.classes.symbol.isLateInit
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -143,12 +143,12 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
     }
 
     internal fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
-        in LazyModifiersBox.VISIBILITY_MODIFIERS -> {
+        in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
             val visibility = withClassOrObjectSymbol { it.toPsiVisibilityForClass(isNested = !isTopLevel) }
-            LazyModifiersBox.VISIBILITY_MODIFIERS_MAP.with(visibility)
+            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(visibility)
         }
 
-        in LazyModifiersBox.MODALITY_MODIFIERS -> LazyModifiersBox.computeSimpleModality(ktModule, classOrObjectSymbolPointer)
+        in GranularModifiersBox.MODALITY_MODIFIERS -> GranularModifiersBox.computeSimpleModality(ktModule, classOrObjectSymbolPointer)
         PsiModifier.STATIC -> {
             val isStatic = !isTopLevel && !isInner
             mapOf(modifier to isStatic)

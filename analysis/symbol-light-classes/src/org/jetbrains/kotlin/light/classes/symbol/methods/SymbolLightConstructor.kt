@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import java.util.*
@@ -45,14 +45,14 @@ internal class SymbolLightConstructor(
 
     private val _modifierList: PsiModifierList by lazyPub {
         val initialValue = if (this.containingClass is SymbolLightClassForEnumEntry) {
-            LazyModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PACKAGE_LOCAL)
+            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(PsiModifier.PACKAGE_LOCAL)
         } else {
             emptyMap()
         }
 
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            modifiersBox = LazyModifiersBox(
+            modifiersBox = GranularModifiersBox(
                 initialValue = initialValue,
                 computer = ::computeModifiers,
             ),
@@ -66,8 +66,8 @@ internal class SymbolLightConstructor(
     }
 
     private fun computeModifiers(modifier: String): Map<String, Boolean>? {
-        if (modifier !in LazyModifiersBox.VISIBILITY_MODIFIERS) return null
-        return LazyModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
+        if (modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS) return null
+        return GranularModifiersBox.computeVisibilityForMember(ktModule, functionSymbolPointer)
     }
 
     override fun getModifierList(): PsiModifierList = _modifierList

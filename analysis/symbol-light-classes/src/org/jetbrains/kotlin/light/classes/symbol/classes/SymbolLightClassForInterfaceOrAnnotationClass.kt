@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.LazyModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.psi.KtClass
@@ -68,8 +68,8 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
 
     protected open fun computeModifierList(): PsiModifierList? = SymbolLightClassModifierList(
         containingDeclaration = this,
-        modifiersBox = LazyModifiersBox(
-            initialValue = LazyModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT),
+        modifiersBox = GranularModifiersBox(
+            initialValue = GranularModifiersBox.MODALITY_MODIFIERS_MAP.with(PsiModifier.ABSTRACT),
             computer = ::computeModifiers
         ),
         annotationsBox = LazyAnnotationsBox(
