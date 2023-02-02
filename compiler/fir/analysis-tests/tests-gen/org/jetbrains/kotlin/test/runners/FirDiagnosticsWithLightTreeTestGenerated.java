@@ -1664,6 +1664,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("primaryConstructorParametersInSecondaryConstructor.kt")
+            public void testPrimaryConstructorParametersInSecondaryConstructor() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/primaryConstructorParametersInSecondaryConstructor.kt");
+            }
+
+            @Test
             @TestMetadata("primaryConstructorRequiredForDataClass.kt")
             public void testPrimaryConstructorRequiredForDataClass() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/primaryConstructorRequiredForDataClass.kt");

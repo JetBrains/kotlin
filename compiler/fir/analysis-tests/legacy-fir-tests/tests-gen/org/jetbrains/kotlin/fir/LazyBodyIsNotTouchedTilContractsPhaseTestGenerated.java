@@ -1449,6 +1449,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/notASupertype.kt");
         }
 
+        @TestMetadata("primaryConstructorParametersInSecondaryConstructor.kt")
+        public void testPrimaryConstructorParametersInSecondaryConstructor() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/primaryConstructorParametersInSecondaryConstructor.kt");
+        }
+
         @TestMetadata("primaryConstructorRequiredForDataClass.kt")
         public void testPrimaryConstructorRequiredForDataClass() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/diagnostics/primaryConstructorRequiredForDataClass.kt");

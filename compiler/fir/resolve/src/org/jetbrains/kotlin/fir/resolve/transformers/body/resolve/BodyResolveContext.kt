@@ -631,8 +631,10 @@ class BodyResolveContext(
              *   special towerDataContext
              */
             withTowerDataMode(FirTowerDataMode.CONSTRUCTOR_HEADER) {
-                getPrimaryConstructorAllParametersScope()?.let { addLocalScope(it) }
-                f()
+                withTowerDataCleanup {
+                    getPrimaryConstructorAllParametersScope()?.let { addLocalScope(it) }
+                    f()
+                }
             }
         } else {
             withTowerDataCleanup {

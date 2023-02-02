@@ -1,0 +1,11 @@
+FILE: primaryConstructorParametersInSecondaryConstructor.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(x: R|kotlin/Int|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public constructor(y: R|kotlin/String|, z: R|kotlin/Int| = <Unresolved name: x>#): R|A| {
+            this<R|A|>(R|<local>/z|)
+        }
+
+    }
