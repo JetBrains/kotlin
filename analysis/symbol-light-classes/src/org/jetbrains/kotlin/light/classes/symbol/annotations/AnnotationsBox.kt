@@ -12,7 +12,7 @@ import com.intellij.psi.PsiModifierList
  * This class is used as a proxy for [com.intellij.psi.PsiAnnotationOwner].
  *
  * [LazyAnnotationsBox] provides an ability to compute each annotation separately and in a lazy way to avoid heavy computation.
- * [SimpleAnnotationsBox] provides an ability to compute all annotations once on first access.
+ * [ComputeAllAtOnceAnnotationsBox] provides an ability to compute all annotations once on first access.
  * [EmptyAnnotationsBox] just a box without annotations.
  *
  * @see org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightModifierList
