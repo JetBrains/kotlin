@@ -25,13 +25,13 @@ public final class HomeFragment {
         return null;
     }
 
-    private final GroupedNewsListDelegateAdapter getGroupedNewsListAdapter() {
-        return null;
-    }
-
     @kotlin.Suppress(names = {"TOO_MANY_ARGUMENTS", "DELEGATE_SPECIAL_FUNCTION_MISSING"})
     @java.lang.Deprecated()
     private static void getCategoryNewsListPresenter$annotations() {
+    }
+
+    private final GroupedNewsListDelegateAdapter getGroupedNewsListAdapter() {
+        return null;
     }
 }
 
