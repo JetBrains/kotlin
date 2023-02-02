@@ -26,15 +26,15 @@ public final class AnnotationsTest {
     java.lang.String $this$topLevelFun) {
     }
 
+    @Anno(value = "top-level-val")
+    @java.lang.Deprecated()
+    public static void getTopLevelVal$annotations(int p0) {
+    }
+
     @org.jetbrains.annotations.NotNull()
     public static final java.lang.String getTopLevelVal(@Anno(value = "top-level-val-receiver")
     int $this$topLevelVal) {
         return null;
-    }
-
-    @Anno(value = "top-level-val")
-    @java.lang.Deprecated()
-    public static void getTopLevelVal$annotations(int p0) {
     }
 }
 
@@ -88,6 +88,11 @@ public abstract class Test {
         return null;
     }
 
+    @Anno(value = "v-property")
+    @java.lang.Deprecated()
+    public static void getV$annotations() {
+    }
+
     @Anno(value = "v-set")
     public final void setV(@Anno(value = "v-setparam")
     @org.jetbrains.annotations.NotNull()
@@ -104,10 +109,5 @@ public abstract class Test {
     @Anno(value = "abstract-val")
     @java.lang.Deprecated()
     public static void getAbstractVal$annotations() {
-    }
-
-    @Anno(value = "v-property")
-    @java.lang.Deprecated()
-    public static void getV$annotations() {
     }
 }

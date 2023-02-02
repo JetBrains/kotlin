@@ -113,14 +113,14 @@ public final class TestAnno2 {
         return null;
     }
 
+    @Anno3(value = "property")
+    @java.lang.Deprecated()
+    public static void getB$annotations() {
+    }
+
     @Anno3(value = "setter")
     public final void setB(@Anno3(value = "setparam")
     @org.jetbrains.annotations.NotNull()
     java.lang.String p0) {
-    }
-
-    @Anno3(value = "property")
-    @java.lang.Deprecated()
-    public static void getB$annotations() {
     }
 }
