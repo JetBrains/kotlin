@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -29,9 +28,9 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.explicitParameters
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import java.util.*
 import kotlin.collections.ArrayList
@@ -1344,11 +1343,12 @@ internal object DevirtualizationAnalysis {
             return this
         }
 
-        fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(value: IrExpression, tempName: String, type: IrType): IrVariable {
+        fun <T : IrElement> IrStatementsBuilder<T>.irTemporary(parent: IrDeclarationParent, value: IrExpression, tempName: String, type: IrType): IrVariable {
             val temporary = IrVariableImpl(
                     value.startOffset, value.endOffset, IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, IrVariableSymbolImpl(),
                     Name.identifier(tempName), type, isVar = false, isConst = false, isLateinit = false
             ).apply {
+                this.parent = parent
                 this.initializer = value
             }
 
@@ -1357,17 +1357,17 @@ internal object DevirtualizationAnalysis {
         }
 
         // makes temporary val, in case tempName is specified
-        fun <T : IrElement> IrStatementsBuilder<T>.irSplitCoercion(expression: IrExpression, tempName: String?, actualType: IrType) =
+        fun <T : IrElement> IrStatementsBuilder<T>.irSplitCoercion(parent: IrDeclarationParent, expression: IrExpression, tempName: String?, actualType: IrType) =
                 if (expression.isBoxOrUnboxCall()) {
                     val coercion = expression as IrCall
                     val argument = coercion.getValueArgument(0)!!
                     val symbol = coercion.symbol
                     if (tempName != null)
-                        PossiblyCoercedValue.OverVariable(irTemporary(argument, tempName, symbol.owner.explicitParameters.single().type), symbol)
+                        PossiblyCoercedValue.OverVariable(irTemporary(parent, argument, tempName, symbol.owner.explicitParameters.single().type), symbol)
                     else PossiblyCoercedValue.OverExpression(argument, symbol)
                 } else {
                     if (tempName != null)
-                        PossiblyCoercedValue.OverVariable(irTemporary(expression, tempName, actualType), null)
+                        PossiblyCoercedValue.OverVariable(irTemporary(parent, expression, tempName, actualType), null)
                     else PossiblyCoercedValue.OverExpression(expression, null)
                 }
 
@@ -1446,9 +1446,12 @@ internal object DevirtualizationAnalysis {
             }
         }
 
-        irModule.transformChildrenVoid(object: IrElementTransformerVoidWithContext() {
-            override fun visitCall(expression: IrCall): IrExpression {
-                expression.transformChildrenVoid(this)
+        irModule.transformChildren(object : IrElementTransformer<IrDeclarationParent?> {
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
+                    super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+
+            override fun visitCall(expression: IrCall, data: IrDeclarationParent?): IrExpression {
+                expression.transformChildren(this, data)
 
                 val devirtualizedCallSite = devirtualizedCallSites[expression]
                 val possibleCallees = devirtualizedCallSite?.possibleCallees
@@ -1457,6 +1460,7 @@ internal object DevirtualizationAnalysis {
                         || possibleCallees.any { it.receiverType is DataFlowIR.Type.External })
                     return expression
 
+                val caller = data ?: error("At this point code is expected to have been moved to a declaration: ${expression.render()}")
                 val callee = expression.symbol.owner
                 val owner = callee.parentAsClass
                 // TODO: Think how to evaluate different unfold factors (in terms of both execution speed and code size).
@@ -1472,7 +1476,7 @@ internal object DevirtualizationAnalysis {
                 val endOffset = expression.endOffset
                 val function = expression.symbol.owner
                 val type = function.returnType
-                val irBuilder = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, startOffset, endOffset)
+                val irBuilder = context.createIrBuilder((caller as IrDeclaration).symbol, startOffset, endOffset)
                 irBuilder.run {
                     val dispatchReceiver = expression.dispatchReceiver!!
                     return when {
@@ -1494,7 +1498,7 @@ internal object DevirtualizationAnalysis {
                             irBlock(expression) {
                                 val parameters = expression.getArgumentsWithSymbols().map { arg ->
                                     // Temporary val is not required here for a parameter, since each one is used for only one devirtualized callsite
-                                    irSplitCoercion(arg.second, tempName = null, arg.first.owner.type)
+                                    irSplitCoercion(caller, arg.second, tempName = null, arg.first.owner.type)
                                 }
                                 +irDevirtualizedCall(expression, type, possibleCallees[0], parameters)
                             }
@@ -1502,7 +1506,7 @@ internal object DevirtualizationAnalysis {
 
                         else -> irBlock(expression) {
                             val arguments = expression.getArgumentsWithSymbols().mapIndexed { index, arg ->
-                                irSplitCoercion(arg.second, "arg$index", arg.first.owner.type)
+                                irSplitCoercion(caller, arg.second, "arg$index", arg.first.owner.type)
                             }
                             val typeInfo = irTemporary(irCall(symbols.getObjectTypeInfo).apply {
                                 putValueArgument(0, arguments[0].getFullValue(this@irBlock))
@@ -1560,6 +1564,6 @@ internal object DevirtualizationAnalysis {
                     }
                 }
             }
-        })
+        }, null)
     }
 }
