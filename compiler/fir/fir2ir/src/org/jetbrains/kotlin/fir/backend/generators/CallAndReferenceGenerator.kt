@@ -13,13 +13,16 @@ import org.jetbrains.kotlin.fir.dispatchReceiverClassLookupTagOrNull
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
+import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.approximateDeclarationType
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -703,7 +706,35 @@ class CallAndReferenceGenerator(
                 val resolvedReference = callableReferenceAccess.calleeReference as FirResolvedNamedReference
                 val firCallableSymbol = resolvedReference.resolvedSymbol as FirCallableSymbol<*>
                 // Make sure the reference indeed refers to a member of that companion
-                if (firCallableSymbol.dispatchReceiverClassLookupTagOrNull() != classSymbol.toLookupTag()) {
+
+                val dispatchReceiverClassLookupTag = firCallableSymbol.dispatchReceiverClassLookupTagOrNull() ?: return null
+                val callableIsDefinitelyNotMemberOfCompanion = with(session.typeContext) {
+                    !classSymbol.defaultType().anySuperTypeConstructor { it.typeConstructor() == dispatchReceiverClassLookupTag }
+                }
+                if (callableIsDefinitelyNotMemberOfCompanion) {
+                    return null
+                }
+                /*
+                 * This check is supposed to distinguish cases when both companion and containing class have this function
+                 *
+                 *   open class Base {
+                 *       fun foo() {}
+                 *   }
+                 *
+                 *   class Some : Base() {
+                 *       companion object : Base() {
+                 *           fun bar()
+                 *       }
+                 *   }
+                 *
+                 *   Some::foo // reference to Some.foo
+                 *   Some::bar // reference to Some.Companion.bar
+                 */
+                val containingClass = classSymbol.getContainingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
+                val callableIsDefinitelyMemberOfOuterClass = with(session.typeContext) {
+                    containingClass.defaultType().anySuperTypeConstructor { it.typeConstructor() == dispatchReceiverClassLookupTag }
+                }
+                if (callableIsDefinitelyMemberOfOuterClass) {
                     return null
                 }
             }

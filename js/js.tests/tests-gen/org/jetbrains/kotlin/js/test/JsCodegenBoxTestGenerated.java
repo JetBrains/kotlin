@@ -3293,6 +3293,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             public void testAllFilesPresentInSerializability() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/callableReference/serializability"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
             }
+
+            @Test
+            @TestMetadata("referenceToCompanionFunction.kt")
+            public void testReferenceToCompanionFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/serializability/referenceToCompanionFunction.kt");
+            }
         }
     }
 

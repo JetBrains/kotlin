@@ -4531,6 +4531,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("referenceToCompanionFunction.kt")
+            public void testReferenceToCompanionFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/serializability/referenceToCompanionFunction.kt");
+            }
+
+            @Test
             @TestMetadata("reflectedIsNotSerialized.kt")
             public void testReflectedIsNotSerialized() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/serializability/reflectedIsNotSerialized.kt");

@@ -3952,6 +3952,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/serializability/noReflect.kt");
             }
 
+            @TestMetadata("referenceToCompanionFunction.kt")
+            public void testReferenceToCompanionFunction() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/serializability/referenceToCompanionFunction.kt");
+            }
+
             @TestMetadata("reflectedIsNotSerialized.kt")
             public void testReflectedIsNotSerialized() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/serializability/reflectedIsNotSerialized.kt");
