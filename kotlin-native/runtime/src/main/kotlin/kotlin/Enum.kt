@@ -13,7 +13,7 @@ import kotlin.native.internal.enumValuesIntrinsic
  * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/enum-classes.html) for more
  * information on enum classes.
  */
-public abstract class Enum<E: Enum<E>>(public val name: String, public val ordinal: Int): Comparable<E> {
+public abstract class Enum<E: Enum<E>>(@kotlin.internal.IntrinsicConstEvaluation public val name: String, public val ordinal: Int): Comparable<E> {
 
     public companion object {
     }
