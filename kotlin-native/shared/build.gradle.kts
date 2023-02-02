@@ -15,6 +15,7 @@
  */
 @file:Suppress("UnstableApiUsage")
 
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -24,13 +25,17 @@ plugins {
 val rootBuildDirectory by extra(file(".."))
 apply(from = "../gradle/loadRootProperties.gradle")
 
-val kotlinVersion = project.bootstrapKotlinVersion
-
 group = "org.jetbrains.kotlin"
 
 repositories {
     maven("https://cache-redirector.jetbrains.com/maven-central")
     mavenCentral()
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
 }
 
 kotlin {
@@ -47,20 +52,37 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
 }
 
-tasks.jar {
-    archiveFileName.set("shared.jar")
-}
+// TODO: move it somewhere
+//projectTest(jUnitMode = JUnitMode.JUnit5) {
+//    useJUnitPlatform()
+//}
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
+/**
+ * Depending on the `kotlin.native.build.composite-bootstrap` property returns either coordinates or project dependency.
+ * This is to use this project in composite build (build-tools) and as a project itself.
+ * Project should depend on a current snapshot builds while build-tools use bootstrap dependencies
+ */
+fun compositeDependency(coordinates: String, subproject: String = ""): Any {
+    val bootstrap = project.extraProperties.has("kotlin.native.build.composite-bootstrap")
+    val parts = coordinates.split(':')
+    check(parts.size == 3) {
+        "Full dependency coordinates should be specified group:name:version"
+    }
+    return if (!bootstrap) {
+        // returns dependency on the project specified with coordinates
+        dependencies.project("$subproject:${parts[1]}")
+    } else {
+        // returns full coordinates
+        coordinates
+    }
 }
 
 dependencies {
-    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
+    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:${project.bootstrapKotlinVersion}")
 
-    implementation(kotlinStdlib())
-    implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    api(project(":native:kotlin-native-utils"))
-    api(project(":kotlin-util-klib"))
-    testApiJUnit5()
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
+    api(compositeDependency("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}", ":native"))
+    api(compositeDependency("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}"))
+    api(compositeDependency("org.jetbrains.kotlin:kotlin-util-io:${project.bootstrapKotlinVersion}"))
+//    testApiJUnit5()
 }

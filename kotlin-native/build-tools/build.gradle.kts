@@ -60,6 +60,8 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
+
+    api(project(":kotlin-native-shared"))
 }
 
 java {
@@ -92,8 +94,6 @@ kotlin {
     sourceSets {
         main {
             kotlin.srcDir("src/main/kotlin")
-            kotlin.srcDir("../../kotlin-native/shared/src/library/kotlin")
-            kotlin.srcDir("../../kotlin-native/shared/src/main/kotlin")
             kotlin.srcDir("../../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
         }
     }
