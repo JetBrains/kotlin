@@ -38,7 +38,10 @@ public sealed interface KtAnnotationApplication {
     public val useSiteTarget: AnnotationUseSiteTarget?
 
     /**
-     * **true** if the annotation is a call with arguments
+     * This property can be used to optimize some argument processing logic.
+     * For example, if you have [KtAnnotationApplicationInfo] from [KtAnnotated.annotationInfos] and [isCallWithArguments] is **false**,
+     * then you can avoid [KtAnnotated.annotationsByClassId] call,
+     * because effectively you already have all necessary information in [KtAnnotationApplicationInfo]
      */
     public val isCallWithArguments: Boolean
 
