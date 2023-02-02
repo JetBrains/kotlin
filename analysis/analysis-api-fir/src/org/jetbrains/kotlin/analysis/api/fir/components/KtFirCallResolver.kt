@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
+import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
@@ -1275,11 +1277,9 @@ internal class KtFirCallResolver(
         }
     }
 
-    override fun unresolvedKtCallError(psi: KtElement): Nothing {
-        buildErrorWithAttachment("${psi::class.simpleName}(${psi::class.simpleName}) should always resolve to a KtCallInfo") {
-            withPsiEntry("psi", psi)
-            psi.getOrBuildFir(firResolveSession)?.let { withFirEntry("fir", it) }
-        }
+    @KtAnalysisApiInternals
+    override fun provideAdditionalAttachmentToUnresolvedCall(psi: KtElement, builder: ExceptionAttachmentBuilder) {
+        psi.getOrBuildFir(firResolveSession)?.let { builder.withFirEntry("fir", it) }
     }
 
     private inline fun <R> wrapError(element: KtElement, action: () -> R): R {
