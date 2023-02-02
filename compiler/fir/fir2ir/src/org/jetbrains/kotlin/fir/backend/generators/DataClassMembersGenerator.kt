@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
@@ -218,6 +219,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 val equalsFunction = createSyntheticIrFunction(
                     EQUALS,
                     components.irBuiltIns.booleanType,
+                    isExpect = klass.isExpect,
                     otherParameterNeeded = true
                 )
                 irDataClassMembersGenerator.generateEqualsMethod(equalsFunction, properties)
@@ -230,6 +232,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 val hashCodeFunction = createSyntheticIrFunction(
                     HASHCODE_NAME,
                     components.irBuiltIns.intType,
+                    isExpect = klass.isExpect
                 )
                 irDataClassMembersGenerator.generateHashCodeMethod(hashCodeFunction, properties)
                 irClass.declarations.add(hashCodeFunction)
@@ -241,6 +244,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 val toStringFunction = createSyntheticIrFunction(
                     TO_STRING,
                     components.irBuiltIns.stringType,
+                    isExpect = klass.isExpect
                 )
                 irDataClassMembersGenerator.generateToStringMethod(toStringFunction, properties)
                 irClass.declarations.add(toStringFunction)
@@ -262,6 +266,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         private fun createSyntheticIrFunction(
             name: Name,
             returnType: IrType,
+            isExpect: Boolean,
             otherParameterNeeded: Boolean = false
         ): IrFunction {
             val functionSymbol = FirNamedFunctionSymbol(CallableId(lookupTag.classId, name))
@@ -269,7 +274,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 origin = FirDeclarationOrigin.Synthetic
                 this.name = name
                 this.symbol = functionSymbol
-                this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+                this.status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL).also { it.isExpect = isExpect }
                 moduleData = components.session.moduleData
                 this.returnTypeRef = when (returnType) {
                     components.irBuiltIns.booleanType -> FirImplicitBooleanTypeRef(null)
