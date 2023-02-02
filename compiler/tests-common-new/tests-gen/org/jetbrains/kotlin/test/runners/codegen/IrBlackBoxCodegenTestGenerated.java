@@ -46582,6 +46582,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("recursiveDnnTypeInLambda.kt")
+        public void testRecursiveDnnTypeInLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/regressions/recursiveDnnTypeInLambda.kt");
+        }
+
+        @Test
         @TestMetadata("referenceToSelfInLocal.kt")
         public void testReferenceToSelfInLocal() throws Exception {
             runTest("compiler/testData/codegen/box/regressions/referenceToSelfInLocal.kt");

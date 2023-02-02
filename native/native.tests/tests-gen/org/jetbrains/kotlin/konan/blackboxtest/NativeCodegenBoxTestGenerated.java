@@ -36621,6 +36621,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("recursiveDnnTypeInLambda.kt")
+            public void testRecursiveDnnTypeInLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/regressions/recursiveDnnTypeInLambda.kt");
+            }
+
+            @Test
             @TestMetadata("resolvedCallForGetOperator.kt")
             public void testResolvedCallForGetOperator() throws Exception {
                 runTest("compiler/testData/codegen/box/regressions/resolvedCallForGetOperator.kt");

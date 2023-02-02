@@ -35869,6 +35869,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/regressions/objectInsideDelegation.kt");
         }
 
+        @TestMetadata("recursiveDnnTypeInLambda.kt")
+        public void testRecursiveDnnTypeInLambda() throws Exception {
+            runTest("compiler/testData/codegen/box/regressions/recursiveDnnTypeInLambda.kt");
+        }
+
         @TestMetadata("referenceToSelfInLocal.kt")
         public void testReferenceToSelfInLocal() throws Exception {
             runTest("compiler/testData/codegen/box/regressions/referenceToSelfInLocal.kt");
