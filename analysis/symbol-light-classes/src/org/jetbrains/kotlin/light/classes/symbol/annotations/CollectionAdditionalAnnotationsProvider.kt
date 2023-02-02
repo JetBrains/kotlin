@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
 
-internal class SimpleAdditionalAnnotationsProvider(
+internal class CollectionAdditionalAnnotationsProvider(
     private val additionalAnnotationQualifiers: Collection<String>,
 ) : AdditionalAnnotationsProvider {
     constructor(qualifiedName: String) : this(setOf(qualifiedName))

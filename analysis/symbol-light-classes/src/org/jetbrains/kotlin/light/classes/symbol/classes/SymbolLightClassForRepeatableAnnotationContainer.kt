@@ -46,7 +46,7 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
                 annotatedSymbolPointer = classOrObjectSymbolPointer,
             ),
             additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
-                SimpleAdditionalAnnotationsProvider(KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER),
+                CollectionAdditionalAnnotationsProvider(KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER),
                 AbstractClassAdditionalAnnotationsProvider,
             ),
             annotationFilter = CollectionAnnotationFilter(allowedAnnotations),

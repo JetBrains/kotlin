@@ -12,7 +12,7 @@ import com.intellij.psi.PsiModifierList
  * This class provides more annotation in addition to [AnnotationsProvider].
  *
  * [EmptyAdditionalAnnotationsProvider] is just an empty provider.
- * [SimpleAdditionalAnnotationsProvider] is a collection of additional annotations.
+ * [CollectionAdditionalAnnotationsProvider] is a collection of additional annotations.
  * [CompositeAdditionalAnnotationsProvider] is a composition of some [AdditionalAnnotationsProvider].
  *
  * @see [GranularAnnotationsBox]
