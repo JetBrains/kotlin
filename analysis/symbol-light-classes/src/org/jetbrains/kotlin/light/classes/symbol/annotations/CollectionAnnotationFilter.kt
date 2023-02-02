@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 
-internal class SimpleAnnotationFilter(private val allowedQualifiers: Collection<String>) : AnnotationFilter {
+internal class CollectionAnnotationFilter(private val allowedQualifiers: Collection<String>) : AnnotationFilter {
     override fun isAllowed(qualifiedName: String): Boolean = qualifiedName in allowedQualifiers
     override fun filtered(annotations: Collection<PsiAnnotation>): Collection<PsiAnnotation> = annotations.filter { annotation ->
         annotation.qualifiedName?.let(::isAllowed) == true
