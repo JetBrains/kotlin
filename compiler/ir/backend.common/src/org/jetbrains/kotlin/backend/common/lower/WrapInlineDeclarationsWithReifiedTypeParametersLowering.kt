@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isInlineFunWithReifiedParameter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -24,9 +23,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeSubstitutor
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
+import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.util.typeSubstitutionMap
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -37,9 +37,12 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
         get() = context.irFactory
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
-                expression.transformChildrenVoid()
+        irBody.transformChildren(object : IrElementTransformer<IrDeclarationParent?> {
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
+                super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
+
+            override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent?): IrExpression {
+                expression.transformChildren(this, data)
 
                 val owner = expression.symbol.owner as? IrSimpleFunction
                     ?: return expression
@@ -66,7 +69,7 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                     startOffset = SYNTHETIC_OFFSET
                     endOffset = SYNTHETIC_OFFSET
                 }.apply {
-                    parent = container as IrDeclarationParent
+                    parent = data ?: error("Unable to get a proper parent while lower ${expression.render()} at ${container.render()}")
                     val irBuilder = context.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
                     val forwardExtensionReceiverAsParam = owner.extensionReceiverParameter?.let { extensionReceiver ->
                         runIf(expression.extensionReceiver == null) {
@@ -90,6 +93,8 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                         statements.add(
                             irBuilder.irReturn(
                                 irBuilder.irCall(owner.symbol).also { call ->
+                                    expression.extensionReceiver?.setDeclarationsParent(this@apply)
+                                    expression.dispatchReceiver?.setDeclarationsParent(this@apply)
                                     val (extensionReceiver, forwardedParams) = if (forwardExtensionReceiverAsParam) {
                                         irBuilder.irGet(valueParameters.first()) to valueParameters.subList(1, valueParameters.size)
                                     } else {
@@ -124,6 +129,6 @@ class WrapInlineDeclarationsWithReifiedTypeParametersLowering(val context: Backe
                     )
                 }
             }
-        })
+        }, container as? IrDeclarationParent)
     }
 }
