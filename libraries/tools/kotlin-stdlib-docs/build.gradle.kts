@@ -1,6 +1,6 @@
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.DokkaConfiguration
-import org.jetbrains.dokka.gradle.DokkaTask
+import org.jetbrains.dokka.gradle.*
 import java.net.URL
 
 plugins {
@@ -13,8 +13,8 @@ evaluationDependsOnChildren()
 fun pKotlinBig() = project("kotlin_big").ext
 
 val outputDir = file(findProperty("docsBuildDir") as String? ?: "$buildDir/doc")
-val outputDirLatest = file("$outputDir/latest")
-val outputDirPrevious = file("$outputDir/previous")
+val inputDirPrevious = file(findProperty("docsPreviousVersionsDir") as String? ?: "$outputDir/previous")
+val outputDirPartial = outputDir.resolve("partial")
 val kotlin_root: String by pKotlinBig()
 val kotlin_libs: String by pKotlinBig()
 val kotlin_native_root = file("$kotlin_root/kotlin-native").absolutePath
@@ -49,7 +49,7 @@ dependencies {
 }
 
 fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
-    tasks.register<DokkaTask>("kotlin-stdlib_" + version + (if (isLatest) "_latest" else "")) {
+    tasks.register<DokkaTaskPartial>("kotlin-stdlib_" + version + (if (isLatest) "_latest" else "")) {
         dependsOn(prepare)
 
         val kotlin_stdlib_dir = file("$kotlin_root/libraries/stdlib")
@@ -74,21 +74,17 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
 
         moduleName.set("kotlin-stdlib")
         val moduleDirName = "kotlin-stdlib"
+        with(pluginsMapConfiguration) {
+            put("org.jetbrains.dokka.base.DokkaBase"                      , """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
+            put("org.jetbrains.dokka.kotlinlang.StdLibConfigurationPlugin", """{ "ignoreCommonBuiltIns": "true" }""")
+            put("org.jetbrains.dokka.versioning.VersioningPlugin"         , """{ "version": "$version" }" }""")
+        }
         if (isLatest) {
-            outputDirectory.set(outputDirLatest.resolve(moduleDirName))
-            with(pluginsMapConfiguration) {
-                put("org.jetbrains.dokka.base.DokkaBase"                      , """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
-                put("org.jetbrains.dokka.kotlinlang.StdLibConfigurationPlugin", """{ "ignoreCommonBuiltIns": "true" }""")
-                put("org.jetbrains.dokka.versioning.VersioningPlugin"         , """{ "version": "$version", "olderVersionsDir": "${outputDirPrevious.resolve(moduleDirName).invariantSeparatorsPath}" }""")
-            }
+            outputDirectory.set(file("$outputDirPartial/latest").resolve(moduleDirName))
         } else {
-            outputDirectory.set(outputDirPrevious.resolve(moduleDirName).resolve(version))
-            with(pluginsMapConfiguration) {
-                put("org.jetbrains.dokka.base.DokkaBase"                      , """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
-                put("org.jetbrains.dokka.kotlinlang.StdLibConfigurationPlugin", """{ "ignoreCommonBuiltIns": "true" }""")
-                put("org.jetbrains.dokka.kotlinlang.VersionFilterPlugin"      , """{ "targetVersion": "$version" }""")
-                put("org.jetbrains.dokka.versioning.VersioningPlugin"         , """{ "version": "$version" }""")
-            }
+            outputDirectory.set(file("$outputDirPartial/previous").resolve(moduleDirName).resolve(version))
+            pluginsMapConfiguration
+                .put("org.jetbrains.dokka.kotlinlang.VersionFilterPlugin"      , """{ "targetVersion": "$version" }""")
         }
         dokkaSourceSets {
             if (version != "1.0" && version != "1.1") { // Common platform since Kotlin 1.2
@@ -224,9 +220,9 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
         }
     }
 
-fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean, stdlibDocTask: TaskProvider<DokkaTask>) =
-    tasks.register<DokkaTask>("kotlin-test_" + version + (if (isLatest) "_latest" else "")) {
-        dependsOn(prepare, stdlibDocTask)
+fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
+    tasks.register<DokkaTaskPartial>("kotlin-test_" + version + (if (isLatest) "_latest" else "")) {
+        dependsOn(prepare)
 
         val kotlinTestIncludeMd = file("$kotlin_root/libraries/kotlin.test/Module.md")
 
@@ -237,25 +233,20 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean, stdlibD
         val kotlinTestJsClasspath = fileTree("$kotlin_libs/kotlin-test-js")
         val kotlinTestJvmClasspath = fileTree("$kotlin_libs/kotlin-test")
 
-        val stdlibPackageList = URL("file:///${stdlibDocTask.get().outputDirectory.get()}/kotlin-stdlib/package-list")
         val kotlinLanguageVersion = version
 
         moduleName.set("kotlin-test")
 
         val moduleDirName = "kotlin-test"
+        with(pluginsMapConfiguration) {
+            put("org.jetbrains.dokka.base.DokkaBase", """{ "templatesDir": "$templatesDir" }""")
+            put("org.jetbrains.dokka.versioning.VersioningPlugin", """{ "version": "$version" }""")
+        }
         if (isLatest) {
-            outputDirectory.set(outputDirLatest.resolve(moduleDirName))
-            with(pluginsMapConfiguration) {
-                put("org.jetbrains.dokka.base.DokkaBase"                      , """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
-                put("org.jetbrains.dokka.versioning.VersioningPlugin"         , """{ "version": "$version", "olderVersionsDir": "${outputDirPrevious.resolve(moduleDirName).invariantSeparatorsPath}" }""")
-            }
+            outputDirectory.set(file("$outputDirPartial/latest").resolve(moduleDirName))
         } else {
-            outputDirectory.set(outputDirPrevious.resolve(moduleDirName).resolve(version))
-            with(pluginsMapConfiguration) {
-                put("org.jetbrains.dokka.base.DokkaBase"                      , """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
-                put("org.jetbrains.dokka.kotlinlang.VersionFilterPlugin"      , """{ "targetVersion": "$version" }""")
-                put("org.jetbrains.dokka.versioning.VersioningPlugin"         , """{ "version": "$version" }""")
-            }
+            outputDirectory.set(file("$outputDirPartial/previous").resolve(moduleDirName).resolve(version))
+            pluginsMapConfiguration.put("org.jetbrains.dokka.kotlinlang.VersionFilterPlugin", """{ "targetVersion": "$version" }""")
         }
 
         dokkaSourceSets {
@@ -369,11 +360,32 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean, stdlibD
                 languageVersion.set(kotlinLanguageVersion)
                 noStdlibLink.set(true)
                 sourceLinksFromRoot()
-                externalDocumentationLink {
-                    url.set(URL("https://kotlinlang.org/api/latest/jvm/stdlib/"))
-                    packageListUrl.set(stdlibPackageList)
-                }
             }
+        }
+    }
+
+
+fun createAllLibsVersionedDocTask(version: String, isLatest: Boolean, vararg libTasks: TaskProvider<DokkaTaskPartial>) =
+    tasks.register<DokkaMultiModuleTask>("all-libs_" + version + (if (isLatest) "_latest" else "")) {
+        moduleName.set("Kotlin libraries")
+        plugins.extendsFrom(configurations.dokkaHtmlMultiModulePlugin.get())
+        runtime.extendsFrom(configurations.dokkaHtmlMultiModuleRuntime.get())
+        libTasks.forEach { addChildTask(it.name) }
+
+        fileLayout.set(DokkaMultiModuleFileLayout { parent, child ->
+            parent.outputDirectory.get().resolve(child.moduleName.get())
+        })
+
+        val moduleDirName = "all-libs"
+        val outputDirLatest = file("$outputDir/latest")
+        val outputDirPrevious = file("$outputDir/previous")
+        pluginsMapConfiguration.put("org.jetbrains.dokka.base.DokkaBase", """{ "templatesDir": "$templatesDir" }""")
+        if (isLatest) {
+            outputDirectory.set(outputDirLatest.resolve(moduleDirName))
+            pluginsMapConfiguration.put("org.jetbrains.dokka.versioning.VersioningPlugin", """{ "version": "$version", "olderVersionsDir": "${inputDirPrevious.resolve(moduleDirName).invariantSeparatorsPath}" }""")
+        } else {
+            outputDirectory.set(outputDirPrevious.resolve(moduleDirName).resolve(version))
+            pluginsMapConfiguration.put("org.jetbrains.dokka.versioning.VersioningPlugin", """{ "version": "$version" }""")
         }
     }
 
@@ -401,17 +413,18 @@ gradle.projectsEvaluated {
     val buildLatestVersion by tasks.registering
 
     val latestStdlib = createStdLibVersionedDocTask(latestVersion, true)
-    val latestTest = createKotlinTestVersionedDocTask(latestVersion, true, latestStdlib)
+    val latestTest = createKotlinTestVersionedDocTask(latestVersion, true)
+    val latestAll = createAllLibsVersionedDocTask(latestVersion, true, latestStdlib, latestTest)
 
-    buildLatestVersion.configure { dependsOn(latestStdlib, latestTest) }
+    buildLatestVersion.configure { dependsOn(latestStdlib, latestTest, latestAll) }
 
     versions.forEach { version ->
         val versionStdlib = createStdLibVersionedDocTask(version, false)
-        val versionTest = createKotlinTestVersionedDocTask(version, false, versionStdlib)
+        val versionTest = createKotlinTestVersionedDocTask(version, false)
+        val versionAll = createAllLibsVersionedDocTask(version, isLatest = false, versionStdlib, versionTest)
         if (version != latestVersion) {
-            latestStdlib.configure { dependsOn(versionStdlib) }
-            latestTest.configure { dependsOn(versionTest) }
+            latestAll.configure { dependsOn(versionAll) }
         }
-        buildAllVersions.configure { dependsOn(versionStdlib, versionTest) }
+        buildAllVersions.configure { dependsOn(versionStdlib, versionTest, versionAll) }
     }
 }
