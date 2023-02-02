@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.konan.CacheSupport
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.konan.TempFiles
+import java.io.File
 
 internal fun createTempFiles(config: KonanConfig, cacheDeserializationStrategy: CacheDeserializationStrategy?): TempFiles {
     val pathToTempDir = config.configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR)?.let {
@@ -20,3 +21,16 @@ internal fun createTempFiles(config: KonanConfig, cacheDeserializationStrategy: 
     }
     return TempFiles(pathToTempDir)
 }
+
+/**
+ * Files that are generated only during compilation of C dynamic/static library.
+ *
+ * TODO: At some point this class and it usages can be generalized to all possible compiler outputs,
+ *  so instead of OutputFiles we will create a series of classes for each specific compiler output kit.
+ */
+internal class CExportFiles(
+        val cppAdapter: File,
+        val bitcodeAdapter: File,
+        val header: File,
+        val def: File?,
+)

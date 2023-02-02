@@ -47,7 +47,6 @@ internal class NativeGenerationState(
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
         val outputFiles: OutputFiles,
-        val tempFiles: TempFiles,
         val llvmModuleName: String,
 ) : BasicPhaseContext(config), BackendContextHolder<Context>, LlvmIrHolder {
     val outputFile = outputFiles.mainFileName
