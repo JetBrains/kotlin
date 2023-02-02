@@ -57,6 +57,7 @@ fun FirResult.convertToIrAndActualize(
     irMangler: KotlinMangler.IrMangler,
     visibilityConverter: Fir2IrVisibilityConverter,
     kotlinBuiltIns: KotlinBuiltIns,
+    fir2IrResultPostCompute: Fir2IrResult.() -> Unit = {},
 ): Fir2IrResult {
     val result: Fir2IrResult
 
@@ -76,7 +77,9 @@ fun FirResult.convertToIrAndActualize(
             irMangler,
             visibilityConverter,
             kotlinBuiltIns,
-        )
+        ).also {
+            fir2IrResultPostCompute(it)
+        }
         result = platformOutput.convertToIr(
             fir2IrExtensions,
             irGeneratorExtensions,
@@ -86,7 +89,9 @@ fun FirResult.convertToIrAndActualize(
             irMangler,
             visibilityConverter,
             kotlinBuiltIns,
-        )
+        ).also {
+            fir2IrResultPostCompute(it)
+        }
         IrActualizer.actualize(
             result.irModuleFragment,
             listOf(commonIrOutput.irModuleFragment)

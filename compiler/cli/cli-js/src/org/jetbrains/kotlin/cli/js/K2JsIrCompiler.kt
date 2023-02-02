@@ -50,7 +50,10 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
+import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
@@ -604,57 +607,19 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             moduleDescriptor
         }
 
-        val commonMemberStorage = Fir2IrCommonMemberStorage(
-            generateSignatures = false,
-            signatureComposerCreator = null,
-            manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
-        )
-
-        // TODO: replace with appropriate (probably empty) implementation
-        val specialAnnotationSymbolProvider = Fir2IrJvmSpecialAnnotationSymbolProvider()
-
-        // TODO: consider passing externally
-        val builtIns = builtInsModule ?: DefaultBuiltIns.Instance
-
-        val commonIrOutput = if (isMppEnabled) {
-            Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-                commonFirOutput!!.session, commonFirOutput.scopeSession, commonFirOutput.fir,
-                configuration.languageVersionSettings,
-                fir2IrExtensions,
-                JsManglerIr, IrFactoryImpl,
-                Fir2IrVisibilityConverter.Default,
-                specialAnnotationSymbolProvider,
-                IrGenerationExtension.getInstances(environmentForJS.project),
-                generateSignatures = false,
-                kotlinBuiltIns = builtIns,
-                commonMemberStorage = commonMemberStorage,
-                initializedIrBuiltIns = null
-            ).also { fir2IrResult ->
-                (fir2IrResult.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
-            }
-        } else {
-            null
-        }
-
-        val platformIrOutput = Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
-            platformFirOutput.session, platformFirOutput.scopeSession, platformFirOutput.fir,
-            configuration.languageVersionSettings,
+        val firResult = FirResult(platformFirOutput, commonFirOutput)
+        val irResult = firResult.convertToIrAndActualize(
             fir2IrExtensions,
-            JsManglerIr, IrFactoryImpl,
-            Fir2IrVisibilityConverter.Default,
-            specialAnnotationSymbolProvider,
             IrGenerationExtension.getInstances(environmentForJS.project),
-            generateSignatures = false,
-            kotlinBuiltIns = builtIns,
-            commonMemberStorage = commonMemberStorage,
-            initializedIrBuiltIns = commonIrOutput?.components?.irBuiltIns
-        ).also { fir2IrResult ->
-            (fir2IrResult.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
-        }
-
-        if (isMppEnabled) {
-            IrActualizer.actualize(platformIrOutput.irModuleFragment, listOf(commonIrOutput!!.irModuleFragment))
-        }
+            linkViaSignatures = false,
+            signatureComposerCreator = null,
+            irMangler = JsManglerIr,
+            visibilityConverter = Fir2IrVisibilityConverter.Default,
+            kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
+            fir2IrResultPostCompute = {
+                (this.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
+            }
+        )
 
         // Serialize klib
 
@@ -682,7 +647,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 sourceFiles,
                 klibPath = outputKlibPath,
                 resolvedLibraries.map { it.library },
-                platformIrOutput.irModuleFragment,
+                irResult.irModuleFragment,
                 expectDescriptorToSymbol = mutableMapOf(),
                 cleanFiles = icData,
                 nopack = true,
