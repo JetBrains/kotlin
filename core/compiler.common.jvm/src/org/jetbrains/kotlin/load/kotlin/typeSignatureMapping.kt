@@ -44,7 +44,7 @@ fun <T : Any> TypeSystemCommonBackendContext.mapBuiltInType(
         return typeFactory.boxTypeIfNeeded(jvmType, isNullableInJava)
     }
 
-    val arrayElementType = constructor.getPrimitiveArrayType()
+    val arrayElementType = constructor.getPrimitiveArrayType() ?: type.getPrimitiveVArrayType()
     if (arrayElementType != null) {
         return typeFactory.createFromString("[" + JvmPrimitiveType.get(arrayElementType).desc)
     }

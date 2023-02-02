@@ -128,6 +128,8 @@ object CastDiagnosticsUtil {
         // NOTE: this does not account for 'as Array<List<T>>'
         if (allParametersReified(subtype)) return false
 
+        if (KotlinBuiltIns.isPrimitiveVArray(subtype)) return false
+
         val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype.constructor).resultingType ?: return true
 
         // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>

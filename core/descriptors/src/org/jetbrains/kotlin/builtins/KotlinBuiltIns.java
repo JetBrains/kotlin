@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
@@ -310,8 +309,12 @@ public abstract class KotlinBuiltIns {
         return getBuiltInClassByNameOrNull("VArray");
     }
 
-    public ClassDescriptor getPrimitiveArrayClassDescriptor(@NotNull PrimitiveType type) {
-        return getBuiltInClassByNameOrNull(type.getArrayTypeName().asString());
+    public ClassDescriptor getPrimitiveArrayClassDescriptorOrNull(@NotNull PrimitiveType type) {
+        ClassifierDescriptor classifier = builtInClassifiersByName.invoke(Name.identifier(type.getArrayTypeName().asString()));
+        if (classifier instanceof ClassDescriptor) {
+            return (ClassDescriptor) classifier;
+        }
+        return null;
     }
 
     @NotNull
@@ -734,7 +737,9 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isArrayOrPrimitiveArray(@NotNull ClassDescriptor descriptor) {
-        return classFqNameEquals(descriptor, FqNames.array) || getPrimitiveArrayType(descriptor) != null;
+        return classFqNameEquals(descriptor, FqNames.vArray) ||
+               classFqNameEquals(descriptor, FqNames.array) ||
+               getPrimitiveArrayType(descriptor) != null;
     }
 
     public static boolean isArrayOrPrimitiveArray(@NotNull KotlinType type) {
@@ -879,6 +884,10 @@ public abstract class KotlinBuiltIns {
 
     public static boolean isULong(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FqNames.uLongFqName.toUnsafe());
+    }
+
+    public static boolean isUnsignedType(@NotNull KotlinType type) {
+        return isUByte(type) || isUShort(type) || isUInt(type) || isULong(type);
     }
 
     public static boolean isUByteArray(@NotNull KotlinType type) {

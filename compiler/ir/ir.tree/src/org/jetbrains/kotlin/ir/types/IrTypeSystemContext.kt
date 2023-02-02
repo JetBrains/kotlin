@@ -446,6 +446,13 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun KotlinTypeMarker.isVArray(): Boolean =
         (this as IrType).isVArray
 
+    override fun KotlinTypeMarker.getPrimitiveVArrayType(): PrimitiveType? {
+        if (!isVArray()) return null
+        val argument = getArgument(0)
+        if (argument.getVariance() != TypeVariance.INV) return null
+        return argument.getType().getPrimitiveType()
+    }
+
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val symbol = this as IrClassifierSymbol
         return symbol is IrClassSymbol && symbol.owner.let {
