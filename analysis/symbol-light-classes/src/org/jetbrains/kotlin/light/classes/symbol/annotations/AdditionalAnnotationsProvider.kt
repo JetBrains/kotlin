@@ -24,7 +24,9 @@ internal sealed interface AdditionalAnnotationsProvider {
         foundQualifiers: MutableSet<String>,
         owner: PsiModifierList,
     ) {
-        if (!foundQualifiers.add(qualifier)) return
+        val isNewQualifier = foundQualifiers.add(qualifier)
+        if (!isNewQualifier) return
+
         currentRawAnnotations += SymbolLightSimpleAnnotation(qualifier, owner)
     }
 
