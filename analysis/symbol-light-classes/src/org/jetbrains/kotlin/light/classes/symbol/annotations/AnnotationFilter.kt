@@ -7,7 +7,19 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.psi.PsiAnnotation
 
+/**
+ * Provider a filter for resulted annotations from [LazyAnnotationsBox]
+ *
+ * @see LazyAnnotationsBox
+ */
 internal sealed interface AnnotationFilter {
+    /**
+     * @return **true** if an annotations with [qualifiedName] is allowed
+     */
     fun isAllowed(qualifiedName: String): Boolean
+
+    /**
+     * @return a filtered collection where each annotation in a list has an allowed qualifier
+     */
     fun filtered(annotations: Collection<PsiAnnotation>): Collection<PsiAnnotation>
 }
