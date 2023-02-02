@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.getName
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -53,18 +54,28 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
 }
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Context, irModule: IrModuleFragment) {
+    val config = context.config
     useContext(backendContext) { backendEngine ->
         backendEngine.runPhase(functionsWithoutBoundCheck)
         val fragments = backendEngine.splitIntoFragments(irModule)
         fragments.forEach { fragment ->
-            val generationState = NativeGenerationState(context.config, backendContext,
-                    fragment.cacheDeserializationStrategy
-            )
-            backendEngine.useContext(generationState) { generationStateEngine ->
-                // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                val it = generationStateEngine.compileModule(fragment.irModule)
-                // Split here
-                compileAndLink(it, it.outputFiles.mainFileName, it.outputFiles, it.temporaryFiles, isCoverageEnabled = false)
+            val tempFiles = createTempFiles(config, fragment.cacheDeserializationStrategy)
+            try {
+                val outputPath = config.cacheSupport.tryGetImplicitOutput(fragment.cacheDeserializationStrategy) ?: config.outputPath
+                val outputFiles = OutputFiles(outputPath, config.target, config.produce)
+                val generationState = NativeGenerationState(context.config, backendContext,
+                        fragment.cacheDeserializationStrategy, fragment.dependenciesTracker, fragment.llvmModuleSpecification, outputFiles,
+                        tempFiles,
+                        llvmModuleName = "out" // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
+                )
+                backendEngine.useContext(generationState) { generationStateEngine ->
+                    // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
+                    val it = generationStateEngine.compileModule(fragment.irModule)
+                    // Split here
+                    compileAndLink(it, it.outputFiles.mainFileName, it.outputFiles, it.temporaryFiles, isCoverageEnabled = false)
+                }
+            } finally {
+                tempFiles.dispose()
             }
         }
     }

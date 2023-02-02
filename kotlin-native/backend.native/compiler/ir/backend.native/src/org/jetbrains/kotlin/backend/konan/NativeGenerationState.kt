@@ -9,7 +9,6 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.BackendContextHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
-import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
@@ -18,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializ
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.konan.TempFiles
-import org.jetbrains.kotlin.konan.file.File
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -45,19 +43,13 @@ internal class NativeGenerationState(
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
         //  It will reduce code coupling and make it easier to create NativeGenerationState instances.
         val context: Context,
-        val cacheDeserializationStrategy: CacheDeserializationStrategy?
+        val cacheDeserializationStrategy: CacheDeserializationStrategy?,
+        val dependenciesTracker: DependenciesTracker,
+        val llvmModuleSpecification: LlvmModuleSpecification,
+        val outputFiles: OutputFiles,
+        val tempFiles: TempFiles,
+        val llvmModuleName: String,
 ) : BasicPhaseContext(config), BackendContextHolder<Context>, LlvmIrHolder {
-    private val outputPath = config.cacheSupport.tryGetImplicitOutput(cacheDeserializationStrategy) ?: config.outputPath
-    val outputFiles = OutputFiles(outputPath, config.target, config.produce)
-    val tempFiles = run {
-        val pathToTempDir = config.configuration.get(KonanConfigKeys.TEMPORARY_FILES_DIR)?.let {
-            val singleFileStrategy = cacheDeserializationStrategy as? CacheDeserializationStrategy.SingleFile
-            if (singleFileStrategy == null)
-                it
-            else File(it, CacheSupport.cacheFileId(singleFileStrategy.fqName, singleFileStrategy.filePath)).path
-        }
-        TempFiles(pathToTempDir)
-    }
     val outputFile = outputFiles.mainFileName
 
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
@@ -78,22 +70,10 @@ internal class NativeGenerationState(
 
     lateinit var fileLowerState: FileLowerState
 
-    val llvmModuleSpecification by lazy {
-        if (config.produce.isCache)
-            CacheLlvmModuleSpecification(
-                    config.cachedLibraries,
-                    PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy!!),
-                    containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
-            )
-        else DefaultLlvmModuleSpecification(config.cachedLibraries)
-    }
-
     val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
 
-    val dependenciesTracker: DependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, config, context)
-
     private val runtimeDelegate = lazy { Runtime(llvmContext, config.distribution.compilerInterface(config.target)) }
-    private val llvmDelegate = lazy { Llvm(this, LLVMModuleCreateWithNameInContext("out", llvmContext)!!) }
+    private val llvmDelegate = lazy { Llvm(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
 
     val llvmContext = LLVMContextCreate()!!
@@ -137,7 +117,6 @@ internal class NativeGenerationState(
             LLVMDisposeModule(runtime.llvmModule)
         }
         LLVMContextDispose(llvmContext)
-        tempFiles.dispose()
 
         isDisposed = true
     }
