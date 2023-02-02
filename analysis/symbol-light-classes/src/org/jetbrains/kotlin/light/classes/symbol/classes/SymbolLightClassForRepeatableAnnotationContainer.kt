@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.asJava.elements.KtLightField
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightRepeatableAnnotationContainerMethod
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SimpleModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
 
@@ -39,7 +39,7 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
         containingDeclaration = this,
         // It is marked as Abstract because all the annotation classes are marked as Abstract
         // It is marked as Static because all nested interfaces are marked as Static
-        modifiersBox = SimpleModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.ABSTRACT),
+        modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.ABSTRACT),
         annotationsBox = LazyAnnotationsBox(
             annotationsProvider = SymbolAnnotationsProvider(
                 ktModule = ktModule,

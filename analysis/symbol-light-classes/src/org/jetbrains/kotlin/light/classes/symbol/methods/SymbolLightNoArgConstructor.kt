@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SimpleModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightParameterList
 
@@ -39,7 +39,7 @@ internal class SymbolLightNoArgConstructor(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            modifiersBox = SimpleModifiersBox(visibility),
+            modifiersBox = InitializedModifiersBox(visibility),
         )
     }
 

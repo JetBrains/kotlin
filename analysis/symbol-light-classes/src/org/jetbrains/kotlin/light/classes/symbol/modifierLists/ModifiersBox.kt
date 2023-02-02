@@ -9,7 +9,7 @@ package org.jetbrains.kotlin.light.classes.symbol.modifierLists
  * This class is used as a proxy for [com.intellij.psi.PsiModifierList.hasModifierProperty].
  *
  * [LazyModifiersBox] provides an ability to compute each modifier separately to avoid heavy computation.
- * [SimpleModifiersBox] is a collection of possible modifiers.
+ * [InitializedModifiersBox] is a collection of possible modifiers.
  * [EmptyModifiersBox] just a box without modifiers.
  *
  * @see SymbolLightModifierList

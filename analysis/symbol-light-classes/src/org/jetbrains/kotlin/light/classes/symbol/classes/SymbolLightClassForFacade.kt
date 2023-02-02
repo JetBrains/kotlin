@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.light.classes.symbol.analyzeForLightClasses
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SimpleModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
@@ -63,7 +63,7 @@ class SymbolLightClassForFacade(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            modifiersBox = SimpleModifiersBox(PsiModifier.PUBLIC, PsiModifier.FINAL),
+            modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.FINAL),
             annotationsBox = if (multiFileClass) {
                 EmptyAnnotationsBox
             } else {

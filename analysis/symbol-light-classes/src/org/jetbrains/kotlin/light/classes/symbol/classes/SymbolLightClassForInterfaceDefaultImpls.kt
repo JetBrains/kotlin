@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.psi.*
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassKind
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SimpleModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
 
@@ -40,7 +40,7 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
 
     override fun computeModifierList(): PsiModifierList = SymbolLightClassModifierList(
         containingDeclaration = this,
-        modifiersBox = SimpleModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL),
+        modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL),
     )
 
     override fun classKind(): KtClassKind = KtClassKind.CLASS

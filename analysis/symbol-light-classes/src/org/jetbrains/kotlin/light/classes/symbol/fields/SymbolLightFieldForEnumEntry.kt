@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.annotationUseSiteTa
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClassOrObject
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SimpleModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.psi.KtEnumEntry
@@ -40,7 +40,7 @@ internal class SymbolLightFieldForEnumEntry(
     private val _modifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            modifiersBox = SimpleModifiersBox(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
+            modifiersBox = InitializedModifiersBox(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
             annotationsBox = LazyAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
