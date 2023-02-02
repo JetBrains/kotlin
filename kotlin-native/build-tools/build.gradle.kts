@@ -58,7 +58,8 @@ dependencies {
     val metadataVersion = "0.0.1-dev-10"
     implementation("org.jetbrains.kotlinx:kotlinx-metadata-klib:$metadataVersion")
 
-//    api(project(":kotlin-native-shared"))
+    implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 }
 
 java {
@@ -94,8 +95,6 @@ kotlin {
             kotlin.srcDir("../../kotlin-native/shared/src/library/kotlin")
             kotlin.srcDir("../../kotlin-native/shared/src/main/kotlin")
             kotlin.srcDir("../../kotlin-native/tools/kotlin-native-gradle-plugin/src/main/kotlin")
-            kotlin.srcDir("../../compiler/util-klib/src")
-            kotlin.srcDir("../../native/utils/src")
         }
     }
 }
