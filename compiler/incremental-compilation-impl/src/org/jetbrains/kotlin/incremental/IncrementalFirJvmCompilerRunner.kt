@@ -50,7 +50,7 @@ import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
-import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
+import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualizeForJvm
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -275,7 +275,7 @@ class IncrementalFirJvmCompilerRunner(
             val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
             val irGenerationExtensions =
                 (projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }.orEmpty()
-            val platformIrOutput = cycleResult.convertToIrAndActualize(extensions, irGenerationExtensions, linkViaSignatures = false)
+            val platformIrOutput = cycleResult.convertToIrAndActualizeForJvm(extensions, irGenerationExtensions, linkViaSignatures = false)
 
             performanceManager?.notifyIRTranslationFinished()
 
