@@ -55,6 +55,7 @@ data class LlvmPipelineConfig(
         val objCPasses: Boolean,
         val inlineThreshold: Int?,
         val sanitizer: SanitizerKind?,
+        val preview19Pipeline: Boolean
 )
 
 private fun getCpuModel(context: PhaseContext): String {
@@ -104,7 +105,8 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
             objCPasses = configurables is AppleConfigurables,
             makeDeclarationsHidden = false,
             inlineThreshold = tryGetInlineThreshold(generationState),
-            sanitizer = null
+            sanitizer = null,
+            preview19Pipeline = false
     )
 }
 
@@ -162,6 +164,8 @@ internal fun createLTOFinalPipelineConfig(generationState: NativeGenerationState
         else -> null
     }
 
+    val preview19Pipeline = config.preview19LLVMPipeline
+
     return LlvmPipelineConfig(
             generationState.llvm.targetTriple,
             cpuModel,
@@ -176,7 +180,8 @@ internal fun createLTOFinalPipelineConfig(generationState: NativeGenerationState
             makeDeclarationsHidden,
             objcPasses,
             inlineThreshold,
-            config.sanitizer
+            config.sanitizer,
+            preview19Pipeline
     )
 }
 
@@ -221,6 +226,14 @@ class LlvmOptimizationPipeline(
         LLVMKotlinAddTargetLibraryInfoWrapperPass(modulePasses, config.targetTriple)
         // TargetTransformInfo pass.
         LLVMAddAnalysisPasses(targetMachine, modulePasses)
+        config.inlineThreshold?.let { threshold ->
+            LLVMPassManagerBuilderUseInlinerWithThreshold(passBuilder, threshold)
+        }
+
+        if (config.preview19Pipeline) {
+            LLVMPassManagerBuilderPopulateModulePassManager(passBuilder, modulePasses)
+            LLVMPassManagerBuilderPopulateFunctionPassManager(passBuilder, modulePasses)
+        }
         if (config.internalize) {
             LLVMAddInternalizePass(modulePasses, 0)
         }
@@ -229,9 +242,6 @@ class LlvmOptimizationPipeline(
         }
         if (config.globalDce) {
             LLVMAddGlobalDCEPass(modulePasses)
-        }
-        config.inlineThreshold?.let { threshold ->
-            LLVMPassManagerBuilderUseInlinerWithThreshold(passBuilder, threshold)
         }
 
         // Pipeline that is similar to `llvm-lto`.

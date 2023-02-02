@@ -476,6 +476,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
             && libraryToCache == null)
 
+    val preview19LLVMPipeline = configuration.get(BinaryOptions.preview19LLVMPipeline) ?: false
+
     /**
      * Do not compile binary when compiling framework.
      * This is useful when user care only about framework's interface.

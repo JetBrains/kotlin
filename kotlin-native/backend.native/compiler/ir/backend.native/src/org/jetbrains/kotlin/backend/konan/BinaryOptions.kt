@@ -48,6 +48,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val mimallocUseDefaultOptions by booleanOption()
 
     val mimallocUseCompaction by booleanOption()
+
+    val preview19LLVMPipeline by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
