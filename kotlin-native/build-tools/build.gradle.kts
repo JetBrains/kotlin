@@ -82,7 +82,7 @@ compileKotlin.apply {
     }
 }
 
-// Add Kotlin classes to a classpath for the Gr§oovy compiler
+// Add Kotlin classes to a classpath for the Groovy compiler
 compileGroovy.apply {
     classpath += project.files(compileKotlin.destinationDirectory)
     dependsOn(compileKotlin)
