@@ -8,6 +8,15 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiModifierList
 
+/**
+ * This class is used as a proxy for [com.intellij.psi.PsiAnnotationOwner].
+ *
+ * [LazyAnnotationsBox] provides an ability to compute each annotation separately and in a lazy way to avoid heavy computation.
+ * [SimpleAnnotationsBox] provides an ability to compute all annotations once on first access.
+ * [EmptyAnnotationsBox] just a box without annotations.
+ *
+ * @see org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightModifierList
+ */
 internal sealed interface AnnotationsBox {
     fun annotationsArray(owner: PsiModifierList): Array<PsiAnnotation>
     fun findAnnotation(owner: PsiModifierList, qualifiedName: String): PsiAnnotation?
