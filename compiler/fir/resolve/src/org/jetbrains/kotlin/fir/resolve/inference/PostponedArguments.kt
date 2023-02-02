@@ -63,8 +63,11 @@ fun Candidate.preprocessLambdaArgument(
 
     if (expectedType != null) {
         val parameters = resolvedArgument.parameters
+        val functionTypeKind = context.session.functionTypeService.extractSingleSpecialKindForFunction(anonymousFunction.symbol)
+            ?: resolvedArgument.expectedFunctionTypeKind
+            ?: FunctionTypeKind.Function
         val lambdaType = createFunctionType(
-            resolvedArgument.expectedFunctionTypeKind ?: FunctionTypeKind.Function,
+            functionTypeKind,
             if (resolvedArgument.coerceFirstParameterToExtensionReceiver) parameters.drop(1) else parameters,
             resolvedArgument.receiver,
             resolvedArgument.returnType,

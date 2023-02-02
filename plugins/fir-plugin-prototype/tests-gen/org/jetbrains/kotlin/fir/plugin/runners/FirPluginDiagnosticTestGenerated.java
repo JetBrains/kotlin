@@ -62,6 +62,12 @@ public class FirPluginDiagnosticTestGenerated extends AbstractFirPluginDiagnosti
         }
 
         @Test
+        @TestMetadata("inference.kt")
+        public void testInference() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/functionalTypes/inference.kt");
+        }
+
+        @Test
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("plugins/fir-plugin-prototype/testData/diagnostics/functionalTypes/simple.kt");
