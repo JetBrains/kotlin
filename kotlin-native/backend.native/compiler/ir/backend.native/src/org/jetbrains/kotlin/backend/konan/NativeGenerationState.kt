@@ -86,7 +86,7 @@ internal class NativeGenerationState(
 
     val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
 
-    val dependenciesTracker: DependenciesTracker = DependenciesTrackerImpl(this)
+    val dependenciesTracker: DependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, config, context)
 
     private val runtimeDelegate = lazy { Runtime(llvmContext, config.distribution.compilerInterface(config.target)) }
     private val llvmDelegate = lazy { Llvm(this, LLVMModuleCreateWithNameInContext("out", llvmContext)!!) }

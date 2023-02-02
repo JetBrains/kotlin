@@ -142,11 +142,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFr
     // TODO: Currently, all llvm modules are named as "out" which might lead to collisions.
     val bitcodeFile = context.tempFiles.create(context.llvm.module.getName(), ".bc").javaFile()
     runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
-    val dependenciesTrackingResult = DependenciesTrackingResult(
-            context.dependenciesTracker.bitcodeToLink,
-            context.dependenciesTracker.allNativeDependencies,
-            context.dependenciesTracker.allCachedBitcodeDependencies,
-    )
+    val dependenciesTrackingResult = context.dependenciesTracker.collectResult()
     return ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult, context.tempFiles, context.outputFiles)
 }
 
