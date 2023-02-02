@@ -28,9 +28,7 @@ internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: L
         qualifiedName: String,
         owner: PsiModifierList,
     ): PsiAnnotation? {
-        if (qualifiedName != JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION.asString() &&
-            qualifiedName != JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION.asString()
-        ) {
+        if (!qualifiedName.isNullOrNotNullQualifiedName) {
             return null
         }
 
