@@ -9,6 +9,7 @@ import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.BackendContextHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
+import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
@@ -79,8 +80,11 @@ internal class NativeGenerationState(
 
     val llvmModuleSpecification by lazy {
         if (config.produce.isCache)
-            CacheLlvmModuleSpecification(this, config.cachedLibraries,
-                    PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy!!))
+            CacheLlvmModuleSpecification(
+                    config.cachedLibraries,
+                    PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy!!),
+                    containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
+            )
         else DefaultLlvmModuleSpecification(config.cachedLibraries)
     }
 
