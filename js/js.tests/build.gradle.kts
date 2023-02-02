@@ -220,7 +220,7 @@ fun Test.setupV8() {
     }
 }
 
-fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: Boolean) {
+fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: Boolean, es6Enabled: Boolean) {
     setupV8()
     if (jsIrEnabled) {
         setupNodeJs()
@@ -267,16 +267,34 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
         include("org/jetbrains/kotlin/js/test/*")
     }
     if (!jsEnabled) {
-        if (firEnabled) {
-            include("org/jetbrains/kotlin/js/test/fir/*")
-            include("org/jetbrains/kotlin/test/runners/ir/Fir2IrJsTextTestGenerated.class")
-        } else {
-            include("org/jetbrains/kotlin/js/test/ir/*")
+        when {
+            firEnabled -> {
+                include("org/jetbrains/kotlin/js/test/fir/*")
+                include("org/jetbrains/kotlin/test/runners/ir/Fir2IrJsTextTestGenerated.class")
+            }
+            es6Enabled -> {
+                include("org/jetbrains/kotlin/js/test/ir/IrBoxJsES6TestGenerated.class")
+                include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxTestGenerated.class")
+                include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenInlineTestGenerated.class")
+                include("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxErrorTestGenerated.class")
 
-            include("org/jetbrains/kotlin/incremental/*")
-            include("org/jetbrains/kotlin/js/testOld/compatibility/binary/JsKlibBinaryCompatibilityTestGenerated.class")
-            include("org/jetbrains/kotlin/benchmarks/GenerateIrRuntime.class")
-            include("org/jetbrains/kotlin/integration/JsIrAnalysisHandlerExtensionTest.class")
+                include("org/jetbrains/kotlin/incremental/JsIrES6InvalidationTestGenerated.class")
+            }
+            else -> {
+                include("org/jetbrains/kotlin/js/test/ir/*")
+
+                include("org/jetbrains/kotlin/incremental/*")
+                include("org/jetbrains/kotlin/js/testOld/compatibility/binary/JsKlibBinaryCompatibilityTestGenerated.class")
+                include("org/jetbrains/kotlin/benchmarks/GenerateIrRuntime.class")
+                include("org/jetbrains/kotlin/integration/JsIrAnalysisHandlerExtensionTest.class")
+
+                exclude("org/jetbrains/kotlin/js/test/ir/IrBoxJsES6TestGenerated.class")
+                exclude("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxTestGenerated.class")
+                exclude("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenInlineTestGenerated.class")
+                exclude("org/jetbrains/kotlin/js/test/ir/IrJsES6CodegenBoxErrorTestGenerated.class")
+
+                exclude("org/jetbrains/kotlin/incremental/JsIrES6InvalidationTestGenerated.class")
+            }
         }
     }
 
@@ -321,7 +339,7 @@ fun Test.setUpBoxTests() {
 }
 
 val test = projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
-    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true, firEnabled = true)
+    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true, firEnabled = true, es6Enabled = true)
 
     inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
 
@@ -336,22 +354,26 @@ val test = projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSiz
 }
 
 val jsTest = projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
-    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false)
+    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false, es6Enabled = false)
     useJUnitPlatform()
 }
 
 projectTest("jsIrTest", true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
-    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false)
+    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false, es6Enabled = false)
+    useJUnitPlatform()
+}
+projectTest("jsIrES6Test", true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
+    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false, es6Enabled = true)
     useJUnitPlatform()
 }
 
 projectTest("jsFirTest", true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
-    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = true)
+    setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = true, es6Enabled = false)
     useJUnitPlatform()
 }
 
 projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
-    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false)
+    setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false, es6Enabled = false)
     systemProperty("kotlin.js.skipMinificationTest", "true")
     useJUnitPlatform()
 }
