@@ -161,11 +161,6 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                     return expression
                 }
 
-                if (expression.origin.isLambda && expression.type.isSuspendFunction()) {
-                    // Handled later by coroutines lowerings
-                    return expression
-                }
-
                 return transformFunctionReference(expression)
             }
 
