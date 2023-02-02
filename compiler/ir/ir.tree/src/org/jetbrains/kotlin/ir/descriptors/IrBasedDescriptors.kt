@@ -1150,7 +1150,9 @@ fun IrType.toIrBasedKotlinType(): KotlinType = when (this) {
     is IrSimpleType ->
         makeKotlinType(classifier, arguments, isMarkedNullable()).let {
             if (classifier is IrTypeParameterSymbol && nullability == SimpleTypeNullability.DEFINITELY_NOT_NULL) {
-                DefinitelyNotNullType.makeDefinitelyNotNull(it.unwrap()) ?: it
+                // avoidCheckingActualTypeNullability = true is necessary because in recursive cases `makesSenseToBeDefinitelyNotNull` triggers
+                // supertype computation for a type parameter and for which bounds we need to call `toIrBasedKotlinType` again
+                DefinitelyNotNullType.makeDefinitelyNotNull(it.unwrap(), avoidCheckingActualTypeNullability = true) ?: it
             } else {
                 it
             }

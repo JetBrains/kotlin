@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.storage.StorageManager
@@ -97,14 +96,22 @@ class DefinitelyNotNullType private constructor(
     DefinitelyNotNullTypeMarker {
 
     companion object {
+        // Having `@JvmOverloads` just to make sure we don't break ABI compatibility
+        @JvmOverloads
         fun makeDefinitelyNotNull(
             type: UnwrappedType,
-            useCorrectedNullabilityForTypeParameters: Boolean = false
+            useCorrectedNullabilityForTypeParameters: Boolean = false,
+            // Should be used when we are sure that original type is nullable, i.e. makesSenseToBeDefinitelyNotNull would return true,
+            // but we can't actually call it because otherwise we would fail with StackOverFlow because supertypes are being computed recursively
+            // and there's no easy way to prevent recursion.
+            // NB: makesSenseToBeDefinitelyNotNull is mostly needed as an optimization because nothing really bad would happen even if we
+            // create DNN for a type parameter with non-nullable bound.
+            avoidCheckingActualTypeNullability: Boolean = false,
         ): DefinitelyNotNullType? {
             return when {
                 type is DefinitelyNotNullType -> type
 
-                makesSenseToBeDefinitelyNotNull(type, useCorrectedNullabilityForTypeParameters) -> {
+                avoidCheckingActualTypeNullability || makesSenseToBeDefinitelyNotNull(type, useCorrectedNullabilityForTypeParameters) -> {
                     if (type is FlexibleType) {
                         assert(type.lowerBound.constructor == type.upperBound.constructor) {
                             "DefinitelyNotNullType for flexible type ($type) can be created only from type variable with the same constructor for bounds"
