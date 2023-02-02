@@ -58,7 +58,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
 
             scenario("$jdkPrefix${prefix}parallel clean compile to warmup daemon") {
                 jdk = jdkPath
-                arguments(*parallelRerunBuild)
+                arguments(*parallelRerunBuild, "-x", "compileKotlinWasm")
                 expectSlowBuild("clean build")
                 step {
                     doNotMeasure()
@@ -84,7 +84,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
 
             scenario("$jdkPrefix${prefix}clean build") {
                 jdk = jdkPath
-                arguments(*nonParallelRerunBuild)
+                arguments(*nonParallelRerunBuild, "-x", "compileKotlinWasm")
                 expectSlowBuild("clean build")
                 step {
                     doNotMeasure()
@@ -97,7 +97,7 @@ fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<Str
 
             scenario("$jdkPrefix${prefix}clean build parallel") {
                 jdk = jdkPath
-                arguments(*parallelRerunBuild)
+                arguments(*parallelRerunBuild, "-x", "compileKotlinWasm")
                 expectSlowBuild("clean build")
                 step {
                     doNotMeasure()
