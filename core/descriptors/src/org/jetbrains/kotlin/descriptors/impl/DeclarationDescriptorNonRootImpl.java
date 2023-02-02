@@ -17,10 +17,7 @@
 package org.jetbrains.kotlin.descriptors.impl;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource;
-import org.jetbrains.kotlin.descriptors.SourceElement;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.name.Name;
 
@@ -62,6 +59,11 @@ public abstract class DeclarationDescriptorNonRootImpl
     @NotNull
     public SourceElement getSource() {
         return source;
+    }
+
+    @Override
+    public void validate() {
+        containingDeclaration.validate();
     }
 
 }

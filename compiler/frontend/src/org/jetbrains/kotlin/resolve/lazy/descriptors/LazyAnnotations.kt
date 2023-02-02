@@ -76,7 +76,7 @@ class LazyAnnotations(
 class LazyAnnotationDescriptor(
     val c: LazyAnnotationsContext,
     val annotationEntry: KtAnnotationEntry
-) : AnnotationDescriptor, LazyEntity {
+) : AnnotationDescriptor, LazyEntity, ValidateableDescriptor {
 
     override val type by c.storageManager.createLazyValue(
         computable = lazy@{
@@ -127,6 +127,11 @@ class LazyAnnotationDescriptor(
 
     fun getSourceForArgument(name: Name): SourceElement =
         valueArgumentsWithSourceInfo[name]?.second ?: SourceElement.NO_SOURCE
+
+
+    override fun validate() {
+        checkNotNull(scope) { "scope == null for $this" }
+    }
 
     override fun forceResolveAllContents() {
         ForceResolveUtil.forceResolveAllContents(type)

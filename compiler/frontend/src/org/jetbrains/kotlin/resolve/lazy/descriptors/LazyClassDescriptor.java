@@ -703,6 +703,13 @@ public class LazyClassDescriptor extends ClassDescriptorBase implements ClassDes
     }
 
     @Override
+    public void validate() {
+        if (parameters == null) {
+            throw new IllegalStateException("parameters == null for " + this);
+        }
+    }
+
+    @Override
     public String toString() {
         // not using DescriptorRenderer to preserve laziness
         return (isExpect ? "expect " : isActual ? "actual " : "") + "class " + getName().toString();

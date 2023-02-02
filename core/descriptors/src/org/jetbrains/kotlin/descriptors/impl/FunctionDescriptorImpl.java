@@ -307,6 +307,11 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
     }
 
     @Override
+    public void validate() {
+        getTypeParameters();
+    }
+
+    @Override
     @NotNull
     public List<ValueParameterDescriptor> getValueParameters() {
         return unsubstitutedValueParameters;
