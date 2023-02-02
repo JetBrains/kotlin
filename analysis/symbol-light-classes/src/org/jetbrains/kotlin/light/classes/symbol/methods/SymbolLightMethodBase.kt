@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.light.classes.symbol.SymbolLightMemberBase
 import org.jetbrains.kotlin.light.classes.symbol.annotations.getJvmNameFromAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasPublishedApiAnnotation
-import org.jetbrains.kotlin.light.classes.symbol.annotations.toFilterWithAdditionalNull
+import org.jetbrains.kotlin.light.classes.symbol.annotations.toOptionalFilter
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 
 internal abstract class SymbolLightMethodBase(
@@ -109,7 +109,7 @@ internal abstract class SymbolLightMethodBase(
         containingClass: SymbolLightClassBase,
         annotationUseSiteTarget: AnnotationUseSiteTarget? = null,
     ): String where T : KtAnnotatedSymbol, T : KtSymbolWithVisibility, T : KtCallableSymbol {
-        getJvmNameFromAnnotation(annotationUseSiteTarget.toFilterWithAdditionalNull())?.let { return it }
+        getJvmNameFromAnnotation(annotationUseSiteTarget.toOptionalFilter())?.let { return it }
 
         if (visibility != Visibilities.Internal) return defaultName
         if (containingClass is KtLightClassForFacade) return defaultName

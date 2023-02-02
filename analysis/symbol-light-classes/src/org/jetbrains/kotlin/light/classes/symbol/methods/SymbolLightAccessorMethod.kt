@@ -91,7 +91,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private val _name: String by lazyPub {
         analyzeForLightClasses(ktModule) {
-            propertyAccessorSymbol().getJvmNameFromAnnotation(accessorSite.toFilterWithAdditionalNull()) ?: run {
+            propertyAccessorSymbol().getJvmNameFromAnnotation(accessorSite.toOptionalFilter()) ?: run {
                 val symbol = propertySymbol()
                 val defaultName = symbol.name.identifier.let {
                     if (this@SymbolLightAccessorMethod.containingClass.isAnnotationType) it else it.abiName()
@@ -136,7 +136,7 @@ internal class SymbolLightAccessorMethod private constructor(
                 builder,
                 this@SymbolLightAccessorMethod,
                 containingClass,
-                accessorSite.toFilterWithAdditionalNull(),
+                accessorSite.toOptionalFilter(),
             )
         }
     }
@@ -178,7 +178,7 @@ internal class SymbolLightAccessorMethod private constructor(
             return@analyzeForLightClasses true
         }
 
-        val filter = accessorSite.toFilterWithAdditionalNull()
+        val filter = accessorSite.toOptionalFilter()
         propertySymbol.hasJvmStaticAnnotation(filter) || propertyAccessorSymbol().hasJvmStaticAnnotation(filter)
     }
 
@@ -191,7 +191,7 @@ internal class SymbolLightAccessorMethod private constructor(
                     SymbolAnnotationsProvider(
                         ktModule = ktModule,
                         annotatedSymbolPointer = propertyAccessorSymbolPointer,
-                        annotationUseSiteTargetFilter = accessorSite.toFilterWithAdditionalNull(),
+                        annotationUseSiteTargetFilter = accessorSite.toOptionalFilter(),
                     ),
                     SymbolAnnotationsProvider(
                         ktModule = ktModule,
@@ -222,7 +222,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         analyzeForLightClasses(ktModule) {
-            val filter = accessorSite.toFilterWithAdditionalNull()
+            val filter = accessorSite.toOptionalFilter()
             propertySymbol().hasDeprecatedAnnotation(filter) || propertyAccessorSymbol().hasDeprecatedAnnotation(filter)
         }
     }

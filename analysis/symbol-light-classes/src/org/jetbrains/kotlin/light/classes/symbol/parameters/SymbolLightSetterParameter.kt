@@ -46,7 +46,7 @@ internal class SymbolLightSetterParameter(
                     SymbolAnnotationsProvider(
                         ktModule = ktModule,
                         annotatedSymbolPointer = parameterSymbolPointer,
-                        annotationUseSiteTargetFilter = AnnotationUseSiteTarget.SETTER_PARAMETER.toFilterWithAdditionalNull(),
+                        annotationUseSiteTargetFilter = AnnotationUseSiteTarget.SETTER_PARAMETER.toOptionalFilter(),
                     ),
                     SymbolAnnotationsProvider(
                         ktModule = ktModule,

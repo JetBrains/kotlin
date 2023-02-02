@@ -87,7 +87,7 @@ internal class SymbolLightFieldForProperty private constructor(
 
     private val _isDeprecated: Boolean by lazyPub {
         withPropertySymbol { propertySymbol ->
-            propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD.toFilterWithAdditionalNull())
+            propertySymbol.hasDeprecatedAnnotation(AnnotationUseSiteTarget.FIELD.toOptionalFilter())
         }
     }
 
@@ -125,7 +125,7 @@ internal class SymbolLightFieldForProperty private constructor(
         PsiModifier.VOLATILE -> withPropertySymbol { propertySymbol ->
             val hasAnnotation = propertySymbol.hasAnnotation(
                 VOLATILE_ANNOTATION_CLASS_ID,
-                AnnotationUseSiteTarget.FIELD.toFilterWithAdditionalNull(),
+                AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
             )
 
             mapOf(modifier to hasAnnotation)
@@ -134,7 +134,7 @@ internal class SymbolLightFieldForProperty private constructor(
         PsiModifier.TRANSIENT -> withPropertySymbol { propertySymbol ->
             val hasAnnotation = propertySymbol.hasAnnotation(
                 TRANSIENT_ANNOTATION_CLASS_ID,
-                AnnotationUseSiteTarget.FIELD.toFilterWithAdditionalNull(),
+                AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
             )
 
             mapOf(modifier to hasAnnotation)
@@ -157,7 +157,7 @@ internal class SymbolLightFieldForProperty private constructor(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = propertySymbolPointer,
-                    annotationUseSiteTargetFilter = AnnotationUseSiteTarget.FIELD.toFilterWithAdditionalNull(),
+                    annotationUseSiteTargetFilter = AnnotationUseSiteTarget.FIELD.toOptionalFilter(),
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->

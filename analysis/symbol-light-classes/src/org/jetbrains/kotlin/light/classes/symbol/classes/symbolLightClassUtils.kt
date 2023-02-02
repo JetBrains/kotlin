@@ -309,7 +309,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
     if (this !is SymbolLightClassForFacade && propertyTypeIsValueClass) return
 
     fun KtPropertyAccessorSymbol.needToCreateAccessor(siteTarget: AnnotationUseSiteTarget): Boolean {
-        val useSiteTargetFilterForPropertyAccessor = siteTarget.toFilterWithAdditionalNull()
+        val useSiteTargetFilterForPropertyAccessor = siteTarget.toOptionalFilter()
         if (onlyJvmStatic &&
             !hasJvmStaticAnnotation(useSiteTargetFilterForPropertyAccessor) &&
             !declaration.hasJvmStaticAnnotation(useSiteTargetFilterForPropertyAccessor)
@@ -404,7 +404,7 @@ private fun hasBackingField(property: KtPropertySymbol): Boolean {
 
     val fieldUseSite = AnnotationUseSiteTarget.FIELD
     if (property.modality == Modality.ABSTRACT ||
-        property.isHiddenOrSynthetic(fieldUseSite, fieldUseSite.toFilterWithAdditionalNull())
+        property.isHiddenOrSynthetic(fieldUseSite, fieldUseSite.toOptionalFilter())
     ) return false
 
     return hasBackingFieldByPsi ?: property.hasBackingField

@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
-internal fun AnnotationUseSiteTarget?.toFilterWithAdditionalNull(): AnnotationUseSiteTargetFilter {
+/**
+ * @return [AnnotationUseSiteTargetFilter] which allows [this] and [NoAnnotationUseSiteTargetFilter] filter
+ */
+internal fun AnnotationUseSiteTarget?.toOptionalFilter(): AnnotationUseSiteTargetFilter {
     if (this == null) return NoAnnotationUseSiteTargetFilter
 
     return annotationUseSiteTargetFilterOf(NoAnnotationUseSiteTargetFilter, toFilter())
