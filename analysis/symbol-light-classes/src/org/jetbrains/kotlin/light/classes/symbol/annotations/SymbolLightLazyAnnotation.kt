@@ -40,9 +40,9 @@ internal class SymbolLightLazyAnnotation(
 
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
         if (annotationApplication.isCallWithArguments) {
-            SymbolLightLazyAnnotationParameterList(this, lazyPub { annotationApplicationWithArgumentsInfo.value.arguments })
+            symbolLightAnnotationParameterList { annotationApplicationWithArgumentsInfo.value.arguments }
         } else {
-            SymbolLightEmptyAnnotationParameterList(this)
+            symbolLightAnnotationParameterList()
         }
     }
 

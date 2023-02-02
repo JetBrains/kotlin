@@ -29,7 +29,7 @@ internal open class SymbolLightJavaAnnotation(
     override fun getQualifiedName(): String = javaQualifier
 
     private val _parameterList: PsiAnnotationParameterList by lazyPub {
-        SymbolLightLazyAnnotationParameterList(this, lazyPub { argumentsComputer() })
+        symbolLightAnnotationParameterList { argumentsComputer() }
     }
 
     override fun getParameterList(): PsiAnnotationParameterList = _parameterList
