@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.fields
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.FieldAnnotationUseSiteTargetFilter
-import org.jetbrains.kotlin.analysis.api.annotations.NullAnnotationUseSiteTargetFilter
+import org.jetbrains.kotlin.analysis.api.annotations.NoAnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.PropertyAnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.symbolPointerOfType
@@ -46,7 +46,7 @@ internal class SymbolLightFieldForEnumEntry(
                     ktModule = ktModule,
                     annotatedSymbolPointer = enumEntry.symbolPointerOfType<KtEnumEntrySymbol>(),
                     annotationUseSiteTargetFilter = annotationUseSiteTargetFilterOf(
-                        NullAnnotationUseSiteTargetFilter,
+                        NoAnnotationUseSiteTargetFilter,
                         FieldAnnotationUseSiteTargetFilter,
                         PropertyAnnotationUseSiteTargetFilter,
                     ),

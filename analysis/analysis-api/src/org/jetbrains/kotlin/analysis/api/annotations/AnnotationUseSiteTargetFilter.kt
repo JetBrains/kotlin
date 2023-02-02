@@ -12,7 +12,7 @@ public fun interface AnnotationUseSiteTargetFilter {
 }
 
 public fun AnnotationUseSiteTarget?.toFilter(): AnnotationUseSiteTargetFilter = when (this) {
-    null -> NullAnnotationUseSiteTargetFilter
+    null -> NoAnnotationUseSiteTargetFilter
     AnnotationUseSiteTarget.FIELD -> FieldAnnotationUseSiteTargetFilter
     AnnotationUseSiteTarget.FILE -> FileAnnotationUseSiteTargetFilter
     AnnotationUseSiteTarget.PROPERTY -> PropertyAnnotationUseSiteTargetFilter
@@ -28,7 +28,7 @@ public object AnyAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = true
 }
 
-public object NullAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
+public object NoAnnotationUseSiteTargetFilter : AnnotationUseSiteTargetFilter {
     override fun isAllowed(useSiteTarget: AnnotationUseSiteTarget?): Boolean = useSiteTarget == null
 }
 

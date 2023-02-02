@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
 internal fun AnnotationUseSiteTarget?.toFilterWithAdditionalNull(): AnnotationUseSiteTargetFilter {
-    if (this == null) return NullAnnotationUseSiteTargetFilter
+    if (this == null) return NoAnnotationUseSiteTargetFilter
 
-    return annotationUseSiteTargetFilterOf(NullAnnotationUseSiteTargetFilter, toFilter())
+    return annotationUseSiteTargetFilterOf(NoAnnotationUseSiteTargetFilter, toFilter())
 }
 
 internal fun annotationUseSiteTargetFilterOf(
