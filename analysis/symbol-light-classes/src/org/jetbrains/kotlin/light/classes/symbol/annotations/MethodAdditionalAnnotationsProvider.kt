@@ -23,7 +23,7 @@ internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvi
     }
 
     override fun findSpecialAnnotation(
-        annotationsBox: LazyAnnotationsBox,
+        annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
         owner: PsiModifierList,
     ): PsiAnnotation? = if (owner.parent.isMethodWithOverride())

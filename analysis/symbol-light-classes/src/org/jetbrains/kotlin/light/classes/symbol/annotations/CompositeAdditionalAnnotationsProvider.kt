@@ -22,7 +22,7 @@ internal class CompositeAdditionalAnnotationsProvider(val providers: List<Additi
     }
 
     override fun findSpecialAnnotation(
-        annotationsBox: LazyAnnotationsBox,
+        annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
         owner: PsiModifierList,
     ): PsiAnnotation? = providers.firstNotNullOfOrNull { provider -> provider.findSpecialAnnotation(annotationsBox, qualifiedName, owner) }

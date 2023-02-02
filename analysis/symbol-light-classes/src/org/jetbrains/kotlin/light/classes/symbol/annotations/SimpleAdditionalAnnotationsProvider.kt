@@ -24,7 +24,7 @@ internal class SimpleAdditionalAnnotationsProvider(
     }
 
     override fun findSpecialAnnotation(
-        annotationsBox: LazyAnnotationsBox,
+        annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
         owner: PsiModifierList,
     ): PsiAnnotation? {

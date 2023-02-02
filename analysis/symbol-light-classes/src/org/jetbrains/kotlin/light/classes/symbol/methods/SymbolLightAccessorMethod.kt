@@ -186,7 +186,7 @@ internal class SymbolLightAccessorMethod private constructor(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
-            annotationsBox = LazyAnnotationsBox(
+            annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = CompositeAnnotationsProvider(
                     SymbolAnnotationsProvider(
                         ktModule = ktModule,

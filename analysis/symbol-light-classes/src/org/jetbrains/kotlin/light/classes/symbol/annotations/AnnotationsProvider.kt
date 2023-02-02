@@ -11,13 +11,13 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 /**
- * This class provides annotations to [LazyAnnotationsBox].
+ * This class provides annotations to [GranularAnnotationsBox].
  *
  * [EmptyAnnotationsProvider] is just an empty provider.
  * [SymbolAnnotationsProvider] is a provider based on [KtAnnotatedSymbol] API.
  * [CompositeAnnotationsProvider] is a composition of some [AnnotationsProvider].
  *
- * @see [LazyAnnotationsBox]
+ * @see [GranularAnnotationsBox]
  */
 internal sealed interface AnnotationsProvider {
     /**

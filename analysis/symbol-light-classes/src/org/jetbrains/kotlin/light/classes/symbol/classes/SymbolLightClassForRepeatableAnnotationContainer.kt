@@ -40,7 +40,7 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
         // It is marked as Abstract because all the annotation classes are marked as Abstract
         // It is marked as Static because all nested interfaces are marked as Static
         modifiersBox = InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.ABSTRACT),
-        annotationsBox = LazyAnnotationsBox(
+        annotationsBox = GranularAnnotationsBox(
             annotationsProvider = SymbolAnnotationsProvider(
                 ktModule = ktModule,
                 annotatedSymbolPointer = classOrObjectSymbolPointer,

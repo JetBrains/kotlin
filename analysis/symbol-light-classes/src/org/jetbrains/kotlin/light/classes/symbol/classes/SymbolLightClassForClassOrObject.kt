@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox
+import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
@@ -85,7 +85,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         SymbolLightClassModifierList(
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
-            annotationsBox = LazyAnnotationsBox(
+            annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(ktModule, classOrObjectSymbolPointer)
             ),
         )

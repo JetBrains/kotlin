@@ -67,7 +67,7 @@ class SymbolLightClassForFacade(
             annotationsBox = if (multiFileClass) {
                 EmptyAnnotationsBox
             } else {
-                LazyAnnotationsBox(
+                GranularAnnotationsBox(
                     annotationsProvider = SymbolAnnotationsProvider(
                         ktModule = this.ktModule,
                         annotatedSymbolPointer = firstFileInFacade.symbolPointerOfType<KtFileSymbol>(),

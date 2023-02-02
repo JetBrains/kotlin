@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.PsiAnnotation
 
 /**
- * Provider a filter for resulted annotations from [LazyAnnotationsBox]
+ * Provider a filter for resulted annotations from [GranularAnnotationsBox]
  *
- * @see LazyAnnotationsBox
+ * @see GranularAnnotationsBox
  */
 internal sealed interface AnnotationFilter {
     /**

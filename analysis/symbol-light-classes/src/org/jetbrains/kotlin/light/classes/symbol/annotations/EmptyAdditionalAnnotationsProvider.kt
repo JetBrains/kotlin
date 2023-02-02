@@ -16,7 +16,7 @@ internal object EmptyAdditionalAnnotationsProvider : AdditionalAnnotationsProvid
     ) = Unit
 
     override fun findSpecialAnnotation(
-        annotationsBox: LazyAnnotationsBox,
+        annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
         owner: PsiModifierList,
     ): PsiAnnotation? = null

@@ -15,7 +15,7 @@ import com.intellij.psi.PsiModifierList
  * [SimpleAdditionalAnnotationsProvider] is a collection of additional annotations.
  * [CompositeAdditionalAnnotationsProvider] is a composition of some [AdditionalAnnotationsProvider].
  *
- * @see [LazyAnnotationsBox]
+ * @see [GranularAnnotationsBox]
  */
 internal sealed interface AdditionalAnnotationsProvider {
     /**
@@ -30,8 +30,8 @@ internal sealed interface AdditionalAnnotationsProvider {
     fun addAllAnnotations(currentRawAnnotations: MutableList<in PsiAnnotation>, foundQualifiers: MutableSet<String>, owner: PsiModifierList)
 
     /**
-     * @return **true** if this qualifier should be treated as a **special** in [LazyAnnotationsBox.findAnnotation]
-     * (should be processed without [LazyAnnotationsBox.getOrComputeCachedAnnotations] call)
+     * @return **true** if this qualifier should be treated as a **special** in [GranularAnnotationsBox.findAnnotation]
+     * (should be processed without [GranularAnnotationsBox.getOrComputeCachedAnnotations] call)
      */
     fun isSpecialQualifier(qualifiedName: String): Boolean
 
@@ -44,7 +44,7 @@ internal sealed interface AdditionalAnnotationsProvider {
      *
      * @return a new annotation with [qualifiedName]
      */
-    fun findSpecialAnnotation(annotationsBox: LazyAnnotationsBox, qualifiedName: String, owner: PsiModifierList): PsiAnnotation?
+    fun findSpecialAnnotation(annotationsBox: GranularAnnotationsBox, qualifiedName: String, owner: PsiModifierList): PsiAnnotation?
 
     /**
      * Adds a new annotation with [qualifier] name to [currentRawAnnotations] and [foundQualifiers] if not already present

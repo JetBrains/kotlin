@@ -141,7 +141,7 @@ internal class SymbolLightSimpleMethod(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
-            annotationsBox = LazyAnnotationsBox(
+            annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = functionSymbolPointer,

@@ -24,7 +24,7 @@ internal class NullabilityAnnotationsProvider(private val lazyNullabilityType: L
     }
 
     override fun findSpecialAnnotation(
-        annotationsBox: LazyAnnotationsBox,
+        annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
         owner: PsiModifierList,
     ): PsiAnnotation? {

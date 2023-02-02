@@ -30,7 +30,7 @@ internal object AbstractClassAdditionalAnnotationsProvider : AdditionalAnnotatio
     }
 
     override fun findSpecialAnnotation(
-        annotationsBox: LazyAnnotationsBox,
+        annotationsBox: GranularAnnotationsBox,
         qualifiedName: String,
         owner: PsiModifierList,
     ): PsiAnnotation? = if (owner.parent.isAnnotationClass())
@@ -69,7 +69,7 @@ private fun addAllAnnotationsFromAnnotationClass(
 }
 
 private fun findAdditionalAnnotationFromAnnotationClass(
-    annotationsBox: LazyAnnotationsBox,
+    annotationsBox: GranularAnnotationsBox,
     qualifiedName: String,
     owner: PsiModifierList,
 ): PsiAnnotation? = annotationsBox.tryConvertToRetentionJavaAnnotation(qualifiedName, owner)
@@ -78,7 +78,7 @@ private fun findAdditionalAnnotationFromAnnotationClass(
     ?: annotationsBox.tryConvertToRepeatableJavaAnnotation(qualifiedName, owner)
 
 
-private fun LazyAnnotationsBox.tryConvertToDocumentedJavaAnnotation(
+private fun GranularAnnotationsBox.tryConvertToDocumentedJavaAnnotation(
     qualifiedName: String,
     owner: PsiModifierList,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
@@ -96,7 +96,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToDocumentedJavaAnnotation(
     owner = owner,
 )
 
-private fun LazyAnnotationsBox.tryConvertToRetentionJavaAnnotation(
+private fun GranularAnnotationsBox.tryConvertToRetentionJavaAnnotation(
     qualifiedName: String,
     owner: PsiModifierList,
 ): PsiAnnotation? {
@@ -150,7 +150,7 @@ private fun javaRetentionArguments(kotlinRetentionName: String?): List<KtNamedAn
     )
 )
 
-private fun LazyAnnotationsBox.tryConvertToRepeatableJavaAnnotation(
+private fun GranularAnnotationsBox.tryConvertToRepeatableJavaAnnotation(
     qualifiedName: String,
     owner: PsiModifierList,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
@@ -184,7 +184,7 @@ private fun SymbolLightJavaAnnotation.computeRepeatableJavaAnnotationArguments()
     )
 }
 
-private fun LazyAnnotationsBox.tryConvertToTargetJavaAnnotation(
+private fun GranularAnnotationsBox.tryConvertToTargetJavaAnnotation(
     qualifiedName: String,
     owner: PsiModifierList,
 ): PsiAnnotation? = tryConvertToJavaAnnotation(
@@ -251,7 +251,7 @@ private fun KtAnnotationValue.mapToJavaTarget(): String? {
     }?.name
 }
 
-private fun LazyAnnotationsBox.tryConvertToJavaAnnotation(
+private fun GranularAnnotationsBox.tryConvertToJavaAnnotation(
     qualifiedName: String,
     javaQualifier: String,
     kotlinQualifier: String,

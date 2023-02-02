@@ -153,7 +153,7 @@ internal class SymbolLightFieldForProperty private constructor(
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(initializerValue, ::computeModifiers),
-            annotationsBox = LazyAnnotationsBox(
+            annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(
                     ktModule = ktModule,
                     annotatedSymbolPointer = propertySymbolPointer,

@@ -41,7 +41,7 @@ internal class SymbolLightSetterParameter(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightClassModifierList(
             containingDeclaration = this,
-            annotationsBox = LazyAnnotationsBox(
+            annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = CompositeAnnotationsProvider(
                     SymbolAnnotationsProvider(
                         ktModule = ktModule,

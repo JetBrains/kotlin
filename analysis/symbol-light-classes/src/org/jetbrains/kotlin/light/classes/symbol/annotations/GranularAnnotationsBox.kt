@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.SmartList
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater
 
-internal class LazyAnnotationsBox(
+internal class GranularAnnotationsBox(
     private val annotationsProvider: AnnotationsProvider,
     private val additionalAnnotationsProvider: AdditionalAnnotationsProvider = EmptyAdditionalAnnotationsProvider,
     private val annotationFilter: AnnotationFilter = AlwaysAllowedAnnotationFilter,
@@ -84,7 +84,7 @@ internal class LazyAnnotationsBox(
 
     companion object {
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
-            /* tclass = */ LazyAnnotationsBox::class.java,
+            /* tclass = */ GranularAnnotationsBox::class.java,
             /* vclass = */ Collection::class.java,
             /* fieldName = */ "cachedAnnotations",
         )
