@@ -510,7 +510,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val logger = configuration.resolverLogger
         val resolvedLibraries = jsResolveLibraries(libraries + friendLibraries, logger).getFullResolvedList()
 
-        FirJsSessionFactory.createJsLibrarySession(
+        FirJsSessionFactory.createLibrarySession(
             escapedMainModuleName,
             resolvedLibraries,
             sessionProvider,
@@ -549,7 +549,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         }
 
         val commonSession = runIf(isMppEnabled) {
-            FirJsSessionFactory.createJsModuleBasedSession(
+            FirJsSessionFactory.createModuleBasedSession(
                 commonModuleData!!,
                 sessionProvider,
                 extensionRegistrars,
@@ -559,7 +559,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 init = sessionConfigurator,
             )
         }
-        val platformSession = FirJsSessionFactory.createJsModuleBasedSession(
+        val platformSession = FirJsSessionFactory.createModuleBasedSession(
             mainModuleData,
             sessionProvider,
             extensionRegistrars,

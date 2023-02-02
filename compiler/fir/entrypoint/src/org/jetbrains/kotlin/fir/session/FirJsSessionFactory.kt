@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 
 object FirJsSessionFactory : FirAbstractSessionFactory() {
-    fun createJsModuleBasedSession(
+    fun createModuleBasedSession(
         moduleData: FirModuleData,
         sessionProvider: FirProjectSessionProvider,
         extensionRegistrars: List<FirExtensionRegistrar>,
@@ -55,7 +55,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         )
     }
 
-    fun createJsLibrarySession(
+    fun createLibrarySession(
         mainModuleName: Name,
         resolvedLibraries: List<KotlinResolvedLibrary>,
         sessionProvider: FirProjectSessionProvider,

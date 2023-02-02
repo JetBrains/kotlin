@@ -41,7 +41,7 @@ object TestFirJsSessionFactory {
         val libraries = getAllJsDependenciesPaths(module, testServices)
         val resolvedLibraries = jsResolveLibraries(libraries, logger).getFullResolvedList()
 
-        return FirJsSessionFactory.createJsLibrarySession(
+        return FirJsSessionFactory.createLibrarySession(
             mainModuleName,
             resolvedLibraries,
             sessionProvider,
@@ -57,7 +57,7 @@ object TestFirJsSessionFactory {
         registerExtraComponents: ((FirSession) -> Unit),
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): FirSession =
-        FirJsSessionFactory.createJsModuleBasedSession(
+        FirJsSessionFactory.createModuleBasedSession(
             mainModuleData,
             sessionProvider,
             extensionRegistrars,
