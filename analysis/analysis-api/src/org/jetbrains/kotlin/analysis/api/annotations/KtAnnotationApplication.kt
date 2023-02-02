@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.psi.KtCallElement
  * - For declarations: `@Deprecated("Should not be used") fun foo(){}`
  * - For types: `fun foo(x: List<@A Int>){}`
  * - Inside another annotation (`B` is annotation here): `@A(B()) fun foo(){}
+ *
+ * @see KtAnnotationApplicationInfo
+ * @see KtAnnotationApplicationWithArgumentsInfo
  */
 public sealed interface KtAnnotationApplication {
     /**

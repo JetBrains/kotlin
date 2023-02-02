@@ -9,6 +9,10 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 
+/**
+ * @see KtAnnotated.annotations
+ * @see KtAnnotationApplicationInfo
+ */
 public data class KtAnnotationApplicationWithArgumentsInfo(
     override val classId: ClassId?,
     override val psi: KtCallElement?,

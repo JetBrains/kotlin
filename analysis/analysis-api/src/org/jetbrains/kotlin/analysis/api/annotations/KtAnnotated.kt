@@ -17,6 +17,9 @@ public interface KtAnnotated {
 /**
  * A list of annotations applied.
  *
+ * To check if annotation is present, please use [hasAnnotation].
+ * [annotationInfos] is more preferable if suits your needs because it is lightweight.
+ *
  * @see [KtAnnotationsList.annotations]
  */
 public val KtAnnotated.annotations: List<KtAnnotationApplicationWithArgumentsInfo>

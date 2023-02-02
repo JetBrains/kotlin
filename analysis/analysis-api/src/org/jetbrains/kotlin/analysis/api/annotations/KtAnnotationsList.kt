@@ -18,6 +18,7 @@ public abstract class KtAnnotationsList : KtLifetimeOwner {
      * A list of annotations applied.
      *
      * To check if annotation is present, please use [hasAnnotation].
+     * [annotationInfos] is more preferable if suits your needs as a lightweight.
      *
      * @see KtAnnotationApplication
      */

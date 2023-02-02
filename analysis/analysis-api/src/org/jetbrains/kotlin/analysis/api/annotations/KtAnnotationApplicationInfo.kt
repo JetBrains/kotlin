@@ -10,11 +10,19 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 
 /**
- * Info of annotation to some declaration or type.
+ * A lightweight implementation of [KtAnnotationApplication].
+ * Should be used instead of [KtAnnotationApplicationWithArgumentsInfo] where possible to avoid redundant resolve.
  *
- * Some examples:
- * - For declarations: `@Deprecated("Should not be used") fun foo(){}`
- * - For types: `fun foo(x: List<@A Int>){}`
+ * Example:
+ * ```
+ * @Anno1(1) @Anno2
+ * class Foo
+ * ```
+ * In this case if you don't want to process [KtAnnotationApplicationWithArgumentsInfo.arguments]
+ * you can call [KtAnnotated.annotationInfos] to get all necessary information.
+ *
+ * @see KtAnnotated.annotationInfos
+ * @see KtAnnotationApplicationWithArgumentsInfo
  */
 public data class KtAnnotationApplicationInfo(
     public override val classId: ClassId?,
