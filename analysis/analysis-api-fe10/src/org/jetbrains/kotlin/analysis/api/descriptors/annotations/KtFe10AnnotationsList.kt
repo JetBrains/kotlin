@@ -10,17 +10,16 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
-import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.maybeLocalClassId
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.classIdForAnnotation
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationApplication
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtAnnotationInfo
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.useSiteTarget
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
-import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 internal class KtFe10AnnotationsList private constructor(
     private val fe10Annotations: Annotations,
@@ -32,21 +31,15 @@ internal class KtFe10AnnotationsList private constructor(
 
     override val annotations: List<KtAnnotationApplicationWithArgumentsInfo>
         get() = withValidityAssertion {
-            fe10Annotations.mapIndexedNotNull { index, annotation ->
-                if (annotation.annotationClass.classId in annotationsToIgnore)
-                    null
-                else
-                    annotation.toKtAnnotationApplication(analysisContext, index)
+            mapNotIgnoredAnnotationsWithIndex { index, annotation ->
+                annotation.toKtAnnotationApplication(analysisContext, index)
             }
         }
 
     override val annotationInfos: List<KtAnnotationApplicationInfo>
         get() = withValidityAssertion {
-            fe10Annotations.mapIndexedNotNull { index, annotation ->
-                if (annotation.annotationClass.classId in annotationsToIgnore)
-                    null
-                else
-                    annotation.toKtAnnotationInfo(index)
+            mapNotIgnoredAnnotationsWithIndex { index, annotation ->
+                annotation.toKtAnnotationInfo(index)
             }
         }
 
@@ -55,11 +48,11 @@ internal class KtFe10AnnotationsList private constructor(
             withValidityAssertion {
                 val result = mutableListOf<ClassId>()
                 for (annotation in fe10Annotations) {
-                    val annotationClass = annotation.annotationClass ?: continue
-                    val classId = annotationClass.maybeLocalClassId
+                    val classId = annotation.classIdForAnnotation ?: continue
                     if (classId in annotationsToIgnore) continue
                     result += classId
                 }
+
                 return result
             }
         }
@@ -75,11 +68,23 @@ internal class KtFe10AnnotationsList private constructor(
         if (classId in annotationsToIgnore) return@withValidityAssertion emptyList()
 
         fe10Annotations.mapIndexedNotNull { index, annotation ->
-            if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.annotationClass?.maybeLocalClassId != classId) {
+            if (!useSiteTargetFilter.isAllowed(annotation.useSiteTarget) || annotation.classIdForAnnotation != classId) {
                 return@mapIndexedNotNull null
             }
 
             annotation.toKtAnnotationApplication(analysisContext, index)
+        }
+    }
+
+    private fun <T> mapNotIgnoredAnnotationsWithIndex(transformer: (index: Int, annotation: AnnotationDescriptor) -> T?): List<T> {
+        var ignoredAnnotationsCounter = 0
+        return fe10Annotations.mapIndexedNotNull { index, annotation ->
+            if (annotation.classIdForAnnotation in annotationsToIgnore) {
+                ignoredAnnotationsCounter++
+                null
+            } else {
+                transformer(index - ignoredAnnotationsCounter, annotation)
+            }
         }
     }
 
