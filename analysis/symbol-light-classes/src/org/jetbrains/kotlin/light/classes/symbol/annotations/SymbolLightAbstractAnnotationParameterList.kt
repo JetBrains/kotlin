@@ -13,11 +13,7 @@ import org.jetbrains.kotlin.psi.KtElement
 internal sealed class SymbolLightAbstractAnnotationParameterList(
     parent: SymbolLightAbstractAnnotation,
 ) : KtLightElementBase(parent), PsiAnnotationParameterList {
-    override val kotlinOrigin: KtElement?
-        get() = (parent as SymbolLightAbstractAnnotation).kotlinOrigin?.valueArgumentList
-
-    override fun equals(other: Any?): Boolean = other === this || other is SymbolLightLazyAnnotationParameterList && other.parent == parent
-    override fun hashCode(): Int = parent.hashCode()
+    override val kotlinOrigin: KtElement? get() = (parent as SymbolLightAbstractAnnotation).kotlinOrigin?.valueArgumentList
 }
 
 internal fun SymbolLightAbstractAnnotation.symbolLightAnnotationParameterList(
