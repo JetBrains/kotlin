@@ -1079,6 +1079,7 @@ class ComposableFunctionBodyTransformer(
                 )
             )
         } else {
+            scope.realizeCoalescableGroup()
             declaration.body = IrBlockBodyImpl(
                 body.startOffset,
                 body.endOffset,
