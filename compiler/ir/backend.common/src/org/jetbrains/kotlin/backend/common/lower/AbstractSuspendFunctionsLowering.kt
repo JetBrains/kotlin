@@ -33,7 +33,6 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
         stateMachineFunction: IrFunction,
         transformingFunction: IrFunction,
         argumentToPropertiesMap: Map<IrValueParameter, IrField>,
-        tailSuspendCalls: Set<IrCall>
     )
 
     protected abstract fun IrBlockBodyBuilder.generateCoroutineStart(invokeSuspendFunction: IrFunction, receiver: IrExpression)
@@ -64,7 +63,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         val (tailSuspendCalls, hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
         return if (hasNotTailSuspendCalls) {
-            listOf<IrDeclaration>(buildCoroutine(function, tailSuspendCalls).clazz, function)
+            listOf<IrDeclaration>(buildCoroutine(function).clazz, function)
         } else {
             // Otherwise, no suspend calls at all or all of them are tail calls - no need in a state machine.
             // Have to simplify them though (convert them to proper return statements).
@@ -101,8 +100,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     private val getContinuationSymbol = symbols.getContinuation
     private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
-    private fun buildCoroutine(irFunction: IrSimpleFunction, tailSuspendCalls: Set<IrCall>) =
-        CoroutineBuilder(irFunction, tailSuspendCalls).build().also { coroutine ->
+    private fun buildCoroutine(irFunction: IrSimpleFunction) =
+        CoroutineBuilder(irFunction).build().also { coroutine ->
             // Replace original function with a call to constructor of the built coroutine.
             val irBuilder = context.createIrBuilder(irFunction.symbol, irFunction.startOffset, irFunction.endOffset)
             irFunction.body = irBuilder.irBlockBody(irFunction) {
@@ -129,7 +128,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
     private class BuiltCoroutine(val clazz: IrClass, val constructor: IrConstructor, val stateMachineFunction: IrFunction)
 
-    private inner class CoroutineBuilder(val irFunction: IrFunction, val tailSuspendCalls: Set<IrCall>) {
+    private inner class CoroutineBuilder(val irFunction: IrFunction) {
         private val functionParameters = irFunction.explicitParameters
 
         private val coroutineClass: IrClass =
@@ -250,7 +249,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 overriddenSymbols += stateMachineFunction.symbol
             }
 
-            buildStateMachine(function, irFunction, argumentToPropertiesMap, tailSuspendCalls)
+            buildStateMachine(function, irFunction, argumentToPropertiesMap)
             return function
         }
     }

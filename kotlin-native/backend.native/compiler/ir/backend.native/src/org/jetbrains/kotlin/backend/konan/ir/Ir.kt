@@ -355,8 +355,6 @@ internal abstract class KonanSymbols(
     val invokeSuspendFunction =
             baseContinuationImpl.findMemberSimpleFunction(Name.identifier("invokeSuspend"))!!
 
-    val completionGetter = baseContinuationImpl.findMemberPropertyGetter(Name.identifier("completion"))!!
-
     override val coroutineSuspendedGetter = symbolTable.referenceSimpleFunction(
             coroutinesIntrinsicsPackage
                     .getContributedVariables(COROUTINE_SUSPENDED_NAME, NoLookupLocation.FROM_BACKEND)
