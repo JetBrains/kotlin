@@ -7,7 +7,7 @@ package kotlin
 
 import kotlin.js.*
 
-abstract class Enum<E : Enum<E>>(val name: String, val ordinal: Int) : Comparable<E> {
+abstract class Enum<E : Enum<E>>(@kotlin.internal.IntrinsicConstEvaluation val name: String, val ordinal: Int) : Comparable<E> {
 
     final override fun compareTo(other: E) = ordinal.compareTo(other.ordinal)
 
