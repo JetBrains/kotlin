@@ -40,11 +40,11 @@ abstract class TestFnBase(val type: String) {
     abstract fun testBad(x: Any)
 
     protected fun assertIs(x: Any, condition: Boolean) {
-        assert(condition) { "x is $type: failed for $x" }
+        require(condition) { "x is $type: failed for $x" }
     }
     
     protected fun assertIsNot(x: Any, condition: Boolean) {
-        assert(condition) { "x !is $type: failed for $x" }
+        require(condition) { "x !is $type: failed for $x" }
     }
 }
 

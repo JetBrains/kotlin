@@ -16,7 +16,7 @@ inline fun <reified T> assertReifiedIs(x: Any, type: String) {
     catch (e: Throwable) {
         throw AssertionError("$x is $type: should not throw exceptions, got $e")
     }
-    assert(answer) { "$x is $type: failed" }
+    require(answer) { "$x is $type: failed" }
 }
 
 inline fun <reified T> assertReifiedIsNot(x: Any, type: String) {
@@ -27,7 +27,7 @@ inline fun <reified T> assertReifiedIsNot(x: Any, type: String) {
     catch (e: Throwable) {
         throw AssertionError("$x !is $type: should not throw exceptions, got $e")
     }
-    assert(answer) { "$x !is $type: failed" }
+    require(answer) { "$x !is $type: failed" }
 }
 
 fun box(): String {
