@@ -109,6 +109,9 @@ class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>
     val isVararg: Boolean
         get() = fir.isVararg
 
+    val containingFunctionSymbol: FirFunctionSymbol<*>
+        get() = fir.containingFunctionSymbol
+
 }
 
 class FirErrorPropertySymbol(
