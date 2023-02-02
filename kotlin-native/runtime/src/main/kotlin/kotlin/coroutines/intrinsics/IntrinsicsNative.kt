@@ -26,14 +26,12 @@ import kotlin.native.internal.*
 public actual inline fun <T> (suspend () -> T).startCoroutineUninterceptedOrReturn(
         completion: Continuation<T>
 ): Any? {
+    val wrappedCompletion = wrapWithContinuationImpl(completion)
     val function = this as? Function1<Continuation<T>, Any?>
     return if (function == null)
-        startCoroutineUninterceptedOrReturnFallback(this, completion)
-    else {
-        function.invoke(
-                completion.takeIf { this is BaseContinuationImpl } ?: wrapWithContinuationImpl(completion)
-        )
-    }
+        startCoroutineUninterceptedOrReturnFallback(this, wrappedCompletion)
+    else
+        function.invoke(wrappedCompletion)
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -66,14 +64,12 @@ public actual inline fun <R, T> (suspend R.() -> T).startCoroutineUninterceptedO
         receiver: R,
         completion: Continuation<T>
 ): Any? {
+    val wrappedCompletion = wrapWithContinuationImpl(completion)
     val function = this as? Function2<R, Continuation<T>, Any?>
     return if (function == null)
-        startCoroutineUninterceptedOrReturnFallback(this, receiver, completion)
-    else {
-        function.invoke(receiver,
-                completion.takeIf { this is BaseContinuationImpl } ?: wrapWithContinuationImpl(completion)
-        )
-    }
+        startCoroutineUninterceptedOrReturnFallback(this, receiver, wrappedCompletion)
+    else
+        function.invoke(receiver, wrappedCompletion)
 }
 
 @Suppress("UNCHECKED_CAST")
@@ -96,14 +92,12 @@ internal actual inline fun <R, P, T> (suspend R.(P) -> T).startCoroutineUninterc
         param: P,
         completion: Continuation<T>
 ): Any? {
+    val wrappedCompletion = wrapWithContinuationImpl(completion)
     val function = this as? Function3<R, P, Continuation<T>, Any?>
     return if (function == null)
-        startCoroutineUninterceptedOrReturnFallback(this, receiver, param, completion)
-    else {
-        function.invoke(receiver, param,
-                completion.takeIf { this is BaseContinuationImpl } ?: wrapWithContinuationImpl(completion)
-        )
-    }
+        startCoroutineUninterceptedOrReturnFallback(this, receiver, param, wrappedCompletion)
+    else
+        function.invoke(receiver, param, wrappedCompletion)
 }
 
 @Suppress("UNCHECKED_CAST")
