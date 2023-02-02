@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.tools.lib
 import org.jetbrains.kotlin.*
 
 plugins {
-    id("build.tools-conventions")
+    id("kotlin.native.build-tools-conventions")
     id("native")
 }
 val libclangextEnabled = org.jetbrains.kotlin.konan.target.HostManager.hostIsMac

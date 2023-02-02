@@ -11,7 +11,7 @@ extra["org.jetbrains.kotlin.native.home"] = konanHome
 
 plugins {
     kotlin("multiplatform")
-    id("build.tools-conventions")
+    id("kotlin.native.build-tools-conventions")
     id("konan")
 }
 

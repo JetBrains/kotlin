@@ -4,7 +4,7 @@
  */
 
 plugins {
-    id("build.tools-conventions")
+    id("kotlin.native.build-tools-conventions")
     id("compile-to-bitcode")
 }
 

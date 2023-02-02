@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.konan.target.Family.*
 import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
-    id("build.tools-conventions")
+    id("kotlin.native.build-tools-conventions")
     id("native")
 }
 

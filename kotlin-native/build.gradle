@@ -50,7 +50,7 @@ if (isMac()) {
     checkXcodeVersion(project)
 }
 
-apply plugin: "build.tools-conventions"
+apply plugin: "kotlin.native.build-tools-conventions"
 
 ext {
     distDir = UtilsKt.getKotlinNativeDist(project)
