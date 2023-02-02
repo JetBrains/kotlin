@@ -52,7 +52,7 @@ public abstract class KtCallResolver : KtAnalysisSessionComponent() {
 public interface KtCallResolverMixIn : KtAnalysisSessionMixIn {
 
     public fun KtElement.resolveCall(): KtCallInfo? =
-        withValidityAssertion { withValidityAssertion { analysisSession.callResolver.resolveCall(this) } }
+        withValidityAssertion { analysisSession.callResolver.resolveCall(this) }
 
     public fun KtCallElement.resolveCall(): KtCallInfo = withValidityAssertion {
         analysisSession.callResolver.resolveCall(this)
