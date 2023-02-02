@@ -55,7 +55,7 @@ internal fun MethodNode.acceptWithStateMachine(
         isForNamedFunction = irFunction.isSuspend,
         disableTailCallOptimizationForFunctionReturningUnit = irFunction.isSuspend && irFunction.suspendFunctionOriginal().let {
             it.returnType.isUnit() && it.anyOfOverriddenFunctionsReturnsNonUnit()
-        },
+        } || (irFunction in (context.suspendFunctionUsedAsFunctionRef)),
         reportSuspensionPointInsideMonitor = {
             classCodegen.context.ktDiagnosticReporter.at(irFunction, classCodegen.irClass)
                 .report(JvmBackendErrors.SUSPENSION_POINT_INSIDE_MONITOR, it)
@@ -70,6 +70,7 @@ internal fun MethodNode.acceptWithStateMachine(
         shouldOptimiseUnusedVariables = !context.configuration.getBoolean(JVMConfigurationKeys.ENABLE_DEBUG_MODE)
     )
     accept(visitor)
+    context.suspendFunctionUsedAsFunctionRef.remove(irFunction)
 }
 
 private fun IrFunction.anyOfOverriddenFunctionsReturnsNonUnit(): Boolean =

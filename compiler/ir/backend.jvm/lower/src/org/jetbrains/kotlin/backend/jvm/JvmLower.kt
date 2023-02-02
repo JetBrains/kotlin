@@ -397,6 +397,7 @@ private val jvmFilePhases = listOf(
     toArrayPhase,
     jvmSafeCallFoldingPhase,
     jvmOptimizationLoweringPhase,
+    recordSuspendFunctionUsedAsFrLoweringPhase,
     additionalClassAnnotationPhase,
     recordEnclosingMethodsPhase,
     typeOperatorLowering,
