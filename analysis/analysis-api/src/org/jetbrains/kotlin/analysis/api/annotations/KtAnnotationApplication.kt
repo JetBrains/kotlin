@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtCallElement
 
 /**
- * Application of annotation to some declaration, type, or as argument inside other annotation.
+ * Application of annotation to some declaration, type, or as argument inside another annotation.
  *
  * Some examples:
  * - For declarations: `@Deprecated("Should not be used") fun foo(){}`
@@ -46,7 +46,7 @@ public sealed interface KtAnnotationApplication {
     public val isCallWithArguments: Boolean
 
     /**
-     * An index of the annotation in an owner. `null` for annotation arguments
+     * An index of the annotation in an owner. `null` when annotation is used as an argument of other annotations
      */
     public val index: Int?
 }
