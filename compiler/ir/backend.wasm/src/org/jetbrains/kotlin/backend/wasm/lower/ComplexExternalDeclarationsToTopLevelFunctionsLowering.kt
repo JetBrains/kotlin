@@ -201,6 +201,10 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
             return
         }
 
+        if (function.isFakeOverride) {
+            return
+        }
+
         val jsFunctionReference = when {
             jsFun != null -> "($jsFun)"
             function.isTopLevelDeclaration -> referenceTopLevelExternalDeclaration(function)

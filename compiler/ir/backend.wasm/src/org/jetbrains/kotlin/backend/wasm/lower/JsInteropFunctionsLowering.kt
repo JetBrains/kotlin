@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.addDispatchReceiver
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isBuiltInWasmRefType
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExported
@@ -621,7 +622,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         }
 
         val hashString: String =
-            functionType.hashCode().absoluteValue.toString(Character.MAX_RADIX)
+            // Rendering type to improve hash stability across compiler runs
+            functionType.render().cityHash64().toULong().toString(Character.MAX_RADIX)
 
         val originalParameterTypes: List<IrType> =
             functionType.arguments.dropLast(1).map { (it as IrTypeProjection).type }
