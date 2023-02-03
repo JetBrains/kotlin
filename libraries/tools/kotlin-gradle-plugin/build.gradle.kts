@@ -213,7 +213,52 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
 
     testing {
         suites {
-            val functionalTest by registering(JvmTestSuite::class) {
+            val functionalTest by registering(JvmTestSuite::class)
+
+            val functionalRegressionTest by registering(JvmTestSuite::class) {
+                sources {
+                    java {
+                        setSrcDirs(listOf("src/functionalTest/kotlin"))
+                    }
+                }
+
+                targets.all {
+                    testTask.configure {
+                        include("**/org/jetbrains/kotlin/gradle/regressionTests/**")
+                    }
+                }
+            }
+
+            val functionalDependencyResolutionTest by registering(JvmTestSuite::class) {
+                sources {
+                    java {
+                        setSrcDirs(listOf("src/functionalTest/kotlin"))
+                    }
+                }
+
+                targets.all {
+                    testTask.configure {
+                        include("**/org/jetbrains/kotlin/gradle/dependencyResolutionTests/**")
+                    }
+                }
+            }
+
+            val functionalUnitTest by registering(JvmTestSuite::class) {
+                sources {
+                    java {
+                        setSrcDirs(listOf("src/functionalTest/kotlin"))
+                    }
+                }
+
+                targets.all {
+                    testTask.configure {
+                        include("**/org/jetbrains/kotlin/gradle/unitTests/**")
+                    }
+                }
+            }
+
+            withType<JvmTestSuite>().configureEach {
+                if (name == "test") return@configureEach
                 useJUnit()
 
                 dependencies {
@@ -240,24 +285,6 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                 configurations.named(sources.runtimeOnlyConfigurationName) {
                     extendsFrom(configurations.getByName(mainSourceSet.runtimeOnlyConfigurationName))
                     extendsFrom(configurations.getByName(testSourceSet.runtimeOnlyConfigurationName))
-                }
-
-                targets.create("functionalRegressionTest") {
-                    testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/regressionTests/**")
-                    }
-                }
-
-                targets.create("functionalDependencyResolutionTest") {
-                    testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/dependencyResolutionTests/**")
-                    }
-                }
-
-                targets.create("functionalUnitTest") {
-                    testTask.configure {
-                        include("**/org/jetbrains/kotlin/gradle/unitTests/**")
-                    }
                 }
 
                 targets.all {
