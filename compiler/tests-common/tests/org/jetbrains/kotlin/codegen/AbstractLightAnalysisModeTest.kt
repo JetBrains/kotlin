@@ -25,16 +25,18 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         var TEST_LIGHT_ANALYSIS: ClassBuilderFactory = object : ClassBuilderFactories.TestClassBuilderFactory() {
             override fun getClassBuilderMode() = ClassBuilderMode.getLightAnalysisForTests()
         }
+
+        private val ignoreDirectives = listOf(
+            "// IGNORE_LIGHT_ANALYSIS",
+            "// MODULE:",
+            "// TARGET_FRONTEND: FIR",
+            "// IGNORE_BACKEND_K1:",
+        )
     }
 
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         for (file in files) {
-            if (file.content.contains("// IGNORE_LIGHT_ANALYSIS") ||
-                file.content.contains("// MODULE:") ||
-                file.content.contains("// TARGET_FRONTEND: FIR")
-            ) {
-                return
-            }
+            if (ignoreDirectives.any { file.content.contains(it) }) return
         }
 
         val fullTxt = compileWithFullAnalysis(files)
