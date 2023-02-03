@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
-import java.util.*
 
 internal class KtFirScopeProvider(
     override val analysisSession: KtFirAnalysisSession,
@@ -55,12 +54,6 @@ internal class KtFirScopeProvider(
 ) : KtScopeProvider() {
     // KtFirScopeProvider is thread local, so it's okay to use the same session here
     private val scopeSession = analysisSession.getScopeSessionFor(analysisSession.useSiteSession)
-
-    private val memberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtScope>()
-    private val declaredMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtScope>()
-    private val delegatedMemberScopeCache = IdentityHashMap<KtSymbolWithMembers, KtScope>()
-    private val fileScopeCache = IdentityHashMap<KtFileSymbol, KtScope>()
-    private val packageMemberScopeCache = IdentityHashMap<KtPackageSymbol, KtScope>()
 
     private inline fun <T> KtSymbolWithMembers.withFirForScope(crossinline body: (FirClass) -> T): T? {
         return when (this) {
@@ -78,19 +71,17 @@ internal class KtFirScopeProvider(
     }
 
     override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
-        return memberScopeCache.getOrPut(classSymbol) {
-            val firScope = classSymbol.withFirForScope { fir ->
-                fir.lazyResolveToPhase(FirResolvePhase.STATUS)
-                val firSession = analysisSession.useSiteSession
-                fir.unsubstitutedScope(
-                    firSession,
-                    scopeSession,
-                    withForcedTypeCalculator = false
-                )
-            }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope)
-                ?: return@getOrPut getEmptyScope()
-            KtFirDelegatingScope(firScope, builder)
-        }
+        val firScope = classSymbol.withFirForScope { fir ->
+            fir.lazyResolveToPhase(FirResolvePhase.STATUS)
+            val firSession = analysisSession.useSiteSession
+            fir.unsubstitutedScope(
+                firSession,
+                scopeSession,
+                withForcedTypeCalculator = false
+            )
+        }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope)
+            ?: return getEmptyScope()
+        return KtFirDelegatingScope(firScope, builder)
     }
 
     override fun getStaticMemberScope(symbol: KtSymbolWithMembers): KtScope {
@@ -106,43 +97,37 @@ internal class KtFirScopeProvider(
     }
 
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
-        return declaredMemberScopeCache.getOrPut(classSymbol) {
-            val firScope = classSymbol.withFirForScope {
-                analysisSession.useSiteSession.declaredMemberScope(it)
-            } ?: return@getOrPut getEmptyScope()
+        val firScope = classSymbol.withFirForScope {
+            analysisSession.useSiteSession.declaredMemberScope(it)
+        } ?: return getEmptyScope()
 
-            KtFirDelegatingScope(firScope, builder)
-        }
+        return KtFirDelegatingScope(firScope, builder)
     }
 
     override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
         val declaredScope = (getDeclaredMemberScope(classSymbol) as? KtFirDelegatingScope)?.firScope
-            ?: return delegatedMemberScopeCache.getOrPut(classSymbol) { getEmptyScope() }
-        return delegatedMemberScopeCache.getOrPut(classSymbol) {
-            val firScope = classSymbol.withFirForScope { fir ->
-                fir.lazyResolveToPhase(FirResolvePhase.STATUS)
-                val delegateFields = fir.delegateFields
-                if (delegateFields.isNotEmpty()) {
-                    val firSession = analysisSession.useSiteSession
-                    FirDelegatedMemberScope(
-                        firSession,
-                        scopeSession,
-                        fir,
-                        declaredScope,
-                        delegateFields
-                    )
-                } else null
-            } ?: return@getOrPut getEmptyScope()
+            ?: return getEmptyScope()
+        val firScope = classSymbol.withFirForScope { fir ->
+            fir.lazyResolveToPhase(FirResolvePhase.STATUS)
+            val delegateFields = fir.delegateFields
+            if (delegateFields.isNotEmpty()) {
+                val firSession = analysisSession.useSiteSession
+                FirDelegatedMemberScope(
+                    firSession,
+                    scopeSession,
+                    fir,
+                    declaredScope,
+                    delegateFields
+                )
+            } else null
+        } ?: return getEmptyScope()
 
-            KtFirDelegatedMemberScope(firScope, builder)
-        }
+        return KtFirDelegatedMemberScope(firScope, builder)
     }
 
     override fun getFileScope(fileSymbol: KtFileSymbol): KtScope {
-        return fileScopeCache.getOrPut(fileSymbol) {
             check(fileSymbol is KtFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${fileSymbol::class} was provided" }
-            KtFirFileScope(fileSymbol, builder)
-        }
+        return KtFirFileScope(fileSymbol, builder)
     }
 
     override fun getEmptyScope(): KtScope {
@@ -150,9 +135,7 @@ internal class KtFirScopeProvider(
     }
 
     override fun getPackageScope(packageSymbol: KtPackageSymbol): KtScope {
-        return packageMemberScopeCache.getOrPut(packageSymbol) {
-            createPackageScope(packageSymbol.fqName)
-        }
+        return createPackageScope(packageSymbol.fqName)
     }
 
 
