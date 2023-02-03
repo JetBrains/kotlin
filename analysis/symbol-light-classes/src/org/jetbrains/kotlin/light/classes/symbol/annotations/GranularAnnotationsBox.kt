@@ -94,16 +94,9 @@ internal class GranularAnnotationsBox(
          */
         private val specialAnnotationsList: Map<String, ClassId> = listOf(
             StandardClassIds.Annotations.Deprecated,
-//        Annotations.Retention,
-//        Annotations.Java.Retention,
-//        Annotations.Target,
-//        Annotations.Java.Target,
-//        Annotations.Java.Override,
             StandardClassIds.Annotations.DeprecatedSinceKotlin,
             StandardClassIds.Annotations.WasExperimental,
             StandardClassIds.Annotations.JvmRecord,
-//        Annotations.Repeatable,
-//        Annotations.Java.Repeatable,
         ).associateBy { it.asFqNameString() }
     }
 }
