@@ -458,7 +458,7 @@ class KotlinConstraintSystemCompleter(
             val position = constraint.position.from.let { basicPosition ->
                 if (basicPosition is IncorporationConstraintPosition) basicPosition.from else basicPosition
             }
-            if (position is BuilderInferenceSubstitutionConstraintPosition<*, *> && position.isFromNotSubstitutedDeclaredUpperBound) {
+            if (position is BuilderInferenceSubstitutionConstraintPosition<*> && position.isFromNotSubstitutedDeclaredUpperBound) {
                 upperBoundType = constraint.type
                 true
             } else {

@@ -30,6 +30,6 @@ class ConeLambdaArgumentConstraintPosition(
 
 
 class ConeBuilderInferenceSubstitutionConstraintPosition(initialConstraint: InitialConstraint) :
-    BuilderInferenceSubstitutionConstraintPosition<Nothing?, InitialConstraint>(null, initialConstraint) // TODO
+    BuilderInferenceSubstitutionConstraintPosition<Nothing?>(null, initialConstraint) // TODO
 
 class ConeReceiverConstraintPosition(receiver: FirExpression) : ReceiverConstraintPosition<FirExpression>(receiver)

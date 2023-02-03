@@ -21,7 +21,7 @@ class BuilderInferenceSubstitutionConstraintPositionImpl(
     builderInferenceLambda: LambdaKotlinCallArgument,
     initialConstraint: InitialConstraint,
     isFromNotSubstitutedDeclaredUpperBound: Boolean = false
-) : BuilderInferenceSubstitutionConstraintPosition<LambdaKotlinCallArgument, InitialConstraint>(
+) : BuilderInferenceSubstitutionConstraintPosition<LambdaKotlinCallArgument>(
     builderInferenceLambda, initialConstraint, isFromNotSubstitutedDeclaredUpperBound
 )
 
