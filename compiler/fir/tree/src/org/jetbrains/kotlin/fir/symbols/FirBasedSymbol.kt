@@ -59,15 +59,10 @@ abstract class FirBasedSymbol<E : FirDeclaration> {
 
 @SymbolInternals
 fun FirAnnotationContainer.resolvedCompilerRequiredAnnotations(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
-    return annotations.resolvedCompilerRequiredAnnotations(anchorElement)
-}
-
-@SymbolInternals
-fun List<FirAnnotation>.resolvedCompilerRequiredAnnotations(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
-    if (isEmpty()) return emptyList()
+    if (annotations.isEmpty()) return emptyList()
 
     anchorElement.lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
-    return this
+    return annotations
 }
 
 @SymbolInternals
@@ -114,15 +109,10 @@ fun List<FirAnnotation>.resolvedAnnotationsWithClassIds(anchorElement: FirBasedS
 
 @SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationClassIds(anchorElement: FirBasedSymbol<*>): List<ClassId> {
-    return annotations.resolvedAnnotationClassIds(anchorElement)
-}
-
-@SymbolInternals
-fun List<FirAnnotation>.resolvedAnnotationClassIds(anchorElement: FirBasedSymbol<*>): List<ClassId> {
-    if (isEmpty()) return emptyList()
+    if (annotations.isEmpty()) return emptyList()
 
     anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
-    return mapNotNull { (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId }
+    return annotations.mapNotNull { (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId }
 }
 
 @RequiresOptIn
