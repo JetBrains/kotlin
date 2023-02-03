@@ -193,13 +193,21 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
             }
             is ConeTypeVariableType -> lookupTag.name.asString()
             is ConeLookupTagBasedType -> lookupTag.name.asString()
+
+            // NOTE: Flexible types can occur not only as implicit return types,
+            // but also as implicit parameter types, for example in setters with implicit types
             is ConeFlexibleType -> {
-                // Can be present as return type
-                "${lowerBound.renderTypeAsKotlinType()}..${upperBound.renderTypeAsKotlinType()}"
+                // since Kotlin decompiler always "renders" flexible types as their lower bound, we can do the same here
+                lowerBound.renderTypeAsKotlinType()
             }
+
             else -> errorWithFirSpecificEntries("Type should not be present in Kotlin declaration", coneType = this)
         }.replace('/', '.')
-        return rendered + nullability.suffix
+
+        // UNKNOWN nullability occurs only on flexible types
+        val nullabilitySuffix = nullability.takeUnless { it == ConeNullability.UNKNOWN }?.suffix.orEmpty()
+
+        return rendered + nullabilitySuffix
     }
 
     private fun ConeTypeProjection.renderTypeAsKotlinType(): String = when (this) {
