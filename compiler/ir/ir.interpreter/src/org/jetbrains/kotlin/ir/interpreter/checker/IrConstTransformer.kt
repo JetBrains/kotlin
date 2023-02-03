@@ -25,13 +25,13 @@ class IrConstTransformer(
     private val interpreter: IrInterpreter,
     private val irFile: IrFile,
     private val mode: EvaluationMode,
-    private val onWarning: (IrElement, IrErrorExpression) -> Unit = { _, _ -> },
-    private val onError: (IrElement, IrErrorExpression) -> Unit = { _, _ -> },
+    private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
+    private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     private val suppressExceptions: Boolean = false,
 ) : IrElementTransformerVoid() {
     private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
-            onWarning(original, this)
+            onWarning(irFile, original, this)
             return original
         }
         return this
@@ -39,7 +39,7 @@ class IrConstTransformer(
 
     private fun IrExpression.reportIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
-            onError(original, this)
+            onError(irFile, original, this)
             return when (mode) {
                 // need to pass any const value to be able to get some bytecode and then report error
                 EvaluationMode.ONLY_INTRINSIC_CONST -> IrConstImpl.constNull(startOffset, endOffset, type)

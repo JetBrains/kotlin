@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.runners.codegen
 
-import org.jetbrains.kotlin.backend.jvm.lower.constEvaluationPhase
+import org.jetbrains.kotlin.backend.jvm.constEvaluationPhase
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
