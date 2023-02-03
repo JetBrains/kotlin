@@ -23,8 +23,8 @@ internal class KtFirFlexibleType(
     private val builder: KtSymbolByFirBuilder,
 ) : KtFlexibleType(), KtFirType {
 
-    override val lowerBound: KtType by cached { builder.typeBuilder.buildKtType(coneType.lowerBound) }
-    override val upperBound: KtType by cached { builder.typeBuilder.buildKtType(coneType.upperBound) }
+    override val lowerBound: KtType get() = withValidityAssertion { builder.typeBuilder.buildKtType(coneType.lowerBound) }
+    override val upperBound: KtType get() = withValidityAssertion { builder.typeBuilder.buildKtType(coneType.upperBound) }
     override val annotationsList: KtAnnotationsList by cached {
         KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
     }

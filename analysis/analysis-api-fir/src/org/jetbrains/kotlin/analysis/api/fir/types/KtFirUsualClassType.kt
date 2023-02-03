@@ -27,10 +27,11 @@ internal class KtFirUsualClassType(
     private val builder: KtSymbolByFirBuilder,
 ) : KtUsualClassType(), KtFirType {
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
-    override val classSymbol: KtClassLikeSymbol by cached {
-        builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
-            ?: errorWithFirSpecificEntries("Class was not found", coneType = coneType)
-    }
+    override val classSymbol: KtClassLikeSymbol
+        get() = withValidityAssertion {
+            builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)
+                ?: errorWithFirSpecificEntries("Class was not found", coneType = coneType)
+        }
 
     override val qualifiers by cached {
         UsualClassTypeQualifierBuilder.buildQualifiers(coneType, builder)
