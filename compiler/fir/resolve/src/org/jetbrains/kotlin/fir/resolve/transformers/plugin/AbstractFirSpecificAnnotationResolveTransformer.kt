@@ -45,21 +45,17 @@ import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
- * @see org.jetbrains.kotlin.light.classes.symbol.annotations.LazyAnnotationsBox.Companion
+ * @see org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox.Companion
  */
 object CompilerRequiredAnnotationsHelper {
     internal val REQUIRED_ANNOTATIONS_WITH_ARGUMENTS: Set<ClassId> = setOf(
         Deprecated,
-//        Annotations.Retention,
-//        Annotations.Target,
     )
 
     val REQUIRED_ANNOTATIONS: Set<ClassId> = REQUIRED_ANNOTATIONS_WITH_ARGUMENTS + setOf(
         DeprecatedSinceKotlin,
         WasExperimental,
         JvmRecord,
-//        Annotations.Repeatable,
-//        Annotations.Java.Repeatable,
     )
 }
 
