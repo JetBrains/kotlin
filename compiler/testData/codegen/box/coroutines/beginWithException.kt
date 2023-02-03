@@ -9,14 +9,11 @@ suspend fun suspendHere(): Any = suspendCoroutineUninterceptedOrReturn { x -> }
 fun builder(c: suspend () -> Unit) {
     var exception: Throwable? = null
 
-    c.createCoroutine(object : ContinuationAdapter<Unit>() {
+    c.createCoroutine(object : Continuation<Unit> {
         override val context = EmptyCoroutineContext
 
-        override fun resume(data: Unit) {
-        }
-
-        override fun resumeWithException(e: Throwable) {
-            exception = e
+        override fun resumeWith(data: Result<Unit>) {
+            exception = data.exceptionOrNull()
         }
     }).resumeWithException(RuntimeException("OK"))
 

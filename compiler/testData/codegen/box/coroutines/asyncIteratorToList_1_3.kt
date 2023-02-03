@@ -28,7 +28,7 @@ fun <T> asyncGenerate(block: suspend AsyncGenerator<T>.() -> Unit): AsyncSequenc
     }
 }
 
-class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, ContinuationAdapter<Unit>() {
+class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuation<Unit> {
     var computedNext = false
     var nextValue: T? = null
     var nextStep: Continuation<Unit>? = null
@@ -86,14 +86,9 @@ class AsyncGeneratorIterator<T>: AsyncIterator<T>, AsyncGenerator<T>, Continuati
     }
 
     // Completion continuation implementation
-    override fun resume(value: Unit) {
+    override fun resumeWith(value: Result<Unit>) {
         done()
-        resumeIterator(null)
-    }
-
-    override fun resumeWithException(exception: Throwable) {
-        done()
-        resumeIterator(exception)
+        resumeIterator(value.exceptionOrNull())
     }
 
     // Generator implementation

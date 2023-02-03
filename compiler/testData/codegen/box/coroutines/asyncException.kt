@@ -47,15 +47,15 @@ fun box(): String {
 
 fun <T> async(c: suspend () -> T): CompletableFuture<T> {
     val future = CompletableFuture<T>()
-    c.startCoroutine(object : helpers.ContinuationAdapter<T>() {
+    c.startCoroutine(object : Continuation<T> {
         override val context = EmptyCoroutineContext
 
-        override fun resume(data: T) {
-            future.complete(data)
-        }
-
-        override fun resumeWithException(exception: Throwable) {
-            future.completeExceptionally(exception)
+        override fun resumeWith(data: Result<T>) {
+            try {
+                future.complete(data.getOrThrow())
+            } catch (t: Throwable) {
+                future.completeExceptionally(t)
+            }
         }
     })
     return future

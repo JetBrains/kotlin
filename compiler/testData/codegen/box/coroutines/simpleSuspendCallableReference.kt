@@ -1,4 +1,3 @@
-// !LANGUAGE: +ReleaseCoroutines
 // WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*

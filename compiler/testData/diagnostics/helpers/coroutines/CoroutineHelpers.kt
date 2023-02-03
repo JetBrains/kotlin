@@ -32,17 +32,3 @@ class ResultContinuation : Continuation<Any?> {
 
     var result: Any? = null
 }
-
-abstract class ContinuationAdapter<in T> : Continuation<T> {
-    override val context: CoroutineContext = EmptyCoroutineContext
-    override fun resumeWith(result: Result<T>) {
-        if (result.isSuccess) {
-            resume(result.getOrThrow())
-        } else {
-            resumeWithException(result.exceptionOrNull()!!)
-        }
-    }
-
-    abstract fun resumeWithException(exception: Throwable)
-    abstract fun resume(value: T)
-}

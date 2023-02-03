@@ -27,25 +27,19 @@ class Controller {
 }
 
 abstract class ContinuationDispatcher : AbstractCoroutineContextElement(ContinuationInterceptor), ContinuationInterceptor {
-    abstract fun <T> dispatchResume(value: T, continuation: Continuation<T>): Boolean
-    abstract fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean
+    abstract fun <T> dispatchResumeWith(value: Result<T>, continuation: Continuation<T>): Boolean
     override fun <T> interceptContinuation(continuation: Continuation<T>): Continuation<T> = DispatchedContinuation(this, continuation)
 }
 
 private class DispatchedContinuation<T>(
     val dispatcher: ContinuationDispatcher,
     val continuation: Continuation<T>
-): ContinuationAdapter<T>() {
+): Continuation<T> {
     override val context: CoroutineContext = continuation.context
 
-    override fun resume(value: T) {
-        if (!dispatcher.dispatchResume(value, continuation))
-            continuation.resume(value)
-    }
-
-    override fun resumeWithException(exception: Throwable) {
-        if (!dispatcher.dispatchResumeWithException(exception, continuation))
-            continuation.resumeWithException(exception)
+    override fun resumeWith(value: Result<T>) {
+        if (!dispatcher.dispatchResumeWith(value, continuation))
+            continuation.resumeWith(value)
     }
 }
 
@@ -59,16 +53,9 @@ fun test(c: suspend Controller.() -> Unit): String {
             controller.log += "after $id;"
         }
 
-        override fun <P> dispatchResume(data: P, continuation: Continuation<P>): Boolean {
+        override fun <P> dispatchResumeWith(data: Result<P>, continuation: Continuation<P>): Boolean {
             dispatchResume {
-                continuation.resume(data)
-            }
-            return true
-        }
-
-        override fun dispatchResumeWithException(exception: Throwable, continuation: Continuation<*>): Boolean {
-            dispatchResume {
-                continuation.resumeWithException(exception)
+                continuation.resumeWith(data)
             }
             return true
         }

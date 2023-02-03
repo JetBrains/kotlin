@@ -1,4 +1,3 @@
-// !LANGUAGE: +ReleaseCoroutines
 // SKIP_TXT
 
 import kotlin.suspend as suspendLambda
