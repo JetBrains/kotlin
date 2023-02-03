@@ -384,8 +384,9 @@ class IrBuiltInsOverDescriptors(
     override val doubleArray = builtIns.getPrimitiveArrayClassDescriptorOrNull(PrimitiveType.DOUBLE)?.toIrSymbol()
     override val booleanArray = builtIns.getPrimitiveArrayClassDescriptorOrNull(PrimitiveType.BOOLEAN)?.toIrSymbol()
 
-    override val primitiveArraysToPrimitiveTypes =
-        PrimitiveType.values().associate { builtIns.getPrimitiveArrayClassDescriptorOrNull(it).toIrSymbol() to it }
+    override val primitiveArraysToPrimitiveTypes = PrimitiveType.values()
+        .filter { builtIns.getPrimitiveArrayClassDescriptorOrNull(it) != null }
+        .associateBy { builtIns.getPrimitiveArrayClassDescriptorOrNull(it).toIrSymbol() }
     override val primitiveTypesToPrimitiveArrays = primitiveArraysToPrimitiveTypes.map { (k, v) -> v to k }.toMap()
     override val primitiveArrayElementTypes = primitiveArraysToPrimitiveTypes.mapValues { primitiveTypeToIrType[it.value] }
     override val primitiveArrayForType = primitiveArrayElementTypes.asSequence().associate { it.value to it.key }

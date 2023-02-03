@@ -75,8 +75,7 @@ fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
 
 fun IrType.toArrayOrPrimitiveArrayType(irBuiltIns: IrBuiltIns): IrType =
     if (isPrimitiveType()) {
-        irBuiltIns.primitiveArrayForType[this]?.defaultType
-            ?: throw AssertionError("$this not in primitiveArrayForType")
+        irBuiltIns.getPrimitiveArrayType(this)
     } else {
         irBuiltIns.arrayClass.typeWith(this)
     }

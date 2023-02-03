@@ -278,7 +278,7 @@ class Fir2IrTypeConverter(
     private fun getArrayClassSymbol(classId: ClassId?): IrClassSymbol? {
         val primitiveId = StandardClassIds.elementTypeByPrimitiveArrayType[classId] ?: return null
         val irType = classIdToTypeMap[primitiveId]
-        return irBuiltIns.primitiveArrayForType[irType] ?: error("Strange primitiveId $primitiveId from array: $classId")
+        return irBuiltIns.primitiveArrayForType[irType]
     }
 
     private fun getBuiltInClassSymbol(classId: ClassId?): IrClassSymbol? {

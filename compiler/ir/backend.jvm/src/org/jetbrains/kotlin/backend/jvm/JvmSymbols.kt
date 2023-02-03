@@ -50,6 +50,7 @@ class JvmSymbols(
 
     private val kotlinPackage: IrPackageFragment = createPackage(FqName("kotlin"))
     private val kotlinCoroutinesPackage: IrPackageFragment = createPackage(FqName("kotlin.coroutines"))
+    private val kotlinCollectionsPackage: IrPackageFragment = createPackage(FqName("kotlin.collections"))
     private val kotlinCoroutinesJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.coroutines.jvm.internal"))
     private val kotlinJvmPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm"))
     private val kotlinJvmInternalPackage: IrPackageFragment = createPackage(FqName("kotlin.jvm.internal"))
@@ -105,6 +106,7 @@ class JvmSymbols(
                 "java.lang.invoke" -> javaLangInvokePackage
                 "java.util" -> javaUtilPackage
                 "kotlin.internal" -> kotlinInternalPackage
+                "kotlin.collections" -> kotlinCollectionsPackage
                 else -> error("Other packages are not supported yet: $fqName")
             }
             createImplicitParameterDeclarationWithWrappedDescriptor()
@@ -890,7 +892,7 @@ class JvmSymbols(
                 addValueParameter("element", irType)
             }
 
-            klass.addFunction("toArray", irBuiltIns.primitiveArrayForType.getValue(irType).defaultType)
+            klass.addFunction("toArray", irBuiltIns.getPrimitiveArrayType(irType))
         }
     }
 
@@ -1155,6 +1157,16 @@ class JvmSymbols(
         val RAW_TYPE_ANNOTATION_FQ_NAME =
             IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier("RawType"))
     }
+
+    val intArrayFactory: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.identifier("IntArray")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            returnType = irBuiltIns.getPrimitiveArrayType(irBuiltIns.intType)
+            parent = createClass(StandardNames.FqNames.arraysKt).owner
+            addValueParameter("size", irBuiltIns.intType)
+        }.symbol
 }
 
 fun IrClassSymbol.functionByName(name: String): IrSimpleFunctionSymbol =
