@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkElementMetadata
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.FirAbstractContractResolveTransformerDispatcher
 
@@ -45,7 +45,7 @@ internal class LLFirDesignatedContractsResolveTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.target.resolvePhase >= FirResolvePhase.CONTRACTS) return
-        designation.target.checkPhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+        designation.target.checkElementMetadata(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
 
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.CONTRACTS) {
@@ -58,7 +58,7 @@ internal class LLFirDesignatedContractsResolveTransformer(
     }
 
     override fun checkIsResolved(target: FirElementWithResolvePhase) {
-        target.checkPhase(FirResolvePhase.CONTRACTS)
+        target.checkElementMetadata(FirResolvePhase.CONTRACTS)
         if (target is FirContractDescriptionOwner) {
            // TODO checkContractDescriptionIsResolved(declaration)
         }

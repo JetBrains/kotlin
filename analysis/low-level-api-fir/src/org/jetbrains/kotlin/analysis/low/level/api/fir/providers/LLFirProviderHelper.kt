@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
+import org.jetbrains.kotlin.analysis.utils.caches.strongCachedValue
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirSession
@@ -38,7 +40,7 @@ internal class LLFirProviderHelper(
     private val allowKotlinPackage = canContainKotlinPackage ||
             firSession.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
-    private val classifierByClassId =
+    private val classifierByClassId by strongCachedValue(LLFirExceptionHandler) {
         firSession.firCachesFactory.createCache<ClassId, FirClassLikeDeclaration?, KtClassLikeDeclaration?> { classId, context ->
             val ktClass = context ?: declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return@createCache null
 
@@ -47,14 +49,16 @@ internal class LLFirProviderHelper(
             FirElementFinder.findClassifierWithClassId(firFile, classId)
                 ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
         }
+    }
 
-
-    private val callablesByCallableId = firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>> { callableId ->
-        val files = declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
-        buildList {
-            files.forEach { ktFile ->
-                val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
-                firFile.collectCallableDeclarationsTo(this, callableId.callableName)
+    private val callablesByCallableId by strongCachedValue(LLFirExceptionHandler) {
+        firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>> { callableId ->
+            val files = declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
+            buildList {
+                files.forEach { ktFile ->
+                    val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
+                    firFile.collectCallableDeclarationsTo(this, callableId.callableName)
+                }
             }
         }
     }

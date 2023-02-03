@@ -43,7 +43,7 @@ internal class LLFirDesignatedTypeResolverTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.target.resolvePhase >= FirResolvePhase.TYPES) return
-        designation.target.checkPhase(FirResolvePhase.SUPER_TYPES)
+        designation.target.checkElementMetadata(FirResolvePhase.SUPER_TYPES)
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.TYPES) {
             designation.firFile.transform<FirFile, Any?>(this, null)
@@ -62,7 +62,7 @@ internal class LLFirDesignatedTypeResolverTransformer(
     }
 
     override fun checkIsResolved(target: FirElementWithResolvePhase) {
-        target.checkPhase(FirResolvePhase.TYPES)
+        target.checkElementMetadata(FirResolvePhase.TYPES)
         when (target) {
             is FirCallableDeclaration -> {
                 checkReturnTypeRefIsResolved(target, acceptImplicitTypeRef = true)

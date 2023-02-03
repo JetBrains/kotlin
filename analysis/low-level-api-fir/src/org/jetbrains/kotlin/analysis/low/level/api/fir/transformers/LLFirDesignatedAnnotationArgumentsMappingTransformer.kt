@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnnotationArgumentsMappingIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkElementMetadata
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
@@ -39,7 +39,7 @@ internal class LLFirDesignatedAnnotationArgumentsMappingTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.target.resolvePhase >= FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) return
-        designation.target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        designation.target.checkElementMetadata(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
 
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
             FirLazyBodiesCalculator.calculateAnnotations(designation.firFile)
@@ -51,7 +51,7 @@ internal class LLFirDesignatedAnnotationArgumentsMappingTransformer(
     }
 
     override fun checkIsResolved(target: FirElementWithResolvePhase) {
-        target.checkPhase(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
+        target.checkElementMetadata(FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING)
         if (target !is FirAnnotationContainer) return
         for (annotation in target.annotations) {
             if (annotation is FirAnnotationCall) {

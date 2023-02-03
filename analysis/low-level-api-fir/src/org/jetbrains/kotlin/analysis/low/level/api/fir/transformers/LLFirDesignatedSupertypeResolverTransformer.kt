@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockPro
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirResolvableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkElementMetadata
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
@@ -155,7 +155,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.target.resolvePhase >= FirResolvePhase.SUPER_TYPES) return
-        designation.firFile.checkPhase(FirResolvePhase.IMPORTS)
+        designation.firFile.checkElementMetadata(FirResolvePhase.IMPORTS)
 
         val targetDesignation = if (designation.target !is FirClassLikeDeclaration) {
             val resolvableTarget = designation.path.lastOrNull()
@@ -178,7 +178,7 @@ internal class LLFirDesignatedSupertypeResolverTransformer(
     }
 
     override fun checkIsResolved(target: FirElementWithResolvePhase) {
-        target.checkPhase(FirResolvePhase.SUPER_TYPES)
+        target.checkElementMetadata(FirResolvePhase.SUPER_TYPES)
         when (target) {
             is FirClass -> {
                 for (superTypeRef in target.superTypeRefs) {

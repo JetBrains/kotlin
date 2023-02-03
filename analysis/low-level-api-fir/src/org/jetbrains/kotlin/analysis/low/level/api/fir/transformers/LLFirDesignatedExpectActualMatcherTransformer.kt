@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkElementMetadata
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -39,7 +39,7 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.target.resolvePhase >= FirResolvePhase.EXPECT_ACTUAL_MATCHING) return
-        designation.target.checkPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+        designation.target.checkElementMetadata(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
 
         FirLazyBodiesCalculator.calculateLazyBodiesInside(designation)
         phaseRunner.runPhaseWithCustomResolve(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
@@ -53,7 +53,7 @@ internal class LLFirDesignatedExpectActualMatcherTransformer(
     }
 
     override fun checkIsResolved(target: FirElementWithResolvePhase) {
-        target.checkPhase(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
+        target.checkElementMetadata(FirResolvePhase.EXPECT_ACTUAL_MATCHING)
         // TODO check if expect-actual matching is present
         checkNestedDeclarationsAreResolved(target)
     }

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
+import org.jetbrains.kotlin.analysis.utils.caches.strongCachedValue
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.concurrent.ConcurrentHashMap
 
@@ -13,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
  * Belongs to a [org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession]
  */
 internal class FileStructureCache(private val moduleResolveComponents: LLFirModuleResolveComponents) {
-    private val cache = ConcurrentHashMap<KtFile, FileStructure>()
+    private val cache: ConcurrentHashMap<KtFile, FileStructure> by strongCachedValue(LLFirExceptionHandler) { ConcurrentHashMap() }
 
     fun getFileStructure(ktFile: KtFile): FileStructure = cache.computeIfAbsent(ktFile) {
         FileStructure.build(ktFile, moduleResolveComponents)

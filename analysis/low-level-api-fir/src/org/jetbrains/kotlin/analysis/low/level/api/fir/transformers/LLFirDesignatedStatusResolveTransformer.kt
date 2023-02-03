@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer.Companion.updatePhaseDeep
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeclarationStatusIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkElementMetadata
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -78,7 +78,7 @@ internal class LLFirDesignatedStatusResolveTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.target.resolvePhase >= FirResolvePhase.STATUS) return
-        designation.target.checkPhase(FirResolvePhase.TYPES)
+        designation.target.checkElementMetadata(FirResolvePhase.TYPES)
 
         val designationIterator = designation.path.iterator()
         val transformer = FirDesignatedStatusResolveTransformerForIDE(designationIterator)
@@ -92,7 +92,7 @@ internal class LLFirDesignatedStatusResolveTransformer(
 
     override fun checkIsResolved(target: FirElementWithResolvePhase) {
         if (target !is FirAnonymousInitializer) {
-            target.checkPhase(FirResolvePhase.STATUS)
+            target.checkElementMetadata(FirResolvePhase.STATUS)
         }
         if (target is FirMemberDeclaration) {
             checkDeclarationStatusIsResolved(target)

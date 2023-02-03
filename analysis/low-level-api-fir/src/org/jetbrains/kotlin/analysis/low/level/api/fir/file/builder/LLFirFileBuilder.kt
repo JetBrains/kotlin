@@ -7,10 +7,17 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.psi.KtFile
+
+private object FileStructureStampKey : FirDeclarationDataKey()
+
+internal var FirFile.fileStructureStamp: Long? by FirDeclarationDataRegistry.data(FileStructureStampKey)
 
 /**
  * Responsible for building [FirFile] by [KtFile]
@@ -30,11 +37,11 @@ internal class LLFirFileBuilder(
             else -> BodyBuildingMode.LAZY_BODIES
         }
 
-        RawFirBuilder(
-            moduleComponents.session,
-            moduleComponents.scopeProvider,
-            bodyBuildingMode = bodyBuildingMode
-        ).buildFirFile(ktFile)
+        val builder = RawFirBuilder(moduleComponents.session, moduleComponents.scopeProvider, bodyBuildingMode = bodyBuildingMode)
+
+        builder.buildFirFile(ktFile).apply {
+            fileStructureStamp = LLFirExceptionHandler.modificationCount
+        }
     }
 }
 

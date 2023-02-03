@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirPhaseRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkElementMetadata
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkTypeRefIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
@@ -56,7 +56,7 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
 
     override fun transformDeclaration(phaseRunner: LLFirPhaseRunner) {
         if (designation.target.resolvePhase >= FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS) return
-        designation.target.checkPhase(FirResolvePhase.STATUS)
+        designation.target.checkElementMetadata(FirResolvePhase.STATUS)
 
         val designationIterator = designation.toSequenceWithFile(includeTarget = false).iterator()
 
@@ -75,7 +75,7 @@ internal class LLFirDesignatedAnnotationArgumentsResolveTransformer(
         check(unresolvedAnnotation == null) {
             "Unexpected annotationTypeRef annotation, expected resolvedType but actual ${unresolvedAnnotation?.annotationTypeRef}"
         }
-        target.checkPhase(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
+        target.checkElementMetadata(FirResolvePhase.ARGUMENTS_OF_ANNOTATIONS)
 
         for (annotation in target.annotations) {
             for (argument in annotation.argumentMapping.mapping.values) {

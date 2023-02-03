@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
+import com.intellij.openapi.progress.ProcessCanceledException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.fileStructureStamp
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -13,22 +15,27 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 
-internal fun FirElementWithResolvePhase.checkPhase(requiredResolvePhase: FirResolvePhase) {
+internal fun FirElementWithResolvePhase.checkElementMetadata(requiredResolvePhase: FirResolvePhase) {
+    val containingFile = this.getContainingFile()
+    if (containingFile != null && containingFile.fileStructureStamp != LLFirExceptionHandler.modificationCount) {
+        throw ProcessCanceledException()
+    }
+
     val declarationResolvePhase = resolvePhase
     checkWithAttachmentBuilder(
         declarationResolvePhase >= requiredResolvePhase,
         { "At least $requiredResolvePhase expected but $declarationResolvePhase found for ${this::class.simpleName}" }
     ) {
-        withFirEntry("firDeclaration", this@checkPhase)
+        withFirEntry("firDeclaration", this@checkElementMetadata)
     }
 }
 
 internal fun FirDesignation.checkPathPhase(firResolvePhase: FirResolvePhase) =
-    path.forEach { it.checkPhase(firResolvePhase) }
+    path.forEach { it.checkElementMetadata(firResolvePhase) }
 
 internal fun FirDesignation.checkDesignationPhase(firResolvePhase: FirResolvePhase) {
     checkPathPhase(firResolvePhase)
-    target.checkPhase(firResolvePhase)
+    target.checkElementMetadata(firResolvePhase)
 }
 
 internal fun FirDesignation.checkDesignationPhaseForClasses(firResolvePhase: FirResolvePhase) {
