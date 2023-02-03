@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: NATIVE
 // WITH_STDLIB
 
 const val code = '1'.code

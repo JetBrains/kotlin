@@ -1,6 +1,3 @@
-// KT-56189 error: an annotation argument must be a compile-time constant
-// -3.14 is not constant
-// MUTED_WHEN: K2
 package test
 
 annotation class Primitives(

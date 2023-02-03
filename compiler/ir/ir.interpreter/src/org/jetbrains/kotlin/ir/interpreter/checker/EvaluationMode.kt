@@ -50,7 +50,10 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
     ONLY_BUILTINS(mustCheckBody = false) {
         private val forbiddenMethodsOnPrimitives = setOf("inc", "dec", "rangeTo", "rangeUntil", "hashCode")
         private val forbiddenMethodsOnStrings = setOf("subSequence", "hashCode", "<init>")
-        private val allowedExtensionFunctions = setOf("kotlin.floorDiv", "kotlin.mod", "kotlin.NumbersKt.floorDiv", "kotlin.NumbersKt.mod")
+        private val allowedExtensionFunctions = setOf(
+            "kotlin.floorDiv", "kotlin.mod", "kotlin.NumbersKt.floorDiv", "kotlin.NumbersKt.mod", "kotlin.<get-code>",
+            "kotlin.internal.ir.EQEQ",
+        )
 
         override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean {
             if ((function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isConst == true) return true

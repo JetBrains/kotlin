@@ -24013,6 +24013,18 @@ public class K1NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt56215.kt");
             }
 
+            @Test
+            @TestMetadata("stringConcatenationWithObject.kt")
+            public void testStringConcatenationWithObject() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringConcatenationWithObject.kt");
+            }
+
+            @Test
+            @TestMetadata("thisPlusString.kt")
+            public void testThisPlusString() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusString.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck")
             @TestDataPath("$PROJECT_ROOT")
@@ -24023,6 +24035,78 @@ public class K1NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
                 @Test
                 public void testAllFilesPresentInDumpIrAndCheck() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+
+                @Test
+                @TestMetadata("booleanOperations.kt")
+                public void testBooleanOperations() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/booleanOperations.kt");
+                }
+
+                @Test
+                @TestMetadata("byteOperations.kt")
+                public void testByteOperations() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/byteOperations.kt");
+                }
+
+                @Test
+                @TestMetadata("charOperations.kt")
+                public void testCharOperations() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/charOperations.kt");
+                }
+
+                @Test
+                @TestMetadata("doubleOperations.kt")
+                public void testDoubleOperations() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/doubleOperations.kt");
+                }
+
+                @Test
+                @TestMetadata("floatOperations.kt")
+                public void testFloatOperations() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/floatOperations.kt");
+                }
+
+                @Test
+                @TestMetadata("ifConstVal.kt")
+                public void testIfConstVal() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/ifConstVal.kt");
+                }
+
+                @Test
+                @TestMetadata("intOperations.kt")
+                public void testIntOperations() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/intOperations.kt");
+                }
+
+                @Test
+                @TestMetadata("longOperations.kt")
+                public void testLongOperations() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/longOperations.kt");
+                }
+
+                @Test
+                @TestMetadata("shortOperations.kt")
+                public void testShortOperations() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/shortOperations.kt");
+                }
+
+                @Test
+                @TestMetadata("stdlibConst.kt")
+                public void testStdlibConst() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stdlibConst.kt");
+                }
+
+                @Test
+                @TestMetadata("stringOperations.kt")
+                public void testStringOperations() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stringOperations.kt");
+                }
+
+                @Test
+                @TestMetadata("unsignedConst.kt")
+                public void testUnsignedConst() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/unsignedConst.kt");
                 }
             }
         }

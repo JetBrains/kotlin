@@ -1420,8 +1420,7 @@ task localClass_localHierarchy(type: KonanLocalTest) {
 }
 
 standaloneTest("objectDeclaration_globalConstants") {
-    disabled = (cacheTesting != null) || // Cache is not compatible with -opt.
-            isK2(project) // KT-56189
+    disabled = (cacheTesting != null) // Cache is not compatible with -opt.
     flags = ["-opt", "-opt-in=kotlin.native.internal.InternalForKotlinNative", "-tr"]
     source = "codegen/objectDeclaration/globalConstants.kt"
 }
@@ -2846,7 +2845,6 @@ standaloneTest("runtime_math_exceptions") {
 }
 
 standaloneTest("runtime_math") {
-    disabled = isK2(project) // KT-56189
     source = "stdlib_external/numbers/MathTest.kt"
     flags = ['-tr']
 }
@@ -3095,7 +3093,6 @@ task concatenation(type: KonanLocalTest) {
 }
 
 task const_infinity(type: KonanLocalTest) {
-    disabled = isK2(project) // KT-56189
     source = "codegen/basics/const_infinity.kt"
 }
 
@@ -3217,7 +3214,6 @@ task initializers3(type: KonanLocalTest) {
 }
 
 task initializers4(type: KonanLocalTest) {
-    disabled = isK2(project)  // KT-56189
     useGoldenData = true
     source = "runtime/basic/initializers4.kt"
 }
@@ -6147,10 +6143,6 @@ task buildKonanTests { t ->
 
     // These tests should not be built into the TestRunner's test executable
     def excludeList = [ "codegen/inline/returnLocalClassFromBlock.kt" ]
-    if (isK2(project)) {
-        excludeList += "codegen/basics/const_infinity.kt" // KT-56189
-        excludeList += "runtime/basic/initializers4.kt"   // KT-56189
-    }
     project.tasks
             .withType(KonanStandaloneTest.class)
             .each {

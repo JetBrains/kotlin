@@ -417,9 +417,14 @@ class Fir2IrConverter(
 
     companion object {
         private fun evaluateConstants(irModuleFragment: IrModuleFragment) {
+            val firModuleDescriptor = irModuleFragment.descriptor as? FirModuleDescriptor
+            val languageVersionSettings = firModuleDescriptor?.session?.languageVersionSettings
+            val intrinsicConstEvaluation = languageVersionSettings?.supportsFeature(LanguageFeature.IntrinsicConstEvaluation) == true
+
             val interpreter = IrInterpreter(irModuleFragment.irBuiltins)
+            val mode = if (intrinsicConstEvaluation) EvaluationMode.ONLY_INTRINSIC_CONST else EvaluationMode.ONLY_BUILTINS
             irModuleFragment.files.forEach {
-                it.transformChildren(IrConstTransformer(interpreter, it, mode = EvaluationMode.ONLY_BUILTINS), null)
+                it.transformChildren(IrConstTransformer(interpreter, it, mode = mode), null)
             }
         }
 

@@ -61,7 +61,10 @@ fun generateMap(): String {
         this += Operation("toString", listOf("Unit"), customExpression = "Unit.toString()")
     })
 
-    generateInterpretBinaryFunction(p, getOperationMap(2) + getBinaryIrOperationMap(irBuiltIns) + getExtensionOperationMap())
+    generateInterpretBinaryFunction(
+        p,
+        getOperationMap(2) + getBinaryIrOperationMap(irBuiltIns) + getExtensionOperationMap() + getAdditionalEqualsOperationMap()
+    )
 
     generateInterpretTernaryFunction(p, getOperationMap(3))
 
@@ -272,6 +275,16 @@ private fun getExtensionOperationMap(): List<Operation> {
     }
 
     return operationMap
+}
+
+// We need this additional list to properly interpret functions like `Boolean.equals(Boolean) in Native`
+// Probably can be dropped after KT-57344 fix
+private fun getAdditionalEqualsOperationMap(): List<Operation> {
+    val builtIns = DefaultBuiltIns.Instance
+    return PrimitiveType.values().map { builtIns.getBuiltInClassByFqName(it.typeFqName) }.map {
+        val type = it.defaultType.constructor.toString()
+        Operation("equals", listOf(type, type), isFunction = true)
+    }
 }
 
 private fun getIrMethodSymbolByName(methodName: String): String {

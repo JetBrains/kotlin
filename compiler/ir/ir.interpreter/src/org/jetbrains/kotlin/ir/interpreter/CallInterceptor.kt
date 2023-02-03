@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isArray
-import org.jetbrains.kotlin.ir.types.isUnsignedType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
@@ -91,7 +88,9 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                 verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {
-                val propertySymbol = irClass.declarations.single { it is IrProperty }.symbol
+                // Check for type is a hack needed for Native;
+                // in UInt, for example, we may have (after lowerings, I guess) additional property "$companion".
+                val propertySymbol = irClass.declarations.single { it is IrProperty && it.getter?.returnType?.isPrimitiveType() == true }.symbol
                 callStack.pushState(receiver.apply { this.setField(propertySymbol, args.single()) })
             }
             else -> defaultAction()

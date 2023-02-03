@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND_K1: JVM_IR
+// TARGET_BACKEND: NATIVE
+// IGNORE_BACKEND_K1: JVM_IR, NATIVE
 
 const val minusOneVal = -1.0f
 const val oneVal = 1.0f

@@ -99,6 +99,13 @@ class IrCompileTimeChecker(
         if (mode == EvaluationMode.ONLY_INTRINSIC_CONST && expression.origin == IrStatementOrigin.WHEN) {
             return expression.statements.all { it.accept(this, null) }
         }
+
+        // `IrReturnableBlock` will be created from IrCall after inline. We should do basically the same check as for IrCall.
+        if (expression is IrReturnableBlock) {
+            // TODO after JVM inline MR 8122 will be pushed check original IrCall.
+            TODO("Interpretation of `IrReturnableBlock` is not implemented")
+        }
+
         return visitStatements(expression.statements)
     }
 

@@ -1,4 +1,7 @@
 // TARGET_BACKEND: JVM_IR
+// TARGET_BACKEND: NATIVE
+// `Boolean.equals(Boolean)` will not be evaluated in K1
+// IGNORE_BACKEND_K1: NATIVE
 
 const val trueVal = true
 const val falseVal = false
