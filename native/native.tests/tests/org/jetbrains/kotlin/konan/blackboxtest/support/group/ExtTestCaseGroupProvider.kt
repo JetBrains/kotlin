@@ -146,9 +146,21 @@ private class ExtTestDataFile(
     private fun isIgnoredNativeTarget(pipelineType: PipelineType, testDataFile: File): Boolean {
         return when (pipelineType) {
             PipelineType.K1 ->
-                isIgnoredTarget(TargetBackend.NATIVE, testDataFile, IGNORE_BACKEND_DIRECTIVE_PREFIX, IGNORE_BACKEND_K1_DIRECTIVE_PREFIX)
+                isIgnoredTarget(
+                    TargetBackend.NATIVE,
+                    testDataFile,
+                    /*includeAny = */true,
+                    IGNORE_BACKEND_DIRECTIVE_PREFIX,
+                    IGNORE_BACKEND_K1_DIRECTIVE_PREFIX
+                )
             PipelineType.K2 ->
-                isIgnoredTarget(TargetBackend.NATIVE, testDataFile, IGNORE_BACKEND_DIRECTIVE_PREFIX, IGNORE_BACKEND_K2_DIRECTIVE_PREFIX)
+                isIgnoredTarget(
+                    TargetBackend.NATIVE,
+                    testDataFile,
+                    /*includeAny = */true,
+                    IGNORE_BACKEND_DIRECTIVE_PREFIX,
+                    IGNORE_BACKEND_K2_DIRECTIVE_PREFIX
+                )
         }
     }
 
