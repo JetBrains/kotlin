@@ -74,7 +74,10 @@ fun FirAnnotationContainer.resolvedAnnotationsWithArguments(anchorElement: FirBa
 fun List<FirAnnotation>.resolvedAnnotationsWithArguments(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
     if (isEmpty()) return emptyList()
 
-    // this loop by index is required to avoid possible ConcurrentModificationException
+    /**
+     * This loop by index is required to avoid possible [ConcurrentModificationException],
+     * because the annotations might be in a process of resolve from some other threads
+     */
     var hasAnnotationCallWithArguments = false
     for (i in indices) {
         val currentAnnotation = get(i)
