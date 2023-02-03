@@ -112,6 +112,12 @@ public class SerializationFirBlackBoxTestGenerated extends AbstractSerialization
         }
 
         @Test
+        @TestMetadata("intrinsicAnnotations.kt")
+        public void testIntrinsicAnnotations() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicAnnotations.kt");
+        }
+
+        @Test
         @TestMetadata("intrinsicsBox.kt")
         public void testIntrinsicsBox() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/intrinsicsBox.kt");

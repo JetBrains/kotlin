@@ -50,7 +50,8 @@ public final class IntrinsicsAdvancedKt : java/lang/Object {
           POP
           NEW (kotlinx/serialization/internal/ArrayListSerializer)
           DUP
-          GETSTATIC (Simple$$serializer, INSTANCE, LSimple$$serializer;)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
           POP
         LABEL (L3)
@@ -109,7 +110,8 @@ public final class IntrinsicsAdvancedKt : java/lang/Object {
           ANEWARRAY (kotlinx/serialization/KSerializer)
           DUP
           ICONST_0
-          GETSTATIC (Simple$$serializer, INSTANCE, LSimple$$serializer;)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
           AASTORE
           INVOKESTATIC (kotlinx/serialization/SerializersKt, noCompiledSerializer, (Lkotlinx/serialization/modules/SerializersModule;Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
         LABEL (L15)
