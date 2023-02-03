@@ -22,6 +22,13 @@ export KOTLIN_NATIVE_VERSION=1.8.0
 export DOCKER_CONTAINER_URL=kotlin.registry.jetbrains.space/p/kotlin/containers/kotlin-build-env:v6
 ```
 
+Optional: The docker image can be built locally with the `kotlin-build-env.dockerfile` file.
+
+```shell
+docker build --no-cache -t local/kotlin-build-env:v6 -f kotlin-build-env.dockerfile .
+export DOCKER_CONTAINER_URL=local/kotlin-build-env:v6
+```
+
 ## Clone Kotlin repository
 
 In a new folder, clone the release tag from the Kotlin repository, and change directory to the build folder:
