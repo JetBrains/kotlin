@@ -517,7 +517,7 @@ class DoubleColonExpressionResolver(
                 if (genericArrayClassLiteralSupport.isEnabled ||
                     !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitGenericArrayClassLiteral)
                 ) {
-                    if (KotlinBuiltIns.isNonPrimitiveArray(descriptor)) {
+                    if (KotlinBuiltIns.isNonPrimitiveArray(descriptor) || KotlinBuiltIns.isVArray(type)) {
                         return type.arguments.none { typeArgument ->
                             typeArgument.isStarProjection || !isAllowedInClassLiteral(typeArgument.type)
                         }

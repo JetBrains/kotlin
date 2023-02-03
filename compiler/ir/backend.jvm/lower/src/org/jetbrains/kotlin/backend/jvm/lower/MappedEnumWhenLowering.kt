@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
@@ -60,10 +61,14 @@ internal val enumWhenPhase = makeIrFilePhase(
 // at the negligible cost of an additional initializer per run + one array read per call.
 //
 private class MappedEnumWhenLowering(override val context: JvmBackendContext) : EnumWhenLowering(context) {
-    private val intArray = context.irBuiltIns.primitiveArrayForType.getValue(context.irBuiltIns.intType)
-    private val intArrayConstructor = intArray.constructors.single { it.owner.valueParameters.size == 1 }
-    private val intArrayGet = intArray.functions.single { it.owner.name == OperatorNameConventions.GET }
-    private val intArraySet = intArray.functions.single { it.owner.name == OperatorNameConventions.SET }
+    private val intArrayConstructor: IrFunctionSymbol =
+        context.irBuiltIns.intArray?.let { it.constructors.single { it.owner.valueParameters.size == 1 } }
+            ?: context.ir.symbols.intArrayFactory
+    private val intArrayGet =
+        (context.irBuiltIns.intArray ?: context.irBuiltIns.vArrayClass!!)
+            .functions.single { it.owner.name == OperatorNameConventions.GET }
+    private val intArraySet = (context.irBuiltIns.intArray ?: context.irBuiltIns.vArrayClass!!)
+        .functions.single { it.owner.name == OperatorNameConventions.SET }
     private val refArraySize = context.irBuiltIns.arrayClass.owner.properties.single { it.name.toString() == "size" }.getter!!
 
     // To avoid visibility-related issues, classes containing the mappings are direct children
@@ -91,7 +96,7 @@ private class MappedEnumWhenLowering(override val context: JvmBackendContext) : 
             mappings.getOrPut(enumClass) {
                 EnumMappingClass(mappingsClass.addField {
                     name = Name.identifier("\$EnumSwitchMapping\$${mappings.size}")
-                    type = intArray.defaultType
+                    type = context.irBuiltIns.getPrimitiveArrayType(context.irBuiltIns.intType)
                     origin = JvmLoweredDeclarationOrigin.ENUM_MAPPINGS_FOR_WHEN
                     isFinal = true
                     isStatic = true

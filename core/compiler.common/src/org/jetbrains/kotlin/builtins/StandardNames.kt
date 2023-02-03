@@ -97,6 +97,7 @@ object StandardNames {
         @JvmField val string: FqNameUnsafe = fqNameUnsafe("String")
         @JvmField val array: FqNameUnsafe = fqNameUnsafe("Array")
         @JvmField val vArray: FqNameUnsafe = fqNameUnsafe("VArray")
+        @JvmField val vArrayIterator : FqNameUnsafe = fqNameUnsafe("VArrayIterator")
 
         @JvmField val _boolean: FqNameUnsafe = fqNameUnsafe("Boolean")
         @JvmField val _char: FqNameUnsafe = fqNameUnsafe("Char")
@@ -155,6 +156,7 @@ object StandardNames {
         @JvmField val mutableSet: FqName = collectionsFqName("MutableSet")
         @JvmField val mutableMap: FqName = collectionsFqName("MutableMap")
         @JvmField val mutableMapEntry: FqName = mutableMap.child(Name.identifier("MutableEntry"))
+        @JvmField val arraysKt: FqName = collectionsFqName("ArraysKt")
 
         @JvmField val kClass: FqNameUnsafe = reflect("KClass")
         @JvmField val kCallable: FqNameUnsafe = reflect("KCallable")

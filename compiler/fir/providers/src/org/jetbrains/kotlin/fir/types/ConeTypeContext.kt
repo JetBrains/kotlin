@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.DoCustomTransform
@@ -518,6 +518,16 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun KotlinTypeMarker.isVArray(): Boolean {
         require(this is ConeKotlinType)
         return this.classId == StandardClassIds.VArray
+    }
+
+    override fun KotlinTypeMarker.getPrimitiveVArrayType(): PrimitiveType? {
+        if (!isVArray()) return null
+        val argument = getArgument(0)
+        if (argument.getVariance() != TypeVariance.INV) return null
+        val argumentType = argument.getType()
+        if (argumentType !is ConeClassLikeType) return null
+        if (!argumentType.isPrimitiveType()) return null
+        return PrimitiveType.getByShortName(argumentType.classId!!.shortClassName.identifier)
     }
 
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {

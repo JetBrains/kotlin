@@ -46,6 +46,8 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType?
     fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType?
 
+    fun KotlinTypeMarker.getPrimitiveVArrayType(): PrimitiveType?
+
     fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean
     fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe?
 

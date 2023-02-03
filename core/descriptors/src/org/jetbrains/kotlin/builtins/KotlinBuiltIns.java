@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
-import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull;
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
@@ -44,7 +44,7 @@ public abstract class KotlinBuiltIns {
     private final NotNullLazyValue<Primitives> primitives;
     private final NotNullLazyValue<Collection<PackageViewDescriptor>> builtInPackagesImportedByDefault;
 
-    private final MemoizedFunctionToNotNull<Name, ClassDescriptor> builtInClassesByName;
+    private final MemoizedFunctionToNullable<Name, ClassifierDescriptor> builtInClassifiersByName;
 
     private final StorageManager storageManager;
 
@@ -57,10 +57,10 @@ public abstract class KotlinBuiltIns {
             @Override
             public Collection<PackageViewDescriptor> invoke() {
                 return Arrays.asList(
-                    getBuiltInsModule().getPackage(BUILT_INS_PACKAGE_FQ_NAME),
-                    getBuiltInsModule().getPackage(COLLECTIONS_PACKAGE_FQ_NAME),
-                    getBuiltInsModule().getPackage(RANGES_PACKAGE_FQ_NAME),
-                    getBuiltInsModule().getPackage(ANNOTATION_PACKAGE_FQ_NAME)
+                        getBuiltInsModule().getPackage(BUILT_INS_PACKAGE_FQ_NAME),
+                        getBuiltInsModule().getPackage(COLLECTIONS_PACKAGE_FQ_NAME),
+                        getBuiltInsModule().getPackage(RANGES_PACKAGE_FQ_NAME),
+                        getBuiltInsModule().getPackage(ANNOTATION_PACKAGE_FQ_NAME)
                 );
             }
         });
@@ -73,7 +73,7 @@ public abstract class KotlinBuiltIns {
                 Map<SimpleType, SimpleType> kotlinArrayTypeToPrimitiveKotlinType = new HashMap<SimpleType, SimpleType>();
                 for (PrimitiveType primitive : PrimitiveType.values()) {
                     SimpleType type = getBuiltInTypeByClassName(primitive.getTypeName().asString());
-                    SimpleType arrayType = getBuiltInTypeByClassName(primitive.getArrayTypeName().asString());
+                    SimpleType arrayType = getBuiltInArrayType(primitive);
 
                     primitiveTypeToArrayKotlinType.put(primitive, arrayType);
                     primitiveKotlinTypeToKotlinArrayType.put(type, arrayType);
@@ -85,16 +85,13 @@ public abstract class KotlinBuiltIns {
             }
         });
 
-        this.builtInClassesByName = storageManager.createMemoizedFunction(new Function1<Name, ClassDescriptor>() {
-            @Override
-            public ClassDescriptor invoke(Name name) {
-                ClassifierDescriptor classifier = getBuiltInsPackageScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
-                if (classifier != null && !(classifier instanceof ClassDescriptor)) {
-                    throw new AssertionError("Must be a class descriptor " + name + ", but was " + classifier);
-                }
-                return (ClassDescriptor) classifier;
-            }
-        });
+        this.builtInClassifiersByName =
+                storageManager.createMemoizedFunctionWithNullableValues(new Function1<Name, ClassifierDescriptor>() {
+                    @Override
+                    public ClassifierDescriptor invoke(Name name) {
+                        return getBuiltInsPackageScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
+                    }
+                });
     }
 
     protected void createBuiltInsModule(boolean isFallback) {
@@ -179,7 +176,7 @@ public abstract class KotlinBuiltIns {
     /**
      * Checks if the given descriptor is declared in the deserialized built-in package fragment, i.e. if it was loaded as a part of
      * loading .kotlin_builtins definition files.
-     *
+     * <p>
      * NOTE: this method returns false for descriptors loaded from .class files or other binaries, even if they are "built-in" in some
      * other sense! For example, it returns false for the class descriptor of `kotlin.IntRange` loaded from `kotlin/IntRange.class`.
      * In case you need to check if the class is "built-in" in another sense, you should probably do it by inspecting its FQ name,
@@ -217,15 +214,35 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     private ClassDescriptor getBuiltInClassByName(@NotNull String simpleName) {
-        ClassDescriptor classDescriptor = builtInClassesByName.invoke(Name.identifier(simpleName));
-        if (classDescriptor == null) {
+        ClassDescriptor descriptor = getBuiltInClassByNameOrNull(simpleName);
+        if (descriptor == null) {
             throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName)) + " is not found");
         }
-        return classDescriptor;
+        return descriptor;
+    }
+
+    @NotNull
+    private SimpleType getBuiltInArrayType(@NotNull PrimitiveType primitive) {
+        ClassifierDescriptor arrayClassifier = builtInClassifiersByName.invoke(Name.identifier(primitive.getArrayTypeName().asString()));
+        SimpleType arrayType;
+        if (arrayClassifier instanceof ClassDescriptor) {
+            arrayType = arrayClassifier.getDefaultType();
+        }
+        else if (arrayClassifier instanceof TypeAliasDescriptor) {
+            arrayType = ((TypeAliasDescriptor) arrayClassifier).getExpandedType();
+        }
+        else {
+            throw new AssertionError("Unsupported array type classifier for " + primitive + ": " + arrayClassifier);
+        }
+        return arrayType;
     }
 
     private ClassDescriptor getBuiltInClassByNameOrNull(@NotNull String simpleName) {
-        return builtInClassesByName.invoke(Name.identifier(simpleName));
+        ClassifierDescriptor classifier = builtInClassifiersByName.invoke(Name.identifier(simpleName));
+        if (classifier != null && !(classifier instanceof ClassDescriptor)) {
+            throw new AssertionError("Must be a class descriptor " + simpleName + ", but was " + classifier);
+        }
+        return (ClassDescriptor) classifier;
     }
 
     @NotNull
@@ -292,9 +309,12 @@ public abstract class KotlinBuiltIns {
         return getBuiltInClassByNameOrNull("VArray");
     }
 
-    @NotNull
-    public ClassDescriptor getPrimitiveArrayClassDescriptor(@NotNull PrimitiveType type) {
-        return getBuiltInClassByName(type.getArrayTypeName().asString());
+    public ClassDescriptor getPrimitiveArrayClassDescriptorOrNull(@NotNull PrimitiveType type) {
+        ClassifierDescriptor classifier = builtInClassifiersByName.invoke(Name.identifier(type.getArrayTypeName().asString()));
+        if (classifier instanceof ClassDescriptor) {
+            return (ClassDescriptor) classifier;
+        }
+        return null;
     }
 
     @NotNull
@@ -472,7 +492,8 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getMutableMapEntry() {
-        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getMutableMap(), "MutableEntry", NoLookupLocation.FROM_BUILTINS);
+        ClassDescriptor classDescriptor =
+                DescriptorUtils.getInnerClassByName(getMutableMap(), "MutableEntry", NoLookupLocation.FROM_BUILTINS);
         assert classDescriptor != null : "Can't find MutableMap.MutableEntry";
         return classDescriptor;
     }
@@ -584,7 +605,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public KotlinType getArrayElementType(@NotNull KotlinType arrayType) {
-        if (isArray(arrayType)) {
+        if (isArray(arrayType) || isVArray(arrayType)) {
             if (arrayType.getArguments().size() != 1) {
                 throw new IllegalStateException();
             }
@@ -671,6 +692,16 @@ public abstract class KotlinBuiltIns {
                : null;
     }
 
+    @Nullable
+    public static PrimitiveType getPrimitiveArrayElementType(@NotNull KotlinType type) {
+        if (isPrimitiveVArray(type)) {
+            Name primitiveTypeName =
+                    type.getArguments().get(0).getType().getConstructor().getDeclarationDescriptor().getName();
+            return FqNames.fqNameToPrimitiveType.get(BUILT_INS_PACKAGE_FQ_NAME.child(primitiveTypeName).toUnsafe());
+        }
+        return getPrimitiveArrayType(type.getConstructor().getDeclarationDescriptor());
+    }
+
     @NotNull
     public SimpleType getArrayType(@NotNull Variance projectionType, @NotNull KotlinType argument, @NotNull Annotations annotations) {
         List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(projectionType, argument));
@@ -706,22 +737,27 @@ public abstract class KotlinBuiltIns {
     }
 
     public static boolean isArrayOrPrimitiveArray(@NotNull ClassDescriptor descriptor) {
-        return classFqNameEquals(descriptor, FqNames.array) || getPrimitiveArrayType(descriptor) != null;
+        return classFqNameEquals(descriptor, FqNames.vArray) ||
+               classFqNameEquals(descriptor, FqNames.array) ||
+               getPrimitiveArrayType(descriptor) != null;
     }
 
     public static boolean isArrayOrPrimitiveArray(@NotNull KotlinType type) {
         return isArray(type) || isPrimitiveArray(type);
     }
 
-    public static boolean isPrimitiveArray(@NotNull KotlinType type) {
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor != null && getPrimitiveArrayType(descriptor) != null;
+    public static boolean isPrimitiveVArray(@NotNull KotlinType type) {
+        if (isVArray(type)) {
+            TypeProjection elementType = type.getArguments().get(0);
+            return elementType.getProjectionKind() == Variance.INVARIANT && isPrimitiveType(elementType.getType());
+        }
+        return false;
     }
 
-    @Nullable
-    public static PrimitiveType getPrimitiveArrayElementType(@NotNull KotlinType type) {
+    public static boolean isPrimitiveArray(@NotNull KotlinType type) {
+        if (isPrimitiveVArray(type)) return true;
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        return descriptor == null ? null : getPrimitiveArrayType(descriptor);
+        return descriptor != null && getPrimitiveArrayType(descriptor) != null;
     }
 
     @Nullable
@@ -850,6 +886,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClassAndNotNullable(type, FqNames.uLongFqName.toUnsafe());
     }
 
+    public static boolean isUnsignedType(@NotNull KotlinType type) {
+        return isUByte(type) || isUShort(type) || isUInt(type) || isULong(type);
+    }
+
     public static boolean isUByteArray(@NotNull KotlinType type) {
         return isConstructedFromGivenClassAndNotNullable(type, FqNames.uByteArrayFqName.toUnsafe());
     }
@@ -917,8 +957,9 @@ public abstract class KotlinBuiltIns {
         assert functionReturnType != null : "Function return typed type must be resolved.";
         boolean mayReturnNonUnitValue = !isUnit(functionReturnType);
         for (FunctionDescriptor overriddenDescriptor : descriptor.getOriginal().getOverriddenDescriptors()) {
-            if (mayReturnNonUnitValue)
+            if (mayReturnNonUnitValue) {
                 break;
+            }
             KotlinType overriddenFunctionReturnType = overriddenDescriptor.getReturnType();
             assert overriddenFunctionReturnType != null : "Function return typed type must be resolved.";
             mayReturnNonUnitValue = !isUnit(overriddenFunctionReturnType);

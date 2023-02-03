@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
@@ -101,14 +101,14 @@ abstract class IrBuiltIns {
     abstract val primitiveIrTypesWithComparisons: List<IrType>
     abstract val primitiveFloatingPointIrTypes: List<IrType>
 
-    abstract val byteArray: IrClassSymbol
-    abstract val charArray: IrClassSymbol
-    abstract val shortArray: IrClassSymbol
-    abstract val intArray: IrClassSymbol
-    abstract val longArray: IrClassSymbol
-    abstract val floatArray: IrClassSymbol
-    abstract val doubleArray: IrClassSymbol
-    abstract val booleanArray: IrClassSymbol
+    abstract val byteArray: IrClassSymbol?
+    abstract val charArray: IrClassSymbol?
+    abstract val shortArray: IrClassSymbol?
+    abstract val intArray: IrClassSymbol?
+    abstract val longArray: IrClassSymbol?
+    abstract val floatArray: IrClassSymbol?
+    abstract val doubleArray: IrClassSymbol?
+    abstract val booleanArray: IrClassSymbol?
 
     abstract val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType>
     abstract val primitiveTypesToPrimitiveArrays: Map<PrimitiveType, IrClassSymbol>
@@ -184,6 +184,12 @@ abstract class IrBuiltIns {
     companion object {
         val KOTLIN_INTERNAL_IR_FQN = FqName("kotlin.internal.ir")
         val BUILTIN_OPERATOR = object : IrDeclarationOriginImpl("OPERATOR") {}
+    }
+
+    fun getPrimitiveArrayType(type: IrType): IrSimpleType {
+        require(type.isPrimitiveType())
+        if (vArrayClass != null) return vArrayClass!!.typeWith(listOf(type))
+        return primitiveArrayForType[type]!!.defaultType as IrSimpleType
     }
 }
 

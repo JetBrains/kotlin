@@ -61,6 +61,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(kotlinFqn, null, "enumValueOf", listOf(stringFqn)) to EnumValueOf,
                 Key(kotlinFqn, stringFqn, "plus", listOf(anyFqn)) to StringPlus,
                 Key(kotlinReflectFqn, null, "typeOf", listOf()) to TypeOf,
+                Key(StandardNames.FqNames.vArrayIterator.toSafe(), null, "next", listOf()) to VArrayIteratorNext,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.floatClass]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
@@ -85,7 +86,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 symbols.jvmDebuggerInvokeSpecialIntrinsic.toKey()!! to JvmDebuggerInvokeSpecial,
                 symbols.intPostfixIncrDecr.toKey()!! to IntIncr(isPrefix = false),
                 symbols.intPrefixIncrDecr.toKey()!! to IntIncr(isPrefix = true),
-                createKeyMapping(VArrayIteratorNext, symbols.vArrayIterator, "next"),
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +

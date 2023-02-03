@@ -748,6 +748,11 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return KotlinBuiltIns.isVArray(this)
     }
 
+    override fun KotlinTypeMarker.getPrimitiveVArrayType(): PrimitiveType? {
+        require(this is KotlinType, this::errorMessage)
+        return KotlinBuiltIns.getPrimitiveArrayElementType(this)
+    }
+
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
         require(this is KotlinType, this::errorMessage)
         return annotations.hasAnnotation(fqName)

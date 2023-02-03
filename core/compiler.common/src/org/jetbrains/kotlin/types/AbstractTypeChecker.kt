@@ -251,6 +251,7 @@ object AbstractTypeChecker {
             if (isCommonDenotableType(a) && isCommonDenotableType(b)) {
                 val refinedA = state.prepareType(state.refineType(a))
                 val refinedB = state.prepareType(state.refineType(b))
+                if (isOldPrimitiveArrayAndEquivalentVArray(refinedA, refinedB)) return true
                 val simpleA = refinedA.lowerBoundIfFlexible()
                 if (!areEqualTypeConstructors(refinedA.typeConstructor(), refinedB.typeConstructor())) return false
                 if (simpleA.argumentsCount() == 0) {
@@ -262,6 +263,25 @@ object AbstractTypeChecker {
 
             return isSubtypeOf(state, a, b) && isSubtypeOf(state, b, a)
         }
+
+    private val oldPrimitiveArrayToVArray = mapOf(
+        "BooleanArray" to "VArray<Boolean>",
+        "ByteArray" to "VArray<ByteArray>",
+        "ShortArray" to "VArray<Short>",
+        "IntArray" to "VArray<Int>",
+        "LongArray" to "VArray<Long>",
+        "FloatArray" to "VArray<Float>",
+        "DoubleArray" to "VArray<Double>",
+        "CharArray" to "VArray<Char>"
+    )
+
+    private fun isOldPrimitiveArrayAndEquivalentVArray(a: KotlinTypeMarker, b: KotlinTypeMarker): Boolean {
+        val aStr = a.toString()
+        val bStr = b.toString()
+        oldPrimitiveArrayToVArray[aStr]?.also { if (it == bStr) return true }
+        oldPrimitiveArrayToVArray[bStr]?.also { if (it == aStr) return true }
+        return false
+    }
 
 
     private fun completeIsSubTypeOf(
@@ -357,7 +377,7 @@ object AbstractTypeChecker {
             assert(subType.isSingleClassifierType() || subType.typeConstructor().isIntersection() || state.isAllowedTypeVariable(subType)) {
                 "Not singleClassifierType and not intersection subType: $subType"
             }
-            assert(superType.isSingleClassifierType() || state .isAllowedTypeVariable(superType)) {
+            assert(superType.isSingleClassifierType() || state.isAllowedTypeVariable(superType)) {
                 "Not singleClassifierType superType: $superType"
             }
         }
@@ -535,6 +555,8 @@ object AbstractTypeChecker {
         if (subType.isStubType() || superType.isStubType())
             return state.isStubTypeEqualsToAnything
 
+        if (isOldPrimitiveArrayAndEquivalentVArray(subType, superType)) return true
+
         // superType might be a definitely notNull type (see KT-42824)
         val superOriginalType = superType.asDefinitelyNotNullType()?.original() ?: superType
         val superTypeCaptured = superOriginalType.asCapturedType()
@@ -569,7 +591,8 @@ object AbstractTypeChecker {
          */
         val subTypeConstructor = subType.typeConstructor()
         if (subType is CapturedTypeMarker
-            || (subTypeConstructor.isIntersection() && subTypeConstructor.supertypes().all { it is CapturedTypeMarker })) {
+            || (subTypeConstructor.isIntersection() && subTypeConstructor.supertypes().all { it is CapturedTypeMarker })
+        ) {
             val typeParameter =
                 state.typeSystemContext.getTypeParameterForArgumentInBaseIfItEqualToTarget(baseType = superType, targetType = subType)
             if (typeParameter != null && typeParameter.hasRecursiveBounds(superType.typeConstructor())) {
