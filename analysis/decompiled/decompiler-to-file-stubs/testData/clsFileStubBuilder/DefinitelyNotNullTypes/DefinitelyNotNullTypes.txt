@@ -8,7 +8,7 @@ PsiJetFileStubImpl[package=]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=DefinitelyNotNullTypes]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
-        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x, rawName=x]
           TYPE_REFERENCE
             INTERSECTION_TYPE
               TYPE_REFERENCE
@@ -33,7 +33,7 @@ PsiJetFileStubImpl[package=]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x, rawName=x]
             TYPE_REFERENCE
               INTERSECTION_TYPE
                 TYPE_REFERENCE
@@ -42,11 +42,11 @@ PsiJetFileStubImpl[package=]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=Any]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=action]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=action, rawName=action]
             TYPE_REFERENCE
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null, rawName=null]
                     TYPE_REFERENCE
                       INTERSECTION_TYPE
                         TYPE_REFERENCE
@@ -74,7 +74,7 @@ PsiJetFileStubImpl[package=]
       FUN[fqName=DefinitelyNotNullTypes.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=xs]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=xs, rawName=xs]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE

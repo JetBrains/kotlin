@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.psi.stubs.elements;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.stubs.IndexSink;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.psi.stubs.StubInputStream;
@@ -40,8 +41,10 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
     public KotlinParameterStub createStub(@NotNull KtParameter psi, StubElement parentStub) {
         FqName fqName = psi.getFqName();
         StringRef fqNameRef = StringRef.fromString(fqName != null ? fqName.asString() : null);
+        PsiElement identifier = psi.getNameIdentifier();
+        String rawName = identifier != null ? identifier.getText() : null;
         return new KotlinParameterStubImpl(
-                (StubElement<?>) parentStub, fqNameRef, StringRef.fromString(psi.getName()),
+                (StubElement<?>) parentStub, fqNameRef, StringRef.fromString(psi.getName()), StringRef.fromString(rawName),
                 psi.isMutable(), psi.hasValOrVar(), psi.hasDefaultValue()
         );
     }
@@ -49,6 +52,7 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
     @Override
     public void serialize(@NotNull KotlinParameterStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
+        dataStream.writeName(stub.getRawName());
         dataStream.writeBoolean(stub.isMutable());
         dataStream.writeBoolean(stub.hasValOrVar());
         dataStream.writeBoolean(stub.hasDefaultValue());
@@ -60,12 +64,13 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
     @Override
     public KotlinParameterStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
+        StringRef rawName = dataStream.readName();
         boolean isMutable = dataStream.readBoolean();
         boolean hasValOrValNode = dataStream.readBoolean();
         boolean hasDefaultValue = dataStream.readBoolean();
         StringRef fqName = dataStream.readName();
 
-        return new KotlinParameterStubImpl((StubElement<?>) parentStub, fqName, name, isMutable, hasValOrValNode, hasDefaultValue);
+        return new KotlinParameterStubImpl((StubElement<?>) parentStub, fqName, name, rawName, isMutable, hasValOrValNode, hasDefaultValue);
     }
 
     @Override

@@ -119,6 +119,7 @@ interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
     fun isMutable(): Boolean
     fun hasValOrVar(): Boolean
     fun hasDefaultValue(): Boolean
+    fun getRawName(): String?
 }
 
 interface KotlinPropertyAccessorStub : StubElement<KtPropertyAccessor> {

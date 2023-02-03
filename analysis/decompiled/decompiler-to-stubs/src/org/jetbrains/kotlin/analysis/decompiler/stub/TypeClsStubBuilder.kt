@@ -214,7 +214,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 }
             }
             val parameter = KotlinParameterStubImpl(
-                parameterList, fqName = null, name = null, isMutable = false, hasValOrVar = false, hasDefaultValue = false
+                parameterList, fqName = null, name = null, rawName = null, isMutable = false, hasValOrVar = false, hasDefaultValue = false
             )
 
             createTypeReferenceStub(parameter, argument.type(c.typeTable)!!)
@@ -242,6 +242,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val parameterStub = KotlinParameterStubImpl(
                 parameterListStub,
                 name = name.ref(),
+                rawName = name.ref(),
                 fqName = null,
                 hasDefaultValue = false,
                 hasValOrVar = false,

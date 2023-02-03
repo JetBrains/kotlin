@@ -15,7 +15,7 @@ PsiJetFileStubImpl[package=test]
             MODIFIER_LIST[suspend]
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST
-                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null, rawName=null]
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
@@ -40,7 +40,7 @@ PsiJetFileStubImpl[package=test]
                       REFERENCE_EXPRESSION[referencedName=A]
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST
-                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null, rawName=null]
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
@@ -58,7 +58,7 @@ PsiJetFileStubImpl[package=test]
             MODIFIER_LIST[suspend]
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST
-                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null, rawName=null]
                   TYPE_REFERENCE
                     NULLABLE_TYPE
                       USER_TYPE
@@ -84,7 +84,7 @@ PsiJetFileStubImpl[package=test]
                         REFERENCE_EXPRESSION[referencedName=test]
                       REFERENCE_EXPRESSION[referencedName=RS]
               VALUE_PARAMETER_LIST
-                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null, rawName=null]
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
@@ -108,7 +108,7 @@ PsiJetFileStubImpl[package=test]
                       REFERENCE_EXPRESSION[referencedName=test]
                     REFERENCE_EXPRESSION[referencedName=RS]
               VALUE_PARAMETER_LIST
-                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null, rawName=null]
                   TYPE_REFERENCE
                     USER_TYPE
                       USER_TYPE
@@ -122,18 +122,18 @@ PsiJetFileStubImpl[package=test]
       FUN[fqName=test.SuspendLambda.override, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=override]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p, rawName=p]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=String]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b, rawName=b]
             TYPE_REFERENCE
               MODIFIER_LIST[suspend]
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null, rawName=null]
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
@@ -153,12 +153,12 @@ PsiJetFileStubImpl[package=test]
       FUN[fqName=test.SuspendLambda.override, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=override]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=b, rawName=b]
             TYPE_REFERENCE
               MODIFIER_LIST[suspend]
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null, rawName=null]
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
@@ -180,12 +180,12 @@ PsiJetFileStubImpl[package=test]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f, rawName=f]
             TYPE_REFERENCE
               MODIFIER_LIST[suspend]
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null, rawName=null]
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
@@ -205,12 +205,12 @@ PsiJetFileStubImpl[package=test]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f, rawName=f]
             TYPE_REFERENCE
               MODIFIER_LIST[suspend]
               FUNCTION_TYPE
                 VALUE_PARAMETER_LIST
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=null, rawName=null]
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
@@ -245,7 +245,7 @@ PsiJetFileStubImpl[package=test]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=completion]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=completion, rawName=completion]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -278,11 +278,11 @@ PsiJetFileStubImpl[package=test]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver, rawName=receiver]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=R]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=completion]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=completion, rawName=completion]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE

@@ -28,6 +28,7 @@ class KotlinParameterStubImpl(
     parent: StubElement<out PsiElement>?,
     private val fqName: StringRef?,
     private val name: StringRef?,
+    private val rawName: StringRef?,
     private val isMutable: Boolean,
     private val hasValOrVar: Boolean,
     private val hasDefaultValue: Boolean
@@ -43,4 +44,7 @@ class KotlinParameterStubImpl(
     override fun isMutable() = isMutable
     override fun hasValOrVar() = hasValOrVar
     override fun hasDefaultValue() = hasDefaultValue
+    override fun getRawName(): String? {
+        return StringRef.toString(rawName)
+    }
 }

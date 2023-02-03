@@ -14,7 +14,7 @@ PsiJetFileStubImpl[package=test]
       FUN[fqName=test.InnerTypes.bar, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=bar]
         MODIFIER_LIST[public final]
         VALUE_PARAMETER_LIST
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x, rawName=x]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -35,7 +35,7 @@ PsiJetFileStubImpl[package=test]
                             REFERENCE_EXPRESSION[referencedName=kotlin]
                           REFERENCE_EXPRESSION[referencedName=Double]
                 REFERENCE_EXPRESSION[referencedName=Inner2]
-          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y, rawName=y]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -77,7 +77,7 @@ PsiJetFileStubImpl[package=test]
               FUN[fqName=test.InnerTypes.Inner.Inner3.foo, hasBlockBody=true, hasBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
                 MODIFIER_LIST[public final]
                 VALUE_PARAMETER_LIST
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x, rawName=x]
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
@@ -107,7 +107,7 @@ PsiJetFileStubImpl[package=test]
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=kotlin]
                                 REFERENCE_EXPRESSION[referencedName=Int]
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=y, rawName=y]
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
@@ -135,7 +135,7 @@ PsiJetFileStubImpl[package=test]
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=kotlin]
                                 REFERENCE_EXPRESSION[referencedName=Double]
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=z]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=z, rawName=z]
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE
@@ -174,7 +174,7 @@ PsiJetFileStubImpl[package=test]
                                 USER_TYPE
                                   REFERENCE_EXPRESSION[referencedName=kotlin]
                                 REFERENCE_EXPRESSION[referencedName=Double]
-                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=w]
+                  VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=w, rawName=w]
                     TYPE_REFERENCE
                       USER_TYPE
                         USER_TYPE

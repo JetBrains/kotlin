@@ -74,6 +74,16 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return findChildByType(KtTokens.EQ);
     }
 
+    @Nullable
+    public String getRawName() {
+        KotlinParameterStub stub = getStub();
+        if (stub != null) {
+            return stub.getRawName();
+        }
+        PsiElement nameIdentifier = getNameIdentifier();
+        return nameIdentifier != null ? nameIdentifier.getText() : null;
+    }
+
     public boolean hasDefaultValue() {
         KotlinParameterStub stub = getStub();
         if (stub != null) {

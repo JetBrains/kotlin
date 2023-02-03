@@ -578,7 +578,7 @@ open class RawFirBuilder(
             valueParameterDeclaration: ValueParameterDeclaration,
             additionalAnnotations: List<FirAnnotation>,
         ): FirValueParameter {
-            val name = convertValueParameterName(nameAsSafeName, name, valueParameterDeclaration)
+            val name = convertValueParameterName(nameAsSafeName, rawName, valueParameterDeclaration)
             return buildValueParameter {
                 source = toFirSourceElement()
                 moduleData = baseModuleData
