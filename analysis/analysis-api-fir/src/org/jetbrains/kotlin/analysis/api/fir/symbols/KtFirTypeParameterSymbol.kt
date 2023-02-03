@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirTypeParameterSymbolPointer
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.fir.analysis.checkers.typeParameterSymbols
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.isNullableAny
@@ -29,15 +28,14 @@ import org.jetbrains.kotlin.types.Variance
 
 internal class KtFirTypeParameterSymbol(
     override val firSymbol: FirTypeParameterSymbol,
-    override val firResolveSession: LLFirResolveSession,
-    private val builder: KtSymbolByFirBuilder
+    override val analysisSession: KtFirAnalysisSession,
 ) : KtTypeParameterSymbol(), KtFirSymbol<FirTypeParameterSymbol> {
     override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override val annotationsList: KtAnnotationsList
         get() = withValidityAssertion {
-            KtFirAnnotationListForDeclaration.create(firSymbol, firResolveSession.useSiteFirSession, token)
+            KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)
         }
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }

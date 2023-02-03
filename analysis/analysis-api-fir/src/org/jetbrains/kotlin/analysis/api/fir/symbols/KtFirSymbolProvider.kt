@@ -134,7 +134,7 @@ internal class KtFirSymbolProvider(
 
     private fun KtClassOrObject.resolveToFirClassLikeSymbol(): FirClassSymbol<*> {
         return when (val firClassLike = resolveToFirSymbolOfType<FirClassLikeSymbol<*>>(firResolveSession)) {
-            is FirTypeAliasSymbol -> firClassLike.fullyExpandedClass(firResolveSession.useSiteFirSession)
+            is FirTypeAliasSymbol -> firClassLike.fullyExpandedClass(analysisSession.useSiteSession)
                 ?: buildErrorWithAttachment("${firClassLike.fir::class} should be expanded to the expected type alias") {
                     withFirSymbolEntry("firClassLikeSymbol", firClassLike)
                     withPsiEntry("ktClassOrObject", this@resolveToFirClassLikeSymbol)

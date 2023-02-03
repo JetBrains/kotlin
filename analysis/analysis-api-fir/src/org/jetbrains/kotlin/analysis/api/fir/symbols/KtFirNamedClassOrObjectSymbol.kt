@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
 import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirClassLikeSymbolPointer
@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointe
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.UnsupportedSymbolKind
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -37,8 +36,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirNamedClassOrObjectSymbol(
     override val firSymbol: FirRegularClassSymbol,
-    override val firResolveSession: LLFirResolveSession,
-    private val builder: KtSymbolByFirBuilder
+    override val analysisSession: KtFirAnalysisSession,
 ) : KtNamedClassOrObjectSymbol(), KtFirSymbol<FirRegularClassSymbol> {
     override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
@@ -71,7 +69,7 @@ internal class KtFirNamedClassOrObjectSymbol(
     override val annotationsList by cached {
         KtFirAnnotationListForDeclaration.create(
             firSymbol,
-            firResolveSession.useSiteFirSession,
+            analysisSession.useSiteSession,
             token,
         )
     }
