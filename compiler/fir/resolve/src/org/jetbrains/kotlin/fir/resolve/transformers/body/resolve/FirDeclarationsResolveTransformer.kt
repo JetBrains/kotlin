@@ -596,24 +596,20 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         if (result.returnTypeRef is FirImplicitTypeRef) {
             val simpleFunction = function as? FirSimpleFunction
             val returnExpression = (body?.statements?.single() as? FirReturnExpression)?.result
-            if (returnExpression?.typeRef is FirResolvedTypeRef) {
-                result.transformReturnTypeRef(
-                    transformer,
-                    withExpectedType(
-                        returnExpression.resultType.approximateDeclarationType(
-                            session,
-                            simpleFunction?.visibilityForApproximation(),
-                            isLocal = simpleFunction?.isLocal == true,
-                            isInlineFunction = simpleFunction?.isInline == true
-                        )
-                    )
-                )
+            val returnTypeRef = if (returnExpression?.typeRef is FirResolvedTypeRef) {
+                returnExpression.resultType.approximateDeclarationType(
+                    session,
+                    simpleFunction?.visibilityForApproximation(),
+                    isLocal = simpleFunction?.isLocal == true,
+                    isInlineFunction = simpleFunction?.isInline == true
+                ).copyWithNewSource(result.returnTypeRef.source)
             } else {
-                result.transformReturnTypeRef(
-                    transformer,
-                    withExpectedType(buildErrorTypeRef { diagnostic = ConeSimpleDiagnostic("empty body", DiagnosticKind.Other) })
-                )
+                buildErrorTypeRef {
+                    source = result.returnTypeRef.source
+                    diagnostic = ConeSimpleDiagnostic("empty body", DiagnosticKind.Other)
+                }
             }
+            result.transformReturnTypeRef(transformer, withExpectedType(returnTypeRef))
         }
 
         return result
