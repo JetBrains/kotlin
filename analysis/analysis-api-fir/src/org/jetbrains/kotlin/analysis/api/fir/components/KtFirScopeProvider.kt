@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.delegateFields
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -52,8 +53,10 @@ internal class KtFirScopeProvider(
     private val project: Project,
     private val firResolveSession: LLFirResolveSession,
 ) : KtScopeProvider() {
-    // KtFirScopeProvider is thread local, so it's okay to use the same session here
-    private val scopeSession = analysisSession.getScopeSessionFor(analysisSession.useSiteSession)
+
+    private fun getScopeSession(): ScopeSession {
+        return analysisSession.getScopeSessionFor(analysisSession.useSiteSession)
+    }
 
     private inline fun <T> KtSymbolWithMembers.withFirForScope(crossinline body: (FirClass) -> T): T? {
         return when (this) {
@@ -76,7 +79,7 @@ internal class KtFirScopeProvider(
             val firSession = analysisSession.useSiteSession
             fir.unsubstitutedScope(
                 firSession,
-                scopeSession,
+                getScopeSession(),
                 withForcedTypeCalculator = false
             )
         }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope)
@@ -90,7 +93,7 @@ internal class KtFirScopeProvider(
             fir.scopeProvider.getStaticScope(
                 fir,
                 firSession,
-                scopeSession,
+                getScopeSession(),
             )
         } ?: return getEmptyScope()
         return KtFirDelegatingScope(firScope, builder)
@@ -114,7 +117,7 @@ internal class KtFirScopeProvider(
                 val firSession = analysisSession.useSiteSession
                 FirDelegatedMemberScope(
                     firSession,
-                    scopeSession,
+                    getScopeSession(),
                     fir,
                     declaredScope,
                     delegateFields
@@ -221,7 +224,7 @@ internal class KtFirScopeProvider(
         check(type is KtFirType) { "KtFirScopeProvider can only work with KtFirType, but ${type::class} was provided" }
         return type.coneType.scope(
             firResolveSession.useSiteFirSession,
-            scopeSession,
+            getScopeSession(),
             FakeOverrideTypeCalculator.Forced,
             requiredPhase = FirResolvePhase.STATUS,
         )
