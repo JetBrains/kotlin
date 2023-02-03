@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
-import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.analysis.utils.caches.SoftCachedMap
 import org.jetbrains.kotlin.psi.KtElement
 import kotlin.reflect.KClass
@@ -58,7 +57,6 @@ private class KtAnalysisSessionCache(project: Project) {
         listOf(
             PsiModificationTracker.MODIFICATION_COUNT,
             ProjectRootModificationTracker.getInstance(project),
-            project.createProjectWideOutOfBlockModificationTracker()
         )
     )
 
