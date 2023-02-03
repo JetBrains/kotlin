@@ -98,7 +98,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
         }
 
         val fileArtifacts = klibSrcFiles.map { srcFile ->
-            commitSourceFileMetadata(srcFile.getCacheFile(BINARY_AST_SUFFIX), srcFile, signatureToIndexMapping[srcFile] ?: emptyMap())
+            commitSourceFileMetadata(srcFile, signatureToIndexMapping[srcFile] ?: emptyMap())
         }
         return IncrementalCacheArtifact(cacheDir, removedSrcFiles.isNotEmpty(), fileArtifacts, library.jsOutputName)
     }
@@ -200,10 +200,10 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
         }
 
     private fun commitSourceFileMetadata(
-        binaryAstFile: File,
         srcFile: KotlinSourceFile,
         signatureToIndexMapping: Map<IdSignature, Int>
     ): SourceFileCacheArtifact {
+        val binaryAstFile = srcFile.getCacheFile(BINARY_AST_SUFFIX)
         val headerCacheFile = srcFile.getCacheFile(METADATA_SUFFIX)
         val sourceFileMetadata = kotlinLibrarySourceFileMetadata[srcFile]
             ?: return SourceFileCacheArtifact.DoNotChangeMetadata(srcFile, binaryAstFile)

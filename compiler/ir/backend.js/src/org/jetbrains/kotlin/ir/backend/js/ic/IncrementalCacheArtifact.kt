@@ -54,6 +54,8 @@ internal class IncrementalCacheArtifact(
     private val srcCacheActions: List<SourceFileCacheArtifact>,
     private val externalModuleName: String?
 ) {
+    fun getSourceFiles() = srcCacheActions.mapTo(HashSet(srcCacheActions.size)) { it.srcFile }
+
     fun buildModuleArtifactAndCommitCache(
         moduleName: String,
         rebuiltFileFragments: Map<KotlinSourceFile, JsIrProgramFragment>,
