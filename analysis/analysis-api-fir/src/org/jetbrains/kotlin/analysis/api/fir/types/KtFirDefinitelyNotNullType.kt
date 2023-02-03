@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirDefinitelyNotNullType(
     override val coneType: ConeDefinitelyNotNullType,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtDefinitelyNotNullType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
     override val original: KtType = withValidityAssertion { builder.typeBuilder.buildKtType(this.coneType.original) }
     override val annotationsList: KtAnnotationsList by cached {
         KtFirAnnotationListForType.create(coneType, builder.rootSession, token)

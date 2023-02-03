@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirDynamicType(
     override val coneType: ConeDynamicType,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtDynamicType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
     override val annotationsList: KtAnnotationsList by cached {
         KtFirAnnotationListForType.create(coneType, builder.rootSession, token)
     }

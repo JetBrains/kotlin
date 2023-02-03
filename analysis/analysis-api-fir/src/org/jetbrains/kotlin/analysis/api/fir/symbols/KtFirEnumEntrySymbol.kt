@@ -29,9 +29,9 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirEnumEntrySymbol(
     override val firSymbol: FirEnumEntrySymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtEnumEntrySymbol(), KtFirSymbol<FirEnumEntrySymbol> {
+    override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override val annotationsList: KtAnnotationsList

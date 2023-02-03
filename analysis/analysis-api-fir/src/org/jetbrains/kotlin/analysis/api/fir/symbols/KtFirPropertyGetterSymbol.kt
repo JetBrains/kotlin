@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.name.CallableId
 internal class KtFirPropertyGetterSymbol(
     override val firSymbol: FirPropertyAccessorSymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtPropertyGetterSymbol(), KtFirSymbol<FirPropertyAccessorSymbol> {
+    override val token: KtLifetimeToken get() = builder.token
     init {
         require(firSymbol.isGetter)
     }

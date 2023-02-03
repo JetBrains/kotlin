@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 internal class KtFirBackingFieldSymbol(
     override val firSymbol: FirBackingFieldSymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtBackingFieldSymbol(), KtFirSymbol<FirBackingFieldSymbol> {
+    override val token: KtLifetimeToken get() = builder.token
     override val origin: KtSymbolOrigin get() = withValidityAssertion { super<KtBackingFieldSymbol>.origin }
 
     override val annotationsList: KtAnnotationsList

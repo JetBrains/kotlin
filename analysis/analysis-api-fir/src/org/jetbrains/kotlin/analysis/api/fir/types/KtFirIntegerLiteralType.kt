@@ -19,9 +19,10 @@ import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirIntegerLiteralType(
     override val coneType: ConeIntegerLiteralConstantType,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtIntegerLiteralType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
+
     override val isUnsigned: Boolean get() = withValidityAssertion { coneType.isUnsigned }
 
     override val value: Long get() = withValidityAssertion { coneType.value }

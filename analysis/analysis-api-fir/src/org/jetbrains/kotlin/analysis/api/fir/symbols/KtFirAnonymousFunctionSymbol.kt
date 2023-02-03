@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 internal class KtFirAnonymousFunctionSymbol(
     override val firSymbol: FirAnonymousFunctionSymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtAnonymousFunctionSymbol(), KtFirSymbol<FirAnonymousFunctionSymbol> {
+    override val token: KtLifetimeToken get() = builder.token
 
     override val psi: PsiElement? by cached { firSymbol.fir.findPsi(firSymbol.fir.moduleData.session) }
 

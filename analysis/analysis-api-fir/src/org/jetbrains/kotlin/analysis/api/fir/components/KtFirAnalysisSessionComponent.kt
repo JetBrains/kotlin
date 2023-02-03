@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
+import org.jetbrains.kotlin.analysis.api.KtTypeProjection
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.diagnostics.KT_DIAGNOSTIC_CONVERTER
@@ -108,8 +108,8 @@ internal interface KtFirAnalysisSessionComponent {
     fun ConeSubstitutor.toKtSubstitutor(): KtSubstitutor {
         return when (this) {
             ConeSubstitutor.Empty -> KtSubstitutor.Empty(analysisSession.token)
-            is ConeSubstitutorByMap -> KtFirMapBackedSubstitutor(this, analysisSession.firSymbolBuilder, analysisSession.token)
-            else -> KtFirGenericSubstitutor(this, analysisSession.firSymbolBuilder, analysisSession.token)
+            is ConeSubstitutorByMap -> KtFirMapBackedSubstitutor(this, analysisSession.firSymbolBuilder)
+            else -> KtFirGenericSubstitutor(this, analysisSession.firSymbolBuilder)
         }
     }
 }

@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirJavaFieldSymbol(
     override val firSymbol: FirFieldSymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtJavaFieldSymbol(), KtFirSymbol<FirFieldSymbol> {
+    override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override val annotationsList: KtAnnotationsList

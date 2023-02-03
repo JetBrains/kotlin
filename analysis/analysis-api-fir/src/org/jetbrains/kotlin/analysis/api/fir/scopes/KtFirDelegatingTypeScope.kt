@@ -20,8 +20,9 @@ import org.jetbrains.kotlin.name.Name
 internal open class KtFirDelegatingTypeScope(
     val firScope: FirContainingNamesAwareScope,
     private val builder: KtSymbolByFirBuilder,
-    final override val token: KtLifetimeToken
 ) : KtTypeScope {
+    override val token: KtLifetimeToken get() = builder.token
+
     private val allNamesCached by cached {
         getPossibleCallableNames() + getPossibleClassifierNames()
     }

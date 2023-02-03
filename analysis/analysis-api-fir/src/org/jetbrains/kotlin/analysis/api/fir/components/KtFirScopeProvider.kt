@@ -89,7 +89,7 @@ internal class KtFirScopeProvider(
                 )
             }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope)
                 ?: return@getOrPut getEmptyScope()
-            KtFirDelegatingScope(firScope, builder, token)
+            KtFirDelegatingScope(firScope, builder)
         }
     }
 
@@ -102,7 +102,7 @@ internal class KtFirScopeProvider(
                 scopeSession,
             )
         } ?: return getEmptyScope()
-        return KtFirDelegatingScope(firScope, builder, token)
+        return KtFirDelegatingScope(firScope, builder)
     }
 
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
@@ -111,7 +111,7 @@ internal class KtFirScopeProvider(
                 analysisSession.useSiteSession.declaredMemberScope(it)
             } ?: return@getOrPut getEmptyScope()
 
-            KtFirDelegatingScope(firScope, builder, token)
+            KtFirDelegatingScope(firScope, builder)
         }
     }
 
@@ -134,14 +134,14 @@ internal class KtFirScopeProvider(
                 } else null
             } ?: return@getOrPut getEmptyScope()
 
-            KtFirDelegatedMemberScope(firScope, token, builder)
+            KtFirDelegatedMemberScope(firScope, builder)
         }
     }
 
     override fun getFileScope(fileSymbol: KtFileSymbol): KtScope {
         return fileScopeCache.getOrPut(fileSymbol) {
             check(fileSymbol is KtFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${fileSymbol::class} was provided" }
-            KtFirFileScope(fileSymbol, token, builder)
+            KtFirFileScope(fileSymbol, builder)
         }
     }
 
@@ -208,10 +208,10 @@ internal class KtFirScopeProvider(
 
     private fun convertToKtScope(firScope: FirScope): KtScope {
         return when (firScope) {
-            is FirAbstractSimpleImportingScope -> KtFirNonStarImportingScope(firScope, builder, token)
-            is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, builder, analysisSession.useSiteScopeDeclarationProvider, token)
+            is FirAbstractSimpleImportingScope -> KtFirNonStarImportingScope(firScope, builder)
+            is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, builder, analysisSession.useSiteScopeDeclarationProvider)
             is FirPackageMemberScope -> createPackageScope(firScope.fqName)
-            is FirContainingNamesAwareScope -> KtFirDelegatingScope(firScope, builder, token)
+            is FirContainingNamesAwareScope -> KtFirDelegatingScope(firScope, builder)
             else -> TODO(firScope::class.toString())
         }
     }
@@ -221,7 +221,6 @@ internal class KtFirScopeProvider(
             fqName,
             project,
             builder,
-            token,
             analysisSession.useSiteAnalysisScope,
             analysisSession.useSiteScopeDeclarationProvider,
             analysisSession.targetPlatform
@@ -230,7 +229,7 @@ internal class KtFirScopeProvider(
 
     private fun convertToKtTypeScope(firScope: FirScope): KtTypeScope {
         return when (firScope) {
-            is FirContainingNamesAwareScope -> KtFirDelegatingTypeScope(firScope, builder, token)
+            is FirContainingNamesAwareScope -> KtFirDelegatingTypeScope(firScope, builder)
             else -> TODO(firScope::class.toString())
         }
     }

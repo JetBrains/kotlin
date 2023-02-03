@@ -23,16 +23,16 @@ import org.jetbrains.kotlin.analysis.api.types.KtFunctionalType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirFunctionalType(
     override val coneType: ConeClassLikeTypeImpl,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtFunctionalType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
+
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
     override val classSymbol: KtClassLikeSymbol by cached {
         builder.classifierBuilder.buildClassLikeSymbolByLookupTag(coneType.lookupTag)

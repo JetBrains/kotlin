@@ -21,9 +21,9 @@ import org.jetbrains.kotlin.name.Name
 
 internal class KtFirTypeParameterType(
     override val coneType: ConeTypeParameterType,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtTypeParameterType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
     override val name: Name get() = withValidityAssertion { coneType.lookupTag.name }
     override val symbol: KtTypeParameterSymbol by cached {
         builder.classifierBuilder.buildTypeParameterSymbolByLookupTag(coneType.lookupTag)

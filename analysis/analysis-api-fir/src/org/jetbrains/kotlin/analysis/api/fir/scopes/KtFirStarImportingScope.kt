@@ -23,8 +23,8 @@ internal class KtFirStarImportingScope(
     private val firScope: FirAbstractStarImportingScope,
     private val builder: KtSymbolByFirBuilder,
     private val declarationProvider: KotlinDeclarationProvider,
-    override val token: KtLifetimeToken,
 ) : KtScope {
+    override val token: KtLifetimeToken get() = builder.token
 
     private val imports: List<StarImport> by cached {
         firScope.starImports.map { import ->

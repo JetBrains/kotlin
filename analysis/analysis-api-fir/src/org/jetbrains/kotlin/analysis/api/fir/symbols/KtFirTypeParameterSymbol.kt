@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.types.Variance
 internal class KtFirTypeParameterSymbol(
     override val firSymbol: FirTypeParameterSymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtTypeParameterSymbol(), KtFirSymbol<FirTypeParameterSymbol> {
+    override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override val annotationsList: KtAnnotationsList

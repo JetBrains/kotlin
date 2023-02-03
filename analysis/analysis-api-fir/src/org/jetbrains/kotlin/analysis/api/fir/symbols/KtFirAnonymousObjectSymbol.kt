@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 internal class KtFirAnonymousObjectSymbol(
     override val firSymbol: FirAnonymousObjectSymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtAnonymousObjectSymbol(), KtFirSymbol<FirAnonymousObjectSymbol> {
+    override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override val annotationsList by cached {

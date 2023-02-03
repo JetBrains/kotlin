@@ -9,14 +9,14 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
@@ -32,11 +32,12 @@ internal class KtFirPackageScope(
     private val fqName: FqName,
     private val project: Project,
     private val builder: KtSymbolByFirBuilder,
-    override val token: KtLifetimeToken,
     private val searchScope: GlobalSearchScope,
     private val declarationProvider: KotlinDeclarationProvider,
     private val targetPlatform: TargetPlatform,
 ) : KtScope {
+    override val token: KtLifetimeToken get() = builder.token
+
     private val packageProvider = project.createPackageProvider(searchScope)
 
     private val firScope: FirPackageMemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {

@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirTypeErrorType(
     override val coneType: ConeErrorType,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtTypeErrorType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
 
     override val nullability: KtTypeNullability get() = withValidityAssertion { coneType.nullability.asKtNullability() }
     override val errorMessage: String get() = withValidityAssertion { coneType.diagnostic.reason }

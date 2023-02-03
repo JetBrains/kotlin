@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.fir.types.renderForDebugging
 
 internal class KtFirFlexibleType(
     override val coneType: ConeFlexibleType,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtFlexibleType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
 
     override val lowerBound: KtType get() = withValidityAssertion { builder.typeBuilder.buildKtType(coneType.lowerBound) }
     override val upperBound: KtType get() = withValidityAssertion { builder.typeBuilder.buildKtType(coneType.upperBound) }

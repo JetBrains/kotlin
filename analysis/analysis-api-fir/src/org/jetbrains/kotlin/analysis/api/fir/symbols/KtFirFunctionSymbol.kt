@@ -45,9 +45,9 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirFunctionSymbol(
     override val firSymbol: FirNamedFunctionSymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtFunctionSymbol(), KtFirSymbol<FirNamedFunctionSymbol> {
+    override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
     override val name: Name get() = withValidityAssertion { firSymbol.name }
 

@@ -32,9 +32,9 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirValueParameterSymbol(
     override val firSymbol: FirValueParameterSymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtValueParameterSymbol(), KtFirSymbol<FirValueParameterSymbol> {
+    override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override val name: Name get() = withValidityAssertion { firSymbol.name }

@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.fir.types.renderForDebugging
 internal class KtFirClassErrorType(
     override val coneType: ConeClassLikeType,
     private val coneDiagnostic: ConeDiagnostic,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtClassErrorType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
 
     override val qualifiers: List<KtClassTypeQualifier> by cached {
         when (coneDiagnostic) {

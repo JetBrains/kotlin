@@ -40,9 +40,9 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirKotlinPropertySymbol(
     override val firSymbol: FirPropertySymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtKotlinPropertySymbol(), KtFirSymbol<FirPropertySymbol> {
+    override val token: KtLifetimeToken get() = builder.token
     init {
         assert(!firSymbol.isLocal)
         check(firSymbol !is FirSyntheticPropertySymbol)

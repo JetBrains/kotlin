@@ -34,9 +34,9 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KtFirConstructorSymbol(
     override val firSymbol: FirConstructorSymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtConstructorSymbol(), KtFirSymbol<FirConstructorSymbol> {
+    override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override val returnType: KtType get() = withValidityAssertion { firSymbol.returnType(builder) }

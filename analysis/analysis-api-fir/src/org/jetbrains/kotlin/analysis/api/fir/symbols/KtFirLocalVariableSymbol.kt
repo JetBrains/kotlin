@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.name.Name
 internal class KtFirLocalVariableSymbol(
     override val firSymbol: FirPropertySymbol,
     override val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtLocalVariableSymbol(),
     KtFirSymbol<FirPropertySymbol> {
@@ -35,6 +34,7 @@ internal class KtFirLocalVariableSymbol(
         assert(firSymbol.isLocal)
     }
 
+    override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.findPsi() }
 
     override val annotationsList: KtAnnotationsList

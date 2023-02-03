@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirUsualClassType(
     override val coneType: ConeClassLikeTypeImpl,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder,
 ) : KtUsualClassType(), KtFirType {
+    override val token: KtLifetimeToken get() = builder.token
     override val classId: ClassId get() = withValidityAssertion { coneType.lookupTag.classId }
     override val classSymbol: KtClassLikeSymbol
         get() = withValidityAssertion {

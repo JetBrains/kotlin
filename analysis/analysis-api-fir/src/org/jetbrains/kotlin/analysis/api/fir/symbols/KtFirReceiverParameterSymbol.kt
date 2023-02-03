@@ -27,9 +27,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 internal class KtFirReceiverParameterSymbol(
     val firSymbol: FirCallableSymbol<*>,
     val firResolveSession: LLFirResolveSession,
-    override val token: KtLifetimeToken,
     private val builder: KtSymbolByFirBuilder
 ) : KtReceiverParameterSymbol(), KtLifetimeOwner {
+    override val token: KtLifetimeToken get() = builder.token
     override val psi: PsiElement? by cached { firSymbol.fir.receiverParameter?.typeRef?.findPsi(firSymbol.fir.moduleData.session) }
 
     init {
