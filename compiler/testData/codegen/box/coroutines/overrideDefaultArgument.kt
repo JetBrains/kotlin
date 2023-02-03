@@ -47,27 +47,25 @@ suspend fun sleep(): Unit = suspendCoroutine { c ->
 }
 
 fun async(f: suspend () -> Unit) {
-    f.startCoroutine(object : ContinuationAdapter<Unit>() {
-        override fun resume(x: Unit) {
+    f.startCoroutine(object : Continuation<Unit> {
+        override fun resumeWith(x: Result<Unit>) {
             proceed = {
                 result += "done;"
                 finished = true
             }
         }
-        override fun resumeWithException(x: Throwable) {}
         override val context = EmptyCoroutineContext
     })
 }
 
 fun asyncSuspend(f: suspend () -> Unit) {
-    val coroutine = f.createCoroutine(object : ContinuationAdapter<Unit>() {
-        override fun resume(x: Unit) {
+    val coroutine = f.createCoroutine(object : Continuation<Unit> {
+        override fun resumeWith(x: Result<Unit>) {
             proceed = {
                 result += "done;"
                 finished = true
             }
         }
-        override fun resumeWithException(x: Throwable) {}
         override val context = EmptyCoroutineContext
     })
     coroutine.resume(Unit)

@@ -1,5 +1,4 @@
 // FIR_IDENTICAL
-// !LANGUAGE: +ReleaseCoroutines
 // SKIP_TXT
 
 fun bar() {
