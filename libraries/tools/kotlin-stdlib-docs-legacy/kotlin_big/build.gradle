@@ -7,8 +7,16 @@ final String kotlinRootDir = rootProject.file("../../../").absolutePath.replace(
 final String kotlinLibsDir = "$buildDir/libs"
 
 final String githubRevision = isTeamcityBuild ? project.property("githubRevision") : "master"
-final String kotlinVersion = isTeamcityBuild ? project.property("deployVersion") : "1.8.255-SNAPSHOT"
+final String kotlinVersion = isTeamcityBuild ? project.property("deployVersion") : defaultSnapshotVersion(kotlinRootDir)
 final String repo = isTeamcityBuild ? project.property("kotlinLibsRepo") : "$kotlinRootDir/build/repo"
+
+def defaultSnapshotVersion(String kotlinRootDir) {
+  file("$kotlinRootDir/gradle.properties").newInputStream().with {
+    final def props = new Properties()
+    props.load(it)
+    return Objects.requireNonNull(props.get("defaultSnapshotVersion")) as String
+  }
+}
 
 println("# Extracting info:")
 println("    isTeamcityBuild: $isTeamcityBuild")

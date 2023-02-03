@@ -9,8 +9,12 @@ val kotlinRootDir = rootProject.file("../../../").absoluteFile.invariantSeparato
 val kotlinLibsDir = "$buildDir/libs"
 
 val githubRevision = if (isTeamcityBuild) project.property("githubRevision") else "master"
-val kotlinVersion = if (isTeamcityBuild) project.property("deployVersion") as String else "1.6.255-SNAPSHOT"
+val kotlinVersion = if (isTeamcityBuild) project.property("deployVersion") as String else defaultSnapshotVersion()
 val repo = if (isTeamcityBuild) project.property("kotlinLibsRepo") as String else "$kotlinRootDir/build/repo"
+
+fun defaultSnapshotVersion(): String = file(kotlinRootDir).resolve("gradle.properties").inputStream().use { stream ->
+    java.util.Properties().apply { load(stream) }["defaultSnapshotVersion"] as String
+}
 
 println("# Parameters summary:")
 println("    isTeamcityBuild: $isTeamcityBuild")
