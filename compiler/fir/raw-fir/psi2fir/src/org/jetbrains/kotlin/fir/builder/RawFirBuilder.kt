@@ -1066,7 +1066,7 @@ open class RawFirBuilder(
                     }
                 }
 
-                for (danglingModifierList in PsiTreeUtil.getChildrenOfTypeAsList(file, KtModifierList::class.java)) {
+                for (danglingModifierList in file.danglingModifierLists) {
                     declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifierList)
                 }
             }
@@ -1284,7 +1284,7 @@ open class RawFirBuilder(
                                 )
                             )
                         }
-                        for (danglingModifier in PsiTreeUtil.getChildrenOfTypeAsList(classOrObject.body, KtModifierList::class.java)) {
+                        for (danglingModifier in classOrObject.body?.danglingModifierLists ?: emptyList()) {
                             addDeclaration(
                                 buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifier).apply {
                                     containingClassAttr = currentDispatchReceiverType()?.lookupTag
@@ -1383,7 +1383,7 @@ open class RawFirBuilder(
                             )
                         }
 
-                        for (danglingModifier in PsiTreeUtil.getChildrenOfTypeAsList(objectDeclaration.body, KtModifierList::class.java)) {
+                        for (danglingModifier in objectDeclaration.body?.danglingModifierLists ?: emptyList()) {
                             declarations += buildErrorTopLevelDeclarationForDanglingModifierList(danglingModifier).apply {
                                 containingClassAttr = currentDispatchReceiverType()?.lookupTag
                             }

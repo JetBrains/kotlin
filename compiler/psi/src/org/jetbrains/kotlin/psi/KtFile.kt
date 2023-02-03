@@ -128,17 +128,22 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
         get() = script != null
 
     /**
-     * @return annotations that do not belong to any declaration due to incomplete code or syntax errors
+     * @return modifier lists that do not belong to any declaration due to incomplete code or syntax errors
      */
-    val danglingAnnotations: List<KtAnnotationEntry>
+    val danglingModifierLists: Array<out KtModifierList>
         get() {
             val stub = stub
-            val danglingModifierLists = stub?.getChildrenByType(
+            return stub?.getChildrenByType(
                 KtStubElementTypes.MODIFIER_LIST,
                 KtStubElementTypes.MODIFIER_LIST.arrayFactory
             ) ?: findChildrenByClass(KtModifierList::class.java)
-            return danglingModifierLists.flatMap { obj: KtModifierList -> obj.annotationEntries }
         }
+
+    /**
+     * @return annotations that do not belong to any declaration due to incomplete code or syntax errors
+     */
+    val danglingAnnotations: List<KtAnnotationEntry>
+        get() = danglingModifierLists.flatMap { obj: KtModifierList -> obj.annotationEntries }
 
     override fun getFileType(): FileType = KotlinFileType.INSTANCE
 

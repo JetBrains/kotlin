@@ -69,5 +69,11 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
      * @return annotations that do not belong to any declaration due to incomplete code or syntax errors
      */
     val danglingAnnotations: List<KtAnnotationEntry>
-        get() = getStubOrPsiChildrenAsList(MODIFIER_LIST).flatMap { it.annotationEntries }
+        get() = danglingModifierLists.flatMap { it.annotationEntries }
+
+    /**
+     * @return modifier lists that do not belong to any declaration due to incomplete code or syntax errors
+     */
+    val danglingModifierLists: List<KtModifierList>
+        get() = getStubOrPsiChildrenAsList(MODIFIER_LIST)
 }
