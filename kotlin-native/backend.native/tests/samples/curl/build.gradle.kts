@@ -46,13 +46,17 @@ kotlin {
         }
     }
 
-    // The code snippet below is needed to make all compile tasks depend on publication of
+    // The code below is needed to make all compile tasks depend on publication of
     // "libcurl" library. So that to the time of compilation the library will already be
     // in Maven repo and will be successfully resolved as a dependency of this project.
     targets.all {
         compilations.all {
             compileKotlinTask.dependsOn(":libcurl:publish")
         }
+    }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyTransformationTask> {
+        dependsOn(":libcurl:publish")
     }
 }
 
