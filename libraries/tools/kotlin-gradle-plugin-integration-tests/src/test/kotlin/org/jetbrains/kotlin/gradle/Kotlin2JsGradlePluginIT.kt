@@ -9,11 +9,9 @@ import com.google.gson.Gson
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -125,132 +123,6 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             )
 
             build("assemble")
-        }
-    }
-
-    @DisplayName("Check IR incremental cache invalidation by compiler args")
-    @GradleTest
-    fun testJsIrIncrementalCacheInvalidationByArgs(gradleVersion: GradleVersion) {
-        project("kotlin2JsIrICProject", gradleVersion) {
-            val buildConfig = buildGradleKts.readText()
-
-            fun setLazyInitializationArg(value: Boolean) {
-                buildGradleKts.writeText(buildConfig)
-                buildGradleKts.appendText(
-                    """
-                    |
-                    |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileDevelopmentExecutableKotlinJs") {
-                    |    kotlinOptions {
-                    |        freeCompilerArgs += "-Xir-property-lazy-initialization=$value"
-                    |   }
-                    |}
-                    """.trimMargin()
-                )
-            }
-
-            fun String.testScriptOutLines() = this.lines().mapNotNull {
-                val trimmed = it.removePrefix(">>> TEST OUT: ")
-                if (trimmed == it) null else trimmed
-            }
-
-            // -Xir-property-lazy-initialization default is true
-            build("nodeRun") {
-                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
-                assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
-            }
-
-            setLazyInitializationArg(false)
-            build("nodeRun") {
-                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
-                assertEquals(listOf("TOP LEVEL!", "Hello, Gradle."), output.testScriptOutLines())
-            }
-
-            setLazyInitializationArg(true)
-            build("nodeRun") {
-                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
-                assertEquals(listOf("Hello, Gradle."), output.testScriptOutLines())
-            }
-        }
-    }
-
-    @DisplayName("incremental compilation for JS IR consider multiple artifacts in one project")
-    @GradleTest
-    fun testJsIrIncrementalMultipleArtifacts(gradleVersion: GradleVersion) {
-        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
-            build("compileDevelopmentExecutableKotlinJs") {
-                val cacheDir = projectPath.resolve("app/build/klib/cache/").toFile()
-                val cacheRootDirName = cacheDir.list()?.singleOrNull()
-                assertTrue("Lib cache root dir should contain 1 element 'version.hash'") {
-                    cacheRootDirName?.startsWith("version.") ?: false
-                }
-                val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
-                val klibCacheDirs = cacheRootDir.list()
-                // 2 for lib.klib + 1 for stdlib  + 1 for main
-                assertEquals(4, klibCacheDirs?.size, "cache should contain 4 dirs")
-
-                val libKlibCacheDirs = klibCacheDirs?.filter { dir -> dir.startsWith("lib.klib.") }
-                assertEquals(2, libKlibCacheDirs?.size, "cache should contain 2 dirs for lib.klib")
-
-                var lib = false
-                var libOther = false
-
-                cacheRootDir.listFiles()!!
-                    .forEach {
-                        it.listFiles()!!
-                            .filter { it.isFile }
-                            .forEach {
-                                val text = it.readText()
-                                // cache keeps the js code of compiled module, this substring from that js code
-                                if (text.contains("root['kotlin-js-ir-ic-multiple-artifacts-lib']")) {
-                                    if (lib) {
-                                        error("lib should be only once in cache")
-                                    }
-                                    lib = true
-                                }
-                                // cache keeps the js code of compiled module, this substring from that js code
-                                if (text.contains("root['kotlin-js-ir-ic-multiple-artifacts-lib-other']")) {
-                                    if (libOther) {
-                                        error("libOther should be only once in cache")
-                                    }
-                                    libOther = true
-                                }
-                            }
-
-                    }
-
-                assertTrue("lib and libOther should be once in cache") {
-                    lib && libOther
-                }
-                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
-            }
-        }
-    }
-
-    @DisplayName("Remove unused dependency from klib")
-    @GradleTest
-    fun testJsIrIncrementalKlibRemoveUnusedDependency(gradleVersion: GradleVersion) {
-        project("kotlin-js-ir-ic-remove-unused-dep", gradleVersion) {
-            val appBuildGradleKts = subProject("app").buildGradleKts
-
-            val buildGradleKtsWithoutDependency = appBuildGradleKts.readText()
-            appBuildGradleKts.appendText(
-                """
-                |
-                |dependencies {
-                |    implementation(project(":lib"))
-                |}
-                |
-                """.trimMargin()
-            )
-
-            build("compileDevelopmentExecutableKotlinJs") {
-                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
-            }
-
-            appBuildGradleKts.writeText(buildGradleKtsWithoutDependency)
-            build("compileDevelopmentExecutableKotlinJs") {
-                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
-            }
         }
     }
 
@@ -1545,10 +1417,11 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 Gson().fromJson(it.readText(), PackageJson::class.java)
             }
 
-    @DisplayName("incremental compilation with multiple js modules after compilation error works")
+    @DisplayName("incremental compilation with multiple js modules after frontend compilation error works")
     @GradleTest
     fun testIncrementalCompilationWithMultipleModulesAfterCompilationError(gradleVersion: GradleVersion) {
-        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
+        val buildOptions = defaultBuildOptions.copy(jsOptions = defaultJsOptions.copy(incrementalJsKlib = true))
+        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion, buildOptions = buildOptions) {
             build("compileKotlinJs")
 
             val libKt = subProject("lib").kotlinSourcesDir().resolve("Lib.kt") ?: error("No Lib.kt file in test project")
@@ -1558,7 +1431,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             buildAndFail("compileKotlinJs")
             libKt.modify { it.replace("func answe", "fun answer") } // revert compilation error
             appKt.modify { it.replace("Sheldon:", "Sheldon :") } // some change for incremental compilation
-            build("compileKotlinJs", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+            build("compileKotlinJs", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
                 assertTasksUpToDate(":lib:compileKotlinJs")
                 assertTasksExecuted(":app:compileKotlinJs")
