@@ -27,8 +27,8 @@ object FirTestSessionFactoryHelper {
     @ObsoleteTestInfrastructure
     fun createSessionForTests(
         projectEnvironment: AbstractProjectEnvironment,
-        sourceScope: AbstractProjectFileSearchScope,
-        librariesScope: AbstractProjectFileSearchScope = !sourceScope,
+        javaSourceScope: AbstractProjectFileSearchScope,
+        librariesScope: AbstractProjectFileSearchScope = !javaSourceScope,
         moduleName: String = "TestModule",
         friendsPaths: List<Path> = emptyList(),
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
@@ -39,7 +39,7 @@ object FirTestSessionFactoryHelper {
         externalSessionProvider = null,
         projectEnvironment,
         languageVersionSettings,
-        sourceScope,
+        javaSourceScope,
         librariesScope,
         lookupTracker = null,
         enumWhenTracker = null,

@@ -132,7 +132,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
         val (sourceFiles: Collection<KtSourceFile>, scope) =
             if (USE_LIGHT_TREE) {
                 val (platformSources, _) = collectSources(environment.configuration, projectEnvironment, environment.messageCollector)
-                platformSources to projectEnvironment.getSearchScopeBySourceFiles(platformSources)
+                platformSources to projectEnvironment.getSearchScopeForProjectJavaSources()
             } else {
                 val ktFiles = environment.getSourceFiles()
                 ktFiles.map { KtPsiSourceFile(it) } to
