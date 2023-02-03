@@ -143,6 +143,16 @@ fun Test.advanceGradleVersion() {
 
 // additional configuration in tasks.withType<Test> below
 projectTest(
+    "debugTest",
+    shortenTempRootName = shortenTempRootName,
+    jUnitMode = JUnitMode.JUnit5
+) {
+    includeTestsWithPattern(true) {
+        add("org.jetbrains.kotlin.gradle.NewMultiplatformIT.testLibWithTests")
+    }
+}
+
+projectTest(
     "test",
     shortenTempRootName = shortenTempRootName,
     jUnitMode = JUnitMode.JUnit5
