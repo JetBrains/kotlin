@@ -46,6 +46,7 @@ inline val FirMemberDeclaration.isLateInit: Boolean get() = status.isLateInit
 inline val FirMemberDeclaration.isFromSealedClass: Boolean get() = status.isFromSealedClass
 inline val FirMemberDeclaration.isFromEnumClass: Boolean get() = status.isFromEnumClass
 inline val FirMemberDeclaration.isFun: Boolean get() = status.isFun
+inline val FirMemberDeclaration.hasStableParameterNames: Boolean get() = status.hasStableParameterNames
 
 inline val FirClassLikeDeclaration.isLocal: Boolean get() = symbol.classId.isLocal
 

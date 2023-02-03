@@ -22101,6 +22101,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("disallowForDelegationToJavaMethods.kt")
+            public void testDisallowForDelegationToJavaMethods() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/namedArguments/disallowForDelegationToJavaMethods.kt");
+            }
+
+            @Test
+            @TestMetadata("disallowForFunctionTypes.kt")
+            public void testDisallowForFunctionTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/namedArguments/disallowForFunctionTypes.kt");
+            }
+
+            @Test
             @TestMetadata("disallowForJavaConstructor.kt")
             public void testDisallowForJavaConstructor() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/namedArguments/disallowForJavaConstructor.kt");

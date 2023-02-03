@@ -572,6 +572,7 @@ abstract class FirJavaFacade(
                 // Approximation: all Java methods with name that allows to use it in operator form are considered operators
                 // We need here more detailed checks (see modifierChecks.kt)
                 isOperator = name in ALL_JAVA_OPERATION_NAMES || OperatorNameConventions.COMPONENT_REGEX.matches(name.asString())
+                hasStableParameterNames = false
             }
 
             if (!javaMethod.isStatic) {
@@ -628,6 +629,7 @@ abstract class FirJavaFacade(
                 visibility.toEffectiveVisibility(ownerClassBuilder.symbol)
             ).apply {
                 isInner = isThisInner
+                hasStableParameterNames = false
             }
             this.visibility = visibility
             isPrimary = javaConstructor == null

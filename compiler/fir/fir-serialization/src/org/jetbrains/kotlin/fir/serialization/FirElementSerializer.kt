@@ -433,8 +433,9 @@ class FirElementSerializer private constructor(
             simpleFunction?.isExternal == true,
             simpleFunction?.isSuspend == true,
             simpleFunction?.isExpect == true,
-            true // TODO: supply 'hasStableParameterNames' flag for metadata
+            shouldSetStableParameterNames(simpleFunction),
         )
+
         if (flags != builder.flags) {
             builder.flags = flags
         }
@@ -507,6 +508,15 @@ class FirElementSerializer private constructor(
         return builder
     }
 
+    private fun shouldSetStableParameterNames(simpleFunction: FirSimpleFunction?): Boolean {
+        return when {
+            simpleFunction?.hasStableParameterNames == true -> true
+            // for backward compatibility with K1, remove this line to fix KT-4758
+            simpleFunction?.origin == FirDeclarationOrigin.Delegated -> true
+            else -> false
+        }
+    }
+
     private fun typeAliasProto(typeAlias: FirTypeAlias): ProtoBuf.TypeAlias.Builder? = whileAnalysing(session, typeAlias) {
         if (!extension.shouldSerializeTypeAlias(typeAlias)) return null
 
@@ -570,7 +580,7 @@ class FirElementSerializer private constructor(
             constructor.nonSourceAnnotations(session).isNotEmpty(),
             ProtoEnumFlags.visibility(normalizeVisibility(constructor)),
             !constructor.isPrimary,
-            true // TODO: supply 'hasStableParameterNames' flag for metadata
+            constructor.hasStableParameterNames,
         )
         if (flags != builder.flags) {
             builder.flags = flags

@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.*
-import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.name.CallableId
@@ -65,7 +64,7 @@ internal class KtFirFunctionSymbol(
     override val valueParameters: List<KtValueParameterSymbol> by cached { firSymbol.createKtValueParameters(builder) }
 
     override val hasStableParameterNames: Boolean
-        get() = withValidityAssertion { firSymbol.fir.getHasStableParameterNames(firSymbol.moduleData.session) }
+        get() = withValidityAssertion { firSymbol.fir.hasStableParameterNames }
 
     override val annotationsList by cached {
         KtFirAnnotationListForDeclaration.create(

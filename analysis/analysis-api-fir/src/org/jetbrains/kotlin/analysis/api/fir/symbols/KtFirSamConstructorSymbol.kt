@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
+import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 import org.jetbrains.kotlin.name.CallableId
@@ -54,7 +54,7 @@ internal class KtFirSamConstructorSymbol(
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion {
-            firSymbol.fir.getHasStableParameterNames(firSymbol.moduleData.session)
+            firSymbol.fir.hasStableParameterNames
         }
 
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }

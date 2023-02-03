@@ -371,6 +371,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
     }
 
+    fun testHasStableParameterNames() {
+        val library = compileLibrary("library", additionalOptions = listOf("-language-version", "2.0"))
+        compileKotlin("source.kt", tmpdir, listOf(library), additionalOptions = listOf("-language-version", "2.0"))
+    }
+
     fun testRequireKotlinInNestedClasses() {
         compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
     }

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.CanNotCreateSymbolPoin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtPsiBasedSymbolPointer
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.fir.resolve.getHasStableParameterNames
+import org.jetbrains.kotlin.fir.declarations.utils.hasStableParameterNames
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.isExtension
 
@@ -46,7 +46,7 @@ internal class KtFirAnonymousFunctionSymbol(
 
     override val hasStableParameterNames: Boolean
         get() = withValidityAssertion {
-            firSymbol.fir.getHasStableParameterNames(firSymbol.moduleData.session)
+            firSymbol.fir.hasStableParameterNames
         }
     override val isExtension: Boolean get() = withValidityAssertion { firSymbol.isExtension }
 
