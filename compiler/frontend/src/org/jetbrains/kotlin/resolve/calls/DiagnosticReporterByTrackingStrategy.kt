@@ -71,20 +71,17 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     override fun onCall(diagnostic: KotlinCallDiagnostic) {
-        when (diagnostic.javaClass) {
-            VisibilityError::class.java -> tracingStrategy.invisibleMember(trace, (diagnostic as VisibilityError).invisibleMember)
-            NoValueForParameter::class.java -> tracingStrategy.noValueForParameter(
-                trace,
-                (diagnostic as NoValueForParameter).parameterDescriptor
-            )
-            TypeCheckerHasRanIntoRecursion::class.java -> {
+        when (diagnostic) {
+            is VisibilityError -> tracingStrategy.invisibleMember(trace, diagnostic.invisibleMember)
+            is NoValueForParameter -> tracingStrategy.noValueForParameter(trace, diagnostic.parameterDescriptor)
+            is TypeCheckerHasRanIntoRecursion -> {
                 val shouldReportErrorsOnRecursiveTypeInsidePlusAssignment =
                     context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsOnRecursiveTypeInsidePlusAssignment)
                 tracingStrategy.recursiveType(trace, shouldReportErrorsOnRecursiveTypeInsidePlusAssignment)
             }
-            InstantiationOfAbstractClass::class.java -> tracingStrategy.instantiationOfAbstractClass(trace)
-            AbstractSuperCall::class.java -> {
-                val superExpression = (diagnostic as AbstractSuperCall).receiver.psiExpression as? KtSuperExpression
+            is InstantiationOfAbstractClass -> tracingStrategy.instantiationOfAbstractClass(trace)
+            is AbstractSuperCall -> {
+                val superExpression = diagnostic.receiver.psiExpression as? KtSuperExpression
                 if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidSuperDelegationToAbstractAnyMethod) ||
                     superExpression == null ||
                     trace[BindingContext.SUPER_EXPRESSION_FROM_ANY_MIGRATION, superExpression] != true
@@ -94,60 +91,58 @@ class DiagnosticReporterByTrackingStrategy(
                     tracingStrategy.abstractSuperCallWarning(trace)
                 }
             }
-            AbstractFakeOverrideSuperCall::class.java -> {
+            is AbstractFakeOverrideSuperCall -> {
                 if (context.languageVersionSettings.supportsFeature(LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride)) {
                     tracingStrategy.abstractSuperCall(trace)
                 } else {
                     tracingStrategy.abstractSuperCallWarning(trace)
                 }
             }
-            NonApplicableCallForBuilderInferenceDiagnostic::class.java -> {
-                val reportOn = (diagnostic as NonApplicableCallForBuilderInferenceDiagnostic).kotlinCall
+            is NonApplicableCallForBuilderInferenceDiagnostic -> {
+                val reportOn = diagnostic.kotlinCall
                 trace.reportDiagnosticOnce(NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE.on(reportOn.psiKotlinCall.psiCall.callElement))
             }
-            CandidateChosenUsingOverloadResolutionByLambdaAnnotation::class.java -> {
+            is CandidateChosenUsingOverloadResolutionByLambdaAnnotation -> {
                 trace.report(CANDIDATE_CHOSEN_USING_OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION.on(psiKotlinCall.psiCall.callElement))
             }
-            EnumEntryAmbiguityWarning::class.java -> {
-                val propertyDescriptor = (diagnostic as EnumEntryAmbiguityWarning).property
+            is EnumEntryAmbiguityWarning -> {
+                val propertyDescriptor = diagnostic.property
                 val enumEntryDescriptor = diagnostic.enumEntry
                 val enumCompanionDescriptor = (enumEntryDescriptor.containingDeclaration as? ClassDescriptor)?.companionObjectDescriptor
                 if (enumCompanionDescriptor == null || propertyDescriptor.containingDeclaration != enumCompanionDescriptor) {
-                    trace.report(DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY.on(psiKotlinCall.psiCall.callElement, propertyDescriptor, enumEntryDescriptor))
+                    trace.report(
+                        DEPRECATED_RESOLVE_WITH_AMBIGUOUS_ENUM_ENTRY.on(
+                            psiKotlinCall.psiCall.callElement, propertyDescriptor, enumEntryDescriptor
+                        )
+                    )
                 }
             }
-            CompatibilityWarning::class.java -> {
+            is CompatibilityWarning -> {
                 val callElement = psiKotlinCall.psiCall.callElement
                 trace.report(
-                    COMPATIBILITY_WARNING.on(
-                        callElement.getCalleeExpressionIfAny() ?: callElement,
-                        (diagnostic as CompatibilityWarning).candidate
-                    )
+                    COMPATIBILITY_WARNING.on(callElement.getCalleeExpressionIfAny() ?: callElement, diagnostic.candidate)
                 )
             }
-            NoContextReceiver::class.java -> {
+            is NoContextReceiver -> {
                 val callElement = psiKotlinCall.psiCall.callElement
                 trace.report(
                     NO_CONTEXT_RECEIVER.on(
                         callElement.getCalleeExpressionIfAny() ?: callElement,
-                        (diagnostic as NoContextReceiver).receiverDescriptor.value.toString()
+                        diagnostic.receiverDescriptor.value.toString()
                     )
                 )
             }
-            MultipleArgumentsApplicableForContextReceiver::class.java -> {
+            is MultipleArgumentsApplicableForContextReceiver -> {
                 val callElement = psiKotlinCall.psiCall.callElement
                 trace.report(
-                    MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER.on(
-                        callElement,
-                        (diagnostic as MultipleArgumentsApplicableForContextReceiver).receiverDescriptor.value.toString()
-                    )
+                    MULTIPLE_ARGUMENTS_APPLICABLE_FOR_CONTEXT_RECEIVER.on(callElement, diagnostic.receiverDescriptor.value.toString())
                 )
             }
-            ContextReceiverAmbiguity::class.java -> {
+            is ContextReceiverAmbiguity -> {
                 val callElement = psiKotlinCall.psiCall.callElement
                 trace.report(AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER.on(callElement))
             }
-            UnsupportedContextualDeclarationCall::class.java -> {
+            is UnsupportedContextualDeclarationCall -> {
                 val callElement = psiKotlinCall.psiCall.callElement
                 trace.report(UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL.on(callElement))
             }
@@ -179,28 +174,25 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     override fun onCallReceiver(callReceiver: SimpleKotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
-        when (diagnostic.javaClass) {
-            UnsafeCallError::class.java -> {
-                val unsafeCallErrorDiagnostic = diagnostic as UnsafeCallError
+        when (diagnostic) {
+            is UnsafeCallError -> {
                 val isForImplicitInvoke = when (callReceiver) {
                     is ReceiverExpressionKotlinCallArgument -> callReceiver.isForImplicitInvoke
-                    else -> unsafeCallErrorDiagnostic.isForImplicitInvoke
+                    else -> diagnostic.isForImplicitInvoke
                             || callReceiver.receiver.receiverValue.type.isExtensionFunctionType
                 }
 
                 tracingStrategy.unsafeCall(trace, callReceiver.receiver.receiverValue.type, isForImplicitInvoke)
             }
 
-            SuperAsExtensionReceiver::class.java -> {
+            is SuperAsExtensionReceiver -> {
                 val psiExpression = callReceiver.psiExpression
                 if (psiExpression is KtSuperExpression) {
                     trace.report(SUPER_CANT_BE_EXTENSION_RECEIVER.on(psiExpression, psiExpression.text))
                 }
             }
 
-            StubBuilderInferenceReceiver::class.java -> {
-                diagnostic as StubBuilderInferenceReceiver
-
+            is StubBuilderInferenceReceiver -> {
                 val stubType = callReceiver.receiver.receiverValue.type as? StubTypeForBuilderInference
                 val originalTypeParameter = stubType?.originalTypeVariable?.originalTypeParameter
 
@@ -216,12 +208,10 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     override fun onCallArgument(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
-        when (diagnostic.javaClass) {
-            SmartCastDiagnostic::class.java -> reportSmartCast(diagnostic as SmartCastDiagnostic)
-            UnstableSmartCastDiagnosticError::class.java,
-            UnstableSmartCastResolutionError::class.java -> reportUnstableSmartCast(diagnostic as UnstableSmartCast)
-            VisibilityErrorOnArgument::class.java -> {
-                diagnostic as VisibilityErrorOnArgument
+        when (diagnostic) {
+            is SmartCastDiagnostic -> reportSmartCast(diagnostic)
+            is UnstableSmartCast -> reportUnstableSmartCast(diagnostic)
+            is VisibilityErrorOnArgument -> {
                 val invisibleMember = diagnostic.invisibleMember
                 val argumentExpression =
                     diagnostic.argument.psiCallArgument.valueArgument.getArgumentExpression()?.lastBlockStatementOrThis()
@@ -230,57 +220,47 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.report(INVISIBLE_MEMBER.on(argumentExpression, invisibleMember, invisibleMember.visibility, invisibleMember))
                 }
             }
-            TooManyArguments::class.java -> {
+            is TooManyArguments -> {
                 trace.reportTrailingLambdaErrorOr(callArgument.psiExpression) { expr ->
-                    TOO_MANY_ARGUMENTS.on(expr, (diagnostic as TooManyArguments).descriptor)
+                    TOO_MANY_ARGUMENTS.on(expr, diagnostic.descriptor)
                 }
 
                 trace.markAsReported()
             }
-            VarargArgumentOutsideParentheses::class.java -> trace.reportTrailingLambdaErrorOr(callArgument.psiExpression) { expr ->
+            is VarargArgumentOutsideParentheses -> trace.reportTrailingLambdaErrorOr(callArgument.psiExpression) { expr ->
                 VARARG_OUTSIDE_PARENTHESES.on(expr)
             }
 
-            MixingNamedAndPositionArguments::class.java ->
+            is MixingNamedAndPositionArguments -> {
                 trace.report(MIXING_NAMED_AND_POSITIONED_ARGUMENTS.on(callArgument.psiCallArgument.valueArgument.asElement()))
+            }
 
-            NoneCallableReferenceCallCandidates::class.java -> {
-                val argument = (diagnostic as? NoneCallableReferenceCallCandidates)?.argument
+            is NoneCallableReferenceCallCandidates -> {
+                val argument = diagnostic.argument
                 val expression = (argument as? CallableReferenceKotlinCallArgumentImpl)?.ktCallableReferenceExpression
                 if (expression != null) {
                     trace.report(UNRESOLVED_REFERENCE.on(expression.callableReference, expression.callableReference))
                 }
             }
 
-            CallableReferenceCallCandidatesAmbiguity::class.java -> {
-                val ambiguityDiagnostic = diagnostic as CallableReferenceCallCandidatesAmbiguity
-                val expression = when (val psiExpression = ambiguityDiagnostic.argument.psiExpression) {
+            is CallableReferenceCallCandidatesAmbiguity -> {
+                val expression = when (val psiExpression = diagnostic.argument.psiExpression) {
                     is KtPsiUtil.KtExpressionWrapper -> psiExpression.baseExpression
                     else -> psiExpression
                 } as? KtCallableReferenceExpression
 
-                val candidates = ambiguityDiagnostic.candidates.map { it.candidate }
+                val candidates = diagnostic.candidates.map { it.candidate }
                 if (expression != null) {
                     trace.reportDiagnosticOnce(CALLABLE_REFERENCE_RESOLUTION_AMBIGUITY.on(expression.callableReference, candidates))
                     trace.record(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression.callableReference, candidates)
                 }
             }
 
-            ArgumentNullabilityErrorDiagnostic::class.java -> {
-                require(diagnostic is ArgumentNullabilityErrorDiagnostic)
-                reportNullabilityMismatchDiagnostic(callArgument, diagnostic)
-            }
+            is ArgumentNullabilityErrorDiagnostic -> reportNullabilityMismatchDiagnostic(callArgument, diagnostic)
 
-            ArgumentNullabilityWarningDiagnostic::class.java -> {
-                require(diagnostic is ArgumentNullabilityWarningDiagnostic)
-                reportNullabilityMismatchDiagnostic(callArgument, diagnostic)
-            }
+            is ArgumentNullabilityWarningDiagnostic -> reportNullabilityMismatchDiagnostic(callArgument, diagnostic)
 
-            CallableReferencesDefaultArgumentUsed::class.java -> {
-                require(diagnostic is CallableReferencesDefaultArgumentUsed) {
-                    "diagnostic ($diagnostic) should have type CallableReferencesDefaultArgumentUsed"
-                }
-
+            is CallableReferencesDefaultArgumentUsed -> {
                 val callableReferenceExpression = diagnostic.argument.call.extractCallableReferenceExpression()
 
                 require(callableReferenceExpression != null) {
@@ -295,18 +275,17 @@ class DiagnosticReporterByTrackingStrategy(
                 )
             }
 
-            ResolvedToSamWithVarargDiagnostic::class.java -> {
+            is ResolvedToSamWithVarargDiagnostic -> {
                 trace.report(TYPE_INFERENCE_CANDIDATE_WITH_SAM_AND_VARARG.on(callArgument.psiCallArgument.valueArgument.asElement()))
             }
 
-            NotEnoughInformationForLambdaParameter::class.java -> {
-                val unknownParameterTypeDiagnostic = diagnostic as NotEnoughInformationForLambdaParameter
-                val lambdaArgument = unknownParameterTypeDiagnostic.lambdaArgument
-                val parameterIndex = unknownParameterTypeDiagnostic.parameterIndex
+            is NotEnoughInformationForLambdaParameter -> {
+                val lambdaArgument = diagnostic.lambdaArgument
+                val parameterIndex = diagnostic.parameterIndex
 
-                val argumentExpression = KtPsiUtil.deparenthesize(lambdaArgument.psiCallArgument.valueArgument.getArgumentExpression())
+                val valueArgument = lambdaArgument.psiCallArgument.valueArgument
 
-                val valueParameters = when (argumentExpression) {
+                val valueParameters = when (val argumentExpression = KtPsiUtil.deparenthesize(valueArgument.getArgumentExpression())) {
                     is KtLambdaExpression -> argumentExpression.valueParameters
                     is KtNamedFunction -> argumentExpression.valueParameters // for anonymous functions
                     else -> return
@@ -318,16 +297,13 @@ class DiagnosticReporterByTrackingStrategy(
                 }
             }
 
-            CompatibilityWarningOnArgument::class.java -> {
+            is CompatibilityWarningOnArgument -> {
                 trace.report(
-                    COMPATIBILITY_WARNING.on(
-                        callArgument.psiCallArgument.valueArgument.asElement(),
-                        (diagnostic as CompatibilityWarningOnArgument).candidate
-                    )
+                    COMPATIBILITY_WARNING.on(callArgument.psiCallArgument.valueArgument.asElement(), diagnostic.candidate)
                 )
             }
 
-            AdaptedCallableReferenceIsUsedWithReflection::class.java -> {
+            is AdaptedCallableReferenceIsUsedWithReflection -> {
                 trace.report(
                     ADAPTED_CALLABLE_REFERENCE_AGAINST_REFLECTION_TYPE.on(
                         callArgument.psiCallArgument.valueArgument.asElement()
@@ -335,8 +311,7 @@ class DiagnosticReporterByTrackingStrategy(
                 )
             }
 
-            MultiLambdaBuilderInferenceRestriction::class.java -> {
-                diagnostic as MultiLambdaBuilderInferenceRestriction
+            is MultiLambdaBuilderInferenceRestriction -> {
                 val typeParameter = diagnostic.typeParameter as? TypeParameterDescriptor
 
                 trace.reportDiagnosticOnce(
@@ -352,31 +327,31 @@ class DiagnosticReporterByTrackingStrategy(
 
     override fun onCallArgumentName(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
         val nameReference = callArgument.psiCallArgument.valueArgument.getArgumentName()?.referenceExpression ?: return
-        when (diagnostic.javaClass) {
-            NamedArgumentReference::class.java -> {
-                trace.record(BindingContext.REFERENCE_TARGET, nameReference, (diagnostic as NamedArgumentReference).parameterDescriptor)
+        when (diagnostic) {
+            is NamedArgumentReference -> {
+                trace.record(BindingContext.REFERENCE_TARGET, nameReference, diagnostic.parameterDescriptor)
                 trace.markAsReported()
             }
-            NameForAmbiguousParameter::class.java -> trace.report(NAME_FOR_AMBIGUOUS_PARAMETER.on(nameReference))
-            NameNotFound::class.java -> trace.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference, nameReference))
+            is NameForAmbiguousParameter -> trace.report(NAME_FOR_AMBIGUOUS_PARAMETER.on(nameReference))
+            is NameNotFound -> trace.report(NAMED_PARAMETER_NOT_FOUND.on(nameReference, nameReference))
 
-            NamedArgumentNotAllowed::class.java -> trace.report(
+            is NamedArgumentNotAllowed -> trace.report(
                 NAMED_ARGUMENTS_NOT_ALLOWED.on(
                     nameReference,
-                    when ((diagnostic as NamedArgumentNotAllowed).descriptor) {
+                    when (diagnostic.descriptor) {
                         is FunctionInvokeDescriptor -> INVOKE_ON_FUNCTION_TYPE
                         is DeserializedCallableMemberDescriptor -> INTEROP_FUNCTION
                         else -> NON_KOTLIN_FUNCTION
                     }
                 )
             )
-            ArgumentPassedTwice::class.java -> trace.report(ARGUMENT_PASSED_TWICE.on(nameReference))
+            is ArgumentPassedTwice -> trace.report(ARGUMENT_PASSED_TWICE.on(nameReference))
         }
     }
 
     override fun onCallArgumentSpread(callArgument: KotlinCallArgument, diagnostic: KotlinCallDiagnostic) {
-        when (diagnostic.javaClass) {
-            NonVarargSpread::class.java -> {
+        when (diagnostic) {
+            is NonVarargSpread -> {
                 val castedPsiCallArgument = callArgument as? PSIKotlinCallArgument
                 val castedCallArgument = callArgument as? ExpressionKotlinCallArgumentImpl
 
@@ -554,13 +529,10 @@ class DiagnosticReporterByTrackingStrategy(
     }
 
     override fun constraintError(error: ConstraintSystemError) {
-        when (error.javaClass) {
-            NewConstraintError::class.java, NewConstraintWarning::class.java -> {
-                reportConstraintErrorByPosition(error as NewConstraintMismatch, error.position.from)
-            }
+        when (error) {
+            is NewConstraintMismatch -> reportConstraintErrorByPosition(error, error.position.from)
 
-            CapturedTypeFromSubtyping::class.java -> {
-                error as CapturedTypeFromSubtyping
+            is CapturedTypeFromSubtyping -> {
                 val position = error.position
                 val argumentPosition: ArgumentConstraintPositionImpl? =
                     position as? ArgumentConstraintPositionImpl
@@ -577,9 +549,7 @@ class DiagnosticReporterByTrackingStrategy(
                 }
             }
 
-            InferredIntoDeclaredUpperBounds::class.java -> {
-                error as InferredIntoDeclaredUpperBounds
-
+            is InferredIntoDeclaredUpperBounds -> {
                 val psiCall = psiKotlinCall.psiCall
                 val expression = if (psiCall is CallTransformer.CallForImplicitInvoke) {
                     psiCall.outerCall.calleeExpression
@@ -593,9 +563,7 @@ class DiagnosticReporterByTrackingStrategy(
                 )
             }
 
-            NotEnoughInformationForTypeParameterImpl::class.java -> {
-                error as NotEnoughInformationForTypeParameterImpl
-
+            is NotEnoughInformationForTypeParameterImpl -> {
                 val resolvedAtom = error.resolvedAtom
                 val isDiagnosticRedundant = !isSpecialFunction(resolvedAtom) && allDiagnostics.any {
                     when (it) {
@@ -646,8 +614,8 @@ class DiagnosticReporterByTrackingStrategy(
                 }
             }
 
-            OnlyInputTypesDiagnostic::class.java -> {
-                val typeVariable = (error as OnlyInputTypesDiagnostic).typeVariable as? TypeVariableFromCallableDescriptor ?: return
+            is OnlyInputTypesDiagnostic -> {
+                val typeVariable = error.typeVariable as? TypeVariableFromCallableDescriptor ?: return
                 psiKotlinCall.psiCall.calleeExpression?.let {
                     trace.report(
                         TYPE_INFERENCE_ONLY_INPUT_TYPES.on(context.languageVersionSettings, it, typeVariable.originalTypeParameter)
@@ -655,7 +623,7 @@ class DiagnosticReporterByTrackingStrategy(
                 }
             }
 
-            InferredEmptyIntersectionError::class.java, InferredEmptyIntersectionWarning::class.java -> {
+            is InferredEmptyIntersectionError, is InferredEmptyIntersectionWarning -> {
                 val typeVariable = (error as InferredEmptyIntersection).typeVariable
                 psiKotlinCall.psiCall.calleeExpression?.let { expression ->
                     val typeVariableText = (typeVariable as? TypeVariableFromCallableDescriptor)?.originalTypeParameter?.name?.asString()
@@ -682,6 +650,10 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.reportDiagnosticOnce(diagnostic)
                 }
             }
+            is ConstrainingTypeIsError -> {}
+            is LowerPriorityToPreserveCompatibility -> {}
+            is NoSuccessfulFork -> {}
+            is NotEnoughInformationForTypeParameter<*> -> {}
         }
     }
 
