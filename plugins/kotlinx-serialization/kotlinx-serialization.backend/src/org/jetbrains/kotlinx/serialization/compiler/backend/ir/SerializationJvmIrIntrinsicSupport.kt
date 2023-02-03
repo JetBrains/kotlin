@@ -49,6 +49,7 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.sealedSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SpecialBuiltins
+import org.jetbrains.kotlinx.serialization.compiler.resolve.annotationsWithArguments
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -381,8 +382,8 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
             val descriptor = StringBuilder("(${serializersModuleType.descriptor}${AsmTypes.K_CLASS_TYPE.descriptor}")
             // Generic args (if present)
             if (argSerializers.isNotEmpty()) {
-                fillArray(kSerializerType, argSerializers) { _, serializer ->
-                    instantiate(serializer, null)
+                fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+                    generateSerializerForType(type, this, intrinsicType)
                 }
                 descriptor.append(kSerializerArrayType.descriptor)
             }
@@ -485,8 +486,8 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                             aconst(null)
                         }
                         signature.append(kSerializerType.descriptor)
-                        fillArray(kSerializerType, argSerializers) { _, serializer ->
-                            instantiate(serializer, null)
+                        fillArray(kSerializerType, argSerializers) { _, (type, _) ->
+                            generateSerializerForType(type, this, intrinsicType)
                         }
                         signature.append(kSerializerArrayType.descriptor)
                     }
@@ -498,7 +499,8 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     AsmUtil.wrapJavaClassIntoKClass(this)
                     signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
                     // Reference array serializer still needs serializer for its argument type
-                    instantiate(argSerializers[0], signature)
+                    generateSerializerForType(argSerializers[0].first, this, intrinsicType)
+                    signature.append(kSerializerType.descriptor)
                 }
 
                 sealedSerializerId -> {
@@ -550,7 +552,10 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
                     signature.append("Ljava/lang/Object;")
                 }
                 // all serializers get arguments with serializers of their generic types
-                else -> argSerializers.forEach { instantiate(it, signature) }
+                else -> argSerializers.forEach { (type, _) ->
+                    generateSerializerForType(type, this, intrinsicType)
+                    signature.append(kSerializerType.descriptor)
+                }
             }
             signature.append(")V")
             // invoke constructor
