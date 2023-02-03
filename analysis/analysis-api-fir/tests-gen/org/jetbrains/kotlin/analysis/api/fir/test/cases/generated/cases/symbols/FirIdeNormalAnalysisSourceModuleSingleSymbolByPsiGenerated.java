@@ -131,6 +131,12 @@ public class FirIdeNormalAnalysisSourceModuleSingleSymbolByPsiGenerated extends 
     }
 
     @Test
+    @TestMetadata("typeAnnotationsOnFunctionalTypeWithTypeAlias.kt")
+    public void testTypeAnnotationsOnFunctionalTypeWithTypeAlias() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnFunctionalTypeWithTypeAlias.kt");
+    }
+
+    @Test
     @TestMetadata("typeAnnotationsOnPropertyGetterReturnType.kt")
     public void testTypeAnnotationsOnPropertyGetterReturnType() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnPropertyGetterReturnType.kt");

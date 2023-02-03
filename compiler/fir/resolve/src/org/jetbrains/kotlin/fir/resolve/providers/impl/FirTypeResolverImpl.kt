@@ -443,7 +443,10 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         }
     }
 
-    private fun createFunctionType(typeRef: FirFunctionTypeRef): Pair<ConeClassLikeTypeImpl, ConeDiagnostic?> {
+    private fun createFunctionType(
+        typeRef: FirFunctionTypeRef,
+        containerDeclaration: FirDeclaration? = null
+    ): Pair<ConeClassLikeTypeImpl, ConeDiagnostic?> {
         val parameters =
             typeRef.contextReceiverTypeRefs.map { it.coneType } +
                     listOfNotNull(typeRef.receiverTypeRef?.coneType) +
@@ -472,7 +475,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                 if (typeRef.contextReceiverTypeRefs.isNotEmpty()) {
                     add(CompilerConeAttributes.ContextFunctionTypeParams(typeRef.contextReceiverTypeRefs.size))
                 }
-            }
+            },
+            containerDeclaration
         )
         return ConeClassLikeTypeImpl(
             classId.toLookupTag(),
@@ -503,7 +507,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     isOperandOfIsOperator,
                 ) to (result as? TypeResolutionResult.Resolved)?.typeCandidate?.diagnostic
             }
-            is FirFunctionTypeRef -> createFunctionType(typeRef)
+            is FirFunctionTypeRef -> createFunctionType(typeRef, scopeClassDeclaration.containerDeclaration)
             is FirDynamicTypeRef -> ConeDynamicType.create(session) to null
             is FirIntersectionTypeRef -> {
                 val leftType = typeRef.leftType.coneType

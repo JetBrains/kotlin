@@ -71,4 +71,16 @@ public interface KtFunctionalTypeRenderer {
         }
     }
 
+    public object AS_FULLY_EXPANDED_CLASS_TYPE_FOR_REFELCTION_TYPES : KtFunctionalTypeRenderer {
+        context(KtAnalysisSession, KtTypeRenderer)
+        override fun renderType(type: KtFunctionalType, printer: PrettyPrinter) {
+            val fullyExpandedType = type.fullyExpandedType
+            if (fullyExpandedType is KtFunctionalType) {
+                val renderer = if (fullyExpandedType.isReflectType) AS_CLASS_TYPE else AS_FUNCTIONAL_TYPE
+                renderer.renderType(fullyExpandedType, printer)
+            } else {
+                renderType(fullyExpandedType, printer)
+            }
+        }
+    }
 }
