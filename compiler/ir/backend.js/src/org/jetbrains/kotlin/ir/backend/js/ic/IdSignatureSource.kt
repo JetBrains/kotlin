@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.serialization.IrFileDeserializer
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -57,7 +58,7 @@ internal fun resolveFakeOverrideFunction(symbol: IrSymbol): IdSignature? {
     }
 }
 
-internal fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSymbol>): Map<IdSignature, IrSymbol> {
+private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSymbol>): Map<IdSignature, IrSymbol> {
     return HashMap<IdSignature, IrSymbol>(deserializedSymbols.size).apply {
         for ((signature, symbol) in deserializedSymbols) {
             put(signature, symbol)
@@ -96,5 +97,41 @@ internal fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSy
 
             (symbol.owner as? IrClass)?.let(::addNestedDeclarations)
         }
+    }
+}
+
+internal sealed class FileSignatureProvider(val irFile: IrFile) {
+    abstract fun getSignatureToIndexMapping(): Map<IdSignature, Int>
+    abstract fun getReachableSignatures(): Set<IdSignature>
+    abstract fun getImplementedSymbols(): Map<IdSignature, IrSymbol>
+
+    class DeserializedFromKlib(private val fileDeserializer: IrFileDeserializer) : FileSignatureProvider(fileDeserializer.file) {
+        override fun getSignatureToIndexMapping(): Map<IdSignature, Int> {
+            return fileDeserializer.symbolDeserializer.signatureDeserializer.signatureToIndexMapping()
+        }
+
+        override fun getReachableSignatures(): Set<IdSignature> {
+            return getSignatureToIndexMapping().keys
+        }
+
+        override fun getImplementedSymbols(): Map<IdSignature, IrSymbol> {
+            return collectImplementedSymbol(fileDeserializer.symbolDeserializer.deserializedSymbols)
+        }
+    }
+
+    class GeneratedFunctionTypeInterface(file: IrFile) : FileSignatureProvider(file) {
+        private val allSignatures = run {
+            val topLevelSymbols = buildMap {
+                for (declaration in irFile.declarations) {
+                    val signature = declaration.symbol.signature ?: continue
+                    put(signature, declaration.symbol)
+                }
+            }
+            collectImplementedSymbol(topLevelSymbols)
+        }
+
+        override fun getSignatureToIndexMapping(): Map<IdSignature, Int> = emptyMap()
+        override fun getReachableSignatures(): Set<IdSignature> = allSignatures.keys
+        override fun getImplementedSymbols(): Map<IdSignature, IrSymbol> = allSignatures
     }
 }

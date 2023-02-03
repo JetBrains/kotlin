@@ -107,22 +107,21 @@ internal object KotlinSourceFileMetadataNotExist : KotlinSourceFileMetadata() {
     override val directDependencies = KotlinSourceFileMap<Map<IdSignature, ICHash>>(emptyMap())
 }
 
-internal class DirtyFileExports(
-    override val inverseDependencies: KotlinSourceFileMutableMap<Set<IdSignature>> = KotlinSourceFileMutableMap()
-) : KotlinSourceFileExports() {
-    override fun getExportedSignatures(): Set<IdSignature> = allExportedSignatures
-
+internal class DirtyFileExports : KotlinSourceFileExports() {
     val allExportedSignatures = hashSetOf<IdSignature>()
+
+    override val inverseDependencies: KotlinSourceFileMutableMap<Set<IdSignature>> = KotlinSourceFileMutableMap()
+
+    override fun getExportedSignatures(): Set<IdSignature> = allExportedSignatures
 }
 
 internal class DirtyFileMetadata(
     val maybeImportedSignatures: Collection<IdSignature>,
-
-    val oldDirectDependencies: KotlinSourceFileMap<*>,
-
-    override val inverseDependencies: KotlinSourceFileMutableMap<MutableSet<IdSignature>> = KotlinSourceFileMutableMap(),
-    override val directDependencies: KotlinSourceFileMutableMap<MutableMap<IdSignature, ICHash>> = KotlinSourceFileMutableMap(),
+    val oldDirectDependencies: KotlinSourceFileMap<*>
 ) : KotlinSourceFileMetadata() {
+    override val inverseDependencies: KotlinSourceFileMutableMap<MutableSet<IdSignature>> = KotlinSourceFileMutableMap()
+    override val directDependencies: KotlinSourceFileMutableMap<MutableMap<IdSignature, ICHash>> = KotlinSourceFileMutableMap()
+
     fun addInverseDependency(lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature) =
         when (val signatures = inverseDependencies[lib, src]) {
             null -> inverseDependencies[lib, src] = hashSetOf(signature)

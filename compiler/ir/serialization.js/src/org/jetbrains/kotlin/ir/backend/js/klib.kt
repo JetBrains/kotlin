@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -38,7 +37,6 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -72,6 +70,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
 
 val KotlinLibrary.moduleName: String
@@ -188,14 +187,6 @@ fun deserializeDependencies(
     }
 }
 
-fun getFunctionFactoryCallback(stdlibModule: IrModuleFragment) = { packageFragmentDescriptor: PackageFragmentDescriptor ->
-    IrFileImpl(
-        NaiveSourceBasedFileEntryImpl("${packageFragmentDescriptor.fqName}-[K][Suspend]Functions"),
-        packageFragmentDescriptor,
-        stdlibModule
-    ).also { stdlibModule.files += it }
-}
-
 fun loadIr(
     depsDescriptors: ModulesStructure,
     irFactory: IrFactory,
@@ -291,7 +282,9 @@ fun getIrModuleInfoForKlib(
         irBuiltIns,
         symbolTable,
         typeTranslator,
-        if (loadFunctionInterfacesIntoStdlib) getFunctionFactoryCallback(deserializedModuleFragments.first()) else null,
+        loadFunctionInterfacesIntoStdlib.ifTrue {
+            FunctionTypeInterfacePackages().makePackageAccessor(deserializedModuleFragments.first())
+        },
         true
     )
 
@@ -349,7 +342,9 @@ fun getIrModuleInfoForSourceFiles(
             irBuiltIns,
             symbolTable,
             psi2IrContext.typeTranslator,
-            if (loadFunctionInterfacesIntoStdlib) getFunctionFactoryCallback(deserializedModuleFragments.first()) else null,
+            loadFunctionInterfacesIntoStdlib.ifTrue {
+                FunctionTypeInterfacePackages().makePackageAccessor(deserializedModuleFragments.first())
+            },
             true
         )
 

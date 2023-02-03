@@ -925,6 +925,12 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         public void testSuspendFunctionIsAs() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/suspendFunctionIsAs.kt");
         }
+
+        @Test
+        @TestMetadata("suspendFunctionalInterface.kt")
+        public void testSuspendFunctionalInterface() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendFunctionalInterface.kt");
+        }
     }
 
     @Nested

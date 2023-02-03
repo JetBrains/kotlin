@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
 import java.io.File
@@ -45,6 +46,17 @@ internal inline fun <E> buildSetUntil(to: Int, builderAction: MutableSet<E>.(Int
 
 internal inline fun <K, V> buildMapUntil(to: Int, builderAction: MutableMap<K, V>.(Int) -> Unit): Map<K, V> {
     return HashMap<K, V>(to).apply { repeat(to) { builderAction(it) } }
+}
+
+internal fun findStdlib(
+    mainFragment: IrModuleFragment,
+    allFragments: Map<KotlinLibraryFile, IrModuleFragment>
+): Pair<KotlinLibraryFile, IrModuleFragment> {
+    val stdlibDescriptor = mainFragment.descriptor.builtIns.builtInsModule
+    val (stdlibFile, stdlibIr) = allFragments.entries.find {
+        it.value.descriptor === stdlibDescriptor
+    } ?: notFoundIcError("stdlib fragment")
+    return stdlibFile to stdlibIr
 }
 
 internal class StopwatchIC {
