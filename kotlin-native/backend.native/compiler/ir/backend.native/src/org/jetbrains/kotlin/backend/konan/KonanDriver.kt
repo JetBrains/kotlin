@@ -64,7 +64,7 @@ class KonanDriver(
         // Avoid showing warning twice in 2-phase compilation.
         if (konanConfig.produce != CompilerOutputKind.LIBRARY && konanConfig.target in deprecatedTargets) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                    "target ${konanConfig.target} is deprecated and will be removed soon. See $DEPRECATION_LINK")
+                    "target ${konanConfig.target} is deprecated and will be removed soon. See: $DEPRECATION_LINK")
         }
 
         ensureModuleName(konanConfig)
