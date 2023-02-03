@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.canNarrowDownGetterType
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
-import org.jetbrains.kotlin.fir.declarations.utils.isFinal
-import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
@@ -560,20 +557,14 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
     // for intersection/substitution overrides
     originScope: FirTypeScope? = null
 ): ForbiddenNamedArgumentsTarget? {
-    if (this is FirConstructor && this.isPrimary) {
-        this.getContainingClass(session)?.let { containingClass ->
-            if (containingClass.classKind == ClassKind.ANNOTATION_CLASS) {
-                // Java annotation classes allow (actually require) named parameters.
-                return null
-            }
-        }
-    }
+    if (hasStableParameterNames) return null
+
     return when (origin) {
-        FirDeclarationOrigin.Source, FirDeclarationOrigin.Precompiled, FirDeclarationOrigin.Library -> null
         FirDeclarationOrigin.Delegated -> delegatedWrapperData?.wrapped?.getAsForbiddenNamedArgumentsTarget(session)
-        FirDeclarationOrigin.ImportedFromObjectOrStatic -> importedFromObjectOrStaticData?.original?.getAsForbiddenNamedArgumentsTarget(session)
-        is FirDeclarationOrigin.Java, FirDeclarationOrigin.Enhancement -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
-        FirDeclarationOrigin.SamConstructor -> null
+
+        FirDeclarationOrigin.ImportedFromObjectOrStatic ->
+            importedFromObjectOrStaticData?.original?.getAsForbiddenNamedArgumentsTarget(session)
+
         FirDeclarationOrigin.IntersectionOverride, FirDeclarationOrigin.SubstitutionOverride -> {
             var result: ForbiddenNamedArgumentsTarget? =
                 originalIfFakeOverride()?.getAsForbiddenNamedArgumentsTarget(session) ?: return null
@@ -587,24 +578,12 @@ fun FirFunction.getAsForbiddenNamedArgumentsTarget(
             }
             result
         }
-        // referenced function of a Kotlin function type
-        FirDeclarationOrigin.BuiltIns -> runIf(dispatchReceiverClassLookupTagOrNull()?.isSomeFunctionType(session) == true) {
-            ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
-        }
 
-        FirDeclarationOrigin.Synthetic,
-        FirDeclarationOrigin.DynamicScope,
-        FirDeclarationOrigin.RenamedForOverride,
-        FirDeclarationOrigin.WrappedIntegerOperator,
-        FirDeclarationOrigin.ScriptCustomization,
+        FirDeclarationOrigin.BuiltIns -> ForbiddenNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
         is FirDeclarationOrigin.Plugin -> null // TODO: figure out what to do with plugin generated functions
+        else -> ForbiddenNamedArgumentsTarget.NON_KOTLIN_FUNCTION
     }
 }
-
-// TODO: handle functions with non-stable parameter names, see also
-//  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.functionProto
-//  org.jetbrains.kotlin.fir.serialization.FirElementSerializer.constructorProto
-fun FirFunction.getHasStableParameterNames(session: FirSession): Boolean = getAsForbiddenNamedArgumentsTarget(session) == null
 
 @OptIn(ExperimentalContracts::class)
 fun FirExpression?.isIntegerLiteralOrOperatorCall(): Boolean {

@@ -20,7 +20,7 @@ open class FirDeclarationStatusImpl(
     override val modality: Modality?
 ) : FirPureAbstractElement(), FirDeclarationStatus {
     override val source: KtSourceElement? get() = null
-    protected var flags: Int = 0
+    protected var flags: Int = HAS_STABLE_PARAMETER_NAMES.mask
 
     operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0
 
@@ -140,6 +140,12 @@ open class FirDeclarationStatusImpl(
             this[FUN] = value
         }
 
+    override var hasStableParameterNames: Boolean
+        get() = this[HAS_STABLE_PARAMETER_NAMES]
+        set(value) {
+            this[HAS_STABLE_PARAMETER_NAMES] = value
+        }
+
     enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
@@ -158,7 +164,8 @@ open class FirDeclarationStatusImpl(
         STATIC(0x4000),
         FROM_SEALED(0x8000),
         FROM_ENUM(0x10000),
-        FUN(0x20000)
+        FUN(0x20000),
+        HAS_STABLE_PARAMETER_NAMES(0x40000),
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

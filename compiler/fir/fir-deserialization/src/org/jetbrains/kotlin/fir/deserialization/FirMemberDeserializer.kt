@@ -502,6 +502,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 isTailRec = Flags.IS_TAILREC.get(flags)
                 isExternal = Flags.IS_EXTERNAL_FUNCTION.get(flags)
                 isSuspend = Flags.IS_SUSPEND.get(flags)
+                hasStableParameterNames = !Flags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
             }
             this.symbol = symbol
             dispatchReceiverType = c.dispatchReceiver
@@ -571,6 +572,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 visibility.toEffectiveVisibility(classBuilder.symbol)
             ).apply {
                 isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
+                hasStableParameterNames = !Flags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
                 isActual = false
                 isOverride = false
                 this.isInner = isInner

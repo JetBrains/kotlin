@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
-import org.jetbrains.kotlin.fir.declarations.utils.modality
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
@@ -262,6 +259,8 @@ class FirSignatureEnhancement(
                             FirDeclarationStatusImpl(firMethod.visibility, Modality.FINAL)
                         }.apply {
                             isInner = firMethod.isInner
+                            // Java annotation class constructors have stable names, copy flag.
+                            hasStableParameterNames = firMethod.hasStableParameterNames
                         }
                         this.symbol = symbol
                         dispatchReceiverType = firMethod.dispatchReceiverType
