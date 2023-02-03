@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForReceiverParameter
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirReceiverParameterSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
+import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 
 internal class KtFirReceiverParameterSymbol(
@@ -28,7 +28,7 @@ internal class KtFirReceiverParameterSymbol(
     val analysisSession: KtFirAnalysisSession,
 ) : KtReceiverParameterSymbol(), KtLifetimeOwner {
     override val token: KtLifetimeToken get() = analysisSession.token
-    override val psi: PsiElement? by cached { firSymbol.fir.receiverParameter?.typeRef?.findPsi(firSymbol.fir.moduleData.session) }
+    override val psi: PsiElement? = withValidityAssertion{ firSymbol.fir.receiverParameter?.typeRef?.psi }
 
     init {
         require(firSymbol.fir.receiverParameter != null) { "$firSymbol doesn't have an extension receiver." }

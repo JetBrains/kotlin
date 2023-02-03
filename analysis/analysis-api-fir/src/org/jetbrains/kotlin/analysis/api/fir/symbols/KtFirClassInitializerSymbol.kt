@@ -9,8 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.annotations.KtEmptyAnnotationsList
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassInitializerSymbol
@@ -25,7 +24,7 @@ internal class KtFirClassInitializerSymbol(
     override val firSymbol: FirAnonymousInitializerSymbol,
     override val analysisSession: KtFirAnalysisSession,
 ) : KtClassInitializerSymbol(), KtFirSymbol<FirAnonymousInitializerSymbol> {
-    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
 
     context(KtAnalysisSession)
     override fun createPointer(): KtSymbolPointer<KtSymbol> = withValidityAssertion {

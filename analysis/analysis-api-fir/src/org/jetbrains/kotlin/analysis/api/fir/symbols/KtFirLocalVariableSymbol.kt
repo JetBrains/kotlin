@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
-import org.jetbrains.kotlin.analysis.api.fir.utils.cached
+import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtLocalVariableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
@@ -31,7 +30,7 @@ internal class KtFirLocalVariableSymbol(
         assert(firSymbol.isLocal)
     }
 
-    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
 
     override val annotationsList: KtAnnotationsList
         get() = withValidityAssertion {

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.KtFirEnumEntryInitializerSymbolPointer
 import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.requireOwnerPointer
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
@@ -26,7 +26,7 @@ internal class KtFirAnonymousObjectSymbol(
     override val firSymbol: FirAnonymousObjectSymbol,
     override val analysisSession: KtFirAnalysisSession,
 ) : KtAnonymousObjectSymbol(), KtFirSymbol<FirAnonymousObjectSymbol> {
-    override val psi: PsiElement? by cached { firSymbol.findPsi() }
+    override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
 
     override val annotationsList by cached {
         KtFirAnnotationListForDeclaration.create(firSymbol, analysisSession.useSiteSession, token)

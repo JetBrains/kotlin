@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiver
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.annotations.KtFirAnnotationListForDeclaration
-import org.jetbrains.kotlin.analysis.api.fir.findPsi
+import org.jetbrains.kotlin.analysis.api.fir.getAllowedPsi
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtAnonymousFunctionSymbol
@@ -30,7 +30,7 @@ internal class KtFirAnonymousFunctionSymbol(
     override val analysisSession: KtFirAnalysisSession,
 ) : KtAnonymousFunctionSymbol(), KtFirSymbol<FirAnonymousFunctionSymbol> {
 
-    override val psi: PsiElement? by cached { firSymbol.fir.findPsi(firSymbol.fir.moduleData.session) }
+    override val psi: PsiElement? = withValidityAssertion { firSymbol.fir.getAllowedPsi() }
 
     override val annotationsList: KtAnnotationsList
         get() = withValidityAssertion {
