@@ -1,0 +1,7 @@
+$TESTDATA_DIR$/lambdaWithReceiver.kt
+-d
+$TEMP_DIR$
+-cp
+$TESTDATA_DIR$/../../../../dist/common/kotlin-stdlib-common.jar
+-language-version
+2.0
