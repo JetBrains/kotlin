@@ -147,9 +147,8 @@ projectTest(
     shortenTempRootName = shortenTempRootName,
     jUnitMode = JUnitMode.JUnit5
 ) {
-    includeTestsWithPattern(true) {
-        add("org.jetbrains.kotlin.gradle.NewMultiplatformIT.testLibWithTests")
-    }
+    filter.includeTest("org.jetbrains.kotlin.gradle.NewMultiplatformIT", "testLibWithTests")
+    //filter.includeTest("org.jetbrains.kotlin.gradle.NewMultiplatformIT", "testResourceProcessing")
 }
 
 projectTest(
