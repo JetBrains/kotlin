@@ -18,7 +18,8 @@ class BinaryModuleData(
         fun createDependencyModuleData(
             name: Name,
             platform: TargetPlatform,
-            analyzerServices: PlatformDependentAnalyzerServices
+            analyzerServices: PlatformDependentAnalyzerServices,
+            capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty
         ): FirModuleData {
             return FirModuleDataImpl(
                 name,
@@ -27,6 +28,7 @@ class BinaryModuleData(
                 friendDependencies = emptyList(),
                 platform,
                 analyzerServices,
+                capabilities
             )
         }
 

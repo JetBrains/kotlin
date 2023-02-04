@@ -12,10 +12,13 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
+import org.jetbrains.kotlin.fir.FirModuleCapabilities
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
+import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -35,7 +38,17 @@ internal fun PhaseContext.firFrontend(input: KotlinCoreEnvironment): FirOutput {
     }
     val binaryModuleData = BinaryModuleData.initialize(mainModuleName, CommonPlatforms.defaultCommonPlatform, NativePlatformAnalyzerServices)
     val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
-        dependencies(config.resolvedLibraries.getFullList().map { it.libraryFile.absolutePath })
+        val (interopLibs, regularLibs) = config.resolvedLibraries.getFullList().partition { it.isInterop }
+        dependencies(regularLibs.map { it.libraryFile.absolutePath })
+        if (interopLibs.isNotEmpty()) {
+            val interopModuleData =
+                    BinaryModuleData.createDependencyModuleData(
+                            Name.special("<regular interop dependencies of $mainModuleName>"),
+                            CommonPlatforms.defaultCommonPlatform, NativePlatformAnalyzerServices,
+                            FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
+                    )
+            dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
+        }
         friendDependencies(config.friendModuleFiles.map { it.absolutePath })
         // TODO: !!! dependencies module data?
     }

@@ -35,6 +35,7 @@ fun takeUShort(@ImplicitIntegerCoercion u: UShort) {}
 fun takeUInt(@ImplicitIntegerCoercion u: UInt) {}
 fun takeULong(@ImplicitIntegerCoercion u: ULong) {}
 
+@ExperimentalUnsignedTypes
 fun takeUBytes(@ImplicitIntegerCoercion vararg u: UByte) {}
 
 fun takeLong(@ImplicitIntegerCoercion l: Long) {}

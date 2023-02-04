@@ -6,16 +6,16 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.builtins.functions.isBasicFunctionOrKFunction
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.createFunctionType
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.inference.LambdaWithTypeVariableAsExpectedTypeAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
@@ -487,7 +487,9 @@ private fun Candidate.prepareExpectedType(
                     )
                 }
             }
-        } ?: basicExpectedType
+        }
+            ?: getExpectedTypeWithImplicintIntegerCoercion(session, argument, parameter, basicExpectedType)
+            ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
 }
 
@@ -508,6 +510,29 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
         usesSAM = true
         expectedFunctionType
     }
+}
+
+private fun getExpectedTypeWithImplicintIntegerCoercion(
+    session: FirSession,
+    argument: FirExpression,
+    parameter: FirValueParameter,
+    candidateExpectedType: ConeKotlinType
+): ConeKotlinType? {
+    if (!session.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitSignedToUnsignedIntegerConversion)) return null
+
+    if (!parameter.isMarkedWithImplicitIntegerCoercion) return null
+
+    val argumentType =
+        if (argument.isIntegerLiteralOrOperatorCall()) argument.resultType.coneType
+        else {
+            argument.calleeReference?.toResolvedCallableSymbol()?.takeIf {
+                it.rawStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
+            }?.resolvedReturnType
+        }
+
+    // TODO: consider adding a check that argument could be converted to the parameter type (maybe difficult for platform types)
+
+    return argumentType?.withNullability(candidateExpectedType.nullability, session.typeContext)
 }
 
 fun FirExpression.isFunctional(

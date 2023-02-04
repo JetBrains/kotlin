@@ -1,14 +1,13 @@
-// !DIAGNOSTICS: -UNUSED_PARAMETER
+// WITH_STDLIB
 // !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
-// ALLOW_KOTLIN_PACKAGE
-
-// FILE: annotation.kt
+// IGNORE_BACKEND_K1: JVM
+// FILE: signedToUnsignedConversions_annotation.kt
 
 package kotlin.internal
 
 annotation class ImplicitIntegerCoercion
 
-// FILE: test.kt
+// FILE: signedToUnsignedConversions_test.kt
 
 import kotlin.internal.ImplicitIntegerCoercion
 
@@ -35,16 +34,11 @@ fun takeUShort(@ImplicitIntegerCoercion u: UShort) {}
 fun takeUInt(@ImplicitIntegerCoercion u: UInt) {}
 fun takeULong(@ImplicitIntegerCoercion u: ULong) {}
 
-@ExperimentalUnsignedTypes
-fun takeUBytes(@ImplicitIntegerCoercion vararg u: <!OPT_IN_USAGE!>UByte<!>) {}
+fun takeUBytes(@ImplicitIntegerCoercion vararg u: UByte) {}
 
 fun takeLong(@ImplicitIntegerCoercion l: Long) {}
 
-fun takeUIntWithoutAnnotaion(u: UInt) {}
-
-fun takeIntWithoutAnnotation(i: Int) {}
-
-fun test() {
+fun box(): String {
     takeUByte(IMPLICIT_INT)
     takeUByte(EXPLICIT_INT)
 
@@ -55,17 +49,9 @@ fun test() {
 
     takeULong(IMPLICIT_INT)
 
-    <!OPT_IN_USAGE!>takeUBytes<!>(IMPLICIT_INT, EXPLICIT_INT, 42u)
+    takeUBytes(IMPLICIT_INT, EXPLICIT_INT, 42u)
 
-    takeLong(IMPLICIT_INT)
-
-    takeIntWithoutAnnotation(IMPLICIT_INT)
-
-    takeUIntWithoutAnnotaion(UINT_CONST)
-
-    takeUByte(LONG_CONST)
-    takeUByte(<!ARGUMENT_TYPE_MISMATCH!>NON_CONST<!>)
-    takeUByte(BIGGER_THAN_UBYTE)
-    takeUByte(UINT_CONST)
-    takeUIntWithoutAnnotaion(<!ARGUMENT_TYPE_MISMATCH!>IMPLICIT_INT<!>)
+//    such kind of conversions (Int <-> Long) actually are not supported
+//    takeLong(IMPLICIT_INT)
+    return "OK"
 }
