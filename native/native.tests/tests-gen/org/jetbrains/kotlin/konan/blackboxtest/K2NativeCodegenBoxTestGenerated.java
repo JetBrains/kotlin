@@ -40286,6 +40286,12 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
             }
 
             @Test
+            @TestMetadata("signedToUnsignedConversions.kt")
+            public void testSignedToUnsignedConversions() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/signedToUnsignedConversions.kt");
+            }
+
+            @Test
             @TestMetadata("unsignedArraySize.kt")
             public void testUnsignedArraySize() throws Exception {
                 runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArraySize.kt");

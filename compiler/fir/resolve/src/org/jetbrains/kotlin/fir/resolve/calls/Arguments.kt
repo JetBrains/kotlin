@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPo
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessCallableReference
 import org.jetbrains.kotlin.fir.resolve.inference.preprocessLambdaArgument
+import org.jetbrains.kotlin.fir.resolve.isMarkedWithImplicitIntegerCoercion
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.transformers.ensureResolvedTypeDeclaration
@@ -487,7 +489,9 @@ private fun Candidate.prepareExpectedType(
                     )
                 }
             }
-        } ?: basicExpectedType
+        }
+            ?: getExpectedTypeWithImplicintIntegerCoercion(session, argument, parameter, basicExpectedType)
+            ?: basicExpectedType
     return this.substitutor.substituteOrSelf(expectedType)
 }
 
@@ -508,6 +512,31 @@ private fun Candidate.getExpectedTypeWithSAMConversion(
         usesSAM = true
         expectedFunctionType
     }
+}
+
+private fun getExpectedTypeWithImplicintIntegerCoercion(
+    session: FirSession,
+    argument: FirExpression,
+    parameter: FirValueParameter,
+    candidateExpectedType: ConeKotlinType
+): ConeKotlinType? {
+    val argumentRef = argument.calleeReference?.toResolvedCallableSymbol() ?: return null
+    if (argumentRef.rawStatus.isConst &&
+        parameter.isMarkedWithImplicitIntegerCoercion &&
+        argumentRef.isMarkedWithImplicitIntegerCoercion) {
+
+        val argumentType = argumentRef.resolvedReturnType
+        val parameterType = parameter.returnTypeRef.coneTypeOrNull?.let {
+            if (parameter.isVararg) it.varargElementType() else it
+        }
+
+        fun ConeKotlinType.isConvertible() = isIntegerTypeOrNullableIntegerTypeOfAnySize || isUnsignedTypeOrNullableUnsignedType
+
+        if (parameterType != null && argumentType.isConvertible() && parameterType.isConvertible()) {
+            return argumentType.withNullability(candidateExpectedType.nullability, session.typeContext)
+        }
+    }
+    return null
 }
 
 fun FirExpression.isFunctional(

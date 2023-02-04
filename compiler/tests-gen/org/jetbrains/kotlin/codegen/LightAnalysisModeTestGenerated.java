@@ -39872,6 +39872,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/unsignedTypes/nullableUnsignedEqualsLiteral.kt");
         }
 
+        @TestMetadata("signedToUnsignedConversions.kt")
+        public void testSignedToUnsignedConversions() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/signedToUnsignedConversions.kt");
+        }
+
         @TestMetadata("unsignedArraySize.kt")
         public void testUnsignedArraySize() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/unsignedArraySize.kt");

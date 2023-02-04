@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.isMarkedWithImplicitIntegerCoercion
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -983,7 +985,9 @@ class CallAndReferenceGenerator(
                 irArgument = irArgument.applySamConversionIfNeeded(argument, parameter, substitutor)
             }
         }
-        return irArgument.applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
+        return irArgument
+            .applyAssigningArrayElementsToVarargInNamedForm(argument, parameter)
+            .applyImplicitIntegerCoercionIfNeeded(argument, parameter)
     }
 
     private fun IrExpression.applyAssigningArrayElementsToVarargInNamedForm(
@@ -1005,6 +1009,68 @@ class CallAndReferenceGenerator(
                 irVarargElement.type.isArray()
             ) {
                 elements[i] = IrSpreadElementImpl(irVarargElement.startOffset, irVarargElement.endOffset, irVarargElement)
+            }
+        }
+        return this
+    }
+
+    private fun IrExpression.applyImplicitIntegerCoercionIfNeeded(
+        argument: FirExpression,
+        parameter: FirValueParameter?
+    ): IrExpression {
+        if (parameter == null) return this
+
+        val parameterType = parameter.returnTypeRef.coneTypeOrNull?.let {
+            if (parameter.isVararg) it.varargElementType() else it
+        } ?: return this
+
+        fun ConeKotlinType.isConvertible() = isIntegerTypeOrNullableIntegerTypeOfAnySize || isUnsignedTypeOrNullableUnsignedType
+
+        fun IrExpression.applyToElement(argumentRef: FirCallableSymbol<*>?, conversionFunction: IrSimpleFunctionSymbol): IrExpression =
+            if (argumentRef != null && argumentRef.resolvedStatus.isConst && argumentRef.resolvedReturnType.isConvertible() &&
+                argumentRef.isMarkedWithImplicitIntegerCoercion
+            ) {
+                IrCallImpl(
+                    startOffset, endOffset,
+                    conversionFunction.owner.returnType,
+                    conversionFunction,
+                    typeArgumentsCount = 0,
+                    valueArgumentsCount = 0
+                ).apply {
+                    extensionReceiver = this@applyToElement
+                }
+            } else this@applyToElement
+
+        if (parameter.isMarkedWithImplicitIntegerCoercion && parameterType.isConvertible()) {
+            if (this is IrVarargImpl && argument is FirVarargArgumentsExpression) {
+
+                val targetTypeFqName = varargElementType.classFqName ?: return this
+                val conversionFunctions = irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(
+                    Name.identifier("to" + targetTypeFqName.shortName().asString()),
+                    StandardNames.BUILT_INS_PACKAGE_NAME.asString()
+                )
+                if (conversionFunctions.isNotEmpty()) {
+                    elements.forEachIndexed { i, irVarargElement ->
+                        val targetFun = argument.arguments[i].typeRef.toIrType().classifierOrNull?.let { conversionFunctions[it] }
+                        if (targetFun != null && irVarargElement is IrExpression) {
+                            elements[i] =
+                                irVarargElement.applyToElement(argument.arguments[i].calleeReference?.toResolvedCallableSymbol(), targetFun)
+                        }
+                    }
+                }
+                return this
+            } else {
+                val targetIrType = parameter.returnTypeRef.toIrType()
+                val targetTypeFqName = targetIrType.classFqName ?: return this
+                val conversionFunctions = irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(
+                    Name.identifier("to" + targetTypeFqName.shortName().asString()),
+                    StandardNames.BUILT_INS_PACKAGE_NAME.asString()
+                )
+                val sourceTypeClassifier = argument.typeRef.toIrType().classifierOrNull ?: return this
+
+                val conversionFunction = conversionFunctions[sourceTypeClassifier] ?: return this
+
+                return this.applyToElement(argument.calleeReference?.toResolvedCallableSymbol(), conversionFunction)
             }
         }
         return this
