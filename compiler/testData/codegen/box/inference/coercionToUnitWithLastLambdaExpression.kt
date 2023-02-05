@@ -1,6 +1,4 @@
 // IGNORE_BACKEND: WASM
-// KT-55468
-// IGNORE_BACKEND_K2: NATIVE
 
 fun <T> myRun(action: () -> T): T = action()
 fun foo(): String = "foo"
