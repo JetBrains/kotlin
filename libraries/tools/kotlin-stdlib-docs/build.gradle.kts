@@ -64,7 +64,6 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 "kotlin.native.internal",
                 "kotlin.jvm.functions",
                 "kotlin.coroutines.jvm.internal",
-                "kotlin.reflect.jvm.internal"
         )
 
         var kotlinLanguageVersion = version
@@ -114,7 +113,6 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
 
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/src")
 
-                sourceRoots.from("$kotlin_root/core/reflection.jvm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/runtime/kotlin/jvm/annotations")
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/runtime/kotlin/jvm/JvmClassMapping.kt")
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/runtime/kotlin/jvm/PurelyImplements.kt")
@@ -214,6 +212,51 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                     perPackageOption(packageName) {
                         suppress.set(true)
                     }
+                }
+                sourceLinksFromRoot()
+            }
+        }
+    }
+
+fun createKotlinReflectVersionedDocTask(version: String, isLatest: Boolean) =
+    tasks.register<DokkaTaskPartial>("kotlin-reflect_" + version + (if (isLatest) "_latest" else "")) {
+        dependsOn(prepare)
+
+        val kotlinReflectIncludeMd = file("$kotlin_root/libraries/reflect/Module.md")
+
+        val kotlinReflectClasspath = fileTree("$kotlin_libs/kotlin-reflect")
+
+        val kotlinLanguageVersion = version
+
+        moduleName.set("kotlin-reflect")
+
+        val moduleDirName = "kotlin-reflect"
+        with(pluginsMapConfiguration) {
+            put("org.jetbrains.dokka.base.DokkaBase", """{ "templatesDir": "$templatesDir" }""")
+            put("org.jetbrains.dokka.versioning.VersioningPlugin", """{ "version": "$version" }""")
+        }
+        if (isLatest) {
+            outputDirectory.set(file("$outputDirPartial/latest").resolve(moduleDirName))
+        } else {
+            outputDirectory.set(file("$outputDirPartial/previous").resolve(moduleDirName).resolve(version))
+            pluginsMapConfiguration.put("org.jetbrains.dokka.kotlinlang.VersionFilterPlugin", """{ "targetVersion": "$version" }""")
+        }
+
+        dokkaSourceSets {
+            register("jvm") {
+                jdkVersion.set(8)
+                platform.set(Platform.jvm)
+                classpath.setFrom(kotlinReflectClasspath)
+
+                displayName.set("JVM")
+                sourceRoots.from("$kotlin_root/core/reflection.jvm/src")
+
+                skipDeprecated.set(false)
+                includes.from(kotlinReflectIncludeMd)
+                languageVersion.set(kotlinLanguageVersion)
+                noStdlibLink.set(true)
+                perPackageOption("kotlin.reflect.jvm.internal") {
+                    suppress.set(true)
                 }
                 sourceLinksFromRoot()
             }
@@ -413,15 +456,17 @@ gradle.projectsEvaluated {
     val buildLatestVersion by tasks.registering
 
     val latestStdlib = createStdLibVersionedDocTask(latestVersion, true)
+    val latestReflect = createKotlinReflectVersionedDocTask(latestVersion, true)
     val latestTest = createKotlinTestVersionedDocTask(latestVersion, true)
-    val latestAll = createAllLibsVersionedDocTask(latestVersion, true, latestStdlib, latestTest)
+    val latestAll = createAllLibsVersionedDocTask(latestVersion, true, latestStdlib, latestReflect, latestTest)
 
-    buildLatestVersion.configure { dependsOn(latestStdlib, latestTest, latestAll) }
+    buildLatestVersion.configure { dependsOn(latestStdlib, latestTest, latestReflect, latestAll) }
 
     versions.forEach { version ->
         val versionStdlib = createStdLibVersionedDocTask(version, false)
+        val versionReflect = createKotlinReflectVersionedDocTask(version, false)
         val versionTest = createKotlinTestVersionedDocTask(version, false)
-        val versionAll = createAllLibsVersionedDocTask(version, isLatest = false, versionStdlib, versionTest)
+        val versionAll = createAllLibsVersionedDocTask(version, isLatest = false, versionStdlib, versionReflect, versionTest)
         if (version != latestVersion) {
             latestAll.configure { dependsOn(versionAll) }
         }
