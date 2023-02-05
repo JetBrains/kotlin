@@ -466,7 +466,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +fieldList(import).withTransform()
             +declarations.withTransform()
             +stringField("name")
-            +field("sourceFile", sourceFileType, nullable = true)
+            +field("sourceFile", sourceFileType, nullable = false)
             +field("sourceFileLinesMapping", sourceFileLinesMappingType, nullable = true)
             +symbol("FirFileSymbol")
         }
