@@ -34,6 +34,7 @@ val modules = listOf(
     "kotlin-stdlib-jdk7",
     "kotlin-stdlib-jdk8",
     "kotlin-stdlib-js",
+    "kotlin-reflect",
     "kotlin-test",
     "kotlin-test-js",
     "kotlin-test-junit5",
