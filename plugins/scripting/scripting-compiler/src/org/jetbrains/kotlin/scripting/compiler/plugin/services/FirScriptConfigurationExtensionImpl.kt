@@ -46,7 +46,7 @@ class FirScriptConfiguratorExtensionImpl(
 
         // TODO: rewrite/extract decision logic for clarity
         val compilationConfiguration = session.scriptDefinitionProviderService?.let { providerService ->
-            fileBuilder.sourceFile?.toSourceCode()?.let { script ->
+            fileBuilder.sourceFile.toSourceCode()?.let { script ->
                 val ktFile = (script as? KtFileScriptSource)?.ktFile ?: error("only PSI scripts are supported at the moment")
                 providerService.configurationProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration
                     ?: providerService.definitionProvider?.findDefinition(script)?.compilationConfiguration

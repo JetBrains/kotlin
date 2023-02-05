@@ -94,7 +94,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Any?): FirStatement {
         processExhaustivenessCheck(whenExpression)
         bodyResolveComponents.session.enumWhenTracker?.reportEnumUsageInWhen(
-            bodyResolveComponents.file.sourceFile?.path,
+            bodyResolveComponents.file.sourceFile.path,
             getSubjectType(bodyResolveComponents.session, whenExpression)
         )
         return whenExpression

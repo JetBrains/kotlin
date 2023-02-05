@@ -45,7 +45,7 @@ class FirFileBuilder : FirAnnotationContainerBuilder {
     val imports: MutableList<FirImport> = mutableListOf()
     val declarations: MutableList<FirDeclaration> = mutableListOf()
     lateinit var name: String
-    var sourceFile: KtSourceFile? = null
+    lateinit var sourceFile: KtSourceFile
     var sourceFileLinesMapping: KtSourceFileLinesMapping? = null
     lateinit var symbol: FirFileSymbol
 

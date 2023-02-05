@@ -170,7 +170,7 @@ object FirCliExceptionHandler : FirExceptionHandler() {
 
     override fun handleExceptionOnFileAnalysis(file: FirFile, throwable: Throwable): Nothing {
         throw throwable.wrapIntoFileAnalysisExceptionIfNeeded(
-            file.sourceFile?.path,
+            file.sourceFile.path,
             file.source
         ) { file.sourceFileLinesMapping?.getLineAndColumnByOffset(it) }
     }

@@ -33,7 +33,7 @@ abstract class FirFile : FirDeclaration() {
     abstract val imports: List<FirImport>
     abstract val declarations: List<FirDeclaration>
     abstract val name: String
-    abstract val sourceFile: KtSourceFile?
+    abstract val sourceFile: KtSourceFile
     abstract val sourceFileLinesMapping: KtSourceFileLinesMapping?
     abstract override val symbol: FirFileSymbol
 

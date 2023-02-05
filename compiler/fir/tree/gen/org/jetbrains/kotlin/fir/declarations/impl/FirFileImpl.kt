@@ -42,7 +42,7 @@ internal class FirFileImpl(
     override val imports: MutableList<FirImport>,
     override val declarations: MutableList<FirDeclaration>,
     override val name: String,
-    override val sourceFile: KtSourceFile?,
+    override val sourceFile: KtSourceFile,
     override val sourceFileLinesMapping: KtSourceFileLinesMapping?,
     override val symbol: FirFileSymbol,
 ) : FirFile() {

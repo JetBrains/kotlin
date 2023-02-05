@@ -144,13 +144,13 @@ class Fir2IrConverter(
                     ?: when (val linesMapping = file.sourceFileLinesMapping) {
                         is KtSourceFileLinesMappingFromLineStartOffsets ->
                             NaiveSourceBasedFileEntryImpl(
-                                file.sourceFile?.path ?: file.sourceFile?.name ?: file.name,
+                                file.sourceFile.path ?: file.sourceFile.name,
                                 linesMapping.lineStartOffsets,
                                 linesMapping.lastOffset
                             )
                         is KtPsiSourceFileLinesMapping -> PsiIrFileEntry(linesMapping.psiFile)
                         else ->
-                            NaiveSourceBasedFileEntryImpl(file.sourceFile?.path ?: file.sourceFile?.name ?: file.name)
+                            NaiveSourceBasedFileEntryImpl(file.sourceFile.path ?: file.sourceFile.name)
                     }
             FirDeclarationOrigin.Synthetic -> NaiveSourceBasedFileEntryImpl(file.name)
             else -> error("Unsupported file origin: ${file.origin}")
