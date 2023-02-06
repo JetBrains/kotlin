@@ -15,6 +15,7 @@ dependencies {
     api(project(":compiler:ir.tree"))
     api(project(":compiler:backend.js"))
     api(project(":compiler:backend.wasm"))
+    api(project(":compiler:config.web"))
     api(project(":js:js.translator"))
     api(project(":js:js.serializer"))
     api(project(":js:js.dce"))

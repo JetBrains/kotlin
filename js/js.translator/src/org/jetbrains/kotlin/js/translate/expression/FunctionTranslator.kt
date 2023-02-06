@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 import org.jetbrains.kotlin.js.descriptorUtils.shouldBeExported
 import org.jetbrains.kotlin.js.inline.util.FunctionWithWrapper
 import org.jetbrains.kotlin.js.translate.context.Namer
@@ -116,7 +116,7 @@ fun TranslationContext.wrapWithInlineMetadata(
                 }
             InlineMetadata.wrapFunction(outerContext, FunctionWithWrapper(function, block), sourceInfo)
         }.also {
-            val incrementalResults = config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]
+            val incrementalResults = config.configuration[WebConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]
             incrementalResults?.reportInlineFunction(descriptor, it, sourceInfo)
         }
     }

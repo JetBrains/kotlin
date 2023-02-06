@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.js.config;
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
-import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker;
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -53,15 +49,6 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> TYPED_ARRAYS_ENABLED =
             CompilerConfigurationKey.create("TypedArrays enabled");
 
-    public static final CompilerConfigurationKey<IncrementalDataProvider> INCREMENTAL_DATA_PROVIDER =
-            CompilerConfigurationKey.create("incremental data provider");
-
-    public static final CompilerConfigurationKey<IncrementalResultsConsumer> INCREMENTAL_RESULTS_CONSUMER =
-            CompilerConfigurationKey.create("incremental results consumer");
-
-    public static final CompilerConfigurationKey<IncrementalNextRoundChecker> INCREMENTAL_NEXT_ROUND_CHECKER =
-            CompilerConfigurationKey.create("incremental compilation next round checker");
-
     public static final CompilerConfigurationKey<Boolean> FRIEND_PATHS_DISABLED =
             CompilerConfigurationKey.create("disable support for friend paths");
 
@@ -90,21 +77,6 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Map<String, String>> FILE_PATHS_PREFIX_MAP =
             CompilerConfigurationKey.create("this map used to shorten/replace prefix of paths in comments with file paths, " +
                                             "including region comments");
-
-    public static final CompilerConfigurationKey<Boolean> PRINT_REACHABILITY_INFO =
-            CompilerConfigurationKey.create("print declarations' reachability info during performing DCE");
-
-    public static final CompilerConfigurationKey<Boolean> FAKE_OVERRIDE_VALIDATOR =
-            CompilerConfigurationKey.create("IR fake override validator");
-
-    public static final CompilerConfigurationKey<ErrorTolerancePolicy> ERROR_TOLERANCE_POLICY =
-            CompilerConfigurationKey.create("set up policy to ignore compilation errors");
-
-    public static final CompilerConfigurationKey<Boolean> PARTIAL_LINKAGE =
-            CompilerConfigurationKey.create("allows some symbols in klibs be missed");
-
-    public static final CompilerConfigurationKey<Boolean> PROPERTY_LAZY_INITIALIZATION =
-            CompilerConfigurationKey.create("perform lazy initialization for properties");
 
     public static final CompilerConfigurationKey<Boolean> GENERATE_INLINE_ANONYMOUS_FUNCTIONS =
             CompilerConfigurationKey.create("translate lambdas into in-line anonymous functions");

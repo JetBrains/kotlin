@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -99,7 +100,7 @@ class JsIrBackendContext(
                 call.symbol == intrinsics.arrayConcat
 
     val devMode = configuration[JSConfigurationKeys.DEVELOPER_MODE] ?: false
-    val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
+    val errorPolicy = configuration[WebConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
 
@@ -155,7 +156,7 @@ class JsIrBackendContext(
     override val reflectionSymbols: ReflectionSymbols get() = intrinsics.reflectionSymbols
 
     override val propertyLazyInitialization: PropertyLazyInitialization = PropertyLazyInitialization(
-        enabled = configuration.get(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true),
+        enabled = configuration.get(WebConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true),
         eagerInitialization = symbolTable.referenceClass(getJsInternalClass("EagerInitialization"))
     )
 

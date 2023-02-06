@@ -45,7 +45,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
@@ -194,9 +194,9 @@ fun loadIr(
     val mainModule = depsDescriptors.mainModule
     val configuration = depsDescriptors.compilerConfiguration
     val allDependencies = depsDescriptors.allDependencies
-    val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
+    val errorPolicy = configuration.get(WebConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.irMessageLogger
-    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = configuration[WebConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
@@ -259,7 +259,7 @@ fun getIrModuleInfoForKlib(
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
-    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = configuration[WebConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
     val irLinker = JsIrLinker(
         currentModule = null,
@@ -319,7 +319,7 @@ fun getIrModuleInfoForSourceFiles(
         JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
 
-    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = configuration[WebConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
     val irLinker = JsIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,
@@ -352,7 +352,7 @@ fun getIrModuleInfoForSourceFiles(
         moduleFragment.acceptVoid(mangleChecker)
     }
 
-    if (configuration.getBoolean(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
+    if (configuration.getBoolean(WebConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
         val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
     }
@@ -640,7 +640,7 @@ fun serializeModuleIntoKlib(
 
     val moduleDescriptor = moduleFragment.descriptor
 
-    val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
+    val incrementalResultsConsumer = configuration.get(WebConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
     val empty = ByteArray(0)
 
     fun processCompiledFileData(ioFile: File, compiledFile: KotlinFileSerializedData) {
@@ -758,7 +758,7 @@ private fun compareMetadataAndGoToNextICRoundIfNeeded(
     files: List<KtFile>,
     allowErrors: Boolean
 ) {
-    val nextRoundChecker = config.get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return
+    val nextRoundChecker = config.get(WebConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return
     val bindingContext = analysisResult.bindingContext
     val serializer = KlibMetadataIncrementalSerializer(config, project, allowErrors)
     for (ktFile in files) {
@@ -831,4 +831,4 @@ fun IncrementalDataProvider.getSerializedData(newSources: List<KtFile>): List<Ko
     getSerializedData(newSources.map(::KtPsiSourceFile))
 
 val CompilerConfiguration.incrementalDataProvider: IncrementalDataProvider?
-    get() = get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
+    get() = get(WebConfigurationKeys.INCREMENTAL_DATA_PROVIDER)

@@ -40,10 +40,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
-import org.jetbrains.kotlin.js.config.EcmaVersion;
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys;
-import org.jetbrains.kotlin.js.config.JsConfig;
-import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding;
+import org.jetbrains.kotlin.js.config.*;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
 import org.jetbrains.kotlin.js.facade.TranslationResult;
@@ -117,7 +114,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             @NotNull JsConfig config
     ) throws TranslationException {
         K2JSTranslator translator = new K2JSTranslator(config);
-        IncrementalDataProvider incrementalDataProvider = config.getConfiguration().get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER);
+        IncrementalDataProvider incrementalDataProvider = config.getConfiguration().get(WebConfigurationKeys.INCREMENTAL_DATA_PROVIDER);
         if (incrementalDataProvider != null) {
             Map<File, KtFile> nonCompiledSources = new HashMap<>(allKotlinFiles.size());
             for (KtFile ktFile : allKotlinFiles) {
@@ -484,12 +481,12 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
 
         IncrementalDataProvider incrementalDataProvider = services.get(IncrementalDataProvider.class);
         if (incrementalDataProvider != null) {
-            configuration.put(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER, incrementalDataProvider);
+            configuration.put(WebConfigurationKeys.INCREMENTAL_DATA_PROVIDER, incrementalDataProvider);
         }
 
         IncrementalResultsConsumer incrementalResultsConsumer = services.get(IncrementalResultsConsumer.class);
         if (incrementalResultsConsumer != null) {
-            configuration.put(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, incrementalResultsConsumer);
+            configuration.put(WebConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, incrementalResultsConsumer);
         }
 
         LookupTracker lookupTracker = services.get(LookupTracker.class);

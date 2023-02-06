@@ -213,6 +213,7 @@ val fe10CompilerModules = arrayOf(
     ":js:js.sourcemap",
     ":js:js.serializer",
     ":js:js.parser",
+    ":compiler:config.web",
     ":js:js.config",
     ":js:js.frontend",
     ":js:js.translator",
@@ -253,6 +254,7 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":compiler:util",
     ":compiler:config",
     ":compiler:config.jvm",
+    ":compiler:config.web",
     ":js:js.config",
     ":core:util.runtime",
     ":compiler:compiler.version"
