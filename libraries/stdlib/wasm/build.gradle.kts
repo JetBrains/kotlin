@@ -185,15 +185,3 @@ afterEvaluate {
     }
 }
 
-if (!isConfigurationCacheDisabled) {
-    tasks.matching {
-        it is org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
-                || it is org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
-                || it is org.jetbrains.kotlin.gradle.plugin.mpp.TransformKotlinGranularMetadata
-    }.configureEach {
-        onlyIf {
-            logger.warn("Task '$name' is disabled due to incompatibility with configuration cache. KT-49933")
-            false
-        }
-    }
-}
