@@ -28,7 +28,8 @@ class BuilderInferenceSubstitutionConstraintPositionImpl(
 class ExpectedTypeConstraintPositionImpl(topLevelCall: KotlinCall) : ExpectedTypeConstraintPosition<KotlinCall>(topLevelCall)
 
 class DeclaredUpperBoundConstraintPositionImpl(
-    typeParameter: TypeParameterDescriptor
+    typeParameter: TypeParameterDescriptor,
+    val kotlinCall: KotlinCall
 ) : DeclaredUpperBoundConstraintPosition<TypeParameterDescriptor>(typeParameter) {
     override fun toString() = "DeclaredUpperBound ${typeParameter.name} from ${typeParameter.containingDeclaration}"
 }
