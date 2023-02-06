@@ -34,7 +34,7 @@ abstract class AbstractCompilerLightClassTest : KotlinMultiFileTestWithJava<Kotl
         val actual = LightClassTestCommon.getActualLightClassText(
             wholeFile,
             { fqname -> findLightClass(allowFrontendExceptions, environment, fqname) },
-            LightClassTestCommon::removeEmptyDefaultImpls
+            { LightClassTestCommon.removeEmptyDefaultImpls(it).replace("\$test_module", "\$light_idea_test_case") },
         )
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual)
     }

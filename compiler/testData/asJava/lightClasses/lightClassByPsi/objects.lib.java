@@ -37,6 +37,15 @@ public final class C1 /* C1*/ {
   class Companion ...
 }
 
+public final class C2 /* C2*/ {
+  @org.jetbrains.annotations.NotNull()
+  public static final C2.Companion Companion;
+
+  public  C2();//  .ctor()
+
+  class Companion ...
+}
+
 public final class ClassWithConstContainer /* ClassWithConstContainer*/ {
   @org.jetbrains.annotations.NotNull()
   public static final ClassWithConstContainer.Companion Companion;
@@ -65,11 +74,7 @@ private static final class Companion /* C1.Companion*/ {
   private  Companion();//  .ctor()
 }
 
-public static final class Companion /* I.Companion*/ {
-  private  Companion();//  .ctor()
-}
-
-public static final class Companion /* ClassWithConstContainer.Companion*/ {
+public static final class Companion /* C2.Companion*/ {
   private  Companion();//  .ctor()
 }
 
@@ -98,6 +103,14 @@ public static final class Companion /* C.Companion*/ {
   public final void bar();//  bar()
 
   public final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
+}
+
+public static final class Companion /* I.Companion*/ {
+  private  Companion();//  .ctor()
+}
+
+public static final class Companion /* ClassWithConstContainer.Companion*/ {
+  private  Companion();//  .ctor()
 }
 
 public final class ConstContainer /* ConstContainer*/ {

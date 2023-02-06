@@ -23,6 +23,12 @@ interface I {
   companion object { }
 }
 
+class C2 {
+    internal companion object {
+
+    }
+}
+
 object Obj : java.lang.Runnable {
     @JvmStatic var x: String = ""
     override fun run() {}

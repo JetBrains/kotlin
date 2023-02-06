@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForClas
 import org.jetbrains.kotlin.light.classes.symbol.compareSymbolPointers
 import org.jetbrains.kotlin.light.classes.symbol.isValid
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
+import org.jetbrains.kotlin.light.classes.symbol.modifierLists.InitializedModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightMemberModifierList
 import org.jetbrains.kotlin.light.classes.symbol.nonExistentType
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
@@ -35,6 +36,7 @@ internal class SymbolLightFieldForObject private constructor(
     lightMemberOrigin: LightMemberOrigin?,
     private val objectSymbolPointer: KtSymbolPointer<KtNamedClassOrObjectSymbol>,
     override val kotlinOrigin: KtObjectDeclaration?,
+    private val isCompanion: Boolean,
 ) : SymbolLightField(containingClass, lightMemberOrigin) {
     internal constructor(
         ktAnalysisSession: KtAnalysisSession,
@@ -42,12 +44,14 @@ internal class SymbolLightFieldForObject private constructor(
         name: String,
         lightMemberOrigin: LightMemberOrigin?,
         containingClass: SymbolLightClassForClassLike<*>,
+        isCompanion: Boolean,
     ) : this(
         containingClass = containingClass,
         name = name,
         lightMemberOrigin = lightMemberOrigin,
         kotlinOrigin = objectSymbol.sourcePsiSafe(),
         objectSymbolPointer = with(ktAnalysisSession) { objectSymbol.createPointer() },
+        isCompanion = isCompanion,
     )
 
     private inline fun <T> withObjectDeclarationSymbol(crossinline action: KtAnalysisSession.(KtNamedClassOrObjectSymbol) -> T): T =
@@ -58,22 +62,26 @@ internal class SymbolLightFieldForObject private constructor(
     private val _modifierList: PsiModifierList by lazyPub {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
-            modifiersBox = GranularModifiersBox(
-                initialValue = GranularModifiersBox.MODALITY_MODIFIERS_MAP.mutate {
-                    it[PsiModifier.FINAL] = true
-                    it[PsiModifier.STATIC] = true
-                },
-                computer = ::computeModifiers,
-            ),
+            modifiersBox = if (isCompanion) {
+                GranularModifiersBox(
+                    initialValue = GranularModifiersBox.MODALITY_MODIFIERS_MAP.mutate {
+                        it[PsiModifier.FINAL] = true
+                        it[PsiModifier.STATIC] = true
+                    },
+                    computer = ::computeCompanionModifiers,
+                )
+            } else {
+                InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)
+            },
             annotationsBox = ComputeAllAtOnceAnnotationsBox { modifierList ->
                 listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
             },
         )
     }
 
-    private fun computeModifiers(modifier: String): Map<String, Boolean>? {
+    private fun computeCompanionModifiers(modifier: String): Map<String, Boolean>? {
         if (modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS) return null
-        return GranularModifiersBox.computeVisibilityForMember(ktModule, objectSymbolPointer)
+        return GranularModifiersBox.computeVisibilityForClass(ktModule, objectSymbolPointer, isTopLevel = false)
     }
 
     private val _isDeprecated: Boolean by lazyPub {

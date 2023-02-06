@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.light.classes.symbol.computeSimpleModality
+import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
 import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForMember
 import org.jetbrains.kotlin.light.classes.symbol.withSymbol
 import org.jetbrains.kotlin.utils.keysToMap
@@ -66,6 +67,18 @@ internal class GranularModifiersBox(
         ): PersistentMap<String, Boolean> {
             val visibility = declarationPointer.withSymbol(ktModule) {
                 it.toPsiVisibilityForMember()
+            }
+
+            return VISIBILITY_MODIFIERS_MAP.with(visibility)
+        }
+
+        internal fun computeVisibilityForClass(
+            ktModule: KtModule,
+            declarationPointer: KtSymbolPointer<KtSymbolWithVisibility>,
+            isTopLevel: Boolean,
+        ): PersistentMap<String, Boolean> {
+            val visibility = declarationPointer.withSymbol(ktModule) {
+                it.toPsiVisibilityForClass(!isTopLevel)
             }
 
             return VISIBILITY_MODIFIERS_MAP.with(visibility)

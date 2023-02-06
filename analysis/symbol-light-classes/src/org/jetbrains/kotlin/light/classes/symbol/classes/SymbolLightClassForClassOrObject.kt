@@ -273,6 +273,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
                 containingClass = this,
                 name = JvmAbi.INSTANCE_FIELD,
                 lightMemberOrigin = null,
+                isCompanion = false,
             )
         )
     }

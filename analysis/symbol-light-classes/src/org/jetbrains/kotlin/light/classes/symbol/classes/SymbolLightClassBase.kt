@@ -107,7 +107,7 @@ abstract class SymbolLightClassBase protected constructor(val ktModule: KtModule
         }
     }
 
-    protected open val isTopLevel: Boolean get() = false
+    internal open val isTopLevel: Boolean get() = false
 
     private val _containingFile: PsiFile? by lazyPub {
         val kotlinOrigin = kotlinOrigin ?: return@lazyPub null

@@ -26,8 +26,6 @@ import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForPrope
 import org.jetbrains.kotlin.light.classes.symbol.isConstOrJvmField
 import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
-import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
-import org.jetbrains.kotlin.light.classes.symbol.toPsiVisibilityForClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
@@ -137,6 +135,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
                     containingClass = this,
                     name = it.name.asString(),
                     lightMemberOrigin = null,
+                    isCompanion = true,
                 )
             )
         }
@@ -144,8 +143,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
 
     internal fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
-            val visibility = withClassOrObjectSymbol { it.toPsiVisibilityForClass(isNested = !isTopLevel) }
-            GranularModifiersBox.VISIBILITY_MODIFIERS_MAP.with(visibility)
+            GranularModifiersBox.computeVisibilityForClass(ktModule, classOrObjectSymbolPointer, isTopLevel)
         }
 
         in GranularModifiersBox.MODALITY_MODIFIERS -> GranularModifiersBox.computeSimpleModality(ktModule, classOrObjectSymbolPointer)
