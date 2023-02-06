@@ -320,12 +320,11 @@ val constEvaluationPhase = makeIrModulePhase<JvmBackendContext>(
     {
         ConstEvaluationLowering(
             it,
-            it.configuration.getBoolean(JVMConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS),
-            { irFile, element, warning ->
+            onWarning = { irFile, element, warning ->
                 it.ktDiagnosticReporter.at(element, irFile)
                     .report(JvmBackendErrors.EXCEPTION_IN_CONST_EXPRESSION, warning.description)
             },
-            { irFile, element, error ->
+            onError = { irFile, element, error ->
                 it.ktDiagnosticReporter.at(element, irFile)
                     .report(JvmBackendErrors.EXCEPTION_IN_CONST_VAL_INITIALIZER, error.description)
             }

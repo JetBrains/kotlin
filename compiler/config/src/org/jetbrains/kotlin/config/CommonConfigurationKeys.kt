@@ -88,6 +88,9 @@ object CommonConfigurationKeys {
     @JvmField
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS =
         CompilerConfigurationKey.create<Boolean>("Allow to compile any scripts along with regular Kotlin sources")
+
+    @JvmField
+    val IGNORE_CONST_OPTIMIZATION_ERRORS = CompilerConfigurationKey.create<Boolean>("Ignore errors from IrConstTransformer")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

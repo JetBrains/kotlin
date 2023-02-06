@@ -821,16 +821,6 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
         }
 
     @Argument(
-        value = "-Xignore-const-optimization-errors",
-        description = "Ignore all compilation exceptions while optimizing some constant expressions."
-    )
-    var ignoreConstOptimizationErrors = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xno-new-java-annotation-targets",
         description = "Do not generate Java 1.8+ targets for Kotlin annotation classes"
     )

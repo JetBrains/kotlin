@@ -36,8 +36,6 @@ where advanced options include:
   -Xenhance-type-parameter-types-to-def-not-null
                              Enhance not null annotated type parameter's types to definitely not null types (@NotNull T => T & Any)
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
-  -Xignore-const-optimization-errors
-                             Ignore all compilation exceptions while optimizing some constant expressions.
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjava-package-prefix      Package prefix for Java files
@@ -193,6 +191,8 @@ where advanced options include:
   -Xfragment-sources=<fragment name>:<path>
                              Adds sources to a specific fragment of a multiplatform compilation
   -Xfragments=<fragment name> Declares all known fragments of a multiplatform compilation
+  -Xignore-const-optimization-errors
+                             Ignore all compilation exceptions while optimizing some constant expressions.
   -Xenable-incremental-compilation
                              Enable incremental compilation
   -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm

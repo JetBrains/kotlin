@@ -85,6 +85,8 @@ where advanced options include:
   -Xfragment-sources=<fragment name>:<path>
                              Adds sources to a specific fragment of a multiplatform compilation
   -Xfragments=<fragment name> Declares all known fragments of a multiplatform compilation
+  -Xignore-const-optimization-errors
+                             Ignore all compilation exceptions while optimizing some constant expressions.
   -Xenable-incremental-compilation
                              Enable incremental compilation
   -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm

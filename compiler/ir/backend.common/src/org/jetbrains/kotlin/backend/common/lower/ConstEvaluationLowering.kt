@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
@@ -18,7 +19,7 @@ import org.jetbrains.kotlin.ir.interpreter.checker.IrConstTransformer
 
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
-    private val suppressErrors: Boolean = false,
+    private val suppressErrors: Boolean = context.configuration.getBoolean(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS),
     private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
 ) : FileLoweringPass {

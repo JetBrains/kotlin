@@ -71,7 +71,6 @@ class JvmBuildMetaInfo : BuildMetaInfo() {
             "allowNoSourceFiles",
             "allowUnstableDependencies",
             "enableJvmPreview",
-            "ignoreConstOptimizationErrors",
             "suppressMissingBuiltinsError",
         )
 }
