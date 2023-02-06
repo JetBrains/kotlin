@@ -1,13 +1,6 @@
 public final class C /* C*/ {
-  @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String x = "" /* initializer type: java.lang.String */;
-
-  @org.jetbrains.annotations.NotNull()
-  private static java.lang.String c1;
-
-  @org.jetbrains.annotations.NotNull()
-  private static java.lang.String c;
+  private static java.lang.String x;
 
   @org.jetbrains.annotations.NotNull()
   public static final C.Companion Companion;
@@ -137,15 +130,11 @@ public abstract interface I /* I*/ {
 }
 
 public final class Obj /* Obj*/ implements java.lang.Runnable {
-  @kotlin.jvm.JvmStatic()
   @org.jetbrains.annotations.NotNull()
-  private static java.lang.String x = "" /* initializer type: java.lang.String */;
+  private static java.lang.String x;
 
   @org.jetbrains.annotations.NotNull()
   public static final Obj INSTANCE;
-
-  @java.lang.Override()
-  public void run();//  run()
 
   @kotlin.jvm.JvmStatic()
   public static final int zoo();//  zoo()
@@ -156,4 +145,6 @@ public final class Obj /* Obj*/ implements java.lang.Runnable {
   private  Obj();//  .ctor()
 
   public static final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
+
+  public void run();//  run()
 }
