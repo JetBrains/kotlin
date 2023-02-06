@@ -39,7 +39,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyResolver(
             resolver = IdeJvmAndAndroidSourceDependencyResolver,
-            constraint = SourceSetConstraint.unconstrained,
+            constraint = SourceSetConstraint.isJvmAndAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
         )
@@ -135,7 +135,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
         registerAdditionalArtifactResolver(
             resolver = IdeMetadataSourcesResolver(),
             constraint = !SourceSetConstraint.isSinglePlatformType,
-            phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndJavadocArtifactResolution,
+            phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndDocumentationResolution,
             level = IdeMultiplatformImport.AdditionalArtifactResolutionLevel.Default
         )
 
@@ -143,7 +143,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             registerAdditionalArtifactResolver(
                 resolver = IdeArtifactResolutionQuerySourcesAndDocumentationResolver,
                 constraint = SourceSetConstraint.unconstrained,
-                phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndJavadocArtifactResolution,
+                phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndDocumentationResolution,
                 level = IdeMultiplatformImport.AdditionalArtifactResolutionLevel.Default
             )
         }
@@ -174,6 +174,13 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             constraint = SourceSetConstraint.isAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
+        )
+
+        registerAdditionalArtifactResolver(
+            resolver = IdeAdditionalArtifactResolver.Empty,
+            constraint = SourceSetConstraint.isAndroid,
+            phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndDocumentationResolution,
+            level = IdeMultiplatformImport.AdditionalArtifactResolutionLevel.Overwrite
         )
     }
 }
