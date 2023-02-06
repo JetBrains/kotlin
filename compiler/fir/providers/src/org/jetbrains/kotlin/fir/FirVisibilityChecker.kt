@@ -375,7 +375,7 @@ abstract class FirVisibilityChecker : FirSessionComponent {
         for (declaration in containingDeclarationOfUseSite) {
             if (declaration !is FirClass) continue
             val boundSymbol = declaration.symbol
-            if (boundSymbol.classId.isSame(ownerLookupTag.classId)) {
+            if (boundSymbol.toLookupTag() == ownerLookupTag) {
                 return true
             }
         }
