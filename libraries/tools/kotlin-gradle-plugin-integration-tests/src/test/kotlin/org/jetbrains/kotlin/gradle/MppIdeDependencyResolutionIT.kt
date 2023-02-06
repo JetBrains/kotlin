@@ -212,7 +212,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                         val crc = CRC32()
                         crc.update(cinteropFile.readBytes())
                         val crcValue = crc.value.toInt()
-                        val crcString = Base64.getEncoder().withoutPadding().encodeToString(
+                        val crcString = Base64.getUrlEncoder().withoutPadding().encodeToString(
                             ByteBuffer.allocate(4).putInt(crcValue).array()
                         )
 
