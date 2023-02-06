@@ -608,7 +608,7 @@ internal class KtSymbolByFirBuilder constructor(
 
 
 private class BuilderCache<From, To : KtSymbol> {
-    private val cache = ContainerUtil.createConcurrentSoftMap<From, To>()
+    private val cache = ContainerUtil.createWeakKeySoftValueMap<From, To>()
 
     inline fun <reified S : To> cache(key: From, calculation: () -> S): S {
         val value = cache.getOrPut(key, calculation)
