@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 import kotlin.system.measureTimeMillis
 
 
+@Suppress("LoggingStringTemplateAsArgument")
 internal class IdeMultiplatformImportImpl(
     private val extension: KotlinProjectExtension
 ) : IdeMultiplatformImport {

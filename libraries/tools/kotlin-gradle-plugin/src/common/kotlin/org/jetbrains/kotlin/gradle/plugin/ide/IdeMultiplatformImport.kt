@@ -129,7 +129,7 @@ interface IdeMultiplatformImport {
 
     enum class AdditionalArtifactResolutionPhase {
         PreAdditionalArtifactResolution,
-        SourcesAndJavadocArtifactResolution,
+        SourcesAndDocumentationResolution,
         PostAdditionalArtifactResolution
     }
 
