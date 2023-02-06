@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.targets.metadata
 
 import org.gradle.api.Project
-import org.gradle.api.Task
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Category.CATEGORY_ATTRIBUTE
@@ -21,8 +19,6 @@ import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.commonizer.SharedCommonizerTarget
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
-import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
 import org.jetbrains.kotlin.gradle.plugin.sources.*
@@ -92,7 +88,7 @@ class KotlinMetadataTargetConfigurator :
 
             configureProjectStructureMetadataGeneration(target.project, allMetadataJar)
 
-            setupDependencyTransformationForCommonSourceSets(target)
+            configureMetadataDependenciesConfigurationsForCommonSourceSets(target)
 
             target.project.configurations.getByName(target.apiElementsConfigurationName).run {
                 attributes.attribute(USAGE_ATTRIBUTE, target.project.usageByName(KotlinUsages.KOTLIN_METADATA))
@@ -166,10 +162,12 @@ class KotlinMetadataTargetConfigurator :
         return result
     }
 
-    private fun setupDependencyTransformationForCommonSourceSets(target: KotlinMetadataTarget) {
+    private fun configureMetadataDependenciesConfigurationsForCommonSourceSets(target: KotlinMetadataTarget) {
         target.project.whenEvaluated {
             kotlinExtension.sourceSets.all {
-                setupDependencyTransformationForSourceSet(target.project, it)
+                if (it is DefaultKotlinSourceSet) {
+                    configureMetadataDependenciesConfigurations(target.project, it)
+                }
             }
         }
     }
@@ -368,79 +366,26 @@ class KotlinMetadataTargetConfigurator :
             }
         }
 
-    private fun setupDependencyTransformationForSourceSet(
+    private fun configureMetadataDependenciesConfigurations(
         project: Project,
-        sourceSet: KotlinSourceSet
+        sourceSet: DefaultKotlinSourceSet
     ) {
-        val parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { componentIdentifier ->
-            dependsOnClosureWithInterCompilationDependencies(sourceSet).filterIsInstance<DefaultKotlinSourceSet>()
-                .flatMap { it.compileDependenciesTransformationOrFail.visibleSourceSetsByComponentId[componentIdentifier].orEmpty() }
-                .toSet()
-        }
+        /*
+        Older IDEs still rely on resolving the metadata configurations explicitly.
+        Dependencies will be coming from extending the newer 'resolvableMetadataConfiguration'.
 
-        val granularMetadataTransformation = GranularMetadataTransformation(
-            params = GranularMetadataTransformation.Params(project, sourceSet),
-            parentSourceSetVisibilityProvider = parentSourceSetVisibilityProvider
-        )
-
+        the intransitiveMetadataConfigurationName will not extend this mechanism, since it only
+        relies on dependencies being added explicitly by the Kotlin Gradle Plugin
+        */
         @Suppress("DEPRECATION")
-        if (sourceSet is DefaultKotlinSourceSet) {
-            sourceSet.compileDependenciesTransformation = granularMetadataTransformation
-
-            /*
-            Older IDEs still rely on resolving the metadata configurations explicitly.
-            Dependencies will be coming from extending the newer 'resolvableMetadataConfiguration'.
-
-            the intransitiveMetadataConfigurationName will not extend this mechanism, since it only
-            relies on dependencies being added explicitly by the Kotlin Gradle Plugin
-            */
-            listOf(
-                sourceSet.apiMetadataConfigurationName,
-                sourceSet.implementationMetadataConfigurationName,
-                sourceSet.compileOnlyMetadataConfigurationName
-            ).forEach { configurationName ->
-                val configuration = project.configurations.getByName(configurationName)
-                configuration.extendsFrom(sourceSet.resolvableMetadataConfiguration)
-                configuration.shouldResolveConsistentlyWith(sourceSet.resolvableMetadataConfiguration)
-                project.applyTransformationToLegacyDependenciesMetadataConfiguration(configuration, granularMetadataTransformation)
-            }
-        }
-    }
-
-    /**
-     *
-     * This method is only intended to be called on deprecated DependenciesMetadata configurations to ensure
-     * correct behaviour in import.
-     *
-     * KGP based dependency resolution is therefore unaffected.
-     *
-     * Ensure that the [configuration] excludes the dependencies that are classified by this [GranularMetadataTransformation] as
-     * [MetadataDependencyResolution.Exclude], and uses exactly the same versions as were resolved for the requested
-     * dependencies during the transformation.
-     */
-    private fun Project.applyTransformationToLegacyDependenciesMetadataConfiguration(
-        configuration: Configuration,
-        transformation: GranularMetadataTransformation
-    ) {
-        // Run this action immediately before the configuration first takes part in dependency resolution:
-        configuration.withDependencies {
-            val (unrequested, requested) = transformation.metadataDependencyResolutions
-                .partition { it is MetadataDependencyResolution.Exclude }
-
-            unrequested.forEach {
-                val (group, name) = it.projectDependency(this)?.run {
-                    /** Note: the project dependency notation here should be exactly this, group:name,
-                     * not from [ModuleIds.fromProjectPathDependency], as `exclude` checks it against the project's group:name  */
-                    ModuleDependencyIdentifier(group.toString(), name)
-                } ?: ModuleIds.fromComponent(project, it.dependency)
-                configuration.exclude(mapOf("group" to group, "module" to name))
-            }
-
-            requested.filter { it.dependency.currentBuildProjectIdOrNull == null }.forEach {
-                val (group, name) = ModuleIds.fromComponent(project, it.dependency)
-                val notation = listOfNotNull(group.orEmpty(), name, it.dependency.moduleVersion?.version).joinToString(":")
-                configuration.resolutionStrategy.force(notation)
-            }
+        listOf(
+            sourceSet.apiMetadataConfigurationName,
+            sourceSet.implementationMetadataConfigurationName,
+            sourceSet.compileOnlyMetadataConfigurationName
+        ).forEach { configurationName ->
+            val configuration = project.configurations.getByName(configurationName)
+            configuration.extendsFrom(sourceSet.resolvableMetadataConfiguration)
+            configuration.shouldResolveConsistentlyWith(sourceSet.resolvableMetadataConfiguration)
         }
     }
 

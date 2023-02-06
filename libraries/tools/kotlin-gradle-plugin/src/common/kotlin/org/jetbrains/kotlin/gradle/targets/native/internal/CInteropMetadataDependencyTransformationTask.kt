@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.toKpmModuleIdentifiers
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.compileDependenciesTransformationOrFail
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -156,8 +155,8 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     @get:Internal
     protected val chooseVisibleSourceSets
         get() = sourceSet
-            .compileDependenciesTransformationOrFail
-            .metadataDependencyResolutions
+            .compileDependenciesTransformation
+            .metadataDependencyResolutionsOrEmpty
             .resolutionsToTransform()
 
     @Suppress("unused")
