@@ -26,8 +26,6 @@ public final class C /* C*/ {
   public static final void setX(@org.jetbrains.annotations.NotNull() java.lang.String);//  setX(java.lang.String)
 
   class Companion ...
-
-  class Factory ...
 }
 
 public final class C1 /* C1*/ {
@@ -122,10 +120,6 @@ public final class ConstContainer /* ConstContainer*/ {
   public static final long oneLong = 1L /* initializer type: long */ /* constant value 1 */;
 
   private  ConstContainer();//  .ctor()
-}
-
-public static final class Factory /* C.Factory*/ {
-  private  Factory();//  .ctor()
 }
 
 public abstract interface I /* I*/ {

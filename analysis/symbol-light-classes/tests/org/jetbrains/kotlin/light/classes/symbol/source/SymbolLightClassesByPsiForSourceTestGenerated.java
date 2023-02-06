@@ -55,6 +55,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
     }
 
     @Test
+    @TestMetadata("companionDuplication.kt")
+    public void testCompanionDuplication() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/companionDuplication.kt");
+    }
+
+    @Test
     @TestMetadata("constructors.kt")
     public void testConstructors() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/constructors.kt");

@@ -13,7 +13,6 @@ class C {
             get() = "OK"
             @JvmStatic set(t: String) {}
     }
-    companion object Factory {}
 }
 
 class C1 {
@@ -51,5 +50,3 @@ class ClassWithConstContainer {
         const val complexFloat = 2.7182818284f + 2.4 // Float
     }
 }
-
-// COMPILATION_ERRORS
