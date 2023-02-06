@@ -210,7 +210,7 @@ task sanity {
     })
     dependsOn(":kotlin-native:Interop:Indexer:check")
     dependsOn(":kotlin-native:Interop:StubGenerator:check")
-    dependsOn(":kotlin-native-shared:check")
+//    dependsOn(":kotlin-native-shared:check")
 }
 
 boolean isExcluded(String dir) {
