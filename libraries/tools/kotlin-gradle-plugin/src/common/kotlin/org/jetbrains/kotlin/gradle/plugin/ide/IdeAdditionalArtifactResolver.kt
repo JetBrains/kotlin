@@ -17,6 +17,10 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.SO
 
 fun interface IdeAdditionalArtifactResolver {
     fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>)
+
+    object Empty : IdeAdditionalArtifactResolver {
+        override fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) = Unit
+    }
 }
 
 internal fun IdeDependencyResolver.withAdditionalArtifactResolver(resolver: IdeAdditionalArtifactResolver) =
