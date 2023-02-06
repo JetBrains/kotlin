@@ -1,9 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink
-import java.lang.reflect.Field
-import java.lang.reflect.Modifier
 
 plugins {
     `maven-publish`
@@ -193,27 +190,10 @@ if (!isConfigurationCacheDisabled) {
         it is org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
                 || it is org.jetbrains.kotlin.gradle.plugin.mpp.GenerateProjectStructureMetadata
                 || it is org.jetbrains.kotlin.gradle.plugin.mpp.TransformKotlinGranularMetadata
-                || it is MetadataDependencyTransformationTask
     }.configureEach {
         onlyIf {
             logger.warn("Task '$name' is disabled due to incompatibility with configuration cache. KT-49933")
             false
-        }
-    }
-    tasks.withType<MetadataDependencyTransformationTask>().configureEach {
-        try {
-            val field = MetadataDependencyTransformationTask::class.java.getDeclaredField("transformationParameters")
-            field.isAccessible = true
-            val params = field.get(this)
-            val removePropertiesValues = setOf("sourceSetVisibilityProvider", "resolvedMetadataConfiguration")
-            for (property in removePropertiesValues) {
-                val resolvedMetadataConfiguration = params::class.java.getDeclaredField(property)
-                resolvedMetadataConfiguration.isAccessible = true
-                resolvedMetadataConfiguration.set(params, null)
-            }
-            logger.warn("Applied configuration cache compatibility workaround for `MetadataDependencyTransformationTask`")
-        } catch (t: Throwable) {
-            logger.warn("Failed to apply workaround for configuration cache compatibility for `MetadataDependencyTransformationTask`")
         }
     }
 }
