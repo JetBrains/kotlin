@@ -704,14 +704,33 @@ __attribute__((swift_name("InterfaceMethodNameManglingKt")))
 + (KtInterfaceNameManglingC2 *)o2 __attribute__((swift_name("o2()")));
 @end
 
+
+/**
+ * Summary class [KDocExport].
+ *
+ * @property xyzzy Doc for property xyzzy
+ * @property zzz See below.
+ */
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("KDocExport")))
 @interface KtKDocExport : KtBase
+
+/** Non-primary ctor KDoc: */
 - (instancetype)initWithName:(NSString *)name __attribute__((swift_name("init(name:)"))) __attribute__((objc_designated_initializer));
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+
+/**
+ * @param xyzzy is documented.
+ *
+ * This is multi-line KDoc. See a blank line above.
+ */
 @property (readonly) NSString *xyzzy __attribute__((swift_name("xyzzy")));
+
+/** @property xyzzy KDoc for foo? */
 @property (readonly) NSString *foo __attribute__((swift_name("foo")));
+
+/** @property foo KDoc for yxxyz? */
 @property int32_t yxxyz __attribute__((swift_name("yxxyz")));
 @end
 
@@ -719,6 +738,37 @@ __attribute__((swift_name("SomeClassWithProperty")))
 @interface KtSomeClassWithProperty : KtBase
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+
+/**
+ * Returns dispatcher that executes coroutines immediately when it is already in the right context
+ * (e.g. current looper is the same as this handler's looper) without an additional [re-dispatch][CoroutineDispatcher.dispatch].
+ *
+ * Immediate dispatcher is safe from stack overflows and in case of nested invocations forms event-loop similar to [Dispatchers.Unconfined].
+ * The event loop is an advanced topic and its implications can be found in [Dispatchers.Unconfined] documentation.
+ * The formed event-loop is shared with [Unconfined] and other immediate dispatchers, potentially overlapping tasks between them.
+ *
+ * Example of usage:
+ * ```
+ * suspend fun updateUiElement(val text: String) {
+ *   **
+ *    * If it is known that updateUiElement can be invoked both from the Main thread and from other threads,
+ *    * `immediate` dispatcher is used as a performance optimization to avoid unnecessary dispatch.
+ *    *
+ *    * In that case, when `updateUiElement` is invoked from the Main thread, `uiElement.text` will be
+ *    * invoked immediately without any dispatching, otherwise, the `Dispatchers.Main` dispatch cycle will be triggered.
+ *    **
+ *   withContext(Dispatchers.Main.immediate) {
+ *     uiElement.text = text
+ *   }
+ *   // Do context-independent logic such as logging
+ * }
+ * ```
+ *
+ * Method may throw [UnsupportedOperationException] if immediate dispatching is not supported by current dispatcher,
+ * please refer to specific dispatcher documentation.
+ *
+ * [Dispatchers.Main] supports immediate execution for Android, JavaFx and Swing platforms.
+ */
 @property (readonly) KtSomeClassWithProperty *heavyFormattedKDocFoo __attribute__((swift_name("heavyFormattedKDocFoo")));
 @end
 
@@ -727,6 +777,13 @@ __attribute__((swift_name("KdocExportKt")))
 @interface KtKdocExportKt : KtBase
 
 /**
+ * Useless function [whatever]
+ *
+ * This kdoc has some additional formatting.
+ * @param a keep intact and return
+ * @return value of [a]
+ * Check for additional comment (note) below
+ *
  * @note This method converts instances of IllegalArgumentException to errors.
  * Other uncaught Kotlin exceptions are fatal.
 */
@@ -1039,16 +1096,24 @@ __attribute__((swift_name("Bar")))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 
 /**
+ * My method
+ *   @param nodocParam is one arg
+ *  @param fooParam is second arg
+ * @param fooParam annotations Foo BugReport(assignedTo="me", status="fixed")
+ * @return their sum
+ *
  * @note annotations
  *   Foo
- * @param fooParam annotations Foo BugReport(assignedTo="me", status="fixed")
  * @note This method converts instances of CancellationException to errors.
  * Other uncaught Kotlin exceptions are fatal.
  * @note This method has protected visibility in Kotlin source and is intended only for use by subclasses.
 */
 - (void)bazNodocParam:(int32_t)nodocParam fooParam:(int32_t)fooParam completionHandler:(void (^)(KtInt * _Nullable, NSError * _Nullable))completionHandler __attribute__((swift_name("baz(nodocParam:fooParam:completionHandler:)"))) __attribute__((deprecated("warning")));
 
-/**
+/** My property
+ ***
+ *
+ *
  * @note annotations
  *   Foo
  *   BugReport(assignedTo="me", status="open")
