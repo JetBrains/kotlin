@@ -5603,13 +5603,13 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
                         }
                         baseDir "$testOutputFramework/${task.name}"
 
-                        if (fr.library != null) {
-                            dependsOn konanArtifacts[fr.library].getByTarget(target.name)
+                        fr.libraries.forEach { library ->
+                            dependsOn konanArtifacts[library].getByTarget(target.name)
                             libraries {
-                                file konanArtifacts[fr.library].getArtifactByTarget(target.name)
+                                file konanArtifacts[library].getArtifactByTarget(target.name)
                             }
                             linkerOpts "-L$buildDir"
-                            UtilsKt.dependsOnKonanBuildingTask(task, fr.library, target)
+                            UtilsKt.dependsOnKonanBuildingTask(task, library, target)
                         }
 
                         extraOpts fr.bitcode ? "-Xembed-bitcode" : "-Xembed-bitcode-marker"
@@ -5626,35 +5626,45 @@ Task frameworkTest(String name, Closure<FrameworkTest> configurator) {
     }
 }
 
-if (isAppleTarget(project)) {
-    frameworkTest('testObjCExport') {
-        final String frameworkName = 'Kt'
-        final String dir = "$testOutputFramework/testObjCExport"
+Task objcExportTest(
+        Task allTask,
+        String suffix,
+        List<String> frameworkOpts,
+        List<String> swiftOpts,
+        Boolean isStaticFramework,
+        Boolean needLazyHeaderCheck
+) {
+    final String name = "testObjCExport$suffix"
+    final String frameworkName = "Kt$suffix"
+    final String expectedLazyHeaderName = "expectedLazy${suffix}.h"
+    final Task task = frameworkTest(name) {
+        final String dir = "$testOutputFramework/$name"
         final File lazyHeader = file("$dir/$target-lazy.h")
 
         doLast {
             // Check lazy header.
-            final String expectedLazyHeaderName = "expectedLazy.h"
-            final String expectedLazyHeaderDir = file("objcexport/")
-            final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
+            if (needLazyHeaderCheck) {
+                final String expectedLazyHeaderDir = file("objcexport/")
+                final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
 
-            if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
-                exec {
-                    commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
-                    ignoreExitValue = true
+                if (!expectedLazyHeader.exists() || expectedLazyHeader.readLines() != lazyHeader.readLines()) {
+                    exec {
+                        commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
+                        ignoreExitValue = true
+                    }
+
+                    copy {
+                        from(lazyHeader)
+                        into(expectedLazyHeaderDir)
+                        rename { expectedLazyHeaderName }
+                    }
+
+                    throw new Error("$expectedLazyHeader file patched;\nRun gradlew ${allTask.path} --continue and don't forget to commit the patch")
                 }
-
-                copy {
-                    from(lazyHeader)
-                    into(expectedLazyHeaderDir)
-                    rename { expectedLazyHeaderName }
-                }
-
-                throw new Error("$expectedLazyHeader file patched;\nre-run the test and don't forget to commit the patch")
             }
 
             // Check bundle ID.
-            final String frameworkPath = "$dir/$target/${frameworkName}.framework"
+            final String frameworkPath = "$dir/$target/Kt.framework"
             final Pattern pattern = ~"<key>CFBundleIdentifier</key>\n\\s*<string>foo.bar</string>"
             final String plistPath = (target.family == Family.OSX) ?
                     "$frameworkPath/Resources/Info.plist" :
@@ -5669,7 +5679,7 @@ if (isAppleTarget(project)) {
         konanArtifacts {
             library(libraryName, targets: [target.name]) {
                 srcDir "objcexport/library"
-                artifactName "test-library"
+                artifactName "test-$libraryName"
                 delegate.getByTarget(target.name).configure{
                     UtilsKt.dependsOnDist(it)
                 }
@@ -5677,14 +5687,27 @@ if (isAppleTarget(project)) {
                 extraOpts "-Xshort-module-name=MyLibrary"
                 extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
             }
+
         }
+        codesign = !isStaticFramework
         framework(frameworkName) {
             enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
-            library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xexport-kdoc", "-Xbinary=bundleId=foo.bar"]
+            libraries = [libraryName]
+            artifact = 'Kt'
+            bitcode = !isStaticFramework
+            isStatic = isStaticFramework
+            if (needLazyHeaderCheck) {
+                opts += "-Xemit-lazy-objc-header=$lazyHeader"
+            }
+            opts += [
+                    "-Xexport-kdoc",
+                    "-Xbinary=bundleId=foo.bar",
+            ]
+            opts += frameworkOpts
         }
         swiftSources = ['objcexport']
+        swiftExtraOpts = swiftOpts
         if (isNoopGC) {
             swiftExtraOpts += ["-D", "NOOP_GC"]
         }
@@ -5692,220 +5715,63 @@ if (isAppleTarget(project)) {
             swiftExtraOpts += ["-D", "AGGRESSIVE_GC"]
         }
     }
+    allTask.dependsOn(task)
+    return task
+}
 
-    frameworkTest('testObjCExportNoGenerics') {
-        final String frameworkName = 'KtNoGenerics'
-        final String frameworkArtifactName = 'Kt'
-        final String dir = "$testOutputFramework/testObjCExportNoGenerics"
-        final File lazyHeader = file("$dir/$target-lazy.h")
 
-        doLast {
-            final String expectedLazyHeaderName = "expectedLazyNoGenerics.h"
-            final String expectedLazyHeaderDir = file("objcexport/")
-            final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
 
-            if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
-                exec {
-                    commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
-                    ignoreExitValue = true
-                }
+if (isAppleTarget(project)) {
+    final Task ObjCExportAllTask = tasks.create("testObjCExportAll")
+    objcExportTest(
+            ObjCExportAllTask,
+            '',
+            [],
+            [],
+            false,
+            true
+    )
+    objcExportTest(
+            ObjCExportAllTask,
+            'NoGenerics',
+            ["-Xno-objc-generics"],
+            [ '-D', 'NO_GENERICS' ],
+            false,
+            true
+    )
+    objcExportTest(
+            ObjCExportAllTask,
+            'LegacySuspendUnit',
+            ["-Xbinary=unitSuspendFunctionObjCExport=legacy"],
+            [ '-D', 'LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT' ],
+            false,
+            true
+    )
+    objcExportTest(
+            ObjCExportAllTask,
+            'NoSwiftMemberNameMangling',
+            ["-Xbinary=objcExportDisableSwiftMemberNameMangling=true"],
+            [ '-D', 'DISABLE_MEMBER_NAME_MANGLING' ],
+            false,
+            false
+    )
+    objcExportTest(
+            ObjCExportAllTask,
+            'NoInterfaceMemberNameMangling',
+            ["-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true"],
+            [ '-D', 'DISABLE_INTERFACE_METHOD_NAME_MANGLING' ],
+            false,
+            false
+    )
 
-                copy {
-                    from(lazyHeader)
-                    into(expectedLazyHeaderDir)
-                    rename { expectedLazyHeaderName }
-                }
-
-                throw new Error("$expectedLazyHeader file patched;\nre-run the test and don't forget to commit the patch")
-            }
-
-        }
-
-        def libraryName = frameworkName + "Library"
-        konanArtifacts {
-            library(libraryName, targets: [target.name]) {
-                srcDir "objcexport/library"
-                artifactName "test-library"
-
-                if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
-                }
-
-                extraOpts "-Xshort-module-name=MyLibrary"
-                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
-            }
-        }
-        framework(frameworkName) {
-            enabled = !isK2(project) // KT-56182
-            sources = ['objcexport']
-            artifact = frameworkArtifactName
-            library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xno-objc-generics"]
-        }
-        swiftSources = ['objcexport']
-        swiftExtraOpts = [ '-D', 'NO_GENERICS' ]
-        if (isNoopGC) {
-            swiftExtraOpts += ["-D", "NOOP_GC"]
-        }
-    }
-
-    frameworkTest('testObjCExportLegacySuspendUnit') {
-        final String frameworkName = 'KtLegacySuspendUnit'
-        final String frameworkArtifactName = 'Kt'
-        final String dir = "$testOutputFramework/testObjCExportLegacySuspendUnit"
-        final File lazyHeader = file("$dir/$target-lazy.h")
-
-        doLast {
-            final String expectedLazyHeaderName = "expectedLazyLegacySuspendUnit.h"
-            final String expectedLazyHeaderDir = file("objcexport/")
-            final File expectedLazyHeader = new File(expectedLazyHeaderDir, expectedLazyHeaderName)
-
-            if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {
-                exec {
-                    commandLine 'diff', '-u', expectedLazyHeader, lazyHeader
-                    ignoreExitValue = true
-                }
-
-                copy {
-                    from(lazyHeader)
-                    into(expectedLazyHeaderDir)
-                    rename { expectedLazyHeaderName }
-                }
-
-                throw new Error("$expectedLazyHeader file patched;\nre-run the test and don't forget to commit the patch")
-            }
-
-        }
-
-        def libraryName = frameworkName + "Library"
-        konanArtifacts {
-            library(libraryName, targets: [target.name]) {
-                srcDir "objcexport/library"
-                artifactName "test-library"
-
-                if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
-                }
-
-                extraOpts "-Xshort-module-name=MyLibrary"
-                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
-            }
-        }
-        framework(frameworkName) {
-            enabled = !isK2(project) // KT-56182
-            sources = ['objcexport']
-            artifact = frameworkArtifactName
-            library = libraryName
-            opts = ["-Xemit-lazy-objc-header=$lazyHeader", "-Xbinary=unitSuspendFunctionObjCExport=legacy"]
-        }
-        swiftSources = ['objcexport']
-        swiftExtraOpts = [ '-D', 'LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT' ]
-        if (isNoopGC) {
-            swiftExtraOpts += ["-D", "NOOP_GC"]
-        }
-    }
-
-    frameworkTest('testObjCExportNoSwiftMemberNameMangling') {
-        final String frameworkName = 'KtNoSwiftMemberNameMangling'
-        final String frameworkArtifactName = 'Kt'
-        final String dir = "$testOutputFramework/testObjCExportNoSwiftMemberNameMangling"
-
-        def libraryName = frameworkName + "Library"
-        konanArtifacts {
-            library(libraryName, targets: [target.name]) {
-                srcDir "objcexport/library"
-                artifactName "test-library"
-
-                if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
-                }
-
-                extraOpts "-Xshort-module-name=MyLibrary"
-                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
-            }
-        }
-        framework(frameworkName) {
-            enabled = !isK2(project) // KT-56182
-            sources = ['objcexport']
-            artifact = frameworkArtifactName
-            library = libraryName
-            opts = ["-Xbinary=objcExportDisableSwiftMemberNameMangling=true"]
-        }
-        swiftSources = ['objcexport']
-        swiftExtraOpts = [ '-D', 'DISABLE_MEMBER_NAME_MANGLING' ]
-        if (isNoopGC) {
-            swiftExtraOpts += ["-D", "NOOP_GC"]
-        }
-    }
-
-    frameworkTest('testObjCExportNoInterfaceMemberNameMangling') {
-        final String frameworkName = 'KtNoInterfaceMemberNameMangling'
-        final String frameworkArtifactName = 'Kt'
-        final String dir = "$testOutputFramework/testObjCExportNoInterfaceMemberNameMangling"
-
-        def libraryName = frameworkName + "Library"
-        konanArtifacts {
-            library(libraryName, targets: [target.name]) {
-                srcDir "objcexport/library"
-                artifactName "test-library"
-
-                if (!useCustomDist) {
-                    dependsOn ":${target.name}CrossDistRuntime", ':distCompiler'
-                }
-
-                extraOpts "-Xshort-module-name=MyLibrary"
-                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
-            }
-        }
-        framework(frameworkName) {
-            enabled = !isK2(project) // KT-56182
-            sources = ['objcexport']
-            artifact = frameworkArtifactName
-            library = libraryName
-            opts = ["-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true"]
-        }
-        swiftSources = ['objcexport']
-        swiftExtraOpts = [ '-D', 'DISABLE_INTERFACE_METHOD_NAME_MANGLING' ]
-        if (isNoopGC) {
-            swiftExtraOpts += ["-D", "NOOP_GC"]
-        }
-    }
-
-    frameworkTest('testObjCExportStatic') {
-        final String frameworkName = 'KtStatic'
-        final String frameworkArtifactName = 'Kt'
-        final String libraryName = frameworkName + "Library"
-
-        konanArtifacts {
-            library(libraryName, targets: [target.name]) {
-                srcDir "objcexport/library"
-                artifactName "test-library"
-
-                delegate.getByTarget(target.name).configure{
-                    UtilsKt.dependsOnDist(it)
-                }
-
-                extraOpts "-Xshort-module-name=MyLibrary"
-                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
-            }
-        }
-
-        codesign = false
-        framework(frameworkName) {
-            enabled = !isK2(project) // KT-56182
-            sources = ['objcexport']
-            bitcode = false
-            artifact = frameworkArtifactName
-            library = libraryName
-            isStatic = true
-            opts = ["-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=none"]
-        }
-        swiftSources = ['objcexport']
-        swiftExtraOpts = [ '-D', 'ALLOW_SUSPEND_ANY_THREAD' ]
-        if (isNoopGC) {
-            swiftExtraOpts += ["-D", "NOOP_GC"]
-        }
-    }
+    objcExportTest(
+            ObjCExportAllTask,
+            'Static',
+            ["-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=none"],
+            [ '-D', 'ALLOW_SUSPEND_ANY_THREAD' ],
+            true,
+            false
+    )
 
     frameworkTest('testValuesGenericsFramework') {
         framework('ValuesGenerics') {
@@ -5966,7 +5832,7 @@ if (isAppleTarget(project)) {
     frameworkTest("testGh3343Framework") {
         framework('Gh3343') {
             sources = ['framework/gh3343']
-            library = 'objcGh3343'
+            libraries = ['objcGh3343']
         }
         swiftSources = ['framework/gh3343/']
     }
@@ -5982,7 +5848,7 @@ if (isAppleTarget(project)) {
     frameworkTest("testKt43517Framework") {
         framework('Kt43517') {
             sources = ['framework/kt43517']
-            library = 'objcKt43517'
+            libraries = ['objcKt43517']
         }
         swiftSources = ['framework/kt43517/']
     }
@@ -6054,7 +5920,7 @@ if (isAppleTarget(project)) {
     frameworkTest("testForwardDeclarationsFramework") {
         framework('ForwardDeclarations') {
             sources = ['framework/forwardDeclarations']
-            library = 'frameworkForwardDeclarations'
+            libraries = ['frameworkForwardDeclarations']
         }
         swiftSources = ['framework/forwardDeclarations/']
     }

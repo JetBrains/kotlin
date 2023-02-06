@@ -59,7 +59,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
      * @param bitcode bitcode embedding in the framework,
      * @param isStatic determines that framework is static
      * @param artifact the name of the resulting artifact,
-     * @param library library dependency name,
+     * @param library list of library dependency names,
      * @param opts additional options for the compiler.
      */
     class Framework(
@@ -68,7 +68,7 @@ open class FrameworkTest : DefaultTask(), KonanTestExecutable {
             var bitcode: Boolean = false,
             var isStatic: Boolean = false,
             var artifact: String = name,
-            var library: String? = null,
+            var libraries: List<String> = emptyList(),
             var opts: List<String> = emptyList()
     ) : Serializable // Required for Gradle when using Framework as task input.
 
