@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 import org.jetbrains.kotlin.library.impl.buffer
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -90,7 +91,7 @@ internal class ICHasher {
         val importantSettings = listOf(
             JSConfigurationKeys.GENERATE_DTS,
             JSConfigurationKeys.MODULE_KIND,
-            JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION
+            WebConfigurationKeys.PROPERTY_LAZY_INITIALIZATION
         )
         hashCalculator.updateForEach(importantSettings) { key ->
             hashCalculator.update(key.toString())

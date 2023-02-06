@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.js.test.utils
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
@@ -22,7 +22,7 @@ class JsIncrementalEnvironmentConfigurator(testServices: TestServices) : Environ
             val header = incrementalData?.header
             if (header != null) {
                 configuration.put(
-                    JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER,
+                    WebConfigurationKeys.INCREMENTAL_DATA_PROVIDER,
                     IncrementalDataProviderImpl(
                         header,
                         incrementalData.translatedFiles,
@@ -33,7 +33,7 @@ class JsIncrementalEnvironmentConfigurator(testServices: TestServices) : Environ
                 )
             }
 
-            configuration.put(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, IncrementalResultsConsumerImpl())
+            configuration.put(WebConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER, IncrementalResultsConsumerImpl())
         }
     }
 }

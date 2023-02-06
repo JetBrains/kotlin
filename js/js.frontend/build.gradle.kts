@@ -11,6 +11,7 @@ dependencies {
     api(project(":js:js.parser"))
     api(project(":js:js.serializer"))
     api(project(":js:js.config"))
+    api(project(":compiler:config.web"))
     compileOnly(intellijCore())
     compileOnly(commonDependency("com.google.guava:guava"))
 }

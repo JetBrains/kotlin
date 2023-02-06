@@ -13,11 +13,11 @@ import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 
 fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBackendContext) {
     val printReachabilityInfo =
-        context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
+        context.configuration.getBoolean(WebConfigurationKeys.PRINT_REACHABILITY_INFO) ||
                 java.lang.Boolean.getBoolean("kotlin.wasm.dce.print.reachability.info")
 
     val usefulDeclarations = WasmUsefulDeclarationProcessor(
