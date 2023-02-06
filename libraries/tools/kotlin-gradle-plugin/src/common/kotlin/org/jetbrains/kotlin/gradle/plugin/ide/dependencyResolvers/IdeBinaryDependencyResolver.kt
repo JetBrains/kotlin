@@ -27,12 +27,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
-import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.project
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
 @ExternalKotlinTargetApi
@@ -51,7 +51,8 @@ class IdeBinaryDependencyResolver(
         data class Compilation(
             internal val compilationSelector: (KotlinSourceSet) -> KotlinCompilation<*>? =
                 { sourceSet -> sourceSet.internal.compilations.singleOrNull { it.platformType != KotlinPlatformType.common } },
-            internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {}
+            internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
+            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null
         ) : ArtifactResolutionStrategy()
 
         /**
@@ -60,7 +61,8 @@ class IdeBinaryDependencyResolver(
          */
         data class ResolvableConfiguration(
             internal val configurationSelector: (KotlinSourceSet) -> Configuration?,
-            internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {}
+            internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
+            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null
         ) : ArtifactResolutionStrategy()
 
         /**
@@ -166,6 +168,9 @@ class IdeBinaryDependencyResolver(
         return compilation.internal.configurations.compileDependencyConfiguration.incoming.artifactView { view ->
             view.isLenient = true
             view.attributes.setupArtifactViewAttributes(sourceSet)
+            if (componentFilter != null) {
+                view.componentFilter(componentFilter)
+            }
         }
     }
 
@@ -174,6 +179,9 @@ class IdeBinaryDependencyResolver(
         return configuration.incoming.artifactView { view ->
             view.isLenient = true
             view.attributes.setupArtifactViewAttributes(sourceSet)
+            if (componentFilter != null) {
+                view.componentFilter(componentFilter)
+            }
         }
     }
 
