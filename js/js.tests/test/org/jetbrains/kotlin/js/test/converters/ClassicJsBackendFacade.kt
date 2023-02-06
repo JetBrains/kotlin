@@ -10,7 +10,7 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationResult
@@ -94,7 +94,7 @@ class ClassicJsBackendFacade(
         )
 
         if (!incrementalCompilationEnabled) {
-            jsConfig.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]?.let {
+            jsConfig.configuration[WebConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]?.let {
                 val incrementalData = JsClassicIncrementalDataProvider.IncrementalData()
                 val incrementalService = it as IncrementalResultsConsumerImpl
 

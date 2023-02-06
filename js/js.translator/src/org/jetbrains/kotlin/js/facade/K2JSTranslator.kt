@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
+import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 import org.jetbrains.kotlin.js.coroutine.transformCoroutines
 import org.jetbrains.kotlin.js.facade.exceptions.TranslationException
 import org.jetbrains.kotlin.js.inline.JsInliner
@@ -65,7 +66,7 @@ class K2JSTranslator @JvmOverloads constructor(
     private val shouldValidateJsAst: Boolean = false
 ) {
 
-    private val incrementalResults = config.configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
+    private val incrementalResults = config.configuration.get(WebConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
 
     @Throws(TranslationException::class)
     @JvmOverloads

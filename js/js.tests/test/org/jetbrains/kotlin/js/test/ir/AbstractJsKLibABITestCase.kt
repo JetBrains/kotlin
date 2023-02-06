@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.klib.KlibABITestUtils
 import org.jetbrains.kotlin.klib.KlibABITestUtils.MAIN_MODULE_NAME
@@ -158,9 +159,9 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
     private fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: KlibABITestUtils.Dependencies) {
         val configuration = environment.configuration.copy()
 
-        configuration.put(JSConfigurationKeys.PARTIAL_LINKAGE, true)
+        configuration.put(WebConfigurationKeys.PARTIAL_LINKAGE, true)
         configuration.put(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
-        configuration.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
+        configuration.put(WebConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
         configuration.put(CommonConfigurationKeys.MODULE_NAME, MAIN_MODULE_NAME)
 
         val compilationOutputs = if (useIncrementalCompiler)

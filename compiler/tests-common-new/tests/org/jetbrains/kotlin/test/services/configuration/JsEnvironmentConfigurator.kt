@@ -250,7 +250,9 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
     }
 
     override fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {
-        register(PROPERTY_LAZY_INITIALIZATION, JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION)
+        register(PROPERTY_LAZY_INITIALIZATION,
+                 WebConfigurationKeys.PROPERTY_LAZY_INITIALIZATION
+        )
         register(GENERATE_INLINE_ANONYMOUS_FUNCTIONS, JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS)
     }
 
@@ -286,7 +288,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         configuration.put(JSConfigurationKeys.TARGET, EcmaVersion.v5)
 
         val errorIgnorancePolicy = registeredDirectives[ERROR_POLICY].singleOrNull() ?: ErrorTolerancePolicy.DEFAULT
-        configuration.put(JSConfigurationKeys.ERROR_TOLERANCE_POLICY, errorIgnorancePolicy)
+        configuration.put(WebConfigurationKeys.ERROR_TOLERANCE_POLICY, errorIgnorancePolicy)
         if (errorIgnorancePolicy.allowErrors) {
             configuration.put(JSConfigurationKeys.DEVELOPER_MODE, true)
         }
