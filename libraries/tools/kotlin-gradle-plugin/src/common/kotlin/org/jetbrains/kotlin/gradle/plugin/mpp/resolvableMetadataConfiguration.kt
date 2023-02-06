@@ -7,14 +7,20 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
-import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.usageByName
+import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
+import org.jetbrains.kotlin.gradle.utils.getOrCreate
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
@@ -56,7 +62,7 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
         }
     })
 
-    val allCompileMetadataConfiguration = project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME)
+    val allCompileMetadataConfiguration = project.allCompileMetadataConfiguration
 
     /* Ensure consistent dependency resolution result within the whole module */
     configuration.shouldResolveConsistentlyWith(allCompileMetadataConfiguration)
@@ -64,6 +70,16 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
 
     configuration
 }
+
+internal val Project.allCompileMetadataConfiguration get(): Configuration =
+    configurations.getOrCreate("allSourceSetsCompileDependenciesMetadata", invokeWhenCreated = {
+        it.markResolvable()
+
+        val metadataTarget = multiplatformExtension.metadata()
+        it.usesPlatformOf(metadataTarget)
+        it.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        it.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+    })
 
 private inline fun <reified T> Project.listProvider(noinline provider: () -> List<T>): Provider<List<T>> {
     return project.objects.listProperty<T>().apply {
