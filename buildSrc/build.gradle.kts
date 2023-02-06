@@ -135,7 +135,7 @@ dependencies {
 
     implementation("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:1.0.1")
 
-    implementation("org.gradle:test-retry-gradle-plugin:1.2.0")
+    implementation("org.gradle:test-retry-gradle-plugin:1.5.1")
     compileOnly("com.gradle:gradle-enterprise-gradle-plugin:3.11.2")
 
     compileOnly(gradleApi())
