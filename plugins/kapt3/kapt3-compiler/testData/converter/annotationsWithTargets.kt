@@ -1,4 +1,4 @@
-// FIR_ALMOST_DONE
+// FIR_BLOCKED: KT-54804
 @Target(AnnotationTarget.FIELD)
 annotation class FieldAnno
 

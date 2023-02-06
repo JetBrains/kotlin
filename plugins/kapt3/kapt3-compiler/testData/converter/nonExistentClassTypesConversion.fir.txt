@@ -37,11 +37,11 @@ public final class NonExistentClassTypesConversionKt {
 @Anno(a = Blah.class, b = {NoFoo1.class, NoBar1.class}, c = {NoFoo2.class, java.lang.String.class}, d = {boolean.class, NoBar3.class})
 public final class Test<G extends java.lang.Object> {
     public ABC a;
-    private final ABC b;
+    private final ABC b = null;
     @org.jetbrains.annotations.Nullable()
-    private final java.util.List<ABC> c;
+    private final java.util.List<ABC> c = null;
     @org.jetbrains.annotations.Nullable()
-    private final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> d;
+    private final java.util.List<java.util.Map<BCD, ABC<java.util.List<BCD>>>> d = null;
     public java.util.List<java.util.Map<? extends ABC, BCD>> e;
     public ABC<?> f;
     public java.util.List<?> g;

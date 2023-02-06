@@ -4,14 +4,14 @@ public final class Test {
     public static final Test.A A = null;
     @org.jetbrains.annotations.NotNull()
     @kotlin.jvm.JvmStatic()
-    public static final java.lang.String test = "";
+    private static final java.lang.String test = "";
 
     public Test() {
         super();
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static java.lang.String getTest() {
+    public static final java.lang.String getTest() {
         return null;
     }
 

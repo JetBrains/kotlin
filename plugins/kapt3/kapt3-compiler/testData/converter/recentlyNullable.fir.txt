@@ -26,8 +26,8 @@ public final class KBox implements androidx.annotation.Box {
     @org.jetbrains.annotations.NotNull()
     private final androidx.annotation.Box delegate = null;
 
-    @androidx.annotation.RecentlyNullable()
     @java.lang.Override()
+    @androidx.annotation.RecentlyNullable()
     public java.lang.String foo() {
         return null;
     }

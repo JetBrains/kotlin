@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -152,6 +152,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     }
 
     @Test
+    @TestMetadata("delegatedProperties.kt")
+    public void testDelegatedProperties() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/delegatedProperties.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/deprecated.kt");
@@ -173,6 +179,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/enums.kt");
+    }
+
+    @Test
+    @TestMetadata("errorExtensionReceiver.kt")
+    public void testErrorExtensionReceiver() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/errorExtensionReceiver.kt");
     }
 
     @Test
@@ -332,6 +344,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     }
 
     @Test
+    @TestMetadata("jvmRepeatableAnnotation.kt")
+    public void testJvmRepeatableAnnotation() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmRepeatableAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("jvmStatic.kt")
     public void testJvmStatic() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmStatic.kt");
@@ -431,6 +449,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     @TestMetadata("kt34569.kt")
     public void testKt34569() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt34569.kt");
+    }
+
+    @Test
+    @TestMetadata("kt43786.kt")
+    public void testKt43786() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/kt43786.kt");
     }
 
     @Test
@@ -593,6 +617,12 @@ public class KotlinKapt4ContextTestGenerated extends AbstractKotlinKapt4ContextT
     @TestMetadata("suspendErrorTypes.kt")
     public void testSuspendErrorTypes() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/suspendErrorTypes.kt");
+    }
+
+    @Test
+    @TestMetadata("suspendFunctionSupertype.kt")
+    public void testSuspendFunctionSupertype() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/suspendFunctionSupertype.kt");
     }
 
     @Test

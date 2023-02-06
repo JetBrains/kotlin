@@ -1,4 +1,4 @@
-// FIR_BLOCKED: LC don't support illegal java identifiers
+// FIR_BLOCKED: KT-56868
 class `:)` {
     lateinit val f: String
 }

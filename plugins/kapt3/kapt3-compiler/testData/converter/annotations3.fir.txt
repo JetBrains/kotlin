@@ -68,9 +68,21 @@ public final class Test {
 
 @kotlin.Metadata()
 @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
+@java.lang.annotation.Repeatable(value = TypeParceler.Container.class)
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY})
 @kotlin.annotation.Repeatable()
 @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
 public abstract @interface TypeParceler<T extends java.lang.Object, P extends Parceler<? super T>> {
+
+    @kotlin.Metadata()
+    @java.lang.annotation.Target(value = {java.lang.annotation.ElementType.TYPE})
+    @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.SOURCE)
+    @kotlin.jvm.internal.RepeatableContainer()
+    @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.CLASS, kotlin.annotation.AnnotationTarget.PROPERTY})
+    @kotlin.annotation.Retention(value = kotlin.annotation.AnnotationRetention.SOURCE)
+    public static abstract @interface Container {
+
+        public abstract TypeParceler[] value();
+    }
 }
