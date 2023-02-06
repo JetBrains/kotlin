@@ -221,25 +221,26 @@ fun FirClass.modality(): Modality? {
 }
 
 /**
- * returns implicit modality by FirMemberDeclaration<*>
+ * Returns a set of [Modality] modifiers which are redundant for the given [FirMemberDeclaration]. If a modality modifier is redundant, the
+ * declaration's modality won't be changed by the modifier.
  */
-fun FirMemberDeclaration.implicitModality(context: CheckerContext): Modality {
+fun FirMemberDeclaration.redundantModalities(context: CheckerContext): Set<Modality> {
     if (this is FirRegularClass) {
         return when (classKind) {
-            ClassKind.INTERFACE -> Modality.ABSTRACT
-            else -> Modality.FINAL
+            ClassKind.INTERFACE -> setOf(Modality.ABSTRACT, Modality.OPEN)
+            else -> setOf(Modality.FINAL)
         }
     }
 
-    val containingClass = context.findClosestClassOrObject() ?: return Modality.FINAL
+    val containingClass = context.findClosestClassOrObject() ?: return setOf(Modality.FINAL)
 
     return when {
-        isOverride && !containingClass.isFinal -> Modality.OPEN
+        isOverride && !containingClass.isFinal -> setOf(Modality.OPEN)
         containingClass.isInterface -> when {
-            hasBody() -> Modality.OPEN
-            else -> Modality.ABSTRACT
+            hasBody() -> setOf(Modality.OPEN)
+            else -> setOf(Modality.ABSTRACT, Modality.OPEN)
         }
-        else -> Modality.FINAL
+        else -> setOf(Modality.FINAL)
     }
 }
 

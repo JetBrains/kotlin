@@ -12,6 +12,7 @@ interface Interface {
     // error
     <!PRIVATE_FUNCTION_WITH_NO_BODY!>private<!> <!WRONG_MODIFIER_CONTAINING_DECLARATION!>final<!> fun bar()
 
+    <!REDUNDANT_MODALITY_MODIFIER, REDUNDANT_OPEN_IN_INTERFACE!>open<!> fun loo()
     <!REDUNDANT_MODALITY_MODIFIER!>open<!> fun goo() {}
     <!REDUNDANT_MODALITY_MODIFIER!>abstract<!> fun tar()
 
@@ -84,7 +85,7 @@ abstract class AbstractDerived2 : Interface {
 // Redundant final object
 <!REDUNDANT_MODALITY_MODIFIER!>final<!> object FinalObject
 // Open interface
-<!REDUNDANT_MODIFIER_FOR_TARGET!>open<!> interface OpenInterface
+<!REDUNDANT_MODALITY_MODIFIER, REDUNDANT_MODIFIER_FOR_TARGET!>open<!> interface OpenInterface
 
 class FinalDerived2(override <!REDUNDANT_MODALITY_MODIFIER!>final<!> val gav: Int) : Base() {
     override fun bar() {}
