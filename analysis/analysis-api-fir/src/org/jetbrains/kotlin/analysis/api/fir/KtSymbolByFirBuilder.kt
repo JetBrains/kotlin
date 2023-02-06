@@ -78,9 +78,6 @@ internal class KtSymbolByFirBuilder constructor(
     val rootSession: FirSession = firResolveSession.useSiteFirSession
 
     private val symbolsCache = BuilderCache<FirBasedSymbol<*>, KtSymbol>()
-    private val extensionReceiverSymbolsCache = BuilderCache<FirCallableSymbol<*>, KtSymbol>()
-    private val filesCache = BuilderCache<FirFileSymbol, KtFileSymbol>()
-    private val backingFieldCache =  BuilderCache<FirBackingFieldSymbol, KtBackingFieldSymbol>()
 
     val classifierBuilder = ClassifierSymbolBuilder()
     val functionLikeBuilder = FunctionLikeSymbolBuilder()
@@ -105,7 +102,7 @@ internal class KtSymbolByFirBuilder constructor(
     fun buildEnumEntrySymbol(firSymbol: FirEnumEntrySymbol) =
         symbolsCache.cache(firSymbol) { KtFirEnumEntrySymbol(firSymbol, analysisSession) }
 
-    fun buildFileSymbol(firSymbol: FirFileSymbol) = filesCache.cache(firSymbol) { KtFirFileSymbol(firSymbol, analysisSession) }
+    fun buildFileSymbol(firSymbol: FirFileSymbol) = KtFirFileSymbol(firSymbol, analysisSession)
 
     private val packageProvider = project.createPackageProvider(GlobalSearchScope.allScope(project))//todo scope
 
@@ -348,9 +345,7 @@ internal class KtSymbolByFirBuilder constructor(
         }
 
         fun buildBackingFieldSymbol(firSymbol: FirBackingFieldSymbol): KtFirBackingFieldSymbol {
-            return backingFieldCache.cache(firSymbol) {
-                KtFirBackingFieldSymbol(firSymbol, analysisSession)
-            }
+            return KtFirBackingFieldSymbol(firSymbol, analysisSession)
         }
 
         fun buildBackingFieldSymbolByProperty(firSymbol: FirPropertySymbol): KtFirBackingFieldSymbol {
@@ -409,9 +404,7 @@ internal class KtSymbolByFirBuilder constructor(
 
         fun buildExtensionReceiverSymbol(firCallableSymbol: FirCallableSymbol<*>): KtReceiverParameterSymbol? {
             if (firCallableSymbol.fir.receiverParameter == null) return null
-            return extensionReceiverSymbolsCache.cache(firCallableSymbol) {
-                KtFirReceiverParameterSymbol(firCallableSymbol, analysisSession)
-            }
+            return KtFirReceiverParameterSymbol(firCallableSymbol, analysisSession)
         }
     }
 
