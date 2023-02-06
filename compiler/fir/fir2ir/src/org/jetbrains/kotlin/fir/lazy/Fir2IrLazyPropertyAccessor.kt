@@ -95,7 +95,9 @@ class Fir2IrLazyPropertyAccessor(
                                 typeConverter, conversionTypeContext
                             ),
                             parent = this@Fir2IrLazyPropertyAccessor,
-                            name = valueParameter?.name
+                            name = valueParameter?.name,
+                            isCrossinline = valueParameter?.isCrossinline == true,
+                            isNoinline = valueParameter?.isNoinline == true
                         )
                     )
                 }

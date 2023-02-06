@@ -43941,6 +43941,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("noinlineFunctional.kt")
+            public void testNoinlineFunctional() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/property/noinlineFunctional.kt");
+            }
+
+            @Test
             @TestMetadata("property.kt")
             public void testProperty() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/property/property.kt");
