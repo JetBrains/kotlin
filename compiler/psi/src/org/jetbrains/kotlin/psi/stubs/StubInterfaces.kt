@@ -119,6 +119,11 @@ interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
     fun isMutable(): Boolean
     fun hasValOrVar(): Boolean
     fun hasDefaultValue(): Boolean
+
+    /**
+     * Returns raw name, i. e. text of name identifier. Returns same value as getName() unless name is quoted. Return null if and only if
+     * name will return null
+     */
     fun getRawName(): String?
 }
 
