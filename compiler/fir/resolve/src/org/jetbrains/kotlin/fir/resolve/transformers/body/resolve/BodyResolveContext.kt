@@ -649,11 +649,9 @@ class BodyResolveContext(
         mode: ResolutionMode,
         f: () -> T
     ): T {
+        require(mode !is ResolutionMode.ContextDependent && mode !is ResolutionMode.ContextDependentDelegate)
         if (mode !is ResolutionMode.LambdaResolution) {
-            specialTowerDataContexts.storeAnonymousFunctionContext(anonymousFunction.symbol, towerDataContext)
-        }
-        if (mode is ResolutionMode.ContextDependent || mode is ResolutionMode.ContextDependentDelegate) {
-            return f()
+            storeContextForAnonymousFunction(anonymousFunction)
         }
         return withTowerDataCleanup {
             addLocalScope(FirLocalScope(holder.session))
@@ -669,6 +667,11 @@ class BodyResolveContext(
                 }
             }
         }
+    }
+
+    @OptIn(PrivateForInline::class)
+    fun storeContextForAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
+        specialTowerDataContexts.storeAnonymousFunctionContext(anonymousFunction.symbol, towerDataContext)
     }
 
     @OptIn(PrivateForInline::class)

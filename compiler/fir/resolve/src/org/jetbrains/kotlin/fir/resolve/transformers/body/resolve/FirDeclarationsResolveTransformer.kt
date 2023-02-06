@@ -718,9 +718,8 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         }
         return when (data) {
             is ResolutionMode.ContextDependent, is ResolutionMode.ContextDependentDelegate -> {
-                context.withAnonymousFunction(anonymousFunction, components, data) {
-                    anonymousFunction
-                }
+                context.storeContextForAnonymousFunction(anonymousFunction)
+                anonymousFunction
             }
             is ResolutionMode.LambdaResolution -> {
                 val expectedReturnTypeRef =
