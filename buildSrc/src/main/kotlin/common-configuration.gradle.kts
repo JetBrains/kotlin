@@ -162,6 +162,7 @@ fun Project.configureKotlinCompilationOptions() {
         // TODO: fix remaining warnings and remove this property.
         val tasksWithWarnings = listOf(
             ":kotlin-gradle-plugin:compileCommonKotlin",
+            ":kotlin-native:build-tools:compileKotlin"
         )
 
         val projectsWithEnabledContextReceivers: List<String> by rootProject.extra
