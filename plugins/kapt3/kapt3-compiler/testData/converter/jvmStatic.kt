@@ -1,4 +1,4 @@
-// FIR_ALMOST_DONE
+// FIR_BLOCKED: KT-56924
 
 class JvmStaticTest {
     companion object {

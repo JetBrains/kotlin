@@ -1,5 +1,3 @@
-package some;
-
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Anno1 {
@@ -9,7 +7,6 @@ public abstract @interface Anno1 {
 
 ////////////////////
 
-package some;
 
 @kotlin.Metadata()
 public enum Enum1 {
@@ -18,11 +15,15 @@ public enum Enum1 {
 
     Enum1() {
     }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<Enum1> getEntries() {
+        return null;
+    }
 }
 
 ////////////////////
 
-package some;
 
 @kotlin.Metadata()
 public enum Enum2 {
@@ -56,16 +57,45 @@ public enum Enum2 {
 
     public final void publicEnumFun() {
     }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<Enum2> getEntries() {
+        return null;
+    }
 }
 
 ////////////////////
 
-package some;
+
+@kotlin.Metadata()
+public abstract interface I {
+
+    @kotlin.Metadata()
+    public static enum Nested {
+        /*public static final*/ WHITE /* = new Nested() */;
+
+        Nested() {
+        }
+
+        @org.jetbrains.annotations.NotNull()
+        public static kotlin.enums.EnumEntries<I.Nested> getEntries() {
+            return null;
+        }
+    }
+}
+
+////////////////////
+
 
 @kotlin.Metadata()
 public enum Nested1 {
     /*public static final*/ WHITE /* = new Nested1() */;
 
     Nested1() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<Nested1> getEntries() {
+        return null;
     }
 }

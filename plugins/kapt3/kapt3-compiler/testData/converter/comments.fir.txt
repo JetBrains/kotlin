@@ -1,5 +1,6 @@
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
+@java.lang.annotation.Target(value = {})
 @kotlin.annotation.Target(allowedTargets = {kotlin.annotation.AnnotationTarget.PROPERTY})
 public abstract @interface Anno {
 }
@@ -17,6 +18,11 @@ public enum EnumError {
 
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String doIt();
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<EnumError> getEntries() {
+        return null;
+    }
 }
 
 ////////////////////

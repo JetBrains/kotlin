@@ -20,8 +20,8 @@ public final class TopLevelKt {
     public static final int topLevelConstProperty = 2;
     private static final int topLevelProperty = 2;
 
-    public static final void extensionFunction(@Anno(value = "rec")
-    @org.jetbrains.annotations.NotNull()
+    public static final void extensionFunction(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "rec")
     java.lang.String $this$extensionFunction, @org.jetbrains.annotations.NotNull()
     @Anno(value = "1")
     java.lang.String a, @org.jetbrains.annotations.NotNull()
@@ -30,8 +30,8 @@ public final class TopLevelKt {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@Anno(value = "propRec")
-    @org.jetbrains.annotations.NotNull()
+    public static final <T extends java.lang.Object>java.lang.String getExtensionProperty(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "propRec")
     T $this$extensionProperty) {
         return null;
     }
@@ -50,8 +50,8 @@ public final class TopLevelKt {
         return null;
     }
 
-    public static final <T extends java.lang.Object>void setExtensionProperty(@Anno(value = "propRec")
-    @org.jetbrains.annotations.NotNull()
+    public static final <T extends java.lang.Object>void setExtensionProperty(@org.jetbrains.annotations.NotNull()
+    @Anno(value = "propRec")
     T $this$extensionProperty, @org.jetbrains.annotations.NotNull()
     @Anno(value = "setparam")
     java.lang.String setParamName) {

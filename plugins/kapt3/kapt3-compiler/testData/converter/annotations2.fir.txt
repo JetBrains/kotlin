@@ -12,8 +12,8 @@ public abstract @interface Anno {
 
 package test;
 
-@kotlin.jvm.JvmName(name = "AnnotationsTest")
 @kotlin.Metadata()
+@kotlin.jvm.JvmName(name = "AnnotationsTest")
 public final class AnnotationsTest {
 
     public AnnotationsTest() {
@@ -58,6 +58,11 @@ public enum Enum {
 
     public final int getX() {
         return 0;
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<test.Enum> getEntries() {
+        return null;
     }
 }
 

@@ -14,7 +14,7 @@ package secondary;
 @kotlin.Metadata()
 public final class Product2 implements secondary.Named {
     @org.jetbrains.annotations.Nullable()
-    private java.lang.String name;
+    private java.lang.String name = null;
 
     @java.lang.Override()
     @org.jetbrains.annotations.Nullable()

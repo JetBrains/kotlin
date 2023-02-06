@@ -128,11 +128,11 @@ public class PublicClassProtectedConstructor {
     }
 
     @kotlin.Metadata()
-    public static abstract interface ProtectedInterface {
+    protected static abstract interface ProtectedInterface {
     }
 
     @kotlin.Metadata()
-    static abstract interface PrivateInterface {
+    private static abstract interface PrivateInterface {
     }
 }
 

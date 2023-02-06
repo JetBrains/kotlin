@@ -39,7 +39,7 @@ public final class Foo {
     @org.jetbrains.annotations.NotNull()
     private final java.lang.Class<?> cl = null;
     @org.jetbrains.annotations.NotNull()
-    private final java.lang.Class<?>[] clarr = null;
+    private final java.lang.Class<?>[] clarr = {};
     @org.jetbrains.annotations.NotNull()
     private final Em em = Em.BAR;
     @org.jetbrains.annotations.NotNull()

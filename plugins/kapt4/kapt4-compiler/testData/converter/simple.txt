@@ -1,5 +1,3 @@
-import java.lang.System;
-
 @kotlin.Metadata()
 @java.lang.annotation.Retention(value = java.lang.annotation.RetentionPolicy.RUNTIME)
 public abstract @interface Ann {
@@ -24,8 +22,6 @@ public abstract @interface Ann {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 @Ann(b = 1, s = 2, i = 3, l = 4, ss = "hello", c = 'c', some = SomeEnum.A)
 public final class Base {
@@ -38,13 +34,16 @@ public final class Base {
 ////////////////////
 
 
-import java.lang.System;
-
 @kotlin.Metadata()
 public enum SomeEnum {
     /*public static final*/ A /* = new SomeEnum() */,
     /*public static final*/ B /* = new SomeEnum() */;
 
     SomeEnum() {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<SomeEnum> getEntries() {
+        return null;
     }
 }

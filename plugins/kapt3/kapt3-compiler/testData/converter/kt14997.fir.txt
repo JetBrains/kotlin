@@ -25,12 +25,12 @@ public final class Kt14997Kt {
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.Object b() {
+    public static final java.io.Serializable b() {
         return null;
     }
 
     @org.jetbrains.annotations.NotNull()
-    public static final java.lang.Object c() {
+    public static final CrashMe c() {
         return null;
     }
 

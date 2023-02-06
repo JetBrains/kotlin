@@ -71,5 +71,6 @@ public abstract interface TestC {
     @org.jetbrains.annotations.NotNull()
     public abstract lib.IOException d();
 
+    @org.jetbrains.annotations.NotNull()
     public abstract lib.FooBar e();
 }
