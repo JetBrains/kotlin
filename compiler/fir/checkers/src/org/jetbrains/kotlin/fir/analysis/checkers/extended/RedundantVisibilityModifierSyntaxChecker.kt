@@ -117,10 +117,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             return
         }
 
-        val isAccessorWithSameVisibility = element is FirPropertyAccessor
-                && element.visibility == context.containingPropertyVisibility
-
-        if (element !is FirMemberDeclaration && !isAccessorWithSameVisibility) {
+        if (element !is FirMemberDeclaration) {
             return
         }
 
@@ -281,7 +278,4 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             scope.processOverriddenFunctions(function.symbol, it)
         }
     }
-
-    private val CheckerContext.containingPropertyVisibility
-        get() = (this.containingDeclarations.last() as? FirProperty)?.visibility
 }
