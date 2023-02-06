@@ -3843,6 +3843,12 @@ public class FirPsiBlackBoxInlineCodegenTestGenerated extends AbstractFirPsiBlac
         }
 
         @Test
+        @TestMetadata("crossinlineFunctional.kt")
+        public void testCrossinlineFunctional() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/property/crossinlineFunctional.kt");
+        }
+
+        @Test
         @TestMetadata("fromObject.kt")
         public void testFromObject() throws Exception {
             runTest("compiler/testData/codegen/boxInline/property/fromObject.kt");
@@ -3852,6 +3858,12 @@ public class FirPsiBlackBoxInlineCodegenTestGenerated extends AbstractFirPsiBlac
         @TestMetadata("kt22649.kt")
         public void testKt22649() throws Exception {
             runTest("compiler/testData/codegen/boxInline/property/kt22649.kt");
+        }
+
+        @Test
+        @TestMetadata("noinlineFunctional.kt")
+        public void testNoinlineFunctional() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/property/noinlineFunctional.kt");
         }
 
         @Test
