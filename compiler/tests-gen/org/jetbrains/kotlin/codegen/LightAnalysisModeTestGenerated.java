@@ -29314,6 +29314,26 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/properties/initOrderMultiModule.kt");
         }
 
+        @TestMetadata("initializerOfConstValWithConst.kt")
+        public void testInitializerOfConstValWithConst() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/initializerOfConstValWithConst.kt");
+        }
+
+        @TestMetadata("initializerOfConstValWithConstExpr.kt")
+        public void testInitializerOfConstValWithConstExpr() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/initializerOfConstValWithConstExpr.kt");
+        }
+
+        @TestMetadata("initializerOfValWithConstExpr.kt")
+        public void testInitializerOfValWithConstExpr() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/initializerOfValWithConstExpr.kt");
+        }
+
+        @TestMetadata("initializerOfValWithNonConstExpr.kt")
+        public void testInitializerOfValWithNonConstExpr() throws Exception {
+            runTest("compiler/testData/codegen/box/properties/initializerOfValWithNonConstExpr.kt");
+        }
+
         @TestMetadata("javaGenericSynthProperty.kt")
         public void testJavaGenericSynthProperty() throws Exception {
             runTest("compiler/testData/codegen/box/properties/javaGenericSynthProperty.kt");

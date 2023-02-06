@@ -28053,6 +28053,30 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("initializerOfConstValWithConst.kt")
+            public void testInitializerOfConstValWithConst() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/initializerOfConstValWithConst.kt");
+            }
+
+            @Test
+            @TestMetadata("initializerOfConstValWithConstExpr.kt")
+            public void testInitializerOfConstValWithConstExpr() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/initializerOfConstValWithConstExpr.kt");
+            }
+
+            @Test
+            @TestMetadata("initializerOfValWithConstExpr.kt")
+            public void testInitializerOfValWithConstExpr() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/initializerOfValWithConstExpr.kt");
+            }
+
+            @Test
+            @TestMetadata("initializerOfValWithNonConstExpr.kt")
+            public void testInitializerOfValWithNonConstExpr() throws Exception {
+                runTest("compiler/testData/codegen/box/properties/initializerOfValWithNonConstExpr.kt");
+            }
+
+            @Test
             @TestMetadata("kt10715.kt")
             public void testKt10715() throws Exception {
                 runTest("compiler/testData/codegen/box/properties/kt10715.kt");
