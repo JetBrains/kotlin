@@ -158,7 +158,7 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
 
         put(
             FirSerializationErrors.EXTERNAL_SERIALIZER_USELESS,
-            "@Serializer annotation is useless for class ''{0}'', because all members of the KSerializer are overridden",
+            "@Serializer annotation has no effect on class ''{0}'', because all members of KSerializer are already overridden",
             FirDiagnosticRenderers.SYMBOL,
         )
 

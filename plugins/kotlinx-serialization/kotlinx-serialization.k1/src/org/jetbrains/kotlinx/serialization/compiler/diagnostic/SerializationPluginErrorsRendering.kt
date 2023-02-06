@@ -167,7 +167,7 @@ object SerializationPluginErrorsRendering : DefaultErrorMessages.Extension {
 
         MAP.put(
             SerializationErrors.EXTERNAL_SERIALIZER_USELESS,
-            "@Serializer annotation is useless for class ''{0}'', because all members of the KSerializer are overridden",
+            "@Serializer annotation has no effect on class ''{0}'', because all members of KSerializer are already overridden",
             Renderers.RENDER_TYPE
         )
 

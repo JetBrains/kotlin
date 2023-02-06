@@ -67,8 +67,9 @@ data class PartiallyWithoutType(val i: Int) {
 
 @Serializable(FullyOverridden.Companion::class)
 data class FullyOverridden(val i: Int) {
-    @Serializer(forClass = FullyOverridden::class)
     companion object : KSerializer<FullyOverridden> {
+        override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("FullyOverridden", PrimitiveKind.STRING)
+
         override fun serialize(encoder: Encoder, value: FullyOverridden) {
             encoder.encodeString("i=${value.i}")
         }
