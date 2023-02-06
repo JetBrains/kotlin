@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
@@ -18,9 +19,11 @@ import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
 import org.jetbrains.kotlin.backend.konan.lower.erasedUpperBound
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.builders.irWhile
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrWhileLoopImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
@@ -400,6 +403,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 nodes.addAll(newPhiNodes)
                 return PointsToGraph(this, nodes, parameterNodes, variableNodes)
             }
+
+            fun graphsAreEqual(first: PointsToGraph, second: PointsToGraph): Boolean {
+
+            }
         }
 
         private interface NodeFactory {
@@ -410,7 +417,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
         private class PointsToGraph(
                 val forest: PointsToGraphForest,
-                val nodes: MutableList<Node>,
+                val nodes: MutableList<Node>, // TODO: What if just always maintain: nodes[node.id] === node ?
                 val parameterNodes: MutableMap<IrValueParameter, Node.Parameter>,
                 val variableNodes: MutableMap<IrVariable, Node.VariableValue>
         ) : NodeFactory {
@@ -804,7 +811,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val clone = data.graph.clone(list)
                 (returnTargetsResults[expression.returnTargetSymbol] ?: error("Unknown return target: ${expression.render()}"))
                         .add(ExpressionResult(list[0], clone))
-                return Node.Unit // TODO: Nothing?
+                // TODO: Return null (=Nothing) and clear the graph.
+                return Node.Unit
             }
 
             override fun visitContainerExpression(expression: IrContainerExpression, data: BuilderState): Node {
@@ -835,6 +843,52 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     branchResults.add(ExpressionResult(Node.Unit, data.graph))
                 }
                 return controlFlowMergePoint(data.graph, expression.takeIf { data.insideLoop }, expression.type, branchResults)
+            }
+
+            val irBuilder = context.createIrBuilder(function.symbol)
+            val fictitiousLoopsStarts = mutableMapOf<IrLoop, IrElement>()
+            val loopsContinueResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
+            val loopsBreakResults = mutableMapOf<IrLoop, MutableList<ExpressionResult>>()
+
+            override fun visitContinue(jump: IrContinue, data: BuilderState): Node {
+                (loopsContinueResults[jump.loop] ?: error("A continue from an unknown loop: ${jump.loop}"))
+                        .add(ExpressionResult(Node.Unit, data.graph.clone()))
+                // TODO: Return null (=Nothing) and clear the graph.
+                return Node.Unit
+            }
+
+            override fun visitBreak(jump: IrBreak, data: BuilderState): Node {
+                (loopsBreakResults[jump.loop] ?: error("A break from an unknown loop: ${jump.loop}"))
+                        .add(ExpressionResult(Node.Unit, data.graph.clone()))
+                // TODO: Return null (=Nothing) and clear the graph.
+                return Node.Unit
+            }
+
+            override fun visitWhileLoop(loop: IrWhileLoop, data: BuilderState): Node {
+                val fictitiousLoopStart = fictitiousLoopsStarts.getOrPut(loop) { irBuilder.irWhile() }
+                val continueResults = loopsContinueResults.getOrPut(loop) { mutableListOf() }
+                val breakResults = loopsBreakResults.getOrPut(loop) { mutableListOf() }
+                var prevGraph = data.graph
+                loop.condition.accept(this, BuilderState(prevGraph, true))
+                var iterations = 0
+                do {
+                    ++iterations
+                    continueResults.clear()
+                    breakResults.clear()
+                    val currentGraph = prevGraph.clone()
+                    loop.body?.accept(this, BuilderState(currentGraph, true))
+                    continueResults.add(ExpressionResult(Node.Unit, currentGraph))
+                    val nextGraph = PointsToGraph(prevGraph.forest)
+                    controlFlowMergePoint(nextGraph, fictitiousLoopStart, context.irBuiltIns.unitType, continueResults)
+                    loop.condition.accept(this, BuilderState(nextGraph, true))
+                    val graphHasChanged = !forest.graphsAreEqual(prevGraph, nextGraph)
+                    prevGraph = nextGraph
+                } while (graphHasChanged && iterations < 10)
+
+                if (iterations >= 10)
+                    error("BUGBUGBUG: ${loop.dump()}")
+                breakResults.add(ExpressionResult(Node.Unit, prevGraph))
+                return controlFlowMergePoint(data.graph, loop.takeIf { data.insideLoop }, context.irBuiltIns.unitType, breakResults)
             }
 
             fun processCall(
