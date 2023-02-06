@@ -235,6 +235,12 @@ public class SymbolLightClassesByFqNameForSourceTestGenerated extends AbstractSy
     }
 
     @Test
+    @TestMetadata("PrivateObject.kt")
+    public void testPrivateObject() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PrivateObject.kt");
+    }
+
+    @Test
     @TestMetadata("PublishedApi.kt")
     public void testPublishedApi() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PublishedApi.kt");

@@ -204,6 +204,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/OnlySecondaryConstructors.kt");
     }
 
+    @TestMetadata("PrivateObject.kt")
+    public void testPrivateObject() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PrivateObject.kt");
+    }
+
     @TestMetadata("PublishedApi.kt")
     public void testPublishedApi() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/PublishedApi.kt");
