@@ -17,6 +17,7 @@
 
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.*
 
 plugins {
     id("kotlin")
@@ -52,23 +53,21 @@ tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
 }
 
-// TODO: move it somewhere
-//projectTest(jUnitMode = JUnitMode.JUnit5) {
-//    useJUnitPlatform()
-//}
+val isCompositeBootstrap = project.extraProperties.has("kotlin.native.build.composite-bootstrap")
 
 /**
- * Depending on the `kotlin.native.build.composite-bootstrap` property returns either coordinates or project dependency.
- * This is to use this project in composite build (build-tools) and as a project itself.
- * Project should depend on a current snapshot builds while build-tools use bootstrap dependencies
+ * Depending on the `kotlin.native.build.composite-bootstrap` property returns either coordinates or the project dependency.
+ *
+ * It to use this project in composite build (build-tools) and as a project itself.
+ * Project should depend on a current snapshot builds while build-tools use bootstrap dependencies.
+ * TODO: merge this project with kotlin-native-utils to get rid of this hack
  */
 fun compositeDependency(coordinates: String, subproject: String = ""): Any {
-    val bootstrap = project.extraProperties.has("kotlin.native.build.composite-bootstrap")
     val parts = coordinates.split(':')
     check(parts.size == 3) {
         "Full dependency coordinates should be specified group:name:version"
     }
-    return if (!bootstrap) {
+    return if (!isCompositeBootstrap) {
         // returns dependency on the project specified with coordinates
         dependencies.project("$subproject:${parts[1]}")
     } else {
@@ -78,11 +77,24 @@ fun compositeDependency(coordinates: String, subproject: String = ""): Any {
 }
 
 dependencies {
-    kotlinCompilerClasspath("org.jetbrains.kotlin:kotlin-compiler-embeddable:${project.bootstrapKotlinVersion}")
-
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
     api(compositeDependency("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}", ":native"))
     api(compositeDependency("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}"))
     api(compositeDependency("org.jetbrains.kotlin:kotlin-util-io:${project.bootstrapKotlinVersion}"))
-//    testApiJUnit5()
+
+    if (!isCompositeBootstrap) {
+        val versionProperties = Properties()
+        project.rootProject.projectDir.resolve("gradle/versions.properties").inputStream().use { propInput ->
+            versionProperties.load(propInput)
+        }
+        val platformVersion = versionProperties["versions.junit-bom"]
+        testApi(platform("org.junit:junit-bom:$platformVersion"))
+        testApi("org.junit.jupiter:junit-jupiter")
+    }
+}
+
+if (!isCompositeBootstrap) {
+    tasks.withType<Test>().configureEach() {
+        useJUnitPlatform()
+    }
 }
