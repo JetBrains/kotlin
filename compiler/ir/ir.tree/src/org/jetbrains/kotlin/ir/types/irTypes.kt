@@ -193,6 +193,10 @@ val IrClass.typeConstructorParameters: Sequence<IrTypeParameter>
                     // Ideally this should be fixed in FE.
                     null
                 }
+                current is IrSimpleFunction && current.isStatic -> {
+                    // Static functions don't capture type parameters.
+                    null
+                }
                 current.isAnonymousObject -> {
                     // Anonymous classes don't capture type parameters.
                     null

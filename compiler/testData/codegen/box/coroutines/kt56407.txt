@@ -1,0 +1,87 @@
+@kotlin.Metadata
+public interface Client {
+    // source: 'kt56407.kt'
+    public abstract @org.jetbrains.annotations.Nullable method connectToServer(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class DefaultAuthorizableClient$connectToServer$2 {
+    // source: 'kt56407.kt'
+    enclosing method DefaultAuthorizableClient.connectToServer(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+    synthetic final field $nextObjectQuery: DefaultAuthorizableClient$connectToServer$NextObjectQuery
+    field label: int
+    synthetic final field this$0: DefaultAuthorizableClient
+    inner (anonymous) class DefaultAuthorizableClient$connectToServer$2
+    method <init>(p0: DefaultAuthorizableClient, p1: DefaultAuthorizableClient$connectToServer$NextObjectQuery, p2: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class DefaultAuthorizableClient$connectToServer$NextObjectQuery {
+    // source: 'kt56407.kt'
+    enclosing method DefaultAuthorizableClient.connectToServer(Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+    inner (local) class DefaultAuthorizableClient$connectToServer$NextObjectQuery NextObjectQuery
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public abstract class DefaultAuthorizableClient {
+    // source: 'kt56407.kt'
+    inner (anonymous) class DefaultAuthorizableClient$connectToServer$2
+    inner (local) class DefaultAuthorizableClient$connectToServer$NextObjectQuery NextObjectQuery
+    public method <init>(): void
+    synthetic static method connectToServer$suspendImpl(p0: DefaultAuthorizableClient, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public @org.jetbrains.annotations.Nullable method connectToServer(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Kt56407Kt$box$1$1 {
+    // source: 'kt56407.kt'
+    enclosing method Kt56407Kt$box$1.invokeSuspend(Ljava/lang/Object;)Ljava/lang/Object;
+    inner (anonymous) class Kt56407Kt$box$1
+    inner (anonymous) class Kt56407Kt$box$1$1
+    method <init>(): void
+}
+
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class Kt56407Kt$box$1 {
+    // source: 'kt56407.kt'
+    enclosing method Kt56407Kt.box()Ljava/lang/String;
+    field label: int
+    inner (anonymous) class Kt56407Kt$box$1
+    inner (anonymous) class Kt56407Kt$box$1$1
+    method <init>(p0: kotlin.coroutines.Continuation): void
+    public final @org.jetbrains.annotations.NotNull method create(@org.jetbrains.annotations.Nullable p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public final method invoke(p0: java.lang.Object, p1: java.lang.Object): java.lang.Object
+    public final @org.jetbrains.annotations.Nullable method invokeSuspend(@org.jetbrains.annotations.NotNull p0: java.lang.Object): java.lang.Object
+}
+
+@kotlin.Metadata
+public final class Kt56407Kt$builder$$inlined$Continuation$1 {
+    // source: 'Continuation.kt'
+    enclosing method Kt56407Kt.builder(Lkotlin/jvm/functions/Function2;)V
+    synthetic final field $context: kotlin.coroutines.CoroutineContext
+    inner (anonymous) class Kt56407Kt$builder$$inlined$Continuation$1
+    public method <init>(p0: kotlin.coroutines.CoroutineContext): void
+    public @org.jetbrains.annotations.NotNull method getContext(): kotlin.coroutines.CoroutineContext
+    public method resumeWith(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
+}
+
+@kotlin.Metadata
+public final class Kt56407Kt {
+    // source: 'kt56407.kt'
+    inner (anonymous) class Kt56407Kt$box$1
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method builder(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2): void
+    private final static @org.jetbrains.annotations.Nullable method consumeEach$$forInline(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method consumeEach(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function1, @org.jetbrains.annotations.NotNull p2: kotlin.coroutines.Continuation): java.lang.Object
+}
+
+@kotlin.Metadata
+public interface ServerBase {
+    // source: 'kt56407.kt'
+}
