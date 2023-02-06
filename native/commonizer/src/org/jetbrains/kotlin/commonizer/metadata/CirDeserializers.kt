@@ -12,7 +12,6 @@ import kotlinx.metadata.klib.compileTimeValue
 import kotlinx.metadata.klib.getterAnnotations
 import kotlinx.metadata.klib.setterAnnotations
 import org.jetbrains.kotlin.commonizer.cir.*
-import org.jetbrains.kotlin.commonizer.cir.CirProvided
 import org.jetbrains.kotlin.commonizer.utils.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.types.Variance
@@ -266,13 +265,15 @@ object CirDeserializers {
         isData = Flag.Class.IS_DATA(source.flags),
         isValue = Flag.Class.IS_VALUE(source.flags),
         isInner = Flag.Class.IS_INNER(source.flags),
-        isExternal = Flag.Class.IS_EXTERNAL(source.flags)
+        isExternal = Flag.Class.IS_EXTERNAL(source.flags),
+        hasEnumEntries = Flag.Class.HAS_ENUM_ENTRIES(source.flags)
     )
 
     fun defaultEnumEntry(
         name: CirName,
         annotations: List<KmAnnotation>,
         enumClassId: CirEntityId,
+        hasEnumEntries: Boolean,
         typeResolver: CirTypeResolver
     ): CirClass = CirClass.create(
         annotations = annotations.compactMap { annotation(it, typeResolver) },
@@ -294,7 +295,8 @@ object CirDeserializers {
         isData = false,
         isValue = false,
         isInner = false,
-        isExternal = false
+        isExternal = false,
+        hasEnumEntries = hasEnumEntries
     )
 
     @Suppress("NOTHING_TO_INLINE")

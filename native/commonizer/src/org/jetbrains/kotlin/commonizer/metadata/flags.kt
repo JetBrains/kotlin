@@ -91,6 +91,7 @@ internal fun CirClass.classFlags(isExpect: Boolean): Flags =
         Flag.Class.IS_EXTERNAL.takeIf { isExternal },
         Flag.Class.IS_EXPECT.takeIf { isExpect },
         Flag.Class.IS_VALUE.takeIf { isValue },
+        Flag.Class.HAS_ENUM_ENTRIES.takeIf { hasEnumEntries }
         //Flag.Class.IS_FUN.takeIf { false }
     )
 

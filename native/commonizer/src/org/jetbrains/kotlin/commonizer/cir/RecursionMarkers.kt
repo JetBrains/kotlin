@@ -20,6 +20,7 @@ object CirClassRecursionMarker : CirClass, CirRecursionMarker {
     override val isValue get() = unsupported()
     override val isInner get() = unsupported()
     override val isExternal get() = unsupported()
+    override val hasEnumEntries: Boolean get() = unsupported()
     override var supertypes: List<CirType>
         get() = unsupported()
         set(_) = unsupported()

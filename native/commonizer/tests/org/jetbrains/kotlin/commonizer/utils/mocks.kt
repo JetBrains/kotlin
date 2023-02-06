@@ -75,7 +75,8 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
                     isData = false,
                     isValue = false,
                     isInner = false,
-                    isExternal = false
+                    isExternal = false,
+                    hasEnumEntries = false
                 )
             }
         )
