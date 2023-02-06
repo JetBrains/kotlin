@@ -293,26 +293,6 @@ fun Task.dependsOnKonanBuildingTask(artifact: String, target: KonanTarget) {
 }
 
 //endregion
-// Run command line from string.
-fun Array<String>.runCommand(
-    workingDir: File = File("."),
-    timeoutAmount: Long = 60,
-    timeoutUnit: TimeUnit = TimeUnit.SECONDS
-): String {
-    return try {
-        ProcessBuilder(*this)
-            .directory(workingDir)
-            .redirectOutput(ProcessBuilder.Redirect.PIPE)
-            .redirectError(ProcessBuilder.Redirect.PIPE)
-            .start().apply {
-                waitFor(timeoutAmount, timeoutUnit)
-            }.inputStream.bufferedReader().readText()
-    } catch (e: Exception) {
-        println("Couldn't run command ${this.joinToString(" ")}")
-        println(e.stackTrace.joinToString("\n"))
-        error(e.message!!)
-    }
-}
 
 @JvmOverloads
 fun compileSwift(

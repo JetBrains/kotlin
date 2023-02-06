@@ -9,9 +9,13 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.konan.target.*
 import java.io.File
 import javax.inject.Inject
 import java.nio.file.Paths
+import java.net.URL
+import java.util.concurrent.TimeUnit
+import java.nio.file.Path
 import kotlin.reflect.KClass
 
 enum class CodeSizeEntity { FRAMEWORK, EXECUTABLE }
@@ -91,6 +95,55 @@ open class SwiftBenchmarkingPlugin : BenchmarkingPlugin() {
                         Paths.get(buildDir.absolutePath, benchmark.applicationName), false)
             }
         }
+    }
+
+    fun Array<String>.runCommand(
+            workingDir: File = File("."),
+            timeoutAmount: Long = 60,
+            timeoutUnit: TimeUnit = TimeUnit.SECONDS
+    ): String {
+        return try {
+            ProcessBuilder(*this)
+                    .directory(workingDir)
+                    .redirectOutput(ProcessBuilder.Redirect.PIPE)
+                    .redirectError(ProcessBuilder.Redirect.PIPE)
+                    .start().apply {
+                        waitFor(timeoutAmount, timeoutUnit)
+                    }.inputStream.bufferedReader().readText()
+        } catch (e: Exception) {
+            println("Couldn't run command ${this.joinToString(" ")}")
+            println(e.stackTrace.joinToString("\n"))
+            error(e.message!!)
+        }
+    }
+    fun compileSwift(
+            project: Project, target: KonanTarget, sources: List<String>, options: List<String>,
+            output: Path, fullBitcode: Boolean = false
+    ) {
+        val platform = project.platformManager.platform(target)
+        assert(platform.configurables is AppleConfigurables)
+        val configs = platform.configurables as AppleConfigurables
+        val compiler = configs.absoluteTargetToolchain + "/usr/bin/swiftc"
+
+        val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
+
+        val args = listOf("-sdk", configs.absoluteTargetSysRoot, "-target", swiftTarget) +
+                options + "-o" + output.toString() + sources +
+                if (fullBitcode) listOf("-embed-bitcode", "-Xlinker", "-bitcode_verify") else listOf("-embed-bitcode-marker")
+
+        val out = mutableListOf<String>().apply {
+            add(compiler)
+            addAll(args)
+        }.toTypedArray().runCommand(timeoutAmount = 240)
+
+        println(
+                """
+        |$compiler finished with:
+        |options: ${args.joinToString(separator = " ")}
+        |output: $out
+        """.trimMargin()
+        )
+        check(output.toFile().exists()) { "Compiler swiftc hasn't produced an output file: $output" }
     }
 
     override fun Project.collectCodeSize(applicationName: String) =
