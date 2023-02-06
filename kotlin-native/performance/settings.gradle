@@ -13,6 +13,8 @@ pluginManagement {
     }
 }
 
+includeBuild '../build-tools'
+
 include ':ring'
 include ':cinterop'
 include ':helloworld'

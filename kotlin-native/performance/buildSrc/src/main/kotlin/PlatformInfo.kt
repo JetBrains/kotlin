@@ -15,4 +15,8 @@ object PlatformInfo {
 
     @JvmStatic
     fun isLinux() = HostManager.hostIsLinux
+
+    @JvmStatic
+    val hostName: String
+        get() = HostManager.hostName
 }
