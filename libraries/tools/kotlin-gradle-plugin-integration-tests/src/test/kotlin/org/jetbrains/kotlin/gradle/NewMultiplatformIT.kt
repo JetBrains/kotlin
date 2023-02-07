@@ -322,6 +322,13 @@ class NewMultiplatformIT : BaseGradleIT() {
             ).map { ":compileKotlin$it" }
 
         with(libProject) {
+            gradleProperties().appendText(
+                """
+                
+                systemProp.kotlin.js.compiler.legacy.force_enabled=true
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+            )
             build(
                 "publish",
                 options = defaultBuildOptions().copy(jsCompilerType = jsCompilerType)
@@ -377,6 +384,14 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         with(appProject) {
             setupWorkingDir()
+
+            gradleProperties().appendText(
+                """
+                
+                systemProp.kotlin.js.compiler.legacy.force_enabled=true
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+            )
 
             // we use `maven { setUrl(...) }` because this syntax actually works both for Groovy and Kotlin DSLs in Gradle
             gradleBuildScript().appendText("\nrepositories { maven { setUrl(\"$libLocalRepoUri\") } }")
@@ -973,6 +988,14 @@ class NewMultiplatformIT : BaseGradleIT() {
         val appProject = Project("sample-app", gradleVersion, "new-mpp-lib-and-app")
 
         val buildOptions = hmppFlags.buildOptions
+        libProject.setupWorkingDir()
+        libProject.gradleProperties().appendText(
+            """
+                
+                systemProp.kotlin.js.compiler.legacy.force_enabled=true
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+        )
         @Suppress("DEPRECATION")
         libProject.build(
             "publish",
@@ -985,6 +1008,14 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         with(appProject) {
             setupWorkingDir()
+
+            gradleProperties().appendText(
+                """
+                
+                systemProp.kotlin.js.compiler.legacy.force_enabled=true
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+            )
 
             val pathPrefix = "metadataDependency: "
 
@@ -1463,6 +1494,15 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testJsDceInMpp() = with(Project("new-mpp-js-dce", gradleVersion)) {
+        setupWorkingDir()
+        gradleProperties().appendText(
+            """
+                
+                systemProp.kotlin.js.compiler.legacy.force_enabled=true
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+        )
+
         @Suppress("DEPRECATION")
         build(
             "runRhino",
@@ -1593,6 +1633,8 @@ class NewMultiplatformIT : BaseGradleIT() {
 
     @Test
     fun testIncrementalCompilation() = with(Project("new-mpp-jvm-js-ic", gradleVersion)) {
+        setupWorkingDir()
+
         build("build") {
             assertSuccessful()
         }
@@ -1633,6 +1675,14 @@ class NewMultiplatformIT : BaseGradleIT() {
     fun testPomRewritingInSinglePlatformProject() = with(Project("kt-27059-pom-rewriting")) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        gradleProperties().appendText(
+            """
+                
+                systemProp.kotlin.js.compiler.legacy.force_enabled=true
+                kotlin.compiler.execution.strategy=in-process
+                """.trimIndent()
+        )
 
         val groupDir = "build/repo/com/example/"
 
