@@ -48,99 +48,34 @@ class PersistentCheckerContext private constructor(
         allErrorsSuppressed = false
     )
 
-    override fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): PersistentCheckerContext {
-        return PersistentCheckerContext(
-            implicitReceiverStack.add(name, value),
-            containingDeclarations,
-            qualifiedAccessOrAssignmentsOrAnnotationCalls,
-            getClassCalls,
-            annotationContainers,
-            isContractBody,
-            sessionHolder,
-            returnTypeCalculator,
-            suppressedDiagnostics,
-            allInfosSuppressed,
-            allWarningsSuppressed,
-            allErrorsSuppressed
-        )
-    }
+    override fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): PersistentCheckerContext =
+        copy(implicitReceiverStack = implicitReceiverStack.add(name, value))
 
-    override fun addDeclaration(declaration: FirDeclaration): PersistentCheckerContext {
-        return PersistentCheckerContext(
-            implicitReceiverStack,
-            containingDeclarations.add(declaration),
-            qualifiedAccessOrAssignmentsOrAnnotationCalls,
-            getClassCalls,
-            annotationContainers,
-            isContractBody,
-            sessionHolder,
-            returnTypeCalculator,
-            suppressedDiagnostics,
-            allInfosSuppressed,
-            allWarningsSuppressed,
-            allErrorsSuppressed
-        )
-    }
+    override fun addDeclaration(declaration: FirDeclaration): PersistentCheckerContext =
+        copy(containingDeclarations = containingDeclarations.add(declaration))
 
     override fun dropDeclaration() {
     }
 
-    override fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): PersistentCheckerContext {
-        return PersistentCheckerContext(
-            implicitReceiverStack,
-            containingDeclarations,
-            this.qualifiedAccessOrAssignmentsOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall),
-            getClassCalls,
-            annotationContainers,
-            isContractBody,
-            sessionHolder,
-            returnTypeCalculator,
-            suppressedDiagnostics,
-            allInfosSuppressed,
-            allWarningsSuppressed,
-            allErrorsSuppressed
+    override fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): PersistentCheckerContext =
+        copy(
+            qualifiedAccessOrAssignmentsOrAnnotationCalls =
+            qualifiedAccessOrAssignmentsOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall)
         )
-    }
 
     override fun dropQualifiedAccessOrAnnotationCall() {
     }
 
-    override fun addGetClassCall(getClassCall: FirGetClassCall): PersistentCheckerContext {
-        return PersistentCheckerContext(
-            implicitReceiverStack,
-            containingDeclarations,
-            qualifiedAccessOrAssignmentsOrAnnotationCalls,
-            getClassCalls.add(getClassCall),
-            annotationContainers,
-            isContractBody,
-            sessionHolder,
-            returnTypeCalculator,
-            suppressedDiagnostics,
-            allInfosSuppressed,
-            allWarningsSuppressed,
-            allErrorsSuppressed
+    override fun addGetClassCall(getClassCall: FirGetClassCall): PersistentCheckerContext =
+        copy(
+            getClassCalls = getClassCalls.add(getClassCall),
         )
-    }
 
     override fun dropGetClassCall() {
     }
 
-    override fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): PersistentCheckerContext {
-        return PersistentCheckerContext(
-            implicitReceiverStack,
-            containingDeclarations,
-            qualifiedAccessOrAssignmentsOrAnnotationCalls,
-            getClassCalls,
-            annotationContainers.add(annotationContainer),
-            isContractBody,
-            sessionHolder,
-            returnTypeCalculator,
-            suppressedDiagnostics,
-            allInfosSuppressed,
-            allWarningsSuppressed,
-            allErrorsSuppressed
-        )
-    }
+    override fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): PersistentCheckerContext =
+        copy(annotationContainers = annotationContainers.add(annotationContainer))
 
     override fun dropAnnotationContainer() {
     }
@@ -152,46 +87,40 @@ class PersistentCheckerContext private constructor(
         allErrorsSuppressed: Boolean
     ): CheckerContextForProvider {
         if (diagnosticNames.isEmpty()) return this
+        return copy(
+            suppressedDiagnostics = suppressedDiagnostics.addAll(diagnosticNames),
+            allInfosSuppressed = this.allInfosSuppressed || allInfosSuppressed,
+            allWarningsSuppressed = this.allWarningsSuppressed || allWarningsSuppressed,
+            allErrorsSuppressed = this.allErrorsSuppressed || allErrorsSuppressed
+        )
+    }
+
+    private fun copy(
+        implicitReceiverStack: PersistentImplicitReceiverStack = this.implicitReceiverStack,
+        qualifiedAccessOrAssignmentsOrAnnotationCalls: PersistentList<FirStatement> = this.qualifiedAccessOrAssignmentsOrAnnotationCalls,
+        getClassCalls: PersistentList<FirGetClassCall> = this.getClassCalls,
+        annotationContainers: PersistentList<FirAnnotationContainer> = this.annotationContainers,
+        containingDeclarations: PersistentList<FirDeclaration> = this.containingDeclarations,
+        isContractBody: Boolean = this.isContractBody,
+        allInfosSuppressed: Boolean = this.allInfosSuppressed,
+        allWarningsSuppressed: Boolean = this.allWarningsSuppressed,
+        allErrorsSuppressed: Boolean = this.allErrorsSuppressed,
+        suppressedDiagnostics: PersistentSet<String> = this.suppressedDiagnostics,
+    ): PersistentCheckerContext {
         return PersistentCheckerContext(
-            implicitReceiverStack,
-            containingDeclarations,
-            qualifiedAccessOrAssignmentsOrAnnotationCalls,
-            getClassCalls,
-            annotationContainers,
-            isContractBody,
-            sessionHolder,
-            returnTypeCalculator,
-            suppressedDiagnostics.addAll(diagnosticNames),
-            this.allInfosSuppressed || allInfosSuppressed,
-            this.allWarningsSuppressed || allWarningsSuppressed,
-            this.allErrorsSuppressed || allErrorsSuppressed
+            implicitReceiverStack, containingDeclarations, qualifiedAccessOrAssignmentsOrAnnotationCalls,
+            getClassCalls, annotationContainers, isContractBody, sessionHolder, returnTypeCalculator, suppressedDiagnostics,
+            allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed,
         )
     }
 
     private fun toggleContractBody(newValue: Boolean): CheckerContextForProvider {
         check(isContractBody != newValue)
 
-        return PersistentCheckerContext(
-            implicitReceiverStack,
-            containingDeclarations,
-            qualifiedAccessOrAssignmentsOrAnnotationCalls,
-            getClassCalls,
-            annotationContainers,
-            isContractBody = newValue,
-            sessionHolder,
-            returnTypeCalculator,
-            suppressedDiagnostics,
-            allInfosSuppressed,
-            allWarningsSuppressed,
-            allErrorsSuppressed
-        )
+        return copy(isContractBody = newValue)
     }
 
-    override fun enterContractBody(): CheckerContextForProvider {
-        return toggleContractBody(newValue = true)
-    }
+    override fun enterContractBody(): CheckerContextForProvider = toggleContractBody(newValue = true)
 
-    override fun exitContractBody(): CheckerContextForProvider {
-        return toggleContractBody(newValue = false)
-    }
+    override fun exitContractBody(): CheckerContextForProvider = toggleContractBody(newValue = false)
 }
