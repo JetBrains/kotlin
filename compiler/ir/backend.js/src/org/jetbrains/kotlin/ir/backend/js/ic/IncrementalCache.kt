@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
-import org.jetbrains.kotlin.ir.backend.js.FingerprintHash
+import org.jetbrains.kotlin.ir.backend.web.FingerprintHash
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream

@@ -29,10 +29,10 @@ import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringT
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.getSerializedData
-import org.jetbrains.kotlin.ir.backend.js.incrementalDataProvider
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.backend.web.JsFactories
+import org.jetbrains.kotlin.ir.backend.web.getSerializedData
+import org.jetbrains.kotlin.ir.backend.web.incrementalDataProvider
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
