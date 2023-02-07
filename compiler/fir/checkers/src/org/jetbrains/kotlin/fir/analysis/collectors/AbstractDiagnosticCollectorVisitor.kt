@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.analysis.collectors
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.PrivateForInline
@@ -35,16 +34,16 @@ abstract class AbstractDiagnosticCollectorVisitor(
     protected abstract fun checkElement(element: FirElement)
 
     override fun visitElement(element: FirElement, data: Nothing?) {
-        if (element is FirAnnotationContainer) {
-            withAnnotationContainer(element) {
+        when (element) {
+            is FirAnnotationContainer -> withAnnotationContainer(element) {
                 checkElement(element)
                 visitNestedElements(element)
             }
-            return
+            else -> withElement(element) {
+                checkElement(element)
+                visitNestedElements(element)
+            }
         }
-
-        checkElement(element)
-        visitNestedElements(element)
     }
 
     override fun visitAnnotationContainer(annotationContainer: FirAnnotationContainer, data: Nothing?) {
@@ -166,18 +165,18 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?) {
-        visitWithDeclaration(anonymousInitializer)
+        withElement(anonymousInitializer) {
+            visitWithDeclaration(anonymousInitializer)
+        }
     }
 
     override fun visitBlock(block: FirBlock, data: Nothing?) {
-        withAnnotationContainer(block) {
-            if (block is FirContractCallBlock) {
-                insideContractBody {
-                    visitExpression(block, data)
-                }
-            } else {
+        if (block is FirContractCallBlock) {
+            insideContractBody {
                 visitExpression(block, data)
             }
+        } else {
+            visitExpression(block, data)
         }
     }
 
@@ -341,6 +340,19 @@ abstract class AbstractDiagnosticCollectorVisitor(
             context = existingContext
         }
     }
+    @OptIn(PrivateForInline::class)
+    inline fun <T> withElement(element: FirElement, block: () -> T): T {
+        val existingContext = context
+        context = context.addElement(element)
+        return try {
+            whileAnalysing(context.session, element) {
+                block()
+            }
+        } finally {
+            existingContext.dropElement()
+            context = existingContext
+        }
+    }
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withLabelAndReceiverType(
@@ -367,19 +379,21 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withAnnotationContainer(annotationContainer: FirAnnotationContainer, block: () -> R): R {
-        val existingContext = context
-        addSuppressedDiagnosticsToContext(annotationContainer)
-        val notEmptyAnnotations = annotationContainer.annotations.isNotEmpty()
-        if (notEmptyAnnotations) {
-            context = context.addAnnotationContainer(annotationContainer)
-        }
-        return try {
-            block()
-        } finally {
+        return withElement(annotationContainer) {
+            val existingContext = context
+            addSuppressedDiagnosticsToContext(annotationContainer)
+            val notEmptyAnnotations = annotationContainer.annotations.isNotEmpty()
             if (notEmptyAnnotations) {
-                existingContext.dropAnnotationContainer()
+                context = context.addAnnotationContainer(annotationContainer)
             }
-            context = existingContext
+            try {
+                block()
+            } finally {
+                if (notEmptyAnnotations) {
+                    existingContext.dropAnnotationContainer()
+                }
+                context = existingContext
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -26,6 +27,7 @@ class PersistentCheckerContext private constructor(
     override val qualifiedAccessOrAssignmentsOrAnnotationCalls: PersistentList<FirStatement>,
     override val getClassCalls: PersistentList<FirGetClassCall>,
     override val annotationContainers: PersistentList<FirAnnotationContainer>,
+    override val containingElements: PersistentList<FirElement>,
     override val isContractBody: Boolean,
     sessionHolder: SessionHolder,
     returnTypeCalculator: ReturnTypeCalculator,
@@ -37,6 +39,7 @@ class PersistentCheckerContext private constructor(
 ) : CheckerContextForProvider(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
+        persistentListOf(),
         persistentListOf(),
         persistentListOf(),
         persistentListOf(),
@@ -57,8 +60,7 @@ class PersistentCheckerContext private constructor(
     override fun addDeclaration(declaration: FirDeclaration): PersistentCheckerContext =
         copy(containingDeclarations = containingDeclarations.add(declaration))
 
-    override fun dropDeclaration() {
-    }
+    override fun dropDeclaration() {}
 
     override fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): PersistentCheckerContext =
         copy(
@@ -66,22 +68,22 @@ class PersistentCheckerContext private constructor(
             qualifiedAccessOrAssignmentsOrAnnotationCalls.add(qualifiedAccessOrAnnotationCall)
         )
 
-    override fun dropQualifiedAccessOrAnnotationCall() {
-    }
+    override fun dropQualifiedAccessOrAnnotationCall() {}
 
     override fun addGetClassCall(getClassCall: FirGetClassCall): PersistentCheckerContext =
-        copy(
-            getClassCalls = getClassCalls.add(getClassCall),
-        )
+        copy(getClassCalls = getClassCalls.add(getClassCall))
 
-    override fun dropGetClassCall() {
-    }
+    override fun dropGetClassCall() {}
 
     override fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): PersistentCheckerContext =
         copy(annotationContainers = annotationContainers.add(annotationContainer))
 
-    override fun dropAnnotationContainer() {
-    }
+    override fun dropAnnotationContainer() {}
+
+    override fun addElement(element: FirElement): PersistentCheckerContext =
+        copy(containingElements = containingElements.add(element))
+
+    override fun dropElement() {}
 
     override fun addSuppressedDiagnostics(
         diagnosticNames: Collection<String>,
@@ -103,6 +105,7 @@ class PersistentCheckerContext private constructor(
         qualifiedAccessOrAssignmentsOrAnnotationCalls: PersistentList<FirStatement> = this.qualifiedAccessOrAssignmentsOrAnnotationCalls,
         getClassCalls: PersistentList<FirGetClassCall> = this.getClassCalls,
         annotationContainers: PersistentList<FirAnnotationContainer> = this.annotationContainers,
+        containingElements: PersistentList<FirElement> = this.containingElements,
         containingDeclarations: PersistentList<FirDeclaration> = this.containingDeclarations,
         isContractBody: Boolean = this.isContractBody,
         allInfosSuppressed: Boolean = this.allInfosSuppressed,
@@ -112,8 +115,16 @@ class PersistentCheckerContext private constructor(
         containingFile: FirFile? = this.containingFile,
     ): PersistentCheckerContext {
         return PersistentCheckerContext(
-            implicitReceiverStack, containingDeclarations, qualifiedAccessOrAssignmentsOrAnnotationCalls,
-            getClassCalls, annotationContainers, isContractBody, sessionHolder, returnTypeCalculator, suppressedDiagnostics,
+            implicitReceiverStack,
+            containingDeclarations,
+            qualifiedAccessOrAssignmentsOrAnnotationCalls,
+            getClassCalls,
+            annotationContainers,
+            containingElements,
+            isContractBody,
+            sessionHolder,
+            returnTypeCalculator,
+            suppressedDiagnostics,
             allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed, containingFile,
         )
     }

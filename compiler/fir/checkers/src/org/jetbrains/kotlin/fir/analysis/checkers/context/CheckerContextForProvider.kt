@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.context
 
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -69,4 +70,7 @@ abstract class CheckerContextForProvider(
 
     abstract fun exitFile(file: FirFile): CheckerContextForProvider
 
+    abstract fun addElement(element: FirElement): CheckerContextForProvider
+
+    abstract fun dropElement()
 }
