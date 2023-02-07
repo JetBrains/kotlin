@@ -9,6 +9,10 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.web.JsFactories
+import org.jetbrains.kotlin.ir.backend.web.jsResolveLibraries
+import org.jetbrains.kotlin.ir.backend.web.resolverLogger
+import org.jetbrains.kotlin.ir.backend.web.serializeModuleIntoKlib
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy

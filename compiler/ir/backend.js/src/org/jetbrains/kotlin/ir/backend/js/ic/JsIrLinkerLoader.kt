@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.js.FunctionTypeInterfacePackages
-import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
+import org.jetbrains.kotlin.ir.backend.web.FunctionTypeInterfacePackages
+import org.jetbrains.kotlin.ir.backend.web.JsFactories
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
