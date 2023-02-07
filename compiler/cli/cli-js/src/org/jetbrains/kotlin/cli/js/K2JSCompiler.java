@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.incremental.js.TranslationResultValue;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult;
+import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult;
 import org.jetbrains.kotlin.js.config.*;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;
@@ -109,7 +109,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
     private static TranslationResult translate(
             @NotNull JsConfig.Reporter reporter,
             @NotNull List<KtFile> allKotlinFiles,
-            @NotNull JsAnalysisResult jsAnalysisResult,
+            @NotNull WebAnalysisResult webAnalysisResult,
             @NotNull MainCallParameters mainCallParameters,
             @NotNull JsConfig config
     ) throws TranslationException {
@@ -153,11 +153,11 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
                     translationUnits.add(new TranslationUnit.BinaryAst(translatedValue.getBinaryAst(), translatedValue.getInlineData()));
                 }
             }
-            return translator.translateUnits(reporter, translationUnits, mainCallParameters, jsAnalysisResult, packageMetadata);
+            return translator.translateUnits(reporter, translationUnits, mainCallParameters, webAnalysisResult, packageMetadata);
         }
 
         CollectionsKt.sortBy(allKotlinFiles, ktFile -> VfsUtilCore.virtualToIoFile(ktFile.getVirtualFile()));
-        return translator.translate(reporter, allKotlinFiles, mainCallParameters, jsAnalysisResult);
+        return translator.translate(reporter, allKotlinFiles, mainCallParameters, webAnalysisResult);
     }
 
     @NotNull
@@ -289,16 +289,16 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
             ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
             analysisResult = analyzerWithCompilerReport.getAnalysisResult();
 
-            if (analysisResult instanceof JsAnalysisResult.RetryWithAdditionalRoots) {
-                environmentForJS.addKotlinSourceRoots(((JsAnalysisResult.RetryWithAdditionalRoots) analysisResult).getAdditionalKotlinRoots());
+            if (analysisResult instanceof WebAnalysisResult.RetryWithAdditionalRoots) {
+                environmentForJS.addKotlinSourceRoots(((WebAnalysisResult.RetryWithAdditionalRoots) analysisResult).getAdditionalKotlinRoots());
             }
-        } while(analysisResult instanceof JsAnalysisResult.RetryWithAdditionalRoots);
+        } while(analysisResult instanceof WebAnalysisResult.RetryWithAdditionalRoots);
 
         if (!analysisResult.getShouldGenerateCode())
             return OK;
 
-        assert analysisResult instanceof JsAnalysisResult : "analysisResult should be instance of JsAnalysisResult, but " + analysisResult;
-        JsAnalysisResult jsAnalysisResult = (JsAnalysisResult) analysisResult;
+        assert analysisResult instanceof WebAnalysisResult : "analysisResult should be instance of WebAnalysisResult, but " + analysisResult;
+        WebAnalysisResult webAnalysisResult = (WebAnalysisResult) analysisResult;
 
         File outputPrefixFile = null;
         if (arguments.getOutputPrefix() != null) {
@@ -338,7 +338,7 @@ public class K2JSCompiler extends CLICompiler<K2JSCompilerArguments> {
         TranslationResult translationResult;
 
         try {
-            translationResult = translate(reporter, sourcesFiles, jsAnalysisResult, mainCallParameters, config);
+            translationResult = translate(reporter, sourcesFiles, webAnalysisResult, mainCallParameters, config);
         }
         catch (Exception e) {
             throw ExceptionUtilsKt.rethrow(e);

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
@@ -37,7 +37,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : Abstra
             languageVersionSettings: LanguageVersionSettings,
             separateModules: Boolean,
             jvmTarget: JvmTarget
-    ): JsAnalysisResult {
+    ): WebAnalysisResult {
         val analysisResult = super.analyzeModuleContents(moduleContext, files, moduleTrace, languageVersionSettings, separateModules, jvmTarget)
         val diagnostics = analysisResult.bindingTrace.bindingContext.diagnostics
 

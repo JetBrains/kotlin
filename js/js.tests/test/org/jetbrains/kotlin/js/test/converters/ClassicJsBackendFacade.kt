@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult
 import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
@@ -90,7 +90,7 @@ class ClassicJsBackendFacade(
 
         val translator = K2JSTranslator(jsConfig, false)
         val translationResult = translator.translateUnits(
-            JsEnvironmentConfigurator.Companion.ExceptionThrowingReporter, units, mainCallParameters, analysisResult as? JsAnalysisResult
+            JsEnvironmentConfigurator.Companion.ExceptionThrowingReporter, units, mainCallParameters, analysisResult as? WebAnalysisResult
         )
 
         if (!incrementalCompilationEnabled) {

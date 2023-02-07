@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
@@ -43,19 +43,19 @@ import org.jetbrains.kotlin.serialization.js.KotlinJavascriptSerializationUtil
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.serialization.js.PackagesWithHeaderMetadata
 import org.jetbrains.kotlin.utils.JsMetadataVersion
+import org.jetbrains.kotlin.web.analyze.AbstractTopDownAnalyzerFacadeForWeb
 
-abstract class AbstractTopDownAnalyzerFacadeForJS {
-
-    fun analyzeFiles(
+abstract class AbstractTopDownAnalyzerFacadeForJS : AbstractTopDownAnalyzerFacadeForWeb {
+    override fun analyzeFiles(
         files: Collection<KtFile>,
         project: Project,
         configuration: CompilerConfiguration,
         moduleDescriptors: List<ModuleDescriptor>,
         friendModuleDescriptors: List<ModuleDescriptor>,
         targetEnvironment: TargetEnvironment,
-        thisIsBuiltInsModule: Boolean = false,
-        customBuiltInsModule: ModuleDescriptor? = null
-    ): JsAnalysisResult {
+        thisIsBuiltInsModule: Boolean,
+        customBuiltInsModule: ModuleDescriptor?
+    ): WebAnalysisResult {
         require(!thisIsBuiltInsModule || customBuiltInsModule == null) {
             "Can't simultaneously use custom built-ins module and set current module as built-ins"
         }
@@ -99,15 +99,15 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         languageVersionSettings: LanguageVersionSettings
     ): PackageFragmentProvider
 
-    fun analyzeFilesWithGivenTrace(
+    override fun analyzeFilesWithGivenTrace(
         files: Collection<KtFile>,
         trace: BindingTrace,
         moduleContext: ModuleContext,
         configuration: CompilerConfiguration,
         targetEnvironment: TargetEnvironment,
         project: Project,
-        additionalPackages: List<PackageFragmentProvider> = emptyList()
-    ): JsAnalysisResult {
+        additionalPackages: List<PackageFragmentProvider>
+    ): WebAnalysisResult {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
         val expectActualTracker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
         val inlineConstTracker = configuration.get(CommonConfigurationKeys.INLINE_CONST_TRACKER) ?: InlineConstTracker.DoNothing
@@ -146,47 +146,20 @@ abstract class AbstractTopDownAnalyzerFacadeForJS {
         } ?: result
 
         return when (result) {
-            is JsAnalysisResult -> result
+            is WebAnalysisResult -> result
             else -> {
                 // AnalysisHandlerExtension returns a BindingContext, not BindingTrace. Therefore, synthesize one here.
                 val bindingTrace = DelegatingBindingTrace(result.bindingContext, "DelegatingBindingTrace by AnalysisHandlerExtension")
                 when (result) {
-                    is AnalysisResult.RetryWithAdditionalRoots -> JsAnalysisResult.RetryWithAdditionalRoots(
+                    is AnalysisResult.RetryWithAdditionalRoots -> WebAnalysisResult.RetryWithAdditionalRoots(
                         bindingTrace,
                         result.moduleDescriptor,
                         result.additionalKotlinRoots
                     )
-                    else -> JsAnalysisResult.success(bindingTrace, result.moduleDescriptor, result.shouldGenerateCode)
+                    else -> WebAnalysisResult.success(bindingTrace, result.moduleDescriptor, result.shouldGenerateCode)
                 }
             }
         }
-    }
-
-    fun checkForErrors(allFiles: Collection<KtFile>, bindingContext: BindingContext, errorPolicy: ErrorTolerancePolicy): Boolean {
-        var hasErrors = false
-        try {
-            AnalyzingUtils.throwExceptionOnErrors(bindingContext)
-        } catch (ex: Exception) {
-            if (!errorPolicy.allowSemanticErrors) {
-                throw ex
-            } else {
-                hasErrors = true
-            }
-        }
-
-        try {
-            for (file in allFiles) {
-                AnalyzingUtils.checkForSyntacticErrors(file)
-            }
-        } catch (ex: Exception) {
-            if (!errorPolicy.allowSyntaxErrors) {
-                throw ex
-            } else {
-                hasErrors = true
-            }
-        }
-
-        return hasErrors
     }
 }
 
@@ -213,7 +186,7 @@ object TopDownAnalyzerFacadeForJS : AbstractTopDownAnalyzerFacadeForJS() {
     fun analyzeFiles(
         files: Collection<KtFile>,
         config: JsConfig
-    ): JsAnalysisResult {
+    ): WebAnalysisResult {
         config.init()
         return analyzeFiles(
             files, config.project, config.configuration, config.moduleDescriptors, config.friendModuleDescriptors, config.targetEnvironment,
