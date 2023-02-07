@@ -70,7 +70,7 @@ fun generateIrForKlibSerialization(
     val irBuiltIns = psi2IrContext.irBuiltIns
 
     val feContext = psi2IrContext.run {
-        WebIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
+        WebIrLinker.WebFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
     val stubGenerator = DeclarationStubGeneratorImpl(
         psi2IrContext.moduleDescriptor,

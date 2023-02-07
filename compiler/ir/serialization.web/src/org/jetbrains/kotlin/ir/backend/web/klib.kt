@@ -316,7 +316,7 @@ fun getIrModuleInfoForSourceFiles(
 ): IrModuleInfo {
     val irBuiltIns = psi2IrContext.irBuiltIns
     val feContext = psi2IrContext.run {
-        WebIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
+        WebIrLinker.WebFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
 
     val partialLinkageEnabled = configuration[WebConfigurationKeys.PARTIAL_LINKAGE] ?: false
@@ -626,7 +626,7 @@ fun serializeModuleIntoKlib(
     val signatureClashChecks = configuration[CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS] ?: false
 
     val serializedIr =
-        JsIrModuleSerializer(
+        WebIrModuleSerializer(
             messageLogger,
             moduleFragment.irBuiltins,
             expectDescriptorToSymbol,

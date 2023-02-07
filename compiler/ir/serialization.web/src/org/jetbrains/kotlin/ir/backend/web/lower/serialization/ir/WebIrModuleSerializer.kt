@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 
-class JsIrModuleSerializer(
+class WebIrModuleSerializer(
     messageLogger: IrMessageLogger,
     irBuiltIns: IrBuiltIns,
     private val expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
@@ -28,9 +28,9 @@ class JsIrModuleSerializer(
     shouldCheckSignaturesOnUniqueness: Boolean = true
 ) : IrModuleSerializer<WebIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
 
-    private val globalDeclarationTable = JsGlobalDeclarationTable(
+    private val globalDeclarationTable = WebGlobalDeclarationTable(
         irBuiltIns,
-        if (shouldCheckSignaturesOnUniqueness) JsUniqIdClashTracker() else IdSignatureClashTracker.DEFAULT_TRACKER
+        if (shouldCheckSignaturesOnUniqueness) WebUniqIdClashTracker() else IdSignatureClashTracker.DEFAULT_TRACKER
     )
 
     override fun createSerializerForFile(file: IrFile): WebIrFileSerializer =

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.ir.backend.web.WebFactories
 import org.jetbrains.kotlin.ir.backend.web.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.backend.web.webResolveLibraries
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrLinker
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrModuleSerializer
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
@@ -137,7 +137,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
 
     protected fun serializeModule(irModuleFragment: IrModuleFragment, bindingContext: BindingContext, stdlib: KotlinLibrary, containsErrorCode: Boolean, expectActualSymbols: MutableMap<DeclarationDescriptor, IrSymbol>, skipExpect: Boolean): String {
         val ktFiles = myFiles.psiFiles
-        val serializedIr = JsIrModuleSerializer(
+        val serializedIr = WebIrModuleSerializer(
                 IrMessageLogger.None,
                 irModuleFragment.irBuiltins,
                 expectActualSymbols,

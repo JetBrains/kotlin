@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrLinker
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrModuleSerializer
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
@@ -528,7 +528,7 @@ class GenerateIrRuntime {
 
 
     private fun doSerializeIrModule(module: IrModuleFragment): SerializedIrModule {
-        val serializedIr = JsIrModuleSerializer(
+        val serializedIr = WebIrModuleSerializer(
             IrMessageLogger.None,
             module.irBuiltins,
             mutableMapOf(),

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 
-class JsLazyIrModuleDeserializer(
+class WebLazyIrModuleDeserializer(
     moduleDescriptor: ModuleDescriptor,
     libraryAbiVersion: KotlinAbiVersion,
     private val builtIns: IrBuiltIns,
