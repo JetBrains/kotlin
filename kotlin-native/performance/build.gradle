@@ -33,6 +33,10 @@ plugins {
     id("org.jetbrains.kotlin.multiplatform") apply false
 }
 
+repositories {
+    mavenCentral()
+}
+
 def globalProperties = new java.util.Properties()
 ext.kotlin_root = project.file("../..").absolutePath
 project.logger.info("kotlin_root: $kotlin_root")
