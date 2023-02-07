@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -226,7 +227,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 JavaDescriptorVisibilities.PACKAGE_VISIBILITY,
             isFakeOverride = false,
             copyMetadata = false,
-            typeParametersFromContext = irFunction.parentAsClass.typeParameters,
+            typeParametersFromContext = extractTypeParameters(irFunction.parentAsClass)
         )
         static.body = irFunction.moveBodyTo(static)
         // Fixup dispatch parameter to outer class
