@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR
 // ISSUE: KT-51092
 // FILE: MyValue.java
 import lombok.Value;
