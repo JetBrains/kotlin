@@ -17,45 +17,45 @@ import org.jetbrains.kotlin.backend.common.serialization.mangle.ir.IrMangleCompu
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 
-abstract class AbstractJsManglerIr : IrBasedKotlinManglerImpl() {
+abstract class AbstractWebManglerIr : IrBasedKotlinManglerImpl() {
 
-    private class JsIrExportChecker(compatibleMode: Boolean) : IrExportCheckerVisitor(compatibleMode) {
+    private class WebIrExportChecker(compatibleMode: Boolean) : IrExportCheckerVisitor(compatibleMode) {
         override fun IrDeclaration.isPlatformSpecificExported() = false
     }
 
-    private class JsIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean) : IrMangleComputer(builder, mode, compatibleMode) {
-        override fun copy(newMode: MangleMode): IrMangleComputer = JsIrManglerComputer(builder, newMode, compatibleMode)
+    private class WebIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean) : IrMangleComputer(builder, mode, compatibleMode) {
+        override fun copy(newMode: MangleMode): IrMangleComputer = WebIrManglerComputer(builder, newMode, compatibleMode)
     }
 
-    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<IrDeclaration> = JsIrExportChecker(compatibleMode)
+    override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<IrDeclaration> = WebIrExportChecker(compatibleMode)
 
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<IrDeclaration> {
-        return JsIrManglerComputer(StringBuilder(256), mode, compatibleMode)
+        return WebIrManglerComputer(StringBuilder(256), mode, compatibleMode)
     }
 }
 
-object JsManglerIr : AbstractJsManglerIr()
+object WebManglerIr : AbstractWebManglerIr()
 
-abstract class AbstractJsDescriptorMangler : DescriptorBasedKotlinManglerImpl() {
+abstract class AbstractWebDescriptorMangler : DescriptorBasedKotlinManglerImpl() {
 
     companion object {
-        private val exportChecker = JsDescriptorExportChecker()
+        private val exportChecker = WebDescriptorExportChecker()
     }
 
-    private class JsDescriptorExportChecker : DescriptorExportCheckerVisitor() {
+    private class WebDescriptorExportChecker : DescriptorExportCheckerVisitor() {
         override fun DeclarationDescriptor.isPlatformSpecificExported() = false
     }
 
-    private class JsDescriptorManglerComputer(builder: StringBuilder, mode: MangleMode) : DescriptorMangleComputer(builder, mode) {
-        override fun copy(newMode: MangleMode): DescriptorMangleComputer = JsDescriptorManglerComputer(builder, newMode)
+    private class WebDescriptorManglerComputer(builder: StringBuilder, mode: MangleMode) : DescriptorMangleComputer(builder, mode) {
+        override fun copy(newMode: MangleMode): DescriptorMangleComputer = WebDescriptorManglerComputer(builder, newMode)
     }
 
     override fun getExportChecker(compatibleMode: Boolean): KotlinExportChecker<DeclarationDescriptor> = exportChecker
 
     override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): KotlinMangleComputer<DeclarationDescriptor> {
-        return JsDescriptorManglerComputer(StringBuilder(256), mode)
+        return WebDescriptorManglerComputer(StringBuilder(256), mode)
     }
 }
 
 
-object JsManglerDesc : AbstractJsDescriptorMangler()
+object WebManglerDesc : AbstractWebDescriptorMangler()

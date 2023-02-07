@@ -142,7 +142,7 @@ fun generateKLib(
         icData,
         nopack,
         perFile = false,
-        depsDescriptors.jsFrontEndResult.hasErrors,
+        depsDescriptors.webFrontEndResult.hasErrors,
         abiVersion,
         jsOutputName,
         serializeSingleFile
@@ -154,7 +154,7 @@ data class IrModuleInfo(
     val allDependencies: List<IrModuleFragment>,
     val bultins: IrBuiltIns,
     val symbolTable: SymbolTable,
-    val deserializer: JsIrLinker,
+    val deserializer: WebIrLinker,
     val moduleFragmentToUniqueName: Map<IrModuleFragment, String>,
 )
 
@@ -166,7 +166,7 @@ fun sortDependencies(moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>>
 
 fun deserializeDependencies(
     sortedDependencies: Collection<KotlinLibrary>,
-    irLinker: JsIrLinker,
+    irLinker: WebIrLinker,
     mainModuleLib: KotlinLibrary?,
     filesToLoad: Set<String>?,
     mapping: (KotlinLibrary) -> ModuleDescriptor
@@ -198,7 +198,7 @@ fun loadIr(
     val messageLogger = configuration.irMessageLogger
     val partialLinkageEnabled = configuration[WebConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
-    val signaturer = IdSignatureDescriptor(JsManglerDesc)
+    val signaturer = IdSignatureDescriptor(WebManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
 
     when (mainModule) {
@@ -261,7 +261,7 @@ fun getIrModuleInfoForKlib(
 
     val partialLinkageEnabled = configuration[WebConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
-    val irLinker = JsIrLinker(
+    val irLinker = WebIrLinker(
         currentModule = null,
         messageLogger = messageLogger,
         builtIns = irBuiltIns,
@@ -316,12 +316,12 @@ fun getIrModuleInfoForSourceFiles(
 ): IrModuleInfo {
     val irBuiltIns = psi2IrContext.irBuiltIns
     val feContext = psi2IrContext.run {
-        JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
+        WebIrLinker.WebFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
 
     val partialLinkageEnabled = configuration[WebConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
-    val irLinker = JsIrLinker(
+    val irLinker = WebIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,
         messageLogger = messageLogger,
         builtIns = irBuiltIns,
@@ -347,13 +347,13 @@ fun getIrModuleInfoForSourceFiles(
     val (moduleFragment, _) = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, messageLogger)
 
     // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
-    val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
+    val mangleChecker = ManglerChecker(WebManglerIr, Ir2DescriptorManglerAdapter(WebManglerDesc))
     if (verifySignatures) {
         moduleFragment.acceptVoid(mangleChecker)
     }
 
     if (configuration.getBoolean(WebConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
-        val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
+        val fakeOverrideChecker = FakeOverrideChecker(WebManglerIr, WebManglerDesc)
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
     }
 
@@ -377,7 +377,7 @@ private fun preparePsi2Ir(
     symbolTable: SymbolTable,
     partialLinkageEnabled: Boolean
 ): GeneratorContext {
-    val analysisResult = depsDescriptors.jsFrontEndResult
+    val analysisResult = depsDescriptors.webFrontEndResult
     val psi2Ir = Psi2IrTranslator(
         depsDescriptors.compilerConfiguration.languageVersionSettings,
         Psi2IrConfiguration(errorIgnorancePolicy.allowErrors, partialLinkageEnabled),
@@ -437,10 +437,10 @@ fun GeneratorContext.generateModuleFragmentWithPlugins(
 }
 
 private fun createBuiltIns(storageManager: StorageManager) = object : KotlinBuiltIns(storageManager) {}
-public val JsFactories = KlibMetadataFactories(::createBuiltIns, DynamicTypeDeserializer)
+public val WebFactories = KlibMetadataFactories(::createBuiltIns, DynamicTypeDeserializer)
 
 fun getModuleDescriptorByLibrary(current: KotlinLibrary, mapping: Map<String, ModuleDescriptorImpl>): ModuleDescriptorImpl {
-    val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+    val md = WebFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
         current,
         LanguageVersionSettingsImpl.DEFAULT,
         LockBasedStorageManager.NO_LOCKS,
@@ -469,7 +469,7 @@ class ModulesStructure(
     friendDependenciesPaths: Collection<String>,
 ) {
 
-    val allDependenciesResolution = jsResolveLibrariesWithoutDependencies(
+    val allDependenciesResolution = webResolveLibrariesWithoutDependencies(
         dependencies,
         compilerConfiguration.resolverLogger
     )
@@ -493,7 +493,7 @@ class ModulesStructure(
 
     private val builtInsDep = allDependencies.find { it.isBuiltIns }
 
-    class JsFrontEndResult(val analysisResult: WebAnalysisResult, val hasErrors: Boolean) {
+    class WebFrontEndResult(val analysisResult: WebAnalysisResult, val hasErrors: Boolean) {
         val moduleDescriptor: ModuleDescriptor
             get() = analysisResult.moduleDescriptor
 
@@ -501,7 +501,7 @@ class ModulesStructure(
             get() = analysisResult.bindingContext
     }
 
-    lateinit var jsFrontEndResult: JsFrontEndResult
+    lateinit var webFrontEndResult: WebFrontEndResult
 
     fun runAnalysis(
         errorPolicy: ErrorTolerancePolicy,
@@ -541,7 +541,7 @@ class ModulesStructure(
 
         hasErrors = analyzerFacade.checkForErrors(files, analysisResult.bindingContext, errorPolicy) || hasErrors
 
-        jsFrontEndResult = JsFrontEndResult(analysisResult as WebAnalysisResult, hasErrors)
+        webFrontEndResult = WebFrontEndResult(analysisResult as WebAnalysisResult, hasErrors)
     }
 
     private val languageVersionSettings: LanguageVersionSettings = compilerConfiguration.languageVersionSettings
@@ -571,7 +571,7 @@ class ModulesStructure(
         val isBuiltIns = current.unresolvedDependencies.isEmpty()
 
         val lookupTracker = compilerConfiguration[CommonConfigurationKeys.LOOKUP_TRACKER] ?: LookupTracker.DO_NOTHING
-        val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+        val md = WebFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
             current,
             languageVersionSettings,
             storageManager,
@@ -626,7 +626,7 @@ fun serializeModuleIntoKlib(
     val signatureClashChecks = configuration[CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS] ?: false
 
     val serializedIr =
-        JsIrModuleSerializer(
+        WebIrModuleSerializer(
             messageLogger,
             moduleFragment.irBuiltins,
             expectDescriptorToSymbol,

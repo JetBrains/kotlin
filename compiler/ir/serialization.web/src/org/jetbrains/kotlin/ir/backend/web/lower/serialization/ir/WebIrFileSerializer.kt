@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
 
-class JsIrFileSerializer(
+class WebIrFileSerializer(
     messageLogger: IrMessageLogger,
     declarationTable: DeclarationTable,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.codegen.CodegenTestCase
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.idea.MainFunctionDetector
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerDesc
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebManglerDesc
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -136,7 +136,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
                     CompilerEnvironment,
                 ),
                 psi2ir, ktFilesToAnalyze, GeneratorExtensions(),
-                createIdSignatureComposer = { IdSignatureDescriptor(JsManglerDesc) }
+                createIdSignatureComposer = { IdSignatureDescriptor(WebManglerDesc) }
             )
 
         fun generateIrModuleWithJvmResolve(
@@ -175,7 +175,7 @@ abstract class AbstractIrGeneratorTestCase : CodegenTestCase() {
             )
             val irProviders = generateTypicalIrProviderList(
                 moduleDescriptor, context.irBuiltIns, context.symbolTable,
-                DescriptorByIdSignatureFinderImpl(moduleDescriptor, JsManglerDesc),
+                DescriptorByIdSignatureFinderImpl(moduleDescriptor, WebManglerDesc),
                 extensions = generatorExtensions,
             )
             return psi2ir.generateModuleFragment(context, ktFilesToAnalyze, irProviders, emptyList())

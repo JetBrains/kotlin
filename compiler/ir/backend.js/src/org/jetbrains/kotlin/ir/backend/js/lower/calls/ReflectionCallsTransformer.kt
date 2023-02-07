@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
-import org.jetbrains.kotlin.ir.backend.web.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.web.WebStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.expressions.*
@@ -35,7 +35,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
             addWithPredicate(
                 Name.special(Namer.KCALLABLE_GET_NAME),
                 { call ->
-                    call.origin != JsStatementOrigins.CALLABLE_REFERENCE_INVOKE &&
+                    call.origin != WebStatementOrigins.CALLABLE_REFERENCE_INVOKE &&
                     call.symbol.owner.dispatchReceiverParameter?.run { type.isSubtypeOfClass(context.irBuiltIns.kCallableClass) } ?: false
                 },
                 { call ->

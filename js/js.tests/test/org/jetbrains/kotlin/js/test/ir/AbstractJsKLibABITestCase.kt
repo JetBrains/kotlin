@@ -131,7 +131,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             environment.project,
             moduleSourceFiles,
             config,
-            sourceModule.jsFrontEndResult.analysisResult,
+            sourceModule.webFrontEndResult.analysisResult,
             sortDependencies(sourceModule.moduleDependencies),
             icData,
             expectDescriptorToSymbol,
@@ -142,7 +142,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
         }
 
         val metadataSerializer =
-            KlibMetadataIncrementalSerializer(config, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
+            KlibMetadataIncrementalSerializer(config, sourceModule.project, sourceModule.webFrontEndResult.hasErrors)
 
         generateKLib(
             sourceModule,
@@ -153,7 +153,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             expectDescriptorToSymbol = expectDescriptorToSymbol,
             moduleFragment = moduleFragment
         ) { file ->
-            metadataSerializer.serializeScope(file, sourceModule.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+            metadataSerializer.serializeScope(file, sourceModule.webFrontEndResult.bindingContext, moduleFragment.descriptor)
         }
     }
 

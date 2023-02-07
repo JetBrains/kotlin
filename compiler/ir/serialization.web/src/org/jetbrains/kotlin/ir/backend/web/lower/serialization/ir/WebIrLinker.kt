@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.containsErrorCode
 
-class JsIrLinker(
+class WebIrLinker(
     private val currentModule: ModuleDescriptor?, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable,
     partialLinkageEnabled: Boolean,
     override val translationPluginContext: TranslationPluginContext?,
@@ -42,7 +42,7 @@ class JsIrLinker(
     override val fakeOverrideBuilder = FakeOverrideBuilder(
         linker = this,
         symbolTable = symbolTable,
-        mangler = JsManglerIr,
+        mangler = WebManglerIr,
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = friendModules,
         partialLinkageEnabled = partialLinkageSupport.partialLinkageEnabled
@@ -62,19 +62,19 @@ class JsIrLinker(
         require(klib != null) { "Expecting kotlin library" }
         val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
         return when (val lazyIrGenerator = stubGenerator) {
-            null -> JsModuleDeserializer(moduleDescriptor, klib, strategyResolver, libraryAbiVersion, klib.libContainsErrorCode)
-            else -> JsLazyIrModuleDeserializer(moduleDescriptor, libraryAbiVersion, builtIns, lazyIrGenerator)
+            null -> WebModuleDeserializer(moduleDescriptor, klib, strategyResolver, libraryAbiVersion, klib.libContainsErrorCode)
+            else -> WebLazyIrModuleDeserializer(moduleDescriptor, libraryAbiVersion, builtIns, lazyIrGenerator)
         }
     }
 
-    private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategyResolver: (String) -> DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion, allowErrorCode: Boolean) :
+    private inner class WebModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategyResolver: (String) -> DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion, allowErrorCode: Boolean) :
         BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion, allowErrorCode)
 
     override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
         val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies)
         icData?.let {
             return CurrentModuleWithICDeserializer(currentModuleDeserializer, symbolTable, builtIns, it.icData) { lib ->
-                JsModuleDeserializer(currentModuleDeserializer.moduleDescriptor, lib, currentModuleDeserializer.strategyResolver, KotlinAbiVersion.CURRENT, it.containsErrorCode)
+                WebModuleDeserializer(currentModuleDeserializer.moduleDescriptor, lib, currentModuleDeserializer.strategyResolver, KotlinAbiVersion.CURRENT, it.containsErrorCode)
             }
         }
         return currentModuleDeserializer
@@ -90,7 +90,7 @@ class JsIrLinker(
         return deserializersForModules[moduleDescriptor.name.asString()] ?: error("Deserializer for $moduleDescriptor not found")
     }
 
-    class JsFePluginContext(
+    class WebFePluginContext(
         override val moduleDescriptor: ModuleDescriptor,
         override val symbolTable: ReferenceSymbolTable,
         override val typeTranslator: TypeTranslator,

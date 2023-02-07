@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebManglerIr
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
@@ -27,7 +27,7 @@ import kotlin.math.abs
 
 // TODO remove direct usages of [mapToKey] from [NameTable] & co and move it to scripting & REPL infrastructure. Review usages.
 private fun <T> mapToKey(declaration: T): String {
-    return with(JsManglerIr) {
+    return with(WebManglerIr) {
         if (declaration is IrDeclaration) {
             try {
                 declaration.hashedMangle(compatibleMode = false).toString()

@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.backend.common.ir.createArrayOfExpression
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.web.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.web.WebStatementOrigins
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -144,7 +144,7 @@ class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLowering
         JsIrBuilder.buildCall(
             reflectionSymbols.getClassData,
             typeArguments = listOf(type),
-            origin = JsStatementOrigins.CLASS_REFERENCE
+            origin = WebStatementOrigins.CLASS_REFERENCE
         )
 
     private fun buildCall(name: IrSimpleFunctionSymbol, vararg args: IrExpression): IrExpression =

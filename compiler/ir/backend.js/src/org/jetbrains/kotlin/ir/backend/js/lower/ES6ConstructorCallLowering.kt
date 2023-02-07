@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.web.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.web.WebStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStrictSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
@@ -50,7 +50,7 @@ class ES6ConstructorCallLowering(val context: JsIrBackendContext) : BodyLowering
                 val factoryFunctionCall = JsIrBuilder.buildCall(
                     factoryFunction.symbol,
                     superQualifierSymbol = irClass.symbol.takeIf { isDelegatingCall },
-                    origin = if (isDelegatingCall) ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT else JsStatementOrigins.SYNTHESIZED_STATEMENT
+                    origin = if (isDelegatingCall) ES6_DELEGATING_CONSTRUCTOR_REPLACEMENT else WebStatementOrigins.SYNTHESIZED_STATEMENT
                 ).apply {
                     copyValueArgumentsFrom(expression, factoryFunction)
 
