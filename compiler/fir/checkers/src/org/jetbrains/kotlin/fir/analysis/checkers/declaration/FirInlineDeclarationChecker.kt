@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifier
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -72,9 +73,7 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
             context.session,
             reporter
         )
-        context.withDeclaration(function) {
-            body.checkChildrenWithCustomVisitor(it, visitor)
-        }
+        body.checkChildrenWithCustomVisitor(context, visitor, function)
     }
 
     open val inlineVisitor get() = ::BasicInlineVisitor
@@ -538,13 +537,21 @@ abstract class FirInlineDeclarationChecker : FirFunctionChecker() {
 
     private fun FirElement.checkChildrenWithCustomVisitor(
         parentContext: CheckerContext,
-        visitorVoid: FirVisitor<Unit, CheckerContext>
+        visitorVoid: FirVisitor<Unit, CheckerContext>,
+        rootFunction: FirFunction,
     ) {
-        val collectingVisitor = object : AbstractDiagnosticCollectorVisitor(parentContext) {
-            override fun checkElement(element: FirElement) {
-                element.accept(visitorVoid, context)
-            }
+        // TODO: Get rid of this cast and the following context modification as it looks like a leaking abstraction (see KT-56460)
+        require(parentContext is CheckerContextForProvider) {
+            "This checked violates the contract for read-only checkers"
         }
-        this.accept(collectingVisitor, null)
+
+        parentContext.withDeclaration(rootFunction) {
+            val collectingVisitor = object : AbstractDiagnosticCollectorVisitor(it) {
+                override fun checkElement(element: FirElement) {
+                    element.accept(visitorVoid, context)
+                }
+            }
+            this.accept(collectingVisitor, null)
+        }
     }
 }

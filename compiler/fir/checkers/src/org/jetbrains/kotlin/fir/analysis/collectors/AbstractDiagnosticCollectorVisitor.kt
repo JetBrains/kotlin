@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContextForProvider
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
 import org.jetbrains.kotlin.fir.expressions.*
@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.name.Name
 
 abstract class AbstractDiagnosticCollectorVisitor(
-    @set:PrivateForInline var context: CheckerContext,
+    @set:PrivateForInline var context: CheckerContextForProvider,
 ) : FirDefaultVisitor<Unit, Nothing?>() {
 
     protected open fun shouldVisitDeclaration(declaration: FirDeclaration) = true
@@ -393,6 +393,6 @@ abstract class AbstractDiagnosticCollectorVisitor(
             allInfosSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_INFOS in arguments,
             allWarningsSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_WARNINGS in arguments,
             allErrorsSuppressed = AbstractDiagnosticCollector.SUPPRESS_ALL_ERRORS in arguments
-        ) as CheckerContext
+        )
     }
 }

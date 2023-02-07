@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.context
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.MutableDiagnosticContext
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
@@ -19,11 +19,12 @@ import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ImplicitReceiverStack
 import org.jetbrains.kotlin.fir.resolve.SessionHolder
-import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
-import org.jetbrains.kotlin.name.Name
 
-abstract class CheckerContext : MutableDiagnosticContext() {
+/**
+ * This class is assumed to be read-only (all the modifications are assumed to happen on CheckerContextForProvider side)
+ */
+abstract class CheckerContext : DiagnosticContext {
     // Services
     abstract val sessionHolder: SessionHolder
     abstract val returnTypeCalculator: ReturnTypeCalculator
@@ -44,37 +45,6 @@ abstract class CheckerContext : MutableDiagnosticContext() {
 
     val session: FirSession
         get() = sessionHolder.session
-
-    abstract fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): CheckerContext
-
-    abstract fun addDeclaration(declaration: FirDeclaration): CheckerContext
-
-    abstract fun dropDeclaration()
-
-    fun <T> withDeclaration(declaration: FirDeclaration, f: (CheckerContext) -> T): T {
-        val newContext = addDeclaration(declaration)
-        try {
-            return f(newContext)
-        } finally {
-            newContext.dropDeclaration()
-        }
-    }
-
-    abstract fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): CheckerContext
-
-    abstract fun dropQualifiedAccessOrAnnotationCall()
-
-    abstract fun addGetClassCall(getClassCall: FirGetClassCall): CheckerContext
-
-    abstract fun dropGetClassCall()
-
-    abstract fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): CheckerContext
-
-    abstract fun dropAnnotationContainer()
-
-    abstract fun enterContractBody(): CheckerContext
-
-    abstract fun exitContractBody(): CheckerContext
 
     override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean {
         val factory = diagnostic.factory

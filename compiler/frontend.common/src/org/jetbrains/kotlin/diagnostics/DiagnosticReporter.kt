@@ -16,15 +16,6 @@ interface DiagnosticContext {
     val languageVersionSettings: LanguageVersionSettings
 }
 
-abstract class MutableDiagnosticContext : DiagnosticContext {
-    abstract fun addSuppressedDiagnostics(
-        diagnosticNames: Collection<String>,
-        allInfosSuppressed: Boolean,
-        allWarningsSuppressed: Boolean,
-        allErrorsSuppressed: Boolean
-    ): DiagnosticContext
-}
-
 abstract class DiagnosticReporter {
     abstract fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext)
 

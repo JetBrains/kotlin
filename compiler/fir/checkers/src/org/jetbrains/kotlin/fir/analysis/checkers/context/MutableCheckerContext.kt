@@ -30,7 +30,7 @@ class MutableCheckerContext private constructor(
     allInfosSuppressed: Boolean,
     allWarningsSuppressed: Boolean,
     allErrorsSuppressed: Boolean
-) : AbstractCheckerContext(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
+) : CheckerContextForProvider(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
         mutableListOf(),
@@ -90,7 +90,7 @@ class MutableCheckerContext private constructor(
         getClassCalls.removeAt(getClassCalls.size - 1)
     }
 
-    override fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): CheckerContext {
+    override fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): CheckerContextForProvider {
         annotationContainers.add(annotationContainer)
         return this
     }
@@ -104,7 +104,7 @@ class MutableCheckerContext private constructor(
         allInfosSuppressed: Boolean,
         allWarningsSuppressed: Boolean,
         allErrorsSuppressed: Boolean
-    ): MutableCheckerContext {
+    ): CheckerContextForProvider {
         if (diagnosticNames.isEmpty()) return this
         return MutableCheckerContext(
             implicitReceiverStack,
@@ -122,13 +122,13 @@ class MutableCheckerContext private constructor(
         )
     }
 
-    override fun enterContractBody(): CheckerContext {
+    override fun enterContractBody(): CheckerContextForProvider {
         check(!isContractBody)
         isContractBody = true
         return this
     }
 
-    override fun exitContractBody(): CheckerContext {
+    override fun exitContractBody(): CheckerContextForProvider {
         check(isContractBody)
         isContractBody = false
         return this

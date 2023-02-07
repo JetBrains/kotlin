@@ -32,7 +32,7 @@ class PersistentCheckerContext private constructor(
     allInfosSuppressed: Boolean,
     allWarningsSuppressed: Boolean,
     allErrorsSuppressed: Boolean
-) : AbstractCheckerContext(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
+) : CheckerContextForProvider(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
         persistentListOf(),
@@ -150,7 +150,7 @@ class PersistentCheckerContext private constructor(
         allInfosSuppressed: Boolean,
         allWarningsSuppressed: Boolean,
         allErrorsSuppressed: Boolean
-    ): PersistentCheckerContext {
+    ): CheckerContextForProvider {
         if (diagnosticNames.isEmpty()) return this
         return PersistentCheckerContext(
             implicitReceiverStack,
@@ -168,7 +168,7 @@ class PersistentCheckerContext private constructor(
         )
     }
 
-    private fun toggleContractBody(newValue: Boolean): CheckerContext {
+    private fun toggleContractBody(newValue: Boolean): CheckerContextForProvider {
         check(isContractBody != newValue)
 
         return PersistentCheckerContext(
@@ -187,11 +187,11 @@ class PersistentCheckerContext private constructor(
         )
     }
 
-    override fun enterContractBody(): CheckerContext {
+    override fun enterContractBody(): CheckerContextForProvider {
         return toggleContractBody(newValue = true)
     }
 
-    override fun exitContractBody(): CheckerContext {
+    override fun exitContractBody(): CheckerContextForProvider {
         return toggleContractBody(newValue = false)
     }
 }
