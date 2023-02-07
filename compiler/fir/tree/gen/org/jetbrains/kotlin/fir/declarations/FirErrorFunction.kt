@@ -30,6 +30,7 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
+    abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
     abstract override val returnTypeRef: FirTypeRef
     abstract override val receiverParameter: FirReceiverParameter?
@@ -42,7 +43,6 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override val body: FirBlock?
     abstract override val diagnostic: ConeDiagnostic
     abstract override val symbol: FirErrorFunctionSymbol
-    abstract override val typeParameters: List<FirTypeParameter>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitErrorFunction(this, data)
 
@@ -54,6 +54,8 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract override fun replaceAttributes(newAttributes: FirDeclarationAttributes)
+
     abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
@@ -61,6 +63,8 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?)
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
+
+    abstract override fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?)
 
     abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
 
@@ -72,6 +76,8 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
+    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction
+
     abstract override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
     abstract override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D): FirErrorFunction
@@ -81,6 +87,4 @@ abstract class FirErrorFunction : FirFunction(), FirDiagnosticHolder {
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction
 
     abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirErrorFunction
-
-    abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorFunction
 }

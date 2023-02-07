@@ -52,6 +52,8 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner {
 
     abstract override fun replaceResolveState(newResolveState: FirResolveState)
 
+    abstract override fun replaceAttributes(newAttributes: FirDeclarationAttributes)
+
     abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
@@ -59,6 +61,8 @@ abstract class FirConstructor : FirFunction(), FirTypeParameterRefsOwner {
     abstract override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?)
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
+
+    abstract override fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?)
 
     abstract override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
 

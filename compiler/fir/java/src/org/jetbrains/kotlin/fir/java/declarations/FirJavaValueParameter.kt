@@ -184,7 +184,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     }
 
     override fun replaceDefaultValue(newDefaultValue: FirExpression?) {
-        error("Java value parameter cannot has default value")
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::defaultValue)
     }
 
     override fun replaceGetter(newGetter: FirPropertyAccessor?) {
@@ -193,12 +193,20 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceSetter(newSetter: FirPropertyAccessor?) {
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        error("Body cannot be replaced for FirJavaValueParameter")
+    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::attributes)
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        error("Status cannot be replaced for FirJavaValueParameter")
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::status)
+    }
+
+    override fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?) {
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::dispatchReceiverType)
+    }
+
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::contextReceivers)
     }
 }
 

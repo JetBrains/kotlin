@@ -41,6 +41,8 @@ abstract class FirAnonymousInitializer : FirDeclaration(), FirControlFlowGraphOw
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract override fun replaceAttributes(newAttributes: FirDeclarationAttributes)
+
     abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract fun replaceBody(newBody: FirBlock?)

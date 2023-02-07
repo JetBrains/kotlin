@@ -46,6 +46,8 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract override fun replaceAttributes(newAttributes: FirDeclarationAttributes)
+
     abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
@@ -53,6 +55,8 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
     abstract fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?)
 
     abstract fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
+
+    abstract fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?)
 
     abstract fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>)
 

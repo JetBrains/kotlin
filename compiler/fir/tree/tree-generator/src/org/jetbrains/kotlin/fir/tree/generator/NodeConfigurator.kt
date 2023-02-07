@@ -90,7 +90,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbolWithPackage("fir.symbols", "FirBasedSymbol", "out FirDeclaration")
             +field("moduleData", firModuleDataType)
             +field("origin", declarationOriginType)
-            +field("attributes", declarationAttributesType)
+            +field("attributes", declarationAttributesType).withReplace()
             shouldBeAbstractClass()
         }
 
@@ -101,7 +101,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol("FirCallableSymbol", "out FirCallableDeclaration")
 
             +field("containerSource", type(DeserializedContainerSource::class), nullable = true)
-            +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
+            +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true).withReplace()
 
             +fieldList(contextReceiver, useMutableOrEmpty = true, withReplace = true)
         }
@@ -119,11 +119,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         errorFunction.configure {
             +symbol("FirErrorFunctionSymbol")
-            +typeParameters
         }
 
         memberDeclaration.configure {
-            +status.withTransform()
+            +status.withTransform().withReplace()
         }
 
         expression.configure {

@@ -190,7 +190,15 @@ class FirSyntheticProperty(
         notSupported()
     }
 
+    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {
+        notSupported()
+    }
+
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        notSupported()
+    }
+
+    override fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?) {
         notSupported()
     }
 
