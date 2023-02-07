@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.incremental.js
+package org.jetbrains.kotlin.incremental.web
 
 data class TranslationResultValue(val metadata: ByteArray, val binaryAst: ByteArray, val inlineData: ByteArray)
 

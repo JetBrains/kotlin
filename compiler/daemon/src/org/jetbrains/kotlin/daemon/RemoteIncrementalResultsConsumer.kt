@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.withMeasure
-import org.jetbrains.kotlin.incremental.js.FunctionWithSourceInfo
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
+import org.jetbrains.kotlin.incremental.web.FunctionWithSourceInfo
+import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.web.JsInlineFunctionHash
 import java.io.File
 
 class RemoteIncrementalResultsConsumer(

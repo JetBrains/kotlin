@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.daemon.client
 
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.*
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
+import org.jetbrains.kotlin.incremental.web.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.web.JsInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId

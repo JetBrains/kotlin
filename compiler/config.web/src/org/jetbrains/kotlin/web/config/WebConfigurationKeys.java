@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.config;
+package org.jetbrains.kotlin.web.config;
 
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
-import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker;
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
+import org.jetbrains.kotlin.incremental.web.IncrementalDataProvider;
+import org.jetbrains.kotlin.incremental.web.IncrementalNextRoundChecker;
+import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumer;
 
 public class WebConfigurationKeys {
     private WebConfigurationKeys() {

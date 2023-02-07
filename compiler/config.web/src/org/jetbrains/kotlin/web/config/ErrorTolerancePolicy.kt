@@ -3,9 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.config
-
-import java.util.*
+package org.jetbrains.kotlin.web.config
 
 enum class ErrorTolerancePolicy(val allowSyntaxErrors: Boolean, val allowSemanticErrors: Boolean) {
     NONE(false, false),

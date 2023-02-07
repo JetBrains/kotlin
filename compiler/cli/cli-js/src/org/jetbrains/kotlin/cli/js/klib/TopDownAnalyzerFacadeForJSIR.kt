@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.web.IncrementalDataProvider
 import org.jetbrains.kotlin.ir.backend.web.JsFactories
 import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
