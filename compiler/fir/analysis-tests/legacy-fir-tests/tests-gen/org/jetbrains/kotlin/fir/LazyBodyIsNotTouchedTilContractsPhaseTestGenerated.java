@@ -2512,6 +2512,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/localVariable.kt");
             }
 
+            @TestMetadata("localVariableInSecondaryConstructor.kt")
+            public void testLocalVariableInSecondaryConstructor() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/localVariableInSecondaryConstructor.kt");
+            }
+
             @TestMetadata("manyLocalVariables.kt")
             public void testManyLocalVariables() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/manyLocalVariables.kt");
