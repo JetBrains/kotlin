@@ -77,6 +77,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                     "org.apache.log4j.", // For logging from compiler
                     "org.jetbrains.kotlin.incremental.components.",
                     "org.jetbrains.kotlin.incremental.js",
+                    "org.jetbrains.kotlin.incremental.web",
                     "org.jetbrains.kotlin.load.kotlin.incremental.components."
                 ) + classPrefixesToLoadByParentFromRegistry
 

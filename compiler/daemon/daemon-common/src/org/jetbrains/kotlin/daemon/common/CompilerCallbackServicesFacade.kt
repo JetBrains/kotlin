@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.daemon.common
 
 import org.jetbrains.kotlin.incremental.components.LookupInfo
-import org.jetbrains.kotlin.incremental.js.JsInlineFunctionHash
+import org.jetbrains.kotlin.incremental.web.JsInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
 import java.io.Serializable

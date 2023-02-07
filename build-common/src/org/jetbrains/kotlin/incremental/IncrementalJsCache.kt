@@ -18,9 +18,9 @@ package org.jetbrains.kotlin.incremental
 
 import com.intellij.util.io.DataExternalizer
 import org.jetbrains.kotlin.build.GeneratedFile
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
-import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
-import org.jetbrains.kotlin.incremental.js.TranslationResultValue
+import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumerImpl
+import org.jetbrains.kotlin.incremental.web.IrTranslationResultValue
+import org.jetbrains.kotlin.incremental.web.TranslationResultValue
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl

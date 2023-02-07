@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.js.test.utils
 
-import org.jetbrains.kotlin.incremental.js.TranslationResultValue
+import org.jetbrains.kotlin.incremental.web.TranslationResultValue
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
