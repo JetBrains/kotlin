@@ -1,1 +1,1 @@
-/enumCapturesProperty.kts:7:1: error: Enum class Bar captures the script class instance. Try to use class or anonymous object instead
+/enumCapturesProperty.kts:8:1: error: Enum class Bar captures the script class instance. Try to use class or anonymous object instead

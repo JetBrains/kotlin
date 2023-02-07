@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // !LANGUAGE: +InlineClasses
 
 inline class Z(val x: Int)

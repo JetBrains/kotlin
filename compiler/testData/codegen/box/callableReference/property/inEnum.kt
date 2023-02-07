@@ -1,3 +1,4 @@
+// WITH_STDLIB
 import kotlin.reflect.KProperty1
 
 class Q {

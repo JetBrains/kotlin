@@ -1,3 +1,4 @@
+// WITH_STDLIB
 @Deprecated("") enum class MyEnum {
     FIRST
 }

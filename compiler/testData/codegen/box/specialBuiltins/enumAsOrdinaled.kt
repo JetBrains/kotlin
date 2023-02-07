@@ -1,3 +1,4 @@
+// WITH_STDLIB
 interface Ordinaled {
     val ordinal: Int
 }

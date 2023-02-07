@@ -15,6 +15,7 @@ public final enum class E {
     private synthetic final static method $values(): E[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void
+    public static method getEntries(): kotlin.enums.EnumEntries
     public static method valueOf(p0: java.lang.String): E
     public static method values(): E[]
 }
