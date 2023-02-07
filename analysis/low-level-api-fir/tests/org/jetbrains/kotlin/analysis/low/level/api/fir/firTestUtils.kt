@@ -11,14 +11,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderConten
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirSourceResolveSession
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.render
-import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtElement
 
 
@@ -53,3 +50,24 @@ internal val LLFirResolveSession.isSourceSession: Boolean
             else -> false
         }
     }
+
+inline fun <reified E : FirElement> FirElement.collectAllElementsOfType(): List<E> {
+    val result = mutableListOf<E>()
+    this.accept(object : FirVisitorVoid() {
+        override fun visitElement(element: FirElement) {
+            if (element is E) result += element
+            element.acceptChildren(this)
+        }
+
+    })
+    return result
+}
+
+fun Collection<FirFile>.getDeclarationsToResolve() =
+    flatMap { it.collectAllElementsOfType<FirDeclaration>() }
+        .filterNot { declaration ->
+            declaration is FirFile ||
+                    declaration is FirBackingField ||
+                    declaration is FirAnonymousFunction ||
+                    declaration is FirValueParameter && declaration.containingFunctionSymbol is FirAnonymousFunctionSymbol
+        }

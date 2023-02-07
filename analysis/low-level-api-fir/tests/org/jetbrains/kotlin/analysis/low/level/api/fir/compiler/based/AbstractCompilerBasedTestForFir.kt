@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.createFirResolveSessionForNoCaching
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
@@ -29,7 +30,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.isKtFile
@@ -61,7 +62,8 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
     open fun TestConfigurationBuilder.configureTest() {}
 
     inner class LowLevelFirFrontendFacade(
-        testServices: TestServices
+        testServices: TestServices,
+        private val facadeFactory: LLFirAnalyzerFacadeFactory,
     ) : FirFrontendFacade(testServices) {
         override val additionalServices: List<ServiceRegistrationData>
             get() = emptyList()
@@ -97,7 +99,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
                 DiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS
             } else DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS
 
-            val analyzerFacade = LowLevelFirAnalyzerFacade(firResolveSession, allFirFiles.toMap(), diagnosticCheckerFilter)
+            val analyzerFacade = facadeFactory.createFirFacade(firResolveSession, allFirFiles.toMap(), diagnosticCheckerFilter)
             return FirOutputPartForDependsOnModule(
                 module,
                 firResolveSession.useSiteFirSession,
