@@ -36562,6 +36562,16 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         public void testAllFilesPresentInValueClasses() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/codegen/box/valueClasses/javaInterop")
+        @TestDataPath("$PROJECT_ROOT")
+        public class JavaInterop {
+            @Test
+            public void testAllFilesPresentInJavaInterop() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+            }
+        }
     }
 
     @Nested

@@ -40631,6 +40631,19 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             public void testAllFilesPresentInValueClasses() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/valueClasses/javaInterop")
+            @TestDataPath("$PROJECT_ROOT")
+            @UseExtTestCaseGroupProvider()
+            @UsePartialLinkage(mode = Mode.DISABLED)
+            @Tag("no-partial-linkage-may-be-skipped")
+            public class JavaInterop {
+                @Test
+                public void testAllFilesPresentInJavaInterop() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/valueClasses/javaInterop"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                }
+            }
         }
 
         @Nested
