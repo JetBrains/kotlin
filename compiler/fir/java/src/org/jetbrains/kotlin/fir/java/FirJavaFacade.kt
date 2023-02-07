@@ -20,9 +20,13 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypePa
 import org.jetbrains.kotlin.fir.declarations.builder.buildEnumEntry
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.extensions.FirStatusTransformerExtension
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirSignatureEnhancement
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -31,6 +35,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.*
@@ -71,6 +76,7 @@ abstract class FirJavaFacade(
 
     private val parentClassTypeParameterStackCache = mutableMapOf<FirRegularClassSymbol, JavaTypeParameterStack>()
     private val parentClassEffectiveVisibilityCache = mutableMapOf<FirRegularClassSymbol, EffectiveVisibility>()
+    private val statusExtensions = session.extensionService.statusTransformerExtensions
 
     fun findClass(classId: ClassId, knownContent: ByteArray? = null): JavaClass? =
         classFinder.findClass(JavaClassFinder.Request(classId, knownContent))
@@ -179,7 +185,43 @@ abstract class FirJavaFacade(
 
         enhancement.enhanceTypeParameterBoundsAfterFirstRound(firJavaClass.typeParameters, initialBounds)
 
+        updateStatuses(firJavaClass, parentClassSymbol)
+
         return firJavaClass
+    }
+
+    private fun updateStatuses(firJavaClass: FirJavaClass, parentClassSymbol: FirRegularClassSymbol?) {
+        if (statusExtensions.isEmpty()) return
+        val classSymbol = firJavaClass.symbol
+        val visitor = object : FirVisitorVoid() {
+            override fun visitElement(element: FirElement) {}
+
+            override fun visitRegularClass(regularClass: FirRegularClass) {
+                regularClass.applyExtensionTransformers {
+                    transformStatus(it, regularClass, parentClassSymbol, isLocal = false)
+                }
+                regularClass.acceptChildren(this)
+            }
+
+            override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+                simpleFunction.applyExtensionTransformers {
+                    transformStatus(it, simpleFunction, classSymbol, isLocal = false)
+                }
+            }
+
+            override fun visitField(field: FirField) {
+                field.applyExtensionTransformers {
+                    transformStatus(it, field, classSymbol, isLocal = false)
+                }
+            }
+
+            override fun visitConstructor(constructor: FirConstructor) {
+                constructor.applyExtensionTransformers {
+                    transformStatus(it, constructor, classSymbol, isLocal = false)
+                }
+            }
+        }
+        firJavaClass.accept(visitor)
     }
 
     private fun createFirJavaClass(
@@ -671,5 +713,26 @@ abstract class FirJavaFacade(
 
     private fun List<FirTypeParameter>.toRefs(): List<FirTypeParameterRef> {
         return this.map { buildConstructedClassTypeParameterRef { symbol = it.symbol } }
+    }
+
+    private inline fun FirMemberDeclaration.applyExtensionTransformers(
+        operation: FirStatusTransformerExtension.(FirDeclarationStatus) -> FirDeclarationStatus
+    ) {
+        val declaration = this
+        val oldStatus = declaration.status as FirResolvedDeclarationStatusImpl
+        val newStatus = statusExtensions.fold(status) { acc, it ->
+            if (it.needTransformStatus(declaration)) {
+                it.operation(acc)
+            } else {
+                acc
+            }
+        } as FirDeclarationStatusImpl
+        if (newStatus === oldStatus) return
+        val resolvedStatus = newStatus.resolved(
+            newStatus.visibility,
+            newStatus.modality ?: oldStatus.modality,
+            oldStatus.effectiveVisibility
+        )
+        replaceStatus(resolvedStatus)
     }
 }
