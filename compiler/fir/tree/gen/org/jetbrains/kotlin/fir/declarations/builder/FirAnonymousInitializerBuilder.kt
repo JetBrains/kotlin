@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -40,7 +40,7 @@ class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationConta
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     var body: FirBlock? = null
     var symbol: FirAnonymousInitializerSymbol = FirAnonymousInitializerSymbol()
-    var dispatchReceiverType: ConeSimpleKotlinType? = null
+    var dispatchReceiverType: ConeClassLikeType? = null
 
     override fun build(): FirAnonymousInitializer {
         return FirAnonymousInitializerImpl(

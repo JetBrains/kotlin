@@ -2793,7 +2793,7 @@ internal class UninitializedEnumEntryImpl(
     override val enumEntry: KtSymbol,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
-) : KtFirDiagnostic.UninitializedEnumEntry(), KtAbstractFirDiagnostic<KtSimpleNameExpression>
+) : KtFirDiagnostic.UninitializedEnumEntry(), KtAbstractFirDiagnostic<KtExpression>
 
 internal class UninitializedEnumCompanionImpl(
     override val enumClass: KtClassLikeSymbol,

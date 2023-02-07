@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -94,7 +95,10 @@ class FirFieldSymbol(callableId: CallableId) : FirVariableSymbol<FirField>(calla
         get() = fir.isVar
 }
 
-class FirEnumEntrySymbol(callableId: CallableId) : FirVariableSymbol<FirEnumEntry>(callableId)
+class FirEnumEntrySymbol(callableId: CallableId) : FirVariableSymbol<FirEnumEntry>(callableId) {
+    val initializerObjectSymbol: FirAnonymousObjectSymbol?
+        get() = (fir.initializer as? FirAnonymousObjectExpression)?.anonymousObject?.symbol
+}
 
 class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>(CallableId(name)) {
     val hasDefaultValue: Boolean

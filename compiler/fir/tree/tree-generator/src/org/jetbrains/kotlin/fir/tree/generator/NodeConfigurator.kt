@@ -453,7 +453,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
         anonymousInitializer.configure {
             +body(nullable = true, withReplace = true)
             +symbol("FirAnonymousInitializerSymbol")
-            +field("dispatchReceiverType", coneSimpleKotlinTypeType, nullable = true)
+            +field("dispatchReceiverType", coneClassLikeTypeType, nullable = true)
         }
 
         danglingModifierList.configure {

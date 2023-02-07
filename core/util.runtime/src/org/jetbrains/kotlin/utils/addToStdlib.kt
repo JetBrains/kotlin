@@ -292,6 +292,16 @@ inline fun <T, U, K, V> List<T>.flatGroupBy(
     return result
 }
 
+inline fun <T, K> List<T>.flatAssociateBy(selector: (T) -> Collection<K>): Map<K, T> {
+    return buildMap {
+        for (value in this@flatAssociateBy) {
+            for (key in selector(value)) {
+                put(key, value)
+            }
+        }
+    }
+}
+
 fun <E> MutableList<E>.popLast(): E = removeAt(lastIndex)
 
 fun <K : Enum<K>, V> enumMapOf(vararg pairs: Pair<K, V>): EnumMap<K, V> = EnumMap(mapOf(*pairs))

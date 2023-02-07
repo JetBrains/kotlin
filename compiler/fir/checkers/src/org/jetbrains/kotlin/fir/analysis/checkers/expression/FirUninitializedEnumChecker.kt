@@ -6,25 +6,27 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEnumEntryInitializer
 import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.checkers.outerClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
-import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.utils.addToStdlib.flatAssociateBy
 
 object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
     // Initialization order: member property initializers, enum entries, companion object (including members in it).
@@ -44,8 +46,8 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
     //   }
     //
     // Note that, when initializing enum entries, now we call the enum class's constructor, a.k.a. <init>, to initialize non-final
-    // instance members. Therefore, if there is a member property in the enum class, and if that member has an access to enum entries,
-    // that is an illegal access since enum entries are not yet initialized:
+    // instance members. Therefore, if there is a member property in the enum class, and if that member has access to enum entries,
+    // that is illegal access since enum entries are not yet initialized:
     //   enum class E(...) {
     //     E1, E2, ...
     //     val m1 = E1
@@ -99,18 +101,27 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         // companion object is not initialized for both member properties. The former has the property itself as the last containing
         // declaration, whereas the latter has an anonymous function instead. For both cases, we're looking for member properties as an
         // accessed context.
+        val isInsideCorrespondingEnum = context.containingDeclarations.any {
+            it.getContainingClassSymbol(context.session) == enumClassSymbol
+        }
+        if (!isInsideCorrespondingEnum) return
+
+        val declarationSymbols = enumClassSymbol.declarationSymbols
+        val enumMemberProperties = declarationSymbols.filterIsInstance<FirPropertySymbol>()
+        val enumInitBlocks = declarationSymbols.filterIsInstance<FirAnonymousInitializerSymbol>()
+        val enumEntries = declarationSymbols.filterIsInstance<FirEnumEntrySymbol>()
+        val enumEntriesInitBlocks = enumEntries.flatAssociateBy {
+            it.initializerObjectSymbol?.declarationSymbols?.filterIsInstance<FirAnonymousInitializerSymbol>().orEmpty()
+        }
+
         val accessedContext = context.containingDeclarations.lastOrNull {
-            // To not raise an error for an access from another enum class, e.g.,
+            // To not raise an error for access from another enum class, e.g.,
             //   enum class EnumCompanion4(...) {
             //     INSTANCE(EnumCompanion2.foo())
             //   }
             // find an accessed context within the same enum class.
-            it.getContainingClassSymbol(context.session) == enumClassSymbol
+            it.getContainingClassSymbol(context.session) == enumClassSymbol || it.symbol in enumEntriesInitBlocks
         }?.symbol ?: return
-
-        val declarationSymbols = enumClassSymbol.declarationSymbols
-        val enumMemberProperties = declarationSymbols.filterIsInstance<FirPropertySymbol>()
-        val enumEntries = declarationSymbols.filterIsInstance<FirEnumEntrySymbol>()
 
         // When checking enum member properties, accesses to enum entries in lazy delegation is legitimate, e.g.,
         //   enum JvmTarget(...) {
@@ -120,9 +131,10 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         //           JVM_1_6 -> ...
         //     }
         //   }
+        val containingDeclarationForAccess = context.containingDeclarations.lastOrNull()
         if (accessedContext in enumMemberProperties) {
             val lazyDelegation = (accessedContext as FirPropertySymbol).lazyDelegation
-            if (lazyDelegation != null && lazyDelegation == context.containingDeclarations.lastOrNull()) {
+            if (lazyDelegation != null && lazyDelegation == containingDeclarationForAccess) {
                 return
             }
         }
@@ -137,7 +149,7 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         //       fun foo() = ...
         //     }
         //   }
-        if (accessedContext in enumEntries && context.containingDeclarations.lastOrNull()?.isEnumEntryInitializer != true) {
+        if (accessedContext in enumEntries && containingDeclarationForAccess?.isEnumEntryInitializer(context.session) != true) {
             return
         }
 
@@ -163,34 +175,72 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
         if (calleeSymbol in enumEntries) {
             val calleeEnumEntry = calleeSymbol as FirEnumEntrySymbol
             // Uninitialized from the point of view of members of that enum class
-            if (accessedContext in enumMemberProperties) {
-                // From KT-6054
-                // enum class MyEnum {
-                //   A, B;
-                //   val x = when(this) {
-                //     <!>A<!> -> ...
-                //     <!>B<!> -> ...
-                //   }
-                // }
-                reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry, context)
-            }
-            // enum class A(...) {
-            //   A1(<!>A2<!>),
-            //   A2(...),
-            //   A3(<!>A3<!>)
-            // }
-            if (accessedContext in enumEntries) {
+
+            fun reportIllegalAccessInEnumEntry(correspondingEnumEntry: FirEnumEntrySymbol) {
                 // Technically, this is equal to `enumEntries.indexOf(accessedContext) <= enumEntries.indexOf(calleeDeclaration)`.
                 // Instead of double `indexOf`, we can iterate entries just once until either one appears.
                 var precedingEntry: FirEnumEntrySymbol? = null
-                enumEntries.forEach {
-                    if (precedingEntry != null) return@forEach
-                    if (it == calleeEnumEntry || it == accessedContext) {
+                for (it in enumEntries) {
+                    if (it == calleeEnumEntry || it == correspondingEnumEntry) {
                         precedingEntry = it
+                        break
                     }
                 }
-                if (precedingEntry == accessedContext) {
+                if (precedingEntry == correspondingEnumEntry) {
                     reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry, context)
+                }
+            }
+
+            when (accessedContext) {
+                in enumMemberProperties,
+                in enumInitBlocks -> {
+                    /* From KT-6054
+                     * enum class MyEnum {
+                     *   A, B;
+                     *   val x = when(this) {
+                     *     <!>A<!> -> ...
+                     *     <!>B<!> -> ...
+                     *   }
+                     * }
+                     */
+                    reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_ENTRY, calleeEnumEntry, context)
+                }
+
+                in enumEntries -> {
+                    /*
+                     * enum class A(...) {
+                     *   A1(<!>A2<!>),
+                     *   A2(...),
+                     *   A3(<!>A3<!>)
+                     * }
+                     */
+                    reportIllegalAccessInEnumEntry(accessedContext as FirEnumEntrySymbol)
+                }
+
+                in enumEntriesInitBlocks -> {
+                    /*
+                     * enum class MyEnum {
+                     *   A {
+                     *     init { A }
+                     *   },
+                     *   B;
+                     * }
+                     */
+                    val entrySymbol = enumEntriesInitBlocks.getValue(accessedContext as FirAnonymousInitializerSymbol)
+                    /*
+                     * In init block of entry this entry already initialized, so it's safe to access it
+                     * enum class MyEnum {
+                     *   A {
+                     *     init {
+                     *       A // safe
+                     *       B // unsafe
+                     *     }
+                     *   },
+                     *   B
+                     * }
+                     */
+                    if (entrySymbol == calleeSymbol) return
+                    reportIllegalAccessInEnumEntry(entrySymbol)
                 }
             }
         }
@@ -208,4 +258,18 @@ object FirUninitializedEnumChecker : FirQualifiedAccessExpressionChecker() {
             val lazyCallArgument = delegateCall.argumentList.arguments.singleOrNull() as? FirLambdaArgumentExpression ?: return null
             return (lazyCallArgument.expression as? FirAnonymousFunctionExpression)?.anonymousFunction
         }
+
+    private fun FirDeclaration.isEnumEntryInitializer(session: FirSession): Boolean {
+        val containingClassSymbol = when (this) {
+            is FirConstructor -> {
+                if (!isPrimary) return false
+                (containingClassForStaticMemberAttr as? ConeClassLookupTagWithFixedSymbol)?.symbol
+            }
+            is FirAnonymousInitializer -> {
+                dispatchReceiverType?.toSymbol(session)
+            }
+            else -> null
+        } ?: return false
+        return containingClassSymbol.classKind == ClassKind.ENUM_ENTRY
+    }
 }

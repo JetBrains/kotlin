@@ -2313,7 +2313,7 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val parameter: KtSymbol
     }
 
-    abstract class UninitializedEnumEntry : KtFirDiagnostic<KtSimpleNameExpression>() {
+    abstract class UninitializedEnumEntry : KtFirDiagnostic<KtExpression>() {
         override val diagnosticClass get() = UninitializedEnumEntry::class
         abstract val enumEntry: KtSymbol
     }
