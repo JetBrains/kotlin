@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.daemon
 
 import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.withMeasure
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IrTranslationResultValue
-import org.jetbrains.kotlin.incremental.js.TranslationResultValue
+import org.jetbrains.kotlin.incremental.web.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.web.IrTranslationResultValue
+import org.jetbrains.kotlin.incremental.web.TranslationResultValue
 import java.io.File
 
 class RemoteIncrementalDataProvider(

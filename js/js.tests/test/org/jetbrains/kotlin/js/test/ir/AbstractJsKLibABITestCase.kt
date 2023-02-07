@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.js.config.WebConfigurationKeys
+import org.jetbrains.kotlin.web.config.WebConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8IrJsTestChecker
 import org.jetbrains.kotlin.klib.KlibABITestUtils
 import org.jetbrains.kotlin.klib.KlibABITestUtils.MAIN_MODULE_NAME

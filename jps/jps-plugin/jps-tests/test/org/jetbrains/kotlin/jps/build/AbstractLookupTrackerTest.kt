@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.incremental.testingUtils.TouchPolicy
 import org.jetbrains.kotlin.incremental.testingUtils.copyTestSources
 import org.jetbrains.kotlin.incremental.testingUtils.getModificationsToPerform
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
+import org.jetbrains.kotlin.incremental.web.*
 import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.createTestingCompilerEnvironment
 import org.jetbrains.kotlin.jps.incremental.runJSCompiler

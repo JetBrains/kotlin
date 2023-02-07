@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ProtoData
 import org.jetbrains.kotlin.incremental.getProtoData
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
+import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumerImpl
 import org.jetbrains.kotlin.incremental.utils.TestMessageCollector
 import org.jetbrains.kotlin.name.ClassId
 import org.junit.Assert

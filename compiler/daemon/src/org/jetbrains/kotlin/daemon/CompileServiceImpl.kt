@@ -48,8 +48,8 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
+import org.jetbrains.kotlin.incremental.web.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumer
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryAndroid
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJs
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistoryJvm

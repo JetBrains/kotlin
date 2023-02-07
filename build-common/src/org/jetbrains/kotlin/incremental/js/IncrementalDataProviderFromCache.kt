@@ -6,6 +6,9 @@
 package org.jetbrains.kotlin.incremental.js
 
 import org.jetbrains.kotlin.incremental.IncrementalJsCache
+import org.jetbrains.kotlin.incremental.web.IncrementalDataProvider
+import org.jetbrains.kotlin.incremental.web.IrTranslationResultValue
+import org.jetbrains.kotlin.incremental.web.TranslationResultValue
 import org.jetbrains.kotlin.utils.JsMetadataVersion
 import java.io.File
 

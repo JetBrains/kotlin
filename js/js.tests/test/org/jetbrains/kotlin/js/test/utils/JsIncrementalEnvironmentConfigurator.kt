@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.js.test.utils
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
-import org.jetbrains.kotlin.js.config.WebConfigurationKeys
+import org.jetbrains.kotlin.incremental.web.IncrementalDataProviderImpl
+import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumerImpl
+import org.jetbrains.kotlin.web.config.WebConfigurationKeys
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
