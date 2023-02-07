@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.context
 import kotlinx.collections.immutable.PersistentSet
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
@@ -24,6 +25,7 @@ class MutableCheckerContext private constructor(
     override val qualifiedAccessOrAssignmentsOrAnnotationCalls: MutableList<FirStatement>,
     override val getClassCalls: MutableList<FirGetClassCall>,
     override val annotationContainers: MutableList<FirAnnotationContainer>,
+    override val containingElements: MutableList<FirElement>,
     override var isContractBody: Boolean,
     override var containingFile: FirFile?,
     sessionHolder: SessionHolder,
@@ -35,6 +37,7 @@ class MutableCheckerContext private constructor(
 ) : CheckerContextForProvider(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
+        mutableListOf(),
         mutableListOf(),
         mutableListOf(),
         mutableListOf(),
@@ -56,6 +59,7 @@ class MutableCheckerContext private constructor(
             qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
+            containingElements,
             isContractBody,
             containingFile,
             sessionHolder,
@@ -73,7 +77,7 @@ class MutableCheckerContext private constructor(
     }
 
     override fun dropDeclaration() {
-        containingDeclarations.removeAt(containingDeclarations.size - 1)
+        containingDeclarations.removeLast()
     }
 
     override fun addQualifiedAccessOrAnnotationCall(qualifiedAccessOrAnnotationCall: FirStatement): MutableCheckerContext {
@@ -82,7 +86,7 @@ class MutableCheckerContext private constructor(
     }
 
     override fun dropQualifiedAccessOrAnnotationCall() {
-        qualifiedAccessOrAssignmentsOrAnnotationCalls.removeAt(qualifiedAccessOrAssignmentsOrAnnotationCalls.size - 1)
+        qualifiedAccessOrAssignmentsOrAnnotationCalls.removeLast()
     }
 
     override fun addGetClassCall(getClassCall: FirGetClassCall): MutableCheckerContext {
@@ -91,7 +95,7 @@ class MutableCheckerContext private constructor(
     }
 
     override fun dropGetClassCall() {
-        getClassCalls.removeAt(getClassCalls.size - 1)
+        getClassCalls.removeLast()
     }
 
     override fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): CheckerContextForProvider {
@@ -100,7 +104,17 @@ class MutableCheckerContext private constructor(
     }
 
     override fun dropAnnotationContainer() {
-        annotationContainers.removeAt(annotationContainers.size - 1)
+        annotationContainers.removeLast()
+    }
+
+    override fun addElement(element: FirElement): CheckerContextForProvider {
+        assert(containingElements.lastOrNull() !== element)
+        containingElements.add(element)
+        return this
+    }
+
+    override fun dropElement() {
+        containingElements.removeLast()
     }
 
     override fun addSuppressedDiagnostics(
@@ -116,6 +130,7 @@ class MutableCheckerContext private constructor(
             qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls,
             annotationContainers,
+            containingElements,
             isContractBody,
             containingFile,
             sessionHolder,

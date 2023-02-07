@@ -35,6 +35,7 @@ abstract class CheckerContext : DiagnosticContext {
     abstract val qualifiedAccessOrAssignmentsOrAnnotationCalls: List<FirStatement>
     abstract val getClassCalls: List<FirGetClassCall>
     abstract val annotationContainers: List<FirAnnotationContainer>
+    abstract val containingElements: List<FirElement>
     abstract val isContractBody: Boolean
 
     // Suppress
