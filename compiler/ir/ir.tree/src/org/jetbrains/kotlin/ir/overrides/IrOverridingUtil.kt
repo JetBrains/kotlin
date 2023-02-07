@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo
-import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.incompatible
+import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
@@ -32,8 +32,8 @@ abstract class FakeOverrideBuilderStrategy(
         }
     }
 
-    protected abstract fun linkFunctionFakeOverride(declaration: IrFunctionWithLateBinding, compatibilityMode: Boolean)
-    protected abstract fun linkPropertyFakeOverride(declaration: IrPropertyWithLateBinding, compatibilityMode: Boolean)
+    protected abstract fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, compatibilityMode: Boolean)
+    protected abstract fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, compatibilityMode: Boolean)
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class) // Because of the LazyIR, have to use descriptors here.
@@ -223,7 +223,7 @@ class IrOverridingUtil(
 
         for (fromCurrent in membersFromCurrent) {
             val bound = extractAndBindOverridesForMember(fromCurrent, membersFromSupertypes)
-            notOverridden.removeAll(bound)
+            notOverridden -= bound
         }
 
         val addedFakeOverrides = mutableListOf<IrOverridableMember>()
@@ -237,30 +237,21 @@ class IrOverridingUtil(
     ): Collection<IrOverridableMember> {
         val bound = ArrayList<IrOverridableMember>(descriptorsFromSuper.size)
         val overridden = mutableSetOf<IrOverridableMember>()
+
         for (fromSupertype in descriptorsFromSuper) {
-            val result = isOverridableBy(fromSupertype, fromCurrent/*, current*/).result
-            val isVisibleForOverride =
-                isVisibleForOverride(fromCurrent, fromSupertype.original)
-            when (result) {
+            when (isOverridableBy(fromSupertype, fromCurrent).result) {
                 OverrideCompatibilityInfo.Result.OVERRIDABLE -> {
-                    if (isVisibleForOverride) {
-                        overridden.add(fromSupertype)
-                    }
-                    bound.add(fromSupertype)
+                    if (isVisibleForOverride(fromCurrent, fromSupertype.original))
+                        overridden += fromSupertype
+                    bound += fromSupertype
                 }
                 OverrideCompatibilityInfo.Result.CONFLICT -> {
-                    // if (isVisibleForOverride) {
-                    //     strategy.overrideConflict(fromSupertype, fromCurrent)
-                    // }
-
-                    // Do nothing.
-                    bound.add(fromSupertype)
+                    bound += fromSupertype
                 }
-                OverrideCompatibilityInfo.Result.INCOMPATIBLE -> {
-                }
+                OverrideCompatibilityInfo.Result.INCOMPATIBLE -> Unit
             }
         }
-        //strategy.setOverriddenDescriptors(fromCurrent, overridden)
+
         fromCurrent.overriddenSymbols = overridden.map { it.original.symbol }
 
         return bound
@@ -623,9 +614,7 @@ class IrOverridingUtil(
         superMember: IrOverridableMember,
         subMember: IrOverridableMember,
         // subClass: IrClass?
-    ): OverrideCompatibilityInfo {
-        return isOverridableBy(superMember, subMember/*, subClass*/, false)
-    }
+    ): OverrideCompatibilityInfo = isOverridableBy(superMember, subMember/*, subClass*/, false)
 
     private fun isOverridableBy(
         superMember: IrOverridableMember,
@@ -635,7 +624,7 @@ class IrOverridingUtil(
     ): OverrideCompatibilityInfo {
         val basicResult = isOverridableByWithoutExternalConditions(superMember, subMember, checkReturnType)
         return if (basicResult.result == OverrideCompatibilityInfo.Result.OVERRIDABLE)
-            OverrideCompatibilityInfo.success()
+            success()
         else
             basicResult
         // The frontend goes into external overridability condition details here, but don't deal with them in IR (yet?).
@@ -725,7 +714,7 @@ class IrOverridingUtil(
         }
 
         if (superMember is IrSimpleFunction && subMember is IrSimpleFunction && superMember.isSuspend != subMember.isSuspend) {
-            return OverrideCompatibilityInfo.conflict("Incompatible suspendability")
+            return incompatible("Incompatible suspendability")
         }
 
         if (checkReturnType) {
@@ -734,9 +723,9 @@ class IrOverridingUtil(
                     subMember.returnType,
                     superMember.returnType
                 )
-            ) return OverrideCompatibilityInfo.conflict("Return type mismatch")
+            ) return conflict("Return type mismatch")
         }
-        return OverrideCompatibilityInfo.success()
+        return success()
     }
 
     private fun getBasicOverridabilityProblem(

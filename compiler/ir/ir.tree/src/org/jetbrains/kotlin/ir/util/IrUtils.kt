@@ -1124,23 +1124,23 @@ private class FakeOverrideBuilderForLowerings : FakeOverrideBuilderStrategy(
     friendModules = emptyMap(),
     unimplementedOverridesStrategy = ProcessAsFakeOverrides
 ) {
-    override fun linkFunctionFakeOverride(declaration: IrFunctionWithLateBinding, compatibilityMode: Boolean) {
-        declaration.acquireSymbol(IrSimpleFunctionSymbolImpl())
+    override fun linkFunctionFakeOverride(function: IrFunctionWithLateBinding, compatibilityMode: Boolean) {
+        function.acquireSymbol(IrSimpleFunctionSymbolImpl())
     }
 
-    override fun linkPropertyFakeOverride(declaration: IrPropertyWithLateBinding, compatibilityMode: Boolean) {
+    override fun linkPropertyFakeOverride(property: IrPropertyWithLateBinding, compatibilityMode: Boolean) {
         val propertySymbol = IrPropertySymbolImpl()
-        declaration.getter?.let { it.correspondingPropertySymbol = propertySymbol }
-        declaration.setter?.let { it.correspondingPropertySymbol = propertySymbol }
+        property.getter?.let { it.correspondingPropertySymbol = propertySymbol }
+        property.setter?.let { it.correspondingPropertySymbol = propertySymbol }
 
-        declaration.acquireSymbol(propertySymbol)
+        property.acquireSymbol(propertySymbol)
 
-        declaration.getter?.let {
-            it.correspondingPropertySymbol = declaration.symbol
+        property.getter?.let {
+            it.correspondingPropertySymbol = property.symbol
             linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override getter: $it"), compatibilityMode)
         }
-        declaration.setter?.let {
-            it.correspondingPropertySymbol = declaration.symbol
+        property.setter?.let {
+            it.correspondingPropertySymbol = property.symbol
             linkFunctionFakeOverride(it as? IrFunctionWithLateBinding ?: error("Unexpected fake override setter: $it"), compatibilityMode)
         }
     }
