@@ -10,6 +10,10 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
@@ -49,8 +53,12 @@ class ResolvableMetadataConfigurationTest {
         /* nativeMain explicitly using 3.3.0 (higher than 3.2.0 in commonMain) */
         nativeMain.dependencies {
             implementation("com.squareup.okio:okio:3.3.0")
+            implementation("com.arkivanov.mvikotlin:mvikotlin:3.0.2")
         }
 
+        project.evaluate()
+
+        /* Check by resolving the 'resolvableMetadataConfigurations' directly */
         kotlin.sourceSets.forEach { sourceSet ->
             sourceSet.internal.resolvableMetadataConfiguration.incoming.resolutionResult.allDependencies
                 .mapNotNull { result -> if (result is ResolvedDependencyResult) result.selected.id else null }
@@ -64,5 +72,21 @@ class ResolvableMetadataConfigurationTest {
                     )
                 }
         }
+
+        /* Check IDE resolution for commonMain */
+        project.kotlinIdeMultiplatformImport.resolveDependencies("commonMain")
+            .assertMatches(
+                binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:3.3.0:.*")),
+                binaryCoordinates(Regex("org.jetbrains.kotlin.*"))
+            )
+
+        /* Check IDE resolution for nativeMain */
+        project.kotlinIdeMultiplatformImport.resolveDependencies("nativeMain")
+            .filterIsInstance<IdeaKotlinBinaryDependency>()
+            .filter { it.coordinates?.group.orEmpty() in setOf("com.squareup.okio", "com.arkivanov.mvikotlin") }
+            .assertMatches(
+                binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:3.3.0:.*")),
+                binaryCoordinates(Regex("com.arkivanov.mvikotlin:mvikotlin(-*)?:3.0.2:.*")),
+            )
     }
 }
