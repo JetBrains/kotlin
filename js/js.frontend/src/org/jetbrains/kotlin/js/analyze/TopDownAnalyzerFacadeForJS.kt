@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.web.IncrementalDataProvider
-import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult
+import org.jetbrains.kotlin.web.analyzer.WebAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.web.config.WebConfigurationKeys
