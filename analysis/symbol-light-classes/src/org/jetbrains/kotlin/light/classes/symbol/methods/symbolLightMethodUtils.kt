@@ -13,5 +13,5 @@ import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassBase
 
 context(KtAnalysisSession)
 internal fun String.isSuppressedFinalModifier(containingClass: SymbolLightClassBase, symbol: KtCallableSymbol): Boolean {
-    return this == PsiModifier.FINAL && ((containingClass.isEnum && symbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED) || containingClass.isInterface)
+    return this == PsiModifier.FINAL && (containingClass.isEnum && symbol.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED || containingClass.isInterface)
 }
