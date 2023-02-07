@@ -1755,12 +1755,13 @@ internal class CodeGeneratorVisitor(
             return codegen.theUnitInstanceRef.llvm
         }
 
+        val thisPtr = value.receiver?.let { evaluateExpression(it) }
         val valueToAssign = evaluateExpression(value.value)
         val address: LLVMValueRef
         val alignment: Int
-        if (!value.symbol.owner.isStatic) {
-            val thisPtr = evaluateExpression(value.receiver!!)
-            assert(thisPtr.type == codegen.kObjHeaderPtr) {
+        if (thisPtr != null) {
+            require(!value.symbol.owner.isStatic) { "Unexpected receiver for a static field: ${value.render()}" }
+            require(thisPtr.type == codegen.kObjHeaderPtr) {
                 LLVMPrintTypeToString(thisPtr.type)?.toKString().toString()
             }
             val parentAsClass = value.symbol.owner.parentAsClass
@@ -1775,7 +1776,7 @@ internal class CodeGeneratorVisitor(
             address = fieldPtrOfClass(thisPtr, value.symbol.owner)
             alignment = generationState.llvmDeclarations.forField(value.symbol.owner).alignment
         } else {
-            assert(value.receiver == null)
+            require(value.symbol.owner.isStatic) { "A receiver expected for a non-static field: ${value.render()}" }
             if (context.config.threadsAreAllowed && value.symbol.owner.storageKind(context) == FieldStorageKind.GLOBAL)
                 functionGenerationContext.checkGlobalsAccessible(currentCodeContext.exceptionHandler)
             if (value.symbol.owner.shouldBeFrozen(context) && value.origin != ObjectClassLowering.IrStatementOriginFieldPreInit)
