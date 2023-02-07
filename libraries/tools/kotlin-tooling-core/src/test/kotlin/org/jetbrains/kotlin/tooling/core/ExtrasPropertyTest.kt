@@ -37,6 +37,18 @@ class ExtrasPropertyTest {
     private val keySubjectList = extrasKeyOf<MutableList<Subject>>()
     private val Subject.lazyList: MutableList<Subject> by keySubjectList.lazyProperty { mutableListOf(this) }
 
+    private val lazyNullStringInvocations = mutableListOf<Subject>()
+    private val Subject.lazyNullString: String? by extrasNullableLazyProperty("null") {
+        lazyNullStringInvocations.add(this)
+        null
+    }
+
+    private val lazyNullableStringInvocations = mutableListOf<Subject>()
+    private val Subject.lazyNullableString: String? by extrasNullableLazyProperty("not-null") {
+        lazyNullableStringInvocations.add(this)
+        "OK"
+    }
+
     @Test
     fun `test - readOnlyProperty`() {
         val subject = Subject()
@@ -135,5 +147,28 @@ class ExtrasPropertyTest {
             subject.extras[keySubjectList] = list
             assertSame(list, subject.lazyList)
         }
+    }
+
+    @Test
+    fun `test - lazyNullableProperty`() {
+        val subject1 = Subject()
+        val subject2 = Subject()
+
+        assertNull(subject1.lazyNullString)
+        assertNull(subject1.lazyNullString)
+        assertEquals(listOf(subject1), lazyNullStringInvocations)
+
+        assertNull(subject2.lazyNullString)
+        assertNull(subject2.lazyNullString)
+        assertEquals(listOf(subject1, subject2), lazyNullStringInvocations)
+
+
+        assertEquals("OK", subject1.lazyNullableString)
+        assertEquals("OK", subject1.lazyNullableString)
+        assertEquals(listOf(subject1), lazyNullableStringInvocations)
+
+        assertEquals("OK", subject2.lazyNullableString)
+        assertEquals("OK", subject2.lazyNullableString)
+        assertEquals(listOf(subject1, subject2), lazyNullableStringInvocations)
     }
 }
