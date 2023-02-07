@@ -82,7 +82,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult
 import org.jetbrains.kotlin.js.config.*
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.KotlinAbiVersion
@@ -293,7 +293,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             } else {
                 sourceModule = processSourceModule(environmentForJS, libraries, friendLibraries, arguments, outputKlibPath)
 
-                if (!sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode)
+                if (!sourceModule.jsFrontEndResult.analysisResult.shouldGenerateCode)
                     return OK
             }
 
@@ -429,13 +429,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 friendLibraries,
                 AnalyzerWithCompilerReport(environmentForJS.configuration)
             )
-            val result = sourceModule.jsFrontEndResult.jsAnalysisResult
-            if (result is JsAnalysisResult.RetryWithAdditionalRoots) {
+            val result = sourceModule.jsFrontEndResult.analysisResult
+            if (result is WebAnalysisResult.RetryWithAdditionalRoots) {
                 environmentForJS.addKotlinSourceRoots(result.additionalKotlinRoots)
             }
-        } while (result is JsAnalysisResult.RetryWithAdditionalRoots)
+        } while (result is WebAnalysisResult.RetryWithAdditionalRoots)
 
-        if (sourceModule.jsFrontEndResult.jsAnalysisResult.shouldGenerateCode && (arguments.irProduceKlibDir || arguments.irProduceKlibFile)) {
+        if (sourceModule.jsFrontEndResult.analysisResult.shouldGenerateCode && (arguments.irProduceKlibDir || arguments.irProduceKlibFile)) {
             val moduleSourceFiles = (sourceModule.mainModule as MainModule.SourceFiles).files
             val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(moduleSourceFiles) ?: emptyList()
             val expectDescriptorToSymbol = mutableMapOf<DeclarationDescriptor, IrSymbol>()
@@ -444,7 +444,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 environmentForJS.project,
                 moduleSourceFiles,
                 environmentForJS.configuration,
-                sourceModule.jsFrontEndResult.jsAnalysisResult,
+                sourceModule.jsFrontEndResult.analysisResult,
                 sourceModule.allDependencies,
                 icData,
                 expectDescriptorToSymbol,

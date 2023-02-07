@@ -66,7 +66,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
             module.project,
             sourceFiles,
             module.compilerConfiguration,
-            module.jsFrontEndResult.jsAnalysisResult,
+            module.jsFrontEndResult.analysisResult,
             sortDependencies(module.moduleDependencies),
             icData,
             expectDescriptorToSymbol,

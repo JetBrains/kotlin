@@ -6,7 +6,7 @@ plugins {
 dependencies {
     api(project(":compiler:ir.psi2ir"))
     api(project(":compiler:ir.serialization.common"))
-    api(project(":js:js.frontend"))
+    api(project(":compiler:frontend.web"))
     api(project(":compiler:config.web"))
 
     implementation(project(":compiler:ir.backend.common"))

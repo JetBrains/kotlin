@@ -130,7 +130,7 @@ abstract class AbstractJsKLibABITestCase : KtUsefulTestCase() {
             environment.project,
             moduleSourceFiles,
             config,
-            sourceModule.jsFrontEndResult.jsAnalysisResult,
+            sourceModule.jsFrontEndResult.analysisResult,
             sortDependencies(sourceModule.moduleDependencies),
             icData,
             expectDescriptorToSymbol,
