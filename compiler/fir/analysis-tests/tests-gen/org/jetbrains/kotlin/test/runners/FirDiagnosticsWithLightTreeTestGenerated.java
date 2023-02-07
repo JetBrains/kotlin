@@ -2867,6 +2867,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
                 }
 
                 @Test
+                @TestMetadata("localVariableInSecondaryConstructor.kt")
+                public void testLocalVariableInSecondaryConstructor() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/localVariableInSecondaryConstructor.kt");
+                }
+
+                @Test
                 @TestMetadata("manyLocalVariables.kt")
                 public void testManyLocalVariables() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/unused/manyLocalVariables.kt");
