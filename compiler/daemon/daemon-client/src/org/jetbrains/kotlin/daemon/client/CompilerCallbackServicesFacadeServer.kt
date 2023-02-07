@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.incremental.components.*
 import org.jetbrains.kotlin.incremental.web.IncrementalDataProvider
 import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumer
-import org.jetbrains.kotlin.incremental.web.JsInlineFunctionHash
+import org.jetbrains.kotlin.incremental.web.WebInlineFunctionHash
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.load.kotlin.incremental.components.JvmPackagePartProto
 import org.jetbrains.kotlin.modules.TargetId
@@ -141,7 +141,7 @@ open class CompilerCallbackServicesFacadeServer(
         incrementalResultsConsumer!!.processPackagePart(File(sourceFilePath), packagePartMetadata, binaryAst, inlineData)
     }
 
-    override fun incrementalResultsConsumer_processInlineFunctions(functions: Collection<JsInlineFunctionHash>) {
+    override fun incrementalResultsConsumer_processInlineFunctions(functions: Collection<WebInlineFunctionHash>) {
         incrementalResultsConsumer!!.processInlineFunctions(functions)
     }
 
