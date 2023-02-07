@@ -26,15 +26,15 @@ class JsIrModuleSerializer(
     sourceBaseDirs: Collection<String>,
     private val languageVersionSettings: LanguageVersionSettings,
     shouldCheckSignaturesOnUniqueness: Boolean = true
-) : IrModuleSerializer<JsIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
+) : IrModuleSerializer<WebIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
 
     private val globalDeclarationTable = JsGlobalDeclarationTable(
         irBuiltIns,
         if (shouldCheckSignaturesOnUniqueness) JsUniqIdClashTracker() else IdSignatureClashTracker.DEFAULT_TRACKER
     )
 
-    override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
-        JsIrFileSerializer(
+    override fun createSerializerForFile(file: IrFile): WebIrFileSerializer =
+        WebIrFileSerializer(
             messageLogger,
             DeclarationTable(globalDeclarationTable),
             expectDescriptorToSymbol,
