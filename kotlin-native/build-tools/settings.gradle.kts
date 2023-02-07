@@ -39,3 +39,6 @@ project(":kotlin-native-shared").projectDir = File("$rootDir/../shared")
 //project(":native:kotlin-native-utils").projectDir = File("$rootDir/../../native/kotlin-native-utils")
 //project(":kotlin-util-klib").projectDir = File("$rootDir/../../compiler/util-klib")
 //project(":kotlin-util-io").projectDir = File("$rootDir/../../compiler/util-io")
+
+include(":kotlin-native-executors")
+project(":kotlin-native-executors").projectDir = File("$rootDir/../../native/executors")

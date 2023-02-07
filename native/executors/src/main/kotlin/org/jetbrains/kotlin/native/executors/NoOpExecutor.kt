@@ -1,15 +1,16 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(kotlin.time.ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class)
 
-package org.jetbrains.kotlin.executors
+package org.jetbrains.kotlin.native.executors
 
 import java.io.File
 import java.util.logging.Logger
 import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
 
 /**
  * [Executor] that does not run the process and immediately returns a successful response.

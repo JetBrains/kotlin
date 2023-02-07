@@ -1,9 +1,18 @@
-package org.jetbrains.kotlin
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
+package org.jetbrains.kotlin.native.executors
+
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.annotations.Expose
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.Xcode
 import kotlin.math.min
+
+internal val gson: Gson by lazy { GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()!! }
 
 /**
  * Compares two strings assuming that both are representing numeric version strings.

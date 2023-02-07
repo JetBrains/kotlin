@@ -12,8 +12,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.native.executors.*
 import java.io.File
-
 import java.io.FileWriter
 import java.io.Serializable
 import java.nio.file.Files
