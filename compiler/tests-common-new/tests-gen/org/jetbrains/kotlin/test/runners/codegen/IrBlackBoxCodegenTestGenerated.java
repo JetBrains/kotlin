@@ -10778,6 +10778,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("suspendImplTypeParametersOuterClass.kt")
+        public void testSuspendImplTypeParametersOuterClass() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/suspendImplTypeParametersOuterClass.kt");
+        }
+
+        @Test
         @TestMetadata("suspendInCycle.kt")
         public void testSuspendInCycle() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/suspendInCycle.kt");
