@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.web.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.backend.web.generateModuleFragmentWithPlugins
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrLinker
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrLinker
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebManglerDesc
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -60,7 +60,7 @@ fun generateIrForKlibSerialization(
     val errorPolicy = configuration.get(WebConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
     val allowUnboundSymbols = configuration[WebConfigurationKeys.PARTIAL_LINKAGE] ?: false
-    val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
+    val symbolTable = SymbolTable(IdSignatureDescriptor(WebManglerDesc), irFactory)
     val psi2Ir = Psi2IrTranslator(
         configuration.languageVersionSettings,
         Psi2IrConfiguration(errorPolicy.allowErrors, allowUnboundSymbols),
@@ -70,15 +70,15 @@ fun generateIrForKlibSerialization(
     val irBuiltIns = psi2IrContext.irBuiltIns
 
     val feContext = psi2IrContext.run {
-        JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
+        WebIrLinker.WebFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
     val stubGenerator = DeclarationStubGeneratorImpl(
         psi2IrContext.moduleDescriptor,
         symbolTable,
         irBuiltIns,
-        DescriptorByIdSignatureFinderImpl(psi2IrContext.moduleDescriptor, JsManglerDesc),
+        DescriptorByIdSignatureFinderImpl(psi2IrContext.moduleDescriptor, WebManglerDesc),
     )
-    val irLinker = JsIrLinker(
+    val irLinker = WebIrLinker(
         psi2IrContext.moduleDescriptor,
         messageLogger,
         psi2IrContext.irBuiltIns,
@@ -101,10 +101,10 @@ fun generateIrForKlibSerialization(
     )
 
     if (verifySignatures) {
-        moduleFragment.acceptVoid(ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc)))
+        moduleFragment.acceptVoid(ManglerChecker(WebManglerIr, Ir2DescriptorManglerAdapter(WebManglerDesc)))
     }
     if (configuration.getBoolean(WebConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
-        val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
+        val fakeOverrideChecker = FakeOverrideChecker(WebManglerIr, WebManglerDesc)
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
     }
 

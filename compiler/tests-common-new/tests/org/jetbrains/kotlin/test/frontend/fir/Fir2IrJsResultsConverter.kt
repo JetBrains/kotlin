@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringT
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.web.JsFactories
+import org.jetbrains.kotlin.ir.backend.web.WebFactories
 import org.jetbrains.kotlin.ir.backend.web.getSerializedData
 import org.jetbrains.kotlin.ir.backend.web.incrementalDataProvider
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -147,7 +147,7 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
         session, scopeSession, firFiles.toList(),
         languageVersionSettings,
         fir2IrExtensions,
-        JsManglerIr, IrFactoryImpl,
+        WebManglerIr, IrFactoryImpl,
         Fir2IrVisibilityConverter.Default,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
         irGeneratorExtensions,
@@ -174,7 +174,7 @@ private fun loadResolvedLibraries(
             // TODO: check safety of the approach of creating a separate storage manager per library
             val storageManager = LockBasedStorageManager("ModulesStructure")
 
-            val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+            val moduleDescriptor = WebFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                 resolvedLibrary.library,
                 languageVersionSettings,
                 storageManager,

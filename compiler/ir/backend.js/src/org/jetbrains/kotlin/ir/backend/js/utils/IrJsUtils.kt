@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.descriptors.isClass
 import org.jetbrains.kotlin.descriptors.isInterface
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.web.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.web.WebStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.declarations.*
@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.FqName
 
 fun IrClass.jsConstructorReference(context: JsIrBackendContext): IrExpression {
-    return JsIrBuilder.buildCall(context.intrinsics.jsClass, origin = JsStatementOrigins.CLASS_REFERENCE)
+    return JsIrBuilder.buildCall(context.intrinsics.jsClass, origin = WebStatementOrigins.CLASS_REFERENCE)
         .apply { putTypeArgument(0, defaultType) }
 }
 

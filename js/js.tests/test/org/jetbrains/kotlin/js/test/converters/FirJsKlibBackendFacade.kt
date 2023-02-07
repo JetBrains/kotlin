@@ -11,9 +11,8 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.web.JsFactories
-import org.jetbrains.kotlin.ir.backend.web.jsResolveLibraries
+import org.jetbrains.kotlin.ir.backend.web.WebFactories
+import org.jetbrains.kotlin.ir.backend.web.webResolveLibraries
 import org.jetbrains.kotlin.ir.backend.web.resolverLogger
 import org.jetbrains.kotlin.ir.backend.web.serializeModuleIntoKlib
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
@@ -86,12 +85,12 @@ class FirJsKlibBackendFacade(
         }
 
         // TODO: consider avoiding repeated libraries resolution
-        val lib = jsResolveLibraries(
+        val lib = webResolveLibraries(
             getAllJsDependenciesPaths(module, testServices) + listOf(outputFile),
             configuration.resolverLogger
         ).getFullResolvedList().last().library
 
-        val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+        val moduleDescriptor = WebFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
             lib,
             configuration.languageVersionSettings,
             LockBasedStorageManager("ModulesStructure"),

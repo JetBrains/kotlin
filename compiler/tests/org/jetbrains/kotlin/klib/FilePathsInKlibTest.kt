@@ -67,7 +67,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
             module.project,
             sourceFiles,
             module.compilerConfiguration,
-            module.jsFrontEndResult.analysisResult,
+            module.webFrontEndResult.analysisResult,
             sortDependencies(module.moduleDependencies),
             icData,
             expectDescriptorToSymbol,
@@ -78,7 +78,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
         }
 
         val metadataSerializer =
-            KlibMetadataIncrementalSerializer(module.compilerConfiguration, module.project, module.jsFrontEndResult.hasErrors)
+            KlibMetadataIncrementalSerializer(module.compilerConfiguration, module.project, module.webFrontEndResult.hasErrors)
 
         generateKLib(
             module,
@@ -89,7 +89,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
             expectDescriptorToSymbol = expectDescriptorToSymbol,
             moduleFragment = moduleFragment
         ) { file ->
-            metadataSerializer.serializeScope(file, module.jsFrontEndResult.bindingContext, moduleFragment.descriptor)
+            metadataSerializer.serializeScope(file, module.webFrontEndResult.bindingContext, moduleFragment.descriptor)
         }
     }
 
@@ -103,7 +103,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
     private fun File.md5(): Long = readBytes().md5()
 
     private fun File.loadKlibFilePaths(): List<String> {
-        val libs = jsResolveLibraries(listOf(runtimeKlibPath, canonicalPath), DummyLogger).getFullList()
+        val libs = webResolveLibraries(listOf(runtimeKlibPath, canonicalPath), DummyLogger).getFullList()
         val lib = libs.last()
         val fileSize = lib.fileCount()
         val extReg = ExtensionRegistryLite.newInstance()

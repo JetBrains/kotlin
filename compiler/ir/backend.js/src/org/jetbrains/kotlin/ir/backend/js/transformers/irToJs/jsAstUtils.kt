@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.web.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.web.WebStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.sourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.utils.*
@@ -135,7 +135,7 @@ private fun isFunctionTypeInvoke(receiver: JsExpression?, call: IrCall): Boolean
     val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
     val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
 
-    if (call.origin === JsStatementOrigins.EXPLICIT_INVOKE) return false
+    if (call.origin === WebStatementOrigins.EXPLICIT_INVOKE) return false
 
     return simpleFunction.name == OperatorNameConventions.INVOKE
             && receiverType.isFunctionTypeOrSubtype()
