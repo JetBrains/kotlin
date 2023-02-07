@@ -156,7 +156,7 @@ object StandardNames {
         @JvmField val mutableSet: FqName = collectionsFqName("MutableSet")
         @JvmField val mutableMap: FqName = collectionsFqName("MutableMap")
         @JvmField val mutableMapEntry: FqName = mutableMap.child(Name.identifier("MutableEntry"))
-        @JvmField val arraysKt: FqName = collectionsFqName("ArraysKt")
+        @JvmField val primitiveArrayFactories: FqName = fqName("PrimitiveArrayFactoriesKt")
 
         @JvmField val kClass: FqNameUnsafe = reflect("KClass")
         @JvmField val kCallable: FqNameUnsafe = reflect("KCallable")

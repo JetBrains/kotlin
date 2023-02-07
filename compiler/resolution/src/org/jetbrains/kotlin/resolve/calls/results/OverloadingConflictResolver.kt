@@ -202,6 +202,11 @@ open class OverloadingConflictResolver<C : Any>(
                             discriminateGenerics, useOriginalSamTypes = true
                         )
                     }
+                    // TODO remove. This is a temporary hack
+                    ?: findMaximallySpecificCall(
+                        candidates.filterNotTo(mutableSetOf()) { it.resultingDescriptor is ConstructorDescriptor },
+                        discriminateGenerics
+                    )
         }
 
     // null means ambiguity between variables
@@ -454,7 +459,7 @@ open class OverloadingConflictResolver<C : Any>(
     }
 
     private fun isNotLessSpecificCallableReference(f: CallableDescriptor, g: CallableDescriptor): Boolean =
-    // TODO should we "discriminate generic descriptors" for callable references?
+        // TODO should we "discriminate generic descriptors" for callable references?
         tryCompareDescriptorsFromScripts(f, g) ?: isNotLessSpecificCallableReferenceDescriptor(f, g)
 
     // Different smart casts may lead to the same candidate descriptor wrapped into different ResolvedCallImpl objects

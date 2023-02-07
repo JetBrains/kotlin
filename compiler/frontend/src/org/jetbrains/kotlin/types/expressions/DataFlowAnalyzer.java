@@ -319,6 +319,12 @@ public class DataFlowAnalyzer {
         SmartCastResult castResult = checkPossibleCast(expressionType, expression, c);
         if (castResult != null) return castResult.getResultType();
 
+        // TODO remove. This is a temporary hack
+        if (KotlinBuiltIns.getPrimitiveArrayElementType(expressionType) != null &&
+            KotlinBuiltIns.getPrimitiveArrayElementType(expressionType) == KotlinBuiltIns.getPrimitiveArrayElementType(c.expectedType)) {
+            return expressionType;
+        }
+
         if (reportErrorForTypeMismatch &&
             !DiagnosticUtilsKt.reportTypeMismatchDueToTypeProjection(c, expression, c.expectedType, expressionType) &&
             !DiagnosticUtilsKt.reportTypeMismatchDueToScalaLikeNamedFunctionSyntax(c, expression, c.expectedType, expressionType)) {

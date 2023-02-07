@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
@@ -72,6 +73,13 @@ private fun checkExpressionArgument(
 
     // todo run this approximation only once for call
     val argumentType = convertedType ?: captureFromTypeParameterUpperBoundIfNeeded(expressionArgument.receiver.stableType, expectedType)
+
+    // TODO remove. This is a temporary hack
+    if (KotlinBuiltIns.getPrimitiveArrayElementType(expectedType) != null
+        && KotlinBuiltIns.getPrimitiveArrayElementType(expectedType) == KotlinBuiltIns.getPrimitiveArrayElementType(argumentType)
+    ) {
+        return resolvedExpression
+    }
 
     fun unstableSmartCastOrSubtypeError(
         unstableType: UnwrappedType?, actualExpectedType: UnwrappedType, position: ConstraintPosition

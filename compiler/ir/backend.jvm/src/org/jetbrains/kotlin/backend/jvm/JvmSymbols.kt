@@ -1164,7 +1164,7 @@ class JvmSymbols(
             origin = IrDeclarationOrigin.IR_BUILTINS_STUB
         }.apply {
             returnType = irBuiltIns.getPrimitiveArrayType(irBuiltIns.intType)
-            parent = createClass(StandardNames.FqNames.arraysKt).owner
+            parent = createClass(StandardNames.FqNames.primitiveArrayFactories).owner
             addValueParameter("size", irBuiltIns.intType)
         }.symbol
 }
