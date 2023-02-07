@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ir
 
-import org.jetbrains.kotlin.ir.backend.web.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.web.WebStatementOrigins
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.declarations.buildValueParameter
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
 
@@ -26,7 +25,7 @@ object JsIrBuilder {
         target: IrSimpleFunctionSymbol,
         type: IrType? = null,
         typeArguments: List<IrType>? = null,
-        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
+        origin: IrStatementOrigin = WebStatementOrigins.SYNTHESIZED_STATEMENT,
         superQualifierSymbol: IrClassSymbol? = null,
     ): IrCall {
         val owner = target.owner
@@ -80,7 +79,7 @@ object JsIrBuilder {
         target: IrConstructorSymbol,
         typeArguments: List<IrType?>? = null,
         constructorTypeArguments: List<IrType?>? = null,
-        origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT
+        origin: IrStatementOrigin = WebStatementOrigins.SYNTHESIZED_STATEMENT
     ): IrConstructorCall {
         val owner = target.owner
         val irClass = owner.parentAsClass
@@ -134,14 +133,14 @@ object JsIrBuilder {
     fun buildGetObjectValue(type: IrType, classSymbol: IrClassSymbol) =
         IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, classSymbol)
 
-    fun buildGetValue(symbol: IrValueSymbol, origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT) =
+    fun buildGetValue(symbol: IrValueSymbol, origin: IrStatementOrigin = WebStatementOrigins.SYNTHESIZED_STATEMENT) =
         IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, origin)
 
     fun buildSetValue(symbol: IrValueSymbol, value: IrExpression) =
-        IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+        IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol.owner.type, symbol, value, WebStatementOrigins.SYNTHESIZED_STATEMENT)
 
     fun buildSetVariable(symbol: IrVariableSymbol, value: IrExpression, type: IrType) =
-        IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+        IrSetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, symbol, value, WebStatementOrigins.SYNTHESIZED_STATEMENT)
 
     fun buildGetField(symbol: IrFieldSymbol, receiver: IrExpression?, superQualifierSymbol: IrClassSymbol? = null, type: IrType? = null) =
         IrGetFieldImpl(
@@ -150,7 +149,7 @@ object JsIrBuilder {
             symbol,
             type ?: symbol.owner.type,
             receiver,
-            JsStatementOrigins.SYNTHESIZED_STATEMENT,
+            WebStatementOrigins.SYNTHESIZED_STATEMENT,
             superQualifierSymbol
         )
 
@@ -162,17 +161,17 @@ object JsIrBuilder {
         superQualifierSymbol: IrClassSymbol? = null
     ) =
         IrSetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbol, receiver, value, type,
-                       JsStatementOrigins.SYNTHESIZED_STATEMENT, superQualifierSymbol)
+                       WebStatementOrigins.SYNTHESIZED_STATEMENT, superQualifierSymbol)
 
-    fun buildBlock(type: IrType) = IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+    fun buildBlock(type: IrType) = IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, WebStatementOrigins.SYNTHESIZED_STATEMENT)
     fun buildBlock(type: IrType, statements: List<IrStatement>) =
-        IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, JsStatementOrigins.SYNTHESIZED_STATEMENT, statements)
+        IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, WebStatementOrigins.SYNTHESIZED_STATEMENT, statements)
 
     fun buildComposite(type: IrType, statements: List<IrStatement> = emptyList()) =
-        IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, JsStatementOrigins.SYNTHESIZED_STATEMENT, statements)
+        IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, WebStatementOrigins.SYNTHESIZED_STATEMENT, statements)
 
     fun buildFunctionExpression(type: IrType, function: IrSimpleFunction) =
-        IrFunctionExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, function, JsStatementOrigins.SYNTHESIZED_STATEMENT)
+        IrFunctionExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, function, WebStatementOrigins.SYNTHESIZED_STATEMENT)
 
     fun buildVar(
         type: IrType,
@@ -216,7 +215,7 @@ object JsIrBuilder {
             cond = cond,
             thenBranch = thenBranch,
             elseBranch = elseBranch,
-            origin = JsStatementOrigins.SYNTHESIZED_STATEMENT,
+            origin = WebStatementOrigins.SYNTHESIZED_STATEMENT,
             thenBranchStartOffset = thenBranchStartOffset,
             thenBranchEndOffset = thenBranchEndOffset,
             elseBranchStartOffset = elseBranchStartOffset,
@@ -246,7 +245,7 @@ object JsIrBuilder {
         return element
     }
 
-    fun buildWhen(type: IrType, branches: List<IrBranch>, origin: IrStatementOrigin = JsStatementOrigins.SYNTHESIZED_STATEMENT) =
+    fun buildWhen(type: IrType, branches: List<IrBranch>, origin: IrStatementOrigin = WebStatementOrigins.SYNTHESIZED_STATEMENT) =
         IrWhenImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, origin, branches)
 
     fun buildTypeOperator(type: IrType, operator: IrTypeOperator, argument: IrExpression, toType: IrType) =

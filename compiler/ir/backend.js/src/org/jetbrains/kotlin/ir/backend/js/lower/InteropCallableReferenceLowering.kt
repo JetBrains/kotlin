@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.web.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.web.WebStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
@@ -86,7 +86,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 ctorCall.endOffset,
                 lambdaType,
                 lambdaDeclaration,
-                JsStatementOrigins.CALLABLE_REFERENCE_CREATE
+                WebStatementOrigins.CALLABLE_REFERENCE_CREATE
             )
 
             // TODO: If we generate arrow functions instead of anonymous functions, there's no need for jsBind
@@ -99,7 +99,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     context.intrinsics.jsBind,
                     valueArgumentsCount = 2,
                     typeArgumentsCount = 0,
-                    origin = JsStatementOrigins.BIND_CALL,
+                    origin = WebStatementOrigins.BIND_CALL,
                 ).apply {
                     putValueArgument(0, IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, capturedDispatchReceiver))
                     putValueArgument(1, functionExpression)
@@ -140,7 +140,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
                 expression.transformChildrenVoid()
-                if (expression.origin != JsStatementOrigins.CALLABLE_REFERENCE_CREATE) return expression
+                if (expression.origin != WebStatementOrigins.CALLABLE_REFERENCE_CREATE) return expression
 
                 ctorToFreeFunctionMap[expression.symbol]?.let { liftedLambda ->
                     return replaceLambdaConstructorCallWithReferenceToLiftedLambda(expression, liftedLambda)
@@ -230,7 +230,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         }
 
         override fun visitConstructorCall(expression: IrConstructorCall) {
-            if (expression.origin == JsStatementOrigins.CALLABLE_REFERENCE_CREATE)
+            if (expression.origin == WebStatementOrigins.CALLABLE_REFERENCE_CREATE)
                 lambdaConstructorCalls
                     .getOrPut(expression.symbol, ::mutableListOf)
                     .add(expression)
@@ -432,7 +432,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             invokeFun.symbol,
             0,
             invokeFun.valueParameters.size,
-            JsStatementOrigins.EXPLICIT_INVOKE,
+            WebStatementOrigins.EXPLICIT_INVOKE,
             null
         )
 
@@ -560,7 +560,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
         val lambdaType = lambdaInfo.lambdaClass.superTypes.single { it.classifierOrNull === superClass.symbol }
         val functionExpression = lambdaInfo.lambdaClass.run {
-            IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambdaDeclaration, JsStatementOrigins.CALLABLE_REFERENCE_CREATE)
+            IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambdaDeclaration, WebStatementOrigins.CALLABLE_REFERENCE_CREATE)
         }
 
         val nameGetter = context.mapping.reflectedNameAccessor[lambdaInfo.lambdaClass]
@@ -648,7 +648,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                 visibility = lambdaInfo.lambdaClass.visibility
                 returnType = lambdaInfo.lambdaClass.defaultType
                 name = lambdaInfo.lambdaClass.name
-                origin = JsStatementOrigins.FACTORY_ORIGIN
+                origin = WebStatementOrigins.FACTORY_ORIGIN
             }
         }
 

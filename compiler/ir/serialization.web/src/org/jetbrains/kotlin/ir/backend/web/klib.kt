@@ -198,7 +198,7 @@ fun loadIr(
     val messageLogger = configuration.irMessageLogger
     val partialLinkageEnabled = configuration[WebConfigurationKeys.PARTIAL_LINKAGE] ?: false
 
-    val signaturer = IdSignatureDescriptor(JsManglerDesc)
+    val signaturer = IdSignatureDescriptor(WebManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
 
     when (mainModule) {
@@ -347,13 +347,13 @@ fun getIrModuleInfoForSourceFiles(
     val (moduleFragment, _) = psi2IrContext.generateModuleFragmentWithPlugins(project, files, irLinker, messageLogger)
 
     // TODO: not sure whether this check should be enabled by default. Add configuration key for it.
-    val mangleChecker = ManglerChecker(JsManglerIr, Ir2DescriptorManglerAdapter(JsManglerDesc))
+    val mangleChecker = ManglerChecker(WebManglerIr, Ir2DescriptorManglerAdapter(WebManglerDesc))
     if (verifySignatures) {
         moduleFragment.acceptVoid(mangleChecker)
     }
 
     if (configuration.getBoolean(WebConfigurationKeys.FAKE_OVERRIDE_VALIDATOR)) {
-        val fakeOverrideChecker = FakeOverrideChecker(JsManglerIr, JsManglerDesc)
+        val fakeOverrideChecker = FakeOverrideChecker(WebManglerIr, WebManglerDesc)
         irLinker.modules.forEach { fakeOverrideChecker.check(it) }
     }
 

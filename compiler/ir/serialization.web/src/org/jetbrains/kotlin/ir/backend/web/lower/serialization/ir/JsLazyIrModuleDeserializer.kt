@@ -33,7 +33,7 @@ class JsLazyIrModuleDeserializer(
     // TODO: implement proper check whether `idSig` belongs to this module
     override fun contains(idSig: IdSignature): Boolean = true
 
-    private val descriptorFinder = DescriptorByIdSignatureFinderImpl(moduleDescriptor, JsManglerDesc)
+    private val descriptorFinder = DescriptorByIdSignatureFinderImpl(moduleDescriptor, WebManglerDesc)
 
     override fun tryDeserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol? {
         val descriptor = descriptorFinder.findDescriptorBySignature(idSig) ?: return null

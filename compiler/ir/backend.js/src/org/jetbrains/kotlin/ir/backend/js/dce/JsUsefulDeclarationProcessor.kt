@@ -6,14 +6,13 @@
 package org.jetbrains.kotlin.ir.backend.js.dce
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.web.JsStatementOrigins
+import org.jetbrains.kotlin.ir.backend.web.WebStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.lower.isBuiltInClass
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -55,7 +54,7 @@ internal class JsUsefulDeclarationProcessor(
                     // https://youtrack.jetbrains.com/issue/KT-46672
                     // TODO: Possibly solution with origin is not so good
                     //  There is option with applying this hack to jsGetKClass
-                    if (expression.origin == JsStatementOrigins.CLASS_REFERENCE) {
+                    if (expression.origin == WebStatementOrigins.CLASS_REFERENCE) {
                         // Maybe we need to filter primary constructor
                         // Although at this time, we should have only primary constructor
                         (ref as IrClass)

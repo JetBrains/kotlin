@@ -42,7 +42,7 @@ class WebIrLinker(
     override val fakeOverrideBuilder = FakeOverrideBuilder(
         linker = this,
         symbolTable = symbolTable,
-        mangler = JsManglerIr,
+        mangler = WebManglerIr,
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = friendModules,
         partialLinkageEnabled = partialLinkageSupport.partialLinkageEnabled

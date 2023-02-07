@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.web.FunctionTypeInterfacePackages
 import org.jetbrains.kotlin.ir.backend.web.WebFactories
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrLinker
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerDesc
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
@@ -103,7 +103,7 @@ internal class JsIrLinkerLoader(
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     private fun createLinker(loadedModules: Map<ModuleDescriptor, KotlinLibrary>): LinkerContext {
-        val signaturer = IdSignatureDescriptor(JsManglerDesc)
+        val signaturer = IdSignatureDescriptor(WebManglerDesc)
         val symbolTable = SymbolTable(signaturer, irFactory)
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)

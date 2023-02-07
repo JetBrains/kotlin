@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.backend.web.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.backend.web.webResolveLibraries
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrLinker
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrModuleSerializer
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerDesc
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -215,7 +215,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     protected fun deserializeModule(stdlib: KotlinLibrary, klib: KotlinLibrary): IrModuleFragment {
-        val signaturer = IdSignatureDescriptor(JsManglerDesc)
+        val signaturer = IdSignatureDescriptor(WebManglerDesc)
 
         val stdlibDescriptor = getModuleDescriptor(stdlib)
         val testDescriptor = getModuleDescriptor(klib, stdlibDescriptor)
@@ -287,7 +287,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
             AnalyzingUtils.throwExceptionOnErrors(bindingContext)
         }
 
-        val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl, NameProvider.DEFAULT)
+        val symbolTable = SymbolTable(IdSignatureDescriptor(WebManglerDesc), IrFactoryImpl, NameProvider.DEFAULT)
         val context = psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
         val irBuiltIns = context.irBuiltIns
         val irLinker = WebIrLinker(moduleDescriptor, messageLogger, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)

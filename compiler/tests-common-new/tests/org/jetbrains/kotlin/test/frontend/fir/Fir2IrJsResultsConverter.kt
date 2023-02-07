@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.web.WebFactories
 import org.jetbrains.kotlin.ir.backend.web.getSerializedData
 import org.jetbrains.kotlin.ir.backend.web.incrementalDataProvider
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerIr
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebManglerIr
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
@@ -125,7 +125,7 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
         session, scopeSession, firFiles + commonFirFiles,
         languageVersionSettings,
         fir2IrExtensions,
-        JsManglerIr, IrFactoryImpl,
+        WebManglerIr, IrFactoryImpl,
         Fir2IrVisibilityConverter.Default,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
         irGeneratorExtensions,
