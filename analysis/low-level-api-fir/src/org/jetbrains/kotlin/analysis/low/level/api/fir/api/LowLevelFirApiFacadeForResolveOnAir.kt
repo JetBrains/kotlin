@@ -148,7 +148,10 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val dependencyNonLocalDeclaration = findNonLocalParentMaybeSelf(elementToAnalyze)
             ?: return LLFirResolveSessionDepended(
                 originalFirResolveSession,
-                FileTowerProvider(elementToAnalyze.containingKtFile, onAirGetTowerContextForFile(originalFirResolveSession, originalKtFile)),
+                FileTowerProvider(
+                    elementToAnalyze.containingKtFile,
+                    onAirGetTowerContextForFile(originalFirResolveSession, originalKtFile)
+                ),
                 ktToFirMapping = null
             )
 
@@ -246,36 +249,34 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
         val isInBodyReplacement = isInBodyReplacement(nonLocalDeclaration, replacement)
 
-        return firResolveSession.globalComponents.lockProvider.withGlobalLock(originalFirFile) {
-            val copiedFirDeclaration = if (isInBodyReplacement) {
-                when (originalDeclaration) {
-                    is FirSimpleFunction ->
-                        originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirSimpleFunction)
-                    is FirProperty ->
-                        originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirProperty)
-                    is FirRegularClass ->
-                        originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirRegularClass)
-                    is FirTypeAlias -> newDeclarationWithReplacement
-                    else -> error("Not supported type ${originalDeclaration::class.simpleName}")
-                }
-            } else newDeclarationWithReplacement
 
-            val onAirDesignation = FirDesignationWithFile(
-                path = originalDesignation.path,
-                target = copiedFirDeclaration,
-                firFile = originalFirFile
+        val copiedFirDeclaration = if (isInBodyReplacement) {
+            when (originalDeclaration) {
+                is FirSimpleFunction ->
+                    originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirSimpleFunction)
+                is FirProperty ->
+                    originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirProperty)
+                is FirRegularClass ->
+                    originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirRegularClass)
+                is FirTypeAlias -> newDeclarationWithReplacement
+                else -> error("Not supported type ${originalDeclaration::class.simpleName}")
+            }
+        } else newDeclarationWithReplacement
+
+        val onAirDesignation = FirDesignationWithFile(
+            path = originalDesignation.path,
+            target = copiedFirDeclaration,
+            firFile = originalFirFile
+        )
+        val resolvableSession = onAirDesignation.target.llFirResolvableSession
+            ?: error("Expected resolvable session")
+        resolvableSession.moduleComponents.firModuleLazyDeclarationResolver
+            .runLazyDesignatedOnAirResolveToBodyWithoutLock(
+                designation = onAirDesignation,
+                onAirCreatedDeclaration = onAirCreatedDeclaration,
+                towerDataContextCollector = collector,
             )
-            val resolvableSession = onAirDesignation.target.llFirResolvableSession
-                ?: error("Expected resolvable session")
-            resolvableSession.moduleComponents.firModuleLazyDeclarationResolver
-                .runLazyDesignatedOnAirResolveToBodyWithoutLock(
-                    designation = onAirDesignation,
-                    onAirCreatedDeclaration = onAirCreatedDeclaration,
-                    towerDataContextCollector = collector,
-                )
-            copiedFirDeclaration
-        }
-
+        return copiedFirDeclaration
     }
 
     private fun isInBodyReplacement(ktDeclaration: KtDeclaration, replacement: RawFirReplacement): Boolean = when (ktDeclaration) {
