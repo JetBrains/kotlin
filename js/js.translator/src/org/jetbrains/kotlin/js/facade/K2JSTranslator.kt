@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult
 import org.jetbrains.kotlin.js.backend.ast.JsBlock
 import org.jetbrains.kotlin.js.backend.ast.JsName
 import org.jetbrains.kotlin.js.backend.ast.JsProgramFragment
@@ -74,7 +74,7 @@ class K2JSTranslator @JvmOverloads constructor(
         reporter: JsConfig.Reporter,
         files: List<KtFile>,
         mainCallParameters: MainCallParameters,
-        analysisResult: JsAnalysisResult? = null
+        analysisResult: WebAnalysisResult? = null
     ): TranslationResult {
         val units = ArrayList<TranslationUnit>()
         for (file in files) {
@@ -89,7 +89,7 @@ class K2JSTranslator @JvmOverloads constructor(
         reporter: JsConfig.Reporter,
         units: List<TranslationUnit>,
         mainCallParameters: MainCallParameters,
-        analysisResult: JsAnalysisResult? = null,
+        analysisResult: WebAnalysisResult? = null,
         packageMetadata: MutableMap<FqName, ByteArray> = mutableMapOf()
     ): TranslationResult {
         val files = ArrayList<KtFile>()
@@ -112,7 +112,7 @@ class K2JSTranslator @JvmOverloads constructor(
 
     private fun translateWithoutCode(
         files: List<KtFile>,
-        analysisResult: JsAnalysisResult,
+        analysisResult: WebAnalysisResult,
         packageMetadata: MutableMap<FqName, ByteArray>
     ): TranslationResult {
         val bindingTrace = analysisResult.bindingTrace
@@ -152,7 +152,7 @@ class K2JSTranslator @JvmOverloads constructor(
         files: List<KtFile>,
         allUnits: List<TranslationUnit>,
         mainCallParameters: MainCallParameters,
-        analysisResult: JsAnalysisResult,
+        analysisResult: WebAnalysisResult,
         packageMetadata: MutableMap<FqName, ByteArray>
     ): TranslationResult {
         val bindingTrace = analysisResult.bindingTrace

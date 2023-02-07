@@ -6,6 +6,7 @@ plugins {
 dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:frontend"))
+    api(project(":compiler:frontend.web"))
     api(project(":core:compiler.common.js"))
     api(project(":js:js.ast"))
     api(project(":js:js.parser"))

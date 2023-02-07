@@ -42,8 +42,8 @@ import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.web.analyze.AbstractTopDownAnalyzerFacadeForWeb
+import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.WebConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.Properties
@@ -493,12 +493,12 @@ class ModulesStructure(
 
     private val builtInsDep = allDependencies.find { it.isBuiltIns }
 
-    class JsFrontEndResult(val jsAnalysisResult: AnalysisResult, val hasErrors: Boolean) {
+    class JsFrontEndResult(val analysisResult: WebAnalysisResult, val hasErrors: Boolean) {
         val moduleDescriptor: ModuleDescriptor
-            get() = jsAnalysisResult.moduleDescriptor
+            get() = analysisResult.moduleDescriptor
 
         val bindingContext: BindingContext
-            get() = jsAnalysisResult.bindingContext
+            get() = analysisResult.bindingContext
     }
 
     lateinit var jsFrontEndResult: JsFrontEndResult
@@ -506,7 +506,7 @@ class ModulesStructure(
     fun runAnalysis(
         errorPolicy: ErrorTolerancePolicy,
         analyzer: AbstractAnalyzerWithCompilerReport,
-        analyzerFacade: AbstractTopDownAnalyzerFacadeForJS
+        analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb
     ) {
         require(mainModule is MainModule.SourceFiles)
         val files = mainModule.files
@@ -533,7 +533,7 @@ class ModulesStructure(
         }
 
         var hasErrors = false
-        if (analyzer.hasErrors() || analysisResult !is JsAnalysisResult) {
+        if (analyzer.hasErrors() || analysisResult !is WebAnalysisResult) {
             if (!errorPolicy.allowErrors)
                 throw CompilationErrorException()
             else hasErrors = true
@@ -541,7 +541,7 @@ class ModulesStructure(
 
         hasErrors = analyzerFacade.checkForErrors(files, analysisResult.bindingContext, errorPolicy) || hasErrors
 
-        jsFrontEndResult = JsFrontEndResult(analysisResult, hasErrors)
+        jsFrontEndResult = JsFrontEndResult(analysisResult as WebAnalysisResult, hasErrors)
     }
 
     private val languageVersionSettings: LanguageVersionSettings = compilerConfiguration.languageVersionSettings
