@@ -37,6 +37,8 @@ sealed class FirMemberDeclaration : FirDeclaration(), FirTypeParameterRefsOwner 
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract override fun replaceAttributes(newAttributes: FirDeclarationAttributes)
+
     abstract fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirMemberDeclaration

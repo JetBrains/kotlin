@@ -138,7 +138,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceDelegatedConstructor(newDelegatedConstructor: FirDelegatedConstructorCall?) {
-        error("Delegated constructor cannot be replaced for FirJavaConstructor")
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::delegatedConstructor)
     }
 
     override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?) {}
@@ -148,17 +148,25 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        error("Context receivers cannot be replaced for FirJavaConstructor")
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::contextReceivers)
+    }
+
+    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::attributes)
+    }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::status)
+    }
+
+    override fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?) {
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::dispatchReceiverType)
     }
 
     override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?) {}
 
     override fun replaceBody(newBody: FirBlock?) {
-        error("Body cannot be replaced for FirJavaConstructor")
-    }
-
-    override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        status = newStatus
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::body)
     }
 }
 

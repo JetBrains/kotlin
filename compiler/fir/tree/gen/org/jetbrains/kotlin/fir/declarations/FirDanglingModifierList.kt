@@ -38,5 +38,7 @@ abstract class FirDanglingModifierList : FirDeclaration(), FirDiagnosticHolder {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract override fun replaceAttributes(newAttributes: FirDeclarationAttributes)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirDanglingModifierList
 }

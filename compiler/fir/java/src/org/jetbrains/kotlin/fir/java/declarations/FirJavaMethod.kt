@@ -140,7 +140,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
-        throw AssertionError("Mutating annotations for FirJava* is not supported")
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::annotations)
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSimpleFunction {
@@ -181,12 +181,20 @@ class FirJavaMethod @FirImplementationDetail constructor(
     override fun replaceContractDescription(newContractDescription: FirContractDescription) {
     }
 
-    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
-        error("Body cannot be replaced for FirJavaMethod")
+    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::attributes)
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        status = newStatus
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::status)
+    }
+
+    override fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?) {
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::dispatchReceiverType)
+    }
+
+    override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
+        thrownFieldInJavaDeclarationCannotBeReplacedError(::body)
     }
 }
 

@@ -70,6 +70,8 @@ internal class FirTypeParameterImpl(
         resolveState = newResolveState
     }
 
+    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {}
+
     override fun replaceBounds(newBounds: List<FirTypeRef>) {
         bounds.clear()
         bounds.addAll(newBounds)

@@ -10,8 +10,15 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import kotlin.reflect.KProperty
 
 internal fun javaOrigin(isFromSource: Boolean): FirDeclarationOrigin.Java {
     return if (isFromSource) FirDeclarationOrigin.Java.Source else FirDeclarationOrigin.Java.Library
+}
+
+
+internal fun FirDeclaration.thrownFieldInJavaDeclarationCannotBeReplacedError(field: KProperty<*>): Nothing {
+    error("${field.name} cannot be replaced for ${this::class.simpleName}")
 }

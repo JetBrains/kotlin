@@ -45,6 +45,8 @@ abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
 
     abstract override fun replaceResolveState(newResolveState: FirResolveState)
 
+    abstract override fun replaceAttributes(newAttributes: FirDeclarationAttributes)
+
     abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)

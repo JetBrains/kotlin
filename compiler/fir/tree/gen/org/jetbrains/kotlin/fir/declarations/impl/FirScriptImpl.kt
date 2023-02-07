@@ -81,4 +81,6 @@ internal class FirScriptImpl(
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
     }
+
+    override fun replaceAttributes(newAttributes: FirDeclarationAttributes) {}
 }
