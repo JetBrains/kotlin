@@ -111,7 +111,7 @@ class FirStatusResolver(
         val statuses = overriddenStatuses
             ?: getOverriddenProperties(property, containingClass).map { it.status as FirResolvedDeclarationStatus }
 
-        val status = property.applyExtensionTransformers { transformStatus(it, property, containingClass, isLocal) }
+        val status = property.applyExtensionTransformers { transformStatus(it, property, containingClass?.symbol, isLocal) }
         return resolveStatus(property, status, containingClass, null, isLocal, statuses)
     }
 
@@ -142,7 +142,9 @@ class FirStatusResolver(
     }
 
     fun resolveStatus(function: FirSimpleFunction, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        val status = function.applyExtensionTransformers { transformStatus(it, function, containingClass, isLocal) }
+        val status = function.applyExtensionTransformers {
+            transformStatus(it, function, containingClass?.symbol, isLocal)
+        }
         val overriddenStatuses = getOverriddenStatuses(function, containingClass)
         return resolveStatus(function, status, containingClass, null, isLocal, overriddenStatuses)
     }
@@ -153,7 +155,7 @@ class FirStatusResolver(
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
         val status = when (firClass) {
-            is FirRegularClass -> firClass.applyExtensionTransformers { transformStatus(it, firClass, containingClass, isLocal) }
+            is FirRegularClass -> firClass.applyExtensionTransformers { transformStatus(it, firClass, containingClass?.symbol, isLocal) }
             else -> firClass.status
         }
         return resolveStatus(firClass, status, containingClass, null, isLocal, emptyList())
@@ -164,7 +166,9 @@ class FirStatusResolver(
         containingClass: FirClass?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        val status = typeAlias.applyExtensionTransformers { transformStatus(it, typeAlias, containingClass, isLocal) }
+        val status = typeAlias.applyExtensionTransformers {
+            transformStatus(it, typeAlias, containingClass?.symbol, isLocal)
+        }
         return resolveStatus(typeAlias, status, containingClass, null, isLocal, emptyList())
     }
 
@@ -176,13 +180,15 @@ class FirStatusResolver(
         overriddenStatuses: List<FirResolvedDeclarationStatus> = emptyList(),
     ): FirResolvedDeclarationStatus {
         val status = propertyAccessor.applyExtensionTransformers {
-            transformStatus(it, propertyAccessor, containingClass, containingProperty, isLocal)
+            transformStatus(it, propertyAccessor, containingClass?.symbol, containingProperty, isLocal)
         }
         return resolveStatus(propertyAccessor, status, containingClass, containingProperty, isLocal, overriddenStatuses)
     }
 
     fun resolveStatus(constructor: FirConstructor, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        val status = constructor.applyExtensionTransformers { transformStatus(it, constructor, containingClass, isLocal) }
+        val status = constructor.applyExtensionTransformers {
+            transformStatus(it, constructor, containingClass?.symbol, isLocal)
+        }
         return resolveStatus(constructor, status, containingClass, null, isLocal, emptyList())
     }
 
@@ -195,12 +201,16 @@ class FirStatusResolver(
         containingClass: FirClass?,
         isLocal: Boolean
     ): FirResolvedDeclarationStatus {
-        val status = backingField.applyExtensionTransformers { transformStatus(it, backingField, containingClass, isLocal) }
+        val status = backingField.applyExtensionTransformers {
+            transformStatus(it, backingField, containingClass?.symbol, isLocal)
+        }
         return resolveStatus(backingField, status, containingClass, null, isLocal, emptyList())
     }
 
     fun resolveStatus(enumEntry: FirEnumEntry, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        val status = enumEntry.applyExtensionTransformers { transformStatus(it, enumEntry, containingClass, isLocal) }
+        val status = enumEntry.applyExtensionTransformers {
+            transformStatus(it, enumEntry, containingClass?.symbol, isLocal)
+        }
         return resolveStatus(enumEntry, status, containingClass, null, isLocal, emptyList())
     }
 
