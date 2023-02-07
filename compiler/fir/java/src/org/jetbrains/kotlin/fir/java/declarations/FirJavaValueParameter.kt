@@ -196,6 +196,10 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
         error("Body cannot be replaced for FirJavaValueParameter")
     }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        error("Status cannot be replaced for FirJavaValueParameter")
+    }
 }
 
 @FirBuilderDsl

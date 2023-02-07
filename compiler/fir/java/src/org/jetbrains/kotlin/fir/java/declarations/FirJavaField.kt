@@ -166,6 +166,10 @@ class FirJavaField @FirImplementationDetail constructor(
     override fun replaceContextReceivers(newContextReceivers: List<FirContextReceiver>) {
         error("Body cannot be replaced for FirJavaField")
     }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
 }
 
 @FirBuilderDsl

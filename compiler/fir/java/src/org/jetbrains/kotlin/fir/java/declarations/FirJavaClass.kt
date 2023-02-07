@@ -144,6 +144,10 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         typeParameters.transformInplace(transformer, data)
         return this
     }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
 }
 
 @FirBuilderDsl
