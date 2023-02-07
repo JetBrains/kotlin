@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.containsErrorCode
 
-class JsIrLinker(
+class WebIrLinker(
     private val currentModule: ModuleDescriptor?, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable,
     partialLinkageEnabled: Boolean,
     override val translationPluginContext: TranslationPluginContext?,

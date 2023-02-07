@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.web.KotlinFileSerializedData
 import org.jetbrains.kotlin.ir.backend.web.generateModuleFragmentWithPlugins
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrLinker
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
@@ -70,7 +70,7 @@ fun generateIrForKlibSerialization(
     val irBuiltIns = psi2IrContext.irBuiltIns
 
     val feContext = psi2IrContext.run {
-        JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
+        WebIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
     val stubGenerator = DeclarationStubGeneratorImpl(
         psi2IrContext.moduleDescriptor,
@@ -78,7 +78,7 @@ fun generateIrForKlibSerialization(
         irBuiltIns,
         DescriptorByIdSignatureFinderImpl(psi2IrContext.moduleDescriptor, JsManglerDesc),
     )
-    val irLinker = JsIrLinker(
+    val irLinker = WebIrLinker(
         psi2IrContext.moduleDescriptor,
         messageLogger,
         psi2IrContext.irBuiltIns,

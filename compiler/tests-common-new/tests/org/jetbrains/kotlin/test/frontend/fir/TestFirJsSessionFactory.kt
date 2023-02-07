@@ -15,9 +15,8 @@ import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.web.jsResolveLibraries
+import org.jetbrains.kotlin.ir.backend.web.webResolveLibraries
 import org.jetbrains.kotlin.ir.backend.web.resolverLogger
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.DependencyRelation
@@ -39,7 +38,7 @@ object TestFirJsSessionFactory {
     ): FirSession {
         val logger = configuration.resolverLogger
         val libraries = getAllJsDependenciesPaths(module, testServices)
-        val resolvedLibraries = jsResolveLibraries(libraries, logger).getFullResolvedList()
+        val resolvedLibraries = webResolveLibraries(libraries, logger).getFullResolvedList()
 
         return FirJsSessionFactory.createJsLibrarySession(
             mainModuleName,
@@ -75,7 +74,7 @@ fun resolveJsLibraries(
 ): List<KotlinResolvedLibrary> {
     val paths = getAllJsDependenciesPaths(module, testServices)
     val logger = configuration.resolverLogger
-    return jsResolveLibraries(paths, logger).getFullResolvedList()
+    return webResolveLibraries(paths, logger).getFullResolvedList()
 }
 
 fun getAllJsDependenciesPaths(module: TestModule, testServices: TestServices): List<String> {

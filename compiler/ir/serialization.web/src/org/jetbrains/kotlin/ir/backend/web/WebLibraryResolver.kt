@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolver
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.util.Logger
 
-class JsLibraryResolver(
+class WebLibraryResolver(
     repositories: List<String>,
     directLibs: List<String>,
     distributionKlib: String?,
@@ -36,20 +36,20 @@ class JsLibraryResolver(
 }
 
 // TODO: This is a temporary set of library resolver policies for js compiler.
-fun jsResolveLibraries(libraries: Collection<String>, logger: Logger): KotlinLibraryResolveResult =
-    jsResolveLibrariesWithoutDependencies(
+fun webResolveLibraries(libraries: Collection<String>, logger: Logger): KotlinLibraryResolveResult =
+    webResolveLibrariesWithoutDependencies(
         libraries,
         logger
     ).resolveWithDependencies()
 
-fun jsResolveLibrariesWithoutDependencies(
+fun webResolveLibrariesWithoutDependencies(
     libraries: Collection<String>,
     logger: Logger
-): JsResolution {
+): WebResolution {
     val unresolvedLibraries = libraries.map { UnresolvedLibrary(it, null) }
     val libraryAbsolutePaths = libraries.map { File(it).absolutePath }
     // Configure the resolver to only work with absolute paths for now.
-    val libraryResolver = JsLibraryResolver(
+    val libraryResolver = WebLibraryResolver(
         repositories = emptyList(),
         directLibs = libraryAbsolutePaths,
         distributionKlib = null,
@@ -58,7 +58,7 @@ fun jsResolveLibrariesWithoutDependencies(
         logger = logger
     ).libraryResolver()
 
-    return JsResolution(
+    return WebResolution(
         libraryResolver,
         libraryResolver.resolveWithoutDependencies(
             unresolvedLibraries = unresolvedLibraries,
@@ -69,7 +69,7 @@ fun jsResolveLibrariesWithoutDependencies(
     )
 }
 
-class JsResolution(
+class WebResolution(
     private val libraryResolver: KotlinLibraryResolver<KotlinLibrary>,
     val libraries: List<KotlinLibrary>
 ) {

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.incremental.withJsIC
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrLinker
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -470,7 +470,7 @@ class GenerateIrRuntime {
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl)
         val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
 
-        val irLinker = JsIrLinker(
+        val irLinker = WebIrLinker(
             psi2IrContext.moduleDescriptor,
             messageLogger,
             psi2IrContext.irBuiltIns,
@@ -523,7 +523,7 @@ class GenerateIrRuntime {
         val module: IrModuleFragment,
         val symbolTable: SymbolTable,
         val irBuiltIns: IrBuiltIns,
-        val linker: JsIrLinker
+        val linker: WebIrLinker
     )
 
 
@@ -553,7 +553,7 @@ class GenerateIrRuntime {
         val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
-        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
+        val jsLinker = WebIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
 
         val moduleFragment = jsLinker.deserializeFullModule(moduleDescriptor, moduleDescriptor.kotlinLibrary)
         jsLinker.init(null, emptyList())
@@ -578,7 +578,7 @@ class GenerateIrRuntime {
         val typeTranslator = TypeTranslatorImpl(symbolTable, languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
 
-        val jsLinker = JsIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
+        val jsLinker = WebIrLinker(moduleDescriptor, IrMessageLogger.None, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
 
         val moduleFragment = jsLinker.deserializeFullModule(moduleDescriptor, moduleDescriptor.kotlinLibrary)
         // Create stubs
@@ -596,7 +596,7 @@ class GenerateIrRuntime {
 
 
     private fun doBackEnd(
-        module: IrModuleFragment, symbolTable: SymbolTable, irBuiltIns: IrBuiltIns, jsLinker: JsIrLinker
+        module: IrModuleFragment, symbolTable: SymbolTable, irBuiltIns: IrBuiltIns, jsLinker: WebIrLinker
     ): CompilerResult {
         val context = JsIrBackendContext(
             module.descriptor,

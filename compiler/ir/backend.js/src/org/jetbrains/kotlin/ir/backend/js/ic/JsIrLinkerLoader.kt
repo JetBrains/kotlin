@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.web.FunctionTypeInterfacePackages
-import org.jetbrains.kotlin.ir.backend.web.JsFactories
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.web.WebFactories
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrLinker
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 internal data class LoadedJsIr(
     val loadedFragments: Map<KotlinLibraryFile, IrModuleFragment>,
-    private val linker: JsIrLinker,
+    private val linker: WebIrLinker,
     private val functionTypeInterfacePackages: FunctionTypeInterfacePackages
 ) {
     private val signatureProvidersImpl = hashMapOf<KotlinLibraryFile, List<FileSignatureProvider>>()
@@ -86,7 +86,7 @@ internal class JsIrLinkerLoader(
         val symbolTable: SymbolTable,
         val typeTranslator: TypeTranslatorImpl,
         val irBuiltIns: IrBuiltInsOverDescriptors,
-        val linker: JsIrLinker
+        val linker: WebIrLinker
     ) {
         val functionTypeInterfacePackages = FunctionTypeInterfacePackages()
 
@@ -109,7 +109,7 @@ internal class JsIrLinkerLoader(
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
         val partialLinkageEnabled = compilerConfiguration[WebConfigurationKeys.PARTIAL_LINKAGE] ?: false
-        val linker = JsIrLinker(
+        val linker = WebIrLinker(
             currentModule = null,
             messageLogger = compilerConfiguration.irMessageLogger,
             builtIns = irBuiltIns,
@@ -134,7 +134,7 @@ internal class JsIrLinkerLoader(
             val isBuiltIns = current.unresolvedDependencies.isEmpty()
 
             val lookupTracker = LookupTracker.DO_NOTHING
-            val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+            val md = WebFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
                 current,
                 compilerConfiguration.languageVersionSettings,
                 LockBasedStorageManager.NO_LOCKS,

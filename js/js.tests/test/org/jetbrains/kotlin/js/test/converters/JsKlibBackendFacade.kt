@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.js.test.converters
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.web.JsFactories
-import org.jetbrains.kotlin.ir.backend.web.jsResolveLibraries
+import org.jetbrains.kotlin.ir.backend.web.WebFactories
+import org.jetbrains.kotlin.ir.backend.web.webResolveLibraries
 import org.jetbrains.kotlin.ir.backend.web.resolverLogger
 import org.jetbrains.kotlin.ir.backend.web.serializeModuleIntoKlib
 import org.jetbrains.kotlin.ir.util.irMessageLogger
@@ -69,12 +69,12 @@ class JsKlibBackendFacade(
         }
 
         val dependencies = JsEnvironmentConfigurator.getAllRecursiveDependenciesFor(module, testServices).toList()
-        val lib = jsResolveLibraries(
+        val lib = webResolveLibraries(
             dependencies.map { testServices.jsLibraryProvider.getPathByDescriptor(it) } + listOf(outputFile),
             configuration.resolverLogger
         ).getFullResolvedList().last().library
 
-        val moduleDescriptor = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+        val moduleDescriptor = WebFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
             lib,
             configuration.languageVersionSettings,
             LockBasedStorageManager("ModulesStructure"),

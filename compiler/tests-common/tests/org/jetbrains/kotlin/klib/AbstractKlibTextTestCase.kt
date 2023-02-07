@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.AbstractIrGeneratorTestCase
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
-import org.jetbrains.kotlin.ir.backend.web.JsFactories
+import org.jetbrains.kotlin.ir.backend.web.WebFactories
 import org.jetbrains.kotlin.ir.backend.web.KotlinFileSerializedData
-import org.jetbrains.kotlin.ir.backend.web.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.web.webResolveLibraries
+import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.WebIrLinker
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsIrModuleSerializer
 import org.jetbrains.kotlin.ir.backend.web.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -224,7 +224,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         val typeTranslator =
             TypeTranslatorImpl(symbolTable, myEnvironment.configuration.languageVersionSettings, testDescriptor)
         val irBuiltIns = IrBuiltInsOverDescriptors(testDescriptor.builtIns, typeTranslator, symbolTable)
-        val irLinker = JsIrLinker(null, IrMessageLogger.None, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
+        val irLinker = WebIrLinker(null, IrMessageLogger.None, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
         irLinker.deserializeIrModuleHeader(stdlibDescriptor, stdlib)
         val testModule = irLinker.deserializeIrModuleHeader(testDescriptor, klib, { DeserializationStrategy.ALL })
         irLinker.init(null, emptyList())
@@ -234,7 +234,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
     }
 
     private fun loadKlibFromPath(paths: List<String>): List<KotlinLibrary> {
-        val result = jsResolveLibraries(paths, DummyLogger)
+        val result = webResolveLibraries(paths, DummyLogger)
         return result.getFullList(TopologicalLibraryOrder)
     }
 
@@ -246,7 +246,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
 
     fun getModuleDescriptor(current: KotlinLibrary, builtins: ModuleDescriptorImpl? = null): ModuleDescriptorImpl {
         val lookupTracker = LookupTracker.DO_NOTHING
-        val md = JsFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
+        val md = WebFactories.DefaultDeserializedDescriptorFactory.createDescriptorOptionalBuiltIns(
             current,
             myEnvironment.configuration.languageVersionSettings,
             LockBasedStorageManager("ModulesStructure"),
@@ -290,7 +290,7 @@ abstract class AbstractKlibTextTestCase : CodegenTestCase() {
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImpl, NameProvider.DEFAULT)
         val context = psi2Ir.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
         val irBuiltIns = context.irBuiltIns
-        val irLinker = JsIrLinker(moduleDescriptor, messageLogger, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
+        val irLinker = WebIrLinker(moduleDescriptor, messageLogger, irBuiltIns, symbolTable, partialLinkageEnabled = false, null)
         irLinker.deserializeIrModuleHeader(stdlibDescriptor, stdlib)
 
         return psi2Ir.generateModuleFragment(context, ktFiles, listOf(irLinker), emptyList(), expectActualSymbols) to bindingContext
