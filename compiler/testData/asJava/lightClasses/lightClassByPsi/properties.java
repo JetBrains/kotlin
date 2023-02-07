@@ -96,6 +96,8 @@ D'E"F\G$H */;
 
   private static final int f1;
 
+  private static final int prop3;
+
   private static int prop7;
 
   protected java.lang.String protectedLateinitVar;
