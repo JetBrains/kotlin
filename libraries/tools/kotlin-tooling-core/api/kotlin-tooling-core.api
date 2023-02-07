@@ -98,12 +98,14 @@ public abstract interface class org/jetbrains/kotlin/tooling/core/ExtrasProperty
 public final class org/jetbrains/kotlin/tooling/core/ExtrasPropertyKt {
 	public static final fun extrasFactoryProperty (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lkotlin/jvm/functions/Function0;)Lorg/jetbrains/kotlin/tooling/core/ExtrasFactoryProperty;
 	public static final fun extrasLazyProperty (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/tooling/core/ExtrasLazyProperty;
+	public static final fun extrasNullableLazyProperty (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/tooling/core/NullableExtrasLazyProperty;
 	public static final fun extrasReadProperty (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Lorg/jetbrains/kotlin/tooling/core/ExtrasReadOnlyProperty;
 	public static final fun extrasReadWriteProperty (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Lorg/jetbrains/kotlin/tooling/core/ExtrasReadWriteProperty;
 	public static final fun factoryProperty (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lkotlin/jvm/functions/Function0;)Lorg/jetbrains/kotlin/tooling/core/ExtrasFactoryProperty;
 	public static final fun getReadProperty (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Lorg/jetbrains/kotlin/tooling/core/ExtrasReadOnlyProperty;
 	public static final fun getReadWriteProperty (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;)Lorg/jetbrains/kotlin/tooling/core/ExtrasReadWriteProperty;
 	public static final fun lazyProperty (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/tooling/core/ExtrasLazyProperty;
+	public static final fun nullableLazyProperty (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/tooling/core/NullableExtrasLazyProperty;
 }
 
 public abstract interface class org/jetbrains/kotlin/tooling/core/ExtrasReadOnlyProperty : kotlin/properties/ReadOnlyProperty, org/jetbrains/kotlin/tooling/core/ExtrasProperty {
@@ -221,6 +223,12 @@ public abstract interface class org/jetbrains/kotlin/tooling/core/NotNullExtrasR
 	public fun getValue (Lorg/jetbrains/kotlin/tooling/core/HasMutableExtras;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 	public synthetic fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
 	public fun setValue (Lorg/jetbrains/kotlin/tooling/core/HasMutableExtras;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/tooling/core/NullableExtrasLazyProperty : kotlin/properties/ReadOnlyProperty, org/jetbrains/kotlin/tooling/core/ExtrasProperty {
+	public abstract fun getFactory ()Lkotlin/jvm/functions/Function1;
+	public synthetic fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
+	public fun getValue (Lorg/jetbrains/kotlin/tooling/core/HasMutableExtras;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 }
 
 public final class org/jetbrains/kotlin/tooling/core/TypeUtils {
