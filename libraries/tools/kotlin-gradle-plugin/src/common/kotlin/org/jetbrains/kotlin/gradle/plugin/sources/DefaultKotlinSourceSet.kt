@@ -9,16 +9,13 @@ package org.jetbrains.kotlin.gradle.plugin.sources
 
 import org.gradle.api.Action
 import org.gradle.api.Project
-import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.SourceDirectorySet
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 import org.jetbrains.kotlin.tooling.core.closure
@@ -124,13 +121,6 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
         explicitlyAddedCustomSourceFilesExtensions.addAll(extensions)
     }
 
-    /**
-     * Returns [GranularMetadataTransformation] for all requested compile dependencies
-     * scopes: API, IMPLEMENTATION, COMPILE_ONLY; See [KotlinDependencyScope.compileScopes]
-     */
-    internal val compileDependenciesTransformation: GranularMetadataTransformation? by lazy {
-        createAndConfigureDependencyTransformationForSourceSet()
-    }
 
     private val _requiresVisibilityOf = mutableSetOf<KotlinSourceSet>()
 
@@ -163,7 +153,7 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     internal fun getDependenciesTransformation(): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =
-            compileDependenciesTransformation.metadataDependencyResolutionsOrEmpty
+            metadataTransformation.metadataDependencyResolutionsOrEmpty
                 .associateBy { ModuleIds.fromComponent(project, it.dependency) }
 
         return metadataDependencyResolutionByModule.mapNotNull { (groupAndName, resolution) ->
@@ -192,7 +182,6 @@ abstract class DefaultKotlinSourceSet @Inject constructor(
 
     //endregion
 }
-
 
 internal val defaultSourceSetLanguageSettingsChecker =
     FragmentConsistencyChecker<KotlinSourceSet>(
@@ -229,77 +218,4 @@ val Iterable<KotlinSourceSet>.withDependsOnClosure: Set<KotlinSourceSet>
 
 fun KotlinMultiplatformExtension.findSourceSetsDependingOn(sourceSet: KotlinSourceSet): Set<KotlinSourceSet> {
     return sourceSet.closure { seedSourceSet -> sourceSets.filter { otherSourceSet -> seedSourceSet in otherSourceSet.dependsOn } }
-}
-
-private fun DefaultKotlinSourceSet.createAndConfigureDependencyTransformationForSourceSet(): GranularMetadataTransformation? {
-    // Create only for source sets in multiplatform plugin
-    project.multiplatformExtensionOrNull ?: return null
-
-    val parentSourceSetVisibilityProvider = ParentSourceSetVisibilityProvider { componentIdentifier ->
-        dependsOnClosureWithInterCompilationDependencies(this).filterIsInstance<DefaultKotlinSourceSet>()
-            .mapNotNull { it.compileDependenciesTransformation }
-            .flatMap { it.visibleSourceSetsByComponentId[componentIdentifier].orEmpty() }
-            .toSet()
-    }
-
-    val granularMetadataTransformation = GranularMetadataTransformation(
-        params = GranularMetadataTransformation.Params(project, this),
-        parentSourceSetVisibilityProvider = parentSourceSetVisibilityProvider
-    )
-
-    /**
-     *
-     * This method is only intended to be called on deprecated DependenciesMetadata configurations to ensure
-     * correct behaviour in import.
-     *
-     * KGP based dependency resolution is therefore unaffected.
-     *
-     * Ensure that the [configuration] excludes the dependencies that are classified by this [GranularMetadataTransformation] as
-     * [MetadataDependencyResolution.Exclude], and uses exactly the same versions as were resolved for the requested
-     * dependencies during the transformation.
-     */
-    fun applyTransformationToLegacyDependenciesMetadataConfiguration(
-        configuration: Configuration,
-        transformation: GranularMetadataTransformation
-    ) {
-        // Run this action immediately before the configuration first takes part in dependency resolution:
-        configuration.withDependencies {
-            val (unrequested, requested) = transformation.metadataDependencyResolutions
-                .partition { it is MetadataDependencyResolution.Exclude }
-
-            unrequested.forEach {
-                val (group, name) = it.projectDependency(project)?.run {
-                    /** Note: the project dependency notation here should be exactly this, group:name,
-                     * not from [ModuleIds.fromProjectPathDependency], as `exclude` checks it against the project's group:name  */
-                    ModuleDependencyIdentifier(group.toString(), name)
-                } ?: ModuleIds.fromComponent(project, it.dependency)
-                configuration.exclude(mapOf("group" to group, "module" to name))
-            }
-
-            requested.filter { it.dependency.currentBuildProjectIdOrNull == null }.forEach {
-                val (group, name) = ModuleIds.fromComponent(project, it.dependency)
-                val notation = listOfNotNull(group.orEmpty(), name, it.dependency.moduleVersion?.version).joinToString(":")
-                configuration.resolutionStrategy.force(notation)
-            }
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    /*
-    Older IDEs still rely on resolving the metadata configurations explicitly.
-    Dependencies will be coming from extending the newer 'resolvableMetadataConfiguration'.
-
-    the intransitiveMetadataConfigurationName will not extend this mechanism, since it only
-    relies on dependencies being added explicitly by the Kotlin Gradle Plugin
-    */
-    listOf(
-        apiMetadataConfigurationName,
-        implementationMetadataConfigurationName,
-        compileOnlyMetadataConfigurationName
-    ).forEach { configurationName ->
-        val configuration = project.configurations.getByName(configurationName)
-        applyTransformationToLegacyDependenciesMetadataConfiguration(configuration, granularMetadataTransformation)
-    }
-
-    return granularMetadataTransformation
 }
