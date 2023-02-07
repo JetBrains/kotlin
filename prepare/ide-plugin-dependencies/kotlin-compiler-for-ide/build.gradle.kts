@@ -17,7 +17,7 @@ val excludedCompilerModules = listOf(
     ":compiler:backend.js",
     ":compiler:backend.wasm",
     ":js:js.dce",
-    ":compiler:ir.serialization.js",
+    ":compiler:ir.serialization.web",
     ":compiler:incremental-compilation-impl",
     ":compiler:fir:raw-fir:light-tree2fir"
 )

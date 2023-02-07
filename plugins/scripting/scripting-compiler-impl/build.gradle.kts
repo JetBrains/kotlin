@@ -12,7 +12,7 @@ dependencies {
     compileOnly(project(":compiler:psi"))
     compileOnly(project(":compiler:plugin-api"))
     compileOnly(project(":compiler:cli"))
-    compileOnly(project(":compiler:ir.serialization.js"))
+    compileOnly(project(":compiler:ir.serialization.web"))
     api(project(":kotlin-scripting-common"))
     api(project(":kotlin-scripting-jvm"))
     api(kotlinStdlib())
