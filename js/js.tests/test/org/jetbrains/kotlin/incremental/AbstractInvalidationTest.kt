@@ -62,6 +62,8 @@ abstract class AbstractInvalidationTest(
         private val TEST_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.\\w\\w$")
 
         private val JS_MODULE_KIND = ModuleKind.COMMON_JS
+
+        private const val SOURCE_MAPPING_URL_PREFIX = "//# sourceMappingURL="
     }
 
     override fun createEnvironment(): KotlinCoreEnvironment {
@@ -114,6 +116,7 @@ abstract class AbstractInvalidationTest(
         copy.put(JSConfigurationKeys.GENERATE_DTS, true)
         copy.put(JSConfigurationKeys.MODULE_KIND, JS_MODULE_KIND)
         copy.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
+        copy.put(JSConfigurationKeys.SOURCE_MAP, true)
 
         copy.languageVersionSettings = with(LanguageVersionSettingsBuilder()) {
             language.forEach {
@@ -243,12 +246,16 @@ abstract class AbstractInvalidationTest(
             }
         }
 
-
         private fun verifyJsCode(stepId: Int, mainModuleName: String, jsOutput: CompilationOutputs) {
             val compiledJsFiles = jsOutput.writeAll(jsDir, mainModuleName, true, mainModuleName, JS_MODULE_KIND).filter {
                 it.extension == "js"
             }
             for (jsCodeFile in compiledJsFiles) {
+                val sourceMappingUrlLine = jsCodeFile.readLines().singleOrNull { it.startsWith(SOURCE_MAPPING_URL_PREFIX) }
+                JUnit4Assertions.assertEquals("$SOURCE_MAPPING_URL_PREFIX${jsCodeFile.name}.map", sourceMappingUrlLine) {
+                    "Mismatched source map url at step $stepId"
+                }
+
                 jsCodeFile.writeAsJsModule(jsCodeFile.readText(), "./${jsCodeFile.name}")
             }
 

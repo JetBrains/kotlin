@@ -96,19 +96,18 @@ class JsMultiModuleCache(private val moduleArtifacts: List<ModuleArtifact>) {
     }
 
     fun fetchCompiledJsCode(artifact: ModuleArtifact) = artifact.artifactsDir?.let { cacheDir ->
-        val jsCodeFilePath = File(cacheDir, CACHED_MODULE_JS).ifExists { absolutePath }
-        val sourceMapFilePath = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { absolutePath }
-        val tsDefinitionsFilePath = File(cacheDir, CACHED_MODULE_D_TS).ifExists { absolutePath }
-        jsCodeFilePath?.let { CompilationOutputsCached(it, sourceMapFilePath, tsDefinitionsFilePath) }
+        val jsCodeFile = File(cacheDir, CACHED_MODULE_JS).ifExists { this }
+        val sourceMapFile = File(cacheDir, CACHED_MODULE_JS_MAP).ifExists { this }
+        val tsDefinitionsFile = File(cacheDir, CACHED_MODULE_D_TS).ifExists { this }
+        jsCodeFile?.let { CompilationOutputsCached(it, sourceMapFile, tsDefinitionsFile) }
     }
 
     fun commitCompiledJsCode(artifact: ModuleArtifact, compilationOutputs: CompilationOutputsBuilt): CompilationOutputs =
         artifact.artifactsDir?.let { cacheDir ->
             val jsCodeFile = File(cacheDir, CACHED_MODULE_JS)
             val jsMapFile = File(cacheDir, CACHED_MODULE_JS_MAP)
-            compilationOutputs.writeJsCode(jsCodeFile, jsMapFile)
             File(cacheDir, CACHED_MODULE_D_TS).writeIfNotNull(compilationOutputs.tsDefinitions?.raw)
-            CompilationOutputsBuiltForCache(jsCodeFile.absolutePath, jsMapFile.absolutePath, compilationOutputs)
+            compilationOutputs.writeJsCodeIntoModuleCache(jsCodeFile, jsMapFile)
         } ?: compilationOutputs
 
     fun loadProgramHeadersFromCache(): List<CachedModuleInfo> {
