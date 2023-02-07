@@ -187,4 +187,8 @@ open class FirBackingFieldImpl @FirImplementationDetail constructor(
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
         annotations = newAnnotations.toMutableOrEmpty()
     }
+
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
 }

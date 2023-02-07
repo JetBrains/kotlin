@@ -47,6 +47,8 @@ sealed class FirCallableDeclaration : FirMemberDeclaration() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+
     abstract fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?)

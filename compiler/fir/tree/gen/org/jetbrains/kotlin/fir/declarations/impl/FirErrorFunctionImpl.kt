@@ -124,6 +124,10 @@ internal class FirErrorFunctionImpl(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
+
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
