@@ -10,14 +10,14 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.categoryByName
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
-import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.jetbrains.kotlin.gradle.plugin.sources.*
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.plugin.sources.disambiguateName
-import org.jetbrains.kotlin.gradle.plugin.sources.getVisibleSourceSetsFromAssociateCompilations
+import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.plugin.usageByName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.utils.getOrCreate
@@ -71,14 +71,23 @@ internal val InternalKotlinSourceSet.resolvableMetadataConfiguration: Configurat
     configuration
 }
 
-internal val Project.allCompileMetadataConfiguration get(): Configuration =
-    configurations.getOrCreate("allSourceSetsCompileDependenciesMetadata", invokeWhenCreated = {
-        it.markResolvable()
+/**
+ * Configuration containing all compile dependencies from *all* source sets.
+ * This configuration is used to provide a dependency 'consistency scope' for
+ * the [InternalKotlinSourceSet.resolvableMetadataConfiguration]
+ */
+private val Project.allCompileMetadataConfiguration
+    get(): Configuration = configurations.getOrCreate("allSourceSetsCompileDependenciesMetadata", invokeWhenCreated = { configuration ->
+        configuration.markResolvable()
+        configuration.usesPlatformOf(multiplatformExtension.metadata())
+        configuration.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
+        configuration.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
 
-        val metadataTarget = multiplatformExtension.metadata()
-        it.usesPlatformOf(metadataTarget)
-        it.attributes.attribute(Usage.USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-        it.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+        kotlinExtension.sourceSets.all { sourceSet ->
+            configuration.extendsFrom(configurations.getByName(sourceSet.apiConfigurationName))
+            configuration.extendsFrom(configurations.getByName(sourceSet.implementationConfigurationName))
+            configuration.extendsFrom(configurations.getByName(sourceSet.compileOnlyConfigurationName))
+        }
     })
 
 private inline fun <reified T> Project.listProvider(noinline provider: () -> List<T>): Provider<List<T>> {

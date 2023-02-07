@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
-internal const val ALL_COMPILE_METADATA_CONFIGURATION_NAME = "allSourceSetsCompileDependenciesMetadata"
 
 internal val Project.isKotlinGranularMetadataEnabled: Boolean
     get() = project.pm20ExtensionOrNull != null || with(PropertiesProvider(this)) {
@@ -81,7 +80,6 @@ class KotlinMetadataTargetConfigurator :
                 compileKotlinTaskProvider.configure { it.onlyIf { isCompatibilityMetadataVariantEnabled } }
             }
 
-            createAllCompileMetadataConfiguration(target)
 
             val allMetadataJar = target.project.tasks.withType<Jar>().named(ALL_METADATA_JAR_NAME)
             createMetadataCompilationsForCommonSourceSets(target, allMetadataJar)
@@ -269,18 +267,6 @@ class KotlinMetadataTargetConfigurator :
                     )
                 }
             }
-        }
-    }
-
-    private fun createAllCompileMetadataConfiguration(target: KotlinMetadataTarget) {
-        val project = target.project
-        project.configurations.create(ALL_COMPILE_METADATA_CONFIGURATION_NAME).apply {
-            isCanBeConsumed = false
-            isCanBeResolved = true
-
-            usesPlatformOf(target)
-            attributes.attribute(USAGE_ATTRIBUTE, project.usageByName(KotlinUsages.KOTLIN_METADATA))
-            attributes.attribute(CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
         }
     }
 
