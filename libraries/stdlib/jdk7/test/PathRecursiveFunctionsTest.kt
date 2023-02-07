@@ -5,7 +5,10 @@
 
 package kotlin.jdk7.test
 
+import java.net.URI
 import java.nio.file.*
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 import kotlin.io.path.*
 import kotlin.jdk7.test.PathTreeWalkTest.Companion.createTestFiles
 import kotlin.jdk7.test.PathTreeWalkTest.Companion.referenceFilenames
@@ -969,5 +972,51 @@ class PathRecursiveFunctionsTest : AbstractPathTest() {
         val dst = root.resolve("dstLink").tryCreateSymbolicLinkTo(root)?.resolve("src") ?: return
 
         src.copyToRecursively(dst, followLinks = false, overwrite = true)
+    }
+
+    private fun createZipFile(parent: Path, name: String): Path {
+        val zipRoot = parent.resolve(name)
+        ZipOutputStream(zipRoot.outputStream()).use { out ->
+            out.putNextEntry(ZipEntry("directory/file.txt"))
+            out.write("hello".toByteArray())
+            out.closeEntry()
+        }
+        return zipRoot
+    }
+
+    @Test
+    fun zipToDefaultPath() {
+        val root = createTempDirectory().cleanupRecursively()
+        val zipRoot = createZipFile(root, "src.zip")
+        val dst = root.resolve("dst")
+
+        val classLoader: ClassLoader? = null
+        FileSystems.newFileSystem(zipRoot, classLoader).use { zipFs ->
+            val src = zipFs.getPath("/directory")
+
+            src.copyToRecursively(dst, followLinks = false)
+
+            val expected = listOf("", "file.txt")
+            testVisitedFiles(expected, dst.walkIncludeDirectories(), dst)
+            assertEquals("hello", dst.resolve("file.txt").readText())
+        }
+    }
+
+    @Test
+    fun defaultPathToZip() {
+        val root = createTestFiles().cleanupRecursively()
+        val zipRoot = createZipFile(root, "dst.zip")
+        val src = root.resolve("1").also { it.resolve("3/4.txt").writeText("hello") }
+
+        val classLoader: ClassLoader? = null
+        FileSystems.newFileSystem(zipRoot, classLoader).use { zipFs ->
+            val dst = zipFs.getPath("/directory")
+
+            src.copyToRecursively(dst, followLinks = false)
+
+            val expected = listOf("", "2", "3", "3/4.txt", "3/5.txt", "file.txt")
+            testVisitedFiles(expected, dst.walkIncludeDirectories(), dst)
+            assertEquals("hello", zipFs.getPath("/directory/3/4.txt").readText())
+        }
     }
 }
