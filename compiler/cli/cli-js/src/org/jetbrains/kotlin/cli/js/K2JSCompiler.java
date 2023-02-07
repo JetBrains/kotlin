@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.incremental.web.IncrementalDataProvider;
 import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.incremental.web.TranslationResultValue;
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS;
-import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult;
+import org.jetbrains.kotlin.web.analyzer.WebAnalysisResult;
 import org.jetbrains.kotlin.js.config.*;
 import org.jetbrains.kotlin.js.facade.K2JSTranslator;
 import org.jetbrains.kotlin.js.facade.MainCallParameters;

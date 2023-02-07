@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.web.analyze.AbstractTopDownAnalyzerFacadeForWeb
-import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult
+import org.jetbrains.kotlin.web.analyzer.WebAnalysisResult
 import org.jetbrains.kotlin.web.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.web.config.WebConfigurationKeys
 import org.jetbrains.kotlin.konan.properties.Properties

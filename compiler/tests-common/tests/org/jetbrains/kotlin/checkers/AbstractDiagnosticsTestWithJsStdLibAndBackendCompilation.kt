@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.hasError
-import org.jetbrains.kotlin.js.analyzer.WebAnalysisResult
+import org.jetbrains.kotlin.web.analyzer.WebAnalysisResult
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.K2JSTranslator
 import org.jetbrains.kotlin.js.facade.MainCallParameters
