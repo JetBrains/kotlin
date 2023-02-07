@@ -416,5 +416,11 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
                 model("typeScope")
             }
         }
+
+        group(filter = frontendIs(FrontendKind.Fir)) {
+            test(AbstractScopeContextForPositionTest::class) {
+                model("scopeContextForPosition")
+            }
+        }
     }
 }

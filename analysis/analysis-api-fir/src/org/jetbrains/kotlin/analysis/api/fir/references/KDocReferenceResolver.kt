@@ -50,7 +50,7 @@ internal object KDocReferenceResolver {
 
     context(KtAnalysisSession)
     private fun MutableCollection<KtSymbol>.collectSymbolsFromPositionScopes(owner: KtDeclaration, fqName: FqName) {
-        val initialScope = owner.containingKtFile.getScopeContextForPosition(owner).scopes
+        val initialScope = owner.containingKtFile.getScopeContextForPosition(owner).getCompositeScope()
 
         val scope = fqName.pathSegments()
             .dropLast(1)

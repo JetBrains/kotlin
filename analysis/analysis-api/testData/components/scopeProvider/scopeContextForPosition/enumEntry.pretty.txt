@@ -1,0 +1,65 @@
+element: e
+implicit receivers:
+  type: `<anonymous>`
+  owner symbol: KtFirAnonymousObjectSymbol
+
+  type: kotlin.Enum.Companion
+  owner symbol: KtFirNamedClassOrObjectSymbol
+
+scopes:
+  LocalScope, index = 0, empty
+
+  LocalScope, index = 1, empty
+
+  SimpleTypeScope, index = 2
+    classifiers: 1
+      companion object
+    callables: 9
+      val x: kotlin.String
+      fun foo()
+      fun clone(): kotlin.Any
+      fun compareTo(other: E): kotlin.Int
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+      val name: kotlin.String
+      val ordinal: kotlin.Int
+
+  StaticMemberScope, index = 3
+    classifiers: 0
+    callables: 4
+      A
+      fun values(): kotlin.Array<E>
+      fun valueOf(value: kotlin.String): E
+      val entries: kotlin.enums.EnumEntries<E>
+
+  StaticMemberScope, index = 4
+    classifiers: 1
+      companion object
+    callables: 0
+
+  SimpleTypeScope, index = 5
+    classifiers: 0
+    callables: 3
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+
+  ExplicitSimpleImportingScope, index = 6, empty
+
+  PackageMemberScope, index = 7
+    classifiers: 1
+      enum class E
+    callables: 0
+
+  DefaultSimpleImportingScope, index = 8
+
+  DefaultSimpleImportingScope, index = 9
+
+  ExplicitStarImportingScope, index = 10, empty
+
+  DefaultSimpleImportingScope, index = 11
+
+  DefaultStarImportingScope, index = 12
+
+  DefaultStarImportingScope, index = 13

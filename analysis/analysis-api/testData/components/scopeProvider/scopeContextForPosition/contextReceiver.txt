@@ -1,0 +1,220 @@
+element: e
+implicit receivers:
+  type: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: Context
+  owner symbol: KtFirFunctionSymbol
+
+scopes:
+  LocalScope, index = 0, empty
+
+  SimpleTypeScope, index = 1
+    classifiers: 0
+    callables: 4
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /Context.memberInContext
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: memberInContext
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Unit
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: kotlin/Any.equals
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: true
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: OPEN
+        name: equals
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Boolean
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: [
+          KtValueParameterSymbol:
+            annotationsList: []
+            callableIdIfNonLocal: null
+            contextReceivers: []
+            generatedPrimaryConstructorProperty: null
+            hasDefaultValue: false
+            isCrossinline: false
+            isExtension: false
+            isImplicitLambdaParameter: false
+            isNoinline: false
+            isVararg: false
+            name: other
+            origin: LIBRARY
+            receiverParameter: null
+            returnType: KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Any?
+            symbolKind: LOCAL
+            typeParameters: []
+        ]
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: kotlin/Any.hashCode
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: OPEN
+        name: hashCode
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Int
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: kotlin/Any.toString
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: OPEN
+        name: toString
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/String
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+
+  LocalScope, index = 2, empty
+
+  ExplicitSimpleImportingScope, index = 3, empty
+
+  PackageMemberScope, index = 4
+    classifiers: 1
+      KtNamedClassOrObjectSymbol:
+        annotationsList: []
+        classIdIfNonLocal: Context
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isData: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        modality: FINAL
+        name: Context
+        origin: SOURCE
+        superTypes: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Any
+        ]
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        visibility: Public
+    callables: 1
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /test
+        contextReceivers: [
+          KtContextReceiver:
+            label: null
+            type: KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: Context
+        ]
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: test
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Unit
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+
+  DefaultSimpleImportingScope, index = 5
+
+  DefaultSimpleImportingScope, index = 6
+
+  ExplicitStarImportingScope, index = 7, empty
+
+  DefaultSimpleImportingScope, index = 8
+
+  DefaultStarImportingScope, index = 9
+
+  DefaultStarImportingScope, index = 10

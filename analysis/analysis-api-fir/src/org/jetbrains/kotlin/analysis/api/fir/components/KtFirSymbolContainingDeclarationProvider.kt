@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -113,5 +114,5 @@ internal class KtFirSymbolContainingDeclarationProvider(
         when (val container = this.parentOfType<KtDeclaration>()) {
             is KtDestructuringDeclaration -> container.parentOfType()
             else -> container
-        }
+        }?.let { it.originalDeclaration ?: it }
 }

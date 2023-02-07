@@ -1,0 +1,105 @@
+element: e
+implicit receivers:
+  type: A
+  owner symbol: KtFirAnonymousFunctionSymbol
+
+  type: B
+  owner symbol: KtFirAnonymousFunctionSymbol
+
+  type: C
+  owner symbol: KtFirNamedClassOrObjectSymbol
+
+scopes:
+  SimpleTypeScope, index = 0
+    classifiers: 0
+    callables: 4
+      fun memberInA()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+
+  LocalScope, index = 1, empty
+
+  LocalScope, index = 2, empty
+
+  SimpleTypeScope, index = 3
+    classifiers: 0
+    callables: 4
+      fun memberInB()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+
+  LocalScope, index = 4, empty
+
+  LocalScope, index = 5
+    classifiers: 0
+    callables: 1
+      val localVarA: kotlin.Int
+
+  LocalScope, index = 6
+    classifiers: 0
+    callables: 1
+      lambdaArg: kotlin.String
+
+  LocalScope, index = 7
+    classifiers: 0
+    callables: 2
+      val localVarB: kotlin.Int
+      fun localFunB()
+
+  LocalScope, index = 8
+    classifiers: 0
+    callables: 1
+      param: kotlin.String?
+
+  TypeParameterScope, index = 9
+    classifiers: 1
+      T
+    callables: 0
+
+  SimpleTypeScope, index = 10
+    classifiers: 2
+      class NestedInC
+      class NestedInJavaClass
+    callables: 4
+      fun <T> methodInC(param: kotlin.String?)
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+
+  StaticMemberScope, index = 11
+    classifiers: 1
+      class NestedInC
+    callables: 0
+
+  StaticMemberScope, index = 12
+    classifiers: 1
+      class NestedInJavaClass
+    callables: 0
+
+  ExplicitSimpleImportingScope, index = 13, empty
+
+  PackageMemberScope, index = 14
+    classifiers: 3
+      class C : JavaClass()
+      class B
+      class A
+    callables: 4
+      fun withJavaClass(f: JavaClass.() -> kotlin.Unit)
+      fun topLevel(): kotlin.Int
+      fun withB(f: B.() -> kotlin.Unit)
+      fun withA(f: A.() -> kotlin.Unit)
+
+  DefaultSimpleImportingScope, index = 15
+
+  DefaultSimpleImportingScope, index = 16
+
+  ExplicitStarImportingScope, index = 17, empty
+
+  DefaultSimpleImportingScope, index = 18
+
+  DefaultStarImportingScope, index = 19
+
+  DefaultStarImportingScope, index = 20
+
