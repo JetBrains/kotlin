@@ -83,12 +83,6 @@ internal fun FirMemberDeclaration.isEffectivelyExternal(
 
 internal val FirClass.canHaveOpenMembers: Boolean get() = modality() != Modality.FINAL || classKind == ClassKind.ENUM_CLASS
 
-internal val FirDeclaration.isEnumEntryInitializer: Boolean
-    get() {
-        if (this !is FirConstructor || !this.isPrimary) return false
-        return (containingClassForStaticMemberAttr as? ConeClassLookupTagWithFixedSymbol)?.symbol?.classKind == ClassKind.ENUM_ENTRY
-    }
-
 // contract: returns(true) implies (this is FirMemberDeclaration<*>)
 val FirDeclaration.isLocalMember: Boolean
     get() = symbol.isLocalMember

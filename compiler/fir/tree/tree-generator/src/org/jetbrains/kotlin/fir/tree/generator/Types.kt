@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.tree.generator.context.generatedType
 import org.jetbrains.kotlin.fir.tree.generator.context.type
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.ClassId
@@ -44,6 +45,7 @@ val annotationUseSiteTargetType = type(AnnotationUseSiteTarget::class)
 val operationKindType = type("fir.expressions", "LogicOperationKind")
 val coneKotlinTypeType = type(ConeKotlinType::class)
 val coneSimpleKotlinTypeType = type(ConeSimpleKotlinType::class)
+val coneClassLikeTypeType = type(ConeClassLikeType::class)
 
 val whenRefType = generatedType("", "FirExpressionRef<FirWhenExpression>")
 val referenceToSimpleExpressionType = generatedType("", "FirExpressionRef<FirExpression>")
