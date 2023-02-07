@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -22,7 +21,6 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
     override val defaultBuildOptions =
         super.defaultBuildOptions.copy(
             jsOptions = defaultJsOptions,
-            warningMode = WarningMode.Summary
         )
 
     @DisplayName("Kotlin/JS DOM API automatically added as dependency")
