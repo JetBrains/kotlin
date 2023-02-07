@@ -62,6 +62,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}")
 
     api(project(":kotlin-native-shared"))
+    api(project(":kotlin-native-executors"))
 }
 
 java {
