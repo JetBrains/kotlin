@@ -13,7 +13,8 @@ buildscript {
     }
 
     extra["withoutEmbedabble"] = true
-    project.kotlinInit(findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
+    extra["defaultSnapshotVersion"] = kotlinBuildProperties.defaultSnapshotVersion
+    extra["kotlinVersion"] = findProperty("kotlinVersion")
     val bootstrapKotlinVersion: String by extra(project.bootstrapKotlinVersion)
     val kotlinVersion: String by extra(bootstrapKotlinVersion)
 
