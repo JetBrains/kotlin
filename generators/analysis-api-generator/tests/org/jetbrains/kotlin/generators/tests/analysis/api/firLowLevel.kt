@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractDiagnosticTraversalCounterTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirOutOfContentRootContextCollectionTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirSourceContextCollectionTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataSpecTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirPreresolvedReversedDiagnosisCompilerTestDataTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractOutOfContentRootFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractOutOfContentRootInnerDeclarationsResolvePhaseTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.AbstractSourceInnerDeclarationsResolvePhaseTest
+import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
-import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration
 import org.jetbrains.kotlin.spec.utils.tasks.detectDirsWithTestsMapFileOnly
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
@@ -96,9 +99,16 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         "analysis/low-level-api-fir/tests",
         "compiler/fir/analysis-tests/testData",
     ) {
+        fun TestGroup.TestClass.modelInit() {
+            model("resolve", pattern = org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            model("resolveWithStdlib", pattern = org.jetbrains.kotlin.generators.util.TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
         testClass<AbstractDiagnosisCompilerTestDataTest>(suiteTestClassName = "DiagnosisCompilerFirTestdataTestGenerated") {
-            model("resolve", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
-            model("resolveWithStdlib", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+            modelInit()
+        }
+
+        testClass<AbstractLLFirPreresolvedReversedDiagnosisCompilerTestDataTest>(suiteTestClassName = "AbstractLLFirPreresolvedReversedDiagnosisCompilerFirTestDataTest") {
+            modelInit()
         }
     }
 
@@ -106,7 +116,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         "analysis/low-level-api-fir/tests",
         "compiler/testData",
     ) {
-        testClass<AbstractDiagnosisCompilerTestDataTest>(suiteTestClassName = "DiagnosisCompilerTestFE10TestdataTestGenerated") {
+        fun TestGroup.TestClass.modelInit() {
             model(
                 "diagnostics/tests",
                 excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
@@ -117,16 +127,30 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
                 excludeDirs = listOf("native")
             )
         }
+        testClass<AbstractDiagnosisCompilerTestDataTest>(suiteTestClassName = "DiagnosisCompilerTestFE10TestdataTestGenerated") {
+            modelInit()
+        }
+        testClass<AbstractLLFirPreresolvedReversedDiagnosisCompilerTestDataTest>(suiteTestClassName = "AbstractLLFirPreresolvedReversedDiagnosisCompilerFE10TestDataTest") {
+            modelInit()
+        }
     }
 
 
     testGroup("analysis/low-level-api-fir/tests", testDataRoot = GeneralConfiguration.SPEC_TESTDATA_PATH) {
-        testClass<AbstractDiagnosisCompilerTestDataSpecTest>(suiteTestClassName = "FirIdeSpecTest") {
+        fun TestGroup.TestClass.modelInit() {
             model(
                 "diagnostics",
                 excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
                 excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
             )
         }
+        testClass<AbstractDiagnosisCompilerTestDataSpecTest>(suiteTestClassName = "FirIdeSpecTest") {
+            modelInit()
+        }
+
+        testClass<AbstractLLFirPreresolvedReversedDiagnosisCompilerTestDataTest>(suiteTestClassName = "PreresolvedFirIdeSpecTest") {
+            modelInit()
+        }
     }
 }
+

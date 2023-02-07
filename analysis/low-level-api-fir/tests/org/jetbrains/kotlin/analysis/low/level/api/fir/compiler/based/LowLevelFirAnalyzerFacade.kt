@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestFile
 
-class LowLevelFirAnalyzerFacade(
+open class LowLevelFirAnalyzerFacade(
     val firResolveSession: LLFirResolveSession,
     val allFirFiles: Map<TestFile, FirFile>,
     private val diagnosticCheckerFilter: DiagnosticCheckerFilter,
@@ -25,7 +25,13 @@ class LowLevelFirAnalyzerFacade(
     override val scopeSession: ScopeSession
         get() = ScopeSession()
 
+    private var resolved: Boolean = false
+
     override fun runCheckers(): Map<FirFile, List<KtDiagnostic>> {
+        if (!resolved) {
+            runResolution()
+            resolved = true
+        }
         return allFirFiles.values.associateWith { firFile ->
             val ktFile = firFile.psi as KtFile
             val diagnostics = ktFile.collectDiagnosticsForFile(firResolveSession, diagnosticCheckerFilter)
@@ -34,7 +40,10 @@ class LowLevelFirAnalyzerFacade(
         }
     }
 
-    override fun runResolution(): List<FirFile> = shouldNotBeCalled()
+    override fun runResolution(): List<FirFile> {
+        return allFirFiles.values.toList()
+    }
+
     override fun convertToIr(
         fir2IrExtensions: Fir2IrExtensions,
         commonMemberStorage: Fir2IrCommonMemberStorage,
