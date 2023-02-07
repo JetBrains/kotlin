@@ -435,8 +435,7 @@ enum class LanguageVersion(val major: Int, val minor: Int) : DescriptionAware, L
     override val isUnsupported: Boolean
         get() = this < FIRST_SUPPORTED
 
-    override val versionString: String
-        get() = "$major.$minor"
+    override val versionString: String = "$major.$minor"
 
     override fun toString() = versionString
 
