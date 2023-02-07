@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.daemon.common.Profiler
 import org.jetbrains.kotlin.daemon.common.withMeasure
 import org.jetbrains.kotlin.incremental.web.FunctionWithSourceInfo
 import org.jetbrains.kotlin.incremental.web.IncrementalResultsConsumer
-import org.jetbrains.kotlin.incremental.web.JsInlineFunctionHash
+import org.jetbrains.kotlin.incremental.web.WebInlineFunctionHash
 import java.io.File
 
 class RemoteIncrementalResultsConsumer(
@@ -55,7 +55,7 @@ class RemoteIncrementalResultsConsumer(
         deferInlineFuncs.add(JsInlineFunction(sourceFile.path, fqName, FunctionWithSourceInfo(inlineFunction, line, column)))
     }
 
-    override fun processInlineFunctions(functions: Collection<JsInlineFunctionHash>) = error("Should not be called in Daemon Server")
+    override fun processInlineFunctions(functions: Collection<WebInlineFunctionHash>) = error("Should not be called in Daemon Server")
 
     override fun processPackageMetadata(packageName: String, metadata: ByteArray) {
         rpcProfiler.withMeasure(this) {
@@ -66,7 +66,7 @@ class RemoteIncrementalResultsConsumer(
     fun flush() {
         rpcProfiler.withMeasure(this) {
             facade.incrementalResultsConsumer_processInlineFunctions(deferInlineFuncs.map {
-                JsInlineFunctionHash(it.sourceFilePath, it.fqName, it.inlineFunction.md5)
+                WebInlineFunctionHash(it.sourceFilePath, it.fqName, it.inlineFunction.md5)
             })
         }
     }

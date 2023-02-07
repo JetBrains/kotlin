@@ -26,7 +26,7 @@ interface IncrementalResultsConsumer {
      * Alternative to [processInlineFunction]: record all inline functions after it was processed.
      * Used in daemon RPC.
      */
-    fun processInlineFunctions(functions: Collection<JsInlineFunctionHash>)
+    fun processInlineFunctions(functions: Collection<WebInlineFunctionHash>)
 
     fun processPackageMetadata(packageName: String, metadata: ByteArray)
 
@@ -62,7 +62,7 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         get() = _packageParts
 
     private val _deferInlineFuncs = hashMapOf<File, MutableMap<String, FunctionWithSourceInfo>>()
-    private var _processedInlineFuncs: Collection<JsInlineFunctionHash>? = null
+    private var _processedInlineFuncs: Collection<WebInlineFunctionHash>? = null
     val inlineFunctions: Map<File, Map<String, Long>>
         get() {
             val result = HashMap<File, MutableMap<String, Long>>(_deferInlineFuncs.size)
@@ -93,7 +93,7 @@ open class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         _packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst, inlineData))
     }
 
-    override fun processInlineFunctions(functions: Collection<JsInlineFunctionHash>) {
+    override fun processInlineFunctions(functions: Collection<WebInlineFunctionHash>) {
         check(_processedInlineFuncs == null)
         _processedInlineFuncs = functions
     }
