@@ -40,7 +40,7 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
         ): FirGeneratedClassDeclaredMemberScope? {
             val extensionsByCallableName = session.groupExtensionsByName(
                 generationContext.owner.fir,
-                nameExtractor = { getCallableNamesForClass(it) },
+                nameExtractor = { getCallableNamesForClass(it, generationContext) },
                 nameTransformer = { it }
             )
             val allCallableNames = extensionsByCallableName.keys
@@ -162,17 +162,22 @@ class FirGeneratedClassNestedClassifierScope private constructor(
     useSiteSession: FirSession,
     klass: FirClass,
     private val extensionsByName: Map<Name, List<FirDeclarationGenerationExtension>>,
+    private val context: NestedClassGenerationContext
 ) : FirNestedClassifierScope(klass, useSiteSession) {
     companion object {
         @OptIn(FirExtensionApiInternals::class)
-        fun create(useSiteSession: FirSession, klass: FirClass): FirGeneratedClassNestedClassifierScope? {
+        fun create(
+            useSiteSession: FirSession,
+            klass: FirClass,
+            baseScope: FirNestedClassifierScope?
+        ): FirGeneratedClassNestedClassifierScope? {
             val symbol = klass.symbol
-
+            val context = NestedClassGenerationContext(klass.symbol, baseScope)
             val extensionsByName = useSiteSession.getExtensionsForClass(klass).flatGroupBy {
-                it.nestedClassifierNamesCache.getValue(symbol)
+                it.nestedClassifierNamesCache.getValue(symbol, context)
             }
             if (extensionsByName.isEmpty()) return null
-            return FirGeneratedClassNestedClassifierScope(useSiteSession, klass, extensionsByName)
+            return FirGeneratedClassNestedClassifierScope(useSiteSession, klass, extensionsByName, context)
         }
     }
 
@@ -192,7 +197,7 @@ class FirGeneratedClassNestedClassifierScope private constructor(
         val extensions = extensionsByName[name] ?: return null
 
         val generatedClasses = extensions.mapNotNull { extension ->
-            extension.generateNestedClassLikeDeclaration(klass.symbol, name)?.also { symbol ->
+            extension.generateNestedClassLikeDeclaration(klass.symbol, name, context)?.also { symbol ->
                 symbol.fir.ownerGenerator = extension
             }
         }

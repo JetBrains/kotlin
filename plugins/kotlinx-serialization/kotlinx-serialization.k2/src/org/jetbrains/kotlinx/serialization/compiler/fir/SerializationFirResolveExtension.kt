@@ -51,7 +51,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         hasFactory && hasAnnotatedFactory
     }
 
-    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         val result = mutableSetOf<Name>()
         with(session) {
             if (classSymbol.shouldHaveGeneratedMethodsInCompanion && !classSymbol.isSerializableObject)
@@ -63,7 +63,11 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         return result
     }
 
-    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name): FirClassLikeSymbol<*>? {
+    override fun generateNestedClassLikeDeclaration(
+        owner: FirClassSymbol<*>,
+        name: Name,
+        context: NestedClassGenerationContext
+    ): FirClassLikeSymbol<*>? {
         if (owner !is FirRegularClassSymbol) return null
         if (!session.predicateBasedProvider.matches(FirSerializationPredicates.annotatedWithSerializableOrMeta, owner)) return null
         return when (name) {
@@ -73,7 +77,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         }
     }
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         val classId = classSymbol.classId
         val result = mutableSetOf<Name>()
 
