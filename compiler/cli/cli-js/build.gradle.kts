@@ -11,7 +11,7 @@ dependencies {
     api(project(":compiler:backend-common"))
     api(project(":compiler:fir:fir-serialization"))
     api(project(":compiler:ir.backend.common"))
-    api(project(":compiler:ir.serialization.js"))
+    api(project(":compiler:ir.serialization.web"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:backend.js"))
     api(project(":compiler:backend.wasm"))

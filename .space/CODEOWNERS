@@ -72,7 +72,7 @@
 /compiler/ir/ir.psi2ir/ "Kotlin Compiler Core"
 /compiler/ir/ir.tree/ "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
 /compiler/ir/serialization.common/ "Kotlin Native"
-/compiler/ir/serialization.js/ "Kotlin JS"
+/compiler/ir/serialization.web/ "Kotlin JS" "Kotlin Wasm"
 /compiler/ir/serialization.jvm/ "Kotlin JVM"
 /compiler/javac-wrapper/ "Kotlin Compiler Core"
 /compiler/light-classes/ "Kotlin IDE"

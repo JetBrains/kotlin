@@ -24,7 +24,7 @@ dependencies {
     implementation(project(":compiler:backend.jvm"))
     implementation(project(":compiler:ir.serialization.common"))
     implementation(project(":compiler:ir.serialization.jvm"))
-    implementation(project(":compiler:ir.serialization.js"))
+    implementation(project(":compiler:ir.serialization.web"))
     implementation(project(":compiler:ir.tree"))
 
     compileOnly(intellijCore())
