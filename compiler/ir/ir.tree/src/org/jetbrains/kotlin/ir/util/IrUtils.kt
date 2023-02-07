@@ -1281,7 +1281,7 @@ private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
     val existingNames =
         (contextParameters.map { it.name.asString() } + existingParameters.map { it.name.asString() }).toMutableSet()
 
-    contextParameters.forEach { contextType ->
+    contextParameters.forEachIndexed { i, contextType ->
         val newName = if (existingParameters.any { it.name.asString() == contextType.name.asString() }) {
             val newNamePrefix = contextType.name.asString() + "_I"
             val newName = newNamePrefix + generateSequence(1) { x -> x + 1 }.first { n ->
@@ -1295,6 +1295,7 @@ private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
 
         newParameters.add(buildTypeParameter(this) {
             updateFrom(contextType)
+            index = i
             name = Name.identifier(newName)
         })
     }
