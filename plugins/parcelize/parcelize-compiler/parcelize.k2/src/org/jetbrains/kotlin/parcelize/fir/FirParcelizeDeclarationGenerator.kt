@@ -105,7 +105,7 @@ class FirParcelizeDeclarationGenerator(session: FirSession) : FirDeclarationGene
     }
 
     @OptIn(SymbolInternals::class)
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when {
             classSymbol.fir.modality == Modality.ABSTRACT -> emptySet()
             classSymbol in matchedClasses && classSymbol.fir.modality != Modality.SEALED -> parcelizeMethodsNames

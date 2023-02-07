@@ -7,11 +7,8 @@ package org.jetbrains.kotlin.fir.plugin.generators
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
-import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
+import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
-import org.jetbrains.kotlin.fir.extensions.predicateBasedProvider
 import org.jetbrains.kotlin.fir.plugin.createConstructor
 import org.jetbrains.kotlin.fir.plugin.createMemberFunction
 import org.jetbrains.kotlin.fir.plugin.createNestedClass
@@ -52,7 +49,11 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         return listOf(function.symbol)
     }
 
-    override fun generateNestedClassLikeDeclaration(owner: FirClassSymbol<*>, name: Name): FirClassLikeSymbol<*>? {
+    override fun generateNestedClassLikeDeclaration(
+        owner: FirClassSymbol<*>,
+        name: Name,
+        context: NestedClassGenerationContext
+    ): FirClassLikeSymbol<*>? {
         if (matchedClasses.none { it == owner }) return null
         return createNestedClass(owner, name, Key).symbol
     }
@@ -62,7 +63,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         return listOf(createConstructor.symbol)
     }
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when {
             classSymbol in matchedClasses -> setOf(MATERIALIZE_NAME)
             classSymbol.classId in nestedClassIds -> setOf(SpecialNames.INIT)
@@ -70,7 +71,7 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
         }
     }
 
-    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         return if (classSymbol in matchedClasses) setOf(NESTED_NAME) else emptySet()
     }
 

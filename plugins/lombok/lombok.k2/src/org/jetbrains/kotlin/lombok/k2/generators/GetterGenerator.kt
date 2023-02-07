@@ -40,7 +40,7 @@ class GetterGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     private val cache: FirCache<FirClassSymbol<*>, Map<Name, FirJavaMethod>?, Nothing?> =
         session.firCachesFactory.createCache(::createGetters)
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
         return cache.getValue(classSymbol)?.keys ?: emptySet()
     }

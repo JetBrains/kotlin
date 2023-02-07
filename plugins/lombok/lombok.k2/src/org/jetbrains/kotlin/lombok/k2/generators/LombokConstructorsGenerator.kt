@@ -30,7 +30,7 @@ class LombokConstructorsGenerator(session: FirSession) : FirDeclarationGeneratio
     private val cache: FirCache<FirClassSymbol<*>, Collection<FirFunctionSymbol<*>>?, Nothing?> =
         session.firCachesFactory.createCache(::createConstructors)
 
-    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>): Set<Name> {
+    override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         if (!classSymbol.isSuitableJavaClass()) return emptySet()
         return cache.getValue(classSymbol)?.mapTo(mutableSetOf()) {
             when (it) {
