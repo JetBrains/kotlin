@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.js.JsFactories
-import org.jetbrains.kotlin.ir.backend.js.jsResolveLibraries
-import org.jetbrains.kotlin.ir.backend.js.resolverLogger
-import org.jetbrains.kotlin.ir.backend.js.serializeModuleIntoKlib
+import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.web.JsFactories
+import org.jetbrains.kotlin.ir.backend.web.jsResolveLibraries
+import org.jetbrains.kotlin.ir.backend.web.resolverLogger
+import org.jetbrains.kotlin.ir.backend.web.serializeModuleIntoKlib
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
