@@ -143,6 +143,10 @@ internal class FirAnonymousFunctionImpl(
         annotations = newAnnotations.toMutableOrEmpty()
     }
 
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
+
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }

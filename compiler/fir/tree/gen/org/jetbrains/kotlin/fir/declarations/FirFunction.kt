@@ -54,6 +54,8 @@ sealed class FirFunction : FirCallableDeclaration(), FirTargetElement, FirContro
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
+
     abstract override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef)
 
     abstract override fun replaceReceiverParameter(newReceiverParameter: FirReceiverParameter?)

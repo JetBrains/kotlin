@@ -74,7 +74,7 @@ object FieldSets {
 
     val classKind by lazy { field(classKindType) }
 
-    val status by lazy { field("status", declarationStatus) }
+    val status by lazy { field("status", declarationStatus, withReplace = true) }
 
     val controlFlowGraphReferenceField by lazy { field("controlFlowGraphReference", controlFlowGraphReference, withReplace = true, nullable = true) }
 

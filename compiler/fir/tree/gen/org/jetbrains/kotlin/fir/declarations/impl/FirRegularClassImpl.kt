@@ -111,6 +111,10 @@ internal class FirRegularClassImpl(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
+
     override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider) {
         deprecationsProvider = newDeprecationsProvider
     }

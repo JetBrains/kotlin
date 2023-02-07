@@ -135,6 +135,10 @@ internal class FirConstructorImpl(
         resolvePhase = newResolvePhase
     }
 
+    override fun replaceStatus(newStatus: FirDeclarationStatus) {
+        status = newStatus
+    }
+
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {
         returnTypeRef = newReturnTypeRef
     }
