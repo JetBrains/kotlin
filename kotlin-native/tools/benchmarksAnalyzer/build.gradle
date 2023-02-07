@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.UtilsKt
 
 buildscript {
     ext.rootBuildDirectory = file('../..')
@@ -14,7 +15,7 @@ buildscript {
         }
     }
     ext["withoutEmbedabble"] = true
-    MiscKt.kotlinInit(project, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
+    UtilsKt.kotlinInit(project, findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() ?: false)
     ext["bootstrapKotlinRepo"] = BootstrapKt.getBootstrapKotlinRepo(project)
     ext["bootstrapKotlinVersion"] = BootstrapKt.getBootstrapKotlinVersion(project)
     ext["kotlinVersion"] = project.bootstrapKotlinVersion
