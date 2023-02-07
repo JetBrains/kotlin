@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.Choos
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider.MetadataConsumer.Ide
 import org.jetbrains.kotlin.gradle.plugin.mpp.metadataDependencyResolutionsOrEmpty
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.sources.metadataTransformation
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import java.io.File
 
@@ -51,7 +52,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromProjectDependen
     forIde: Boolean
 ): FileCollection {
     return filesProvider {
-        sourceSet.compileDependenciesTransformation
+        sourceSet.metadataTransformation
             .metadataDependencyResolutionsOrEmpty
             .filterIsInstance<ChooseVisibleSourceSets>()
             .flatMap { chooseVisibleSourceSets ->

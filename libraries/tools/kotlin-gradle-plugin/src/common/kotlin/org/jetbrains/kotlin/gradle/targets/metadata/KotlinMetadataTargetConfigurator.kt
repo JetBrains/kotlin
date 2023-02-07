@@ -162,10 +162,8 @@ class KotlinMetadataTargetConfigurator :
 
     private fun configureMetadataDependenciesConfigurationsForCommonSourceSets(target: KotlinMetadataTarget) {
         target.project.whenEvaluated {
-            kotlinExtension.sourceSets.all {
-                if (it is DefaultKotlinSourceSet) {
-                    configureMetadataDependenciesConfigurations(target.project, it)
-                }
+            kotlinExtension.sourceSets.all { sourceSet ->
+                configureMetadataDependenciesConfigurations(target.project, sourceSet.internal)
             }
         }
     }
@@ -352,10 +350,7 @@ class KotlinMetadataTargetConfigurator :
             }
         }
 
-    private fun configureMetadataDependenciesConfigurations(
-        project: Project,
-        sourceSet: DefaultKotlinSourceSet
-    ) {
+    private fun configureMetadataDependenciesConfigurations(project: Project, sourceSet: InternalKotlinSourceSet) {
         /*
         Older IDEs still rely on resolving the metadata configurations explicitly.
         Dependencies will be coming from extending the newer 'resolvableMetadataConfiguration'.
