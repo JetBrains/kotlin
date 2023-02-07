@@ -5,16 +5,13 @@
 
 package org.jetbrains.kotlin.lombok
 
-import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.SyntheticJavaClassDescriptor
 import org.jetbrains.kotlin.lombok.config.LombokConfig
 import org.jetbrains.kotlin.lombok.processor.*
-import org.jetbrains.kotlin.lombok.utils.getJavaClass
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.SyntheticJavaPartsProvider
 import java.util.*
@@ -35,6 +32,8 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
         RequiredArgsConstructorProcessor(),
         BuilderProcessor(config)
     )
+
+    private val valueFieldModifier = ValueFieldModifier(config)
 
     /**
      * kotlin resolve references in two calls - first it gets names, then actual member descriptor
@@ -102,6 +101,14 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
         return builder.build()
     }
 
+    context(LazyJavaResolverContext)
+    override fun modifyField(
+        thisDescriptor: ClassDescriptor,
+        propertyDescriptor: PropertyDescriptorImpl
+    ): PropertyDescriptorImpl {
+        return valueFieldModifier.modifyField(thisDescriptor, propertyDescriptor) ?: propertyDescriptor
+    }
+
     /**
      * Deduplicates generated functions using name and argument counts, as lombok does
      */
@@ -113,9 +120,7 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
         }
     }
 
-
     companion object {
-
         /**
          * Lombok treat functions as having the same signature by arguments count only
          * Corresponding code in lombok - https://github.com/projectlombok/lombok/blob/v1.18.20/src/core/lombok/javac/handlers/JavacHandlerUtil.java#L752
