@@ -115,7 +115,7 @@ if (!project.hasProperty("versions.kotlin-native")) {
 val irCompilerModules = arrayOf(
     ":compiler:ir.tree",
     ":compiler:ir.serialization.common",
-    ":compiler:ir.serialization.js",
+    ":compiler:ir.serialization.web",
     ":compiler:ir.serialization.jvm",
     ":compiler:ir.backend.common",
     ":compiler:ir.interpreter",
