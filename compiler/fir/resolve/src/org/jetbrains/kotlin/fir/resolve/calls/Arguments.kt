@@ -536,46 +536,73 @@ fun FirExpression.isFunctional(
             ) {
                 return true
             }
-
-            val invokeSymbol =
-                coneType.findContributedInvokeSymbol(
-                    session, scopeSession, classLikeExpectedFunctionType, shouldCalculateReturnTypesOfFakeOverrides = false
-                ) ?: return false
-            // Make sure the contributed `invoke` is indeed a wanted functional type by checking if types are compatible.
-            val expectedReturnType = classLikeExpectedFunctionType.returnType(session).lowerBoundIfFlexible()
-            val returnTypeCompatible =
-                expectedReturnType.originalIfDefinitelyNotNullable() is ConeTypeParameterType ||
-                        AbstractTypeChecker.isSubtypeOf(
-                            session.typeContext.newTypeCheckerState(
-                                errorTypesEqualToAnything = false,
-                                stubTypesEqualToAnything = true
-                            ),
-                            returnTypeCalculator.tryCalculateReturnType(invokeSymbol.fir).type,
-                            expectedReturnType,
-                            isFromNullabilityConstraint = false
-                        )
-            if (!returnTypeCompatible) {
-                return false
-            }
-            if (invokeSymbol.fir.valueParameters.size != classLikeExpectedFunctionType.typeArguments.size - 1) {
-                return false
-            }
-            val parameterPairs =
-                invokeSymbol.fir.valueParameters.zip(classLikeExpectedFunctionType.valueParameterTypesIncludingReceiver(session))
-            return parameterPairs.all { (invokeParameter, expectedParameter) ->
-                val expectedParameterType = expectedParameter.lowerBoundIfFlexible()
-                expectedParameterType.originalIfDefinitelyNotNullable() is ConeTypeParameterType ||
-                        AbstractTypeChecker.isSubtypeOf(
-                            session.typeContext.newTypeCheckerState(
-                                errorTypesEqualToAnything = false,
-                                stubTypesEqualToAnything = true
-                            ),
-                            invokeParameter.returnTypeRef.coneType,
-                            expectedParameterType,
-                            isFromNullabilityConstraint = false
-                        )
-            }
+            return isSubtypeForSamConversion(session, scopeSession, coneType, classLikeExpectedFunctionType, returnTypeCalculator)
         }
+    }
+}
+
+/**
+ * This function checks whether an actual expression type is a subtype of an expected functional type in context of SAM conversion
+ *
+ * In more details, this function searches for an invoke symbol inside the actual expression type,
+ * and then checks compatibility of invoke symbol parameter types and return type
+ * with the corresponding functional type parameters and return type. During this check,
+ * type parameters inside the expected functional type are considered as compatible with everything;
+ * also, stub types in any positions are considered equal to anything.
+ * In other aspects, a normal subtype check is used.
+ */
+private fun isSubtypeForSamConversion(
+    session: FirSession,
+    scopeSession: ScopeSession,
+    actualExpressionType: ConeKotlinType,
+    classLikeExpectedFunctionType: ConeClassLikeType,
+    returnTypeCalculator: ReturnTypeCalculator
+): Boolean {
+    // TODO: can we replace the function with a call of ConeKotlinType.isSubtypeOfFunctionType from FunctionalTypeUtils.kt,
+    // or with a call of AbstractTypeChecker.isSubtypeOf ?
+    // Relevant tests that can become broken:
+    // - codegen/box/sam/passSubtypeOfFunctionSamConversion.kt
+    // - diagnostics/tests/j+k/sam/recursiveSamsAndInvoke.kt
+    val invokeSymbol =
+        actualExpressionType.findContributedInvokeSymbol(
+            session, scopeSession, classLikeExpectedFunctionType, shouldCalculateReturnTypesOfFakeOverrides = false
+        ) ?: return false
+    // Make sure the contributed `invoke` is indeed a wanted functional type by checking if types are compatible.
+    val expectedReturnType = classLikeExpectedFunctionType.returnType(session).lowerBoundIfFlexible()
+    val returnTypeCompatible =
+        // TODO: can we remove is ConeTypeParameterType check here?
+        expectedReturnType.originalIfDefinitelyNotNullable() is ConeTypeParameterType ||
+                AbstractTypeChecker.isSubtypeOf(
+                    session.typeContext.newTypeCheckerState(
+                        errorTypesEqualToAnything = false,
+                        stubTypesEqualToAnything = true
+                    ),
+                    // TODO: can we remove returnTypeCalculatorFrom here
+                    returnTypeCalculator.tryCalculateReturnType(invokeSymbol.fir).type,
+                    expectedReturnType,
+                    isFromNullabilityConstraint = false
+                )
+    if (!returnTypeCompatible) {
+        return false
+    }
+    if (invokeSymbol.fir.valueParameters.size != classLikeExpectedFunctionType.typeArguments.size - 1) {
+        return false
+    }
+    val parameterPairs =
+        invokeSymbol.fir.valueParameters.zip(classLikeExpectedFunctionType.valueParameterTypesIncludingReceiver(session))
+    return parameterPairs.all { (invokeParameter, expectedParameter) ->
+        val expectedParameterType = expectedParameter.lowerBoundIfFlexible()
+        // TODO: can we remove is ConeTypeParameterType check here?
+        expectedParameterType.originalIfDefinitelyNotNullable() is ConeTypeParameterType ||
+                AbstractTypeChecker.isSubtypeOf(
+                    session.typeContext.newTypeCheckerState(
+                        errorTypesEqualToAnything = false,
+                        stubTypesEqualToAnything = true
+                    ),
+                    invokeParameter.returnTypeRef.coneType,
+                    expectedParameterType,
+                    isFromNullabilityConstraint = false
+                )
     }
 }
 
