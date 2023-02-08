@@ -10,7 +10,7 @@ inline fun <reified T> requreIsInstance(value: Any) contract <!UNSUPPORTED_FEATU
 }
 
 val Any?.myLength: Int?
-    get() contract <!UNSUPPORTED_FEATURE!>[
+    get() contract <!CONTRACT_NOT_ALLOWED, UNSUPPORTED_FEATURE!>[
         <!ERROR_IN_CONTRACT_DESCRIPTION!>returnsNotNull() implies (this@length is String)<!>
     ]<!> = (this as? String)?.length
 

@@ -6,7 +6,7 @@ import kotlin.contracts.*
 // TESTCASE NUMBER: 1
 fun case_1() {
     val fun_1 = fun(block: () -> Unit) {
-        contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
         return block()
     }
 
@@ -17,7 +17,7 @@ fun case_1() {
 // TESTCASE NUMBER: 2
 fun case_2() {
     val lambda_1 = { block: () -> Unit ->
-        contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
         block()
     }
 
@@ -43,7 +43,7 @@ class case_4 : ClassLevel3() {
 
     fun <T>T.case_4_3_wrap() {
         fun case_4_3_contract() {
-            contract { returns() implies (this@case_4_3_wrap is ClassLevel1) }
+            <!CONTRACT_NOT_ALLOWED!>contract<!> { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (this@case_4_3_wrap is ClassLevel1)<!> }
             if (this@case_4_3_wrap !is ClassLevel1) throw Exception()
         }
         case_4_3_contract()

@@ -1272,6 +1272,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ERROR_IN_CONTRACT_DESCRIPTION by error<KtElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<String>("reason")
         }
+        val CONTRACT_NOT_ALLOWED by error<KtElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<String>("reason")
+        }
     }
 
     val CONVENTIONS by object : DiagnosticGroup("Conventions") {

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
@@ -52,6 +53,7 @@ internal class FirConstructorImpl(
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val valueParameters: MutableList<FirValueParameter>,
+    override var contractDescription: FirContractDescription,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirConstructorSymbol,
     override var delegatedConstructor: FirDelegatedConstructorCall?,
@@ -72,6 +74,7 @@ internal class FirConstructorImpl(
         contextReceivers.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
+        contractDescription.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         delegatedConstructor?.accept(visitor, data)
         body?.accept(visitor, data)
@@ -85,6 +88,7 @@ internal class FirConstructorImpl(
         contextReceivers.transformInplace(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
+        transformContractDescription(transformer, data)
         transformAnnotations(transformer, data)
         transformDelegatedConstructor(transformer, data)
         transformBody(transformer, data)
@@ -113,6 +117,11 @@ internal class FirConstructorImpl(
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
         valueParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
+        contractDescription = contractDescription.transform(transformer, data)
         return this
     }
 
@@ -162,6 +171,10 @@ internal class FirConstructorImpl(
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
         valueParameters.clear()
         valueParameters.addAll(newValueParameters)
+    }
+
+    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+        contractDescription = newContractDescription
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

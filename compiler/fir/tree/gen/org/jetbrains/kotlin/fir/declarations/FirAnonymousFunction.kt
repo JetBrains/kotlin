@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -24,7 +25,7 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
+abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner, FirContractDescriptionOwner {
     abstract override val source: KtSourceElement?
     abstract override val resolvePhase: FirResolvePhase
     abstract override val annotations: List<FirAnnotation>
@@ -41,6 +42,7 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val valueParameters: List<FirValueParameter>
     abstract override val body: FirBlock?
+    abstract override val contractDescription: FirContractDescription
     abstract override val symbol: FirAnonymousFunctionSymbol
     abstract val label: FirLabel?
     abstract val invocationKind: EventOccurrencesRange?
@@ -76,6 +78,8 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
 
     abstract override fun replaceBody(newBody: FirBlock?)
 
+    abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
+
     abstract fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?)
 
     abstract fun replaceInlineStatus(newInlineStatus: InlineStatus)
@@ -93,6 +97,8 @@ abstract class FirAnonymousFunction : FirFunction(), FirTypeParametersOwner {
     abstract override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 
     abstract override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
+
+    abstract override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 }

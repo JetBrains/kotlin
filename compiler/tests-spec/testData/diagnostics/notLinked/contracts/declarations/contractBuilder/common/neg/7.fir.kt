@@ -6,7 +6,7 @@ import kotlin.contracts.*
 // TESTCASE NUMBER: 1
 fun <T> T?.case_1() {
     fun <K> K?.case_1_1(): Boolean {
-        contract { returns(true) implies (this@case_1 != null) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns(true) implies (this@case_1 != null)<!> }
         return this@case_1 != null
     }
 }

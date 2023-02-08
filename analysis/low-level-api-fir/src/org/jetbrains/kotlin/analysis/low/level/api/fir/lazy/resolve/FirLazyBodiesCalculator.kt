@@ -107,6 +107,7 @@ internal object FirLazyBodiesCalculator {
 
         constructor.apply {
             replaceBody(newConstructor.body)
+            replaceContractDescription(newConstructor.contractDescription)
             replaceDelegatedConstructor(newConstructor.delegatedConstructor)
             replaceValueParameterDefaultValues(valueParameters, newConstructor.valueParameters)
         }

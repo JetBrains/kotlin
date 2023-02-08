@@ -7,6 +7,11 @@ import kotlin.contracts.*
 
 // ============= Class =====================
 open class Class {
+    constructor(f: () -> Unit = {}) {
+        contract { callsInPlace(f, InvocationKind.EXACTLY_ONCE) }
+        f()
+    }
+
     fun member(x: Boolean) {
         contract { returns() implies (x) }
     }
@@ -16,11 +21,11 @@ open class Class {
     }
 
     abstract fun abstractMember(x: Boolean) {
-        contract { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 
     open fun openMemeber(x: Boolean) {
-        contract { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 
     suspend fun suspendMember(x: Boolean) {
@@ -30,17 +35,17 @@ open class Class {
 
 open class Inheritor : Class() {
     override fun openMemeber(x: Boolean) {
-        contract { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 
     final override fun abstractMember(x: Boolean) {
-        contract { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 }
 
 interface Interface {
     fun implicitlyOpenMember(x: Boolean) {
-        contract { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 }
 
@@ -59,43 +64,43 @@ suspend fun suspendTopLevel(x: Boolean) {
 
 // Top-level operator
 operator fun Boolean.plus(x: Boolean): Boolean {
-    contract { returns() implies (x) }
+    <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     return x
 }
 
 val topLevelLambda: (Boolean) -> Unit = { x: Boolean ->
-    contract { returns() implies (x) }
+    <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
 }
 
 val topLevelAnonymousFunction = fun (x: Boolean) {
-    contract { returns() implies (x) }
+    <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
 }
 
 var topLevelPropertyAccessors: Int? = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>42<!>
     get() {
-        contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!UNRESOLVED_REFERENCE!>field<!> != null)<!> }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!UNRESOLVED_REFERENCE!>field<!> != null)<!> }
         return 42
     }
     set(value) {
-        contract { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!UNRESOLVED_REFERENCE!>field<!> != null)<!> }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (<!UNRESOLVED_REFERENCE!>field<!> != null)<!> }
     }
 
 
 // ============= Local =====================
 fun test() {
     fun localDeclaration(x: Boolean) {
-        contract { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 
     suspend fun suspendlocalDeclaration(x: Boolean) {
-        contract { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 
     val localAnonymousFunction = fun (x: Boolean) {
-        contract { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 
     val localLambda: (Boolean) -> Unit = { x: Boolean ->
-        contract { returns() implies (x) }
+        <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
 }

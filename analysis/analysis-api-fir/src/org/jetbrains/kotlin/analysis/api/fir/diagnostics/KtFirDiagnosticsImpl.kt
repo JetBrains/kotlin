@@ -3096,6 +3096,12 @@ internal class ErrorInContractDescriptionImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ErrorInContractDescription(), KtAbstractFirDiagnostic<KtElement>
 
+internal class ContractNotAllowedImpl(
+    override val reason: String,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ContractNotAllowed(), KtAbstractFirDiagnostic<KtElement>
+
 internal class NoGetMethodImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

@@ -1045,8 +1045,9 @@ class DeclarationsConverter(
             annotations += modifiers.annotations
             typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
             valueParameters += firValueParameters.map { it.firValueParameter }
-            val (body, _) = convertFunctionBody(block, null, allowLegacyContractDescription = true)
+            val (body, contractDescription) = convertFunctionBody(block, null, allowLegacyContractDescription = true)
             this.body = body
+            contractDescription?.let { this.contractDescription = it }
             context.firFunctionTargets.removeLast()
             this.contextReceivers.addAll(convertContextReceivers(secondaryConstructor.getParent()!!.getParent()!!))
         }.also {
@@ -1736,13 +1737,14 @@ class DeclarationsConverter(
                     ).map { it.firValueParameter }
                 }
 
-                val allowLegacyContractDescription = outerContractDescription == null && !isLocal
+                val allowLegacyContractDescription = outerContractDescription == null
                 val bodyWithContractDescription = convertFunctionBody(block, expression, allowLegacyContractDescription)
                 this.body = bodyWithContractDescription.first
                 val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
                 contractDescription?.let {
-                    // TODO: add error reporting for contracts on lambdas
                     if (this is FirSimpleFunctionBuilder) {
+                        this.contractDescription = it
+                    } else if (this is FirAnonymousFunctionBuilder) {
                         this.contractDescription = it
                     }
                 }

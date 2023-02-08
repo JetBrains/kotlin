@@ -60,12 +60,12 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val simpleFunction by element(Declaration, function, contractDescriptionOwner, typeParametersOwner)
     val propertyAccessor by element(Declaration, function, contractDescriptionOwner, typeParametersOwner)
     val backingField by element(Declaration, variable, typeParametersOwner, statement)
-    val constructor by element(Declaration, function, typeParameterRefsOwner)
+    val constructor by element(Declaration, function, typeParameterRefsOwner, contractDescriptionOwner)
     val file by element(Declaration, declaration)
     val script by element(Declaration, declaration)
     val packageDirective by element(Other)
 
-    val anonymousFunction by element(Declaration, function, typeParametersOwner)
+    val anonymousFunction by element(Declaration, function, typeParametersOwner, contractDescriptionOwner)
     val anonymousFunctionExpression by element(Expression, expression)
 
     val anonymousObject by element(Declaration, klass, controlFlowGraphOwner)

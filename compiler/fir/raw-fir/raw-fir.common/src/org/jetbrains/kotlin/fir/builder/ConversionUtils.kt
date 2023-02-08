@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -43,6 +44,8 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 fun String.parseCharacter(): CharacterWithDiagnostic {
     // Strip the quotes
@@ -495,18 +498,29 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
 fun processLegacyContractDescription(block: FirBlock): FirContractDescription? {
     if (block.isContractPresentFirCheck()) {
         val contractCall = block.replaceFirstStatement<FirFunctionCall> { FirContractCallBlock(it) }
-        return buildLegacyRawContractDescription {
-            source = contractCall.source
-            this.contractCall = contractCall
-        }
+        return contractCall.toLegacyRawContractDescription()
     }
 
     return null
 }
 
+fun FirFunctionCall.toLegacyRawContractDescription(): FirLegacyRawContractDescription {
+    return buildLegacyRawContractDescription {
+        this.source = this@toLegacyRawContractDescription.source
+        this.contractCall = this@toLegacyRawContractDescription
+    }
+}
+
 fun FirBlock.isContractPresentFirCheck(): Boolean {
     val firstStatement = statements.firstOrNull() ?: return false
-    val contractCall = firstStatement as? FirFunctionCall ?: return false
+    return firstStatement.isContractBlockFirCheck()
+}
+
+@OptIn(ExperimentalContracts::class)
+fun FirStatement.isContractBlockFirCheck(): Boolean {
+    contract { returns(true) implies (this@isContractBlockFirCheck is FirFunctionCall) }
+
+    val contractCall = this as? FirFunctionCall ?: return false
     if (contractCall.calleeReference.name.asString() != "contract") return false
     val receiver = contractCall.explicitReceiver as? FirQualifiedAccessExpression ?: return true
     if (!contractCall.checkReceiver("contracts")) return false

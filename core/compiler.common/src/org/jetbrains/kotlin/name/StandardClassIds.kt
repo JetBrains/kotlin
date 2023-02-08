@@ -17,6 +17,7 @@ object StandardClassIds {
     val BASE_INTERNAL_IR_PACKAGE = BASE_INTERNAL_PACKAGE.child(Name.identifier("ir"))
     val BASE_COROUTINES_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("coroutines"))
     val BASE_ENUMS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("enums"))
+    val BASE_CONTRACTS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("contracts"))
 
     val builtInsPackages = setOf(
         BASE_KOTLIN_PACKAGE,
@@ -216,6 +217,8 @@ object StandardClassIds {
         val clone = "clone".callableId(Cloneable)
 
         val not = "not".callableId(Boolean)
+
+        val contract = "contract".callableId(BASE_CONTRACTS_PACKAGE)
     }
 
     object Java {

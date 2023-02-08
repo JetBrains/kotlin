@@ -89,6 +89,8 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
                 parents += abstractConstructorBuilder
                 defaultNull("delegatedConstructor")
                 defaultNull("body")
+                default("contractDescription", "FirEmptyContractDescription")
+                useTypes(emptyContractDescriptionType)
             }
         }
 
@@ -266,7 +268,9 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             parents += functionBuilder
             defaultNull("invocationKind", "label", "body", "controlFlowGraphReference")
             default("inlineStatus", "InlineStatus.Unknown")
+            default("contractDescription", "FirEmptyContractDescription")
             withCopy()
+            useTypes(emptyContractDescriptionType)
         }
 
         builder(propertyAccessor) {

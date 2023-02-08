@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.declarations.builder
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
@@ -55,6 +56,7 @@ interface FirAbstractConstructorBuilder : FirFunctionBuilder {
     abstract val typeParameters: MutableList<FirTypeParameterRef>
     abstract var receiverParameter: FirReceiverParameter?
     abstract var controlFlowGraphReference: FirControlFlowGraphReference?
+    abstract var contractDescription: FirContractDescription
     abstract var symbol: FirConstructorSymbol
     abstract var delegatedConstructor: FirDelegatedConstructorCall?
     override fun build(): FirConstructor

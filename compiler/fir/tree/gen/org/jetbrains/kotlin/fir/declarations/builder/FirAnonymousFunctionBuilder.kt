@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.FirAnnotationContainerBuilder
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
+import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
@@ -61,6 +63,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
     override var body: FirBlock? = null
+    var contractDescription: FirContractDescription = FirEmptyContractDescription
     lateinit var symbol: FirAnonymousFunctionSymbol
     var label: FirLabel? = null
     var invocationKind: EventOccurrencesRange? = null
@@ -86,6 +89,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
             controlFlowGraphReference,
             valueParameters,
             body,
+            contractDescription,
             symbol,
             label,
             invocationKind,
@@ -141,6 +145,7 @@ inline fun buildAnonymousFunctionCopy(original: FirAnonymousFunction, init: FirA
     copyBuilder.controlFlowGraphReference = original.controlFlowGraphReference
     copyBuilder.valueParameters.addAll(original.valueParameters)
     copyBuilder.body = original.body
+    copyBuilder.contractDescription = original.contractDescription
     copyBuilder.symbol = original.symbol
     copyBuilder.label = original.label
     copyBuilder.invocationKind = original.invocationKind
