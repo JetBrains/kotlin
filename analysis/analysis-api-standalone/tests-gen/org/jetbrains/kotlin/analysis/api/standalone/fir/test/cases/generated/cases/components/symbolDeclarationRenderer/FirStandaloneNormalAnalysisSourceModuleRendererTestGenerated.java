@@ -125,6 +125,12 @@ public class FirStandaloneNormalAnalysisSourceModuleRendererTestGenerated extend
     }
 
     @Test
+    @TestMetadata("functionalTypeAliases.kt")
+    public void testFunctionalTypeAliases() throws Exception {
+        runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/functionalTypeAliases.kt");
+    }
+
+    @Test
     @TestMetadata("genericFunctions.kt")
     public void testGenericFunctions() throws Exception {
         runTest("analysis/analysis-api/testData/components/symbolDeclarationRenderer/renderDeclaration/genericFunctions.kt");

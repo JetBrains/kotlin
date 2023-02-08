@@ -55,46 +55,36 @@ internal class KtFirFunctionalType(
     override val isReflectType: Boolean
         get() = withValidityAssertion { coneType.functionTypeKind(builder.rootSession)?.isReflectType == true }
 
-    override val arity: Int
-        get() = withValidityAssertion {
-            if (coneType.isExtensionFunctionType) coneType.typeArguments.size - 2
-            else coneType.typeArguments.size - 1
-        }
+    override val arity: Int get() = withValidityAssertion { parameterTypes.size }
 
     @OptIn(KtAnalysisApiInternals::class)
     override val contextReceivers: List<KtContextReceiver> by cached {
-        ownTypeArguments.subList(0, coneType.contextReceiversNumberForFunctionType).map { typeProjection ->
-            // Context receivers in function types may not have labels, hence the `null` label.
-            KtContextReceiverImpl((typeProjection as KtTypeArgumentWithVariance).type, _label = null, token)
-        }
+        coneType.contextReceiversTypes(builder.rootSession)
+            .map {
+                // Context receivers in function types may not have labels, hence the `null` label.
+                KtContextReceiverImpl(it.buildKtType(), _label = null, token)
+            }
     }
 
-    override val hasContextReceivers: Boolean get() = withValidityAssertion { coneType.hasContextReceivers }
+    override val hasContextReceivers: Boolean get() = withValidityAssertion { contextReceivers.isNotEmpty() }
 
-    override val receiverType: KtType?
-        get() = withValidityAssertion {
-            if (coneType.isExtensionFunctionType) {
-                // The extension receiver type follows any context receiver types.
-                (ownTypeArguments[coneType.contextReceiversNumberForFunctionType] as KtTypeArgumentWithVariance).type
-            } else null
-        }
+    override val receiverType: KtType? by cached {
+        coneType.receiverType(builder.rootSession)?.buildKtType()
+    }
 
-    override val hasReceiver: Boolean
-        get() = withValidityAssertion {
-            coneType.receiverType(builder.rootSession) != null
-        }
+    override val hasReceiver: Boolean get() = withValidityAssertion { receiverType != null }
 
     override val parameterTypes: List<KtType> by cached {
-        // Parameter types follow context and extension receiver types.
-        val firstIndex = coneType.contextReceiversNumberForFunctionType + (if (coneType.isExtensionFunctionType) 1 else 0)
-        val parameterTypeArgs = ownTypeArguments.subList(firstIndex, ownTypeArguments.lastIndex)
-        parameterTypeArgs.map { (it as KtTypeArgumentWithVariance).type }
+        coneType.valueParameterTypesWithoutReceivers(builder.rootSession).map { it.buildKtType() }
     }
 
-    override val returnType: KtType
-        get() = withValidityAssertion { (ownTypeArguments.last() as KtTypeArgumentWithVariance).type }
+    override val returnType: KtType by cached {
+        coneType.returnType(builder.rootSession).buildKtType()
+    }
 
     override fun asStringForDebugging(): String = withValidityAssertion { coneType.renderForDebugging() }
     override fun equals(other: Any?) = typeEquals(other)
     override fun hashCode() = typeHashcode()
+
+    private fun ConeKotlinType.buildKtType(): KtType = builder.typeBuilder.buildKtType(this)
 }
