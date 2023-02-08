@@ -1,6 +1,6 @@
 // EXPLICIT_API_MODE: STRICT
 
-fun f1() {
+<!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>fun f1<!>() {
     class LocalClass {
         public var foo = 0
     }
@@ -71,7 +71,7 @@ public interface I2 {
 
 public var baz2: Int = 0
 
-class J1 {
+<!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>class J1<!> {
     protected val baz: Int = 0
         <!REDUNDANT_VISIBILITY_MODIFIER!>protected<!> get() = field * 2
     <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>var baf<!>: Int = 0
@@ -80,7 +80,7 @@ class J1 {
             field = value
         }
 
-    var buf: Int = 0
+    <!NO_EXPLICIT_VISIBILITY_IN_API_MODE!>var buf<!>: Int = 0
         <!GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY!>private<!> get() = 42
         protected set(value) {
             field = value
