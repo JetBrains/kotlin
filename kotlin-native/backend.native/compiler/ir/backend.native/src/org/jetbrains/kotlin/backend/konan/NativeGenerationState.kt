@@ -107,6 +107,18 @@ internal class NativeGenerationState(
 
     private var isDisposed = false
 
+    // Both NativeGenerationState and Context could be used for logging purposes.
+    // Unfortunately, only NativeGenerationState is used as a PhaseContext, so logging in Context
+    // will do nothing. Workaround that by setting inVerbosePhase of "parent" context.
+    //
+    // A proper solution would be decoupling of logging, error reporting, etc. into a separate (PhaseEnvironment?) object.
+    override var inVerbosePhase: Boolean
+        get() = super.inVerbosePhase
+        set(value) {
+            super.inVerbosePhase = value
+            context.inVerbosePhase = value
+        }
+
     override fun dispose() {
         if (isDisposed) return
 
