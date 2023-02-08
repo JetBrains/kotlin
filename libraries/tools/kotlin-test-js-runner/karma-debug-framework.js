@@ -31,6 +31,4 @@ function configureTimeouts(injector) {
 
 initDebug.$inject = ['injector'];
 
-module.exports = {
-    'framework:karma-kotlin-debug': ['factory', initDebug]
-};
+module.exports = initDebug;

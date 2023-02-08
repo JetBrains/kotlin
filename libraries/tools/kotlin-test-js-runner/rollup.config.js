@@ -41,6 +41,13 @@ export default [
         plugins: plugins()
     },
     {
+        input: './karma-kotlin-debug-plugin.js',
+        output: {
+            file: 'lib/karma-kotlin-debug-plugin.js',
+            format: 'esm'
+        }
+    },
+    {
         input: './karma-debug-runner.js',
         output: {
             file: 'lib/karma-debug-runner.js',
