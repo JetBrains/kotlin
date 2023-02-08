@@ -1,7 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// tried to access field B.f from class TestKt
+// CHECK_BYTECODE_TEXT
 
 // FILE: A.java
 
@@ -24,3 +23,5 @@ public class C extends B {}
 fun box(): String {
     return C().f
 }
+
+// 1 GETFIELD A.f

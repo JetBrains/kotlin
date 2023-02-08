@@ -28738,6 +28738,18 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         }
 
         @Test
+        @TestMetadata("javaPackagePrivateClassAndPublicField.kt")
+        public void testJavaPackagePrivateClassAndPublicField() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaPackagePrivateClassAndPublicField.kt");
+        }
+
+        @Test
+        @TestMetadata("javaPackagePrivateClassExposedViaProtectedStatic.kt")
+        public void testJavaPackagePrivateClassExposedViaProtectedStatic() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaPackagePrivateClassExposedViaProtectedStatic.kt");
+        }
+
+        @Test
         @TestMetadata("javaProtectedFieldAndKotlinInvisibleProperty.kt")
         public void testJavaProtectedFieldAndKotlinInvisibleProperty() throws Exception {
             runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaProtectedFieldAndKotlinInvisibleProperty.kt");
@@ -28747,12 +28759,6 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("javaProtectedFieldAndKotlinInvisiblePropertyReference.kt")
         public void testJavaProtectedFieldAndKotlinInvisiblePropertyReference() throws Exception {
             runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaProtectedFieldAndKotlinInvisiblePropertyReference.kt");
-        }
-
-        @Test
-        @TestMetadata("javaProtectedFieldAndKotlinInvisiblePropertyWrite.kt")
-        public void testJavaProtectedFieldAndKotlinInvisiblePropertyWrite() throws Exception {
-            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaProtectedFieldAndKotlinInvisiblePropertyWrite.kt");
         }
 
         @Test

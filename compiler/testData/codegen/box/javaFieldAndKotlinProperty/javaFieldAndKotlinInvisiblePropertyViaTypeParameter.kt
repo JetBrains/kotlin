@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// tried to access field Derived.a from class DerivedKt
 
 // FILE: BaseJava.java
 public class BaseJava {
