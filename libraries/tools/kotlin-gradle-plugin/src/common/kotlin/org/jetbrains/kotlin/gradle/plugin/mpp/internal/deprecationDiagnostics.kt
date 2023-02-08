@@ -37,7 +37,7 @@ private fun checkAndReportDeprecatedNativeTargets(project: Project) {
     if (usedDeprecatedTargets.isEmpty()) return
     SingleWarningPerBuild.show(
         project,
-        "w: The following deprecated kotlin native targets were used in the project: ${usedDeprecatedTargets.joinToString { it.targetName }}"
+        "w: The following deprecated Kotlin/Native targets were used in the project: ${usedDeprecatedTargets.joinToString { it.targetName }}"
     )
 }
 
