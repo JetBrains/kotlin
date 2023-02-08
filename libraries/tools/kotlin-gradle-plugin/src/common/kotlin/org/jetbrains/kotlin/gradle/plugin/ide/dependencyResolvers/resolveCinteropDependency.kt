@@ -38,6 +38,7 @@ private fun Project.createCinteropLibraryDependency(libraryFile: java.io.File): 
     }
 
     val (group, module) = cinteropGroupAndModule(library)
+    val libraryTargets = library.commonizerNativeTargets ?: library.nativeTargets
 
     return IdeaKotlinResolvedBinaryDependency(
         binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
@@ -46,7 +47,7 @@ private fun Project.createCinteropLibraryDependency(libraryFile: java.io.File): 
             group = group,
             module = module,
             version = null, // TODO (kirpichenkov): if/when used for published cinterops, should be set up correctly
-            sourceSetName = library.nativeTargets.singleOrNull() ?: library.nativeTargets.joinToString(prefix = "(", postfix = ")")
+            sourceSetName = libraryTargets.singleOrNull() ?: libraryTargets.joinToString(prefix = "(", postfix = ")")
         ),
     ).apply {
         klibExtra = KlibExtra(library)

@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.kotlinNativeDistributionDependencies
 import org.jetbrains.kotlin.gradle.util.resolveIdeDependencies
+import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget.*
+import org.junit.AssumptionViolatedException
 import org.junit.jupiter.api.DisplayName
 import java.nio.ByteBuffer
 import java.util.*
@@ -91,11 +93,6 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
 
     @GradleTest
     fun testCinterops(gradleVersion: GradleVersion) {
-        fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
-            this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
-                it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
-            }
-
         project(projectName = "cinteropImport", gradleVersion = gradleVersion) {
             build(":dep-with-cinterop:publishAllPublicationsToBuildRepository")
 
@@ -245,4 +242,24 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    fun `test cinterops - commonized interop name should include targets unsupported on host`(gradleVersion: GradleVersion) {
+        if (HostManager.hostIsMac) {
+            throw AssumptionViolatedException("Host shouldn't support ios target")
+        }
+
+        project("cinterop-ios", gradleVersion) {
+            resolveIdeDependencies { dependencies ->
+                dependencies["commonMain"].cinteropDependencies().assertMatches(
+                    binaryCoordinates(Regex("""a:cinterop-ios-cinterop-myinterop.*\(ios_x64, linux_x64\)"""))
+                )
+            }
+        }
+    }
+
+    private fun Iterable<IdeaKotlinDependency>.cinteropDependencies() =
+        this.filterIsInstance<IdeaKotlinBinaryDependency>().filter {
+            it.klibExtra?.isInterop == true && !it.isNativeStdlib && !it.isNativeDistribution
+        }
 }
