@@ -338,7 +338,7 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             default: {
                 if (descriptor instanceof FunctionClassDescriptor) {
                     FunctionClassDescriptor functionClassDescriptor = (FunctionClassDescriptor) descriptor;
-                    if (functionClassDescriptor.getFunctionKind() == FunctionTypeKind.Function.INSTANCE) {
+                    if (functionClassDescriptor.getFunctionTypeKind() == FunctionTypeKind.Function.INSTANCE) {
                         ClassDescriptor primitivesObject = findPrimitiveClassesObject(context);
                         assert primitivesObject != null;
                         FunctionDescriptor function = DescriptorUtils.getFunctionByName(

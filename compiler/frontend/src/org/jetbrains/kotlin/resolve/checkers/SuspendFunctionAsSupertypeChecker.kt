@@ -22,14 +22,14 @@ object SuspendFunctionAsSupertypeChecker : DeclarationChecker {
         val functionalSupertypes = descriptor.getAllSuperClassifiers().filterIsInstance<FunctionClassDescriptor>().toList()
 
         if (functionalSupertypes.none {
-                it.functionKind == FunctionTypeKind.SuspendFunction ||
-                        it.functionKind == FunctionTypeKind.KSuspendFunction
+                it.functionTypeKind == FunctionTypeKind.SuspendFunction ||
+                        it.functionTypeKind == FunctionTypeKind.KSuspendFunction
             }
         ) return
 
         if (functionalSupertypes.any {
-                it.functionKind == FunctionTypeKind.Function ||
-                        it.functionKind == FunctionTypeKind.KFunction
+                it.functionTypeKind == FunctionTypeKind.Function ||
+                        it.functionTypeKind == FunctionTypeKind.KFunction
             }
         ) {
             val reportOn = (declaration as? KtClassOrObject)?.getSuperTypeList() ?: declaration

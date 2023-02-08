@@ -52,10 +52,10 @@ internal class KtFe10FunctionalType(
         }
 
     override val isSuspend: Boolean
-        get() = withValidityAssertion { descriptor.functionKind.isSuspendOrKSuspendFunction }
+        get() = withValidityAssertion { descriptor.functionTypeKind.isSuspendOrKSuspendFunction }
 
     override val isReflectType: Boolean
-        get() = withValidityAssertion { descriptor.functionKind.isReflectType }
+        get() = withValidityAssertion { descriptor.functionTypeKind.isReflectType }
 
     override val arity: Int
         get() = withValidityAssertion { descriptor.arity }
@@ -78,20 +78,20 @@ internal class KtFe10FunctionalType(
 
     override val hasReceiver: Boolean
         get() = withValidityAssertion {
-            if (descriptor.functionKind.isReflectType) false
+            if (descriptor.functionTypeKind.isReflectType) false
             else fe10Type.getReceiverTypeFromFunctionType() != null
         }
 
     override val receiverType: KtType?
         get() = withValidityAssertion {
-            if (descriptor.functionKind.isReflectType) null
+            if (descriptor.functionTypeKind.isReflectType) null
             else fe10Type.getReceiverTypeFromFunctionType()?.toKtType(analysisContext)
         }
 
     override val parameterTypes: List<KtType>
         get() = withValidityAssertion {
             when {
-                descriptor.functionKind.isReflectType -> fe10Type.arguments.dropLast(1)
+                descriptor.functionTypeKind.isReflectType -> fe10Type.arguments.dropLast(1)
                 else -> fe10Type.getValueParameterTypesFromFunctionType()
             }.map { it.type.toKtType(analysisContext) }
         }
@@ -99,7 +99,7 @@ internal class KtFe10FunctionalType(
     override val returnType: KtType
         get() = withValidityAssertion {
             when {
-                descriptor.functionKind.isReflectType -> fe10Type.arguments.last().type
+                descriptor.functionTypeKind.isReflectType -> fe10Type.arguments.last().type
                 else -> fe10Type.getReturnTypeFromFunctionType()
             }.toKtType(analysisContext)
         }
@@ -107,8 +107,8 @@ internal class KtFe10FunctionalType(
     override val classId: ClassId
         get() = withValidityAssertion {
             ClassId(
-                descriptor.functionKind.packageFqName,
-                descriptor.functionKind.numberedClassName(descriptor.arity)
+                descriptor.functionTypeKind.packageFqName,
+                descriptor.functionTypeKind.numberedClassName(descriptor.arity)
             )
         }
 
