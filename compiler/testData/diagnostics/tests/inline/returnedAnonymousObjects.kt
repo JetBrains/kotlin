@@ -7,11 +7,11 @@ private inline fun <!PRIVATE_INLINE_FUNCTIONS_RETURNING_ANONYMOUS_OBJECTS!>foo1<
 interface I1
 interface I2
 
-private inline fun foo2(crossinline f: () -> Int) = object : I1 {
+private inline fun <!PRIVATE_INLINE_FUNCTIONS_RETURNING_ANONYMOUS_OBJECTS!>foo2<!>(crossinline f: () -> Int) = object : I1 {
     fun bar(): Int = f()
 }
 
-private inline fun foo3(crossinline f: () -> Int) = object : I1, I2 {
+private inline fun <!PRIVATE_INLINE_FUNCTIONS_RETURNING_ANONYMOUS_OBJECTS!>foo3<!>(crossinline f: () -> Int) = object : I1, I2 {
     fun bar(): Int = f()
 }
 

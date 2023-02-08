@@ -17795,6 +17795,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("returnedAnonymousObjects_2.kt")
+            public void testReturnedAnonymousObjects_2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/returnedAnonymousObjects_2.kt");
+            }
+
+            @Test
             @TestMetadata("returns.kt")
             public void testReturns() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/returns.kt");
