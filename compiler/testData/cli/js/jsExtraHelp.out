@@ -63,6 +63,8 @@ where advanced options include:
   -Xcommon-sources=<path>    Sources of the common module that need to be compiled together with this module in the multi-platform mode.
                              Should be a subset of sources passed as free arguments
   -Xcontext-receivers        Enable experimental context receivers
+  -XdependsOn=<fromModuleName>:<onModuleName>
+                             Declares that <fromModuleName> depends on <onModuleName> with dependsOn relation
   -Xdisable-default-scripting-plugin
                              Do not enable scripting plugin by default
   -Xdisable-phases           Disable backend phases
@@ -89,6 +91,8 @@ where advanced options include:
   -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
   -Xlist-phases              List backend phases
   -Xmetadata-version         Change metadata version of the generated binary files
+  -Xmodule=<module name>;<source file[,source file...]>
+                             Describes module with specific sources. Usage of this arguments requires to specify module for each source file from free args
   -Xmulti-platform           Enable experimental language support for multi-platform projects
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects

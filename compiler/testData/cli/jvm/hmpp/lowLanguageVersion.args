@@ -1,0 +1,11 @@
+$TESTDATA_DIR$/src/a.kt
+$TESTDATA_DIR$/src/b.kt
+$TESTDATA_DIR$/src/c.kt
+-d
+$TEMP_DIR$
+-language-version
+1.9
+-XXLanguage\:+MultiPlatformProjects
+-Xmodule=a;$TESTDATA_DIR$/src/a.kt
+-Xmodule=b;$TESTDATA_DIR$/src/b.kt,$TESTDATA_DIR$/src/c.kt
+-Xcommon-sources=$TESTDATA_DIR$/src/a.kt,$TESTDATA_DIR$/src/b.kt

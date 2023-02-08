@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.common
 
+import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
@@ -47,6 +49,7 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
     val usesK2 = arguments.useK2 || languageVersionSettings.languageVersion.usesK2
     put(CommonConfigurationKeys.USE_FIR, usesK2)
     put(CommonConfigurationKeys.USE_LIGHT_TREE, arguments.useFirLT)
+    buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 }
 
 fun <A : CommonCompilerArguments> CompilerConfiguration.setupLanguageVersionSettings(arguments: A) {
@@ -124,4 +127,135 @@ private fun <A : CommonToolArguments> MessageCollector.reportUnsafeInternalArgum
                     "compiler or generated code. Use it at your own risk!\n"
         )
     }
+}
+
+private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
+    val rawModules = arguments.modulesDescription
+    val rawDependencies = arguments.dependsOnDependencies
+
+    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
+    fun reportError(message: String) {
+        messageCollector.report(CompilerMessageSeverity.ERROR, message)
+    }
+
+    fun reportWarning(message: String) {
+        messageCollector.report(CompilerMessageSeverity.WARNING, message)
+    }
+
+    if (rawModules == null) {
+        if (rawDependencies != null) {
+            reportError("-XdependsOn flag can not be used without -Xmodule")
+        }
+        return null
+    }
+
+    if (!languageVersionSettings.languageVersion.usesK2) {
+        reportWarning("-Xmodule flag is not supported for language version < 2.0")
+        return null
+    }
+
+    var modules = rawModules.mapNotNull { arg ->
+        val split = arg.split(";")
+        val name = split.first()
+        when (split.size) {
+            1 -> reportWarning("Incorrect syntax for -Xmodule argument. Module $name has no sources")
+            2 -> {} // OK
+            else -> {
+                reportError("Incorrect syntax for -Xmodule argument. `<module name>;<source file[,source file...]>` expected but got `$arg`")
+                return@mapNotNull null
+            }
+        }
+        val sources = split.getOrNull(1)?.split(",")?.toSet().orEmpty()
+        HmppCliModule(name, sources)
+    }
+
+    var wasError = false
+    // check sources mapping
+    for (i in modules.indices) {
+        val m1 = modules[i]
+        for (j in (i + 1) until modules.size) {
+            val m2 = modules[j]
+            val commonFiles = m1.sources.intersect(m2.sources)
+            if (commonFiles.isNotEmpty()) {
+                val message = buildString {
+                    if (commonFiles.size == 1) {
+                        append("File '${commonFiles.single()}'")
+                    } else {
+                        append("Files ")
+                        append(commonFiles.joinToString(", ") { "'$it'" })
+                    }
+                    append(" can be a part of only one module, but is listed as a source for both `${m1.name}` and `${m2.name}`, please check you -Xmodule options.")
+                }
+                reportError(message)
+                wasError = true
+            }
+        }
+    }
+
+    for (source in arguments.freeArgs) {
+        if (source.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) continue
+        if (modules.none { source in it.sources }) {
+            reportError("Source '$source' does not belong to any module")
+            wasError = true
+        }
+    }
+
+    if (wasError) {
+        return null
+    }
+
+    if (modules.size == 1) {
+        if (rawDependencies?.isNotEmpty() == true) {
+            reportError("-XdependsOn flag is specified but there is only one module declared")
+        }
+        return HmppCliModuleStructure(modules, emptyMap())
+    }
+
+    val duplicatedModules = modules.filter { module -> modules.count { it.name == module.name } > 1 }
+
+    if (duplicatedModules.isNotEmpty()) {
+        reportError("There are multiple modules with same name(s): ${duplicatedModules.distinct().joinToString(", ") { it.name }}")
+        return null
+    }
+
+    val moduleByName = modules.associateBy { it.name }
+
+    val dependenciesMap = rawDependencies.orEmpty().mapNotNull {
+        val split = it.split(":")
+        if (split.size != 2) {
+            reportError("Incorrect syntax for -XdependsOn argument. Expected <fromModuleName>:<onModuleName> but got `$it`")
+            return@mapNotNull null
+        }
+        val moduleName1 = split[0]
+        val moduleName2 = split[1]
+
+        fun findModule(name: String): HmppCliModule? {
+            return moduleByName[name].also { module ->
+                if (module == null) {
+                    reportError("Module `$name` not found in -Xmodule arguments")
+                }
+            }
+        }
+
+        val module1 = findModule(moduleName1)
+        val module2 = findModule(moduleName2)
+        if (module1 == null || module2 == null) return@mapNotNull null
+        module1 to module2
+    }.groupBy(
+        keySelector = { it.first },
+        valueTransform = { it.second }
+    )
+
+    modules = DFS.topologicalOrder(modules) { dependenciesMap[it].orEmpty() }.asReversed()
+
+    modules.forEachIndexed { i, module ->
+        val dependencies = dependenciesMap[module].orEmpty()
+        val previousModules = modules.subList(0, i)
+        if (dependencies.any { it !in previousModules }) {
+            reportError("There is a cycle in dependencies of module `${module.name}`")
+        }
+    }
+
+    return HmppCliModuleStructure(modules, dependenciesMap)
 }
