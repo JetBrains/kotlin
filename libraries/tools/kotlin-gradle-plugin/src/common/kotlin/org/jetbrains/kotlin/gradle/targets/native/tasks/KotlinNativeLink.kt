@@ -303,8 +303,12 @@ constructor(
             addAll(externalDependenciesArgs)
             when (cacheSettings.orchestration) {
                 NativeCacheOrchestration.Compiler -> {
-                    if (cacheSettings.kind != NativeCacheKind.NONE && konanPropertiesService.get().cacheWorksFor(konanTarget))
+                    if (cacheSettings.kind != NativeCacheKind.NONE
+                        && !optimized
+                        && konanPropertiesService.get().cacheWorksFor(konanTarget)
+                    ) {
                         add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
+                    }
                 }
                 NativeCacheOrchestration.Gradle -> {
                     val cacheBuilder = CacheBuilder(
