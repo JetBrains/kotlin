@@ -946,7 +946,7 @@ private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): By
             }
         }
 
-        memScoped {
+        return memScoped {
             val bufferVar = alloc<CPointerVar<ByteVar>>().apply { value = null }
             val bufferSizeVar = alloc<IntVar>()
 
@@ -956,7 +956,7 @@ private fun createVfsOverlayFileContents(virtualPathToReal: Map<Path, Path>): By
                 error(res)
             }
 
-            return bufferVar.value!!.readBytes(bufferSizeVar.value)
+            bufferVar.value!!.readBytes(bufferSizeVar.value)
         }
     } finally {
         clang_VirtualFileOverlay_dispose(overlay)
