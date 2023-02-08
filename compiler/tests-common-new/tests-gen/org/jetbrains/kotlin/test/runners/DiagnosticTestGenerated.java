@@ -30259,6 +30259,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("smartCastOnAlienPropertyFromInnerClass.kt")
+            public void testSmartCastOnAlienPropertyFromInnerClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnAlienPropertyFromInnerClass.kt");
+            }
+
+            @Test
             @TestMetadata("smartCastOnElvis.kt")
             public void testSmartCastOnElvis() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/smartCastOnElvis.kt");
