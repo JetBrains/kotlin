@@ -204,7 +204,10 @@ public class DebugSymbolRenderer(
     private fun PrettyPrinter.renderType(type: KtType) {
         val typeToRender = if (renderExpandedTypes) type.fullyExpandedType else type
         if (renderTypeByProperties) {
-            renderByPropertyNames(typeToRender)
+            appendLine("type:")
+            withIndent {
+                renderByPropertyNames(typeToRender)
+            }
             return
         }
 
