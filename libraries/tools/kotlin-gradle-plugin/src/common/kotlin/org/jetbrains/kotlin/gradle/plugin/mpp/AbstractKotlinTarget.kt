@@ -67,6 +67,11 @@ abstract class AbstractKotlinTarget(
     override val publishable: Boolean
         get() = true
 
+    internal var publishSources: Boolean = true
+    override fun withSourcesJar(publish: Boolean) {
+        publishSources = publish
+    }
+
     @InternalKotlinGradlePluginApi
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         val mainCompilation = compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
