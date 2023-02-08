@@ -254,6 +254,18 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
     }
 
     @Test
+    @TestMetadata("javaFieldsWithIntersectionTypes_k1.kt")
+    public void testJavaFieldsWithIntersectionTypes_k1() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/javaFieldsWithIntersectionTypes_k1.kt");
+    }
+
+    @Test
+    @TestMetadata("javaFields_k1.kt")
+    public void testJavaFields_k1() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/javaFields_k1.kt");
+    }
+
+    @Test
     @TestMetadata("javaStatics.kt")
     public void testJavaStatics() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/javaStatics.kt");

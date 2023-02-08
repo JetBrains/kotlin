@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_FIR: JVM_IR
-// FIR_STATUS: accesses companion property backing field statically and fails (does not work in K1/JVM too)
+// IGNORE_BACKEND_K1: JVM_IR
 
 // FILE: Base.java
 public class Base {

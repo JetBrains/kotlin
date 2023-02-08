@@ -1013,6 +1013,10 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         // in the anonymous class for this callable reference. Technically it's incorrect because this field is not declared here. It would
         // be more correct to create a fake override but that seems like more work for no clear benefit. Codegen will generate the correct
         // field access anyway, even if the field is not present in this parent.
+        // Note that it is necessary to generate an access to the field whose parent is this anonymous class, and NOT some supertype like
+        // k.j.i.CallableReference, or k.j.i.FunctionReferenceImpl, because then AddSuperQualifierToJavaFieldAccess lowering would add
+        // superQualifierSymbol, which would break inlining of bound function references, since inliner will not understand how to transform
+        // this getfield instruction in the bytecode.
         internal fun IrClass.getReceiverField(context: JvmBackendContext): IrField =
             context.irFactory.buildField {
                 name = Name.identifier("receiver")

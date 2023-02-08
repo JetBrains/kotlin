@@ -1,7 +1,5 @@
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: JVM_IR
-// IGNORE_BACKEND_K2: JVM_IR
-// FIR status: fails because of incorrect receiver in bytecode
 // Field VS property: case "reference"
 
 // FILE: BaseJava.java

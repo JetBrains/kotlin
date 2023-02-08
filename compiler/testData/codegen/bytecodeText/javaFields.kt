@@ -1,3 +1,7 @@
+// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JVM_IR
+// ^ See javaFields_k1.kt for a copy of this test for K1.
+
 // FILE: Java1.java
 public class Java1 { 
   public int f;
@@ -16,8 +20,9 @@ open class Kotlin2 : Java2() {
 
 fun test1(j: Kotlin2) = j.f
 
-// @Kotlin2.class:
-// 1 GETFIELD Java2.f : I
+// K2 generates access to Java1.f in both cases. The main motivation for this is to fix cases like KT-49507.
+// Java1 in this case is the most specific Java superclass of Kotlin2 which has no Kotlin superclasses in its hierarchy.
 
-// @TestKt.class:
-// 1 GETFIELD Kotlin2.f : I
+// 2 GETFIELD Java1.f : I
+// 0 GETFIELD Java2.f : I
+// 0 GETFIELD Kotlin2.f : I
