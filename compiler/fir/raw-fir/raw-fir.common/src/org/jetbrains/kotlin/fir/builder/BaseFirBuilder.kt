@@ -1225,10 +1225,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
 
     protected fun convertValueParameterName(
         safeName: Name,
-        rawName: String?,
-        valueParameterDeclaration: ValueParameterDeclaration
+        valueParameterDeclaration: ValueParameterDeclaration,
+        rawName: () -> String?,
     ): Name {
-        return if (valueParameterDeclaration == ValueParameterDeclaration.LAMBDA && rawName == "_"
+        return if (valueParameterDeclaration == ValueParameterDeclaration.LAMBDA && rawName() == "_"
             ||
             valueParameterDeclaration == ValueParameterDeclaration.CATCH &&
             safeName.asString() == "_"

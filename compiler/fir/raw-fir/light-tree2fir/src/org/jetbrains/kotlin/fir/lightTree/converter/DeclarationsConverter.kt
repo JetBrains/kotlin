@@ -2316,7 +2316,7 @@ class DeclarationsConverter(
             }
         }
 
-        val name = convertValueParameterName(identifier.nameAsSafeName(), identifier, valueParameterDeclaration)
+        val name = convertValueParameterName(identifier.nameAsSafeName(), valueParameterDeclaration) { identifier }
 
         val valueParameterSource = valueParameter.toFirSourceElement()
         return ValueParameter(
