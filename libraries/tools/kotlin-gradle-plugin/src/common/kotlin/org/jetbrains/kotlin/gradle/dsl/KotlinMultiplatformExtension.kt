@@ -66,7 +66,7 @@ abstract class KotlinMultiplatformExtension(project: Project) :
     fun metadata(configure: Action<KotlinOnlyTarget<KotlinMetadataCompilation<*>>>) = metadata { configure.execute(this) }
 
     fun withSourcesJar(publish: Boolean = true) {
-        targets.all { withSourcesJar(publish) }
+        targets.all { it.withSourcesJar(publish) }
     }
 
     fun <T : KotlinTarget> targetFromPreset(

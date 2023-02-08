@@ -67,7 +67,7 @@ open class KotlinVariant(
     final override val target: KotlinTarget
         get() = producingCompilation.target
 
-    override fun getUsages(): Set<KotlinUsageContext> = usages
+    override fun getUsages(): Set<KotlinUsageContext> = usages.publishableUsages()
 
     override fun getName(): String = componentName ?: producingCompilation.target.targetName
 

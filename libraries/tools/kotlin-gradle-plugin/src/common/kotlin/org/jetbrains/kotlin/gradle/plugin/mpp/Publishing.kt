@@ -72,6 +72,7 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
                 project.whenEvaluated { kotlinTarget.createMavenPublications(publishing.publications) }
             else
                 kotlinTarget.createMavenPublications(publishing.publications)
+                // project.whenEvaluated { kotlinTarget.createMavenPublications(publishing.publications) }
         }
 }
 
