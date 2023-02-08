@@ -18,6 +18,12 @@ import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.Lock
 
+internal inline fun <T> executeWithoutPCE(crossinline action: () -> T): T {
+    var result: T? = null
+    ProgressManager.getInstance().executeNonCancelableSection { result = action() }
+    @Suppress("UNCHECKED_CAST")
+    return result as T
+}
 
 internal inline fun <T> Lock.lockWithPCECheck(lockingIntervalMs: Long, action: () -> T): T {
     while (true) {
