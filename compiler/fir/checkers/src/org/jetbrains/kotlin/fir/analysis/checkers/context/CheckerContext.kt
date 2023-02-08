@@ -61,8 +61,7 @@ abstract class CheckerContext : DiagnosticContext {
     override val languageVersionSettings: LanguageVersionSettings
         get() = session.languageVersionSettings
 
-    val containingFile: FirFile?
-        get() = if (containingDeclarations.isEmpty()) null else containingDeclarations.first() as FirFile
+    abstract val containingFile: FirFile?
 
     override val containingFilePath: String?
         get() = containingFile?.sourceFile?.path

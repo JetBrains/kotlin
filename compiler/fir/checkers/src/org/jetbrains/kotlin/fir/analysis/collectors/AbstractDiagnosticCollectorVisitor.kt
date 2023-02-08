@@ -161,7 +161,7 @@ abstract class AbstractDiagnosticCollectorVisitor(
 
     override fun visitFile(file: FirFile, data: Nothing?) {
         withAnnotationContainer(file) {
-            visitWithDeclaration(file)
+            visitWithFile(file)
         }
     }
 
@@ -253,6 +253,15 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    protected inline fun visitWithFile(
+        file: FirFile,
+        block: () -> Unit = { visitNestedElements(file) }
+    ) {
+        withFile(file) {
+            visitWithDeclaration(file, block)
+        }
+    }
+
     private fun visitWithDeclarationAndReceiver(declaration: FirDeclaration, labelName: Name?, receiverParameter: FirReceiverParameter?) {
         visitWithDeclaration(declaration) {
             withLabelAndReceiverType(
@@ -321,6 +330,17 @@ abstract class AbstractDiagnosticCollectorVisitor(
         }
     }
 
+    @OptIn(PrivateForInline::class)
+    inline fun <R> withFile(file: FirFile, block: () -> R): R {
+        val existingContext = context
+        context = context.enterFile(file)
+        try {
+            return block()
+        } finally {
+            existingContext.exitFile(file)
+            context = existingContext
+        }
+    }
 
     @OptIn(PrivateForInline::class)
     inline fun <R> withLabelAndReceiverType(

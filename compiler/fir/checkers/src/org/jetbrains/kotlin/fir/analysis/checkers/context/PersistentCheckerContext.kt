@@ -11,6 +11,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.persistentSetOf
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.PersistentImplicitReceiverStack
@@ -31,7 +32,8 @@ class PersistentCheckerContext private constructor(
     override val suppressedDiagnostics: PersistentSet<String>,
     allInfosSuppressed: Boolean,
     allWarningsSuppressed: Boolean,
-    allErrorsSuppressed: Boolean
+    allErrorsSuppressed: Boolean,
+    override val containingFile: FirFile?,
 ) : CheckerContextForProvider(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
     constructor(sessionHolder: SessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
         PersistentImplicitReceiverStack(),
@@ -45,7 +47,8 @@ class PersistentCheckerContext private constructor(
         persistentSetOf(),
         allInfosSuppressed = false,
         allWarningsSuppressed = false,
-        allErrorsSuppressed = false
+        allErrorsSuppressed = false,
+        containingFile = null,
     )
 
     override fun addImplicitReceiver(name: Name?, value: ImplicitReceiverValue<*>): PersistentCheckerContext =
@@ -106,11 +109,12 @@ class PersistentCheckerContext private constructor(
         allWarningsSuppressed: Boolean = this.allWarningsSuppressed,
         allErrorsSuppressed: Boolean = this.allErrorsSuppressed,
         suppressedDiagnostics: PersistentSet<String> = this.suppressedDiagnostics,
+        containingFile: FirFile? = this.containingFile,
     ): PersistentCheckerContext {
         return PersistentCheckerContext(
             implicitReceiverStack, containingDeclarations, qualifiedAccessOrAssignmentsOrAnnotationCalls,
             getClassCalls, annotationContainers, isContractBody, sessionHolder, returnTypeCalculator, suppressedDiagnostics,
-            allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed,
+            allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed, containingFile,
         )
     }
 
@@ -123,4 +127,8 @@ class PersistentCheckerContext private constructor(
     override fun enterContractBody(): CheckerContextForProvider = toggleContractBody(newValue = true)
 
     override fun exitContractBody(): CheckerContextForProvider = toggleContractBody(newValue = false)
+
+    override fun enterFile(file: FirFile): CheckerContextForProvider = copy(containingFile = file)
+
+    override fun exitFile(file: FirFile): CheckerContextForProvider = copy(containingFile = null)
 }

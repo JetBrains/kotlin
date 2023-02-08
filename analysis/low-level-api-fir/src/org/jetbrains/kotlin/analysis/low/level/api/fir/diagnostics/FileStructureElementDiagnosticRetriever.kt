@@ -121,7 +121,7 @@ internal object FileDiagnosticRetriever : FileStructureElementDiagnosticRetrieve
     ) {
         override fun visitFile(file: FirFile, data: Nothing?) {
             withAnnotationContainer(file) {
-                visitWithDeclaration(file) {
+                visitWithFile(file) {
                     file.annotations.forEach { it.accept(this, data) }
                     file.packageDirective.accept(this, data)
                     file.imports.forEach { it.accept(this, data) }
