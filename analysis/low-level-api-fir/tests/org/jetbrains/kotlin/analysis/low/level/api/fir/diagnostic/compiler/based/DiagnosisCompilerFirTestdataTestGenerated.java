@@ -2741,6 +2741,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
                 runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierCheckerForInnerComponents.kt");
             }
 
+            @Test
+            @TestMetadata("RedundantVisibilityModifierCheckerWithExplicitApiMode.kt")
+            public void testRedundantVisibilityModifierCheckerWithExplicitApiMode() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/RedundantVisibilityModifierCheckerWithExplicitApiMode.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/fir/analysis-tests/testData/resolve/extendedCheckers/canBeReplacedWithOperatorAssignment")
             @TestDataPath("$PROJECT_ROOT")

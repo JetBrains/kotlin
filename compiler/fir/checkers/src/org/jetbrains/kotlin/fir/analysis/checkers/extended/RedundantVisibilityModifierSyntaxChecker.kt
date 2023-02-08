@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.analysis.checkers.extended
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -121,11 +123,23 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
 
         val explicitVisibility = element.source?.explicitVisibility
         val isHidden = explicitVisibility.isEffectivelyHiddenBy(containingMemberDeclaration)
-
-        if (explicitVisibility != implicitVisibility && !isHidden) {
+        if (isHidden) {
+            reportElement(element, context, reporter)
             return
         }
 
+        // In explicit API mode, `public` is explicitly required.
+        val explicitApiMode = context.languageVersionSettings.getFlag(AnalysisFlags.explicitApiMode)
+        if (explicitApiMode != ExplicitApiMode.DISABLED && explicitVisibility == Visibilities.Public) {
+            return
+        }
+
+        if (explicitVisibility == implicitVisibility) {
+            reportElement(element, context, reporter)
+        }
+    }
+
+    private fun reportElement(element: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         reporter.reportOn(element.source, FirErrors.REDUNDANT_VISIBILITY_MODIFIER, context)
     }
 
