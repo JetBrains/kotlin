@@ -18,7 +18,6 @@ internal fun javaOrigin(isFromSource: Boolean): FirDeclarationOrigin.Java {
     return if (isFromSource) FirDeclarationOrigin.Java.Source else FirDeclarationOrigin.Java.Library
 }
 
-
 internal fun FirDeclaration.thrownFieldInJavaDeclarationCannotBeReplacedError(field: KProperty<*>): Nothing {
     error("${field.name} cannot be replaced for ${this::class.simpleName}")
 }
