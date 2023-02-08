@@ -1,0 +1,8 @@
+class A
+
+class B
+
+typealias Foo = context(A, B) suspend String.(Int, Double) -> String
+
+fun foo(f: suspend context(A, B) String.(Int, Double) -> String)
+

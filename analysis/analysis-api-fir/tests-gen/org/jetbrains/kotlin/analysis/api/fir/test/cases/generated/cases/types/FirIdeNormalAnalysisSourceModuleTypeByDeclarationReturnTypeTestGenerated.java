@@ -63,4 +63,10 @@ public class FirIdeNormalAnalysisSourceModuleTypeByDeclarationReturnTypeTestGene
     public void testLocalNestedClassType() throws Exception {
         runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/localNestedClassType.kt");
     }
+
+    @Test
+    @TestMetadata("typeAliasForFunctionalType1.kt")
+    public void testTypeAliasForFunctionalType1() throws Exception {
+        runTest("analysis/analysis-api/testData/types/byDeclarationReturnType/typeAliasForFunctionalType1.kt");
+    }
 }

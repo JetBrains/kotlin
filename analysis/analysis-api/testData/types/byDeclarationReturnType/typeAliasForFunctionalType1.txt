@@ -1,0 +1,31 @@
+annotationsList: []
+arity: -1
+classId: Foo
+classSymbol: KtTypeAliasSymbol(Foo)
+contextReceivers: []
+hasContextReceivers: false
+hasReceiver: false
+isReflectType: false
+isSuspend: false
+nullability: NON_NULLABLE
+ownTypeArguments: []
+parameterTypes: []
+
+qualifiers: [
+  qualifier:
+    name: Foo
+    symbol: KtTypeAliasSymbol(Foo)
+    typeArguments: []
+]
+receiverType: null
+returnType: annotationsList: []
+  classId: kotlin/String
+  classSymbol: KtNamedClassOrObjectSymbol(kotlin/String)
+  nullability: NON_NULLABLE
+  ownTypeArguments: []
+  qualifiers: [
+    qualifier:
+      name: String
+      symbol: KtNamedClassOrObjectSymbol(kotlin/String)
+      typeArguments: []
+  ]
