@@ -28,7 +28,6 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     private val compilerAnnotationsLock = ReentrantLock()
 
     inline fun <R> withGlobalLock(
-        @Suppress("UNUSED_PARAMETER") key: FirFile,
         lockingIntervalMs: Long = DEFAULT_LOCKING_INTERVAL,
         action: () -> R
     ): R {
