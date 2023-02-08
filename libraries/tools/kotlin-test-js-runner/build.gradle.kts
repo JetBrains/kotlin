@@ -44,6 +44,7 @@ tasks {
             "nodejs-idle.ts",
             "karma.ts",
             "karma-kotlin-reporter.js",
+            "karma-kotlin-debug-plugin.js",
             "karma-debug-runner.js",
             "karma-debug-framework.js",
             "mocha-kotlin-reporter.js",

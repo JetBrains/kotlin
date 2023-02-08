@@ -24,9 +24,12 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.internal.MppTestReportHelper
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.*
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
+import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
+import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
@@ -36,6 +39,7 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Compan
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.appendLine
+import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.slf4j.Logger
@@ -54,6 +58,7 @@ class KotlinKarma(
     private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
     private val nodeRootPackageDir by lazy { nodeJs.rootPackageDir }
     private val versions = nodeJs.versions
+    private val nodeModulesCacheDir = nodeJs.nodeModulesGradleCacheDir
 
     private val config: KarmaConfig = KarmaConfig()
     private val requiredDependencies = mutableSetOf<RequiredKotlinJsDependency>()
@@ -369,10 +374,12 @@ class KotlinKarma(
         val file = task.inputFileProperty.get().asFile.toString()
 
         config.files.add(npmProject.require("kotlin-test-js-runner/kotlin-test-karma-runner.js"))
-        config.files.add(file)
-
-        if (debug) {
+        if (!debug) {
+            config.files.add(file)
+        } else {
             config.singleRun = false
+
+            config.files.add(createDebuggerJs(file).normalize().absolutePath)
 
             confJsWriters.add {
                 //language=ES6
@@ -383,7 +390,7 @@ class KotlinKarma(
                             config.plugins.push('karma-*'); // default
                         }
                         
-                        config.plugins.push('kotlin-test-js-runner/karma-debug-framework.js');
+                        config.plugins.push('kotlin-test-js-runner/karma-kotlin-debug-plugin.js');
                     """.trimIndent()
                 )
             }
@@ -587,6 +594,20 @@ class KotlinKarma(
                     }
                 }
         }
+    }
+
+    private fun createDebuggerJs(
+        file: String,
+    ): File {
+        val adapterJs = npmProject.dir.resolve("debugger.js")
+        adapterJs.printWriter().use { writer ->
+            // It is necessary for debugger attaching (--inspect-brk analogue)
+            writer.println("debugger;")
+
+            writer.println("module.exports = require(${file.jsQuoted()})")
+        }
+
+        return adapterJs
     }
 
     private fun Appendable.appendFromConfigDir() {
