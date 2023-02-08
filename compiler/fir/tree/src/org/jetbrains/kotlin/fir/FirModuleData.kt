@@ -50,6 +50,8 @@ abstract class FirModuleData : FirSessionComponent {
     //   refactor them to make API clearer
     abstract val analyzerServices: PlatformDependentAnalyzerServices
 
+    open val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty
+
     private var _session: FirSession? = null
     val session: FirSession
         get() = _session
@@ -73,7 +75,8 @@ class FirModuleDataImpl(
     override val dependsOnDependencies: List<FirModuleData>,
     override val friendDependencies: List<FirModuleData>,
     override val platform: TargetPlatform,
-    override val analyzerServices: PlatformDependentAnalyzerServices
+    override val analyzerServices: PlatformDependentAnalyzerServices,
+    override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty
 ) : FirModuleData()
 
 val FirSession.nullableModuleData: FirModuleData? by FirSession.nullableSessionComponentAccessor()
