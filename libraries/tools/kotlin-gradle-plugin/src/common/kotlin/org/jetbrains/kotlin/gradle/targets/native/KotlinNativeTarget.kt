@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
 
 abstract class KotlinNativeTarget @Inject constructor(
@@ -102,13 +103,13 @@ abstract class KotlinNativeTarget @Inject constructor(
             }
         }
 
-        configureSourcesJarArtifact(mainCompilation, targetName, dashSeparatedName(targetName.toLowerCaseAsciiOnly()))
-        val sourcesUsage = DefaultKotlinUsageContext(
-            compilation = mainCompilation,
-            dependencyConfigurationName = sourcesElementsConfigurationName,
-            includeIntoProjectStructureMetadata = false,
+        mutableUsageContexts.addIfNotNull(
+            createSourcesJarAndUsageContextIfPublishable(
+                mainCompilation,
+                targetName,
+                dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+            )
         )
-        mutableUsageContexts += sourcesUsage
 
         val result = createKotlinVariant(targetName, mainCompilation, mutableUsageContexts)
 

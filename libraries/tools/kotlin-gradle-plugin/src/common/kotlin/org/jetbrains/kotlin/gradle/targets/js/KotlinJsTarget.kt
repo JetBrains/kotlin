@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.utils.addIfNotNull
 import javax.inject.Inject
 
 abstract class KotlinJsTarget
@@ -81,12 +82,12 @@ constructor(
                     irTarget?.let { targetName.removeJsCompilerSuffix(LEGACY) } ?: targetName
                 else PRIMARY_SINGLE_COMPONENT_NAME
 
-            configureSourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCaseAsciiOnly()))
-            usageContexts += DefaultKotlinUsageContext(
-                compilation = mainCompilation,
-                mavenScope = KotlinUsageContext.MavenScope.RUNTIME,
-                dependencyConfigurationName = sourcesElementsConfigurationName,
-                includeIntoProjectStructureMetadata = false,
+            usageContexts.addIfNotNull(
+                createSourcesJarAndUsageContextIfPublishable(
+                    mainCompilation,
+                    componentName,
+                    dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+                )
             )
 
             val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
