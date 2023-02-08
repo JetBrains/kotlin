@@ -38,7 +38,6 @@ class FirDesignationWithFile(
         yieldAll(path)
         if (includeTarget) yield(target)
     }
-
 }
 
 open class FirDesignation(
