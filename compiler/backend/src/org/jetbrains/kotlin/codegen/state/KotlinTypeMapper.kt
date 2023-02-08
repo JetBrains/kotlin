@@ -342,8 +342,8 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         if (classDescriptor is FunctionClassDescriptor) {
             if (classDescriptor.hasBigArity ||
-                classDescriptor.functionKind == FunctionTypeKind.KFunction ||
-                classDescriptor.functionKind == FunctionTypeKind.KSuspendFunction
+                classDescriptor.functionTypeKind == FunctionTypeKind.KFunction ||
+                classDescriptor.functionTypeKind == FunctionTypeKind.KSuspendFunction
             ) {
                 // kotlin.reflect.KFunction{n}<P1, ..., Pn, R> is mapped to kotlin.reflect.KFunction<R> (for all n), and
                 // kotlin.Function{n}<P1, ..., Pn, R> is mapped to kotlin.jvm.functions.FunctionN<R> (for n > 22).

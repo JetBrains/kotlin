@@ -61,7 +61,7 @@ internal class KtFe10TypeSystemCommonBackendContextForTypeMapping(
     override fun SimpleTypeMarker.isSuspendFunction(): Boolean {
         require(this is SimpleType)
         val declaration = constructor.declarationDescriptor
-        return declaration is FunctionClassDescriptor && declaration.functionKind.isSuspendOrKSuspendFunction
+        return declaration is FunctionClassDescriptor && declaration.functionTypeKind.isSuspendOrKSuspendFunction
     }
 
     override fun SimpleTypeMarker.isKClass(): Boolean {
