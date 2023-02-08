@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
@@ -45,16 +46,31 @@ object FirAmbiguousAnonymousTypeChecker : FirBasicDeclarationChecker() {
             else -> error("Should not be there")
         } ?: return
 
-        val classSymbol = typeRef.coneType.toSymbol(context.session) ?: return
+        checkTypeAndArguments(typeRef.coneType, context, reporter, declaration.source)
+    }
+
+    private fun checkTypeAndArguments(
+        type: ConeKotlinType,
+        context: CheckerContext,
+        reporter: DiagnosticReporter,
+        reportOn: KtSourceElement?
+    ) {
+        val classSymbol = type.toSymbol(context.session)
         if (classSymbol is FirAnonymousObjectSymbol && classSymbol.resolvedSuperTypeRefs.size > 1) {
             // Any anonymous object that has only one super type is already approximated to the super type by
             // org.jetbrains.kotlin.fir.types.TypeUtilsKt#hideLocalTypeIfNeeded. Hence, any remaining anonymous object must have more than
             // one super types and hence are ambiguous.
             reporter.reportOn(
-                declaration.source,
+                reportOn,
                 FirErrors.AMBIGUOUS_ANONYMOUS_TYPE_INFERRED,
                 classSymbol.resolvedSuperTypeRefs.map { it.coneType },
                 context
+            )
+        }
+        for (typeArgument in type.typeArguments) {
+            checkTypeAndArguments(
+                typeArgument.type ?: continue,
+                context, reporter, reportOn
             )
         }
     }

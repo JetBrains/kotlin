@@ -34,11 +34,11 @@ private inline fun foo22(crossinline f: () -> Int) = Inv(Inv(object : I1 {
     fun bar(): Int = f()
 }
 
-private inline fun foo31(crossinline f: () -> Int) = Inv(object : I1, I2 {
+<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>private inline fun foo31(crossinline f: () -> Int)<!> = Inv(object : I1, I2 {
     fun bar(): Int = f()
 })
 
-private inline fun foo32(crossinline f: () -> Int) = Inv(Inv(object : I1, I2 {
+<!AMBIGUOUS_ANONYMOUS_TYPE_INFERRED!>private inline fun foo32(crossinline f: () -> Int)<!> = Inv(Inv(object : I1, I2 {
     fun bar(): Int = f()
 }))
 
