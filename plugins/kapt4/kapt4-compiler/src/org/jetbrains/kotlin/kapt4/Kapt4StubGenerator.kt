@@ -1049,7 +1049,10 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             addSuperType(it, superClasses)
             superClassIsObject = superClassIsObject || it.qualifiedNameOrNull == "java.lang.Object"
         }
-        superPsiInterfaces.forEach { addSuperType(it, superInterfaces) }
+        for (superInterface in superPsiInterfaces) {
+            if (superInterface.qualifiedName.startsWith("kotlin.collections.")) continue
+            addSuperType(superInterface, superInterfaces)
+        }
 
         val jcTypeParameters = mapJList(psiClass.typeParameters) { convertTypeParameter(it) }
         val jcSuperClass = superClasses.firstOrNull().takeUnless { psiClass.isInterface } ?: createJavaLangObjectType().also {
