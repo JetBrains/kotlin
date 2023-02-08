@@ -716,6 +716,30 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xmodule",
+        valueDescription = "<module name>;<source file[,source file...]>",
+        description = "Describes module with specific sources. Usage of this arguments requires to specify module for each source file from free args",
+        delimiter = ""
+    )
+    var modulesDescription: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-XdependsOn",
+        valueDescription = "<fromModuleName>:<onModuleName>",
+        description = "Declares that <fromModuleName> depends on <onModuleName> with dependsOn relation",
+        delimiter = ""
+    )
+    var dependsOnDependencies: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @OptIn(IDEAPluginsCompatibilityAPI::class)
     open fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {

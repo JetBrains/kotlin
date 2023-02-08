@@ -250,6 +250,7 @@ fun generateJUnit3CompilerTests(args: Array<String>) {
             testClass<AbstractCliTest> {
                 model("cli/jvm/readingConfigFromEnvironment", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm/plugins", extension = "args", testMethod = "doJvmTest", recursive = false)
+                model("cli/jvm/hmpp", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/jvm", extension = "args", testMethod = "doJvmTest", recursive = false)
                 model("cli/js", extension = "args", testMethod = "doJsTest", recursive = false)
                 model("cli/js-dce", extension = "args", testMethod = "doJsDceTest", recursive = false)
