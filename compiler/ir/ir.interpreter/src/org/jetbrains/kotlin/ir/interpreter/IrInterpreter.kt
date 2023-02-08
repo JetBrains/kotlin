@@ -293,6 +293,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
             return callStack.pushCompoundInstruction(constructorCall)
         }
+
         callStack.pushState(expression.toPrimitive())
     }
 

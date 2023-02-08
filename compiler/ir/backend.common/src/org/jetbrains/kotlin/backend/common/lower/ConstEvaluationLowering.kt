@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.ir.interpreter.checker.IrConstTransformer
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
     private val suppressErrors: Boolean = context.configuration.getBoolean(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS),
+    configuration: IrInterpreterConfiguration = IrInterpreterConfiguration(printOnlyExceptionMessage = true),
     private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
 ) : FileLoweringPass {
-    val configuration = IrInterpreterConfiguration(printOnlyExceptionMessage = true)
     val interpreter = IrInterpreter(IrInterpreterEnvironment(context.irBuiltIns, configuration), emptyMap())
 
     override fun lower(irFile: IrFile) {

@@ -151,13 +151,21 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         }
 
         val receiverType = irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
+        val argsType = (listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }).map {
+            // TODO: for consistency with current K/JS implementation Float constant should be treated as a Double (KT-35422)
+            if (environment.configuration.treatFloatInSpecialWay && it.isFloat()) irBuiltIns.doubleType else it
+        }
         val argsValues = args.wrap(this, irFunction)
 
         // TODO replace unary, binary, ternary functions with vararg
         withExceptionHandler(environment) {
             val result = when (argsType.size) {
-                1 -> interpretUnaryFunction(methodName, argsType[0].getOnlyName(), argsValues[0])
+                1 -> when {
+                    methodName == "toString" && environment.configuration.treatFloatInSpecialWay && (argsValues[0] is Double || argsValues[0] is Float) -> {
+                        argsValues[0].specialToStringForJs()
+                    }
+                    else -> interpretUnaryFunction(methodName, argsType[0].getOnlyName(), argsValues[0])
+                }
                 2 -> when (methodName) {
                     "rangeTo" -> return calculateRangeTo(irFunction.returnType, args)
                     else -> interpretBinaryFunction(

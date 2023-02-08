@@ -12,8 +12,9 @@ const val name3 = EnumClass.anotherValue.name
 const val name4 = EnumClass.WITH_UNDERSCORE.name
 
 fun box(): String {
-    if (name2 != "VALUE") return "Fail 1"
-    if (name3 != "anotherValue") return "Fail 2"
-    if (name4 != "WITH_UNDERSCORE") return "Fail 3"
+    if (EnumClass.OK.name != "OK") return "Fail 1"
+    if (name2 != "VALUE") return "Fail 2"
+    if (name3 != "anotherValue") return "Fail 3"
+    if (name4 != "WITH_UNDERSCORE") return "Fail 4"
     return name1
 }

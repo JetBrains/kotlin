@@ -1,12 +1,14 @@
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: NATIVE
-// IGNORE_BACKEND_K1: JVM_IR, NATIVE
+// TARGET_BACKEND: JS_IR
+// IGNORE_BACKEND_K1: JVM_IR, NATIVE, JS_IR, JS_IR_ES6
 
 const val minusOneVal = -1.0
 const val oneVal = 1.0
 const val twoVal = 2.0
 const val threeVal = 3.0
 const val fourVal = 4.0
+const val oneAndAHalf = 1.5
 
 const val byteVal = 2.toByte()
 const val shortVal = 2.toShort()
@@ -87,6 +89,7 @@ const val equals4 = fourVal == twoVal
 
 const val toString1 = oneVal.toString()
 const val toString2 = twoVal.toString()
+const val toString3 = oneAndAHalf.toString()
 
 fun box(): String {
     if (compareTo1 != -1)   return "Fail 1.1"
@@ -159,8 +162,9 @@ fun box(): String {
     if (equals3 != false)   return "Fail 9.3"
     if (equals4 != false)   return "Fail 9.4"
 
-    if (toString1 != "1.0")   return "Fail 10.1"
-    if (toString2 != "2.0")   return "Fail 10.2"
+    if (toString1 != "1.0" && toString1 != "1" /* JS */)    return "Fail 10.1"
+    if (toString2 != "2.0" && toString2 != "2" /* JS */)    return "Fail 10.2"
+    if (toString3 != "1.5")                                 return "Fail 10.3"
 
     return "OK"
 }

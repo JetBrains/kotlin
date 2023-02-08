@@ -30,11 +30,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrConstTransformer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.psi.KtFile
 
 class Fir2IrConverter(
@@ -418,10 +421,15 @@ class Fir2IrConverter(
     companion object {
         private fun evaluateConstants(irModuleFragment: IrModuleFragment) {
             val firModuleDescriptor = irModuleFragment.descriptor as? FirModuleDescriptor
+            val targetPlatform = firModuleDescriptor?.platform
             val languageVersionSettings = firModuleDescriptor?.session?.languageVersionSettings
             val intrinsicConstEvaluation = languageVersionSettings?.supportsFeature(LanguageFeature.IntrinsicConstEvaluation) == true
 
-            val interpreter = IrInterpreter(irModuleFragment.irBuiltins)
+            val configuration = IrInterpreterConfiguration(
+                printOnlyExceptionMessage = targetPlatform.isJs(),
+                treatFloatInSpecialWay = targetPlatform.isJs()
+            )
+            val interpreter = IrInterpreter(IrInterpreterEnvironment(irModuleFragment.irBuiltins, configuration))
             val mode = if (intrinsicConstEvaluation) EvaluationMode.ONLY_INTRINSIC_CONST else EvaluationMode.ONLY_BUILTINS
             irModuleFragment.files.forEach {
                 it.transformChildren(IrConstTransformer(interpreter, it, mode = mode), null)

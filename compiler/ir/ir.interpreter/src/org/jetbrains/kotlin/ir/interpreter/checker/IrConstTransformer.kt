@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
+import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.*
@@ -49,9 +50,12 @@ class IrConstTransformer(
         return this
     }
 
-    private fun IrExpression.canBeInterpreted(containingDeclaration: IrElement? = null): Boolean {
+    private fun IrExpression.canBeInterpreted(
+        containingDeclaration: IrElement? = null,
+        configuration: IrInterpreterConfiguration = interpreter.environment.configuration
+    ): Boolean {
         return try {
-            this.accept(IrCompileTimeChecker(containingDeclaration, mode = mode), null)
+            this.accept(IrCompileTimeChecker(containingDeclaration, mode, configuration), null)
         } catch (e: Throwable) {
             if (suppressExceptions) {
                 return false
@@ -87,7 +91,9 @@ class IrConstTransformer(
         val expression = initializer?.expression ?: return declaration
         if (expression is IrConst<*>) return declaration
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
-        if (isConst && expression.canBeInterpreted(declaration)) {
+        if (!isConst) return super.visitField(declaration)
+
+        if (expression.canBeInterpreted(declaration, interpreter.environment.configuration.copy(treatFloatInSpecialWay = false))) {
             initializer.expression = expression.interpret(failAsError = true)
         }
 
@@ -129,7 +135,7 @@ class IrConstTransformer(
     }
 
     private fun IrExpression.transformSingleArg(expectedType: IrType): IrExpression {
-        if (this.canBeInterpreted()) {
+        if (this.canBeInterpreted(configuration = interpreter.environment.configuration.copy(treatFloatInSpecialWay = false))) {
             return this.interpret(failAsError = true).convertToConstIfPossible(expectedType)
         } else if (this is IrConstructorCall) {
             transformAnnotation(this)

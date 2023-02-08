@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: NATIVE
+// TARGET_BACKEND: JS_IR
 
 const val someStr = "123"
 const val otherStr = "other"

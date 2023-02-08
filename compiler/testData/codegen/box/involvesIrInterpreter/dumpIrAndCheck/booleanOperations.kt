@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM_IR
 // TARGET_BACKEND: NATIVE
+// TARGET_BACKEND: JS_IR
 // `Boolean.equals(Boolean)` will not be evaluated in K1
 // IGNORE_BACKEND_K1: NATIVE
 
