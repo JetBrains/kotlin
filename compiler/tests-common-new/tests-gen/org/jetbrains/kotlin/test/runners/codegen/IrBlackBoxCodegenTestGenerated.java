@@ -18024,138 +18024,6 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
-        @TestMetadata("javaCloseFieldAndKotlinProperty.kt")
-        public void testJavaCloseFieldAndKotlinProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaCloseFieldAndKotlinProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndCompanionProperty.kt")
-        public void testJavaFieldAndCompanionProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndCompanionProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinInvisibleProperty.kt")
-        public void testJavaFieldAndKotlinInvisibleProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinInvisibleProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinInvisiblePropertyViaTypeParameter.kt")
-        public void testJavaFieldAndKotlinInvisiblePropertyViaTypeParameter() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinInvisiblePropertyViaTypeParameter.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinInvisiblePropertyWithGetter.kt")
-        public void testJavaFieldAndKotlinInvisiblePropertyWithGetter() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinInvisiblePropertyWithGetter.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinLateinitProperty.kt")
-        public void testJavaFieldAndKotlinLateinitProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinLateinitProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinPrivateProperty.kt")
-        public void testJavaFieldAndKotlinPrivateProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinPrivateProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinProperty.kt")
-        public void testJavaFieldAndKotlinProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinPropertyReference.kt")
-        public void testJavaFieldAndKotlinPropertyReference() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinPropertyReference.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinPropertyReferenceFromInner.kt")
-        public void testJavaFieldAndKotlinPropertyReferenceFromInner() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinPropertyReferenceFromInner.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinPropertySuperAccess.kt")
-        public void testJavaFieldAndKotlinPropertySuperAccess() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinPropertySuperAccess.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinPropertyWithComplexReceiver.kt")
-        public void testJavaFieldAndKotlinPropertyWithComplexReceiver() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinPropertyWithComplexReceiver.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldAndKotlinPropertyWithSmartcast.kt")
-        public void testJavaFieldAndKotlinPropertyWithSmartcast() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldAndKotlinPropertyWithSmartcast.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldKotlinPropertyJavaField.kt")
-        public void testJavaFieldKotlinPropertyJavaField() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldKotlinPropertyJavaField.kt");
-        }
-
-        @Test
-        @TestMetadata("javaFieldKotlinPropertyJavaPackagePrivate.kt")
-        public void testJavaFieldKotlinPropertyJavaPackagePrivate() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaFieldKotlinPropertyJavaPackagePrivate.kt");
-        }
-
-        @Test
-        @TestMetadata("javaInvisibleFieldAndKotlinProperty.kt")
-        public void testJavaInvisibleFieldAndKotlinProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaInvisibleFieldAndKotlinProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("javaInvisibleFieldAndKotlinPropertyReference.kt")
-        public void testJavaInvisibleFieldAndKotlinPropertyReference() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaInvisibleFieldAndKotlinPropertyReference.kt");
-        }
-
-        @Test
-        @TestMetadata("javaProtectedFieldAndKotlinInvisibleProperty.kt")
-        public void testJavaProtectedFieldAndKotlinInvisibleProperty() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaProtectedFieldAndKotlinInvisibleProperty.kt");
-        }
-
-        @Test
-        @TestMetadata("javaProtectedFieldAndKotlinInvisiblePropertyReference.kt")
-        public void testJavaProtectedFieldAndKotlinInvisiblePropertyReference() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaProtectedFieldAndKotlinInvisiblePropertyReference.kt");
-        }
-
-        @Test
-        @TestMetadata("javaProtectedFieldAndKotlinInvisiblePropertyWrite.kt")
-        public void testJavaProtectedFieldAndKotlinInvisiblePropertyWrite() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaProtectedFieldAndKotlinInvisiblePropertyWrite.kt");
-        }
-
-        @Test
-        @TestMetadata("javaProtectedFieldAndKotlinPropertyReference.kt")
-        public void testJavaProtectedFieldAndKotlinPropertyReference() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaProtectedFieldAndKotlinPropertyReference.kt");
-        }
-
-        @Test
-        @TestMetadata("javaProtectedFieldAnotherPackageReference.kt")
-        public void testJavaProtectedFieldAnotherPackageReference() throws Exception {
-            runTest("compiler/testData/codegen/box/fieldRename/javaProtectedFieldAnotherPackageReference.kt");
-        }
-
-        @Test
         @TestMetadata("jvmFieldNoClash1.kt")
         public void testJvmFieldNoClash1() throws Exception {
             runTest("compiler/testData/codegen/box/fieldRename/jvmFieldNoClash1.kt");
@@ -28755,6 +28623,148 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             public void testVarAsFunctionCall() throws Exception {
                 runTest("compiler/testData/codegen/box/ir/serializationRegressions/varAsFunctionCall.kt");
             }
+        }
+    }
+
+    @Nested
+    @TestMetadata("compiler/testData/codegen/box/javaFieldAndKotlinProperty")
+    @TestDataPath("$PROJECT_ROOT")
+    public class JavaFieldAndKotlinProperty {
+        @Test
+        public void testAllFilesPresentInJavaFieldAndKotlinProperty() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaFieldAndKotlinProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("javaCloseFieldAndKotlinProperty.kt")
+        public void testJavaCloseFieldAndKotlinProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaCloseFieldAndKotlinProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndCompanionProperty.kt")
+        public void testJavaFieldAndCompanionProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndCompanionProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinInvisibleProperty.kt")
+        public void testJavaFieldAndKotlinInvisibleProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinInvisibleProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinInvisiblePropertyViaTypeParameter.kt")
+        public void testJavaFieldAndKotlinInvisiblePropertyViaTypeParameter() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinInvisiblePropertyViaTypeParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinInvisiblePropertyWithGetter.kt")
+        public void testJavaFieldAndKotlinInvisiblePropertyWithGetter() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinInvisiblePropertyWithGetter.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinLateinitProperty.kt")
+        public void testJavaFieldAndKotlinLateinitProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinLateinitProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinPrivateProperty.kt")
+        public void testJavaFieldAndKotlinPrivateProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinPrivateProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinProperty.kt")
+        public void testJavaFieldAndKotlinProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinPropertyReference.kt")
+        public void testJavaFieldAndKotlinPropertyReference() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinPropertyReference.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinPropertyReferenceFromInner.kt")
+        public void testJavaFieldAndKotlinPropertyReferenceFromInner() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinPropertyReferenceFromInner.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinPropertySuperAccess.kt")
+        public void testJavaFieldAndKotlinPropertySuperAccess() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinPropertySuperAccess.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinPropertyWithComplexReceiver.kt")
+        public void testJavaFieldAndKotlinPropertyWithComplexReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinPropertyWithComplexReceiver.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldAndKotlinPropertyWithSmartcast.kt")
+        public void testJavaFieldAndKotlinPropertyWithSmartcast() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldAndKotlinPropertyWithSmartcast.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldKotlinPropertyJavaField.kt")
+        public void testJavaFieldKotlinPropertyJavaField() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldKotlinPropertyJavaField.kt");
+        }
+
+        @Test
+        @TestMetadata("javaFieldKotlinPropertyJavaPackagePrivate.kt")
+        public void testJavaFieldKotlinPropertyJavaPackagePrivate() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaFieldKotlinPropertyJavaPackagePrivate.kt");
+        }
+
+        @Test
+        @TestMetadata("javaInvisibleFieldAndKotlinProperty.kt")
+        public void testJavaInvisibleFieldAndKotlinProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaInvisibleFieldAndKotlinProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("javaInvisibleFieldAndKotlinPropertyReference.kt")
+        public void testJavaInvisibleFieldAndKotlinPropertyReference() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaInvisibleFieldAndKotlinPropertyReference.kt");
+        }
+
+        @Test
+        @TestMetadata("javaProtectedFieldAndKotlinInvisibleProperty.kt")
+        public void testJavaProtectedFieldAndKotlinInvisibleProperty() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaProtectedFieldAndKotlinInvisibleProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("javaProtectedFieldAndKotlinInvisiblePropertyReference.kt")
+        public void testJavaProtectedFieldAndKotlinInvisiblePropertyReference() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaProtectedFieldAndKotlinInvisiblePropertyReference.kt");
+        }
+
+        @Test
+        @TestMetadata("javaProtectedFieldAndKotlinInvisiblePropertyWrite.kt")
+        public void testJavaProtectedFieldAndKotlinInvisiblePropertyWrite() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaProtectedFieldAndKotlinInvisiblePropertyWrite.kt");
+        }
+
+        @Test
+        @TestMetadata("javaProtectedFieldAndKotlinPropertyReference.kt")
+        public void testJavaProtectedFieldAndKotlinPropertyReference() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaProtectedFieldAndKotlinPropertyReference.kt");
+        }
+
+        @Test
+        @TestMetadata("javaProtectedFieldAnotherPackageReference.kt")
+        public void testJavaProtectedFieldAnotherPackageReference() throws Exception {
+            runTest("compiler/testData/codegen/box/javaFieldAndKotlinProperty/javaProtectedFieldAnotherPackageReference.kt");
         }
     }
 

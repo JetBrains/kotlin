@@ -24070,6 +24070,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/javaFieldAndKotlinProperty")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegen")
+        @UseExtTestCaseGroupProvider()
+        public class JavaFieldAndKotlinProperty {
+            @Test
+            public void testAllFilesPresentInJavaFieldAndKotlinProperty() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaFieldAndKotlinProperty"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegen")
