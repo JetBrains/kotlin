@@ -120,6 +120,8 @@ public interface ErrorsJs {
     DiagnosticFactory1<PsiElement, KotlinType> JS_EXTERNAL_ARGUMENT = DiagnosticFactory1.create(
             ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
+    DiagnosticFactory0<PsiElement> WRONG_OPERATION_WITH_EXTERNAL_ENUM = DiagnosticFactory0.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

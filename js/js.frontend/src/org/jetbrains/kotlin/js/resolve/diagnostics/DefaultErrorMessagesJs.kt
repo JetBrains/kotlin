@@ -118,6 +118,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             "Expected argument with external type, but type {0} is non-external",
             Renderers.RENDER_TYPE)
 
+        put(ErrorsJs.WRONG_OPERATION_WITH_EXTERNAL_ENUM, "Wrong operation with external enum")
+
         this
     }
 }
