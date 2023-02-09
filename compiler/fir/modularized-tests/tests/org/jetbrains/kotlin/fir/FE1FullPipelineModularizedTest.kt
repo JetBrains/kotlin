@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.LanguageVersion
 
 /**
  * Language version to be used for K1 FP tests
@@ -30,6 +31,10 @@ class FE1FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
             args.multiPlatform = true
             args.noStdlib = true
             args.noReflect = true
+        }
+
+        require(LanguageVersion.fromVersionString(args.languageVersion)!! < LanguageVersion.KOTLIN_2_0) {
+            "Language version misconfiguration for K1 FP: ${args.languageVersion} >= 2.0"
         }
     }
 
