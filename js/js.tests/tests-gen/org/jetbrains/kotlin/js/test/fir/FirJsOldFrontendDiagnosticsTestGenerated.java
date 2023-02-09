@@ -123,6 +123,12 @@ public class FirJsOldFrontendDiagnosticsTestGenerated extends AbstractFirJsDiagn
         }
 
         @Test
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/callableReference.kt");
+        }
+
+        @Test
         @TestMetadata("callableReferences.kt")
         public void testCallableReferences() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/callableReferences.kt");
@@ -400,6 +406,12 @@ public class FirJsOldFrontendDiagnosticsTestGenerated extends AbstractFirJsDiagn
         @TestMetadata("extendingNonExportedType.kt")
         public void testExtendingNonExportedType() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/extendingNonExportedType.kt");
+        }
+
+        @Test
+        @TestMetadata("externalEnums.kt")
+        public void testExternalEnums() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/externalEnums.kt");
         }
 
         @Test

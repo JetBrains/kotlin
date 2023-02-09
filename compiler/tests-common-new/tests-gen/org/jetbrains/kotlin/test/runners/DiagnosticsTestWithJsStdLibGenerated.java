@@ -122,6 +122,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("callableReference.kt")
+        public void testCallableReference() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/callableReference.kt");
+        }
+
+        @Test
         @TestMetadata("callableReferences.kt")
         public void testCallableReferences() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/callableReferences.kt");

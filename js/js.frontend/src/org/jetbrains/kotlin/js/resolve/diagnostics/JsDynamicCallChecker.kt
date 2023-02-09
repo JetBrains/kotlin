@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
+import org.jetbrains.kotlin.resolve.calls.tower.NewCallableReferenceResolvedCall
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 
@@ -67,7 +68,13 @@ object JsDynamicCallChecker : CallChecker {
                 }
             }
 
-            is KtSimpleNameExpression -> checkIdentifier(element.getReferencedName(), element, context)
+            is KtSimpleNameExpression -> {
+                checkIdentifier(element.getReferencedName(), element, context)
+
+                if (resolvedCall is NewCallableReferenceResolvedCall<*>) {
+                    context.trace.report(ErrorsJs.WRONG_OPERATION_WITH_DYNAMIC.on(element.parent, "callable reference"))
+                }
+            }
 
             is KtCallExpression -> {
                 val calleePsi = element.calleeExpression
