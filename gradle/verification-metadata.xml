@@ -12,91 +12,48 @@
          <trust file=".*[.]pom" regex="true"/>
          <trust file="kotlin-native-prebuilt-.*" regex="true"/>
          <trust group="gradle" name="gradle" file="gradle-.*-src[.]zip" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="builtins" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="builtins" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-android-extensions" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-android-extensions" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-gradle" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-gradle" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-build-common" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-build-common" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-compiler-embeddable" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-compiler-embeddable" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-compiler-runner" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-compiler-runner" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-daemon-client" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-daemon-client" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-daemon-embeddable" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-daemon-embeddable" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-annotations" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-annotations" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-api" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-api" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea-proto" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea-proto" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-model" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-model" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-api" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-api" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-embeddable" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-embeddable" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-native-utils" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-native-utils" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-project-model" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-project-model" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-reflect" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-reflect" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-sam-with-receiver" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-sam-with-receiver" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-script-runtime" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-script-runtime" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-common" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-scripting-common" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-embeddable" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-embeddable" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-impl-embeddable" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-scripting-compiler-impl-embeddable" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-scripting-jvm" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-scripting-jvm" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-serialization" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-serialization" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-serialization-unshaded" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-serialization-unshaded" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-common" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-common" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk7" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk7" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk8" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jdk8" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-js" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-js" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jvm-minimal-for-test" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-stdlib-jvm-minimal-for-test" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-test" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-annotations-common" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-test-annotations-common" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-common" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-test-common" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-js" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-test-js" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-js-runner" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-test-js-runner" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-test-junit" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-test-junit" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-tooling-core" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-tooling-core" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-tooling-metadata" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-tooling-metadata" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-util-io" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-util-io" version="1.9.0.*" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="kotlin-util-klib" version="1.8.20.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-util-klib" version="1.9.0.*" regex="true"/>
       </trusted-artifacts>
    </configuration>
@@ -6086,6 +6043,28 @@
             <sha256 value="12c14541231e881cdb04ac349605755ff0f7858d15b19f536c010b1b13c36c0c" origin="Generated by Gradle"/>
          </artifact>
       </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-annotations" version="1.8.20-dev-4242">
+         <artifact name="kotlin-gradle-plugin-annotations-1.8.20-dev-4242.jar">
+            <md5 value="eab72c484635dc4d819cdb1c2222e238" origin="Generated by Gradle"/>
+            <sha256 value="b1736cea5d4693607d0f67aaafecd57cc2bf38efa543a2b44d0ca7296a898862" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea" version="1.8.20-dev-4242">
+         <artifact name="kotlin-gradle-plugin-idea-1.8.20-dev-4242-test-fixtures.jar">
+            <md5 value="dd49997d0af77f70269b59e5c6fb3494" origin="Generated by Gradle"/>
+            <sha256 value="b73ed7a9b2f542c22e906506b08573162b58eb8ae24c4acda76d732d4ed42335" origin="Generated by Gradle"/>
+         </artifact>
+         <artifact name="kotlin-gradle-plugin-idea-1.8.20-dev-4242.jar">
+            <md5 value="d0b90ca8ca27ee20dabab05c7f8b0fa4" origin="Generated by Gradle"/>
+            <sha256 value="7d41826fb0310a6d68a919eeae06a922fc12502f0209c02d6797b1af335e433f" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-gradle-plugin-idea-proto" version="1.8.20-dev-4242">
+         <artifact name="kotlin-gradle-plugin-idea-proto-1.8.20-dev-4242.jar">
+            <md5 value="83a175d02ebbf353b6928b91882855b1" origin="Generated by Gradle"/>
+            <sha256 value="38d596755e93cf84e6d00188bff93fc0b70ed279056999a18953e13804dca9c6" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
       <component group="org.jetbrains.kotlin" name="kotlin-klib-commonizer-api" version="1.5.31">
          <artifact name="kotlin-klib-commonizer-api-1.5.31.jar">
             <md5 value="2058ca6689818c130dfc4784e7a106c8" origin="Generated by Gradle"/>
@@ -6602,6 +6581,12 @@
          <artifact name="kotlin-stdlib-jdk8-1.7.20.jar">
             <md5 value="6c5634c67084564766fe5e8cfd2f3aee" origin="Generated by Gradle"/>
             <sha256 value="1da0d306c995945e1f807240ef64b5cd2dd5ac58612afb1a8596143d10b7ded5" origin="Generated by Gradle"/>
+         </artifact>
+      </component>
+      <component group="org.jetbrains.kotlin" name="kotlin-tooling-core" version="1.8.20-dev-4242">
+         <artifact name="kotlin-tooling-core-1.8.20-dev-4242.jar">
+            <md5 value="3762be9ba7cdfc5e9e63dee28bab3515" origin="Generated by Gradle"/>
+            <sha256 value="1b7309b7c1f4bf739ba807e7c275e1fb3748dbe5c58b0100357b0a40003b948d" origin="Generated by Gradle"/>
          </artifact>
       </component>
       <component group="org.jetbrains.kotlin" name="kotlin-tooling-metadata" version="1.5.31">
