@@ -101,14 +101,14 @@ private val localProperties = providers.of(PropertiesValueSource::class.java) {
         fileName.set("local.properties")
         rootDir.set(kotlinRootDir)
     }
-}.forUseAtConfigurationTime()
+}
 
 private val rootGradleProperties = providers.of(PropertiesValueSource::class.java) {
     parameters {
         fileName.set("gradle.properties")
         rootDir.set(kotlinRootDir)
     }
-}.forUseAtConfigurationTime()
+}
 
 fun loadLocalOrGradleProperty(
     propertyName: String
@@ -116,13 +116,13 @@ fun loadLocalOrGradleProperty(
     // Workaround for https://github.com/gradle/gradle/issues/19114
     // as in the includedBuild GradleProperties are empty on configuration cache reuse
     return if ((gradle as GradleInternal).isRootBuild()) {
-        localProperties.map { it.getProperty(propertyName) }.forUseAtConfigurationTime()
-            .orElse(providers.gradleProperty(propertyName).forUseAtConfigurationTime())
-            .orElse(rootGradleProperties.map { it.getProperty(propertyName) }.forUseAtConfigurationTime())
+        localProperties.map { it.getProperty(propertyName) }
+            .orElse(providers.gradleProperty(propertyName))
+            .orElse(rootGradleProperties.map { it.getProperty(propertyName) })
     } else {
-        localProperties.map { it.getProperty(propertyName) }.forUseAtConfigurationTime()
-            .orElse(rootSettings.providers.gradleProperty(propertyName).forUseAtConfigurationTime())
-            .orElse(rootGradleProperties.map { it.getProperty(propertyName) }.forUseAtConfigurationTime())
+        localProperties.map { it.getProperty(propertyName) }
+            .orElse(rootSettings.providers.gradleProperty(propertyName))
+            .orElse(rootGradleProperties.map { it.getProperty(propertyName) })
     }
 }
 
@@ -218,7 +218,7 @@ fun Settings.applyBootstrapConfiguration(
 }
 
 val isLocalBootstrapEnabled: Provider<Boolean> = loadLocalOrGradleProperty(Config.LOCAL_BOOTSTRAP)
-    .mapToBoolean().orElse(false).forUseAtConfigurationTime()
+    .mapToBoolean().orElse(false)
 
 val localBootstrapVersion: Provider<String> = loadLocalOrGradleProperty(Config.LOCAL_BOOTSTRAP_VERSION)
     .orElse(loadLocalOrGradleProperty(Config.DEFAULT_SNAPSHOT_VERSION))
@@ -232,7 +232,7 @@ val customBootstrapVersion = loadLocalOrGradleProperty(Config.CUSTOM_BOOTSTRAP_V
 val customBootstrapRepo = loadLocalOrGradleProperty(Config.CUSTOM_BOOTSTRAP_REPO)
 val defaultBootstrapVersion = loadLocalOrGradleProperty(Config.DEFAULT_BOOTSTRAP_VERSION)
 val isJpsBuildEnabled = loadLocalOrGradleProperty(Config.IS_JPS_BUILD_ENABLED)
-    .mapToBoolean().orElse(false).forUseAtConfigurationTime()
+    .mapToBoolean().orElse(false)
 
 var Project.bootstrapKotlinVersion: String
     get() = property(Config.PROJECT_KOTLIN_VERSION) as String

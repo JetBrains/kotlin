@@ -1,4 +1,5 @@
 import java.net.URI
+import org.gradle.util.GradleVersion
 
 /*
  * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -10,10 +11,18 @@ import java.net.URI
 //    apply from: 'cache-redirector.settings.gradle.kts'
 // }
 
+// This script is also being used in the Gradle integration tests which runs older Gradle versions
+fun <T : Any> Provider<T>.forUseAtConfigurationTimeCompat(): Provider<T> =
+    if (GradleVersion.current() < GradleVersion.version("7.4")) {
+        forUseAtConfigurationTime()
+    } else {
+        this
+    }
+
 internal val Settings.cacheRedirectorEnabled: Provider<Boolean>
     get() = providers
         .gradleProperty("cacheRedirectorEnabled")
-        .forUseAtConfigurationTime()
+        .forUseAtConfigurationTimeCompat()
         .map { it.toBoolean() }
         .orElse(false)
 
@@ -151,9 +160,11 @@ fun Project.overrideNativeCompilerDownloadUrl() {
 
 fun Project.addCheckRepositoriesTask() {
     val checkRepoTask = tasks.register("checkRepositories") {
-        val isTeamcityBuildInput = providers.provider {
-            project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
-        }.forUseAtConfigurationTime()
+        val isTeamcityBuildInput = providers
+            .provider {
+                project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
+            }
+            .forUseAtConfigurationTimeCompat()
 
         doLast {
             val testName = "$name in ${project.displayName}"
