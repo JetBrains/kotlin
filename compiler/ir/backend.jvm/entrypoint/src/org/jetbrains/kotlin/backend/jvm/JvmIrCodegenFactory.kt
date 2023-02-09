@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -309,7 +309,7 @@ open class JvmIrCodegenFactory(
     }
 
     override fun invokeLowerings(state: GenerationState, input: CodegenFactory.BackendInput): CodegenFactory.CodegenInput {
-        val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, _, notifyCodegenStart) =
+        val (irModuleFragment, symbolTable, customPhaseConfig, irProviders, extensions, backendExtension, irPluginContext, notifyCodegenStart) =
             input as JvmIrBackendInput
         val irSerializer = if (
             state.configuration.get(JVMConfigurationKeys.SERIALIZE_IR, JvmSerializeIrMode.NONE) != JvmSerializeIrMode.NONE
@@ -319,7 +319,7 @@ open class JvmIrCodegenFactory(
         val phases = if (evaluatorFragmentInfoForPsi2Ir != null) jvmFragmentLoweringPhases else jvmLoweringPhases
         val phaseConfig = customPhaseConfig ?: PhaseConfig(phases)
         val context = JvmBackendContext(
-            state, irModuleFragment.irBuiltins, symbolTable, phaseConfig, extensions, backendExtension, irSerializer,
+            state, irModuleFragment.irBuiltins, symbolTable, phaseConfig, extensions, backendExtension, irSerializer, irPluginContext
         )
         if (evaluatorFragmentInfoForPsi2Ir != null) {
             context.localDeclarationsLoweringData = mutableMapOf()

@@ -1,0 +1,854 @@
+public final class Container$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
+    public final static Container$$serializer INSTANCE
+
+    private final static kotlinx.serialization.descriptors.SerialDescriptor descriptor
+
+    static void <clinit>() {
+          NEW (Container$$serializer)
+          DUP
+          INVOKESPECIAL (Container$$serializer, <init>, ()V)
+          PUTSTATIC (Container$$serializer, INSTANCE, LContainer$$serializer;)
+          NEW (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor)
+          DUP
+          LDC (Container)
+          GETSTATIC (Container$$serializer, INSTANCE, LContainer$$serializer;)
+          CHECKCAST (kotlinx/serialization/internal/GeneratedSerializer)
+          ICONST_1
+          INVOKESPECIAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
+          ASTORE (0)
+          ALOAD (0)
+          LDC (r)
+          ICONST_0
+          INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, addElement, (Ljava/lang/String;Z)V)
+          ALOAD (0)
+          CHECKCAST (kotlinx/serialization/descriptors/SerialDescriptor)
+          PUTSTATIC (Container$$serializer, descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          RETURN
+    }
+
+    private void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.KSerializer[] childSerializers() {
+        LABEL (L0)
+          INVOKESTATIC (Container, access$get$childSerializers$cp, ()[Lkotlinx/serialization/KSerializer;)
+          ASTORE (1)
+          ICONST_1
+          ANEWARRAY (kotlinx/serialization/KSerializer)
+          ASTORE (2)
+          ALOAD (2)
+          ICONST_0
+          ALOAD (1)
+          ICONST_0
+          AALOAD
+          AASTORE
+          ALOAD (2)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final Container deserialize(kotlinx.serialization.encoding.Decoder decoder) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (decoder)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          GETSTATIC (Container$$serializer, descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          ASTORE (2)
+          ICONST_1
+          ISTORE (3)
+          ICONST_0
+          ISTORE (5)
+          ACONST_NULL
+          ASTORE (6)
+          ALOAD (1)
+          ALOAD (2)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/Decoder, beginStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lkotlinx/serialization/encoding/CompositeDecoder;)
+          ASTORE (7)
+          INVOKESTATIC (Container, access$get$childSerializers$cp, ()[Lkotlinx/serialization/KSerializer;)
+          ASTORE (8)
+          ALOAD (7)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSequentially, ()Z)
+          IFEQ (L1)
+          ALOAD (7)
+          ALOAD (2)
+          ICONST_0
+          ALOAD (8)
+          ICONST_0
+          AALOAD
+          CHECKCAST (kotlinx/serialization/DeserializationStrategy)
+          ALOAD (6)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
+          ASTORE (6)
+          ILOAD (5)
+          ICONST_1
+          IOR
+          ISTORE (5)
+          GOTO (L2)
+        LABEL (L1)
+          ILOAD (3)
+          IFEQ (L2)
+          ALOAD (7)
+          ALOAD (2)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeElementIndex, (Lkotlinx/serialization/descriptors/SerialDescriptor;)I)
+          ISTORE (4)
+          ILOAD (4)
+          TABLESWITCH
+            -1: L3
+            0: L4
+            default: L5
+        LABEL (L3)
+          ICONST_0
+          ISTORE (3)
+          GOTO (L1)
+        LABEL (L4)
+          ALOAD (7)
+          ALOAD (2)
+          ICONST_0
+          ALOAD (8)
+          ICONST_0
+          AALOAD
+          CHECKCAST (kotlinx/serialization/DeserializationStrategy)
+          ALOAD (6)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/DeserializationStrategy;Ljava/lang/Object;)Ljava/lang/Object;)
+          ASTORE (6)
+          ILOAD (5)
+          ICONST_1
+          IOR
+          ISTORE (5)
+          GOTO (L1)
+        LABEL (L5)
+          NEW (kotlinx/serialization/UnknownFieldException)
+          DUP
+          ILOAD (4)
+          INVOKESPECIAL (kotlinx/serialization/UnknownFieldException, <init>, (I)V)
+          ATHROW
+        LABEL (L2)
+          ALOAD (7)
+          ALOAD (2)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, endStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
+          NEW (Container)
+          DUP
+          ILOAD (5)
+          ALOAD (6)
+          CHECKCAST (Result)
+          ACONST_NULL
+          INVOKESPECIAL (Container, <init>, (ILResult;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
+          ARETURN
+        LABEL (L6)
+    }
+
+    public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder) {
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (Container$$serializer, deserialize, (Lkotlinx/serialization/encoding/Decoder;)LContainer;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+
+    public final void serialize(kotlinx.serialization.encoding.Encoder encoder, Container value)
+
+    public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
+
+    public kotlinx.serialization.KSerializer[] typeParametersSerializers()
+}
+
+public final class Container$Companion : java/lang/Object {
+    private void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (Container$Companion, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.KSerializer serializer() {
+        LABEL (L0)
+          GETSTATIC (Container$$serializer, INSTANCE, LContainer$$serializer;)
+          CHECKCAST (kotlinx/serialization/KSerializer)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
+public final class Container : java/lang/Object {
+    private final static kotlinx.serialization.KSerializer[] $childSerializers
+
+    public final static Container$Companion Companion
+
+    private final Result r
+
+    static void <clinit>() {
+          NEW (Container$Companion)
+          DUP
+          ACONST_NULL
+          INVOKESPECIAL (Container$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          PUTSTATIC (Container, Companion, LContainer$Companion;)
+          ICONST_1
+          ANEWARRAY (kotlinx/serialization/KSerializer)
+          ASTORE (0)
+          ALOAD (0)
+          ICONST_0
+          GETSTATIC (Result, Companion, LResult$Companion;)
+          INVOKEVIRTUAL (Result$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          AASTORE
+          ALOAD (0)
+          PUTSTATIC (Container, $childSerializers, [Lkotlinx/serialization/KSerializer;)
+          RETURN
+    }
+
+    public void <init>(Result r) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (r)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+        LINENUMBER (19)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          ALOAD (0)
+          ALOAD (1)
+          PUTFIELD (Container, r, LResult;)
+          RETURN
+        LABEL (L2)
+    }
+
+    public void <init>(int seen0, Result r, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
+        LABEL (L0)
+        LINENUMBER (18)
+          ICONST_1
+          ICONST_1
+          ILOAD (1)
+          IAND
+          IF_ICMPEQ (L1)
+          ILOAD (1)
+          ICONST_1
+          GETSTATIC (Container$$serializer, INSTANCE, LContainer$$serializer;)
+          INVOKEVIRTUAL (Container$$serializer, getDescriptor, ()Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          INVOKESTATIC (kotlinx/serialization/internal/PluginExceptionsKt, throwMissingFieldException, (IILkotlinx/serialization/descriptors/SerialDescriptor;)V)
+        LABEL (L1)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          ALOAD (0)
+          ALOAD (2)
+          PUTFIELD (Container, r, LResult;)
+          RETURN
+        LABEL (L2)
+    }
+
+    public final static kotlinx.serialization.KSerializer[] access$get$childSerializers$cp()
+
+    public final Result getR()
+
+    public final static void write$Self(Container self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
+        LABEL (L0)
+        LINENUMBER (18)
+          GETSTATIC (Container, $childSerializers, [Lkotlinx/serialization/KSerializer;)
+          ASTORE (3)
+          ALOAD (1)
+          ALOAD (2)
+          ICONST_0
+          ALOAD (3)
+          ICONST_0
+          AALOAD
+          CHECKCAST (kotlinx/serialization/SerializationStrategy)
+          ALOAD (0)
+          GETFIELD (Container, r, LResult;)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, encodeSerializableElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILkotlinx/serialization/SerializationStrategy;Ljava/lang/Object;)V)
+          RETURN
+        LABEL (L1)
+    }
+}
+
+final class Result$Companion$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static Result$Companion$1 INSTANCE
+
+    static void <clinit>() {
+          NEW (Result$Companion$1)
+          DUP
+          INVOKESPECIAL (Result$Companion$1, <init>, ()V)
+          PUTSTATIC (Result$Companion$1, INSTANCE, LResult$Companion$1;)
+          RETURN
+    }
+
+    void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          ICONST_0
+          INVOKESPECIAL (kotlin/jvm/internal/Lambda, <init>, (I)V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.KSerializer invoke() {
+        LABEL (L0)
+          NEW (kotlinx/serialization/SealedClassSerializer)
+          DUP
+          LDC (Result)
+          LDC (LResult;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          ICONST_2
+          ANEWARRAY (kotlin/reflect/KClass)
+          ASTORE (1)
+          ALOAD (1)
+          ICONST_0
+          LDC (LResult$Err;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          AASTORE
+          ALOAD (1)
+          ICONST_1
+          LDC (LResult$OK;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          AASTORE
+          ALOAD (1)
+          ICONST_2
+          ANEWARRAY (kotlinx/serialization/KSerializer)
+          ASTORE (1)
+          ALOAD (1)
+          ICONST_0
+          NEW (kotlinx/serialization/internal/ObjectSerializer)
+          DUP
+          LDC (Result.Err)
+          GETSTATIC (Result$Err, INSTANCE, LResult$Err;)
+          ICONST_0
+          ANEWARRAY (java/lang/annotation/Annotation)
+          INVOKESPECIAL (kotlinx/serialization/internal/ObjectSerializer, <init>, (Ljava/lang/String;Ljava/lang/Object;[Ljava/lang/annotation/Annotation;)V)
+          AASTORE
+          ALOAD (1)
+          ICONST_1
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
+          AASTORE
+          ALOAD (1)
+          ICONST_0
+          ANEWARRAY (java/lang/annotation/Annotation)
+          INVOKESPECIAL (kotlinx/serialization/SealedClassSerializer, <init>, (Ljava/lang/String;Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;[Ljava/lang/annotation/Annotation;)V)
+          CHECKCAST (kotlinx/serialization/KSerializer)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public java.lang.Object invoke() {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKEVIRTUAL (Result$Companion$1, invoke, ()Lkotlinx/serialization/KSerializer;)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
+public final class Result$Companion : java/lang/Object {
+    private void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (Result$Companion, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    private final kotlinx.serialization.KSerializer get$cachedSerializer()
+
+    public final kotlinx.serialization.KSerializer serializer() {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (Result$Companion, get$cachedSerializer, ()Lkotlinx/serialization/KSerializer;)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
+final class Result$Err$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static Result$Err$1 INSTANCE
+
+    static void <clinit>() {
+          NEW (Result$Err$1)
+          DUP
+          INVOKESPECIAL (Result$Err$1, <init>, ()V)
+          PUTSTATIC (Result$Err$1, INSTANCE, LResult$Err$1;)
+          RETURN
+    }
+
+    void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          ICONST_0
+          INVOKESPECIAL (kotlin/jvm/internal/Lambda, <init>, (I)V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.KSerializer invoke() {
+        LABEL (L0)
+        LINENUMBER (15)
+          NEW (kotlinx/serialization/internal/ObjectSerializer)
+          DUP
+          LDC (Result.Err)
+          GETSTATIC (Result$Err, INSTANCE, LResult$Err;)
+          ICONST_0
+          ANEWARRAY (java/lang/annotation/Annotation)
+          INVOKESPECIAL (kotlinx/serialization/internal/ObjectSerializer, <init>, (Ljava/lang/String;Ljava/lang/Object;[Ljava/lang/annotation/Annotation;)V)
+          CHECKCAST (kotlinx/serialization/KSerializer)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public java.lang.Object invoke() {
+        LABEL (L0)
+        LINENUMBER (15)
+          ALOAD (0)
+          INVOKEVIRTUAL (Result$Err$1, invoke, ()Lkotlinx/serialization/KSerializer;)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
+public final class Result$Err : Result {
+    private final static kotlin.Lazy $cachedSerializer$delegate
+
+    public final static Result$Err INSTANCE
+
+    static void <clinit>() {
+          NEW (Result$Err)
+          DUP
+          INVOKESPECIAL (Result$Err, <init>, ()V)
+          PUTSTATIC (Result$Err, INSTANCE, LResult$Err;)
+        LABEL (L0)
+        LINENUMBER (15)
+          GETSTATIC (kotlin/LazyThreadSafetyMode, PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
+          GETSTATIC (Result$Err$1, INSTANCE, LResult$Err$1;)
+          CHECKCAST (kotlin/jvm/functions/Function0)
+          INVOKESTATIC (kotlin/LazyKt, lazy, (Lkotlin/LazyThreadSafetyMode;Lkotlin/jvm/functions/Function0;)Lkotlin/Lazy;)
+          PUTSTATIC (Result$Err, $cachedSerializer$delegate, Lkotlin/Lazy;)
+          RETURN
+    }
+
+    private void <init>() {
+        LABEL (L0)
+        LINENUMBER (15)
+          ALOAD (0)
+          ACONST_NULL
+          INVOKESPECIAL (Result, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          RETURN
+        LABEL (L1)
+    }
+
+    private final kotlinx.serialization.KSerializer get$cachedSerializer()
+
+    public final kotlinx.serialization.KSerializer serializer() {
+        LABEL (L0)
+        LINENUMBER (15)
+          ALOAD (0)
+          INVOKESPECIAL (Result$Err, get$cachedSerializer, ()Lkotlinx/serialization/KSerializer;)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
+public final class Result$OK$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
+    public final static Result$OK$$serializer INSTANCE
+
+    private final static kotlinx.serialization.descriptors.SerialDescriptor descriptor
+
+    static void <clinit>() {
+          NEW (Result$OK$$serializer)
+          DUP
+          INVOKESPECIAL (Result$OK$$serializer, <init>, ()V)
+          PUTSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
+          NEW (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor)
+          DUP
+          LDC (Result.OK)
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
+          CHECKCAST (kotlinx/serialization/internal/GeneratedSerializer)
+          ICONST_1
+          INVOKESPECIAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, <init>, (Ljava/lang/String;Lkotlinx/serialization/internal/GeneratedSerializer;I)V)
+          ASTORE (0)
+          ALOAD (0)
+          LDC (s)
+          ICONST_0
+          INVOKEVIRTUAL (kotlinx/serialization/internal/PluginGeneratedSerialDescriptor, addElement, (Ljava/lang/String;Z)V)
+          ALOAD (0)
+          CHECKCAST (kotlinx/serialization/descriptors/SerialDescriptor)
+          PUTSTATIC (Result$OK$$serializer, descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          RETURN
+    }
+
+    private void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.KSerializer[] childSerializers() {
+        LABEL (L0)
+          ICONST_1
+          ANEWARRAY (kotlinx/serialization/KSerializer)
+          ASTORE (1)
+          ALOAD (1)
+          ICONST_0
+          GETSTATIC (kotlinx/serialization/internal/StringSerializer, INSTANCE, Lkotlinx/serialization/internal/StringSerializer;)
+          AASTORE
+          ALOAD (1)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final Result$OK deserialize(kotlinx.serialization.encoding.Decoder decoder) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (decoder)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+          GETSTATIC (Result$OK$$serializer, descriptor, Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          ASTORE (2)
+          ICONST_1
+          ISTORE (3)
+          ICONST_0
+          ISTORE (5)
+          ACONST_NULL
+          ASTORE (6)
+          ALOAD (1)
+          ALOAD (2)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/Decoder, beginStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)Lkotlinx/serialization/encoding/CompositeDecoder;)
+          ASTORE (7)
+          ALOAD (7)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeSequentially, ()Z)
+          IFEQ (L1)
+          ALOAD (7)
+          ALOAD (2)
+          ICONST_0
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeStringElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Ljava/lang/String;)
+          ASTORE (6)
+          ILOAD (5)
+          ICONST_1
+          IOR
+          ISTORE (5)
+          GOTO (L2)
+        LABEL (L1)
+          ILOAD (3)
+          IFEQ (L2)
+          ALOAD (7)
+          ALOAD (2)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeElementIndex, (Lkotlinx/serialization/descriptors/SerialDescriptor;)I)
+          ISTORE (4)
+          ILOAD (4)
+          TABLESWITCH
+            -1: L3
+            0: L4
+            default: L5
+        LABEL (L3)
+          ICONST_0
+          ISTORE (3)
+          GOTO (L1)
+        LABEL (L4)
+          ALOAD (7)
+          ALOAD (2)
+          ICONST_0
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, decodeStringElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;I)Ljava/lang/String;)
+          ASTORE (6)
+          ILOAD (5)
+          ICONST_1
+          IOR
+          ISTORE (5)
+          GOTO (L1)
+        LABEL (L5)
+          NEW (kotlinx/serialization/UnknownFieldException)
+          DUP
+          ILOAD (4)
+          INVOKESPECIAL (kotlinx/serialization/UnknownFieldException, <init>, (I)V)
+          ATHROW
+        LABEL (L2)
+          ALOAD (7)
+          ALOAD (2)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeDecoder, endStructure, (Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
+          NEW (Result$OK)
+          DUP
+          ILOAD (5)
+          ALOAD (6)
+          ACONST_NULL
+          INVOKESPECIAL (Result$OK, <init>, (ILjava/lang/String;Lkotlinx/serialization/internal/SerializationConstructorMarker;)V)
+          ARETURN
+        LABEL (L6)
+    }
+
+    public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder) {
+        LABEL (L0)
+          ALOAD (0)
+          ALOAD (1)
+          INVOKEVIRTUAL (Result$OK$$serializer, deserialize, (Lkotlinx/serialization/encoding/Decoder;)LResult$OK;)
+          ARETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+
+    public final void serialize(kotlinx.serialization.encoding.Encoder encoder, Result$OK value)
+
+    public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
+
+    public kotlinx.serialization.KSerializer[] typeParametersSerializers()
+}
+
+public final class Result$OK$Companion : java/lang/Object {
+    private void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (Result$OK$Companion, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.KSerializer serializer() {
+        LABEL (L0)
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
+          CHECKCAST (kotlinx/serialization/KSerializer)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
+public final class Result$OK : Result {
+    public final static Result$OK$Companion Companion
+
+    private final java.lang.String s
+
+    static void <clinit>() {
+          NEW (Result$OK$Companion)
+          DUP
+          ACONST_NULL
+          INVOKESPECIAL (Result$OK$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          PUTSTATIC (Result$OK, Companion, LResult$OK$Companion;)
+          RETURN
+    }
+
+    public void <init>(java.lang.String s) {
+        LABEL (L0)
+          ALOAD (1)
+          LDC (s)
+          INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
+        LABEL (L1)
+        LINENUMBER (14)
+          ALOAD (0)
+          ACONST_NULL
+          INVOKESPECIAL (Result, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          ALOAD (0)
+          ALOAD (1)
+          PUTFIELD (Result$OK, s, Ljava/lang/String;)
+          RETURN
+        LABEL (L2)
+    }
+
+    public void <init>(int seen0, java.lang.String s, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
+        LABEL (L0)
+        LINENUMBER (14)
+          ICONST_1
+          ICONST_1
+          ILOAD (1)
+          IAND
+          IF_ICMPEQ (L1)
+          ILOAD (1)
+          ICONST_1
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
+          INVOKEVIRTUAL (Result$OK$$serializer, getDescriptor, ()Lkotlinx/serialization/descriptors/SerialDescriptor;)
+          INVOKESTATIC (kotlinx/serialization/internal/PluginExceptionsKt, throwMissingFieldException, (IILkotlinx/serialization/descriptors/SerialDescriptor;)V)
+        LABEL (L1)
+          ALOAD (0)
+          ILOAD (1)
+          ALOAD (3)
+          INVOKESPECIAL (Result, <init>, (ILkotlinx/serialization/internal/SerializationConstructorMarker;)V)
+          ALOAD (0)
+          ALOAD (2)
+          PUTFIELD (Result$OK, s, Ljava/lang/String;)
+          RETURN
+        LABEL (L2)
+    }
+
+    public final java.lang.String getS()
+
+    public final static void write$Self(Result$OK self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
+        LABEL (L0)
+        LINENUMBER (14)
+          ALOAD (0)
+          CHECKCAST (Result)
+          ALOAD (1)
+          ALOAD (2)
+          INVOKESTATIC (Result, write$Self, (LResult;Lkotlinx/serialization/encoding/CompositeEncoder;Lkotlinx/serialization/descriptors/SerialDescriptor;)V)
+          ALOAD (1)
+          ALOAD (2)
+          ICONST_0
+          ALOAD (0)
+          GETFIELD (Result$OK, s, Ljava/lang/String;)
+          INVOKEINTERFACE (kotlinx/serialization/encoding/CompositeEncoder, encodeStringElement, (Lkotlinx/serialization/descriptors/SerialDescriptor;ILjava/lang/String;)V)
+          RETURN
+        LABEL (L1)
+    }
+}
+
+public abstract class Result : java/lang/Object, X {
+    private final static kotlin.Lazy $cachedSerializer$delegate
+
+    public final static Result$Companion Companion
+
+    static void <clinit>() {
+          NEW (Result$Companion)
+          DUP
+          ACONST_NULL
+          INVOKESPECIAL (Result$Companion, <init>, (Lkotlin/jvm/internal/DefaultConstructorMarker;)V)
+          PUTSTATIC (Result, Companion, LResult$Companion;)
+          GETSTATIC (kotlin/LazyThreadSafetyMode, PUBLICATION, Lkotlin/LazyThreadSafetyMode;)
+          GETSTATIC (Result$Companion$1, INSTANCE, LResult$Companion$1;)
+          CHECKCAST (kotlin/jvm/functions/Function0)
+          INVOKESTATIC (kotlin/LazyKt, lazy, (Lkotlin/LazyThreadSafetyMode;Lkotlin/jvm/functions/Function0;)Lkotlin/Lazy;)
+          PUTSTATIC (Result, $cachedSerializer$delegate, Lkotlin/Lazy;)
+          RETURN
+    }
+
+    private void <init>() {
+        LABEL (L0)
+        LINENUMBER (12)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public void <init>(int seen0, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
+        LABEL (L0)
+        LINENUMBER (12)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker) {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (Result, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final static kotlin.Lazy access$get$cachedSerializer$delegate$cp()
+
+    public void def()
+
+    public final static void write$Self(Result self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc) {
+        LABEL (L0)
+          RETURN
+        LABEL (L1)
+    }
+}
+
+public final class X$Companion : java/lang/Object {
+    final static X$Companion $$INSTANCE
+
+    static void <clinit>() {
+          NEW (X$Companion)
+          DUP
+          INVOKESPECIAL (X$Companion, <init>, ()V)
+          PUTSTATIC (X$Companion, $$INSTANCE, LX$Companion;)
+          RETURN
+    }
+
+    private void <init>() {
+        LABEL (L0)
+          ALOAD (0)
+          INVOKESPECIAL (java/lang/Object, <init>, ()V)
+          RETURN
+        LABEL (L1)
+    }
+
+    public final kotlinx.serialization.KSerializer serializer() {
+        LABEL (L0)
+          NEW (kotlinx/serialization/SealedClassSerializer)
+          DUP
+          LDC (X)
+          LDC (LX;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          ICONST_2
+          ANEWARRAY (kotlin/reflect/KClass)
+          ASTORE (1)
+          ALOAD (1)
+          ICONST_0
+          LDC (LResult$Err;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          AASTORE
+          ALOAD (1)
+          ICONST_1
+          LDC (LResult$OK;)
+          INVOKESTATIC (kotlin/jvm/internal/Reflection, getOrCreateKotlinClass, (Ljava/lang/Class;)Lkotlin/reflect/KClass;)
+          AASTORE
+          ALOAD (1)
+          ICONST_2
+          ANEWARRAY (kotlinx/serialization/KSerializer)
+          ASTORE (1)
+          ALOAD (1)
+          ICONST_0
+          NEW (kotlinx/serialization/internal/ObjectSerializer)
+          DUP
+          LDC (Result.Err)
+          GETSTATIC (Result$Err, INSTANCE, LResult$Err;)
+          ICONST_0
+          ANEWARRAY (java/lang/annotation/Annotation)
+          INVOKESPECIAL (kotlinx/serialization/internal/ObjectSerializer, <init>, (Ljava/lang/String;Ljava/lang/Object;[Ljava/lang/annotation/Annotation;)V)
+          AASTORE
+          ALOAD (1)
+          ICONST_1
+          GETSTATIC (Result$OK$$serializer, INSTANCE, LResult$OK$$serializer;)
+          AASTORE
+          ALOAD (1)
+          ICONST_0
+          ANEWARRAY (java/lang/annotation/Annotation)
+          INVOKESPECIAL (kotlinx/serialization/SealedClassSerializer, <init>, (Ljava/lang/String;Lkotlin/reflect/KClass;[Lkotlin/reflect/KClass;[Lkotlinx/serialization/KSerializer;[Ljava/lang/annotation/Annotation;)V)
+          CHECKCAST (kotlinx/serialization/KSerializer)
+          ARETURN
+        LABEL (L1)
+    }
+}
+
+public final class X$DefaultImpls : java/lang/Object {
+    public static void def(X $this)
+}
+
+public abstract interface X : java/lang/Object {
+    public final static X$Companion Companion
+
+    static void <clinit>() {
+          GETSTATIC (X$Companion, $$INSTANCE, LX$Companion;)
+          PUTSTATIC (X, Companion, LX$Companion;)
+          RETURN
+    }
+
+    public abstract void def()
+}

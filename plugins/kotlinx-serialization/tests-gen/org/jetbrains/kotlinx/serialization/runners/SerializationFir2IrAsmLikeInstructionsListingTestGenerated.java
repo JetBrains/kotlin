@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/kotlinx-serialization/testData/codegen")
 @TestDataPath("$PROJECT_ROOT")
-public class SerializationIrAsmLikeInstructionsListingTestGenerated extends AbstractSerializationIrAsmLikeInstructionsListingTest {
+public class SerializationFir2IrAsmLikeInstructionsListingTestGenerated extends AbstractSerializationFir2IrAsmLikeInstructionsListingTest {
     @Test
     public void testAllFilesPresentInCodegen() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlinx-serialization/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
