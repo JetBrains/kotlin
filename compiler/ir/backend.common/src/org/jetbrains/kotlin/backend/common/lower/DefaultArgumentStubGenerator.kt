@@ -355,7 +355,7 @@ open class DefaultParameterInjector(
         return visitFunctionAccessExpression(expression) {
             with(expression) {
                 IrCallImpl(
-                    startOffset, endOffset, type, it as IrSimpleFunctionSymbol,
+                    startOffset, endOffset, (it as IrSimpleFunctionSymbol).owner.returnType, it,
                     typeArgumentsCount = typeArgumentsCount,
                     valueArgumentsCount = it.owner.valueParameters.size,
                     origin = LoweredStatementOrigins.DEFAULT_DISPATCH_CALL,
