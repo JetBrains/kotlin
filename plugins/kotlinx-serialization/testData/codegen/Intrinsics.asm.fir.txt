@@ -1,0 +1,269 @@
+public final class Box$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
+    private final kotlinx.serialization.descriptors.SerialDescriptor descriptor
+
+    private final kotlinx.serialization.KSerializer typeSerial0
+
+    private void <init>()
+
+    private void <init>(kotlinx.serialization.KSerializer typeSerial0)
+
+    public void <init>(kotlinx.serialization.KSerializer typeSerial0, kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    public final kotlinx.serialization.KSerializer[] childSerializers()
+
+    public final Box deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public final kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+
+    private final kotlinx.serialization.KSerializer getTypeSerial0()
+
+    public final void serialize(kotlinx.serialization.encoding.Encoder encoder, Box value)
+
+    public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
+
+    public final kotlinx.serialization.KSerializer[] typeParametersSerializers()
+}
+
+public final class Box$Companion : java/lang/Object {
+    private void <init>()
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    public final kotlinx.serialization.KSerializer serializer(kotlinx.serialization.KSerializer typeSerial0)
+}
+
+public final class Box : java/lang/Object {
+    private final static kotlinx.serialization.descriptors.SerialDescriptor $cachedDescriptor
+
+    public final static Box$Companion Companion
+
+    private final java.lang.Object boxed
+
+    static void <clinit>()
+
+    public void <init>(java.lang.Object boxed)
+
+    public void <init>(int seen0, java.lang.Object boxed, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
+
+    public final java.lang.Object component1()
+
+    public final Box copy(java.lang.Object boxed)
+
+    public static Box copy$default(Box p0, java.lang.Object p1, int p2, java.lang.Object p3)
+
+    public boolean equals(java.lang.Object other)
+
+    public final java.lang.Object getBoxed()
+
+    public int hashCode()
+
+    public java.lang.String toString()
+
+    public final static void write$Self(Box self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc, kotlinx.serialization.KSerializer typeSerial0)
+}
+
+public final class IntrinsicsKt : java/lang/Object {
+    public final static kotlinx.serialization.KSerializer getBoxSer()
+
+    public final static kotlinx.serialization.KSerializer getSer()
+
+    public final static kotlinx.serialization.KSerializer listSer()
+
+    public final static void test() {
+        LABEL (L0)
+        LINENUMBER (28)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          POP
+        LABEL (L1)
+        LINENUMBER (29)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L2)
+        LINENUMBER (47)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+        LABEL (L3)
+          POP
+        LABEL (L4)
+        LINENUMBER (30)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L5)
+        LINENUMBER (48)
+          GETSTATIC (Box, Companion, LBox$Companion;)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
+        LABEL (L6)
+          POP
+        LABEL (L7)
+        LINENUMBER (31)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L8)
+        LINENUMBER (49)
+          GETSTATIC (Box, Companion, LBox$Companion;)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
+        LABEL (L9)
+          POP
+        LABEL (L10)
+        LINENUMBER (32)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L11)
+        LINENUMBER (50)
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
+          DUP
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
+        LABEL (L12)
+          POP
+        LABEL (L13)
+        LINENUMBER (34)
+          GETSTATIC (Box, Companion, LBox$Companion;)
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
+          DUP
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
+          INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
+          POP
+        LABEL (L14)
+        LINENUMBER (36)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L15)
+        LINENUMBER (51)
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
+          DUP
+          GETSTATIC (Box, Companion, LBox$Companion;)
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
+          DUP
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
+          INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
+          INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
+        LABEL (L16)
+          POP
+        LABEL (L17)
+        LINENUMBER (38)
+          GETSTATIC (kotlinx/serialization/internal/IntSerializer, INSTANCE, Lkotlinx/serialization/internal/IntSerializer;)
+          POP
+        LABEL (L18)
+        LINENUMBER (40)
+          GETSTATIC (SerializableObject, INSTANCE, LSerializableObject;)
+          INVOKEVIRTUAL (SerializableObject, serializer, ()Lkotlinx/serialization/KSerializer;)
+          POP
+        LABEL (L19)
+        LINENUMBER (42)
+          ICONST_0
+          ISTORE (0)
+        LABEL (L20)
+        LINENUMBER (52)
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
+          DUP
+          NEW (kotlinx/serialization/internal/ArrayListSerializer)
+          DUP
+          GETSTATIC (Box, Companion, LBox$Companion;)
+          GETSTATIC (kotlinx/serialization/internal/IntSerializer, INSTANCE, Lkotlinx/serialization/internal/IntSerializer;)
+          INVOKEVIRTUAL (Box$Companion, serializer, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
+          INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
+          INVOKESPECIAL (kotlinx/serialization/internal/ArrayListSerializer, <init>, (Lkotlinx/serialization/KSerializer;)V)
+        LABEL (L21)
+          POP
+        LABEL (L22)
+        LINENUMBER (44)
+          GETSTATIC (Simple, Companion, LSimple$Companion;)
+          INVOKEVIRTUAL (Simple$Companion, serializer, ()Lkotlinx/serialization/KSerializer;)
+          INVOKESTATIC (kotlinx/serialization/builtins/BuiltinSerializersKt, getNullable, (Lkotlinx/serialization/KSerializer;)Lkotlinx/serialization/KSerializer;)
+          POP
+        LABEL (L23)
+        LINENUMBER (45)
+          RETURN
+    }
+}
+
+final class SerializableObject$1 : kotlin/jvm/internal/Lambda, kotlin/jvm/functions/Function0 {
+    public final static SerializableObject$1 INSTANCE
+
+    static void <clinit>()
+
+    void <init>()
+
+    public final kotlinx.serialization.KSerializer invoke()
+
+    public java.lang.Object invoke()
+}
+
+public final class SerializableObject : java/lang/Object {
+    private final static kotlin.Lazy $cachedSerializer$delegate
+
+    public final static SerializableObject INSTANCE
+
+    static void <clinit>()
+
+    private void <init>()
+
+    private final kotlinx.serialization.KSerializer get$cachedSerializer()
+
+    public final kotlinx.serialization.KSerializer serializer()
+}
+
+public final class Simple$$serializer : java/lang/Object, kotlinx/serialization/internal/GeneratedSerializer {
+    public final static Simple$$serializer INSTANCE
+
+    private final static kotlinx.serialization.descriptors.SerialDescriptor descriptor
+
+    static void <clinit>()
+
+    private void <init>()
+
+    public final kotlinx.serialization.KSerializer[] childSerializers()
+
+    public final Simple deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public java.lang.Object deserialize(kotlinx.serialization.encoding.Decoder decoder)
+
+    public final kotlinx.serialization.descriptors.SerialDescriptor getDescriptor()
+
+    public final void serialize(kotlinx.serialization.encoding.Encoder encoder, Simple value)
+
+    public void serialize(kotlinx.serialization.encoding.Encoder encoder, java.lang.Object value)
+
+    public kotlinx.serialization.KSerializer[] typeParametersSerializers()
+}
+
+public final class Simple$Companion : java/lang/Object {
+    private void <init>()
+
+    public void <init>(kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
+
+    public final kotlinx.serialization.KSerializer serializer()
+}
+
+public final class Simple : java/lang/Object {
+    public final static Simple$Companion Companion
+
+    private final java.lang.String firstName
+
+    private final java.lang.String lastName
+
+    static void <clinit>()
+
+    public void <init>(java.lang.String firstName, java.lang.String lastName)
+
+    public void <init>(int seen0, java.lang.String firstName, java.lang.String lastName, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker)
+
+    public final java.lang.String getFirstName()
+
+    public final java.lang.String getLastName()
+
+    public final static void write$Self(Simple self, kotlinx.serialization.encoding.CompositeEncoder output, kotlinx.serialization.descriptors.SerialDescriptor serialDesc)
+}

@@ -19,7 +19,7 @@ object SerializableObject {}
 
 val module = SerializersModule {}
 
-inline fun <reified T: Any> getSer(module: SerializersModule): KSerializer<T> {
+inline fun <reified T : Any> getSer(module: SerializersModule): KSerializer<T> {
     return module.serializer<T>()
 }
 

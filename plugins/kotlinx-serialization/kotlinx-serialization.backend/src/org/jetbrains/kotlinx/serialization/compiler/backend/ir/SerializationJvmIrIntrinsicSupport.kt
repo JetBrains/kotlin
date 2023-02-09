@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.intrinsics.IntrinsicMethod
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIn
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIntrinsicsMarkerOwner
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.pluginIntrinsicsMarkerSignature
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
@@ -49,7 +48,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.referenceArraySerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds.sealedSerializerId
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SpecialBuiltins
-import org.jetbrains.kotlinx.serialization.compiler.resolve.annotationsWithArguments
 import org.jetbrains.kotlinx.serialization.compiler.resolve.getClassFromSerializationPackage
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -59,7 +57,10 @@ import org.jetbrains.org.objectweb.asm.tree.InsnList
 import org.jetbrains.org.objectweb.asm.tree.LdcInsnNode
 import org.jetbrains.org.objectweb.asm.tree.VarInsnNode
 
-class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContext) : SerializationBaseContext, JvmIrIntrinsicExtension {
+class SerializationJvmIrIntrinsicSupport(
+    private val jvmBackendContext: JvmBackendContext,
+    private val irPluginContext: IrPluginContext
+) : SerializationBaseContext, JvmIrIntrinsicExtension {
     sealed class IntrinsicType(val methodDescriptor: String) {
         object Simple : IntrinsicType(stubCallDescriptor)
 
@@ -151,14 +152,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
     private val typeSystemContext = jvmBackendContext.typeSystem
     private val typeMapper = jvmBackendContext.defaultTypeMapper
 
-    /**
-     * This likely won't work in FIR because module is empty there and can't reference dependencies
-     * Proper referencing can be done via FirPluginContext, but it's not available in the intrinsics.
-     */
-    @FirIncompatiblePluginAPI
-    override fun referenceClassId(classId: ClassId): IrClassSymbol? {
-        return module.findClassAcrossModuleDependencies(classId)?.let { jvmBackendContext.referenceClass(it) }
-    }
+    override fun referenceClassId(classId: ClassId): IrClassSymbol? = irPluginContext.referenceClass(classId)
 
     private val currentVersion by lazy {
         VersionReader.getVersionsForCurrentModuleFromTrace(module, jvmBackendContext.state.bindingTrace)

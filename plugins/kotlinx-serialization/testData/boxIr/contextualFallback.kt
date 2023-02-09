@@ -5,6 +5,7 @@
 import kotlinx.serialization.*
 import kotlinx.serialization.json.*
 import kotlinx.serialization.encoding.*
+import kotlin.reflect.typeOf
 
 @Serializable
 data class Holder<T>(
@@ -14,7 +15,7 @@ data class Holder<T>(
 )
 
 fun box(): String {
-    val serializer = serializer<Holder<List<String>>>()
+    val serializer = serializer(typeOf<Holder<List<String>>>())
     val instance = Holder(true, listOf("a", "b"))
     val encoded = Json.encodeToString(serializer, instance)
     if (encoded != """{"ok":true,"result":["a","b"]}""") return encoded
