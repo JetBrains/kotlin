@@ -163,7 +163,10 @@ class KotlinMetadataTargetConfigurator :
     private fun configureMetadataDependenciesConfigurationsForCommonSourceSets(target: KotlinMetadataTarget) {
         target.project.whenEvaluated {
             kotlinExtension.sourceSets.all { sourceSet ->
-                configureMetadataDependenciesConfigurations(target.project, sourceSet.internal)
+                // Resolvable metadata configuration must be initialized for all source sets
+                // As it configures legacy metadata configurations that is used by older IDE Import
+                // And it also configures platform source sets for the same reason
+                sourceSet.internal.resolvableMetadataConfiguration
             }
         }
     }
@@ -349,26 +352,6 @@ class KotlinMetadataTargetConfigurator :
                 compilation.output.classesDirs
             }
         }
-
-    private fun configureMetadataDependenciesConfigurations(project: Project, sourceSet: InternalKotlinSourceSet) {
-        /*
-        Older IDEs still rely on resolving the metadata configurations explicitly.
-        Dependencies will be coming from extending the newer 'resolvableMetadataConfiguration'.
-
-        the intransitiveMetadataConfigurationName will not extend this mechanism, since it only
-        relies on dependencies being added explicitly by the Kotlin Gradle Plugin
-        */
-        @Suppress("DEPRECATION")
-        listOf(
-            sourceSet.apiMetadataConfigurationName,
-            sourceSet.implementationMetadataConfigurationName,
-            sourceSet.compileOnlyMetadataConfigurationName
-        ).forEach { configurationName ->
-            val configuration = project.configurations.getByName(configurationName)
-            configuration.extendsFrom(sourceSet.resolvableMetadataConfiguration)
-            configuration.shouldResolveConsistentlyWith(sourceSet.resolvableMetadataConfiguration)
-        }
-    }
 
     private fun createCommonMainElementsConfiguration(target: KotlinMetadataTarget) {
         val project = target.project
