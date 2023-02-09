@@ -52,22 +52,4 @@ class IssuesTest : AbstractModelTest("/src/main/kotlin/issues/Test.kt", "issues"
             }
         }
     }
-
-    //@Test
-    //    fun errorClasses() {
-    //        checkSourceExistsAndVerifyModel("testdata/issues/errorClasses.kt",
-    //            modelConfig = ModelConfig(analysisPlatform = analysisPlatform, withJdk = true, withKotlinRuntime = true)) { model ->
-    //            val cls = model.members.single().members.single()
-    //
-    //            fun DocumentationNode.returnType() = this.details.find { it.kind == NodeKind.Type }?.name
-    //            assertEquals("Test", cls.members[1].returnType())
-    //            assertEquals("Test", cls.members[2].returnType())
-    //            assertEquals("Test", cls.members[3].returnType())
-    //            assertEquals("List", cls.members[4].returnType())
-    //            assertEquals("String", cls.members[5].returnType())
-    //            assertEquals("String", cls.members[6].returnType())
-    //            assertEquals("String", cls.members[7].returnType())
-    //        }
-    //    }
-
 }
