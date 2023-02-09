@@ -253,4 +253,67 @@ class MppCompositeBuildIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    fun `test - sample5-KT-56536-rootProject_name - assemble`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample5-KT-56536-rootProject.name/producerBuild", gradleVersion)
+
+        project("mpp-composite-build/sample5-KT-56536-rootProject.name/consumerBuild", gradleVersion) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            build("cleanNativeDistributionCommonization")
+
+            build("assemble") {
+                assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksExecuted(":consumerA:compileKotlinLinuxX64")
+                assertTasksExecuted(":consumerA:compileKotlinJvm")
+            }
+
+            build("assemble") {
+                assertTasksUpToDate(":consumerA:compileCommonMainKotlinMetadata")
+                assertTasksUpToDate(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksUpToDate(":consumerA:compileNativeMainKotlinMetadata")
+                assertTasksUpToDate(":consumerA:compileKotlinLinuxX64")
+                assertTasksUpToDate(":consumerA:compileKotlinJvm")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `test - sample5-KT-56536-rootProject_name - ide dependencies`(gradleVersion: GradleVersion) {
+        val producer = project("mpp-composite-build/sample5-KT-56536-rootProject.name/producerBuild", gradleVersion)
+
+        project("mpp-composite-build/sample5-KT-56536-rootProject.name/consumerBuild", gradleVersion) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            resolveIdeDependencies(":consumerA") { dependencies ->
+                dependencies["commonMain"].assertMatches(
+                    regularSourceDependency("producerBuild::producerA/commonMain"),
+                    kotlinStdlibDependencies
+                )
+
+                dependencies["nativeMain"].assertMatches(
+                    dependsOnDependency(":consumerA/commonMain"),
+                    regularSourceDependency("producerBuild::producerA/commonMain"),
+                    regularSourceDependency("producerBuild::producerA/nativeMain"),
+                    regularSourceDependency("producerBuild::producerA/linuxMain"),
+                    kotlinNativeDistributionDependencies,
+                    binaryCoordinates(Regex(".*stdlib-common:.*")) /* KT-56278 */
+                )
+
+                dependencies["linuxMain"].assertMatches(
+                    dependencies["nativeMain"],
+                    dependsOnDependency(":consumerA/nativeMain"),
+                )
+
+                dependencies["linuxX64Main"].assertMatches(
+                    dependsOnDependency(":consumerA/commonMain"),
+                    dependsOnDependency(":consumerA/nativeMain"),
+                    dependsOnDependency(":consumerA/linuxMain"),
+                    projectArtifactDependency(Regular, "producerBuild::producerA", FilePathRegex(".*/linuxX64/main/klib/producerA.klib")),
+                    kotlinNativeDistributionDependencies,
+                )
+            }
+        }
+    }
 }
