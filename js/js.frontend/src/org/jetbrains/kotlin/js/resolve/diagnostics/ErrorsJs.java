@@ -112,6 +112,8 @@ public interface ErrorsJs {
 
     DiagnosticFactory1<PsiElement, String> NON_CONSUMABLE_EXPORTED_IDENTIFIER = DiagnosticFactory1.create(WARNING, DEFAULT);
 
+    DiagnosticFactory0<PsiElement> WRONG_OPERATION_WITH_EXTERNAL_ENUM = DiagnosticFactory0.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {

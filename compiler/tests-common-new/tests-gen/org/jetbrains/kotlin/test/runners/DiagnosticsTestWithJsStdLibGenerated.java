@@ -408,6 +408,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("externalEnums.kt")
+        public void testExternalEnums() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/externalEnums.kt");
+        }
+
+        @Test
         @TestMetadata("jsExportOnNestedDeclarations.kt")
         public void testJsExportOnNestedDeclarations() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/jsExportOnNestedDeclarations.kt");

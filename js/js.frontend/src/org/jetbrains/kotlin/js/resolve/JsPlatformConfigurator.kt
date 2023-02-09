@@ -31,6 +31,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         JsModuleCallChecker,
         JsDynamicCallChecker,
         JsDefinedExternallyCallChecker,
+        JsExternalEnumChecker,
     ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
