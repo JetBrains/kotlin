@@ -120,49 +120,6 @@ class CacheUpdater(
         }
     }
 
-    private class DirtyFileExports(
-        override val inverseDependencies: KotlinSourceFileMutableMap<Set<IdSignature>> = KotlinSourceFileMutableMap()
-    ) : KotlinSourceFileExports() {
-        override fun getExportedSignatures(): Set<IdSignature> = allExportedSignatures
-
-        val allExportedSignatures = hashSetOf<IdSignature>()
-    }
-
-    private class DirtyFileMetadata(
-        val maybeImportedSignatures: Collection<IdSignature>,
-
-        val oldDirectDependencies: KotlinSourceFileMap<*>,
-
-        override val inverseDependencies: KotlinSourceFileMutableMap<MutableSet<IdSignature>> = KotlinSourceFileMutableMap(),
-        override val directDependencies: KotlinSourceFileMutableMap<MutableMap<IdSignature, ICHash>> = KotlinSourceFileMutableMap(),
-    ) : KotlinSourceFileMetadata() {
-        fun addInverseDependency(lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature) =
-            when (val signatures = inverseDependencies[lib, src]) {
-                null -> inverseDependencies[lib, src] = hashSetOf(signature)
-                else -> signatures += signature
-            }
-
-        fun addDirectDependency(lib: KotlinLibraryFile, src: KotlinSourceFile, signature: IdSignature, hash: ICHash) =
-            when (val signatures = directDependencies[lib, src]) {
-                null -> directDependencies[lib, src] = hashMapOf(signature to hash)
-                else -> signatures[signature] = hash
-            }
-    }
-
-    private class UpdatedDependenciesMetadata(oldMetadata: KotlinSourceFileMetadata) : KotlinSourceFileMetadata() {
-        private val oldInverseDependencies = oldMetadata.inverseDependencies
-        private val newExportedSignatures: Set<IdSignature> by lazy { inverseDependencies.flatSignatures() }
-
-        var importedSignaturesModified = false
-
-        override val inverseDependencies = oldMetadata.inverseDependencies.toMutable()
-        override val directDependencies = oldMetadata.directDependencies.toMutable()
-
-        override fun getExportedSignatures(): Set<IdSignature> = newExportedSignatures
-
-        fun isExportedSignaturesUpdated() = newExportedSignatures != oldInverseDependencies.flatSignatures()
-    }
-
     private fun addFilesWithRemovedDependencies(
         modifiedFiles: KotlinSourceFileMap<KotlinSourceFileMetadata>, removedFiles: KotlinSourceFileMap<KotlinSourceFileMetadata>
     ): KotlinSourceFileMap<KotlinSourceFileMetadata> {
@@ -360,12 +317,6 @@ class CacheUpdater(
         }
 
         return result
-    }
-
-    private fun KotlinSourceFileMutableMap<UpdatedDependenciesMetadata>.addNewMetadata(
-        libFile: KotlinLibraryFile, srcFile: KotlinSourceFile, oldMetadata: KotlinSourceFileMetadata
-    ) = this[libFile, srcFile] ?: UpdatedDependenciesMetadata(oldMetadata).also {
-        this[libFile, srcFile] = it
     }
 
     private fun KotlinSourceFileMutableMap<UpdatedDependenciesMetadata>.addDependenciesWithUpdatedSignatures(
