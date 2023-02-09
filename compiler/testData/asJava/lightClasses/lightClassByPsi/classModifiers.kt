@@ -1,10 +1,19 @@
 
 package pkg
 
+private interface ITopLevelPrivate
+internal interface ITopLevelInternal
+interface ITopLevelPublic
+
 open class Open {
   private class Private: Open() {}
   protected inner class Private2 {}
   internal class StaticInternal {}
+
+  private interface INestedPrivate
+  protected interface INestedProtected
+  internal interface INestedInternal
+  interface INestedPublic
 }
 internal class OuterInternal {}
 private class TopLevelPrivate {}

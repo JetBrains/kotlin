@@ -1,9 +1,38 @@
+public static abstract interface INestedInternal /* pkg.Open.INestedInternal*/ {
+}
+
+private static abstract interface INestedPrivate /* pkg.Open.INestedPrivate*/ {
+}
+
+protected static abstract interface INestedProtected /* pkg.Open.INestedProtected*/ {
+}
+
+public static abstract interface INestedPublic /* pkg.Open.INestedPublic*/ {
+}
+
+public abstract interface ITopLevelInternal /* pkg.ITopLevelInternal*/ {
+}
+
+abstract interface ITopLevelPrivate /* pkg.ITopLevelPrivate*/ {
+}
+
+public abstract interface ITopLevelPublic /* pkg.ITopLevelPublic*/ {
+}
+
 public static final class Nested /* pkg.Season.Nested*/ extends pkg.Season {
   public  Nested();//  .ctor()
 }
 
 public class Open /* pkg.Open*/ {
   public  Open();//  .ctor()
+
+  class INestedInternal ...
+
+  class INestedPrivate ...
+
+  class INestedProtected ...
+
+  class INestedPublic ...
 
   class Private ...
 

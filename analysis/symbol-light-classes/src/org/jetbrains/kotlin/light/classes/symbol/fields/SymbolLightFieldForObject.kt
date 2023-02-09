@@ -81,7 +81,7 @@ internal class SymbolLightFieldForObject private constructor(
 
     private fun computeCompanionModifiers(modifier: String): Map<String, Boolean>? {
         if (modifier !in GranularModifiersBox.VISIBILITY_MODIFIERS) return null
-        return GranularModifiersBox.computeVisibilityForClass(ktModule, objectSymbolPointer, isTopLevel = false)
+        return GranularModifiersBox.computeVisibilityForClass(ktModule, objectSymbolPointer, isTopLevelOrInterface = false)
     }
 
     private val _isDeprecated: Boolean by lazyPub {

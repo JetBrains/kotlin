@@ -75,10 +75,10 @@ internal class GranularModifiersBox(
         internal fun computeVisibilityForClass(
             ktModule: KtModule,
             declarationPointer: KtSymbolPointer<KtSymbolWithVisibility>,
-            isTopLevel: Boolean,
+            isTopLevelOrInterface: Boolean,
         ): PersistentMap<String, Boolean> {
             val visibility = declarationPointer.withSymbol(ktModule) {
-                it.toPsiVisibilityForClass(!isTopLevel)
+                it.toPsiVisibilityForClass(isTopLevelOrInterface)
             }
 
             return VISIBILITY_MODIFIERS_MAP.with(visibility)

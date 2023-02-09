@@ -143,7 +143,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
 
     internal fun computeModifiers(modifier: String): Map<String, Boolean>? = when (modifier) {
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> {
-            GranularModifiersBox.computeVisibilityForClass(ktModule, classOrObjectSymbolPointer, isTopLevel)
+            GranularModifiersBox.computeVisibilityForClass(ktModule, classOrObjectSymbolPointer, isTopLevel || isInterface)
         }
 
         in GranularModifiersBox.MODALITY_MODIFIERS -> GranularModifiersBox.computeSimpleModality(ktModule, classOrObjectSymbolPointer)

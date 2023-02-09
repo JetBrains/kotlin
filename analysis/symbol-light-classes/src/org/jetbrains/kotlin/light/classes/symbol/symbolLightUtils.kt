@@ -75,7 +75,7 @@ internal fun KtSymbolWithModality.computeSimpleModality(): String? = when (modal
 
 internal fun KtSymbolWithVisibility.toPsiVisibilityForMember(): String = visibility.toPsiVisibilityForMember()
 
-internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isNested: Boolean): String = visibility.toPsiVisibilityForClass(isNested)
+internal fun KtSymbolWithVisibility.toPsiVisibilityForClass(isTopLevelOrInterface: Boolean): String = visibility.toPsiVisibilityForClass(isTopLevelOrInterface)
 
 private fun Visibility.toPsiVisibilityForMember(): String = when (this) {
     Visibilities.Private, Visibilities.PrivateToThis -> PsiModifier.PRIVATE
@@ -83,8 +83,8 @@ private fun Visibility.toPsiVisibilityForMember(): String = when (this) {
     else -> PsiModifier.PUBLIC
 }
 
-private fun Visibility.toPsiVisibilityForClass(isNested: Boolean): String = when (isNested) {
-    false -> when (this) {
+private fun Visibility.toPsiVisibilityForClass(isTopLevelOrInterface: Boolean): String = if (isTopLevelOrInterface) {
+    when (this) {
         Visibilities.Public,
         Visibilities.Protected,
         Visibilities.Local,
@@ -92,8 +92,8 @@ private fun Visibility.toPsiVisibilityForClass(isNested: Boolean): String = when
 
         else -> PsiModifier.PACKAGE_LOCAL
     }
-
-    true -> when (this) {
+} else {
+    when (this) {
         Visibilities.Public, Visibilities.Internal, Visibilities.Local -> PsiModifier.PUBLIC
         Visibilities.Protected -> PsiModifier.PROTECTED
         Visibilities.Private -> PsiModifier.PRIVATE
