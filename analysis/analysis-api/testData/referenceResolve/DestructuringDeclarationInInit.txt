@@ -1,0 +1,2 @@
+Resolved to:
+0: (in ROOT) var x: kotlin.Any
