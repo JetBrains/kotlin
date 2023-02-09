@@ -5,21 +5,33 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
+import java.io.File
+
 // https://karma-runner.github.io/4.0/config/configuration-file.html
 data class KarmaConfig(
     var singleRun: Boolean = true,
     var autoWatch: Boolean = false,
     var basePath: String? = null,
-    val files: MutableList<String> = mutableListOf(),
+    val files: MutableList<Any> = mutableListOf(),
     val frameworks: MutableList<String> = mutableListOf(),
     val client: KarmaClient = KarmaClient(),
     val browsers: MutableList<String> = mutableListOf(),
     val customLaunchers: MutableMap<String, CustomLauncher> = mutableMapOf(),
+    var customContextFile: String? = null,
+    var customDebugFile: String? = null,
     val failOnFailingTestSuite: Boolean = false,
     val failOnEmptyTestSuite: Boolean = false,
     val reporters: MutableList<String> = mutableListOf(),
     val preprocessors: MutableMap<String, MutableList<String>> = mutableMapOf(),
-    var coverageReporter: CoverageReporter? = null
+    var coverageReporter: CoverageReporter? = null,
+    val proxies: MutableMap<String, String> = mutableMapOf()
+)
+
+data class KarmaFile(
+    val pattern: String,
+    val included: Boolean,
+    val served: Boolean,
+    val watched: Boolean
 )
 
 data class KarmaClient(
