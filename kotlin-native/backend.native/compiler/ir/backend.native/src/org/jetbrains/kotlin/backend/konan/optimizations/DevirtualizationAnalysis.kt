@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.generators.implicitCastTo
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -1401,14 +1402,13 @@ internal object DevirtualizationAnalysis {
             }
         }
 
-        fun IrBuilderWithScope.irDevirtualizedCall(callSite: IrCall,
-                                                   actualType: IrType,
-                                                   devirtualizedCallee: DevirtualizedCallee,
-                                                   arguments: List<IrExpression>): IrCall {
-            val actualCallee = devirtualizedCallee.callee.irFunction as IrSimpleFunction
+        fun irDevirtualizedCall(callSite: IrCall,
+                                actualType: IrType,
+                                actualCallee: IrSimpleFunction,
+                                arguments: List<IrExpression>): IrExpression {
             val call = IrCallImpl(
                     callSite.startOffset, callSite.endOffset,
-                    actualType,
+                    actualCallee.returnType,
                     actualCallee.symbol,
                     actualCallee.typeParameters.size,
                     actualCallee.valueParameters.size,
@@ -1420,21 +1420,22 @@ internal object DevirtualizationAnalysis {
                         actualCallee.dump()
             }
             arguments.forEachIndexed { index, argument -> call.putArgument(index, argument) }
-            return call
+            return call.implicitCastIfNeededTo(actualType)
         }
 
-        fun IrBuilderWithScope.irDevirtualizedCall(callee: IrCall, actualType: IrType,
+        fun IrBuilderWithScope.irDevirtualizedCall(callSite: IrCall, actualType: IrType,
                                                    devirtualizedCallee: DevirtualizedCallee,
                                                    arguments: List<PossiblyCoercedValue>): IrExpression {
             val actualCallee = devirtualizedCallee.callee as DataFlowIR.FunctionSymbol.Declared
             return actualCallee.bridgeTarget.let { bridgeTarget ->
                 if (bridgeTarget == null)
-                    irDevirtualizedCall(callee, actualType,
-                            devirtualizedCallee,
-                            arguments.map { it.getFullValue(this@irDevirtualizedCall) })
+                    irDevirtualizedCall(callSite, actualType,
+                            actualCallee.irFunction as IrSimpleFunction,
+                            arguments.map { it.getFullValue(this@irDevirtualizedCall) }
+                    )
                 else {
-                    val callResult = irDevirtualizedCall(callee, actualType,
-                            DevirtualizedCallee(devirtualizedCallee.receiverType, bridgeTarget),
+                    val callResult = irDevirtualizedCall(callSite, actualType,
+                            bridgeTarget.irFunction as IrSimpleFunction,
                             arguments.mapIndexed { index, value ->
                                 val coercion = getTypeConversion(actualCallee.parameters[index], bridgeTarget.parameters[index])
                                 val fullValue = value.getFullValue(this@irDevirtualizedCall)
