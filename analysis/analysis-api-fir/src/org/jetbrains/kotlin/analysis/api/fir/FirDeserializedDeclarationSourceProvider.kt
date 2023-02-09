@@ -12,10 +12,15 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isData
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
+import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -25,6 +30,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 //todo introduce LibraryModificationTracker based cache?
 internal object FirDeserializedDeclarationSourceProvider {
@@ -37,6 +43,34 @@ internal object FirDeserializedDeclarationSourceProvider {
             is FirConstructor -> provideSourceForConstructor(fir, project)
             is FirEnumEntry -> provideSourceForEnumEntry(fir, project)
             else -> null
+        }
+    }
+
+    fun findClassPsiForGeneratedMembers(fir: FirElement, project: Project): PsiElement? {
+        if (fir !is FirCallableDeclaration) {
+            return null
+        }
+        val containingClass = fir.getContainingClass(fir.moduleData.session) ?: return null
+        if (isGeneratedMemberNotWrittenToMetadata(fir.symbol, containingClass)) {
+            return provideSourceForClass(containingClass, project)
+        }
+        return null
+    }
+
+    private fun isGeneratedMemberNotWrittenToMetadata(symbol: FirCallableSymbol<*>, containingClass: FirRegularClass): Boolean {
+        return when {
+            containingClass.isEnumClass -> symbol.name in setOf(
+                StandardNames.ENUM_VALUES,
+                StandardNames.ENUM_VALUE_OF,
+                StandardNames.ENUM_ENTRIES,
+            )
+            containingClass.isData -> symbol.name in setOf(
+                OperatorNameConventions.EQUALS,
+                OperatorNameConventions.TO_STRING,
+                StandardNames.HASHCODE_NAME,
+                StandardNames.DATA_CLASS_COPY,
+            )
+            else -> false
         }
     }
 

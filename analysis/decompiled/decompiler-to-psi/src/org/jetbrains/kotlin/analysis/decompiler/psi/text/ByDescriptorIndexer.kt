@@ -52,6 +52,12 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
             return classOrObject?.primaryConstructor ?: classOrObject
         }
 
+        if ((original as? CallableMemberDescriptor)?.mustNotBeWrittenToDecompiledText() == true &&
+            original.containingDeclaration is ClassDescriptor
+        ) {
+            return getDeclarationForDescriptor(original.containingDeclaration, file)
+        }
+
         val descriptorKey = original.toStringKey()
 
         if (!file.isContentsLoaded && original is MemberDescriptor) {
