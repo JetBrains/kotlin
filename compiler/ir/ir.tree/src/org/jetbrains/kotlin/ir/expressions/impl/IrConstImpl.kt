@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getPrimitiveType
 import org.jetbrains.kotlin.ir.types.isMarkedNullable
+import org.jetbrains.kotlin.ir.types.makeNullable
 
 class IrConstImpl<T>(
     override val startOffset: Int,
@@ -78,7 +79,7 @@ class IrConstImpl<T>(
                 PrimitiveType.FLOAT -> float(startOffset, endOffset, type, 0.0F)
                 PrimitiveType.LONG -> long(startOffset, endOffset, type, 0)
                 PrimitiveType.DOUBLE -> double(startOffset, endOffset, type, 0.0)
-                else -> constNull(startOffset, endOffset, type)
+                else -> constNull(startOffset, endOffset, type.makeNullable())
             }
         }
     }
