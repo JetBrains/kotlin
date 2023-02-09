@@ -273,25 +273,4 @@ class PropertyTest : AbstractModelTest("/src/main/kotlin/property/Test.kt", "pro
             }
         }
     }
-//    @Test
-//    fun annotatedProperty() {
-//        checkSourceExistsAndVerifyModel(
-//            "testdata/properties/annotatedProperty.kt",
-//            modelConfig = ModelConfig(
-//                analysisPlatform = analysisPlatform,
-//                withKotlinRuntime = true
-//            )
-//        ) { model ->
-//            with(model.members.single().members.single()) {
-//                Assert.assertEquals(1, annotations.count())
-//                with(annotations[0]) {
-//                    Assert.assertEquals("Strictfp", name)
-//                    Assert.assertEquals(Content.Empty, content)
-//                    Assert.assertEquals(NodeKind.Annotation, kind)
-//                }
-//            }
-//        }
-//    }
-//
-//}
 }
