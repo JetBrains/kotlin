@@ -116,19 +116,4 @@ class PackagesTest : AbstractModelTest("/src/main/kotlin/packages/Test.kt", "pac
             }
         }
     }
-
-    // todo
-//    @Test fun suppressAtPackageLevel() {
-//        verifyModel(
-//            ModelConfig(
-//                roots = arrayOf(KotlinSourceRoot("testdata/packages/classInPackage.kt", false)),
-//                perPackageOptions = listOf(
-//                    PackageOptionsImpl(prefix = "simple.name", suppress = true)
-//                ),
-//                analysisPlatform = analysisPlatform
-//            )
-//        ) { model ->
-//            assertEquals(0, model.members.count())
-//        }
-//    }
 }
