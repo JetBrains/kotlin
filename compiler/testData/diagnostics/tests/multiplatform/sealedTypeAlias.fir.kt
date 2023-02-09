@@ -2,8 +2,8 @@
 // FILE: common.kt
 
 expect sealed class Presence {
-    object Online: Presence
-    object Offline: Presence
+    <!NO_ACTUAL_FOR_EXPECT{JVM}!>object Online: Presence<!>
+    <!NO_ACTUAL_FOR_EXPECT{JVM}!>object Offline: Presence<!>
 }
 
 // MODULE: m2-jvm()()(m1-common)

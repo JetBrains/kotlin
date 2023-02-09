@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
@@ -22,7 +23,8 @@ import org.jetbrains.kotlin.name.FqName
 
 class MissingFakeOverridesAdder(
     private val expectActualMap: Map<IrSymbol, IrSymbol>,
-    private val typeAliasMap: Map<FqName, FqName>
+    private val typeAliasMap: Map<FqName, FqName>,
+    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
 ) : IrElementVisitorVoid {
     override fun visitClass(declaration: IrClass) {
         if (!declaration.isExpect) {
@@ -75,7 +77,7 @@ class MissingFakeOverridesAdder(
             is IrFunctionImpl,
             is IrPropertyImpl -> {
                 if (members[generateIrElementFullName(actualMember, expectActualMap, typeAliasMap)] != null) {
-                    reportManyInterfacesMembersNotImplemented(declaration, actualMember as IrDeclarationWithName)
+                    diagnosticsReporter.reportManyInterfacesMembersNotImplemented(declaration, actualMember as IrDeclarationWithName)
                     return
                 }
 

@@ -36,7 +36,12 @@ class JvmIrBackendFacade(
         }
 
         if (module.useIrActualizer()) {
-            IrActualizer.actualize(inputArtifact.backendInput.irModuleFragment, inputArtifact.dependentInputs.map { it.irModuleFragment })
+            IrActualizer.actualize(
+                inputArtifact.backendInput.irModuleFragment,
+                inputArtifact.dependentInputs.map { it.irModuleFragment },
+                inputArtifact.state.diagnosticReporter,
+                inputArtifact.state.languageVersionSettings
+            )
         }
 
         val state = inputArtifact.state

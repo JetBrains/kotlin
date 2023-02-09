@@ -275,7 +275,13 @@ class IncrementalFirJvmCompilerRunner(
             val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
             val irGenerationExtensions =
                 (projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }.orEmpty()
-            val platformIrOutput = cycleResult.convertToIrAndActualizeForJvm(extensions, irGenerationExtensions, linkViaSignatures = false)
+            val platformIrOutput = cycleResult.convertToIrAndActualizeForJvm(
+                extensions,
+                irGenerationExtensions,
+                linkViaSignatures = false,
+                compilerEnvironment.diagnosticsReporter,
+                configuration.languageVersionSettings
+            )
 
             performanceManager?.notifyIRTranslationFinished()
 

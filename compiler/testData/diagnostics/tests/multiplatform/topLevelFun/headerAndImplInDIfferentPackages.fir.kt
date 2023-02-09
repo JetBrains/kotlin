@@ -2,7 +2,7 @@
 // FILE: common.kt
 package common
 
-expect fun foo()
+<!NO_ACTUAL_FOR_EXPECT{JVM}, NO_ACTUAL_FOR_EXPECT{JS}!>expect fun foo()<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

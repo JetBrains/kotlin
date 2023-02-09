@@ -6,9 +6,9 @@ expect class Foo {
 
     fun f1(s: String): Int
 
-    fun f2(s: List<String>?): MutableMap<Boolean?, Foo>
+    <!NO_ACTUAL_FOR_EXPECT{JVM}!>fun f2(s: List<String>?): MutableMap<Boolean?, Foo><!>
 
-    fun <T : Set<Number>> f3(t: T): T?
+    <!NO_ACTUAL_FOR_EXPECT{JVM}!>fun <T : Set<Number>> f3(t: T): T?<!>
 }
 
 // MODULE: m2-jvm()()(m1-common)

@@ -201,15 +201,31 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
         testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFirPsiDiagnosticTest>(suiteTestClassName = "FirPsiOldFrontendDiagnosticsTestGenerated") {
-                model("diagnostics/tests", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
+                model(
+                    "diagnostics/tests", pattern = "^(.*)\\.kts?$",
+                    excludeDirsRecursively = listOf("multiplatform"),
+                    excludedPattern = excludedCustomTestdataPattern
+                )
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractFirPsiWithActualizerDiagnosticsTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithPsiTestGenerated") {
+                model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractFirLightTreeDiagnosticsTest>(
                 suiteTestClassName = "FirLightTreeOldFrontendDiagnosticsTestGenerated"
             ) {
-                model("diagnostics/tests", excludedPattern = excludedCustomTestdataPattern)
+                model(
+                    "diagnostics/tests",
+                    excludeDirsRecursively = listOf("multiplatform"),
+                    excludedPattern = excludedCustomTestdataPattern
+                )
                 model("diagnostics/testsWithStdLib", excludedPattern = excludedCustomTestdataPattern)
+            }
+
+            testClass<AbstractFirLightTreeWithActualizerDiagnosticsTest>(suiteTestClassName = "FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated") {
+                model("diagnostics/tests/multiplatform", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 
             testClass<AbstractFirPsiForeignAnnotationsSourceJavaTest>(

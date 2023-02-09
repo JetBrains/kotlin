@@ -12,11 +12,16 @@ import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.deserialization.PlatformDependentTypeTransformer
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
-import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.Fir2IrResult
+import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -59,6 +64,7 @@ internal fun PhaseContext.fir2Ir(
         // Yes, just to all of them.
         moduleDescriptor.setDependencies(ArrayList(dependencies))
     }
+    val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
     val fir2irResult = input.firResult.convertToIrAndActualize(
             fir2IrExtensions,
@@ -67,6 +73,8 @@ internal fun PhaseContext.fir2Ir(
             signatureComposerCreator = null,
             irMangler = KonanManglerIr,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
+            diagnosticReporter = diagnosticsReporter,
+            languageVersionSettings = configuration.languageVersionSettings,
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
     ).also {
         (it.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
@@ -77,6 +85,14 @@ internal fun PhaseContext.fir2Ir(
 
     val symbols = createKonanSymbols(fir2irResult)
     // TODO KT-55580 Invoke CopyDefaultValuesToActualPhase, same as PsiToir phase does.
+
+    val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+    FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
+
+    if (diagnosticsReporter.hasErrors) {
+        throw KonanCompilationException("Compilation failed: there were some diagnostics during fir2ir")
+    }
+
     return Fir2IrOutput(input.firResult, fir2irResult, symbols)
 }
 

@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.prepareJsSessions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.PendingDiagnosticsCollectorWithSuppress
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.FirSession
@@ -99,7 +101,8 @@ fun compileModuleToAnalyzedFir(
 
 fun transformFirToIr(
     moduleStructure: ModulesStructure,
-    firOutputs: List<ModuleCompilerAnalyzedOutput>
+    firOutputs: List<ModuleCompilerAnalyzedOutput>,
+    diagnosticsReporter: PendingDiagnosticsCollectorWithSuppress,
 ): Fir2IrResult {
     val fir2IrExtensions = Fir2IrExtensions.Default
 
@@ -135,6 +138,8 @@ fun transformFirToIr(
         irMangler = JsManglerIr,
         visibilityConverter = Fir2IrVisibilityConverter.Default,
         kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
+        diagnosticReporter = diagnosticsReporter,
+        languageVersionSettings = moduleStructure.compilerConfiguration.languageVersionSettings,
         fir2IrResultPostCompute = {
             (this.irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
         }

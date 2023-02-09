@@ -1,9 +1,9 @@
 // MODULE: m1-common
 // FILE: common.kt
 
-expect enum class Foo {
-    ENTRY
-}
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect enum class Foo {
+    <!NO_ACTUAL_FOR_EXPECT{JVM}!>ENTRY<!>
+}<!>
 
 expect enum class _TimeUnit
 

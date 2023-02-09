@@ -493,7 +493,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         ) ?: return null
 
         // FIR2IR
-        val irResult = transformFirToIr(moduleStructure, outputs)
+        val irResult = transformFirToIr(moduleStructure, outputs, diagnosticsReporter)
 
         // Serialize klib
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
