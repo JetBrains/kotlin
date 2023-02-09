@@ -13,11 +13,11 @@ interface ContentRoot
 /**
  * @param isCommon whether this source root contains sources of a common module in a multi-platform project
  */
-data class KotlinSourceRoot(val path: String, val isCommon: Boolean): ContentRoot
+data class KotlinSourceRoot(val path: String, val isCommon: Boolean, val hmppModuleName: String?): ContentRoot
 
 @JvmOverloads
-fun CompilerConfiguration.addKotlinSourceRoot(path: String, isCommon: Boolean = false) {
-    add(CLIConfigurationKeys.CONTENT_ROOTS, KotlinSourceRoot(path, isCommon))
+fun CompilerConfiguration.addKotlinSourceRoot(path: String, isCommon: Boolean = false, hmppModuleName: String? = null) {
+    add(CLIConfigurationKeys.CONTENT_ROOTS, KotlinSourceRoot(path, isCommon, hmppModuleName))
 }
 
 fun CompilerConfiguration.addKotlinSourceRoots(sources: List<String>): Unit =

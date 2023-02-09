@@ -26,6 +26,7 @@ data class ModuleCompilerInput(
     val commonSources: Collection<KtSourceFile>,
     val platform: TargetPlatform,
     val platformSources: Collection<KtSourceFile>,
+    val sourcesByModule: Map<String, Collection<KtSourceFile>>,
     val configuration: CompilerConfiguration,
     val friendFirModules: Collection<FirModuleData> = emptyList()
 )

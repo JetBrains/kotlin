@@ -187,7 +187,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
                 }
             }
 
-            configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath(), false));
+            configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath(), false, null));
             configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmProtoBufUtil.DEFAULT_MODULE_NAME);
 
             ConfigurationKt.configureScriptDefinitions(

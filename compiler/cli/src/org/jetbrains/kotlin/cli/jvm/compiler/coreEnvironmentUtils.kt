@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.extensions.CompilerConfigurationExtension
 import org.jetbrains.kotlin.extensions.PreprocessedFileCreator
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.modules.Module
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import java.io.File
 
@@ -38,7 +38,7 @@ inline fun List<KotlinSourceRoot>.forAllFiles(
     configuration: CompilerConfiguration,
     project: Project,
     reportLocation: CompilerMessageLocation? = null,
-    body: (VirtualFile, Boolean) -> Unit
+    body: (VirtualFile, Boolean, moduleName: String?) -> Unit
 ) {
     val localFileSystem = VirtualFileManager.getInstance()
         .getFileSystem(StandardFileSystems.FILE_PROTOCOL)
@@ -49,7 +49,7 @@ inline fun List<KotlinSourceRoot>.forAllFiles(
 
     var pluginsConfigured = false
 
-    for ((sourceRootPath, isCommon) in this) {
+    for ((sourceRootPath, isCommon, hmppModuleName) in this) {
         val sourceRoot = File(sourceRootPath)
         val vFile = localFileSystem.findFileByPath(sourceRoot.normalize().path)
         if (vFile == null) {
@@ -85,7 +85,7 @@ inline fun List<KotlinSourceRoot>.forAllFiles(
                     virtualFile.registerPluginsSuppliedExtensionsIfNeeded(project)
                     pluginsConfigured = true
                 }
-                body(virtualFile, isCommon)
+                body(virtualFile, isCommon, hmppModuleName)
             }
         }
     }
@@ -112,10 +112,13 @@ fun createSourceFilesFromSourceRoots(
 ): MutableList<KtFile> {
     val psiManager = PsiManager.getInstance(project)
     val result = mutableListOf<KtFile>()
-    sourceRoots.forAllFiles(configuration, project, reportLocation) { virtualFile, isCommon ->
+    sourceRoots.forAllFiles(configuration, project, reportLocation) { virtualFile, isCommon, moduleName ->
         psiManager.findFile(virtualFile)?.let {
             if (it is KtFile) {
                 it.isCommonSource = isCommon
+                if (moduleName != null) {
+                    it.hmppModuleName = moduleName
+                }
                 result.add(it)
             }
         }
