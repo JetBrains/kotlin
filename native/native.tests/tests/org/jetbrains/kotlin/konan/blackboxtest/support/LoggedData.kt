@@ -101,8 +101,8 @@ internal abstract class LoggedData {
     class CompilationToolCall(
         private val toolName: String,
         private val parameters: LoggedData,
-        private val exitCode: ExitCode,
-        private val toolOutput: String,
+        val exitCode: ExitCode,
+        val toolOutput: String,
         private val toolOutputHasErrors: Boolean,
         private val duration: Duration
     ) : CompilerCall() {
