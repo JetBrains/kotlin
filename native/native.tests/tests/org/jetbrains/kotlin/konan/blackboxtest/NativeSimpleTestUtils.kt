@@ -140,7 +140,7 @@ private fun AbstractNativeSimpleTest.compileToExecutable(
     return compilation.result
 }
 
-private fun getLibraryArtifact(testCase: TestCase, dir: File) =
+internal fun getLibraryArtifact(testCase: TestCase, dir: File) =
     TestCompilationArtifact.KLIB(dir.resolve(testCase.modules.first().name + ".klib"))
 
 private fun AbstractNativeSimpleTest.getExecutableArtifact() =
