@@ -183,6 +183,12 @@ fun IrExpression.coerceToUnitIfNeeded(valueType: IrType, irBuiltIns: IrBuiltIns,
         )
 }
 
+fun IrExpression.implicitCastIfNeededTo(type: IrType) =
+    if (type == this.type || this.type.isNothing())
+        this
+    else
+        IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this)
+
 fun IrFunctionAccessExpression.usesDefaultArguments(): Boolean =
     symbol.owner.valueParameters.any { this.getValueArgument(it.index) == null }
 
