@@ -83,7 +83,7 @@ class IrValidator(val context: CommonBackendContext, val config: IrValidatorConf
         )
 
         if (config.abortOnError) {
-            error("Validation failed in file ${currentFile?.name ?: "???"}")
+            error("Validation failed in file ${currentFile?.name ?: "???"} : ${message}\n${element.render()}")
         }
     }
 
