@@ -50,6 +50,7 @@ public enum Colors {
     Colors() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<Colors> getEntries() {
         return null;
     }
@@ -67,6 +68,7 @@ public enum Enum1 {
     Enum1() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<Enum1> getEntries() {
         return null;
     }

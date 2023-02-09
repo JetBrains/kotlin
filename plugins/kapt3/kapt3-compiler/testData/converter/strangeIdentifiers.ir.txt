@@ -24,6 +24,7 @@ public enum StrangeEnum {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<StrangeEnum> getEntries() {
         return null;
     }

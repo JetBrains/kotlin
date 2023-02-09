@@ -19,6 +19,7 @@ public enum EnumError {
     @org.jetbrains.annotations.NotNull()
     public abstract java.lang.String doIt();
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<EnumError> getEntries() {
         return null;
     }

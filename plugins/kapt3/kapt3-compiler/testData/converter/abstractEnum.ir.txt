@@ -11,6 +11,7 @@ public enum E {
     public final void b() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<E> getEntries() {
         return null;
     }
@@ -50,6 +51,7 @@ public enum E2 {
 
     public abstract void a();
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<E2> getEntries() {
         return null;
     }
@@ -73,6 +75,7 @@ public enum E3 {
         return null;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<E3> getEntries() {
         return null;
     }
@@ -110,6 +113,7 @@ public enum E4 {
         return false;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<E4> getEntries() {
         return null;
     }

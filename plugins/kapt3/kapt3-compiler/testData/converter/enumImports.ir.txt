@@ -11,6 +11,7 @@ public enum Options {
     Options() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<kapt.Options> getEntries() {
         return null;
     }

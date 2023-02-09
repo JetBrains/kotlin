@@ -149,6 +149,7 @@ public enum Color {
     Color() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<Color> getEntries() {
         return null;
     }

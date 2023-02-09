@@ -6,6 +6,7 @@ public enum Em {
     Em() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<Em> getEntries() {
         return null;
     }

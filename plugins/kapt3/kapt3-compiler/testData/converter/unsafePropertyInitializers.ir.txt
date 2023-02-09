@@ -222,6 +222,7 @@ public enum State {
     State() {
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<State> getEntries() {
         return null;
     }

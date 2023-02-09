@@ -60,6 +60,7 @@ public enum Enum {
         return 0;
     }
 
+    @org.jetbrains.annotations.NotNull()
     public static kotlin.enums.EnumEntries<test.Enum> getEntries() {
         return null;
     }
