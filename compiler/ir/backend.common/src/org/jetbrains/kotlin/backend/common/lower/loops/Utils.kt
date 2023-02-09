@@ -33,13 +33,13 @@ internal fun IrExpression.negate(): IrExpression {
                         it.valueParameters.isEmpty()
             }
             IrCallImpl(
-                startOffset, endOffset, type,
+                startOffset, endOffset, unaryMinusFun.returnType,
                 unaryMinusFun.symbol,
                 valueArgumentsCount = 0,
                 typeArgumentsCount = 0
             ).apply {
                 dispatchReceiver = this@negate
-            }
+            }.implicitCastIfNeededTo(type)
         }
     }
 }
