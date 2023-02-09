@@ -74,6 +74,39 @@ internal fun callCompiler(compilerArgs: Array<String>, kotlinNativeClassLoader: 
     return CompilationToolCallResult(exitCode, compilerOutput, messageCollector.hasErrors(), duration)
 }
 
+internal fun callCompilerWithoutOutputInterceptor(
+    compilerArgs: Array<String>,
+    kotlinNativeClassLoader: ClassLoader
+): CompilationToolCallResult {
+    val exitCode: ExitCode
+    val compilerOutput: String
+
+    @OptIn(ExperimentalTime::class)
+    val duration = measureTime {
+        val compilerClass = Class.forName("org.jetbrains.kotlin.cli.bc.K2Native", true, kotlinNativeClassLoader)
+        val entryPoint = compilerClass.getMethod(
+            "exec",
+            PrintStream::class.java,
+            Array<String>::class.java
+        )
+        // TODO: we better use the same entry point as the actual compiler.
+
+        val outputStream = ByteArrayOutputStream()
+
+        exitCode = PrintStream(outputStream).use { printStream ->
+            val result = entryPoint.invoke(compilerClass.getDeclaredConstructor().newInstance(), printStream, compilerArgs)
+            ExitCode.valueOf(result.toString())
+        }
+
+        compilerOutput = outputStream.toString(Charsets.UTF_8.name())
+    }
+
+    val toolOutputHasErrors = exitCode != ExitCode.OK // An approximation, good enough.
+    // Alternatively, we can look for 'error:' and 'exception:' in the output.
+
+    return CompilationToolCallResult(exitCode, compilerOutput, toolOutputHasErrors = toolOutputHasErrors, duration)
+}
+
 @OptIn(ExperimentalTime::class)
 internal fun invokeCInterop(
     kotlinNativeClassLoader: ClassLoader,

@@ -246,3 +246,8 @@ internal enum class PipelineType(val mutedOption: MutedOption, val compilerFlags
 
     override fun toString() = if (compilerFlags.isEmpty()) "" else compilerFlags.joinToString(prefix = "(", postfix = ")", separator = " ")
 }
+
+internal enum class CompilerOutputInterceptor {
+    DEFAULT,
+    NONE
+}

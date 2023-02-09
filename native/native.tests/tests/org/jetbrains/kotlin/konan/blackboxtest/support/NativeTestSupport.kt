@@ -200,6 +200,8 @@ private object NativeTestSupport {
         // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
         output += computePipelineType(testClass.get())
 
+        output += computeCompilerOutputInterceptor(enforcedProperties)
+
         return nativeTargets
     }
 
@@ -221,6 +223,13 @@ private object NativeTestSupport {
 
     private fun computeSanitizer(enforcedProperties: EnforcedProperties): Sanitizer =
         ClassLevelProperty.SANITIZER.readValue(enforcedProperties, Sanitizer.values(), default = Sanitizer.NONE)
+
+    private fun computeCompilerOutputInterceptor(enforcedProperties: EnforcedProperties): CompilerOutputInterceptor =
+        ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR.readValue(
+            enforcedProperties,
+            CompilerOutputInterceptor.values(),
+            default = CompilerOutputInterceptor.DEFAULT
+        )
 
     private fun computeGCType(enforcedProperties: EnforcedProperties): GCType =
         ClassLevelProperty.GC_TYPE.readValue(enforcedProperties, GCType.values(), default = GCType.UNSPECIFIED)
