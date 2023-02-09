@@ -20,6 +20,7 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
         args.useK2 = true
         args.useIR = true
         args.languageVersion = LANGUAGE_VERSION_K2
+
         // TODO: Remove when support for old modularized tests is removed
         if (moduleData.arguments == null) {
             args.apiVersion = API_VERSION

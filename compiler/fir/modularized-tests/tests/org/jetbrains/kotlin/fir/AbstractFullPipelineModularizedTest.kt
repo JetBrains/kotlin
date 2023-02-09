@@ -16,7 +16,11 @@ import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.modules.KotlinModuleXmlBuilder
+import org.jetbrains.kotlin.test.kotlinPathsForDistDirectoryForTests
 import org.jetbrains.kotlin.util.PerformanceCounter
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
+import java.io.File
 import java.io.FileOutputStream
 import java.io.PrintStream
 import java.nio.file.Files
@@ -143,6 +147,12 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             args.progressiveMode = originalArguments.progressiveMode
             args.optIn = (moduleData.optInAnnotations + (originalArguments.optIn ?: emptyArray())).toTypedArray()
             args.allowKotlinPackage = originalArguments.allowKotlinPackage
+
+            args.pluginOptions = originalArguments.pluginOptions
+            args.pluginClasspaths = originalArguments.pluginClasspaths?.mapNotNull {
+                substituteCompilerPluginPathForKnownPlugins(it)?.absolutePath
+            }?.toTypedArray()
+
         } else {
             args.jvmTarget = JVM_TARGET
             args.allowKotlinPackage = true
@@ -363,5 +373,22 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         }
     }
 
+
+}
+
+
+
+fun substituteCompilerPluginPathForKnownPlugins(path: String): File? {
+    val file = File(path)
+    val paths = PathUtil.kotlinPathsForDistDirectoryForTests
+    return when {
+        file.name.startsWith("kotlinx-serialization") || file.name.startsWith("kotlin-serialization") ->
+            paths.jar(KotlinPaths.Jar.SerializationPlugin)
+        file.name.startsWith("kotlin-sam-with-receiver") -> paths.jar(KotlinPaths.Jar.SamWithReceiver)
+        file.name.startsWith("kotlin-allopen") -> paths.jar(KotlinPaths.Jar.AllOpenPlugin)
+        file.name.startsWith("kotlin-noarg") -> paths.jar(KotlinPaths.Jar.NoArgPlugin)
+        file.name.startsWith("kotlin-lombok") -> paths.jar(KotlinPaths.Jar.LombokPlugin)
+        else -> null
+    }
 
 }
