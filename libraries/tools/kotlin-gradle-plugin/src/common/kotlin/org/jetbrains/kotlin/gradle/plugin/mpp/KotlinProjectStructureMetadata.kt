@@ -15,6 +15,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmModule
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.currentBuildId
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope
 import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurationByScope
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
@@ -415,7 +416,7 @@ object GlobalProjectStructureMetadataStorage {
     fun registerProjectStructureMetadata(project: Project, metadataProvider: () -> KotlinProjectStructureMetadata) {
         val compositeBuildRoot = generateSequence(project.gradle) { it.parent }.last().rootProject
         compositeBuildRoot.extensions.extraProperties.set(
-            propertyName(project.rootProject.name, project.path),
+            propertyName(project.currentBuildId().name, project.path),
             { metadataProvider().toJson() }
         )
     }
