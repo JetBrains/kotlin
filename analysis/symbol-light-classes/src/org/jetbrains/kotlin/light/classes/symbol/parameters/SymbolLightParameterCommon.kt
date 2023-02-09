@@ -51,7 +51,7 @@ internal abstract class SymbolLightParameterCommon(
         KtLightIdentifier(this, parameterDeclaration)
     }
 
-    protected fun nullabilityType(): NullabilityType {
+    protected open fun nullabilityType(): NullabilityType {
         if (isVarArgs) return NullabilityType.NotNull
 
         val nullabilityApplicable = !containingMethod.hasModifierProperty(PsiModifier.PRIVATE) &&

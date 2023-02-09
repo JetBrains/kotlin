@@ -206,7 +206,7 @@ internal class SymbolLightAccessorMethod private constructor(
 
                     if (nullabilityApplicable) {
                         containingPropertySymbolPointer.withSymbol(ktModule) { propertySymbol ->
-                            getTypeNullability(propertySymbol.returnType)
+                            if (propertySymbol.isLateInit) NullabilityType.NotNull else getTypeNullability(propertySymbol.returnType)
                         }
                     } else {
                         NullabilityType.Unknown
