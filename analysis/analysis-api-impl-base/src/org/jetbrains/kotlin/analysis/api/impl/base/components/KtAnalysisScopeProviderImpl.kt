@@ -10,7 +10,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtAnalysisScopeProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
+import org.jetbrains.kotlin.analysis.providers.KotlinResolutionScopeProvider
 import org.jetbrains.kotlin.psi.psiUtil.contains
 
 class KtAnalysisScopeProviderImpl(
@@ -18,16 +18,13 @@ class KtAnalysisScopeProviderImpl(
     override val token: KtLifetimeToken
 ) : KtAnalysisScopeProvider() {
 
-    private val allModules = buildList {
-        add(analysisSession.useSiteModule)
-        addAll(analysisSession.useSiteModule.allDirectDependencies())
+    private val scope by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        KotlinResolutionScopeProvider.getInstance(analysisSession.useSiteModule.project).getResolutionScope(analysisSession.useSiteModule)
     }
 
-    private val analysisScope = GlobalSearchScope.union(allModules.map { it.contentScope })
-
-    override fun getAnalysisScope(): GlobalSearchScope = analysisScope
+    override fun getAnalysisScope(): GlobalSearchScope = scope
 
     override fun canBeAnalysed(psi: PsiElement): Boolean {
-        return analysisScope.contains(psi)
+        return scope.contains(psi)
     }
 }
