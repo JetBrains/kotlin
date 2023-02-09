@@ -16,39 +16,12 @@ pluginManagement {
 }
 
 plugins {
-    id "com.gradle.enterprise" version "3.11.2"
-    id "com.gradle.common-custom-user-data-gradle-plugin" version "1.8.1" apply false
     id "org.gradle.toolchains.foojay-resolver-convention" version "0.4.0"
     id "build-cache"
+    id "gradle-enterprise"
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
-
-if (buildProperties.buildScanServer != null) {
-    apply plugin: com.gradle.CommonCustomUserDataGradlePlugin
-}
-
-gradleEnterprise {
-    def buildScanServer = buildProperties.buildScanServer
-    def isTeamCity = buildProperties.isTeamcityBuild
-
-    buildScan {
-        if (buildScanServer != null) {
-            server = buildScanServer
-            captureTaskInputFiles = true
-            publishAlways()
-        } else {
-            setTermsOfServiceUrl("https://gradle.com/terms-of-service")
-            setTermsOfServiceAgree("yes")
-        }
-
-        obfuscation {
-            ipAddresses { addresses -> ["0.0.0.0"] }
-            hostname { host -> "concealed" }
-            username { name -> isTeamCity ? "TeamCity" : "concealed" }
-        }
-    }
-}
 
 // modules
 include ":benchmarks",
