@@ -37,6 +37,7 @@ data class LlvmPipelineConfig(
         val makeDeclarationsHidden: Boolean,
         val objCPasses: Boolean,
         val inlineThreshold: Int?,
+        val timePasses: Boolean = false,
 )
 
 private fun getCpuModel(context: PhaseContext): String {
@@ -100,7 +101,8 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
 internal fun createLTOFinalPipelineConfig(
         context: PhaseContext,
         targetTriple: String,
-        closedWorld: Boolean
+        closedWorld: Boolean,
+        timePasses: Boolean = false,
 ): LlvmPipelineConfig {
     val config = context.config
     val target = config.target
@@ -161,6 +163,7 @@ internal fun createLTOFinalPipelineConfig(
             makeDeclarationsHidden,
             objcPasses,
             inlineThreshold,
+            timePasses = timePasses,
     )
 }
 
@@ -206,6 +209,9 @@ abstract class LlvmOptimizationPipeline(
             LLVMKotlinAddTargetLibraryInfoWrapperPass(passManager, config.targetTriple)
             // TargetTransformInfo pass.
             LLVMAddAnalysisPasses(targetMachine, passManager)
+            if (config.timePasses) {
+                LLVMSetTimePasses(1)
+            }
 
             configurePipeline(config, passManager, passBuilder)
             executeCustomPreprocessing(config, llvmModule)
@@ -222,6 +228,10 @@ abstract class LlvmOptimizationPipeline(
                 """.trimIndent()
             }
             LLVMRunPassManager(passManager, llvmModule)
+            if (config.timePasses) {
+                LLVMPrintAllTimersToStdOut()
+                LLVMClearAllTimers()
+            }
         } finally {
             LLVMPassManagerBuilderDispose(passBuilder)
             LLVMDisposePassManager(passManager)
