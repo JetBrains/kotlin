@@ -21,12 +21,11 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMember
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
-import org.jetbrains.kotlin.light.classes.symbol.correspondingPropertyHasBackingField
 import org.jetbrains.kotlin.light.classes.symbol.isFieldForObjectInstance
-import org.jetbrains.kotlin.light.classes.symbol.isPropertyAccessor
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.org.objectweb.asm.Opcodes
 
 // TODO: unify with KDocCommentKeeper
@@ -69,18 +68,17 @@ class Kapt4KDocCommentKeeper(private val analysisSession: KtAnalysisSession) {
 
     fun saveKDocComment(tree: JCTree, psiElement: PsiElement) {
         val ktElement = psiElement.extractOriginalKtDeclaration<KtDeclaration>() ?: return
-        val docComment = ktElement.docComment ?: return
+        val docComment =
+            when {
+                ktElement is KtProperty ->
+                    // Do not place documentation on property accessors of a property with a backing field
+                    ktElement.docComment.takeIf { psiElement is PsiField }
+                ktElement.docComment == null && ktElement is KtPropertyAccessor -> ktElement.property.docComment
+                else -> ktElement.docComment
+            } ?: return
+
         if (psiElement is PsiMethod && psiElement.isConstructor && ktElement is KtClassOrObject) {
             // We don't want the class comment to be duplicated on <init>()
-            return
-        }
-
-        if (psiElement is PsiMethod
-            && ktElement is KtProperty
-            && psiElement.isPropertyAccessor
-            && with(analysisSession) { psiElement.correspondingPropertyHasBackingField }
-        ) {
-            // Do not place documentation on default property accessors of property with backing field
             return
         }
 
