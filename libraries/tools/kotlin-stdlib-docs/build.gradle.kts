@@ -66,10 +66,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 "kotlin.coroutines.jvm.internal",
         )
 
-        var kotlinLanguageVersion = version
-        if (version == "1.0")
-            kotlinLanguageVersion = "1.1"
-
+        val kotlinLanguageVersion = version
 
         moduleName.set("kotlin-stdlib")
         val moduleDirName = "kotlin-stdlib"
@@ -86,20 +83,18 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 .put("org.jetbrains.dokka.kotlinlang.VersionFilterPlugin"      , """{ "targetVersion": "$version" }""")
         }
         dokkaSourceSets {
-            if (version != "1.0" && version != "1.1") { // Common platform since Kotlin 1.2
-                register("common") {
-                    jdkVersion.set(8)
-                    platform.set(Platform.common)
-                    noJdkLink.set(true)
+            register("common") {
+                jdkVersion.set(8)
+                platform.set(Platform.common)
+                noJdkLink.set(true)
 
-                    displayName.set("Common")
-                    sourceRoots.from("$kotlin_root/core/builtins/native")
-                    sourceRoots.from("$kotlin_root/core/builtins/src/")
+                displayName.set("Common")
+                sourceRoots.from("$kotlin_root/core/builtins/native")
+                sourceRoots.from("$kotlin_root/core/builtins/src/")
 
-                    sourceRoots.from("$kotlin_stdlib_dir/common/src")
-                    sourceRoots.from("$kotlin_stdlib_dir/src")
-                    sourceRoots.from("$kotlin_stdlib_dir/unsigned/src")
-                }
+                sourceRoots.from("$kotlin_stdlib_dir/common/src")
+                sourceRoots.from("$kotlin_stdlib_dir/src")
+                sourceRoots.from("$kotlin_stdlib_dir/unsigned/src")
             }
 
             register("jvm") {
@@ -107,9 +102,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 platform.set(Platform.jvm)
 
                 displayName.set("JVM")
-                if (version != "1.0" && version != "1.1") {
-                    dependsOn("common")
-                }
+                dependsOn("common")
 
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/src")
 
@@ -120,85 +113,53 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/runtime/kotlin/Throws.kt")
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/runtime/kotlin/TypeAliases.kt")
                 sourceRoots.from("$kotlin_stdlib_dir/jvm/runtime/kotlin/text/TypeAliases.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/jdk7/src")
+                sourceRoots.from("$kotlin_stdlib_dir/jdk8/src")
+            }
+            register("js") {
+                jdkVersion.set(8)
+                platform.set(Platform.js)
+                noJdkLink.set(true)
 
-                // for Kotlin 1.0 and 1.1 hack: Common platform becomes JVM
-                if (version == "1.0" || version == "1.1") {
+                displayName.set("JS")
+                if (version != "1.0" && version != "1.1") {
+                    dependsOn("common")
+                }
+
+                sourceRoots.from("$kotlin_stdlib_dir/js/src")
+                sourceRoots.from("$kotlin_stdlib_dir/js-v1/src")
+
+                // for Kotlin 1.1 hack: Common platform becomes JVM
+                if (version == "1.1") {
                     sourceRoots.from("$kotlin_root/core/builtins/native")
                     sourceRoots.from("$kotlin_root/core/builtins/src/")
 
-                    sourceRoots.from("$kotlin_stdlib_dir/common/src")
+                    //sourceRoots.from("$kotlin_stdlib_dir/common/src") // is included  in /js-v1/src folder
                     sourceRoots.from("$kotlin_stdlib_dir/src")
                     sourceRoots.from("$kotlin_stdlib_dir/unsigned/src")
                 }
-            }
-            if (version != "1.0" && version != "1.1") {
-            register("jvm-jdk8") {
-                jdkVersion.set(8)
-                platform.set(Platform.jvm)
-
-                displayName.set("JVM8")
-                dependsOn("jvm")
-                dependsOn("common")
-                sourceRoots.from("$kotlin_stdlib_dir/jdk8/src")
-            }
-            register("jvm-jdk7") {
-                jdkVersion.set(8)
-                platform.set(Platform.jvm)
-
-                displayName.set("JVM7")
-                dependsOn("jvm")
-                dependsOn("common")
-                sourceRoots.from("$kotlin_stdlib_dir/jdk7/src")
-            }
-            }
-            if (version != "1.0") { // JS platform since Kotlin 1.1
-                register("js") {
-                    jdkVersion.set(8)
-                    platform.set(Platform.js)
-                    noJdkLink.set(true)
-
-                    displayName.set("JS")
-                    if (version != "1.0" && version != "1.1") {
-                        dependsOn("common")
-                    }
-
-                    sourceRoots.from("$kotlin_stdlib_dir/js/src")
-                    sourceRoots.from("$kotlin_stdlib_dir/js-v1/src")
-
-                    // for Kotlin 1.1 hack: Common platform becomes JVM
-                    if (version == "1.1") {
-                        sourceRoots.from("$kotlin_root/core/builtins/native")
-                        sourceRoots.from("$kotlin_root/core/builtins/src/")
-
-                        //sourceRoots.from("$kotlin_stdlib_dir/common/src") // is included  in /js-v1/src folder
-                        sourceRoots.from("$kotlin_stdlib_dir/src")
-                        sourceRoots.from("$kotlin_stdlib_dir/unsigned/src")
-                    }
-                    perPackageOption("org.w3c") {
-                        reportUndocumented.set(false)
-                    }
-                    perPackageOption("org.khronos") {
-                        reportUndocumented.set(false)
-                    }
+                perPackageOption("org.w3c") {
+                    reportUndocumented.set(false)
+                }
+                perPackageOption("org.khronos") {
+                    reportUndocumented.set(false)
                 }
             }
-            if (version != "1.0" && version != "1.1" && version != "1.2") { // Native platform since Kotlin 1.3
-                register("native") {
-                    jdkVersion.set(8)
-                    platform.set(Platform.native)
-                    noJdkLink.set(true)
+            register("native") {
+                jdkVersion.set(8)
+                platform.set(Platform.native)
+                noJdkLink.set(true)
 
-                    displayName.set("Native")
-                    dependsOn("common")
+                displayName.set("Native")
+                dependsOn("common")
 
-                    sourceRoots.from("$kotlin_native_root/Interop/Runtime/src/main/kotlin")
-                    sourceRoots.from("$kotlin_native_root/Interop/Runtime/src/native/kotlin")
-                    sourceRoots.from("$kotlin_native_root/Interop/JsRuntime/src/main/kotlin")
-                    sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin")
-                    sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
-                    perPackageOption("kotlin.test") {
-                        suppress.set(true)
-                    }
+                sourceRoots.from("$kotlin_native_root/Interop/Runtime/src/main/kotlin")
+                sourceRoots.from("$kotlin_native_root/Interop/Runtime/src/native/kotlin")
+                sourceRoots.from("$kotlin_native_root/Interop/JsRuntime/src/main/kotlin")
+                sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin")
+                sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
+                perPackageOption("kotlin.test") {
+                    suppress.set(true)
                 }
             }
             configureEach {
@@ -293,17 +254,15 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
         }
 
         dokkaSourceSets {
-            if (version != "1.0" && version != "1.1") { // Common platform since Kotlin 1.2
-                register("common") {
-                    jdkVersion.set(8)
-                    platform.set(Platform.common)
-                    classpath.setFrom(kotlinTestCommonClasspath)
-                    noJdkLink.set(true)
+            register("common") {
+                jdkVersion.set(8)
+                platform.set(Platform.common)
+                classpath.setFrom(kotlinTestCommonClasspath)
+                noJdkLink.set(true)
 
-                    displayName.set("Common")
-                    sourceRoots.from("$kotlin_root/libraries/kotlin.test/common/src/main/kotlin")
-                    sourceRoots.from("$kotlin_root/libraries/kotlin.test/annotations-common/src/main/kotlin")
-                }
+                displayName.set("Common")
+                sourceRoots.from("$kotlin_root/libraries/kotlin.test/common/src/main/kotlin")
+                sourceRoots.from("$kotlin_root/libraries/kotlin.test/annotations-common/src/main/kotlin")
             }
 
             register("jvm") {
@@ -312,13 +271,8 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
                 classpath.setFrom(kotlinTestJvmClasspath)
 
                 displayName.set("JVM")
-                if (version != "1.0" && version != "1.1")
-                    dependsOn("common")
+                dependsOn("common")
                 sourceRoots.from("$kotlin_root/libraries/kotlin.test/jvm/src/main/kotlin")
-                if (version == "1.0" || version == "1.1") {
-                    sourceRoots.from("$kotlin_root/libraries/kotlin.test/common/src/main/kotlin")
-                    sourceRoots.from("$kotlin_root/libraries/kotlin.test/annotations-common/src/main/kotlin")
-                }
             }
 
             register("jvm-JUnit") {
@@ -327,8 +281,7 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
                 classpath.setFrom(kotlinTestJunitClasspath)
 
                 displayName.set("JUnit")
-                if (version != "1.0" && version != "1.1")
-                    dependsOn("common")
+                dependsOn("common")
                 dependsOn("jvm")
                 sourceRoots.from("$kotlin_root/libraries/kotlin.test/junit/src/main/kotlin")
 
@@ -338,7 +291,6 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
                 }
             }
 
-            if (version != "1.0" && version != "1.1")
             register("jvm-JUnit5") {
                 jdkVersion.set(8)
                 platform.set(Platform.jvm)
@@ -355,7 +307,6 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
                 }
             }
 
-            if (version != "1.0" && version != "1.1")
             register("jvm-TestNG") {
                 jdkVersion.set(8)
                 platform.set(Platform.jvm)
@@ -371,31 +322,22 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
                 //     packageListUrl.set(new URL("https://jitpack.io/com/github/cbeust/testng/master/javadoc/package-list"))
                 // }
             }
-            if (version != "1.0") { // JS platform since Kotlin 1.1
-                register("js") {
-                    platform.set(Platform.js)
-                    classpath.setFrom(kotlinTestJsClasspath)
-                    noJdkLink.set(true)
+            register("js") {
+                platform.set(Platform.js)
+                classpath.setFrom(kotlinTestJsClasspath)
+                noJdkLink.set(true)
 
-                    displayName.set("JS")
-                    if (version != "1.1")
-                        dependsOn("common")
-                    sourceRoots.from("$kotlin_root/libraries/kotlin.test/js/src/main/kotlin")
-                    if (version == "1.0" || version == "1.1") {
-                        sourceRoots.from("$kotlin_root/libraries/kotlin.test/common/src/main/kotlin")
-                        sourceRoots.from("$kotlin_root/libraries/kotlin.test/annotations-common/src/main/kotlin")
-                    }
-                }
+                displayName.set("JS")
+                dependsOn("common")
+                sourceRoots.from("$kotlin_root/libraries/kotlin.test/js/src/main/kotlin")
             }
-            if (version != "1.0" && version != "1.1" && version != "1.2") { // Native platform since Kotlin 1.3
-                register("native") {
-                    platform.set(Platform.native)
-                    noJdkLink.set(true)
+            register("native") {
+                platform.set(Platform.native)
+                noJdkLink.set(true)
 
-                    displayName.set("Native")
-                    dependsOn("common")
-                    sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin/kotlin/test")
-                }
+                displayName.set("Native")
+                dependsOn("common")
+                sourceRoots.from("$kotlin_native_root/runtime/src/main/kotlin/kotlin/test")
             }
             configureEach {
                 skipDeprecated.set(false)
@@ -447,7 +389,7 @@ fun GradleDokkaSourceSetBuilder.sourceLinksFromRoot() {
 }
 
 gradle.projectsEvaluated {
-    val versions = listOf("1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7", "1.8")
+    val versions = listOf(/*"1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7",*/ "1.8")
     val latestVersion = versions.last()
 
     // builds this version/all versions as historical for the next versions builds
