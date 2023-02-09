@@ -71,7 +71,7 @@ internal class FirMetadataSerializer(
             projectEnvironment = environment.toAbstractProjectEnvironment() as VfsBasedProjectEnvironment
             librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
             librariesHelperScope = projectEnvironment.getSearchScopeForProjectLibraries()
-            ltFiles = collectSources(configuration, projectEnvironment, messageCollector).let { it.first + it.second }.toList()
+            ltFiles = collectSources(configuration, projectEnvironment, messageCollector).let { it.commonSources + it.platformSources }.toList()
             sourceScope = projectEnvironment.getSearchScopeBySourceFiles(ltFiles)
             providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
                 configuration,

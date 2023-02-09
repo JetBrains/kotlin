@@ -91,7 +91,10 @@ abstract class AbstractFrontendModularizedTest : AbstractModularizedTest() {
 
         configuration.addAll(
             CLIConfigurationKeys.CONTENT_ROOTS,
-            moduleData.sources.filter { it.extension == "kt" || it.isDirectory }.map { KotlinSourceRoot(it.absolutePath, false) })
+            moduleData.sources
+                .filter { it.extension == "kt" || it.isDirectory }
+                .map { KotlinSourceRoot(it.absolutePath, isCommon = false, hmppModuleName = null) }
+        )
 
         configuration.addAll(JVMConfigurationKeys.FRIEND_PATHS, moduleData.friendDirs.map { it.absolutePath })
 

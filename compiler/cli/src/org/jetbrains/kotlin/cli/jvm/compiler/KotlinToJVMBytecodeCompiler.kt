@@ -376,11 +376,12 @@ object KotlinToJVMBytecodeCompiler {
 }
 
 fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: File? = null) {
+    val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
     for (module in chunk) {
         val commonSources = getBuildFilePaths(buildFile, module.getCommonSourceFiles()).toSet()
 
         for (path in getBuildFilePaths(buildFile, module.getSourceFiles())) {
-            addKotlinSourceRoot(path, isCommon = path in commonSources)
+            addKotlinSourceRoot(path, isCommon = path in commonSources, hmppCliModuleStructure?.getModuleNameForSource(path))
         }
     }
 

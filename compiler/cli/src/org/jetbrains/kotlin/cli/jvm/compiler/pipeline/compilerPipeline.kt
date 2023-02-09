@@ -104,12 +104,13 @@ fun compileModulesUsingFrontendIrAndLightTree(
         val moduleConfiguration = compilerConfiguration.copy().applyModuleProperties(module, buildFile).apply {
             put(JVMConfigurationKeys.FRIEND_PATHS, module.getFriendPaths())
         }
-        val (platformSources, commonSources) = collectSources(compilerConfiguration, projectEnvironment, messageCollector)
+        val (platformSources, commonSources, sourcesByModuleName) = collectSources(compilerConfiguration, projectEnvironment, messageCollector)
 
         val compilerInput = ModuleCompilerInput(
             TargetId(module),
             CommonPlatforms.defaultCommonPlatform, commonSources,
             JvmPlatforms.unspecifiedJvmPlatform, platformSources,
+            sourcesByModuleName,
             moduleConfiguration
         )
 
@@ -169,26 +170,40 @@ fun compileModulesUsingFrontendIrAndLightTree(
     )
 }
 
+data class GroupedKtSources(
+    val platformSources: Set<KtSourceFile>,
+    val commonSources: Set<KtSourceFile>,
+    val sourcesByModuleName: Map<String, Set<KtSourceFile>>,
+)
+
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,
     messageCollector: MessageCollector
-): Pair<LinkedHashSet<KtSourceFile>, LinkedHashSet<KtSourceFile>> {
+): GroupedKtSources {
     val platformSources = linkedSetOf<KtSourceFile>()
     val commonSources = linkedSetOf<KtSourceFile>()
+    val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
 
     // TODO: the scripts checking should be part of the scripting plugin functionality, as it is implemented now in ScriptingProcessSourcesBeforeCompilingExtension
     // TODO: implement in the next round of K2 scripting support (https://youtrack.jetbrains.com/issue/KT-55728)
     val skipScriptsInLtMode = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR) && compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
     var skipScriptsInLtModeWarning = false
 
-    compilerConfiguration.kotlinSourceRoots.forAllFiles(compilerConfiguration, projectEnvironment.project) { virtualFile, isCommon ->
+    compilerConfiguration.kotlinSourceRoots.forAllFiles(
+        compilerConfiguration,
+        projectEnvironment.project
+    ) { virtualFile, isCommon, moduleName ->
         val file = KtVirtualFileSourceFile(virtualFile)
         when {
             file.path.endsWith(javaFileExtensionWithDot) -> {}
             file.path.endsWith(kotlinFileExtensionWithDot) || !skipScriptsInLtMode -> {
                 if (isCommon) commonSources.add(file)
                 else platformSources.add(file)
+
+                if (moduleName != null) {
+                    sourcesByModuleName.getOrPut(moduleName) { mutableSetOf() }.add(file)
+                }
             }
             else -> {
                 // temporarily assume it is a script, see the TODO above
@@ -204,7 +219,7 @@ fun collectSources(
             "Scripts are not yet supported with K2 in LightTree mode, consider using K1 or disable LightTree mode with -Xuse-fir-lt=false"
         )
     }
-    return Pair(platformSources, commonSources)
+    return GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
 }
 
 fun convertAnalyzedFirToIr(

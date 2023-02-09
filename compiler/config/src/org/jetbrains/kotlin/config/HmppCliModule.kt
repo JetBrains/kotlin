@@ -19,3 +19,7 @@ class HmppCliModuleStructure(
     val modules: List<HmppCliModule>,
     val dependenciesMap: Map<HmppCliModule, List<HmppCliModule>>
 )
+
+fun HmppCliModuleStructure.getModuleNameForSource(source: String): String? {
+    return modules.firstOrNull { source in it.sources }?.name
+}

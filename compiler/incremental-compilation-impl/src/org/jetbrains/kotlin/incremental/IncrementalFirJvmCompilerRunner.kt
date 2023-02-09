@@ -185,11 +185,15 @@ class IncrementalFirJvmCompilerRunner(
             // -sources
             val allPlatformSourceFiles = linkedSetOf<KtSourceFile>() // TODO: get from caller
             val allCommonSourceFiles = linkedSetOf<KtSourceFile>()
+            val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
 
-            configuration.kotlinSourceRoots.forAllFiles(configuration, projectEnvironment.project) { virtualFile, isCommon ->
+            configuration.kotlinSourceRoots.forAllFiles(configuration, projectEnvironment.project) { virtualFile, isCommon, hmppModule ->
                 val file = KtVirtualFileSourceFile(virtualFile)
                 if (isCommon) allCommonSourceFiles.add(file)
                 else allPlatformSourceFiles.add(file)
+                if (hmppModule != null) {
+                    sourcesByModuleName.getOrPut(hmppModule) { mutableSetOf() }.add(file)
+                }
             }
 
             val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
@@ -207,11 +211,14 @@ class IncrementalFirJvmCompilerRunner(
 
             fun firIncrementalCycle(): FirResult? {
                 while (true) {
-
+                    val dirtySourcesByModuleName = sourcesByModuleName.mapValues { (_, sources) ->
+                        sources.filter { dirtySources.any { df -> df.path == it.path } }
+                    }
                     val compilerInput = ModuleCompilerInput(
                         targetId,
                         CommonPlatforms.defaultCommonPlatform, allCommonSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
                         JvmPlatforms.unspecifiedJvmPlatform, allPlatformSourceFiles.filter { dirtySources.any { df -> df.path == it.path } },
+                        dirtySourcesByModuleName,
                         configuration
                     )
 
@@ -348,11 +355,13 @@ fun CompilerConfiguration.configureBaseRoots(args: K2JVMCompilerArguments) {
 fun CompilerConfiguration.configureSourceRootsFromSources(
     allSources: Collection<File>, commonSources: Set<File>, javaPackagePrefix: String?
 ) {
+    val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
     for (sourceFile in allSources) {
         if (sourceFile.name.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) {
             addJavaSourceRoot(sourceFile, javaPackagePrefix)
         } else {
-            addKotlinSourceRoot(sourceFile.path, isCommon = sourceFile in commonSources)
+            val path = sourceFile.path
+            addKotlinSourceRoot(path, isCommon = sourceFile in commonSources, hmppCliModuleStructure?.getModuleNameForSource(path))
 
             if (sourceFile.isDirectory) {
                 addJavaSourceRoot(sourceFile, javaPackagePrefix)

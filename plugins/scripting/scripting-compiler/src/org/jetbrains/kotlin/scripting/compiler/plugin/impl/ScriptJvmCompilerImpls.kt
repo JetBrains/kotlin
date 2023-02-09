@@ -339,6 +339,7 @@ private fun doCompileWithK2(
         targetId,
         CommonPlatforms.defaultCommonPlatform, emptyList(),
         JvmPlatforms.unspecifiedJvmPlatform, sources,
+        sourcesByModule = emptyMap(),
         kotlinCompilerConfiguration
     )
 

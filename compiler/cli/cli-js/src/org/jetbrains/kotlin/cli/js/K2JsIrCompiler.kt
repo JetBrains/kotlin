@@ -200,8 +200,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()
+        val hmppCliModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         for (arg in arguments.freeArgs) {
-            configuration.addKotlinSourceRoot(arg, commonSources.contains(arg))
+            configuration.addKotlinSourceRoot(arg, commonSources.contains(arg), hmppCliModuleStructure?.getModuleNameForSource(arg))
         }
 
         arguments.relativePathBases?.let {
