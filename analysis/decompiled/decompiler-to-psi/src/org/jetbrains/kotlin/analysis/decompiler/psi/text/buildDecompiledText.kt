@@ -34,6 +34,20 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     parameterNamesInFunctionalTypes = false // to support parameters names in decompiled text we need to load annotation arguments
 }
 
+internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolean {
+    return when (kind) {
+        CallableMemberDescriptor.Kind.DECLARATION -> false
+
+        CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
+        CallableMemberDescriptor.Kind.DELEGATION -> true
+
+        CallableMemberDescriptor.Kind.SYNTHESIZED -> {
+            // Of all synthesized functions, only `component*` functions are rendered (for historical reasons)
+            !DataClassDescriptorResolver.isComponentLike(name)
+        }
+    }
+}
+
 fun buildDecompiledText(
     packageFqName: FqName,
     descriptors: List<DeclarationDescriptor>,
@@ -54,20 +68,6 @@ fun buildDecompiledText(
 
     fun indexDescriptor(descriptor: DeclarationDescriptor, startOffset: Int, endOffset: Int) {
         textIndex.addToIndex(descriptor, TextRange(startOffset, endOffset))
-    }
-
-    fun CallableMemberDescriptor.isConsideredSynthetic(): Boolean {
-        return when (kind) {
-            CallableMemberDescriptor.Kind.DECLARATION -> false
-
-            CallableMemberDescriptor.Kind.FAKE_OVERRIDE,
-            CallableMemberDescriptor.Kind.DELEGATION -> true
-
-            CallableMemberDescriptor.Kind.SYNTHESIZED -> {
-                // Of all synthesized functions, only `component*` functions are rendered (for historical reasons)
-                !DataClassDescriptorResolver.isComponentLike(name)
-            }
-        }
     }
 
     fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String, lastEnumEntry: Boolean? = null) {
@@ -144,7 +144,7 @@ fun buildDecompiledText(
                 if (member == companionObject) {
                     continue
                 }
-                if (member is CallableMemberDescriptor && member.isConsideredSynthetic()) {
+                if (member is CallableMemberDescriptor && member.mustNotBeWrittenToDecompiledText()) {
                     continue
                 }
                 newlineExceptFirst()
