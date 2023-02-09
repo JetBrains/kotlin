@@ -61,6 +61,15 @@ fun main() {
             }
         }
 
+        testGroup("native/native.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractNativeKlibABITest>(
+                suiteTestClassName = "KlibABIK2TestGenerated",
+                annotations = listOf(provider<K2Pipeline>())
+            ) {
+                model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+
         // KLIB binary compatibility tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeKlibBinaryCompatibilityTest>(
