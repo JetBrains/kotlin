@@ -275,7 +275,6 @@ enum class LanguageFeature(
     ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_9, kind = BUG_FIX), // KT-49017
     DataObjects(KOTLIN_1_9), // KT-4107
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_9, kind = BUG_FIX), // KT-49110
-    EnhanceNullabilityOfPrimitiveArrays(KOTLIN_1_9, kind = BUG_FIX), // KT-54521
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_9, kind = BUG_FIX), // KT-46727
     ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
     ValueClassesSecondaryConstructorWithBody(sinceVersion = KOTLIN_1_9, kind = UNSTABLE_FEATURE), // KT-55333
@@ -284,6 +283,8 @@ enum class LanguageFeature(
     // End of 1.* language features --------------------------------------------------
 
     // 2.0
+
+    EnhanceNullabilityOfPrimitiveArrays(KOTLIN_2_0, kind = BUG_FIX), // KT-54521
 
     // End of 2.* language features --------------------------------------------------
 
