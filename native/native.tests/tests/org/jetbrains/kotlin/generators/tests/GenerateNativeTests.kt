@@ -70,6 +70,15 @@ fun main() {
             }
         }
 
+        testGroup("native/native.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractNativeKlibBinaryCompatibilityTest>(
+                suiteTestClassName = "KlibBinaryCompatibilityK2TestGenerated",
+                annotations = listOf(provider<K2Pipeline>())
+            ) {
+                model("binaryCompatibility/klibEvolution", recursive = false)
+            }
+        }
+
         // CInterop tests.
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeCInteropFModulesTest>(

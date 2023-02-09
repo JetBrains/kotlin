@@ -1,3 +1,6 @@
+// KT-56023
+// MUTED_WHEN: K2
+
 // MODULE: lib
 // FILE: A.kt
 // VERSION: 1

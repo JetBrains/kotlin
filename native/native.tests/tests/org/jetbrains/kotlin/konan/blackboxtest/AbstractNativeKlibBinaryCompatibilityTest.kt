@@ -32,12 +32,15 @@ import org.jetbrains.kotlin.compatibility.binary.TestModule as BinaryCompatibili
 @Tag("klib-binary-compatibility")
 abstract class AbstractNativeKlibBinaryCompatibilityTest : AbstractNativeSimpleTest() {
 
-    protected fun runTest(@TestDataFile testPath: String): Unit = AbstractKlibBinaryCompatibilityTest.doTest(
-        filePath = testPath,
-        expectedResult = "OK",
-        produceKlib = ::buildKlib,
-        produceAndRunProgram = ::buildAndExecuteBinary
-    )
+    protected fun runTest(@TestDataFile testPath: String) {
+        muteTestIfNecessary(File(testPath))
+        AbstractKlibBinaryCompatibilityTest.doTest(
+            filePath = testPath,
+            expectedResult = "OK",
+            produceKlib = ::buildKlib,
+            produceAndRunProgram = ::buildAndExecuteBinary
+        )
+    }
 
     private fun buildKlib(
         binaryCompatibilityTestModule: BinaryCompatibilityTestModule,
