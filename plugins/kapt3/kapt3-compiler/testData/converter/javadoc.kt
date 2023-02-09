@@ -14,10 +14,10 @@ class B {
      * comment. */
     val a = ""
 
-	/**
-	 * Mixed
-	 * tabs/spaces
-	 */
+    /**
+     * Mixed
+     * tabs/spaces
+     */
     val b = ""
 
     /**
@@ -28,8 +28,36 @@ class B {
     val c = ""
 
     /**
-     Without
-     stars
+    Without
+    stars
      */
     val d = ""
+
+    /**
+     * A mutable property
+     */
+    var e = ""
+
+    /**
+     * A property without a backing field
+     */
+    var f: String
+        get() = ""
+        set(value) {}
+
+    /**
+     * A property with a backing field and an explicit setter
+     */
+    var g: String
+        set(value) {}
+
+    /**
+     * A property with documentation for an accessor
+     */
+    var h: String
+        /**
+         * It's a getter
+         */
+        get() = ""
+        set(value) {}
 }
