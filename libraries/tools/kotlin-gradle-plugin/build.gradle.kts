@@ -72,7 +72,10 @@ dependencies {
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
     commonRuntimeOnly(project(":kotlin-annotation-processing-gradle"))
     commonRuntimeOnly(project(":kotlin-android-extensions"))
-    commonRuntimeOnly(project(":kotlin-compiler-runner"))
+    commonRuntimeOnly(project(":kotlin-compiler-runner")) {
+        // Excluding dependency with not-relocated 'com.intellij' types
+        exclude(group = "org.jetbrains.kotlin", module = "kotlin-build-common")
+    }
     commonRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     commonRuntimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
 

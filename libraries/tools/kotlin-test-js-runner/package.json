@@ -11,13 +11,14 @@
     "lib/**/*"
   ],
   "scripts": {
-    "build": "rimraf lib/* && rollup -c rollup.config.js"
+    "build": "rimraf lib/* && copyfiles static/* lib && rollup -c rollup.config.js"
   },
   "dependencies": {
   },
   "devDependencies": {
     "@types/node": "^12.12.14",
     "rimraf": "^3.0.0",
+    "copyfiles": "^2.4.1",
     "rollup": "^2.68.0",
     "@rollup/plugin-commonjs": "^21.0.1",
     "@rollup/plugin-node-resolve": "^13.1.3",

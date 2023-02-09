@@ -65,7 +65,11 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureDefaultTestFramework(test: KotlinJsTest) {
         if (test.testFramework == null) {
             test.useKarma {
-                useChromeHeadless()
+                if (compilation.platformType == KotlinPlatformType.wasm) {
+                    useChromeCanaryHeadlessWasmGc()
+                } else {
+                    useChromeHeadless()
+                }
             }
         }
 
