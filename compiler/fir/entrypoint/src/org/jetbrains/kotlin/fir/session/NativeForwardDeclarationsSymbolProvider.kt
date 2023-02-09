@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.session
 import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.BinaryModuleData
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -35,20 +34,12 @@ import org.jetbrains.kotlin.name.Name
 
 class NativeForwardDeclarationsSymbolProvider(
     session: FirSession,
-    moduleDataProvider: ModuleDataProvider,
+    private val forwardDeclarationsModuleData: FirModuleData,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
     private val resolvedLibraries: Collection<KotlinResolvedLibrary>,
 ) : FirSymbolProvider(session) {
     private companion object {
         private val validPackages = ForwardDeclarationKind.packageFqNameToKind.keys
-    }
-
-    private val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
-        Name.special("<forward declarations>"),
-        moduleDataProvider.platform,
-        moduleDataProvider.analyzerServices,
-    ).apply {
-        bindSession(session)
     }
 
     private val includedForwardDeclarations: Set<ClassId> by lazy {
