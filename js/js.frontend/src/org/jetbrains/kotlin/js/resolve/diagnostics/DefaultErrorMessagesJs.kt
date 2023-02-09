@@ -108,6 +108,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
 
         put(ErrorsJs.NON_CONSUMABLE_EXPORTED_IDENTIFIER, "Exported declaration contains non-consumable identifier '${0}', that can't be represented inside TS definitions and ESM", STRING)
 
+        put(ErrorsJs.WRONG_OPERATION_WITH_EXTERNAL_ENUM, "Wrong operation with external enum")
+
         this
     }
 }

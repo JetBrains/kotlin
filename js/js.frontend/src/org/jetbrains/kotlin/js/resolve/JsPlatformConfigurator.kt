@@ -25,12 +25,13 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         JsRuntimeAnnotationChecker,
         JsDynamicDeclarationChecker,
         JsExportAnnotationChecker,
-        JsExportDeclarationChecker
+        JsExportDeclarationChecker,
     ),
     additionalCallCheckers = listOf(
         JsModuleCallChecker,
         JsDynamicCallChecker,
         JsDefinedExternallyCallChecker,
+        JsExternalEnumChecker,
         LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true)
     ),
 ) {
