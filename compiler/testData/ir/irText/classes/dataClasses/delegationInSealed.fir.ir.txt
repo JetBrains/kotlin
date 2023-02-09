@@ -132,8 +132,7 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A.B'
             STRING_CONCATENATION type=kotlin.String
-              CONST String type=kotlin.String value="B("
-              CONST String type=kotlin.String value="c="
+              CONST String type=kotlin.String value="B(c="
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
                 receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.toString' type=<root>.A.B origin=null
               CONST String type=kotlin.String value=")"

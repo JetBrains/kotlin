@@ -413,48 +413,39 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test1'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test1("
-            CONST String type=kotlin.String value="stringArray="
+            CONST String type=kotlin.String value="Test1(stringArray="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:stringArray type:kotlin.Array<kotlin.String> visibility:private [final]' type=kotlin.Array<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="charArray="
+            CONST String type=kotlin.String value=", charArray="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:charArray type:kotlin.CharArray visibility:private [final]' type=kotlin.CharArray origin=null
                 receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="booleanArray="
+            CONST String type=kotlin.String value=", booleanArray="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:booleanArray type:kotlin.BooleanArray visibility:private [final]' type=kotlin.BooleanArray origin=null
                 receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="byteArray="
+            CONST String type=kotlin.String value=", byteArray="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:byteArray type:kotlin.ByteArray visibility:private [final]' type=kotlin.ByteArray origin=null
                 receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="shortArray="
+            CONST String type=kotlin.String value=", shortArray="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:shortArray type:kotlin.ShortArray visibility:private [final]' type=kotlin.ShortArray origin=null
                 receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="intArray="
+            CONST String type=kotlin.String value=", intArray="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:intArray type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
                 receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="longArray="
+            CONST String type=kotlin.String value=", longArray="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:longArray type:kotlin.LongArray visibility:private [final]' type=kotlin.LongArray origin=null
                 receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="floatArray="
+            CONST String type=kotlin.String value=", floatArray="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:floatArray type:kotlin.FloatArray visibility:private [final]' type=kotlin.FloatArray origin=null
                 receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="doubleArray="
+            CONST String type=kotlin.String value=", doubleArray="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:doubleArray type:kotlin.DoubleArray visibility:private [final]' type=kotlin.DoubleArray origin=null
                 receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
@@ -545,8 +536,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test2'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test2("
-            CONST String type=kotlin.String value="genericArray="
+            CONST String type=kotlin.String value="Test2(genericArray="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:genericArray type:kotlin.Array<T of <root>.Test2> visibility:private [final]' type=kotlin.Array<T of <root>.Test2> origin=null
                 receiver: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.toString' type=<root>.Test2<T of <root>.Test2> origin=null
@@ -644,8 +634,7 @@ FILE fqName:<root> fileName:/dataClassWithArrayMembers.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test3'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test3("
-            CONST String type=kotlin.String value="anyArrayN="
+            CONST String type=kotlin.String value="Test3(anyArrayN="
             CALL 'public final fun dataClassArrayMemberToString (arg0: kotlin.Any?): kotlin.String declared in kotlin.internal.ir' type=kotlin.String origin=null
               arg0: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anyArrayN type:kotlin.Array<kotlin.Any>? visibility:private [final]' type=kotlin.Array<kotlin.Any>? origin=null
                 receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.toString' type=<root>.Test3 origin=null

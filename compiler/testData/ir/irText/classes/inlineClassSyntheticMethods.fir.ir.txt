@@ -105,8 +105,7 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.IC'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="IC("
-            CONST String type=kotlin.String value="c="
+            CONST String type=kotlin.String value="IC(c="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:<root>.C<TT of <root>.IC> visibility:private [final]' type=<root>.C<TT of <root>.IC> origin=null
               receiver: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.toString' type=<root>.IC<TT of <root>.IC> origin=null
             CONST String type=kotlin.String value=")"

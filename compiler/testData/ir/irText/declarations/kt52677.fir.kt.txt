@@ -51,7 +51,7 @@ data class LoginSuccessPacket {
   }
 
   override fun toString(): String {
-    return "LoginSuccessPacket(" + "id=" + <this>.#id + ")"
+    return "LoginSuccessPacket(id=" + <this>.#id + ")"
   }
 
 }

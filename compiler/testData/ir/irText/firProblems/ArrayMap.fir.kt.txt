@@ -320,7 +320,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     }
 
     override fun toString(): String {
-      return "Entry(" + "key=" + <this>.#key + ", " + "value=" + <this>.#value + ")"
+      return "Entry(key=" + <this>.#key + ", value=" + <this>.#value + ")"
     }
 
   }

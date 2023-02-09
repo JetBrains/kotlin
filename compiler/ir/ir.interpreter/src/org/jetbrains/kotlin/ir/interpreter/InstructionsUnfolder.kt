@@ -398,7 +398,10 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
             is Primitive<*> -> {
                 // This block is not really needed, but this way it is easier to handle `toString` with `treatFloatInSpecialWay` enabled.
                 callStack.popState()
-                val toStringCall = IrCallImpl.fromSymbolOwner(UNDEFINED_OFFSET, UNDEFINED_OFFSET, environment.irBuiltIns.memberToString)
+                val toStringCall = IrCallImpl.fromSymbolOwner(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    if (state.isNull()) environment.irBuiltIns.extensionToString else environment.irBuiltIns.memberToString
+                )
                 callStack.pushSimpleInstruction(toStringCall)
                 callStack.pushState(state)
             }

@@ -126,12 +126,10 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="A("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="A(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.toString' type=<root>.A origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="y="
+            CONST String type=kotlin.String value=", y="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.toString' type=<root>.A origin=null
             CONST String type=kotlin.String value=")"

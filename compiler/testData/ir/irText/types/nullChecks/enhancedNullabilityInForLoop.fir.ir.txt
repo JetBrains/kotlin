@@ -252,12 +252,10 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.P'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="P("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="P(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.P declared in <root>.P.toString' type=<root>.P origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="y="
+            CONST String type=kotlin.String value=", y="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.P declared in <root>.P.toString' type=<root>.P origin=null
             CONST String type=kotlin.String value=")"

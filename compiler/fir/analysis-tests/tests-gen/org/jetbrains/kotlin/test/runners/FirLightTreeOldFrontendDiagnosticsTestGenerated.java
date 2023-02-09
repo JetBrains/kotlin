@@ -21230,6 +21230,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("stringConcatenation.kt")
+                public void testStringConcatenation() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/modifiers/const/stringConcatenation.kt");
+                }
+
+                @Test
                 @TestMetadata("stringConcatenationWithObject.kt")
                 public void testStringConcatenationWithObject() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/modifiers/const/stringConcatenationWithObject.kt");

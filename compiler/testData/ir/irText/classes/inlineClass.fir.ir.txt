@@ -60,8 +60,7 @@ FILE fqName:<root> fileName:/inlineClass.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.toString' type=<root>.Test origin=null
             CONST String type=kotlin.String value=")"

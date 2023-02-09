@@ -91,8 +91,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="A("
-            CONST String type=kotlin.String value="runA="
+            CONST String type=kotlin.String value="A(runA="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runA type:@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:private [final]' type=@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.toString' type=<root>.A origin=null
             CONST String type=kotlin.String value=")"
@@ -202,8 +201,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.B'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="B("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="B(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.B declared in <root>.B.toString' type=<root>.B origin=null
             CONST String type=kotlin.String value=")"

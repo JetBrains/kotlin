@@ -94,8 +94,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test1'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test1("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test1(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:private [final]' type=T of <root>.Test1 origin=null
               receiver: GET_VAR '<this>: <root>.Test1<T of <root>.Test1> declared in <root>.Test1.toString' type=<root>.Test1<T of <root>.Test1> origin=null
             CONST String type=kotlin.String value=")"
@@ -185,8 +184,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test2'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test2("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test2(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:private [final]' type=T of <root>.Test2 origin=null
               receiver: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.toString' type=<root>.Test2<T of <root>.Test2> origin=null
             CONST String type=kotlin.String value=")"
@@ -276,8 +274,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test3'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test3("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test3(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:private [final]' type=kotlin.collections.List<T of <root>.Test3> origin=null
               receiver: GET_VAR '<this>: <root>.Test3<T of <root>.Test3> declared in <root>.Test3.toString' type=<root>.Test3<T of <root>.Test3> origin=null
             CONST String type=kotlin.String value=")"
@@ -365,8 +362,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test4'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test4("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test4(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:private [final]' type=kotlin.collections.List<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.toString' type=<root>.Test4 origin=null
             CONST String type=kotlin.String value=")"

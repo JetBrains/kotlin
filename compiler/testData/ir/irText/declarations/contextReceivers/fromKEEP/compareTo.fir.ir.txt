@@ -148,12 +148,10 @@ FILE fqName:<root> fileName:/compareTo.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Pair'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Pair("
-            CONST String type=kotlin.String value="first="
+            CONST String type=kotlin.String value="Pair(first="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
               receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.toString' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="second="
+            CONST String type=kotlin.String value=", second="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
               receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.toString' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
             CONST String type=kotlin.String value=")"

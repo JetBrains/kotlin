@@ -157,12 +157,10 @@ FILE fqName:<root> fileName:/kt45236.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.NetRequestStatus.Error'
             STRING_CONCATENATION type=kotlin.String
-              CONST String type=kotlin.String value="Error("
-              CONST String type=kotlin.String value="error="
+              CONST String type=kotlin.String value="Error(error="
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:error type:kotlin.Throwable visibility:private [final]' type=kotlin.Throwable origin=null
                 receiver: GET_VAR '<this>: <root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> declared in <root>.NetRequestStatus.Error.toString' type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=null
-              CONST String type=kotlin.String value=", "
-              CONST String type=kotlin.String value="value="
+              CONST String type=kotlin.String value=", value="
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.NetRequestStatus.Error? visibility:private [final]' type=T of <root>.NetRequestStatus.Error? origin=null
                 receiver: GET_VAR '<this>: <root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> declared in <root>.NetRequestStatus.Error.toString' type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=null
               CONST String type=kotlin.String value=")"

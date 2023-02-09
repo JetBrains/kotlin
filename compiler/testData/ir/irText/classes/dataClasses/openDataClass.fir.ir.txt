@@ -128,12 +128,10 @@ FILE fqName:<root> fileName:/openDataClass.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.ValidatedProperties'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="ValidatedProperties("
-            CONST String type=kotlin.String value="test1="
+            CONST String type=kotlin.String value="ValidatedProperties(test1="
             CALL 'public open fun <get-test1> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
               $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.toString' type=<root>.ValidatedProperties origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="test2="
+            CONST String type=kotlin.String value=", test2="
             CALL 'public open fun <get-test2> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
               $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.toString' type=<root>.ValidatedProperties origin=null
             CONST String type=kotlin.String value=")"

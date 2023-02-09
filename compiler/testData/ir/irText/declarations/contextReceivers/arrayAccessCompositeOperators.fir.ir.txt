@@ -91,8 +91,7 @@ FILE fqName:<root> fileName:/arrayAccessCompositeOperators.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.MyContainer'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="MyContainer("
-            CONST String type=kotlin.String value="i="
+            CONST String type=kotlin.String value="MyContainer(i="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.toString' type=<root>.MyContainer origin=null
             CONST String type=kotlin.String value=")"

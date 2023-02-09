@@ -21143,6 +21143,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
             }
 
             @Test
+            @TestMetadata("stringConcatenation.kt")
+            public void testStringConcatenation() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stringConcatenation.kt");
+            }
+
+            @Test
             @TestMetadata("stringOperations.kt")
             public void testStringOperations() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stringOperations.kt");

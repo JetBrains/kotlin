@@ -25,7 +25,7 @@ value class IT {
   }
 
   override fun toString(): String {
-    return "IT(" + "x=" + <this>.#x + ")"
+    return "IT(x=" + <this>.#x + ")"
   }
 
 }
@@ -102,7 +102,7 @@ value class InlineMutableSet : MutableSet<IT> {
   }
 
   override fun toString(): String {
-    return "InlineMutableSet(" + "ms=" + <this>.#ms + ")"
+    return "InlineMutableSet(ms=" + <this>.#ms + ")"
   }
 
 }

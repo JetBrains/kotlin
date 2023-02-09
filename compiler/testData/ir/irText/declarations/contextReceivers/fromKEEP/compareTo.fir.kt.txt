@@ -55,7 +55,7 @@ data class Pair<A : Any?, B : Any?> {
   }
 
   override fun toString(): String {
-    return "Pair(" + "first=" + <this>.#first + ", " + "second=" + <this>.#second + ")"
+    return "Pair(first=" + <this>.#first + ", second=" + <this>.#second + ")"
   }
 
 }

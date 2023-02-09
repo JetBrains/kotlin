@@ -50,7 +50,7 @@ open data class ValidatedProperties {
   }
 
   override fun toString(): String {
-    return "ValidatedProperties(" + "test1=" + <this>.<get-test1>() + ", " + "test2=" + <this>.<get-test2>() + ")"
+    return "ValidatedProperties(test1=" + <this>.<get-test1>() + ", test2=" + <this>.<get-test2>() + ")"
   }
 
 }

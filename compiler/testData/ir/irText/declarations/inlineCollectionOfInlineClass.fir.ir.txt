@@ -60,8 +60,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.IT'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="IT("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="IT(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.IT declared in <root>.IT.toString' type=<root>.IT origin=null
             CONST String type=kotlin.String value=")"
@@ -242,8 +241,7 @@ FILE fqName:<root> fileName:/inlineCollectionOfInlineClass.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.InlineMutableSet'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="InlineMutableSet("
-            CONST String type=kotlin.String value="ms="
+            CONST String type=kotlin.String value="InlineMutableSet(ms="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ms type:kotlin.collections.MutableSet<<root>.IT> visibility:private [final]' type=kotlin.collections.MutableSet<<root>.IT> origin=null
               receiver: GET_VAR '<this>: <root>.InlineMutableSet declared in <root>.InlineMutableSet.toString' type=<root>.InlineMutableSet origin=null
             CONST String type=kotlin.String value=")"

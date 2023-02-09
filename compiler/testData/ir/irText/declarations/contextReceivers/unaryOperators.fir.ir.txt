@@ -83,8 +83,7 @@ FILE fqName:<root> fileName:/unaryOperators.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Result'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Result("
-            CONST String type=kotlin.String value="i="
+            CONST String type=kotlin.String value="Result(i="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.toString' type=<root>.Result origin=null
             CONST String type=kotlin.String value=")"

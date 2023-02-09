@@ -93,8 +93,7 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Counter'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Counter("
-            CONST String type=kotlin.String value="i="
+            CONST String type=kotlin.String value="Counter(i="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Counter declared in <root>.Counter.toString' type=<root>.Counter origin=null
             CONST String type=kotlin.String value=")"
@@ -184,8 +183,7 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.CounterConfig'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="CounterConfig("
-            CONST String type=kotlin.String value="max="
+            CONST String type=kotlin.String value="CounterConfig(max="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:max type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.CounterConfig declared in <root>.CounterConfig.toString' type=<root>.CounterConfig origin=null
             CONST String type=kotlin.String value=")"

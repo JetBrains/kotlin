@@ -79,7 +79,7 @@ internal fun checkConstantArguments(
                 if (exp is FirResolvedQualifier) {
                     return ConstantArgumentKind.NOT_CONST
                 }
-                checkConstantArguments(exp, session).let { return it }
+                checkConstantArguments(exp, session)?.let { return it }
             }
         }
         expression is FirGetClassCall -> {

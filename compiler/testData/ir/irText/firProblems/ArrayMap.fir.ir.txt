@@ -824,12 +824,10 @@ FILE fqName:<root> fileName:/ArrayMap.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.ArrayMapImpl.Entry'
             STRING_CONCATENATION type=kotlin.String
-              CONST String type=kotlin.String value="Entry("
-              CONST String type=kotlin.String value="key="
+              CONST String type=kotlin.String value="Entry(key="
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:key type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.toString' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
-              CONST String type=kotlin.String value=", "
-              CONST String type=kotlin.String value="value="
+              CONST String type=kotlin.String value=", value="
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.ArrayMapImpl.Entry visibility:private [final]' type=T of <root>.ArrayMapImpl.Entry origin=null
                 receiver: GET_VAR '<this>: <root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> declared in <root>.ArrayMapImpl.Entry.toString' type=<root>.ArrayMapImpl.Entry<T of <root>.ArrayMapImpl.Entry> origin=null
               CONST String type=kotlin.String value=")"

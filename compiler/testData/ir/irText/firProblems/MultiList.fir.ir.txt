@@ -94,8 +94,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Some'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Some("
-            CONST String type=kotlin.String value="value="
+            CONST String type=kotlin.String value="Some(value="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
               receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.toString' type=<root>.Some<T of <root>.Some> origin=null
             CONST String type=kotlin.String value=")"

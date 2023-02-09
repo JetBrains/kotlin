@@ -125,7 +125,7 @@ data class P {
   }
 
   override fun toString(): String {
-    return "P(" + "x=" + <this>.#x + ", " + "y=" + <this>.#y + ")"
+    return "P(x=" + <this>.#x + ", y=" + <this>.#y + ")"
   }
 
 }
