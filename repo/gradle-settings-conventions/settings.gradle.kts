@@ -10,19 +10,19 @@ pluginManagement {
 }
 
 buildscript {
-    repositories {
-        maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
-        mavenCentral()
-    }
-
     val buildGradlePluginVersion = extra.get("kotlin.build.gradlePlugin.version")
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
     }
 }
 
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.4.0"
+}
+
 include(":build-cache")
 include(":gradle-enterprise")
+include(":jvm-toolchain-provisioning")
 
 // Unfortunately it is not possible to apply build-cache.settings.gradle.kts as script compilation
 // could not then find types from "kotlin-build-gradle-plugin"
