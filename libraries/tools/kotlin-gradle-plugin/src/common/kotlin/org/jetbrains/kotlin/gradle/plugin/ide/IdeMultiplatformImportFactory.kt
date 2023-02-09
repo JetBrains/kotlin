@@ -67,7 +67,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyResolver(
             resolver = IdeTransformedMetadataDependencyResolver,
-            constraint = !SourceSetConstraint.isLeaf,
+            constraint = !SourceSetConstraint.isLeaf and !SourceSetConstraint.isJvmAndAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
             level = IdeMultiplatformImport.DependencyResolutionLevel.Default
         )
@@ -150,7 +150,8 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
 
         registerDependencyTransformer(
             transformer = IdePlatformStdlibCommonDependencyFilter,
-            constraint = SourceSetConstraint.isSinglePlatformType and !SourceSetConstraint.isSharedNative,
+            constraint = SourceSetConstraint.isSinglePlatformType and !SourceSetConstraint.isSharedNative
+                    or SourceSetConstraint.isJvmAndAndroid,
             phase = IdeMultiplatformImport.DependencyTransformationPhase.DependencyFilteringPhase,
         )
 
