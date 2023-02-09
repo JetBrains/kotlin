@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirOut
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.AbstractFirSourceContextCollectionTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataSpecTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractDiagnosisCompilerTestDataTest
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirPreresolvedReversedDiagnosisCompilerTestDataSpecTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.AbstractLLFirPreresolvedReversedDiagnosisCompilerTestDataTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractOutOfContentRootFileStructureTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.AbstractSourceFileStructureTest
@@ -148,7 +149,7 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             modelInit()
         }
 
-        testClass<AbstractLLFirPreresolvedReversedDiagnosisCompilerTestDataTest>(suiteTestClassName = "PreresolvedFirIdeSpecTest") {
+        testClass<AbstractLLFirPreresolvedReversedDiagnosisCompilerTestDataSpecTest>(suiteTestClassName = "PreresolvedFirIdeSpecTest") {
             modelInit()
         }
     }
