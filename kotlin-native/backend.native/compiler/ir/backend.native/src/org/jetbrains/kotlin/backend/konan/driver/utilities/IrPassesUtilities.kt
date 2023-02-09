@@ -60,18 +60,18 @@ private fun <Context : PhaseContext, Data> getIrValidator(): Action<Data, Contex
 
             val backendContext: CommonBackendContext? = findBackendContext(context)
             if (backendContext == null) {
-                context.messageCollector.report(CompilerMessageSeverity.WARNING,
+                context.messageCollector.report(CompilerMessageSeverity.LOGGING,
                         "Cannot verify IR ${state.beforeOrAfter} ${state.phase}: insufficient context.")
                 return
             }
             val element = findKotlinBackendIr(context, data)
             if (element == null) {
-                context.messageCollector.report(CompilerMessageSeverity.WARNING,
+                context.messageCollector.report(CompilerMessageSeverity.LOGGING,
                         "Cannot verify IR ${state.beforeOrAfter} ${state.phase}: IR not found.")
                 return
             }
             val validatorConfig = IrValidatorConfig(
-                    abortOnError = false,
+                    abortOnError = true,
                     ensureAllNodesAreDifferent = true,
                     checkTypes = true,
                     checkDescriptors = false
@@ -105,12 +105,10 @@ private fun <Data, Context : PhaseContext> getIrDumper(): Action<Data, Context> 
             defaultDumper(state, element, backendContext)
         }
 
-private val validateAll = false
-
 /**
  * IR dump and verify actions.
  */
 internal fun <Data, Context : PhaseContext> getDefaultIrActions(): Set<Action<Data, Context>> = setOfNotNull(
         getIrDumper(),
-        getIrValidator<Context, Data>().takeIf { validateAll }
+        getIrValidator<Context, Data>()
 )
