@@ -7,22 +7,25 @@ package org.jetbrains.kotlin.cli.metadata
 
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
-import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.jvm.compiler.*
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.collectSources
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createContextForIncrementalCompilation
+import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
-import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
+import org.jetbrains.kotlin.fir.BinaryModuleData
+import org.jetbrains.kotlin.fir.DependencyListForCliModule
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
@@ -32,23 +35,19 @@ import org.jetbrains.kotlin.fir.pipeline.resolveAndCheckFir
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.fir.session.FirCommonSessionFactory
-import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.library.metadata.KlibMetadataHeaderFlags
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
-import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
 internal class FirMetadataSerializer(
     configuration: CompilerConfiguration,
     environment: KotlinCoreEnvironment
-) : AbstractMetadataSerializer<ModuleCompilerAnalyzedOutput>(configuration, environment) {
-    override fun analyze(): ModuleCompilerAnalyzedOutput? {
+) : AbstractMetadataSerializer<List<ModuleCompilerAnalyzedOutput>>(configuration, environment) {
+    override fun analyze(): List<ModuleCompilerAnalyzedOutput>? {
         val performanceManager = environment.configuration.getNotNull(CLIConfigurationKeys.PERF_MANAGER)
         performanceManager.notifyAnalysisStarted()
 
@@ -57,23 +56,28 @@ internal class FirMetadataSerializer(
         val moduleName = Name.special("<${configuration.getNotNull(CommonConfigurationKeys.MODULE_NAME)}>")
         val isLightTree = configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
 
-        val sessionProvider = FirProjectSessionProvider()
+        val rootModuleName = moduleName.asString()
+        val binaryModuleData = BinaryModuleData.initialize(
+            Name.identifier(rootModuleName),
+            CommonPlatforms.defaultCommonPlatform,
+            CommonPlatformAnalyzerServices
+        )
+        val libraryList = DependencyListForCliModule.build(binaryModuleData) {
+            dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
+            dependencies(configuration.jvmModularRoots.map { it.toPath() })
+            friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+        }
 
-        val projectEnvironment: VfsBasedProjectEnvironment
-        var librariesScope: AbstractProjectFileSearchScope
-        val sourceScope: AbstractProjectFileSearchScope
-        val librariesHelperScope: AbstractProjectFileSearchScope
-        var psiFiles: List<KtFile>? = null
-        var ltFiles: List<KtSourceFile>? = null
-        val providerAndScopeForIncrementalCompilation: IncrementalCompilationContext?
+        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
 
-        if (isLightTree) {
-            projectEnvironment = environment.toAbstractProjectEnvironment() as VfsBasedProjectEnvironment
-            librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-            librariesHelperScope = projectEnvironment.getSearchScopeForProjectLibraries()
-            ltFiles = collectSources(configuration, projectEnvironment, messageCollector).let { it.commonSources + it.platformSources }.toList()
-            sourceScope = projectEnvironment.getSearchScopeBySourceFiles(ltFiles)
-            providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
+        val outputs = if (isLightTree) {
+            val projectEnvironment = environment.toAbstractProjectEnvironment() as VfsBasedProjectEnvironment
+            var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
+            val groupedSources = collectSources(configuration, projectEnvironment, messageCollector)
+            val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
+            val ltFiles = groupedSources.let { it.commonSources + it.platformSources }.toList()
+            val sourceScope = projectEnvironment.getSearchScopeBySourceFiles(ltFiles)
+            val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
                 configuration,
                 projectEnvironment,
                 sourceScope,
@@ -82,16 +86,26 @@ internal class FirMetadataSerializer(
             )?.also { (_, _, precompiledBinariesFileScope) ->
                 precompiledBinariesFileScope?.let { librariesScope -= it }
             }
+            val sessionsWithSources = prepareCommonSessions(
+                ltFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars,
+                librariesScope, libraryList, groupedSources.isCommonSourceForLt, groupedSources.fileBelongsToModuleForLt,
+                createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
+            )
+            sessionsWithSources.map { (session, files) ->
+                val firFiles = session.buildFirViaLightTree(files, diagnosticsReporter, performanceManager::addSourcesStats)
+                resolveAndCheckFir(session, firFiles, diagnosticsReporter)
+            }
         } else {
-            projectEnvironment = VfsBasedProjectEnvironment(
+            val projectEnvironment = VfsBasedProjectEnvironment(
                 environment.project,
                 VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
             ) { environment.createPackagePartProvider(it) }
-            librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-            librariesHelperScope = librariesScope
-            psiFiles = environment.getSourceFiles()
-            sourceScope = projectEnvironment.getSearchScopeByPsiFiles(psiFiles) + projectEnvironment.getSearchScopeForProjectJavaSources()
-            providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
+            var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
+            val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
+            val psiFiles = environment.getSourceFiles()
+            val sourceScope =
+                projectEnvironment.getSearchScopeByPsiFiles(psiFiles) + projectEnvironment.getSearchScopeForProjectJavaSources()
+            val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
                 projectEnvironment,
                 configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS),
                 configuration,
@@ -101,80 +115,51 @@ internal class FirMetadataSerializer(
             providerAndScopeForIncrementalCompilation?.precompiledBinariesFileScope?.let {
                 librariesScope -= it
             }
+            val sessionsWithSources = prepareCommonSessions(
+                psiFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars,
+                librariesScope, libraryList, isCommonSourceForPsi, fileBelongsToModuleForPsi,
+                createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
+            )
+
+            sessionsWithSources.map { (session, files) ->
+                val firFiles = session.buildFirFromKtFiles(files)
+                resolveAndCheckFir(session, firFiles, diagnosticsReporter)
+            }
         }
 
-        val libraryList = createFirLibraryListAndSession(
-            moduleName.asString(), configuration, projectEnvironment,
-            scope = librariesHelperScope, librariesScope = librariesScope, friendPaths = emptyList(), sessionProvider = sessionProvider,
-            isJvm = false
-        )
-
-        val commonModuleData = FirModuleDataImpl(
-            moduleName,
-            libraryList.regularDependencies,
-            listOf(),
-            libraryList.friendsDependencies,
-            CommonPlatforms.defaultCommonPlatform,
-            CommonPlatformAnalyzerServices
-        )
-        val project = projectEnvironment.project
-        val session = FirCommonSessionFactory.createModuleBasedSession(
-            commonModuleData,
-            sessionProvider,
-            sourceScope,
-            projectEnvironment,
-            incrementalCompilationContext = providerAndScopeForIncrementalCompilation,
-            FirExtensionRegistrar.getInstances(project),
-            configuration.languageVersionSettings,
-            lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
-            enumWhenTracker = configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
-            needRegisterJavaElementFinder = true,
-            registerExtraComponents = {},
-            init = {
-                if (configuration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)) {
-                    registerExtendedCommonCheckers()
-                }
-            }
-        )
-
-        val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
-        val firFiles = if (isLightTree)
-            session.buildFirViaLightTree(ltFiles!!, diagnosticsReporter, performanceManager::addSourcesStats)
-        else
-            session.buildFirFromKtFiles(psiFiles!!)
-
-        val result = resolveAndCheckFir(session, firFiles, diagnosticsReporter)
 
         return if (diagnosticsReporter.hasErrors) {
             val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
             FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
             null
         } else {
-            result
+            outputs
         }.also {
             performanceManager.notifyAnalysisFinished()
         }
     }
 
-    override fun serialize(analysisResult: ModuleCompilerAnalyzedOutput, destDir: File) {
+    override fun serialize(analysisResult: List<ModuleCompilerAnalyzedOutput>, destDir: File) {
         val fragments = mutableMapOf<String, MutableList<ByteArray>>()
 
-        val (session, scopeSession, fir) = analysisResult
+        for (output in analysisResult) {
+            val (session, scopeSession, fir) = output
 
-        val languageVersionSettings = environment.configuration.languageVersionSettings
-        for (firFile in fir) {
-            val packageFragment = serializeSingleFirFile(
-                firFile,
-                session,
-                scopeSession,
-                FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
-                languageVersionSettings
-            )
-            fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }.add(packageFragment.toByteArray())
+            val languageVersionSettings = environment.configuration.languageVersionSettings
+            for (firFile in fir) {
+                val packageFragment = serializeSingleFirFile(
+                    firFile,
+                    session,
+                    scopeSession,
+                    FirKLibSerializerExtension(session, metadataVersion, FirElementAwareSerializableStringTable()),
+                    languageVersionSettings
+                )
+                fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }.add(packageFragment.toByteArray())
+            }
         }
 
         val header = KlibMetadataProtoBuf.Header.newBuilder()
-        header.moduleName = session.moduleData.name.asString()
+        header.moduleName = analysisResult.last().session.moduleData.name.asString()
 
         if (configuration.languageVersionSettings.isPreRelease()) {
             header.flags = KlibMetadataHeaderFlags.PRE_RELEASE

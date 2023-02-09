@@ -1,0 +1,15 @@
+$TESTDATA_DIR$/../jvm/hmpp/src/a.kt
+$TESTDATA_DIR$/../jvm/hmpp/src/b.kt
+$TESTDATA_DIR$/../jvm/hmpp/src/c.kt
+-ir-output-dir
+$TEMP_DIR$/out.js
+-ir-output-name
+fir-hmpp
+-language-version
+2.0
+-XXLanguage\:+MultiPlatformProjects
+-Xmodule=a;$TESTDATA_DIR$/../jvm/hmpp/src/a.kt
+-Xmodule=b;$TESTDATA_DIR$/../jvm/hmpp/src/b.kt
+-Xmodule=c;$TESTDATA_DIR$/../jvm/hmpp/src/c.kt
+-XdependsOn=b\:a
+-XdependsOn=c\:b

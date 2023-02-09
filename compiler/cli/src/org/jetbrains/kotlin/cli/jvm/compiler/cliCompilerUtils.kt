@@ -10,7 +10,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileSystem
-import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
@@ -27,17 +26,12 @@ import org.jetbrains.kotlin.codegen.state.GenerationStateEventCallback
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
-import org.jetbrains.kotlin.fir.session.FirCommonSessionFactory
-import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.javac.JavacWrapper
-import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompilationComponents
 import org.jetbrains.kotlin.modules.JavaRootPath
@@ -45,7 +39,6 @@ import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -226,49 +219,21 @@ fun createContextForIncrementalCompilation(
     return IncrementalCompilationContext(emptyList(), packagePartProvider, incrementalCompilationScope)
 }
 
-fun createFirLibraryListAndSession(
+fun createLibraryListForJvm(
     moduleName: String,
     configuration: CompilerConfiguration,
-    projectEnvironment: AbstractProjectEnvironment,
-    scope: AbstractProjectFileSearchScope,
-    librariesScope: AbstractProjectFileSearchScope,
-    friendPaths: List<String>,
-    sessionProvider: FirProjectSessionProvider,
-    isJvm: Boolean = true
+    friendPaths: List<String>
 ): DependencyListForCliModule {
     val binaryModuleData = BinaryModuleData.initialize(
         Name.identifier(moduleName),
-        if (isJvm) JvmPlatforms.unspecifiedJvmPlatform else CommonPlatforms.defaultCommonPlatform,
-        if (isJvm) JvmPlatformAnalyzerServices else CommonPlatformAnalyzerServices
+        JvmPlatforms.unspecifiedJvmPlatform,
+        JvmPlatformAnalyzerServices
     )
     val libraryList = DependencyListForCliModule.build(binaryModuleData) {
         dependencies(configuration.jvmClasspathRoots.map { it.toPath() })
         dependencies(configuration.jvmModularRoots.map { it.toPath() })
         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
         friendDependencies(friendPaths)
-    }
-    if (isJvm) {
-        FirJvmSessionFactory.createLibrarySession(
-            Name.identifier(moduleName),
-            sessionProvider,
-            libraryList.moduleDataProvider,
-            projectEnvironment,
-            scope,
-            projectEnvironment.getPackagePartProvider(librariesScope),
-            configuration.languageVersionSettings,
-            registerExtraComponents = {},
-        )
-    } else {
-        FirCommonSessionFactory.createLibrarySession(
-            Name.identifier(moduleName),
-            sessionProvider,
-            libraryList.moduleDataProvider,
-            projectEnvironment,
-            scope,
-            projectEnvironment.getPackagePartProvider(librariesScope) as PackageAndMetadataPartProvider,
-            configuration.languageVersionSettings,
-            registerExtraComponents = {},
-        )
     }
     return libraryList
 }

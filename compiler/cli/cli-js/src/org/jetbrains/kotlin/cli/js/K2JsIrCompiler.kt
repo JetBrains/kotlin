@@ -41,25 +41,19 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
-import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.FirResult
-import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
 import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
-import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
-import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
@@ -91,11 +85,12 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
-import org.jetbrains.kotlin.utils.*
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.KotlinPaths
+import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.kotlin.utils.join
+import org.jetbrains.kotlin.utils.metadataVersion
 import java.io.File
 import java.io.IOException
 import java.nio.file.Paths
@@ -453,7 +448,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             }
 
             val metadataSerializer =
-                KlibMetadataIncrementalSerializer(environmentForJS.configuration, sourceModule.project, sourceModule.jsFrontEndResult.hasErrors)
+                KlibMetadataIncrementalSerializer(
+                    environmentForJS.configuration,
+                    sourceModule.project,
+                    sourceModule.jsFrontEndResult.hasErrors
+                )
 
             generateKLib(
                 sourceModule,
@@ -483,16 +482,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
 
         // FIR
-
-        val isMppEnabled = configuration.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
-
-        val sessionProvider = FirProjectSessionProvider()
         val extensionRegistrars = FirExtensionRegistrar.getInstances(environmentForJS.project)
-        val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
-            if (arguments.extendedCompilerChecks) {
-                registerExtendedCommonCheckers()
-            }
-        }
 
         val mainModuleName = configuration.get(CommonConfigurationKeys.MODULE_NAME)!!
         val escapedMainModuleName = Name.special("<$mainModuleName>")
@@ -514,67 +504,14 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val logger = configuration.resolverLogger
         val resolvedLibraries = jsResolveLibraries(libraries + friendLibraries, logger).getFullResolvedList()
 
-        FirJsSessionFactory.createLibrarySession(
-            escapedMainModuleName,
-            resolvedLibraries,
-            sessionProvider,
-            dependencyList.moduleDataProvider,
-            configuration.languageVersionSettings,
-            registerExtraComponents = {},
+        val sessionsWithSources = prepareJsSessions(
+            ktFiles, configuration, escapedMainModuleName.asString(), resolvedLibraries, dependencyList,
+            extensionRegistrars, isCommonSourceForPsi, fileBelongsToModuleForPsi
         )
 
-        val commonModuleData = runIf(isMppEnabled) {
-            FirModuleDataImpl(
-                Name.identifier("<$mainModuleName-common>"),
-                dependencyList.regularDependencies,
-                listOf(),
-                dependencyList.friendsDependencies,
-                JsPlatforms.defaultJsPlatform,
-                JsPlatformAnalyzerServices
-            )
+        val outputs = sessionsWithSources.map {
+            buildResolveAndCheckFir(it.session, it.files, diagnosticsReporter)
         }
-        val mainModuleData = FirModuleDataImpl(
-            escapedMainModuleName,
-            dependencyList.regularDependencies,
-            listOfNotNull(commonModuleData),
-            dependencyList.friendsDependencies,
-            JsPlatforms.defaultJsPlatform,
-            JsPlatformAnalyzerServices
-        )
-
-        val commonKtFiles = mutableListOf<KtFile>()
-        val platformKtFiles = mutableListOf<KtFile>()
-        if (isMppEnabled) {
-            for (ktFile in ktFiles) {
-                (if (ktFile.isCommonSource == true) commonKtFiles else platformKtFiles).add(ktFile)
-            }
-        } else {
-            platformKtFiles.addAll(ktFiles)
-        }
-
-        val commonSession = runIf(isMppEnabled) {
-            FirJsSessionFactory.createModuleBasedSession(
-                commonModuleData!!,
-                sessionProvider,
-                extensionRegistrars,
-                configuration.languageVersionSettings,
-                null,
-                registerExtraComponents = {},
-                init = sessionConfigurator,
-            )
-        }
-        val platformSession = FirJsSessionFactory.createModuleBasedSession(
-            mainModuleData,
-            sessionProvider,
-            extensionRegistrars,
-            configuration.languageVersionSettings,
-            null,
-            registerExtraComponents = {},
-            init = sessionConfigurator,
-        )
-
-        val commonFirOutput = commonSession?.let { buildResolveAndCheckFir(it, commonKtFiles, diagnosticsReporter) }
-        val platformFirOutput = buildResolveAndCheckFir(platformSession, platformKtFiles, diagnosticsReporter)
 
         if (syntaxErrors || diagnosticsReporter.hasErrors) {
             FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
@@ -608,7 +545,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             moduleDescriptor
         }
 
-        val firResult = FirResult(platformFirOutput, commonFirOutput)
+        val firResult = FirResult(outputs)
         val irResult = firResult.convertToIrAndActualize(
             fir2IrExtensions,
             IrGenerationExtension.getInstances(environmentForJS.project),
@@ -628,13 +565,11 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             val sourceFiles = mutableListOf<KtSourceFile>()
             val firFilesAndSessionsBySourceFile = mutableMapOf<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>()
 
-            commonFirOutput?.fir?.forEach {
-                sourceFiles.add(it.sourceFile!!)
-                firFilesAndSessionsBySourceFile[it.sourceFile!!] = Triple(it, commonFirOutput.session, commonFirOutput.scopeSession)
-            }
-            platformFirOutput.fir.forEach {
-                sourceFiles.add(it.sourceFile!!)
-                firFilesAndSessionsBySourceFile[it.sourceFile!!] = Triple(it, platformFirOutput.session, platformFirOutput.scopeSession)
+            for (output in outputs) {
+                output.fir.forEach {
+                    sourceFiles.add(it.sourceFile!!)
+                    firFilesAndSessionsBySourceFile[it.sourceFile!!] = Triple(it, output.session, output.scopeSession)
+                }
             }
 
             val icData = environmentForJS.configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()

@@ -128,8 +128,9 @@ internal fun collectNewDirtySources(
         }
     }
 
-    analysisResults.commonOutput?.let { visitFirFiles(it) }
-    visitFirFiles(analysisResults.platformOutput)
+    for (output in analysisResults.outputs) {
+        visitFirFiles(output)
+    }
 
     val (dirtyLookupSymbols, dirtyClassFqNames, forceRecompile) = changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
 

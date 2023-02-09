@@ -70,7 +70,6 @@ object KotlinToJVMBytecodeCompiler {
 
         val projectConfiguration = environment.configuration
         if (projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR)) {
-            val extendedAnalysisMode = projectConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS)
             val projectEnvironment =
                 VfsBasedProjectEnvironment(
                     environment.project,
@@ -81,7 +80,7 @@ object KotlinToJVMBytecodeCompiler {
                 environment.configuration,
                 environment.messageCollector,
                 environment.getSourceFiles(),
-                buildFile, chunk, extendedAnalysisMode
+                buildFile, chunk
             )
         }
 

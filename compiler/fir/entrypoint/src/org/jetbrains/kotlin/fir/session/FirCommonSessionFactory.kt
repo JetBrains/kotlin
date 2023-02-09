@@ -37,7 +37,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
         projectEnvironment: AbstractProjectEnvironment,
-        scope: AbstractProjectFileSearchScope,
+        librariesScope: AbstractProjectFileSearchScope,
         packageAndMetadataPartProvider: PackageAndMetadataPartProvider,
         languageVersionSettings: LanguageVersionSettings,
         registerExtraComponents: ((FirSession) -> Unit),
@@ -59,7 +59,7 @@ object FirCommonSessionFactory : FirAbstractSessionFactory() {
                         moduleDataProvider,
                         kotlinScopeProvider,
                         packageAndMetadataPartProvider,
-                        projectEnvironment.getKotlinClassFinder(scope)
+                        projectEnvironment.getKotlinClassFinder(librariesScope)
                     ),
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),

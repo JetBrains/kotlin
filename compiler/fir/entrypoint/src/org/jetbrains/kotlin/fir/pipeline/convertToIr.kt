@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 
-data class FirResult(
-    val platformOutput: ModuleCompilerAnalyzedOutput,
-    val commonOutput: ModuleCompilerAnalyzedOutput?
-)
+data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
 
 data class ModuleCompilerAnalyzedOutput(
     val session: FirSession,
@@ -67,46 +64,58 @@ fun FirResult.convertToIrAndActualize(
         manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler version for other backends.
     )
 
-    if (commonOutput != null) {
-        val commonIrOutput = commonOutput.convertToIr(
-            fir2IrExtensions,
-            irGeneratorExtensions,
-            linkViaSignatures = linkViaSignatures,
-            commonMemberStorage = commonMemberStorage,
-            irBuiltIns = null,
-            irMangler,
-            visibilityConverter,
-            kotlinBuiltIns,
-        ).also {
-            fir2IrResultPostCompute(it)
+    when (outputs.size) {
+        0 -> error("No modules found")
+        1 -> {
+            result = outputs.single().convertToIr(
+                fir2IrExtensions,
+                irGeneratorExtensions,
+                linkViaSignatures = linkViaSignatures,
+                commonMemberStorage = commonMemberStorage,
+                irBuiltIns = null,
+                irMangler,
+                visibilityConverter,
+                kotlinBuiltIns,
+            )
         }
-        result = platformOutput.convertToIr(
-            fir2IrExtensions,
-            irGeneratorExtensions,
-            linkViaSignatures = linkViaSignatures,
-            commonMemberStorage = commonMemberStorage,
-            irBuiltIns = commonIrOutput.components.irBuiltIns,
-            irMangler,
-            visibilityConverter,
-            kotlinBuiltIns,
-        ).also {
-            fir2IrResultPostCompute(it)
+        else -> {
+            val platformOutput = outputs.last()
+            val commonOutputs = outputs.dropLast(1)
+            var irBuiltIns: IrBuiltInsOverFir? = null
+            val commonIrOutputs = commonOutputs.map {
+                it.convertToIr(
+                    fir2IrExtensions,
+                    irGeneratorExtensions,
+                    linkViaSignatures = linkViaSignatures,
+                    commonMemberStorage = commonMemberStorage,
+                    irBuiltIns = irBuiltIns,
+                    irMangler,
+                    visibilityConverter,
+                    kotlinBuiltIns,
+                ).also { result ->
+                    fir2IrResultPostCompute(result)
+                    if (irBuiltIns == null) {
+                        irBuiltIns = result.components.irBuiltIns
+                    }
+                }
+            }
+            result = platformOutput.convertToIr(
+                fir2IrExtensions,
+                irGeneratorExtensions,
+                linkViaSignatures = linkViaSignatures,
+                commonMemberStorage = commonMemberStorage,
+                irBuiltIns = irBuiltIns!!,
+                irMangler,
+                visibilityConverter,
+                kotlinBuiltIns,
+            ).also {
+                fir2IrResultPostCompute(it)
+            }
+            IrActualizer.actualize(
+                result.irModuleFragment,
+                commonIrOutputs.map { it.irModuleFragment }
+            )
         }
-        IrActualizer.actualize(
-            result.irModuleFragment,
-            listOf(commonIrOutput.irModuleFragment)
-        )
-    } else {
-        result = platformOutput.convertToIr(
-            fir2IrExtensions,
-            irGeneratorExtensions,
-            linkViaSignatures = linkViaSignatures,
-            commonMemberStorage = commonMemberStorage,
-            irBuiltIns = null,
-            irMangler,
-            visibilityConverter,
-            kotlinBuiltIns,
-        )
     }
 
     return result

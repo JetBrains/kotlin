@@ -11,10 +11,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensions
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
-import org.jetbrains.kotlin.cli.common.CLICompiler
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.CommonCompilerPerformanceManager
-import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsage
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -30,15 +27,12 @@ import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.backend.jvm.*
-import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
-import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
-import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isArrayType
@@ -50,13 +44,12 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import java.io.File
 
 object FirKotlinToJvmBytecodeCompiler {
@@ -66,14 +59,15 @@ object FirKotlinToJvmBytecodeCompiler {
         messageCollector: MessageCollector,
         allSources: List<KtFile>,
         buildFile: File?,
-        chunk: List<Module>,
-        extendedAnalysisMode: Boolean
+        chunk: List<Module>
     ): Boolean {
         val performanceManager = projectConfiguration.get(CLIConfigurationKeys.PERF_MANAGER)
 
         val notSupportedPlugins = mutableListOf<String?>().apply {
-            projectConfiguration.get(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS).collectIncompatiblePluginNamesTo(this, ComponentRegistrar::supportsK2)
-            projectConfiguration.get(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS).collectIncompatiblePluginNamesTo(this, CompilerPluginRegistrar::supportsK2)
+            projectConfiguration.get(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)
+                .collectIncompatiblePluginNamesTo(this, ComponentRegistrar::supportsK2)
+            projectConfiguration.get(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)
+                .collectIncompatiblePluginNamesTo(this, CompilerPluginRegistrar::supportsK2)
         }
 
         if (notSupportedPlugins.isNotEmpty()) {
@@ -109,8 +103,7 @@ object FirKotlinToJvmBytecodeCompiler {
                 performanceManager,
                 targetIds,
                 incrementalComponents,
-                extendedAnalysisMode,
-                firExtensionRegistrars = project?.let { FirExtensionRegistrar.getInstances(it) } ?: emptyList(),
+                extensionRegistrars = project?.let { FirExtensionRegistrar.getInstances(it) } ?: emptyList(),
                 irGenerationExtensions = project?.let { IrGenerationExtension.getInstances(it) } ?: emptyList()
             )
             val generationState = context.compileModule() ?: return false
@@ -118,7 +111,7 @@ object FirKotlinToJvmBytecodeCompiler {
         }
 
         val mainClassFqName: FqName? = runIf(chunk.size == 1 && projectConfiguration.get(JVMConfigurationKeys.OUTPUT_JAR) != null) {
-            findMainClass(outputs.single().first.platformOutput.fir)
+            findMainClass(outputs.single().first.outputs.last().fir)
         }
 
         return writeOutputsIfNeeded(
@@ -204,97 +197,21 @@ object FirKotlinToJvmBytecodeCompiler {
         providerAndScopeForIncrementalCompilation?.precompiledBinariesFileScope?.let {
             librariesScope -= it
         }
-
-        val languageVersionSettings = moduleConfiguration.languageVersionSettings
-
-        val isMppEnabled = languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
-
-        val sessionProvider = FirProjectSessionProvider()
-
-        val moduleName = module.getModuleName()
-        val libraryList = createFirLibraryListAndSession(
-            moduleName, moduleConfiguration, projectEnvironment,
-            scope = librariesScope, librariesScope = librariesScope, friendPaths = module.getFriendPaths(), sessionProvider
+        val rootModuleName = module.getModuleName()
+        val libraryList = createLibraryListForJvm(rootModuleName, moduleConfiguration, module.getFriendPaths())
+        val sessionsWithSources = prepareJvmSessions(
+            ktFiles, moduleConfiguration, projectEnvironment, rootModuleName,
+            extensionRegistrars, librariesScope, libraryList,
+            isCommonSource = { it.isCommonSource == true },
+            fileBelongsToModule = { file, moduleName -> file.hmppModuleName == moduleName },
+            createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
         )
 
-        val commonModuleData = runIf(isMppEnabled) {
-            FirModuleDataImpl(
-                Name.identifier("${module.getModuleName()}-common"),
-                libraryList.regularDependencies,
-                listOf(),
-                libraryList.friendsDependencies,
-                JvmPlatforms.unspecifiedJvmPlatform,
-                JvmPlatformAnalyzerServices
-            )
-        }
-        val platformModuleData = FirModuleDataImpl(
-            Name.identifier(module.getModuleName()),
-            libraryList.regularDependencies,
-            listOfNotNull(commonModuleData),
-            libraryList.friendsDependencies,
-            JvmPlatforms.unspecifiedJvmPlatform,
-            JvmPlatformAnalyzerServices
-        )
-
-        val lookupTracker = moduleConfiguration.get(CommonConfigurationKeys.LOOKUP_TRACKER)
-        val enumWhenTracker = moduleConfiguration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER)
-        val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
-            if (extendedAnalysisMode) {
-                registerExtendedCommonCheckers()
-            }
+        val outputs = sessionsWithSources.map { (session, sources) ->
+            buildResolveAndCheckFir(session, sources, diagnosticsReporter)
         }
 
-        val commonKtFiles = mutableListOf<KtFile>()
-        val platformKtFiles = mutableListOf<KtFile>()
-        val commonSourcesScope: AbstractProjectFileSearchScope?
-        val platformSourcesScope: AbstractProjectFileSearchScope
-        if (isMppEnabled) {
-            for (ktFile in ktFiles) {
-                (if (ktFile.isCommonSource == true) commonKtFiles else platformKtFiles).add(ktFile)
-            }
-            commonSourcesScope = projectEnvironment.getSearchScopeByPsiFiles(commonKtFiles)
-            platformSourcesScope = sourceScope - commonSourcesScope
-        } else {
-            platformKtFiles.addAll(ktFiles)
-            commonSourcesScope = null
-            platformSourcesScope = sourceScope
-        }
-
-        val commonSession = runIf(isMppEnabled) {
-            FirJvmSessionFactory.createModuleBasedSession(
-                commonModuleData!!,
-                sessionProvider,
-                commonSourcesScope!!,
-                projectEnvironment,
-                providerAndScopeForIncrementalCompilation,
-                firExtensionRegistrars,
-                languageVersionSettings,
-                lookupTracker,
-                enumWhenTracker,
-                needRegisterJavaElementFinder = true,
-                registerExtraComponents = {},
-                sessionConfigurator
-            )
-        }
-        val platformSession = FirJvmSessionFactory.createModuleBasedSession(
-            platformModuleData,
-            sessionProvider,
-            platformSourcesScope,
-            projectEnvironment,
-            providerAndScopeForIncrementalCompilation,
-            firExtensionRegistrars,
-            languageVersionSettings,
-            lookupTracker,
-            enumWhenTracker,
-            needRegisterJavaElementFinder = true,
-            registerExtraComponents = {},
-            sessionConfigurator,
-        )
-
-        val commonOutput = commonSession?.let { buildResolveAndCheckFir(it, commonKtFiles, diagnosticsReporter) }
-        val platformOutput = buildResolveAndCheckFir(platformSession, platformKtFiles, diagnosticsReporter)
-
-        return if (syntaxErrors || diagnosticsReporter.hasErrors) null else FirResult(platformOutput, commonOutput)
+        return runUnless(syntaxErrors || diagnosticsReporter.hasErrors) { FirResult(outputs) }
     }
 
     private fun CompilationContext.runBackend(
@@ -365,8 +282,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val performanceManager: CommonCompilerPerformanceManager?,
         val targetIds: List<TargetId>?,
         val incrementalComponents: IncrementalCompilationComponents?,
-        val extendedAnalysisMode: Boolean,
-        val firExtensionRegistrars: List<FirExtensionRegistrar>,
+        val extensionRegistrars: List<FirExtensionRegistrar>,
         val irGenerationExtensions: Collection<IrGenerationExtension>
     )
 }
