@@ -407,13 +407,6 @@ class FunctionInlining(
             override fun visitElement(element: IrElement) = element.accept(this, null)
         }
 
-        private fun IrExpression.implicitCastIfNeededTo(type: IrType) =
-            // No need to cast expressions of type nothing
-            if (type == this.type || (insertAdditionalImplicitCasts && this.type == context.irBuiltIns.nothingType))
-                this
-            else
-                IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this)
-
         // With `insertAdditionalImplicitCasts` flag we sometimes insert
         // casts to inline lambda parameters before calling `invoke` on them.
         // Unwrapping these casts helps us satisfy inline lambda call detection logic.
