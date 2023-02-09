@@ -1,11 +1,22 @@
+import org.gradle.api.internal.GradleInternal
+
 pluginManagement {
     apply from: '../repo/scripts/cache-redirector.settings.gradle.kts'
     apply from: '../repo/scripts/kotlin-bootstrap.settings.gradle.kts'
+
+    if (((GradleInternal) gradle).isRootBuild()) {
+        includeBuild '../repo/gradle-settings-conventions'
+    }
+
     repositories {
         maven { url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
         mavenCentral()
         gradlePluginPortal()
     }
+}
+
+plugins {
+    id "build-cache"
 }
 
 File versionPropertiesFile = new File(rootProject.projectDir.parentFile, "gradle/versions.properties")
@@ -27,18 +38,6 @@ dependencyResolutionManagement {
                 }
             }
         }
-    }
-}
-
-buildscript {
-    repositories {
-        maven { url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies" }
-        mavenCentral()
-    }
-
-    def buildGradlePluginVersion = ext["kotlin.build.gradlePlugin.version"]
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
     }
 }
 

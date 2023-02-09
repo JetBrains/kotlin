@@ -1,4 +1,6 @@
 pluginManagement {
+    includeBuild("repo/gradle-settings-conventions")
+
     apply from: 'repo/scripts/cache-redirector.settings.gradle.kts'
     apply from: 'repo/scripts/kotlin-bootstrap.settings.gradle.kts'
 
@@ -13,17 +15,11 @@ pluginManagement {
     }
 }
 
-buildscript {
-    def buildGradlePluginVersion = ext["kotlin.build.gradlePlugin.version"]
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${buildGradlePluginVersion}")
-    }
-}
-
 plugins {
     id "com.gradle.enterprise" version "3.11.2"
     id "com.gradle.common-custom-user-data-gradle-plugin" version "1.8.1" apply false
     id "org.gradle.toolchains.foojay-resolver-convention" version "0.4.0"
+    id "build-cache"
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
@@ -50,26 +46,6 @@ gradleEnterprise {
             ipAddresses { addresses -> ["0.0.0.0"] }
             hostname { host -> "concealed" }
             username { name -> isTeamCity ? "TeamCity" : "concealed" }
-        }
-    }
-}
-
-buildCache {
-    local {
-        enabled = buildProperties.localBuildCacheEnabled
-        if (buildProperties.localBuildCacheDirectory != null) {
-            directory = buildProperties.localBuildCacheDirectory
-        }
-    }
-
-    if (buildProperties.buildCacheUrl != null) {
-        remote(HttpBuildCache) {
-            url = buildProperties.buildCacheUrl
-            push = buildProperties.pushToBuildCache
-            if (buildProperties.buildCacheUser != null && buildProperties.buildCachePassword != null) {
-                credentials.username = buildProperties.buildCacheUser
-                credentials.password = buildProperties.buildCachePassword
-            }
         }
     }
 }
