@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
 class IrTypeSystemContextWithAdditionalAxioms(

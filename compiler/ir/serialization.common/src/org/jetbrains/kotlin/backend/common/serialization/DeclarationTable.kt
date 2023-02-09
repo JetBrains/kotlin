@@ -32,7 +32,7 @@ abstract class GlobalDeclarationTable(
 ) {
     val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
 
-    protected val table = mutableMapOf<IrDeclaration, IdSignature>()
+    protected val table = hashMapOf<IrDeclaration, IdSignature>()
 
     constructor(mangler: KotlinMangler.IrMangler) : this(mangler, IdSignatureClashTracker.DEFAULT_TRACKER)
 
@@ -53,7 +53,7 @@ abstract class GlobalDeclarationTable(
 }
 
 open class DeclarationTable(globalTable: GlobalDeclarationTable) {
-    protected val table = mutableMapOf<IrDeclaration, IdSignature>()
+    protected val table = hashMapOf<IrDeclaration, IdSignature>()
     protected open val globalDeclarationTable: GlobalDeclarationTable = globalTable
     // TODO: we need to disentangle signature construction with declaration tables.
     open val signaturer: IdSignatureSerializer = IdSignatureSerializer(globalTable.publicIdSignatureComputer, this)

@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
-import org.jetbrains.kotlin.backend.common.serialization.IdSignatureDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryBytesSource
-import org.jetbrains.kotlin.backend.common.serialization.IrLibraryFileFromBytes
-import org.jetbrains.kotlin.backend.common.serialization.codedInputStream
+import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
@@ -25,6 +22,7 @@ internal class KotlinLibraryHeader(library: KotlinLibrary) {
             add(KotlinSourceFile(fileProto.fileEntry.name))
         }
 
+        val internationService = DefaultIrInternationService()
         val deserializers = buildMapUntil(filesCount) {
             put(files[it], IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
                 private fun err(): Nothing = icError("Not supported")
@@ -34,7 +32,7 @@ internal class KotlinLibraryHeader(library: KotlinLibrary) {
                 override fun string(index: Int): ByteArray = library.string(index, it)
                 override fun body(index: Int): ByteArray = err()
                 override fun debugInfo(index: Int): ByteArray? = null
-            }), null))
+            }), null, internationService))
         }
 
         sourceFiles = files

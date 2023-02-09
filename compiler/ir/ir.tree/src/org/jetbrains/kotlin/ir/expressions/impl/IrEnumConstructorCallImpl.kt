@@ -34,9 +34,11 @@ class IrEnumConstructorCallImpl(
     override val origin: IrStatementOrigin?
         get() = null
 
-    override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
+    override val typeArgumentsByIndex: Array<IrType?> =
+        if (typeArgumentsCount == 0) IrCallEmptyArrays.types else arrayOfNulls(typeArgumentsCount)
 
-    override val argumentsByParameterIndex: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
+    override val argumentsByParameterIndex: Array<IrExpression?> =
+        if (valueArgumentsCount == 0) IrCallEmptyArrays.expressions else arrayOfNulls(valueArgumentsCount)
 
     override var contextReceiversCount = 0
 

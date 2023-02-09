@@ -175,7 +175,7 @@ val IrClassSymbol.starProjectedType: IrSimpleType
     get() = IrSimpleTypeImpl(
         this,
         SimpleTypeNullability.NOT_SPECIFIED,
-        arguments = owner.typeConstructorParameters.map { IrStarProjectionImpl }.toList(),
+        arguments = owner.typeConstructorParameters.map { IrStarProjectionImpl }.toList().ifEmpty { emptyList() },
         annotations = emptyList()
     )
 

@@ -27,14 +27,15 @@ abstract class BasicIrModuleDeserializer(
     override val klib: IrLibrary,
     override val strategyResolver: (String) -> DeserializationStrategy,
     libraryAbiVersion: KotlinAbiVersion,
+    private val internationService: IrInternationService,
     private val containsErrorCode: Boolean = false
 ) : IrModuleDeserializer(moduleDescriptor, libraryAbiVersion) {
 
-    private val fileToDeserializerMap = mutableMapOf<IrFile, IrFileDeserializer>()
+    private val fileToDeserializerMap = hashMapOf<IrFile, IrFileDeserializer>()
 
     private val moduleDeserializationState = ModuleDeserializationState()
 
-    protected val moduleReversedFileIndex = mutableMapOf<IdSignature, FileDeserializationState>()
+    protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
 
     override val moduleDependencies by lazy {
         moduleDescriptor.allDependencyModules
@@ -45,9 +46,7 @@ abstract class BasicIrModuleDeserializer(
     override fun fileDeserializers(): Collection<IrFileDeserializer> {
         return fileToDeserializerMap.values.filterNot { strategyResolver(it.file.fileEntry.name).onDemand }
     }
-
-    protected lateinit var fileDeserializationStates: List<FileDeserializationState>
-
+    
     override fun init(delegate: IrModuleDeserializer) {
         val fileCount = klib.fileCount()
 
@@ -63,8 +62,6 @@ abstract class BasicIrModuleDeserializer(
             if (!strategyResolver(file.fileEntry.name).onDemand)
                 moduleFragment.files.add(file)
         }
-
-        this.fileDeserializationStates = fileDeserializationStates
 
         fileToDeserializerMap.values.forEach { it.symbolDeserializer.deserializeExpectActualMapping() }
     }
@@ -128,7 +125,8 @@ abstract class BasicIrModuleDeserializer(
             fileStrategy.needBodies,
             allowErrorNodes,
             fileStrategy.inlineBodies,
-            moduleDeserializer
+            moduleDeserializer,
+            internationService
         )
 
         fileToDeserializerMap[file] = fileDeserializationState.fileDeserializer
@@ -196,6 +194,7 @@ abstract class BasicIrModuleDeserializer(
         override fun toString(): String = klib.toString()
     }
 }
+
 
 fun IrModuleDeserializer.findModuleDeserializerForTopLevelId(idSignature: IdSignature): IrModuleDeserializer? {
     if (idSignature in this) return this

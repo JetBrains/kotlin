@@ -610,7 +610,7 @@ fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
                 else -> null
             }
     }
-    return result
+    return result.ifEmpty { emptyList() }
 }
 
 

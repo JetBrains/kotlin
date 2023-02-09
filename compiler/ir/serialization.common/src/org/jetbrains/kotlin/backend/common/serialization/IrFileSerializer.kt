@@ -123,7 +123,7 @@ open class IrFileSerializer(
     private val normalizeAbsolutePaths: Boolean = false,
     private val sourceBaseDirs: Collection<String>
 ) {
-    private val loopIndex = mutableMapOf<IrLoop, Int>()
+    private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
 
     // For every actual we keep a corresponding expects' uniqIds.
@@ -132,15 +132,15 @@ open class IrFileSerializer(
 
     // The same type can be used multiple times in a file
     // so use this index to store type data only once.
-    private val protoTypeMap = mutableMapOf<IrTypeKey, Int>()
+    private val protoTypeMap = hashMapOf<IrTypeKey, Int>()
     protected val protoTypeArray = arrayListOf<ProtoType>()
 
-    private val protoStringMap = mutableMapOf<String, Int>()
+    private val protoStringMap = hashMapOf<String, Int>()
     protected val protoStringArray = arrayListOf<String>()
 
     // The same signature could be used multiple times in a file
     // so use this index to store signature only once.
-    private val protoIdSignatureMap = mutableMapOf<IdSignature, Int>()
+    private val protoIdSignatureMap = hashMapOf<IdSignature, Int>()
     protected val protoIdSignatureArray = arrayListOf<ProtoIdSignature>()
 
     protected val protoBodyArray = mutableListOf<XStatementOrExpression>()

@@ -65,6 +65,7 @@ fun deserializeFromByteArray(
         fileSignature = dummyFileSignature,
         /* TODO */ actuals = emptyList(),
         enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
+        internationService = DefaultIrInternationService(),
         handleExpectActualMapping = { _, symbol -> symbol } // no expect declarations
     ) { idSignature, symbolKind ->
         referencePublicSymbol(symbolTable, idSignature, symbolKind)
@@ -85,6 +86,7 @@ fun deserializeFromByteArray(
         DefaultFakeOverrideClassFilter,
         fakeOverrideBuilder,
         compatibilityMode = CompatibilityMode.CURRENT,
+        DefaultIrInternationService(),
     )
     for (declarationProto in irProto.declarationList) {
         deserializer.deserializeDeclaration(declarationProto, setParent = false)
