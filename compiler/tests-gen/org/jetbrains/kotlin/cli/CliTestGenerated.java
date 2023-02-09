@@ -166,6 +166,11 @@ public class CliTestGenerated extends AbstractCliTest {
         public void testSourceNotInAnyModule() throws Exception {
             runTest("compiler/testData/cli/jvm/hmpp/sourceNotInAnyModule.args");
         }
+
+        @TestMetadata("successfulCompilation.args")
+        public void testSuccessfulCompilation() throws Exception {
+            runTest("compiler/testData/cli/jvm/hmpp/successfulCompilation.args");
+        }
     }
 
     @TestMetadata("compiler/testData/cli/jvm")
@@ -1453,6 +1458,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/sourceMapRootMultiple.args");
         }
 
+        @TestMetadata("successfulHmpp.args")
+        public void testSuccessfulHmpp() throws Exception {
+            runTest("compiler/testData/cli/js/successfulHmpp.args");
+        }
+
         @TestMetadata("suppressAllWarningsJS.args")
         public void testSuppressAllWarningsJS() throws Exception {
             runTest("compiler/testData/cli/js/suppressAllWarningsJS.args");
@@ -1617,6 +1627,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("optionalExpectationUsageWithFir.args")
         public void testOptionalExpectationUsageWithFir() throws Exception {
             runTest("compiler/testData/cli/metadata/optionalExpectationUsageWithFir.args");
+        }
+
+        @TestMetadata("successfulHmpp.args")
+        public void testSuccessfulHmpp() throws Exception {
+            runTest("compiler/testData/cli/metadata/successfulHmpp.args");
         }
     }
 }
