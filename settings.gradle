@@ -16,9 +16,9 @@ pluginManagement {
 }
 
 plugins {
-    id "org.gradle.toolchains.foojay-resolver-convention" version "0.4.0"
     id "build-cache"
     id "gradle-enterprise"
+    id "jvm-toolchain-provisioning"
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)

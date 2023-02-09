@@ -18,6 +18,7 @@ pluginManagement {
 plugins {
     id "build-cache"
     id "gradle-enterprise"
+    id "jvm-toolchain-provisioning"
 }
 
 File versionPropertiesFile = new File(rootProject.projectDir.parentFile, "gradle/versions.properties")
