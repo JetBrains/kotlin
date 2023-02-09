@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.config.LanguageVersion
 
 // This is used for API version configuration for both frontends
 // TODO: Deprecated and only used in old FP tests
@@ -17,7 +18,6 @@ internal val LANGUAGE_VERSION_K2: String = System.getProperty("fir.bench.languag
 class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
 
     override fun configureArguments(args: K2JVMCompilerArguments, moduleData: ModuleData) {
-        args.useK2 = true
         args.useIR = true
         args.languageVersion = LANGUAGE_VERSION_K2
 
@@ -33,6 +33,10 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
             )
             args.noStdlib = true
             args.noReflect = true
+        }
+
+        require(LanguageVersion.fromVersionString(args.languageVersion)!! >= LanguageVersion.KOTLIN_2_0) {
+            "Language version misconfiguration for K2 FP: ${args.languageVersion} < 2.0"
         }
     }
 
