@@ -1097,6 +1097,22 @@ __attribute__((swift_name("Kt55736Kt")))
 @end
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt56521")))
+@interface KtKt56521 : KtBase
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
++ (instancetype)kt56521 __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KtKt56521 *shared __attribute__((swift_name("shared")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt56521Kt")))
+@interface KtKt56521Kt : KtBase
++ (KtKt56521 *)getKt56521 __attribute__((swift_name("getKt56521()")));
+@property (class) int32_t initialized __attribute__((swift_name("initialized")));
+@end
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase
 + (NSString *)readDataFromLibraryClassInput:(KtA *)input __attribute__((swift_name("readDataFromLibraryClass(input:)")));
