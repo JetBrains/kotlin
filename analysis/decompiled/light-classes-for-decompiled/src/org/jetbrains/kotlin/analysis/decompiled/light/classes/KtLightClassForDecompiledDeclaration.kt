@@ -17,7 +17,7 @@ import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledField
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
-import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
+import org.jetbrains.kotlin.analysis.providers.createAllLibrariesModificationTracker
 import org.jetbrains.kotlin.asJava.classes.ClassInnerStuffCache
 import org.jetbrains.kotlin.asJava.classes.getEnumEntriesPsiMethod
 import org.jetbrains.kotlin.asJava.classes.lazyPub
@@ -36,7 +36,7 @@ open class KtLightClassForDecompiledDeclaration(
         ClassInnerStuffCache(
             /* aClass = */ this,
             /* generateEnumMethods = */ true,
-            /* modificationTracker = */ KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker,
+            /* modificationTracker = */ project.createAllLibrariesModificationTracker(),
         )
     }
 
