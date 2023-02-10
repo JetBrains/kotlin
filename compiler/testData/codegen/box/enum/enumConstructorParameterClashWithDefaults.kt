@@ -1,3 +1,4 @@
+// WITH_STDLIB
 enum class A(
     name: String,
     ordinal: Int

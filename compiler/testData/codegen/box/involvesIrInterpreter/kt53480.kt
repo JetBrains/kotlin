@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // TARGET_BACKEND: JVM_IR
 // FILE: J.java
 public class J {

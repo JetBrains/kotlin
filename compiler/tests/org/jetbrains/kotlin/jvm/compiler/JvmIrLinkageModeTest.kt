@@ -48,14 +48,14 @@ class JvmIrLinkageModeTest : CodegenTestCase() {
 
     fun testLinkageViaDescriptors() {
         enableLinkageViaSignatures = false
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY)
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.NO_KOTLIN_REFLECT)
         loadText(source)
         generateAndCreateClassLoader(true)
     }
 
     fun testLinkageViaSignatures() {
         enableLinkageViaSignatures = true
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.JDK_ONLY)
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.NO_KOTLIN_REFLECT)
         loadText(source)
         generateAndCreateClassLoader(true)
     }

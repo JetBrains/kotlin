@@ -1,3 +1,4 @@
+// WITH_STDLIB
 enum class Build { Debug, Release }
 
 fun applySomething(build: Build) = when (build) {

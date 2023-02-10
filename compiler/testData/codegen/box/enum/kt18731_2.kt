@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // SKIP_DCE_DRIVEN
 
 enum class Bar {

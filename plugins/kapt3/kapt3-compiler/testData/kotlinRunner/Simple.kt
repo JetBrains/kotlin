@@ -1,3 +1,5 @@
+// WITH_STDLIB
+
 package test
 
 /**

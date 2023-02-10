@@ -1,3 +1,4 @@
+// WITH_STDLIB
 class A {
     companion object {}
     enum class E {

@@ -1,3 +1,4 @@
+// WITH_STDLIB
 @AllOpen
 annotation class AllOpen
 

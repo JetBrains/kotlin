@@ -1,3 +1,4 @@
+// WITH_STDLIB
 class Foo {
   enum class MyClass() {
   }

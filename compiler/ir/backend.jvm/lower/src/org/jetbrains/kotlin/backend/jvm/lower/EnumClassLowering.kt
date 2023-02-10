@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 
 internal val enumClassPhase = makeIrFilePhase(
     ::EnumClassLowering,
@@ -122,21 +123,26 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
             // Construct the synthetic $VALUES field, which contains an array of all enum entries by calling $values()
             val valuesField = buildValuesField(valuesHelperFunction)
 
-            val entriesField: IrField?
-            if (supportsEnumEntries) {
-                // Constructs the synthetic $entries() function that returns plain $VALUES without copy
-                val entriesHelperFunction = buildEntriesHelperFunction(valuesField)
+            val entriesField = when {
+                irClass.declarations.any { it.isGetEntriesFunction } -> {
+                    // Constructs the synthetic $entries() function that returns plain $VALUES without copy
+                    val entriesHelperFunction = buildEntriesHelperFunction(valuesField)
 
-                /*
-                 * Add synthetic $ENTRIES field and binds its initializer to
-                 * ```
-                 * val supplier: () -> E[] = indy LMF $entries
-                 * $ENTRIES = EnumEntries(supplier)
-                 * ```
-                 */
-                entriesField = buildEntriesField(entriesHelperFunction)
-            } else {
-                entriesField = null
+                    /*
+                     * Add synthetic $ENTRIES field and binds its initializer to
+                     * ```
+                     * val supplier: () -> E[] = indy LMF $entries
+                     * $ENTRIES = EnumEntries(supplier)
+                     * ```
+                     */
+                    buildEntriesField(entriesHelperFunction)
+                }
+                supportsEnumEntries -> {
+                    error("kotlin.enums.EnumEntries is not available to the frontend. Is non-full kotlin stdlib being used?")
+                }
+                else -> {
+                    null
+                }
             }
 
             // Add synthetic parameters to enum constructors and implement the values and valueOf functions
@@ -145,6 +151,9 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
             // Add synthetic arguments to enum constructor calls and remap enum constructor parameters
             irClass.transformChildrenVoid(EnumClassCallTransformer())
         }
+
+        private val IrDeclaration.isGetEntriesFunction: Boolean
+            get() = this is IrFunction && name == SpecialNames.ENUM_GET_ENTRIES && origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
 
         private fun buildEnumEntryField(enumEntry: IrEnumEntry): IrField =
             context.cachedDeclarations.getFieldForEnumEntry(enumEntry).apply {

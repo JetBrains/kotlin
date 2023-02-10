@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // SKIP_MANGLE_VERIFICATION
 enum class Foo(
         val x: String,

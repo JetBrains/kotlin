@@ -1,3 +1,4 @@
+// WITH_STDLIB
 enum class E {
     OK, NOT_OK
 }

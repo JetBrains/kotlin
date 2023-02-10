@@ -11,6 +11,7 @@ public final enum class A$B$C {
     private method <init>(p0: java.lang.String, p1: int): void
     public static method values(): A$B$C[]
     public static method valueOf(p0: java.lang.String): A$B$C
+    public static @org.jetbrains.annotations.NotNull method getEntries(): kotlin.enums.EnumEntries
     private synthetic final static method $values(): A$B$C[]
     private synthetic final static method $entries(): A$B$C[]
     static method <clinit>(): void

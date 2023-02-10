@@ -1,3 +1,4 @@
+// WITH_STDLIB
 enum class X {
     B {
         override val value = "OK"

@@ -47,6 +47,11 @@ public enum EnumClass {
 
     EnumClass() {
     }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<test.EnumClass> getEntries() {
+        return null;
+    }
 }
 
 ////////////////////
@@ -61,5 +66,10 @@ public enum EnumClass2 {
     private final java.lang.String blah = null;
 
     EnumClass2(java.lang.String blah) {
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static kotlin.enums.EnumEntries<test.EnumClass2> getEntries() {
+        return null;
     }
 }

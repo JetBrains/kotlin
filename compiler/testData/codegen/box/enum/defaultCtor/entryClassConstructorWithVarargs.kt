@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_BACKEND: JS
 
 

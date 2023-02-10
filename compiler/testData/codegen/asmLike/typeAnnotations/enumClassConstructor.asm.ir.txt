@@ -25,6 +25,10 @@ public class foo/Kotlin : java/lang/Enum {
 
     public void <init>(java.lang.String $enum$name, int $enum$ordinal, java.lang.String s, kotlin.jvm.internal.DefaultConstructorMarker $constructor_marker)
 
+    ()Lkotlin/enums/EnumEntries<Lfoo/Kotlin;>;
+    public static kotlin.enums.EnumEntries getEntries()
+      @Lorg/jetbrains/annotations/NotNull;([]) // invisible
+
     public static foo.Kotlin valueOf(java.lang.String value)
 
     public static foo.Kotlin[] values()

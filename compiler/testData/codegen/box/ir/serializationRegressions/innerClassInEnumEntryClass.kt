@@ -1,3 +1,4 @@
+// WITH_STDLIB
 
 // MODULE: lib
 // FILE: lib.kt
