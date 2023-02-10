@@ -36,8 +36,14 @@ class ConeOverloadConflictResolver(
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean,
         discriminateAbstracts: Boolean
+    ): Set<Candidate> = chooseMaximallySpecificCandidates(candidates, discriminateAbstracts, discriminateGenerics = true)
+
+    private fun chooseMaximallySpecificCandidates(
+        candidates: Set<Candidate>,
+        discriminateAbstracts: Boolean,
+        // Set to 'false' only for property-for-invoke case
+        discriminateGenerics: Boolean,
     ): Set<Candidate> {
         if (candidates.size == 1) return candidates
         val fixedCandidates =
@@ -62,7 +68,7 @@ class ConeOverloadConflictResolver(
         }
 
         val bestInvokeReceiver =
-            chooseMaximallySpecificCandidates(propertyReceiverCandidates, discriminateGenerics = false)
+            chooseMaximallySpecificCandidates(propertyReceiverCandidates, discriminateGenerics = false, discriminateAbstracts = false)
                 .singleOrNull() ?: return candidates
 
         return candidates.filterTo(mutableSetOf()) { it.callInfo.candidateForCommonInvokeReceiver == bestInvokeReceiver }

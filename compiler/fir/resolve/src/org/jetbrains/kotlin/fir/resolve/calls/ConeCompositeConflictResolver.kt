@@ -10,7 +10,6 @@ class ConeCompositeConflictResolver(
 ) : ConeCallConflictResolver() {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean,
         discriminateAbstracts: Boolean
     ): Set<Candidate> {
         if (candidates.size <= 1) return candidates
@@ -18,7 +17,7 @@ class ConeCompositeConflictResolver(
         var index = 0
         while (currentCandidates.size > 1 && index < conflictResolvers.size) {
             val conflictResolver = conflictResolvers[index++]
-            currentCandidates = conflictResolver.chooseMaximallySpecificCandidates(candidates, discriminateGenerics, discriminateAbstracts)
+            currentCandidates = conflictResolver.chooseMaximallySpecificCandidates(candidates, discriminateAbstracts)
         }
         return currentCandidates
     }
