@@ -6248,7 +6248,7 @@ tasks.register("override_konan_properties0", KonanDriverTest) {
             : '-Xoverride-konan-properties=llvmInlineThreshold=76'
     flags = [
             "-opt",
-            "-Xverbose-phases=BitcodeOptimization",
+            "-Xverbose-phases=MandatoryBitcodeLLVMPostprocessingPhase",
             overrides
     ]
     compilerMessages = true
@@ -6454,7 +6454,7 @@ if (HostManager.@Companion.hostIsMac) {
         targetName = "watchos_arm32"
         // Perform check after optimization pipeline because
         // LLVM might infer attributes.
-        phaseToCheck = "BitcodeOptimization"
+        phaseToCheck = "LTOBitcodeOptimization"
     }
 
     fileCheckTest("filecheck_redundant_safepoints_removal_smallbinary") {
