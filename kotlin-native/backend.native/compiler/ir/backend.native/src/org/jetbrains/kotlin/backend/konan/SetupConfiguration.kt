@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArguments) = with(KonanConfigKeys) {
-    val commonSources = arguments.commonSources?.toSet().orEmpty()
+    val commonSources = arguments.commonSources?.toSet().orEmpty().map { it.absoluteNormalizedFile() }
     arguments.freeArgs.forEach {
-        addKotlinSourceRoot(it, it in commonSources)
+        addKotlinSourceRoot(it, it.absoluteNormalizedFile() in commonSources)
     }
 
     // Can be overwritten by explicit arguments below.
@@ -252,6 +252,8 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
     putIfNotNull(SAVE_LLVM_IR_DIRECTORY, arguments.saveLlvmIrDirectory)
 }
+
+private fun String.absoluteNormalizedFile() = java.io.File(this).absoluteFile.normalize()
 
 internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: KonanConfig) = with(KonanConfigKeys) {
     put(TARGET, konanConfig.target.toString())
