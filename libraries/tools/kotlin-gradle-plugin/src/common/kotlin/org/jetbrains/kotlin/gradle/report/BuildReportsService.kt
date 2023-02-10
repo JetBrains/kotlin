@@ -261,7 +261,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             when (key.type) {
                 ValueType.BYTES -> "${key.readableString}: ${formatSize(value)}"
                 ValueType.MILLISECONDS -> DATE_FORMATTER.format(value)
-                else -> "${key.readableString}: $value}"
+                else -> "${key.readableString}: $value"
             }
         }
         timeData.union(perfData).joinTo(readableString, ",", "Performance: [", "]")

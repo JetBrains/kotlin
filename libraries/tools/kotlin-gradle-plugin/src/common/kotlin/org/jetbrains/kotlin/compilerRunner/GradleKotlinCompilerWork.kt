@@ -212,6 +212,9 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 log.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
             }
         }
+
+        val memoryUsageBeforeBuild = daemon.getUsedMemory(withGC = true).takeIf { it.isGood }?.get()
+
         val targetPlatform = when (compilerClassName) {
             KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM
             KotlinCompilerClass.JS -> CompileService.TargetPlatform.JS
@@ -231,6 +234,16 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             bufferingMessageCollector.flush(messageCollector)
             throw e
         } finally {
+            val memoryUsageAfterBuild = daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
+
+            if (memoryUsageAfterBuild == null || memoryUsageBeforeBuild == null) {
+                log.debug("Unable to calculate memory usage")
+            } else {
+                metrics.addMetric(BuildPerformanceMetric.DAEMON_INCREASED_MEMORY, memoryUsageAfterBuild - memoryUsageBeforeBuild)
+                metrics.addMetric(BuildPerformanceMetric.DAEMON_MEMORY_USAGE, memoryUsageAfterBuild)
+            }
+
+
             // todo: can we clear cache on the end of session?
             // often source of the NoSuchObjectException and UnmarshalException, probably caused by the failed/crashed/exited daemon
             // TODO: implement a proper logic to avoid remote calls in such cases

@@ -15,6 +15,9 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
 
     BUNDLE_SIZE(readableString = "Total size of the final bundle", type = ValueType.BYTES),
 
+    DAEMON_INCREASED_MEMORY(readableString = "Increase memory usage", type = ValueType.BYTES),
+    DAEMON_MEMORY_USAGE(readableString = "Total memory usage at the end of build", type = ValueType.BYTES),
+
     COMPILE_ITERATION(parent = null, "Total compiler iteration", type = ValueType.NUMBER),
         ANALYZED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
         CODE_GENERATED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines for code generation", type = ValueType.NUMBER),
@@ -39,7 +42,7 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
     START_TASK_ACTION_EXECUTION(readableString = "Start time of task action", type = ValueType.MILLISECONDS),
     CALL_KOTLIN_DAEMON(readableString = "Finish gradle part of task execution", type = ValueType.NANOSECONDS),
     CALL_WORKER(readableString = "Worker submit time", type = ValueType.NANOSECONDS),
-    START_WORKER_EXECUTION(readableString = "Start time of werker execution", type = ValueType.NANOSECONDS),
+    START_WORKER_EXECUTION(readableString = "Start time of worker execution", type = ValueType.NANOSECONDS),
     START_KOTLIN_DAEMON_EXECUTION(readableString = "Start time of kotlin daemon task execution", type = ValueType.NANOSECONDS),
     FINISH_KOTLIN_DAEMON_EXECUTION(readableString = "Finish kotlin daemon execution", type = ValueType.MILLISECONDS),
     ;

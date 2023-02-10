@@ -723,8 +723,8 @@ class CompileServiceImpl(
                 (compilerId.compilerClasspath.all { expectedCompilerId.compilerClasspath.contains(it) }) &&
                 !classpathWatcher.isChanged
 
-    override fun getUsedMemory(): CompileService.CallResult<Long> =
-        ifAlive { CompileService.CallResult.Good(usedMemory(withGC = true)) }
+    override fun getUsedMemory(withGC: Boolean): CompileService.CallResult<Long> =
+        ifAlive { CompileService.CallResult.Good(usedMemory(withGC = withGC)) }
 
     override fun shutdown(): CompileService.CallResult<Nothing> = ifAliveExclusive(minAliveness = Aliveness.LastSession) {
         shutdownWithDelay()
