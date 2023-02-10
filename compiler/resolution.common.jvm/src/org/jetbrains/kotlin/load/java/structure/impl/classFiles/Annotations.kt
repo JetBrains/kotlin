@@ -213,11 +213,18 @@ class BinaryJavaAnnotation private constructor(
         context.resolveByInternalName(Type.getType(desc).internalName)
     }
 
+    private val fqName by lazy(LazyThreadSafetyMode.NONE) {
+        context.mapInternalNameToClassId(Type.getType(desc).internalName).asSingleFqName()
+    }
+
     override val classId: ClassId
         get() = (classifierResolutionResult.classifier as? JavaClass)?.classId
             ?: ClassId.topLevel(FqName(classifierResolutionResult.qualifiedName))
 
     override fun resolve() = classifierResolutionResult.classifier as? JavaClass
+    override fun isResolvedTo(fqName: FqName): Boolean {
+        return if (fqName != this.fqName) false else classId.asSingleFqName() == fqName
+    }
 }
 
 class BinaryJavaAnnotationVisitor(

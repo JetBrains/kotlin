@@ -132,7 +132,7 @@ abstract class FirJavaFacade(
     }
 
     private fun JavaClass.hasMetadataAnnotation(): Boolean =
-        annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }
+        annotations.any { it.isResolvedTo(JvmAnnotationNames.METADATA_FQ_NAME) }
 
     private class ValueParametersForAnnotationConstructor {
         val valueParameters: MutableMap<JavaMethod, FirJavaValueParameter> = linkedMapOf()
