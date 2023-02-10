@@ -33143,6 +33143,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("hmppSimple.kt")
+            public void testHmppSimple() throws Exception {
+                runTest("compiler/testData/codegen/box/multiplatform/multiModule/hmppSimple.kt");
+            }
+
+            @Test
             @TestMetadata("independentCommonSourceModules.kt")
             public void testIndependentCommonSourceModules() throws Exception {
                 runTest("compiler/testData/codegen/box/multiplatform/multiModule/independentCommonSourceModules.kt");
