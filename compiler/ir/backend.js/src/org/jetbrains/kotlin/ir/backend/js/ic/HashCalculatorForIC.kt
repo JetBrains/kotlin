@@ -105,7 +105,15 @@ internal fun CompilerConfiguration.configHashForIC() = HashCalculatorForIC().app
         update(getBoolean(key).toString())
     }
 
-    update(languageVersionSettings.toString())
+    val langSettings = languageVersionSettings
+    // settings string is built from a hash map,
+    // therefore sometimes settings in the string can be reordered
+    // TODO: it looks hacky, maybe we can do it more gracefully?
+    updateForEach(langSettings.toString().split(' ').sorted()) {
+        update(it)
+    }
+    update(langSettings.languageVersion.toString())
+    update(langSettings.apiVersion.toString())
 }.finalize()
 
 internal fun IrSimpleFunction.irSimpleFunctionHashForIC() = HashCalculatorForIC().also {
