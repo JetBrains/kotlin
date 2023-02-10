@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
@@ -112,6 +114,7 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
+    @OptIn(FirImplementationDetail::class)
     fun calculateLazyBodyForProperty(designation: FirDesignation) {
         val firProperty = designation.target as FirProperty
         if (!needCalculatingLazyBodyForProperty(firProperty)) return

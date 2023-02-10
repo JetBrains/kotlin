@@ -41,7 +41,6 @@ abstract class FirDefaultPropertyAccessor(
     effectiveVisibility: EffectiveVisibility? = null,
     symbol: FirPropertyAccessorSymbol
 ) : FirPropertyAccessorImpl(
-    source,
     resolvePhase = FirResolvePhase.RAW_FIR,
     moduleData,
     origin,
@@ -60,6 +59,7 @@ abstract class FirDefaultPropertyAccessor(
     contractDescription = FirEmptyContractDescription,
     symbol,
     propertySymbol,
+    source,
     isGetter,
     annotations = MutableOrEmptyList.empty(),
     typeParameters = mutableListOf(),
