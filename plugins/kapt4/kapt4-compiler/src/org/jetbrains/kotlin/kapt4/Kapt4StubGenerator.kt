@@ -284,7 +284,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         loop@ for (importDirective in sortedImportDirectives) {
             val acceptableByName = when {
-                importDirective.isAllUnder -> true
+                importDirective.isAllUnder -> unresolvedQualifiers.simpleNames.isNotEmpty()
                 else -> {
                     val fqName = importDirective.importedFqName ?: continue
                     fqName.asString() in unresolvedQualifiers.qualifiedNames || fqName.shortName().identifier in unresolvedQualifiers.simpleNames
@@ -935,6 +935,10 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
     private fun PsiType.recordErrorTypes(
         recorder: UnresolvedQualifiersRecorder  // TODO: convert to context after fix of KT-54197
     ) {
+        if (this is PsiEllipsisType) {
+            this.componentType.recordErrorTypes(recorder)
+            return
+        }
         if (qualifiedNameOrNull == null) {
             recorder.recordUnresolvedQualifier(qualifiedName)
         }
