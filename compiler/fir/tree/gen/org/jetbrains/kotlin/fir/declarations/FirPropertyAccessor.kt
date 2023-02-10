@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
  * This file was generated automatically
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner, FirTypeParametersOwner {
-    abstract override val source: KtSourceElement?
     abstract override val resolvePhase: FirResolvePhase
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
@@ -43,6 +43,7 @@ abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner,
     abstract override val contractDescription: FirContractDescription
     abstract override val symbol: FirPropertyAccessorSymbol
     abstract val propertySymbol: FirPropertySymbol
+    abstract override val source: KtSourceElement?
     abstract val isGetter: Boolean
     abstract val isSetter: Boolean
     abstract override val annotations: List<FirAnnotation>
@@ -71,6 +72,9 @@ abstract class FirPropertyAccessor : FirFunction(), FirContractDescriptionOwner,
     abstract override fun replaceBody(newBody: FirBlock?)
 
     abstract override fun replaceContractDescription(newContractDescription: FirContractDescription)
+
+    @FirImplementationDetail
+    abstract fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

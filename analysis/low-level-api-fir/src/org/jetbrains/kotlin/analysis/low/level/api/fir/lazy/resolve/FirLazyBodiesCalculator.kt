@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
@@ -113,6 +115,7 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
+    @OptIn(FirImplementationDetail::class)
     fun calculateLazyBodyForProperty(designation: FirDesignation) {
         val firProperty = designation.target as FirProperty
         if (!needCalculatingLazyBodyForProperty(firProperty)) return
@@ -151,6 +154,7 @@ internal object FirLazyBodiesCalculator {
             val newDelegate = newProperty.delegate as? FirWrappedDelegateExpression
             check(newDelegate != null) { "Invalid replacement delegate" }
             delegate.replaceExpression(newDelegate.expression)
+            delegate.replaceSource(newDelegate.source)
 
             val delegateProviderCall = delegate.delegateProvider as? FirFunctionCall
             val delegateProviderExplicitReceiver = delegateProviderCall?.explicitReceiver
@@ -159,6 +163,16 @@ internal object FirLazyBodiesCalculator {
                 check(newDelegateProviderExplicitReceiver != null) { "Invalid replacement expression" }
                 delegateProviderCall.replaceExplicitReceiver(newDelegateProviderExplicitReceiver)
             }
+            val source = newDelegate.expression.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor)
+            val replace = {propertyAccessor: FirPropertyAccessor? ->
+                propertyAccessor?.let { accessor ->
+                    if (accessor.source == null) {
+                        accessor.replaceSource(source)
+                    }
+                }
+            }
+            replace(firProperty.getter)
+            replace(firProperty.setter)
         }
     }
 
