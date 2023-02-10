@@ -2750,7 +2750,7 @@ class ComposableFunctionBodyTransformer(
                 // composable calls to happen inside of the inlined lambdas. This means that we have
                 // some control flow analysis to handle there as well. We wrap the call in a
                 // CallScope and coalescable group if the call has any composable invocations inside
-                // of it..
+                // of it.
                 val captureScope = withScope(Scope.CaptureScope()) {
                     expression.transformChildrenVoid()
                 }
@@ -2790,11 +2790,6 @@ class ComposableFunctionBodyTransformer(
     }
 
     private fun visitNormalComposableCall(expression: IrCall): IrExpression {
-        encounteredComposableCall(
-            withGroups = !expression.symbol.owner.hasReadOnlyAnnotation,
-            isCached = false
-        )
-
         val callScope = Scope.CallScope(expression, this)
 
         // it's important that we transform all of the parameters here since this will cause the
@@ -2802,6 +2797,11 @@ class ComposableFunctionBodyTransformer(
         inScope(callScope) {
             expression.transformChildrenVoid()
         }
+
+        encounteredComposableCall(
+            withGroups = !expression.symbol.owner.hasReadOnlyAnnotation,
+            isCached = false
+        )
 
         val ownerFn = expression.symbol.owner
         val numValueParams = ownerFn.valueParameters.size
@@ -4139,6 +4139,9 @@ class ComposableFunctionBodyTransformer(
             val expression: IrCall,
             private val transformer: ComposableFunctionBodyTransformer
         ) : Scope("call") {
+            override val isInComposable: Boolean
+                get() = parent?.isInComposable == true
+
             var marker: IrVariable? = null
                 private set
 
