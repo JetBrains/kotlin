@@ -6275,7 +6275,7 @@ task buildKonanTests { t ->
             baseDir testOutputLocal
             extraOpts '-ea' // Without this option assertions would remain inactive.
             extraOpts '-tr'
-            extraOpts '-Xverify-ir'
+            extraOpts '-Xverify-ir=error'
             extraOpts project.globalTestArgs
         }
     }

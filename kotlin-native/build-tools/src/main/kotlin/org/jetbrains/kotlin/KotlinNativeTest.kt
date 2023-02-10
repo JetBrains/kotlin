@@ -406,7 +406,7 @@ open class KonanStandaloneTest : KonanLocalTest() {
             if (enableKonanAssertions)
                 result += "-ea"
             if (verifyIr)
-                result += "-Xverify-ir"
+                result += "-Xverify-ir=error"
             return result
         }
 
