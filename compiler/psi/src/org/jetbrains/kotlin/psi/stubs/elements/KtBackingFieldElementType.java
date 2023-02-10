@@ -34,15 +34,18 @@ public class KtBackingFieldElementType extends KtStubElementType<KotlinBackingFi
 
     @Override
     public KotlinBackingFieldStub createStub(@NotNull KtBackingField psi, StubElement parentStub) {
-        return new KotlinBackingFieldStubImpl(parentStub);
+        return new KotlinBackingFieldStubImpl(parentStub, psi.hasInitializer());
     }
 
     @Override
-    public void serialize(@NotNull KotlinBackingFieldStub stub, @NotNull StubOutputStream dataStream) throws IOException {}
+    public void serialize(@NotNull KotlinBackingFieldStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+        dataStream.writeBoolean(stub.hasInitializer());
+    }
 
     @NotNull
     @Override
     public KotlinBackingFieldStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return new KotlinBackingFieldStubImpl(parentStub);
+        boolean hasInitializer = dataStream.readBoolean();
+        return new KotlinBackingFieldStubImpl(parentStub, hasInitializer);
     }
 }

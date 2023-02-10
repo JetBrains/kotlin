@@ -62,11 +62,19 @@ public class KtBackingField extends KtDeclarationStub<KotlinBackingFieldStub>
     @Nullable
     @Override
     public KtExpression getInitializer() {
+        KotlinBackingFieldStub stub = getStub();
+        if (stub != null && !stub.hasInitializer()) {
+            return null;
+        }
         return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), KtExpression.class);
     }
 
     @Override
     public boolean hasInitializer() {
+        KotlinBackingFieldStub stub = getStub();
+        if (stub != null) {
+            return stub.hasInitializer();
+        }
         return getInitializer() != null;
     }
 

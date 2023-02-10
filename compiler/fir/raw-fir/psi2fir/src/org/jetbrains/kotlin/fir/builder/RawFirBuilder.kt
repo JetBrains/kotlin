@@ -1705,7 +1705,7 @@ open class RawFirBuilder(
 
         private fun KtDeclarationWithInitializer.toInitializerExpression() =
             runIf(hasInitializer()) {
-                buildOrLazyExpression(initializer?.toFirSourceElement()) {
+                buildOrLazyExpression(null) {
                     initializer.toFirExpression("Should have initializer")
                 }
             }

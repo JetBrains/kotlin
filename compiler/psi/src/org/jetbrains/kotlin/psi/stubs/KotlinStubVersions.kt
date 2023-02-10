@@ -23,7 +23,7 @@ object KotlinStubVersions {
     // Though only kotlin declarations (no code in the bodies) are stubbed, please do increase this version
     //      if you are not 100% sure it can be avoided.
     // Increasing this version will lead to reindexing of all kotlin source files on the first IDE startup with the new version.
-    const val SOURCE_STUB_VERSION = 145
+    const val SOURCE_STUB_VERSION = 146
 
     // Binary stub version should be increased if stub format (org.jetbrains.kotlin.psi.stubs.impl) is changed
     //      or changes are made to the core stub building code (org.jetbrains.kotlin.idea.decompiler.stubBuilder).

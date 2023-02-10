@@ -23,7 +23,14 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
 
 public class KotlinBackingFieldStubImpl extends KotlinStubBaseImpl<KtBackingField>
         implements KotlinBackingFieldStub {
-    public KotlinBackingFieldStubImpl(StubElement<?> parent) {
+    private final boolean hasInitializer;
+    public KotlinBackingFieldStubImpl(StubElement<?> parent, boolean hasInitializer) {
         super(parent, KtStubElementTypes.BACKING_FIELD);
+        this.hasInitializer = hasInitializer;
+    }
+
+    @Override
+    public boolean hasInitializer() {
+        return hasInitializer;
     }
 }

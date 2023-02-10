@@ -127,7 +127,9 @@ interface KotlinPropertyAccessorStub : StubElement<KtPropertyAccessor> {
     fun hasBlockBody(): Boolean
 }
 
-interface KotlinBackingFieldStub : StubElement<KtBackingField>
+interface KotlinBackingFieldStub : StubElement<KtBackingField> {
+    fun hasInitializer(): Boolean
+}
 
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
     fun isVar(): Boolean
