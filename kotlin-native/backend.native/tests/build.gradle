@@ -5941,7 +5941,6 @@ if (isAppleTarget(project)) {
 
     frameworkTest('testValuesGenericsFramework') {
         framework('ValuesGenerics') {
-            enabled = !isK2(project) // KT-56028
             sources = ['objcexport/values.kt', 'framework/values_generics']
         }
         swiftSources = ['framework/values_generics/']
