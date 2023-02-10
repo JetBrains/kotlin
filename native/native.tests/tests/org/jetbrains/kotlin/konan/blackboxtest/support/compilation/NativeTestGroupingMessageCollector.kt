@@ -51,10 +51,6 @@ internal class NativeTestGroupingMessageCollector(
         null
     }
 
-    private val partialLinkageEnabled: Boolean by lazy {
-        "-Xpartial-linkage" in compilerArgs
-    }
-
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) =
         super.report(adjustSeverity(severity, message, location), message, location)
 
@@ -71,8 +67,7 @@ internal class NativeTestGroupingMessageCollector(
             isPreReleaseBinariesWarning(message)
                     || isUnsafeCompilerArgumentsWarning(message)
                     || isLibraryIncludedMoreThanOnceWarning(message)
-                    || isK2Experimental(message)
-                    || isPartialLinkageWarning(message) -> {
+                    || isK2Experimental(message) -> {
                 // These warnings are known and should not be reported as errors.
                 severity
             }
@@ -111,10 +106,6 @@ internal class NativeTestGroupingMessageCollector(
         return libraryPath == pathOfCachedLibraryWithTests
     }
 
-    private fun isPartialLinkageWarning(message: String): Boolean =
-        partialLinkageEnabled && PARTIAL_LINKAGE_WARNING_REGEXES.any(message::matches)
-
-
     private fun isK2Experimental(message: String): Boolean = message.startsWith(K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX)
 
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
@@ -124,13 +115,6 @@ internal class NativeTestGroupingMessageCollector(
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
         private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "Language version 2.0 is experimental"
-
-        private val PARTIAL_LINKAGE_WARNING_REGEXES = listOf(
-            Regex(".*No .+ found for symbol .+"),
-            Regex(".+ uses unlinked .+ symbol .+"),
-            Regex("^Abstract .+ is not implemented in non-abstract .+"),
-            Regex(".+ is .+ while .+ is expected$")
-        )
 
         private fun parseLanguageFeatureArg(arg: String): String? =
             substringAfter(arg, "-XXLanguage:-") ?: substringAfter(arg, "-XXLanguage:+")
