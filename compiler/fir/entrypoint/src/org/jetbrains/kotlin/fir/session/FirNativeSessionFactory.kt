@@ -38,8 +38,16 @@ object FirNativeSessionFactory : FirAbstractSessionFactory() {
             registerExtraComponents,
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _ -> declaredMemberScope } },
             createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
+                val forwardDeclarationsModuleData = BinaryModuleData.createDependencyModuleData(
+                    Name.special("<forward declarations>"),
+                    moduleDataProvider.platform,
+                    moduleDataProvider.analyzerServices,
+                ).apply {
+                    bindSession(session)
+                }
                 listOf(
                     KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
+                    NativeForwardDeclarationsSymbolProvider(session, forwardDeclarationsModuleData, kotlinScopeProvider, resolvedLibraries),
                     FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirExtensionSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
                     FirCloneableSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
