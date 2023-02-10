@@ -164,7 +164,7 @@ internal object FirLazyBodiesCalculator {
                 delegateProviderCall.replaceExplicitReceiver(newDelegateProviderExplicitReceiver)
             }
             val source = newDelegate.expression.source?.fakeElement(KtFakeSourceElementKind.DelegatedPropertyAccessor)
-            val replace = {propertyAccessor: FirPropertyAccessor? ->
+            val replace = { propertyAccessor: FirPropertyAccessor? ->
                 propertyAccessor?.let { accessor ->
                     if (accessor.source == null) {
                         accessor.replaceSource(source)
