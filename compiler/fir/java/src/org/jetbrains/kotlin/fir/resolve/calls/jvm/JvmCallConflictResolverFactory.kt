@@ -24,8 +24,8 @@ object JvmCallConflictResolverFactory : ConeCallConflictResolverFactory() {
         return ConeCompositeConflictResolver(
             ConeOverloadConflictResolver(specificityComparator, components, transformerComponents),
             ConeEquivalentCallConflictResolver(specificityComparator, components, transformerComponents),
-            JvmPlatformOverloadsConflictResolver(specificityComparator, components, transformerComponents),
-            ConeIntegerOperatorConflictResolver(specificityComparator, components, transformerComponents),
+            JvmPlatformOverloadsConflictResolver(components.session),
+            ConeIntegerOperatorConflictResolver,
             FilteringOutOriginalInPresenceOfSmartCastConeCallConflictResolver
         )
     }
