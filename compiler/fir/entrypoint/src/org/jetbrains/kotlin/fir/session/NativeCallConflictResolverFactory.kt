@@ -21,7 +21,7 @@ object NativeCallConflictResolverFactory : ConeCallConflictResolverFactory() {
         return ConeCompositeConflictResolver(
             ConeOverloadConflictResolver(specificityComparator, components, transformerComponents),
             ConeEquivalentCallConflictResolver(specificityComparator, components, transformerComponents),
-            ConeIntegerOperatorConflictResolver(specificityComparator, components, transformerComponents),
+            ConeIntegerOperatorConflictResolver,
             FilteringOutOriginalInPresenceOfSmartCastConeCallConflictResolver
         )
     }
