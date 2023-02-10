@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 
 import java.io.File
 import java.io.FileOutputStream
+import java.nio.channels.FileChannel
+import java.nio.channels.FileLock
+import java.nio.channels.OverlappingFileLockException
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
-internal class NativeDistributionCommonizerLock(
+internal class NativeDistributionCommonizerLock @JvmOverloads constructor(
     private val outputDirectory: File,
     private val logInfo: (message: String) -> Unit = {}
 ) {
@@ -32,7 +35,7 @@ internal class NativeDistributionCommonizerLock(
             outputDirectory.mkdirs()
             logInfo("Acquire lock: ${lockFile.path} ...")
             FileOutputStream(outputDirectory.resolve(".lock")).use { stream ->
-                val lock = stream.channel.lock()
+                val lock: FileLock = stream.channel.lockWithRetries(lockFile)
                 assert(lock.isValid)
                 return try {
                     logInfo("Lock acquired: ${lockFile.path}")
@@ -42,6 +45,34 @@ internal class NativeDistributionCommonizerLock(
                     lockedOutputDirectories.remove(outputDirectory)
                     lock.release()
                     logInfo("Lock released: ${lockFile.path}")
+                }
+            }
+        }
+    }
+
+    private fun FileChannel.lockWithRetries(file: File): FileLock {
+        var retries = 0
+        while (true) {
+            try {
+                return lock()
+            }
+            /*
+            Catching the OverlappingFileLockException which is caused by the same jvm (process) already having locked the file.
+            Since we do use a static re-entrant lock as a monitor to the cache, this can only happen
+            when this code is running in the same JVM but with in complete isolation
+            (e.g. Gradle classpath isolation, or composite builds).
+
+            If we detect this case, we retry the locking after a short period, constantly logging that we're blocked
+            by some other thread using the cache.
+
+            The risk of deadlocking here is low, since we can only get into this code path, *if*
+            the code is very isolated and somebody locked the file.
+             */
+            catch (t: OverlappingFileLockException) {
+                Thread.sleep(25)
+                retries++
+                if (retries % 10 == 0) {
+                    logInfo("Waiting to acquire lock: $file")
                 }
             }
         }
