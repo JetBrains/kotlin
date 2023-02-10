@@ -80,7 +80,7 @@ class KotlinBuildStatHandler {
         sessionLogger.report(NumericalMetrics.GRADLE_DAEMON_HEAP_SIZE, Runtime.getRuntime().maxMemory())
         sessionLogger.report(
             BooleanMetrics.KOTLIN_OFFICIAL_CODESTYLE,
-            gradle.rootProject.properties["kotlin.code.style"] == "official"
+            gradle.rootProject.providers.gradleProperty("kotlin.code.style").orNull == "official"
         ) // constants are saved in IDEA plugin and could not be accessed directly
 
         gradle.taskGraph.whenReady() { taskExecutionGraph ->
