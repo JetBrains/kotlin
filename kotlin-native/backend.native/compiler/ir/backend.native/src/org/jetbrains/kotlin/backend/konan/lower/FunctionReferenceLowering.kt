@@ -310,6 +310,7 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
         }
 
         private val kFunctionImplSymbol = symbols.kFunctionImpl
+        private val kFunctionDescriptionSymbol = symbols.kFunctionDescription
         private val kFunctionImplConstructorSymbol = kFunctionImplSymbol.constructors.single()
         private val kSuspendFunctionImplSymbol = symbols.kSuspendFunctionImpl
         private val kSuspendFunctionImplConstructorSymbol = kSuspendFunctionImplSymbol.constructors.single()
@@ -384,15 +385,6 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                     addOverrideInner(name) { _ -> value() }
                 }
 
-                val kTypeGenerator = KTypeGenerator(context, irFile, functionReference)
-                addOverride("computeReturnType") { with(kTypeGenerator) { irKType(referencedFunction.returnType) } }
-                addOverride("computeArity") { irInt(unboundFunctionParameters.size + if (functionReferenceTarget.isSuspend) 1 else 0) }
-                addOverride("computeFlags") { irInt(getFlags()) }
-                val name = ((functionReferenceTarget as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
-                        ?: functionReferenceTarget.name
-                addOverride("computeName") { irString(name.asString()) }
-                addOverride("computeFqName") { irString(getFqName()) }
-
 
                 listOfNotNull(
                         functionReference.symbol.owner.dispatchReceiverParameter,
@@ -435,11 +427,15 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
 
             body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
                 val superConstructor = when {
-                    this@FunctionReferenceBuilder.isSuspend -> kSuspendFunctionImplConstructorSymbol.owner
                     isLambda -> irBuiltIns.anyClass.owner.constructors.single()
+                    this@FunctionReferenceBuilder.isSuspend -> kSuspendFunctionImplConstructorSymbol.owner
                     else -> kFunctionImplConstructorSymbol.owner
                 }
-                +irDelegatingConstructorCall(superConstructor)
+                +irDelegatingConstructorCall(superConstructor).apply {
+                    if (!isLambda) {
+                        putValueArgument(0, getDescription())
+                    }
+                }
                 +IrInstanceInitializerCallImpl(startOffset, endOffset, functionReferenceClass.symbol, irBuiltIns.unitType)
                 // Save all arguments to fields.
                 boundFunctionParameters.forEachIndexed { index, parameter ->
@@ -465,6 +461,21 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
             return BuiltFunctionReference(clazz, expression)
         }
 
+        private fun IrBuilderWithScope.getDescription() : IrConstantValue {
+            val kTypeGenerator = KTypeGenerator(this@FunctionReferenceBuilder.context, irFile, functionReference)
+
+            return irConstantObject(
+                    kFunctionDescriptionSymbol.owner,
+                    mapOf(
+                            "flags" to irConstantPrimitive(irInt(getFlags())),
+                            "arity" to irConstantPrimitive(irInt(getArity())),
+                            "fqName" to irConstantPrimitive(irString(getFqName())),
+                            "name" to irConstantPrimitive(irString(getName().asString())),
+                            "returnType" to with(kTypeGenerator) { irKType(referencedFunction.returnType) }
+                    )
+            )
+        }
+
         // this value is used only for hashCode and equals, to distinguish different wrappers on same functions
         private fun getFlags() =
                 listOfNotNull(
@@ -480,6 +491,12 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
                     referencedFunction.returnType.getClass()!!.fqNameForIrSerialization.toString()
                 else
                     functionReferenceTarget.computeFullName()
+
+        private fun getName() =
+                ((functionReferenceTarget as? IrSimpleFunction)?.attributeOwnerId as? IrSimpleFunction)?.name
+                        ?: functionReferenceTarget.name
+
+        private fun getArity() = unboundFunctionParameters.size + if (functionReferenceTarget.isSuspend) 1 else 0
 
         private fun isFunInterfaceConstructorAdapter() =
                 referencedFunction.origin == IrDeclarationOrigin.ADAPTER_FOR_FUN_INTERFACE_CONSTRUCTOR
