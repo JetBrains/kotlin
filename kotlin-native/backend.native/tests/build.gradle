@@ -4931,15 +4931,13 @@ interopTest("interop_workerSignals") {
 }
 
 interopTest("interop_forwardDeclarations") {
-    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
-        isK2(project)  // KT-56028
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/forwardDeclarations/forwardDeclarations.kt"
     interop = "cForwardDeclarations"
 }
 
 interopTest("interop_forwardDeclarationsTwoLibs") {
-    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
-        isK2(project) // KT-56028
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
     source = "interop/forwardDeclarationsTwoLibs/forwardDeclarationsTwoLibs.kt"
     interop = "cForwardDeclarationsTwoLibs1"
     interop2 = "cForwardDeclarationsTwoLibs2"
@@ -5052,7 +5050,7 @@ if (PlatformInfo.isAppleTarget(project)) {
     // KT-49034 tests don't need whole compilation pipeline (only frontend) or platform libraries. Consider simplifying them when porting
     // to the new test infra.
     interopTest("interop_kt49034_struct") {
-        disabled = (project.testTarget == 'wasm32') || isK2(project) // KT-56028
+        disabled = (project.testTarget == 'wasm32')
         interop = 'kt49034_struct'
         source = 'interop/objc/kt49034/struct/main.kt'
 
