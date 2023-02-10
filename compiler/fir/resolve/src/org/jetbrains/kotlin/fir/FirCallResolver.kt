@@ -168,7 +168,7 @@ class FirCallResolver(
         fun chooseMostSpecific(): Set<Candidate> {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
             return conflictResolver.chooseMaximallySpecificCandidates(
-                bestCandidates, discriminateGenerics = true, discriminateAbstracts = onSuperReference
+                bestCandidates, discriminateAbstracts = onSuperReference
             )
         }
 
@@ -367,7 +367,7 @@ class FirCallResolver(
         val reducedCandidates = if (noSuccessfulCandidates) {
             bestCandidates.toSet()
         } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
+            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates)
         }
 
         (callableReferenceAccess.explicitReceiver as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(
@@ -586,7 +586,7 @@ class FirCallResolver(
         val reducedCandidates = if (!result.currentApplicability.isSuccess) {
             bestCandidates.toSet()
         } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = true)
+            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates)
         }
 
         val nameReference = createResolvedNamedReference(

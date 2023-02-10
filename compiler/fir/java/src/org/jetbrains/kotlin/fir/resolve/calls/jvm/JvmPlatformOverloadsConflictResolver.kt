@@ -27,7 +27,6 @@ class JvmPlatformOverloadsConflictResolver(
 ) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents, transformerComponents) {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateGenerics: Boolean,
         discriminateAbstracts: Boolean
     ): Set<Candidate> {
         if (!inferenceComponents.session.languageVersionSettings.supportsFeature(LanguageFeature.PreferJavaFieldOverload)) {
