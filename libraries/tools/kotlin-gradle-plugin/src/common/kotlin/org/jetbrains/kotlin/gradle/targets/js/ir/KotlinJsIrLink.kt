@@ -30,6 +30,20 @@ import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import javax.inject.Inject
 
+private fun invalidateCacheIfAnyLibWasRemoved(rootCacheDirectory: File, newCachesDirs: List<File>): List<File> {
+    val oldCacheDirs = rootCacheDirectory.listFiles()?.flatMap {
+        it.listFiles()?.toList() ?: emptyList()
+    } ?: return emptyList()
+
+    val newNames = newCachesDirs.mapTo(mutableSetOf()) { it.name }
+    val removedCaches = oldCacheDirs.filter { it.name !in newNames }
+    if (removedCaches.isNotEmpty()) {
+        rootCacheDirectory.deleteRecursively()
+        newCachesDirs.forEach(File::mkdirs)
+    }
+    return removedCaches
+}
+
 @CacheableTask
 abstract class KotlinJsIrLink @Inject constructor(
     objectFactory: ObjectFactory,
@@ -117,24 +131,28 @@ abstract class KotlinJsIrLink @Inject constructor(
 
         if (incrementalJsIr && mode == DEVELOPMENT) {
             val digest = MessageDigest.getInstance("SHA-256")
-            args.cacheDirectories = args.libraries?.splitByPathSeparator()
+            val cacheDirectories = args.libraries?.splitByPathSeparator()
                 ?.map {
                     val file = File(it)
                     val hash = digest.digest(file.normalize().absolutePath.toByteArray(StandardCharsets.UTF_8)).toHexString()
                     rootCacheDirectory
                         .resolve(file.nameWithoutExtension)
                         .resolve(hash)
-                        .also {
-                            it.mkdirs()
-                        }
                 }
-                ?.plus(rootCacheDirectory.resolve(entryModule.get().asFile.name))
-                ?.let {
-                    if (it.isNotEmpty())
-                        it.joinToString(File.pathSeparator)
-                    else
-                        null
+                ?.plus(rootCacheDirectory.resolve(entryModule.get().asFile.name).resolve(entryModule.get().asFile.name))
+
+            args.cacheDirectories = cacheDirectories?.let {
+                if (it.isNotEmpty()) {
+                    val removedCaches = invalidateCacheIfAnyLibWasRemoved(rootCacheDirectory, it)
+                    if (removedCaches.isNotEmpty()) {
+                        logger.info("Removed ${removedCaches.joinToString()} caches found, clear entire JS IR incremental cache")
+                    }
+                    it.forEach(File::mkdirs)
+                    it.joinToString(File.pathSeparator)
+                } else {
+                    null
                 }
+            }
         }
     }
 
