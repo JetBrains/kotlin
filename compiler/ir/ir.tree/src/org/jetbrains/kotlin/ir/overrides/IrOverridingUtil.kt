@@ -752,9 +752,9 @@ class IrOverridingUtil(
             "This type of IrDeclaration cannot be checked for overridability: $superMember"
         }
 
-        return if (superMember.name != subMember.name) {
+        return /*if (superMember.name != subMember.name) {
             incompatible("Name mismatch")
-        } else
+        } else*/
             checkReceiverAndParameterCount(superMember, subMember)
     }
 
