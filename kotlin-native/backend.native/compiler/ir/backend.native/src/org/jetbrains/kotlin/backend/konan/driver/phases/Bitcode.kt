@@ -62,18 +62,17 @@ internal val RewriteExternalCallsCheckerGlobals = createSimpleNamedCompilerPhase
 
 internal class OptimizationState(
         konanConfig: KonanConfig,
-        val module: LLVMModuleRef,
         val llvmConfig: LlvmPipelineConfig
 ) : BasicPhaseContext(konanConfig)
 
 internal fun optimizationPipelinePass(name: String, description: String, pipeline: (LlvmPipelineConfig, LoggingContext) -> LlvmOptimizationPipeline) =
-        createSimpleNamedCompilerPhase<OptimizationState, Unit>(
+        createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
                 name = name,
                 description = description,
                 postactions = getDefaultLlvmModuleActions(),
-        ) { context, _ ->
+        ) { context, module ->
             pipeline(context.llvmConfig, context).use {
-                it.execute(context.module)
+                it.execute(module)
             }
         }
 
@@ -165,12 +164,13 @@ internal fun PhaseEngine<NativeGenerationState>.runBitcodePostProcessing() {
             closedWorld = context.llvmModuleSpecification.isFinal,
             timePasses = context.config.flexiblePhaseConfig.needProfiling,
     )
-    useContext(OptimizationState(context.config, context.llvmModule, optimizationConfig)) {
-        it.runPhase(MandatoryBitcodeLLVMPostprocessingPhase)
-        it.runPhase(ModuleBitcodeOptimizationPhase)
-        it.runPhase(LTOBitcodeOptimizationPhase)
+    useContext(OptimizationState(context.config, optimizationConfig)) {
+        val module = this@runBitcodePostProcessing.context.llvmModule
+        it.runPhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
+        it.runPhase(ModuleBitcodeOptimizationPhase, module)
+        it.runPhase(LTOBitcodeOptimizationPhase, module)
         when (context.config.sanitizer) {
-            SanitizerKind.THREAD -> it.runPhase(ThreadSanitizerPhase)
+            SanitizerKind.THREAD -> it.runPhase(ThreadSanitizerPhase, module)
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
             null -> {}
         }
