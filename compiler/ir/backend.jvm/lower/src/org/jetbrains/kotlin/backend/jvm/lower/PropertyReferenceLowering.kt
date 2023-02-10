@@ -413,7 +413,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         }
 
         val boundReceiver = expression.getBoundReceiver()
-        val backingField = superClass.properties.single { it.name.asString() == "receiver" }.backingField!!
         val get = superClass.functions.find { it.name.asString() == "get" }
         val set = superClass.functions.find { it.name.asString() == "set" }
         val invoke = superClass.functions.find { it.name.asString() == "invoke" }
@@ -421,6 +420,8 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         val field = expression.field?.owner
         if (field == null) {
             fun IrBuilderWithScope.setCallArguments(call: IrCall, arguments: List<IrValueParameter>) {
+                val backingField =
+                    with(FunctionReferenceLowering) { referenceClass.getReceiverField(this@PropertyReferenceLowering.context) }
                 val receiverFromField = boundReceiver?.let { irImplicitCast(irGetField(irGet(arguments[0]), backingField), it.type) }
                 if (expression.isJavaSyntheticPropertyReference) {
                     assert(call.typeArgumentsCount == 0) { "Unexpected type arguments: ${call.typeArgumentsCount}" }
@@ -458,8 +459,11 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             fun IrBuilderWithScope.fieldReceiver(arguments: List<IrValueParameter>) = when {
                 field.isStatic ->
                     null
-                expression.dispatchReceiver != null ->
+                expression.dispatchReceiver != null -> {
+                    val backingField =
+                        with(FunctionReferenceLowering) { referenceClass.getReceiverField(this@PropertyReferenceLowering.context) }
                     irImplicitCast(irGetField(irGet(arguments[0]), backingField), expression.receiverType)
+                }
                 else ->
                     irImplicitCast(irGet(arguments[1]), expression.receiverType)
             }
