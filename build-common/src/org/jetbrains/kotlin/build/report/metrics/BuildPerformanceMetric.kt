@@ -15,6 +15,9 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
 
     BUNDLE_SIZE(readableString = "Total size of the final bundle", type = ValueType.BYTES),
 
+    DAEMON_INCREASED_MEMORY(readableString = "Increase memory usage", type = ValueType.BYTES),
+    DAEMON_MEMORY_USAGE(readableString = "Total memory usage at the end of build", type = ValueType.BYTES),
+
     COMPILE_ITERATION(parent = null, "Total compiler iteration", type = ValueType.NUMBER),
         ANALYZED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines analyzed", type = ValueType.NUMBER),
         CODE_GENERATED_LINES_NUMBER(parent = COMPILE_ITERATION, "Number of lines for code generation", type = ValueType.NUMBER),
