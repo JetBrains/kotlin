@@ -33,7 +33,10 @@ internal class ExpectActualCollector(private val mainFragment: IrModuleFragment,
         val allActualDeclarations = mutableSetOf<IrDeclaration>()
         val typeAliasMap = mutableMapOf<FqName, FqName>() // It's used to link members from expect class that have typealias actual
 
-        ActualClassifiersCollector(actualClassifiers, allActualDeclarations, typeAliasMap).visitModuleFragment(mainFragment, false)
+        val fragmentsWithActuals = (dependentFragments.drop(1) + mainFragment)
+        for (fragment in fragmentsWithActuals) {
+            ActualClassifiersCollector(actualClassifiers, allActualDeclarations, typeAliasMap).visitModuleFragment(fragment, false)
+        }
 
         val linkCollector = ClassifiersLinkCollector(this, actualClassifiers)
         dependentFragments.forEach { linkCollector.visitModuleFragment(it) }
