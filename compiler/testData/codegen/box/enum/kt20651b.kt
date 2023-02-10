@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // SKIP_MANGLE_VERIFICATION
 interface Callback {
     fun invoke(): String

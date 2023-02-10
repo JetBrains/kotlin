@@ -1,3 +1,4 @@
+// WITH_STDLIB
 enum class ABCD {
     A, B, C, D
 }

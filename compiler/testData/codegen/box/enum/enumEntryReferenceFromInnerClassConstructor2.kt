@@ -1,3 +1,4 @@
+// WITH_STDLIB
 interface IFoo {
     fun foo(): String
 }

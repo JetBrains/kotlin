@@ -1,3 +1,4 @@
+// WITH_STDLIB
 enum class A(val a: Int = 1) {
   FIRST(),
   SECOND(2)

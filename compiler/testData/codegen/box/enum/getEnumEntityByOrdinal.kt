@@ -1,3 +1,4 @@
+// WITH_STDLIB
 package foo
 
 enum class X {

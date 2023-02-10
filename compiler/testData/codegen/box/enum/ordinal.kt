@@ -1,3 +1,4 @@
+// WITH_STDLIB
 enum class State {
   _0,
   _1,

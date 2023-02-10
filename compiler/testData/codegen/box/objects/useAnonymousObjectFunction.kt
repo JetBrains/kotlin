@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // KT-44050
 
 enum class Enum {
