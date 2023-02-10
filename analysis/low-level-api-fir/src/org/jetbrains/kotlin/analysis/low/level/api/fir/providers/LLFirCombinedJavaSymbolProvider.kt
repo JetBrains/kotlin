@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.load.java.JavaClassFinder
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.name.ClassId
@@ -52,6 +53,7 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
 
     private fun computeClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         val javaClasses = javaClassFinder.findClasses(classId)
+            .filterNot { javaClass -> javaClass.annotations.any { it.isResolvedTo(JvmAnnotationNames.METADATA_FQ_NAME) } }
         if (javaClasses.isEmpty()) return null
 
         val (javaClass, provider) = selectFirstElementInClasspathOrder(javaClasses) { javaClass ->
