@@ -52,8 +52,10 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
                 directFriendSymbols = emptySet()
             )
 
+            val ignoredFiles = predefinedTestCase.ignoredFiles.map { it.absoluteNormalizedFile() }
             predefinedTestCase.sourceLocations
                 .expandGlobs(settings) { "No files found for test case $testCaseId" }
+                .filterNot { ignoredFiles.contains(it.absoluteNormalizedFile()) }
                 .forEach { file -> module.files += TestFile.createCommitted(file, module) }
 
             val testCase = TestCase(
@@ -74,6 +76,9 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
             TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = listOf(testCase))
         }
     }
+
+    private fun File.absoluteNormalizedFile() = absoluteFile.normalize()
+    private fun String.absoluteNormalizedFile() = File(this).absoluteNormalizedFile()
 
     private fun Array<String>.expandGlobs(settings: Settings, noExpandedFilesErrorMessage: () -> String): Set<File> {
         val files = buildSet {

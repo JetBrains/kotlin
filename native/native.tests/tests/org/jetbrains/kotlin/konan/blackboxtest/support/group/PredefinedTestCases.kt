@@ -18,6 +18,7 @@ internal annotation class PredefinedTestCase(
     val runnerType: TestRunnerType,
     val freeCompilerArgs: Array<String>,
     val sourceLocations: Array<String>,
+    val ignoredFiles: Array<String> = [],  // TODO Remove it after fix of KT-55902, KT-56023, KT-56483
     val ignoredTests: Array<String> = []
 )
 
