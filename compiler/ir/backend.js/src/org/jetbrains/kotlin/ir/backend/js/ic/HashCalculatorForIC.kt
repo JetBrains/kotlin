@@ -100,7 +100,15 @@ internal class ICHasher {
             hashCalculator.update(config.get(key).toString())
         }
 
-        hashCalculator.update(config.languageVersionSettings.toString())
+        val langSettings = config.languageVersionSettings
+        // settings string is built from a hash map,
+        // therefore sometimes settings in the string can be reordered
+        // TODO: it looks hacky, maybe we can do it more gracefully?
+        hashCalculator.updateForEach(langSettings.toString().split(' ').sorted()) {
+            hashCalculator.update(it)
+        }
+        hashCalculator.update(langSettings.languageVersion.toString())
+        hashCalculator.update(langSettings.apiVersion.toString())
         return hashCalculator.finalize()
     }
 
