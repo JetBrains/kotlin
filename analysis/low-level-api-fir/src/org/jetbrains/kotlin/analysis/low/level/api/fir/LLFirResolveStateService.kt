@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirCodeFragmentResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.state.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirLibraryOrLibrarySourceResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirNotUnderContentRootResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
@@ -39,6 +41,7 @@ class LLFirResolveSessionService(project: Project) {
             is KtSourceModule -> LLFirSourceResolveSession(module, factory)
             is KtLibraryModule, is KtLibrarySourceModule -> LLFirLibraryOrLibrarySourceResolvableResolveSession(module, factory)
             is KtScriptModule -> LLFirScriptResolveSession(module, factory)
+            is KtCodeFragmentModule -> LLFirCodeFragmentResovableSession(module, factory)
             is KtNotUnderContentRootModule -> LLFirNotUnderContentRootResolveSession(module, factory)
             else -> {
                 errorWithFirSpecificEntries("Unexpected ${module::class.java}") {

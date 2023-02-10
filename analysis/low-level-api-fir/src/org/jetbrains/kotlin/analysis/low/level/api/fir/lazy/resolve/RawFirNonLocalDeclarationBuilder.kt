@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 
-internal class RawFirNonLocalDeclarationBuilder private constructor(
+internal class RawFirNonLocalDeclarationBuilder  constructor(
     session: FirSession,
     baseScopeProvider: FirScopeProvider,
     private val originalDeclaration: FirDeclaration,

@@ -12,8 +12,13 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir.onAirGetNonLocalContainingOrThisDeclarationFor
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.LLFirOuterContextCodeFragmentResolveService
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
@@ -29,20 +34,25 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.FirOuterContextCodeFragmentResolveService
+import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
+import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
@@ -434,6 +444,7 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             is KtScriptModule,
             is KtScriptDependencyModule,
             is KtNotUnderContentRootModule,
+            is KtCodeFragmentModule,
             is KtLibrarySourceModule -> error("Module $module cannot depend on ${dependency::class}: $dependency")
         }
 
@@ -502,6 +513,100 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
         }
     }
+
+    fun createCodeFragmentSession(module: KtCodeFragmentModule): LLFirCodeFragmentResolvableModuleSession {
+        val project = module.project
+        val builtinsSession = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(JvmPlatforms.unspecifiedJvmPlatform)
+        val scopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
+        val globalResolveComponents = LLFirGlobalResolveComponents(project)
+        val components = LLFirModuleResolveComponents(
+            ProjectStructureProvider.getModule(project, module.rawContext, null),
+            globalResolveComponents,
+            scopeProvider
+        )
+
+        val dependencies = collectSourceModuleDependencies(module)
+        val dependencyTracker = createSourceModuleDependencyTracker(module, dependencies)
+        return LLFirCodeFragmentResolvableModuleSession(
+            builtinsSession.ktModule,
+            dependencyTracker,
+            builtinsSession.builtinTypes,
+            components
+        ).apply session@{
+            components.session = this
+            val moduleData = LLFirModuleData(module).apply { bindSession(this@session) }
+            register(FirKotlinScopeProvider::class, scopeProvider)
+            registerIdeComponents(project)
+            registerCommonComponents(LanguageVersionSettingsImpl.DEFAULT)
+            registerCommonJavaComponents(JavaModuleResolver.getInstance(project))
+            registerCommonComponentsAfterExtensionsAreConfigured()
+            registerJavaSpecificResolveComponents()
+            registerResolveComponents()
+            registerModuleData(moduleData)
+            register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
+            val annotationsResolver = project.createAnnotationResolver(module.contentScope)
+            register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this@session, annotationsResolver))
+            register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
+            val provider = LLFirProvider(
+                this,
+                components,
+                canContainKotlinPackage = true,
+            ) { scope ->
+                scope.createScopedDeclarationProviderForFile(module.codeFragment)
+            }
+
+            register(FirProvider::class, provider)
+            val dependencyProvider = LLFirDependenciesSymbolProvider(this, buildList {
+                addDependencySymbolProvidersTo(this@session, dependencies, this)
+                add(builtinsSession.symbolProvider)
+            })
+            val javaSymbolProvider = LLFirJavaSymbolProvider(this, moduleData, project, provider.searchScope)
+            val ktFile = module.rawContext.containingFile as KtFile
+            val originalFileModule = ProjectStructureProvider.getModule(ktFile.project, ktFile, null)
+            val originalFileSession = originalFileModule.getFirResolveSession(ktFile.project)
+
+            val dependencyNonLocalDeclaration = module.rawContext.onAirGetNonLocalContainingOrThisDeclarationFor() as? KtNamedDeclaration ?: TODO()
+
+            val collector = FirTowerDataContextAllElementsCollector()
+            val originalDeclaration = dependencyNonLocalDeclaration.getOrBuildFirOfType<FirDeclaration>(originalFileSession)
+            val originalDesignation = originalDeclaration.collectDesignation()
+            val copiedDeclaration = RawFirNonLocalDeclarationBuilder.buildWithReplacement(
+                session = originalDeclaration.moduleData.session,
+                scopeProvider = originalDeclaration.moduleData.session.kotlinScopeProvider,
+                designation = originalDesignation,
+                rootNonLocalDeclaration = dependencyNonLocalDeclaration,
+                replacement = null,
+            )
+            (originalFileSession.useSiteFirSession as LLFirSourcesSession).moduleComponents.firModuleLazyDeclarationResolver.runLazyDesignatedOnAirResolveToBodyWithoutLock(
+                designation = FirDesignationWithFile(
+                    originalDesignation.path,
+                    copiedDeclaration,
+                    ktFile.getOrBuildFirFile(originalFileSession)
+                ),
+                onAirCreatedDeclaration = false,
+                towerDataContextCollector = collector,
+            )
+            val ktElement = module.rawContext.context as KtElement
+            register(
+                FirOuterContextCodeFragmentResolveService::class,
+                LLFirOuterContextCodeFragmentResolveService(collector.getClosestAvailableParentContext(ktElement)!!)
+            )
+            register(
+                FirSymbolProvider::class,
+                LLFirModuleWithDependenciesSymbolProvider(
+                    this,
+                    providers = listOf(
+                        javaSymbolProvider
+                    ),
+                    dependencyProvider,
+                )
+            )
+            register(JavaSymbolProvider::class, javaSymbolProvider)
+            register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
+            LLFirSessionConfigurator.configure(this)
+        }
+    }
+
 
     /**
      * Creates a single-file [KotlinDeclarationProvider] for the provided file, if it is in the search scope.

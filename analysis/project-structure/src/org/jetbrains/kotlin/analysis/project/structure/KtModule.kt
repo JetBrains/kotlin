@@ -6,10 +6,13 @@
 package org.jetbrains.kotlin.analysis.project.structure
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import java.nio.file.Path
@@ -183,6 +186,36 @@ public class KtBuiltinsModule(
 
     override fun equals(other: Any?): Boolean = other is KtBuiltinsModule && this.platform == other.platform
     override fun hashCode(): Int = platform.hashCode()
+}
+
+/**
+ * A module for Kotlin expression.
+ */
+public interface KtCodeFragmentModule : KtModule {
+    /**
+     * Kotlin expression.
+     */
+    public val codeFragment: KtCodeFragment
+
+    /**
+     * A set of Kotlin settings, like API version, supported features and flags.
+     */
+    public val languageVersionSettings: LanguageVersionSettings
+
+    /**
+     * initial context for expression evaluation, later needs to be recalculated.
+     */
+    public val rawContext: PsiElement
+
+    /**
+     * Classname of generated from expression, expected by evaluator.
+     */
+    public val codeFragmentClassName: Name
+
+    /**
+     * Name of generated method from expression, expected by evaluator.
+     */
+    public val codeFragmentFunctionName: Name
 }
 
 /**
