@@ -377,6 +377,7 @@ internal abstract class KonanSymbols(
     private fun reflectionClass(name: String) = irBuiltIns.findClass(Name.identifier(name), StandardNames.KOTLIN_REFLECT_FQ_NAME)!!
 
     val kFunctionImpl = internalClass("KFunctionImpl")
+    val kFunctionDescription = internalClass("KFunctionDescription")
     val kSuspendFunctionImpl = internalClass("KSuspendFunctionImpl")
 
     val kMutableProperty0 = reflectionClass("KMutableProperty0")

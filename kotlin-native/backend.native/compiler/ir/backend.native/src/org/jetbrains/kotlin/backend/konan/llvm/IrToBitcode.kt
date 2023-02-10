@@ -1895,27 +1895,43 @@ internal class CodeGeneratorVisitor(
                     intrinsicGenerator.evaluateConstantConstructorFields(value, value.valueArguments.map { evaluateConstantValue(it) })
                 } else {
                     val fields = context.getLayoutBuilder(constructedClass).getFields(llvm)
-                    val valueParameters = value.constructor.owner.valueParameters.associateBy { it.name.toString() }
+                    val constructor = value.constructor.owner
+                    val valueParameters = constructor.valueParameters.associateBy { it.name.toString() }
+                    // support of initilaization of object in following case:
+                    // open class Base(val field: ...)
+                    // Child(val otherField: ...) : Base(constantValue)
+                    //
+                    //  Child(constantValue) could be initialized constantly. This is required for function references.
+                    val delegatedCallConstants = constructor.body?.statements
+                            ?.filterIsInstance<IrDelegatingConstructorCall>()
+                            ?.singleOrNull()
+                            ?.getArgumentsWithIr()
+                            ?.filter { it.second is IrConstantValue }
+                            ?.associate { it.first.name.toString() to it.second }
+                            .orEmpty()
                     fields.map { field ->
-                        if (field.isConst) {
-                            val init = field.irField!!.initializer?.expression
-                            require(field.name !in valueParameters) {
-                                "Constant field ${field.name} of class ${constructedClass.name} shouldn't be a constructor parameter"
-                            }
-                            when (init) {
-                                is IrConst<*> -> evaluateConst(init)
-                                is IrConstantValue -> evaluateConstantValue(init)
-                                null -> error("Constant field ${field.name} of class ${constructedClass.name} should have initializer")
-                                else -> error("Unexpected constant initializer type: ${init::class}")
+                        val init = if (field.isConst) {
+                            field.irField!!.initializer?.expression.also {
+                                require(field.name !in valueParameters) {
+                                    "Constant field ${field.name} of class ${constructedClass.name} shouldn't be a constructor parameter"
+                                }
                             }
                         } else {
                             val index = valueParameters[field.name]?.index
-                                    ?: error("Bad statically initialized object: field ${field.name} value not set in ${constructedClass.name}")
-                            evaluateConstantValue(value.valueArguments[index])
+                            if (index != null)
+                                value.valueArguments[index]
+                            else
+                                delegatedCallConstants[field.name]
+                        }
+                        when (init) {
+                            is IrConst<*> -> evaluateConst(init)
+                            is IrConstantValue -> evaluateConstantValue(init)
+                            null -> error("Bad statically initialized object: field ${field.name} value not set in ${constructedClass.name}")
+                            else -> error("Unexpected constant initializer type: ${init::class}")
                         }
                     }.also {
-                        require(it.size == value.valueArguments.size + fields.count { it.isConst }) {
-                            "Bad statically initialized object of class ${constructedClass.name}: too many fields"
+                        require(it.size == value.valueArguments.size + fields.count { it.isConst } + delegatedCallConstants.size) {
+                            "Bad statically initialized object of class ${constructedClass.name}: not all arguments are used"
                         }
                     }
                 }
