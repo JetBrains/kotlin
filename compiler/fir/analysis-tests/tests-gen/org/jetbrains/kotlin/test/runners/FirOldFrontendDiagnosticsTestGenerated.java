@@ -23429,6 +23429,18 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("overloadsFromCurrentAndSuperClass.kt")
+            public void testOverloadsFromCurrentAndSuperClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/overload/overloadsFromCurrentAndSuperClass.kt");
+            }
+
+            @Test
+            @TestMetadata("overloadsFromCurrentAndSuperClassWithReturnType.kt")
+            public void testOverloadsFromCurrentAndSuperClassWithReturnType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/overload/overloadsFromCurrentAndSuperClassWithReturnType.kt");
+            }
+
+            @Test
             @TestMetadata("SyntheticAndNotSynthetic.kt")
             public void testSyntheticAndNotSynthetic() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/overload/SyntheticAndNotSynthetic.kt");
