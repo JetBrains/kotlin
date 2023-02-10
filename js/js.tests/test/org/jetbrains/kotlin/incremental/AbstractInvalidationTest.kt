@@ -98,7 +98,7 @@ abstract class AbstractInvalidationTest : KotlinTestWithEnvironment() {
     }
 
     private fun resolveModuleCache(moduleName: String, buildDir: File): File {
-        return File(File(buildDir, moduleName), "cache")
+        return File(File(buildDir, moduleName), "klib/cache/$moduleName/$moduleName")
     }
 
     private fun createConfiguration(moduleName: String, language: List<String>): CompilerConfiguration {

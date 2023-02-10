@@ -75,6 +75,16 @@ class CacheUpdater(
 
     private val mainLibraryFile = KotlinLibraryFile(File(mainModule).canonicalPath)
     private val mainLibrary = libraries[mainLibraryFile] ?: notFoundIcError("main library", mainLibraryFile)
+    private val mainLibraryCache = cacheMap[mainLibrary] ?: notFoundIcError("main library cache", mainLibraryFile)
+    // mainLibraryCache is build/klib/cache/main/main
+    // create cache.lock in build/klib/cache.lock
+    private val cacheLockFile = File(mainLibraryCache).parentFile.parentFile.resolveSibling("cache.lock").also { lockFile ->
+        if (lockFile.exists()) {
+            invalidateCache()
+        }
+        lockFile.parentFile.mkdirs()
+        lockFile.createNewFile()
+    }
 
     private val incrementalCaches = libraries.entries.associate { (libFile, lib) ->
         val cachePath = cacheMap[lib] ?: notFoundIcError("cache path", KotlinLibraryFile(lib))
@@ -85,6 +95,14 @@ class CacheUpdater(
 
     init {
         stopwatch.stop()
+    }
+
+    private fun invalidateCache() {
+        cacheMap.values.forEach { cacheDir ->
+            val f = File(cacheDir)
+            f.deleteRecursively()
+            f.mkdirs()
+        }
     }
 
     fun getDirtyFileStats(): KotlinSourceFileMap<EnumSet<DirtyFileState>> = dirtyFileStats
@@ -647,9 +665,12 @@ class CacheUpdater(
 
     fun actualizeCaches(): List<ModuleArtifact> {
         try {
-            return actualizeCachesImpl()
+            val artifacts = actualizeCachesImpl()
+            cacheLockFile.delete()
+            return artifacts
         } catch (e: Exception) {
-            cacheMap.values.forEach { cacheDir -> File(cacheDir).deleteRecursively() }
+            invalidateCache()
+            cacheLockFile.delete()
             throw e
         }
     }
