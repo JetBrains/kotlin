@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 
 /*
  * This file was generated automatically
@@ -16,11 +17,11 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 abstract class FirWrappedDelegateExpression : FirWrappedExpression() {
-    abstract override val source: KtSourceElement?
     abstract override val typeRef: FirTypeRef
     abstract override val annotations: List<FirAnnotation>
     abstract override val expression: FirExpression
     abstract val delegateProvider: FirExpression
+    abstract override val source: KtSourceElement?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitWrappedDelegateExpression(this, data)
 
@@ -33,6 +34,9 @@ abstract class FirWrappedDelegateExpression : FirWrappedExpression() {
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
     abstract override fun replaceExpression(newExpression: FirExpression)
+
+    @FirImplementationDetail
+    abstract fun replaceSource(newSource: KtSourceElement?)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirWrappedDelegateExpression
 }
