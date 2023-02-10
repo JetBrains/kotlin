@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,8 +18,7 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMember
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.origin.LightMemberOriginForCompiledMethod
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
-import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache
-import org.jetbrains.kotlin.asJava.classes.LightClassesLazyCreator
+import org.jetbrains.kotlin.asJava.classes.ClassInnerStuffCache
 import org.jetbrains.kotlin.asJava.classes.getEnumEntriesPsiMethod
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.isGetEntriesMethod
@@ -29,36 +28,37 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 open class KtLightClassForDecompiledDeclaration(
     clsDelegate: PsiClass,
-    private val clsParent: PsiElement,
-    private val file: KtClsFile,
+    clsParent: PsiElement,
+    protected val file: KtClsFile,
     kotlinOrigin: KtClassOrObject?
 ) : KtLightClassForDecompiledDeclarationBase(clsDelegate, clsParent, kotlinOrigin) {
+    private val myInnersCache by lazyPub {
+        ClassInnerStuffCache(
+            /* aClass = */ this,
+            /* generateEnumMethods = */ true,
+            /* modificationTracker = */ KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker,
+        )
+    }
 
-    private val myInnersCache = KotlinClassInnerStuffCache(
-        myClass = this,
-        dependencies = listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker),
-        lazyCreator = LightClassesLazyCreator(project)
-    )
+    override fun getOwnMethods(): List<PsiMethod> = _methods
 
-    override fun getOwnMethods(): MutableList<PsiMethod> = _methods
+    override fun getOwnFields(): List<PsiField> = _fields
 
-    override fun getOwnFields(): MutableList<PsiField> = _fields
+    override fun getOwnInnerClasses(): List<PsiClass> = _innerClasses
 
-    override fun getOwnInnerClasses(): MutableList<PsiClass> = _innerClasses
+    override fun getFields(): Array<PsiField> = myInnersCache.fields
 
-    override fun getFields() = myInnersCache.fields
+    override fun getMethods(): Array<PsiMethod> = myInnersCache.methods
 
-    override fun getMethods() = myInnersCache.methods
+    override fun getConstructors(): Array<PsiMethod> = myInnersCache.constructors
 
-    override fun getConstructors() = myInnersCache.constructors
+    override fun getInnerClasses(): Array<PsiClass> = myInnersCache.innerClasses
 
-    override fun getInnerClasses() = myInnersCache.innerClasses
+    override fun findFieldByName(name: String, checkBases: Boolean): PsiField? = myInnersCache.findFieldByName(name, checkBases)
 
-    override fun findFieldByName(name: String, checkBases: Boolean) = myInnersCache.findFieldByName(name, checkBases)
+    override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
 
-    override fun findMethodsByName(name: String, checkBases: Boolean) = myInnersCache.findMethodsByName(name, checkBases)
-
-    override fun findInnerClassByName(name: String, checkBases: Boolean) = myInnersCache.findInnerClassByName(name, checkBases)
+    override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
 
     override fun hasModifierProperty(name: String): Boolean =
         clsDelegate.hasModifierProperty(name)
@@ -82,15 +82,15 @@ open class KtLightClassForDecompiledDeclaration(
 
     override fun getContainingClass(): PsiClass? = parent as? PsiClass
 
-    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean = clsDelegate.isInheritorDeep(baseClass, classToByPass)
+    override fun isInheritorDeep(baseClass: PsiClass?, classToByPass: PsiClass?): Boolean =
+        clsDelegate.isInheritorDeep(baseClass, classToByPass)
 
     override fun getAllMethodsAndTheirSubstitutors(): List<Pair<PsiMethod?, PsiSubstitutor?>?> =
         PsiClassImplUtil.getAllWithSubstitutorsByMap<PsiMethod>(this, PsiClassImplUtil.MemberType.METHOD)
 
     override fun isInterface(): Boolean = clsDelegate.isInterface
 
-    override fun getTypeParameters(): Array<PsiTypeParameter> =
-        clsDelegate.typeParameters
+    override fun getTypeParameters(): Array<PsiTypeParameter> = clsDelegate.typeParameters
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
         clsDelegate.isInheritor(baseClass, checkDeep)
@@ -159,59 +159,54 @@ open class KtLightClassForDecompiledDeclaration(
 
     override fun getAllFields(): Array<PsiField> = PsiClassImplUtil.getAllFields(this)
 
-    private val _methods: MutableList<PsiMethod> by lazyPub {
-        mutableListOf<PsiMethod>().also {
-            val isEnum = isEnum
-            clsDelegate.methods.mapNotNullTo(it) { psiMethod ->
-                if (isSyntheticValuesOrValueOfMethod(psiMethod)) return@mapNotNullTo null
-                if (isEnum && isGetEntriesMethod(psiMethod)) {
-                    return@mapNotNullTo getEnumEntriesPsiMethod(this)
-                }
-                KtLightMethodForDecompiledDeclaration(
-                    funDelegate = psiMethod,
-                    funParent = this,
-                    lightMemberOrigin = LightMemberOriginForCompiledMethod(psiMethod, file)
+    private val _methods: List<PsiMethod> by lazyPub {
+        val isEnum = isEnum
+        this.clsDelegate.methods.mapNotNull { psiMethod ->
+            if (isSyntheticValuesOrValueOfMethod(psiMethod)) return@mapNotNull null
+            if (isEnum && isGetEntriesMethod(psiMethod)) {
+                return@mapNotNull getEnumEntriesPsiMethod(this)
+            }
+
+            KtLightMethodForDecompiledDeclaration(
+                funDelegate = psiMethod,
+                funParent = this,
+                lightMemberOrigin = LightMemberOriginForCompiledMethod(psiMethod, file)
+            )
+        }
+    }
+
+    private val _fields: List<PsiField> by lazyPub {
+        this.clsDelegate.fields.map { psiField ->
+            if (psiField !is PsiEnumConstant) {
+                KtLightFieldForDecompiledDeclaration(
+                    fldDelegate = psiField,
+                    fldParent = this,
+                    lightMemberOrigin = LightMemberOriginForCompiledField(psiField, file)
+                )
+            } else {
+                KtLightEnumEntryForDecompiledDeclaration(
+                    fldDelegate = psiField,
+                    fldParent = this,
+                    lightMemberOrigin = LightMemberOriginForCompiledField(psiField, file),
+                    file = file
                 )
             }
         }
     }
 
-    private val _fields: MutableList<PsiField> by lazyPub {
-        mutableListOf<PsiField>().also {
-            clsDelegate.fields.mapTo(it) { psiField ->
-                if (psiField !is PsiEnumConstant) {
-                    KtLightFieldForDecompiledDeclaration(
-                        fldDelegate = psiField,
-                        fldParent = this,
-                        lightMemberOrigin = LightMemberOriginForCompiledField(psiField, file)
-                    )
-                } else {
-                    KtLightEnumEntryForDecompiledDeclaration(
-                        fldDelegate = psiField,
-                        fldParent = this,
-                        lightMemberOrigin = LightMemberOriginForCompiledField(psiField, file),
-                        file = file
-                    )
-                }
-            }
-        }
-    }
+    private val _innerClasses: List<PsiClass> by lazyPub {
+        this.clsDelegate.innerClasses.map { psiClass ->
+            val innerDeclaration = this.kotlinOrigin
+                ?.declarations
+                ?.filterIsInstance<KtClassOrObject>()
+                ?.firstOrNull { cls -> cls.name == this.clsDelegate.name }
 
-    private val _innerClasses: MutableList<PsiClass> by lazyPub {
-        mutableListOf<PsiClass>().also {
-            clsDelegate.innerClasses.mapTo(it) { psiClass ->
-                val innerDeclaration = kotlinOrigin
-                    ?.declarations
-                    ?.filterIsInstance<KtClassOrObject>()
-                    ?.firstOrNull { cls -> cls.name == clsDelegate.name }
-
-                KtLightClassForDecompiledDeclaration(
-                    clsDelegate = psiClass,
-                    clsParent = this,
-                    file = file,
-                    kotlinOrigin = innerDeclaration,
-                )
-            }
+            KtLightClassForDecompiledDeclaration(
+                clsDelegate = psiClass,
+                clsParent = this,
+                file = file,
+                kotlinOrigin = innerDeclaration,
+            )
         }
     }
 

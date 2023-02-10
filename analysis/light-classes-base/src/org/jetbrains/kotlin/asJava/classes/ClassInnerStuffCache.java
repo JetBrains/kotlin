@@ -6,21 +6,22 @@
 package org.jetbrains.kotlin.asJava.classes;
 
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.util.ModificationTracker;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.Ref;
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.augment.PsiAugmentProvider;
 import com.intellij.psi.impl.PsiClassImplUtil;
 import com.intellij.psi.impl.PsiImplUtil;
 import com.intellij.psi.impl.PsiSuperMethodImplUtil;
 import com.intellij.psi.impl.light.*;
-import com.intellij.psi.impl.source.PsiExtensibleClass;
 import com.intellij.psi.javadoc.PsiDocComment;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.util.CachedValueProvider;
 import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.MethodSignature;
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod;
-import com.intellij.psi.util.PsiUtil;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ConcurrentFactoryMap;
@@ -30,6 +31,11 @@ import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin;
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod;
+import org.jetbrains.kotlin.asJava.elements.KtLightParameter;
+import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtParameter;
 
 import java.util.*;
 
@@ -41,31 +47,65 @@ import static com.intellij.util.ObjectUtils.notNull;
  * @see com.intellij.psi.impl.source.ClassInnerStuffCache
  */
 public final class ClassInnerStuffCache {
-    private final PsiExtensibleClass myClass;
-    private final Ref<Pair<Long, Interner<PsiMember>>> myInterner = Ref.create();
+    public static final String NOT_NULL_ANNOTATION_QUALIFIER = "@" + NotNull.class.getName();
 
-    public ClassInnerStuffCache(@NotNull PsiExtensibleClass aClass) {
+    private final @NotNull KtExtensibleLightClass myClass;
+    private final @NotNull ModificationTracker myModificationTracker;
+    private final @NotNull Ref<Pair<Long, Interner<PsiMember>>> myInterner = Ref.create();
+    private final boolean myGenerateEnumMethods;
+
+    public ClassInnerStuffCache(
+            @NotNull KtExtensibleLightClass aClass,
+            boolean generateEnumMethods,
+            @NotNull ModificationTracker modificationTracker
+    ) {
+        myGenerateEnumMethods = generateEnumMethods;
         myClass = aClass;
+        myModificationTracker = modificationTracker;
     }
 
-    public PsiMethod @NotNull [] getConstructors() {
-        return copy(CachedValuesManager.getProjectPsiDependentCache(myClass, PsiImplUtil::getConstructors));
+    @NotNull
+    public PsiMethod[] getConstructors() {
+        return copy(CachedValuesManager.getCachedValue(
+                myClass,
+                () -> CachedValueProvider.Result.createSingleDependency(
+                        PsiImplUtil.getConstructors(myClass),
+                        myModificationTracker
+                )
+        ));
     }
 
-    public PsiField @NotNull [] getFields() {
-        return copy(CachedValuesManager.getProjectPsiDependentCache(myClass, __ -> calcFields()));
+    @NotNull
+    public PsiField[] getFields() {
+        return copy(CachedValuesManager.getCachedValue(
+                myClass,
+                () -> CachedValueProvider.Result.createSingleDependency(
+                        calcFields(),
+                        myModificationTracker
+                )
+        ));
     }
 
-    public PsiMethod @NotNull [] getMethods() {
-        return copy(CachedValuesManager.getProjectPsiDependentCache(myClass, __ -> calcMethods()));
+    @NotNull
+    public PsiMethod[] getMethods() {
+        return copy(CachedValuesManager.getCachedValue(
+                myClass,
+                () -> CachedValueProvider.Result.createSingleDependency(
+                        calcMethods(),
+                        myModificationTracker
+                )
+        ));
     }
 
-    public PsiClass @NotNull [] getInnerClasses() {
-        return copy(CachedValuesManager.getProjectPsiDependentCache(myClass, __ -> calcInnerClasses()));
-    }
-
-    public PsiRecordComponent @NotNull [] getRecordComponents() {
-        return copy(CachedValuesManager.getProjectPsiDependentCache(myClass, __ -> calcRecordComponents()));
+    @NotNull
+    public PsiClass[] getInnerClasses() {
+        return copy(CachedValuesManager.getCachedValue(
+                myClass,
+                () -> CachedValueProvider.Result.createSingleDependency(
+                        calcInnerClasses(),
+                        myModificationTracker
+                )
+        ));
     }
 
     @Nullable
@@ -74,16 +114,29 @@ public final class ClassInnerStuffCache {
             return PsiClassImplUtil.findFieldByName(myClass, name, true);
         }
         else {
-            return CachedValuesManager.getProjectPsiDependentCache(myClass, __ -> getFieldsMap()).get(name);
+            return CachedValuesManager.getCachedValue(
+                    myClass,
+                    () -> CachedValueProvider.Result.createSingleDependency(
+                            getFieldsMap(),
+                            myModificationTracker
+                    )
+            ).get(name);
         }
     }
 
-    public PsiMethod @NotNull [] findMethodsByName(String name, boolean checkBases) {
+    @NotNull
+    public PsiMethod[] findMethodsByName(String name, boolean checkBases) {
         if (checkBases) {
             return PsiClassImplUtil.findMethodsByName(myClass, name, true);
         }
         else {
-            return copy(notNull(CachedValuesManager.getProjectPsiDependentCache(myClass, __ -> getMethodsMap()).get(name), PsiMethod.EMPTY_ARRAY));
+            return copy(notNull(CachedValuesManager.getCachedValue(
+                    myClass,
+                    () -> CachedValueProvider.Result.createSingleDependency(
+                            getMethodsMap(),
+                            myModificationTracker
+                    )
+            ).get(name), PsiMethod.EMPTY_ARRAY));
         }
     }
 
@@ -93,37 +146,48 @@ public final class ClassInnerStuffCache {
             return PsiClassImplUtil.findInnerByName(myClass, name, true);
         }
         else {
-            return CachedValuesManager.getProjectPsiDependentCache(myClass, __ -> getInnerClassesMap()).get(name);
+            return CachedValuesManager.getCachedValue(
+                    myClass,
+                    () -> CachedValueProvider.Result.createSingleDependency(
+                            getInnerClassesMap(),
+                            myModificationTracker
+                    )
+            ).get(name);
         }
     }
 
     @Nullable
-    PsiMethod getValuesMethod() {
-        return myClass.isEnum() && !isAnonymousClass() && !classNameIsSealed()
-               ? internMember(CachedValuesManager.getProjectPsiDependentCache(myClass, ClassInnerStuffCache::makeValuesMethod))
-               : null;
-    }
-
-    private boolean classNameIsSealed() {
-        return PsiKeyword.SEALED.equals(myClass.getName()) && PsiUtil.getLanguageLevel(myClass).isAtLeast(LanguageLevel.JDK_17);
+    private PsiMethod getValuesMethod() {
+        return isEnum() ? internMember(CachedValuesManager.getCachedValue(
+                myClass,
+                () -> CachedValueProvider.Result.createSingleDependency(
+                        makeValuesMethod(myClass),
+                        myModificationTracker
+                )
+        )) : null;
     }
 
     @Nullable
     private PsiMethod getValueOfMethod() {
-        return myClass.isEnum() && !isAnonymousClass()
-               ? internMember(CachedValuesManager.getProjectPsiDependentCache(myClass, ClassInnerStuffCache::makeValueOfMethod))
-               : null;
+        return isEnum() ? internMember(CachedValuesManager.getCachedValue(
+                myClass,
+                () -> CachedValueProvider.Result.createSingleDependency(
+                        makeValueOfMethod(myClass),
+                        myModificationTracker
+                )
+        )) : null;
     }
 
-    private boolean isAnonymousClass() {
-        return myClass.getName() == null || myClass instanceof PsiAnonymousClass;
+    private boolean isEnum() {
+        return myGenerateEnumMethods && myClass.isEnum();
     }
 
     private static <T> T[] copy(T[] value) {
         return value.length == 0 ? value : value.clone();
     }
 
-    private PsiField @NotNull [] calcFields() {
+    @NotNull
+    private PsiField[] calcFields() {
         List<PsiField> own = myClass.getOwnFields();
         List<PsiField> ext = internMembers(PsiAugmentProvider.collectAugments(myClass, PsiField.class, null));
         return ArrayUtil.mergeCollections(own, ext, PsiField.ARRAY_FACTORY);
@@ -134,23 +198,25 @@ public final class ClassInnerStuffCache {
         return ContainerUtil.map(members, this::internMember);
     }
 
+    @SuppressWarnings("unchecked")
     private <T extends PsiMember> T internMember(T m) {
         if (m == null) return null;
-        long modCount = myClass.getManager().getModificationTracker().getModificationCount();
+        long modCount = myModificationTracker.getModificationCount();
         synchronized (myInterner) {
             Pair<Long, Interner<PsiMember>> pair = myInterner.get();
             if (pair == null || pair.first.longValue() != modCount) {
                 myInterner.set(pair = Pair.create(modCount, Interner.createWeakInterner()));
             }
-            //noinspection unchecked
+
             return (T) pair.second.intern(m);
         }
     }
 
-    private PsiMethod @NotNull [] calcMethods() {
+    @NotNull
+    private PsiMethod[] calcMethods() {
         List<PsiMethod> own = myClass.getOwnMethods();
         List<PsiMethod> ext = internMembers(PsiAugmentProvider.collectAugments(myClass, PsiMethod.class, null));
-        if (myGenerateEnumMethods && myClass.isEnum()) {
+        if (isEnum()) {
             ext = new ArrayList<>(ext);
             ContainerUtil.addIfNotNull(ext, getValuesMethod());
             ContainerUtil.addIfNotNull(ext, getValueOfMethod());
@@ -158,15 +224,11 @@ public final class ClassInnerStuffCache {
         return ArrayUtil.mergeCollections(own, ext, PsiMethod.ARRAY_FACTORY);
     }
 
-    private PsiClass @NotNull [] calcInnerClasses() {
+    @NotNull
+    private PsiClass[] calcInnerClasses() {
         List<PsiClass> own = myClass.getOwnInnerClasses();
         List<PsiClass> ext = internMembers(PsiAugmentProvider.collectAugments(myClass, PsiClass.class, null));
         return ArrayUtil.mergeCollections(own, ext, PsiClass.ARRAY_FACTORY);
-    }
-
-    private PsiRecordComponent @NotNull [] calcRecordComponents() {
-        PsiRecordHeader header = myClass.getRecordHeader();
-        return header == null ? PsiRecordComponent.EMPTY_ARRAY : header.getRecordComponents();
     }
 
     @NotNull
@@ -174,10 +236,9 @@ public final class ClassInnerStuffCache {
         Map<String, PsiField> cachedFields = new HashMap<>();
         for (PsiField field : myClass.getOwnFields()) {
             String name = field.getName();
-            if (!cachedFields.containsKey(name)) {
-                cachedFields.put(name, field);
-            }
+            cachedFields.putIfAbsent(name, field);
         }
+
         return ConcurrentFactoryMap.createMap(name -> {
             PsiField result = cachedFields.get(name);
             return result != null ? result :
@@ -188,14 +249,13 @@ public final class ClassInnerStuffCache {
     @NotNull
     private Map<String, PsiMethod[]> getMethodsMap() {
         List<PsiMethod> ownMethods = myClass.getOwnMethods();
-        return ConcurrentFactoryMap.createMap(name -> {
-            return JBIterable
-                    .from(ownMethods).filter(m -> name.equals(m.getName()))
-                    .append("values".equals(name) ? getValuesMethod() : null)
-                    .append("valueOf".equals(name) ? getValueOfMethod() : null)
-                    .append(internMembers(PsiAugmentProvider.collectAugments(myClass, PsiMethod.class, name)))
-                    .toArray(PsiMethod.EMPTY_ARRAY);
-        });
+        return ConcurrentFactoryMap.createMap(name -> JBIterable
+                .from(ownMethods)
+                .filter(m -> name.equals(m.getName()))
+                .append("values".equals(name) ? getValuesMethod() : null)
+                .append("valueOf".equals(name) ? getValueOfMethod() : null)
+                .append(internMembers(PsiAugmentProvider.collectAugments(myClass, PsiMethod.class, name)))
+                .toArray(PsiMethod.EMPTY_ARRAY));
     }
 
     @NotNull
@@ -210,18 +270,20 @@ public final class ClassInnerStuffCache {
                 cachedInners.put(name, psiClass);
             }
         }
+
         return ConcurrentFactoryMap.createMap(name -> {
             PsiClass result = cachedInners.get(name);
-            return result != null ? result :
-                   internMember(ContainerUtil.getFirstItem(PsiAugmentProvider.collectAugments(myClass, PsiClass.class, name)));
+            return result != null
+                   ? result
+                   : internMember(ContainerUtil.getFirstItem(PsiAugmentProvider.collectAugments(myClass, PsiClass.class, name)));
         });
     }
 
-    private static PsiMethod makeValuesMethod(PsiExtensibleClass enumClass) {
+    private static PsiMethod makeValuesMethod(KtExtensibleLightClass enumClass) {
         return new EnumSyntheticMethod(enumClass, EnumMethodKind.Values);
     }
 
-    private static PsiMethod makeValueOfMethod(PsiExtensibleClass enumClass) {
+    private static PsiMethod makeValueOfMethod(KtExtensibleLightClass enumClass) {
         return new EnumSyntheticMethod(enumClass, EnumMethodKind.ValueOf);
     }
 
@@ -230,14 +292,14 @@ public final class ClassInnerStuffCache {
         Values,
     }
 
-    private static class EnumSyntheticMethod extends LightElement implements PsiMethod, SyntheticElement {
-        private final PsiClass myClass;
+    private static class EnumSyntheticMethod extends LightElement implements PsiMethod, SyntheticElement, KtLightMethod {
+        private final KtExtensibleLightClass myClass;
         private final EnumMethodKind myKind;
         private final PsiType myReturnType;
         private final LightParameterListBuilder myParameterList;
         private final LightModifierList myModifierList;
 
-        EnumSyntheticMethod(@NotNull PsiClass enumClass, EnumMethodKind kind) {
+        EnumSyntheticMethod(@NotNull KtExtensibleLightClass enumClass, EnumMethodKind kind) {
             super(enumClass.getManager(), enumClass.getLanguage());
             myClass = enumClass;
             myKind = kind;
@@ -256,6 +318,12 @@ public final class ClassInnerStuffCache {
             }
         }
 
+        private @NotNull PsiAnnotation[] createNotNullAnnotation() {
+            return new PsiAnnotation[] {
+                    PsiElementFactory.getInstance(getProject()).createAnnotationFromText(NOT_NULL_ANNOTATION_QUALIFIER, myClass)
+            };
+        }
+
         private @NotNull PsiType createReturnType() {
             PsiClassType type = JavaPsiFacade.getElementFactory(getProject()).createType(myClass);
             if (myKind == EnumMethodKind.Values) {
@@ -267,6 +335,20 @@ public final class ClassInnerStuffCache {
         @NotNull
         private LightModifierList createModifierList() {
             return new LightModifierList(myManager, getLanguage(), PsiModifier.PUBLIC, PsiModifier.STATIC) {
+                private final PsiAnnotation[] notNullAnnotations = createNotNullAnnotation();
+
+                @Override
+                @NotNull
+                public PsiAnnotation[] getAnnotations() {
+                    return ClassInnerStuffCache.copy(notNullAnnotations);
+                }
+
+                @Override
+                public PsiAnnotation findAnnotation(@NotNull String qualifiedName) {
+                    PsiAnnotation notNullAnnotation = notNullAnnotations[0];
+                    return qualifiedName == notNullAnnotation.getQualifiedName() ? notNullAnnotation : null;
+                }
+
                 @Override
                 public PsiElement getParent() {
                     return EnumSyntheticMethod.this;
@@ -279,10 +361,52 @@ public final class ClassInnerStuffCache {
             LightParameterListBuilder parameters = new LightParameterListBuilder(myManager, getLanguage());
             if (myKind == EnumMethodKind.ValueOf) {
                 PsiClassType string = PsiType.getJavaLangString(myManager, GlobalSearchScope.allScope(getProject()));
-                LightParameter parameter = new LightParameter("name", string, this, getLanguage(), false);
+                LightParameter parameter = new MyKtLightParameter(string, this);
                 parameters.addParameter(parameter);
             }
+
             return parameters;
+        }
+
+        private static final class MyKtLightParameter extends LightParameter implements KtLightParameter {
+            private final @NotNull KtLightMethod myMethod;
+
+            MyKtLightParameter(@NotNull PsiType type, @NotNull KtLightMethod declarationScope) {
+                super("name", type, declarationScope, declarationScope.getLanguage(), false);
+                myMethod = declarationScope;
+            }
+
+            @Nullable
+            @Override
+            public KtParameter getKotlinOrigin() {
+                return null;
+            }
+
+            @NotNull
+            @Override
+            public KtLightMethod getMethod() {
+                return myMethod;
+            }
+
+            @Override
+            public PsiElement getParent() {
+                return myMethod;
+            }
+
+            @Override
+            public PsiFile getContainingFile() {
+                return myMethod.getContainingFile();
+            }
+
+            @Override
+            public String getText() {
+                return getName();
+            }
+
+            @Override
+            public TextRange getTextRange() {
+                return TextRange.EMPTY_RANGE;
+            }
         }
 
         @Override
@@ -292,7 +416,17 @@ public final class ClassInnerStuffCache {
 
         @Override
         public String toString() {
-            return null;
+            return myClass.getText();
+        }
+
+        @Override
+        public String getText() {
+            return "";
+        }
+
+        @Override
+        public TextRange getTextRange() {
+            return TextRange.EMPTY_RANGE;
         }
 
         @Override
@@ -319,7 +453,7 @@ public final class ClassInnerStuffCache {
         }
 
         @Override
-        public @Nullable PsiClass getContainingClass() {
+        public @NotNull KtExtensibleLightClass getContainingClass() {
             return myClass;
         }
 
@@ -340,9 +474,15 @@ public final class ClassInnerStuffCache {
 
         @Override
         public @NotNull PsiReferenceList getThrowsList() {
-            LightReferenceListBuilder throwsList = new LightReferenceListBuilder(myManager, getLanguage(), PsiReferenceList.Role.THROWS_LIST);
+            LightReferenceListBuilder throwsList = new LightReferenceListBuilder(
+                    myManager,
+                    getLanguage(),
+                    PsiReferenceList.Role.THROWS_LIST
+            );
+
             if (myKind == EnumMethodKind.ValueOf) {
-                throwsList.addReference("java.lang.IllegalArgumentException");
+                throwsList.addReference(IllegalArgumentException.class.getName());
+                throwsList.addReference(NullPointerException.class.getName());
             }
 
             return throwsList;
@@ -382,17 +522,20 @@ public final class ClassInnerStuffCache {
         }
 
         @Override
-        public PsiMethod @NotNull [] findSuperMethods() {
+        @NotNull
+        public PsiMethod[] findSuperMethods() {
             return PsiSuperMethodImplUtil.findSuperMethods(this);
         }
 
         @Override
-        public PsiMethod @NotNull [] findSuperMethods(boolean checkAccess) {
+        @NotNull
+        public PsiMethod[] findSuperMethods(boolean checkAccess) {
             return PsiSuperMethodImplUtil.findSuperMethods(this, checkAccess);
         }
 
         @Override
-        public PsiMethod @NotNull [] findSuperMethods(PsiClass parentClass) {
+        @NotNull
+        public PsiMethod[] findSuperMethods(PsiClass parentClass) {
             return PsiSuperMethodImplUtil.findSuperMethods(this, parentClass);
         }
 
@@ -402,12 +545,14 @@ public final class ClassInnerStuffCache {
         }
 
         @Override
+        @Deprecated
         public @Nullable PsiMethod findDeepestSuperMethod() {
             return PsiSuperMethodImplUtil.findDeepestSuperMethod(this);
         }
 
         @Override
-        public PsiMethod @NotNull [] findDeepestSuperMethods() {
+        @NotNull
+        public PsiMethod[] findDeepestSuperMethods() {
             return PsiMethod.EMPTY_ARRAY;
         }
 
@@ -432,6 +577,11 @@ public final class ClassInnerStuffCache {
         }
 
         @Override
+        public @Nullable PsiAnnotationMemberValue getDefaultValue() {
+            return null;
+        }
+
+        @Override
         public boolean hasTypeParameters() {
             return false;
         }
@@ -447,8 +597,26 @@ public final class ClassInnerStuffCache {
         }
 
         @Override
-        public PsiTypeParameter @NotNull [] getTypeParameters() {
+        @NotNull
+        public PsiTypeParameter[] getTypeParameters() {
             return PsiTypeParameter.EMPTY_ARRAY;
+        }
+
+        @Override
+        public boolean isMangled() {
+            return false;
+        }
+
+        @Nullable
+        @Override
+        public KtDeclaration getKotlinOrigin() {
+            return null;
+        }
+
+        @Nullable
+        @Override
+        public LightMemberOrigin getLightMemberOrigin() {
+            return null;
         }
     }
 }

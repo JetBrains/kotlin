@@ -1,4 +1,7 @@
-// Copyright 2000-2021 JetBrains s.r.o. and contributors. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.analysis.decompiled.light.classes
 
@@ -12,14 +15,12 @@ internal class KtLightEnumClassForDecompiledDeclaration(
     clsParent: KtLightClassForDecompiledDeclaration,
     file: KtClsFile,
     kotlinOrigin: KtClassOrObject?
-) :
-    KtLightClassForDecompiledDeclaration(
-        clsDelegate = psiConstantInitializer,
-        clsParent = clsParent,
-        file = file,
-        kotlinOrigin = kotlinOrigin
-    ), PsiEnumConstantInitializer {
-
+) : KtLightClassForDecompiledDeclaration(
+    clsDelegate = psiConstantInitializer,
+    clsParent = clsParent,
+    file = file,
+    kotlinOrigin = kotlinOrigin
+), PsiEnumConstantInitializer {
     override fun getBaseClassType(): PsiClassType = psiConstantInitializer.baseClassType
 
     override fun getArgumentList(): PsiExpressionList? = psiConstantInitializer.argumentList

@@ -14,11 +14,12 @@ import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.*
 import com.intellij.psi.javadoc.PsiDocComment
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.*
+import com.intellij.psi.util.MethodSignature
+import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
+import com.intellij.psi.util.PsiUtil
 import com.intellij.util.ArrayUtil
 import com.intellij.util.IncorrectOperationException
 import gnu.trove.THashMap
-import org.jetbrains.annotations.NotNull
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
@@ -288,7 +289,10 @@ private class KotlinEnumSyntheticMethod(
 
     private companion object {
         private fun makeNotNullAnnotation(context: PsiClass): PsiAnnotation {
-            return PsiElementFactory.getInstance(context.project).createAnnotationFromText("@" + NotNull::class.java.name, context)
+            return PsiElementFactory.getInstance(context.project).createAnnotationFromText(
+                ClassInnerStuffCache.NOT_NULL_ANNOTATION_QUALIFIER,
+                context,
+            )
         }
     }
 }
