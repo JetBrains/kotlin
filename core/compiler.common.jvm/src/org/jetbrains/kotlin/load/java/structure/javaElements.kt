@@ -54,6 +54,10 @@ interface JavaAnnotation : JavaElement {
     val isFreshlySupportedTypeUseAnnotation: Boolean
         get() = false
 
+    fun isResolvedTo(fqName: FqName) : Boolean {
+        return classId?.asSingleFqName() == fqName
+    }
+
     fun resolve(): JavaClass?
 }
 

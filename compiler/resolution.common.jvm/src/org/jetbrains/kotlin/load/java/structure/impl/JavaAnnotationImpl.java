@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 
 import java.util.Collection;
+import java.util.Objects;
 
 import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.namedAnnotationArguments;
 
@@ -93,6 +94,15 @@ public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implement
         PsiAnnotation psi = getPsi();
         ExternalAnnotationsManager externalAnnotationManager = ExternalAnnotationsManager.getInstance(psi.getProject());
         return externalAnnotationManager.isExternalAnnotation(psi);
+    }
+
+    @Override
+    public boolean isResolvedTo(@NotNull FqName fqName) {
+        PsiJavaCodeReferenceElement referenceElement = getPsi().getNameReferenceElement();
+        if (referenceElement == null || !Objects.equals(referenceElement.getReferenceName(), fqName.shortNameOrSpecial().asString())) {
+            return false;
+        }
+        return getPsi().hasQualifiedName(fqName.asString());
     }
 
     @Override
