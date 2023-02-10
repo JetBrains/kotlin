@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.AstLoadingFilter
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -1810,12 +1809,12 @@ open class RawFirBuilder(
                         }
 
                         if (hasDelegate()) {
-                            fun extractDelegateExpression() = this@toFirProperty.delegate?.expression?.let { expression ->
-                                buildOrLazyExpression(expression.toFirSourceElement()) {
-                                    expression.toFirExpression("Should have delegate")
+                            fun extractDelegateExpression() = buildOrLazyExpression(null) {
+                                this@toFirProperty.delegate?.expression?.let {
+                                    it.toFirExpression("Should have delegate")
+                                } ?: buildErrorExpression {
+                                    diagnostic = ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.ExpressionExpected)
                                 }
-                            } ?: buildErrorExpression {
-                                diagnostic = ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.ExpressionExpected)
                             }
 
                             val delegateBuilder = FirWrappedDelegateExpressionBuilder().apply {
