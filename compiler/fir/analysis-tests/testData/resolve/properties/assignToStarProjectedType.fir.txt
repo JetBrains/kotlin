@@ -1,0 +1,44 @@
+FILE: assignToStarProjectedType.kt
+    public final class Inv<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Inv<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun <T> invOf(): R|Inv<T>| {
+        ^invOf R|/Inv.Inv|<R|T|>()
+    }
+    public abstract class Base<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Base<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var foo: R|Inv<T>?| = R|/invOf|<R|T|>()
+            public get(): R|Inv<T>?|
+            public set(value: R|Inv<T>?|): R|kotlin/Unit|
+
+    }
+    public final class Bar : R|Base<kotlin/String>| {
+        public constructor(): R|Bar| {
+            super<R|Base<kotlin/String>|>()
+        }
+
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval x: R|Bar| = R|/Bar.Bar|()
+        R|<local>/x|.R|SubstitutionOverride</Bar.foo: R|Inv<kotlin/String>?|>| = R|/invOf|<R|kotlin/String|>()
+        R|<local>/x|.R|SubstitutionOverride</Bar.foo: R|Inv<kotlin/String>?|>| = Null(null)
+    }
+    public final fun test_2(x: R|Base<*>|): R|kotlin/Unit| {
+        R|<local>/x|.R|SubstitutionOverride</Base.foo: R|Inv<CapturedType(*)>?|>| = R|/invOf<CS errors: /invOf>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+        R|<local>/x|.R|SubstitutionOverride</Base.foo: R|Inv<CapturedType(*)>?|>| = Null(null)
+    }
+    public final fun test_3(x: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|Base<*>|) ->  {
+                R|<local>/x|.R|SubstitutionOverride</Base.foo: R|Inv<CapturedType(*)>?|>| = R|/invOf<CS errors: /invOf>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>>()
+                R|<local>/x|.R|SubstitutionOverride</Base.foo: R|Inv<CapturedType(*)>?|>| = Null(null)
+            }
+        }
+
+    }

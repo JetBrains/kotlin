@@ -1,0 +1,26 @@
+FILE: internalSuperCallFromInlineFun.kt
+    public abstract class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        internal final fun foo(x: R|kotlin/String|): R|kotlin/String| {
+            ^foo R|<local>/x|
+        }
+
+        public abstract fun bar(): R|kotlin/String|
+
+    }
+    public final inline fun baz(crossinline block: R|() -> kotlin/String|): R|C| {
+        ^baz object : R|C| {
+            private constructor(): R|<anonymous>| {
+                super<R|C|>()
+            }
+
+            public open override fun bar(): R|kotlin/String| {
+                ^bar this@R|/<anonymous>|.R|/C.foo|(R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|())
+            }
+
+        }
+
+    }

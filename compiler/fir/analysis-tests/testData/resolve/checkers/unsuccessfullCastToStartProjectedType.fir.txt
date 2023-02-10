@@ -1,0 +1,22 @@
+FILE: unsuccessfullCastToStartProjectedType.kt
+    public open class Foo<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Foo<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Foo1<A> : R|Foo<kotlin/Int>| {
+        public constructor<A>(): R|Foo1<A>| {
+            super<R|Foo<kotlin/Int>|>()
+        }
+
+    }
+    public final class Foo2 : R|Foo<kotlin/Int>| {
+        public constructor(): R|Foo2| {
+            super<R|Foo<kotlin/Int>|>()
+        }
+
+    }
+    public final fun process(foo: R|Foo<kotlin/Long>|): R|kotlin/Unit| {
+        (R|<local>/foo| as R|Foo1<*>|)
+    }

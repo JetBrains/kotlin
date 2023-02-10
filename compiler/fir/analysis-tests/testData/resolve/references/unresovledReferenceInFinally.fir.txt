@@ -1,0 +1,12 @@
+FILE: unresovledReferenceInFinally.kt
+    public final fun test(): R|kotlin/Unit| {
+        String(1234).R|kotlin/apply|<R|kotlin/String|>(<L> = apply@fun R|kotlin/String|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            try {
+            }
+            finally {
+                ::<Unresolved reference: fu1>#
+            }
+
+        }
+        )
+    }

@@ -1,0 +1,29 @@
+FILE: typeOfLambdaWithSmartcast.kt
+    public final fun test_1(): R|kotlin/Unit| {
+        lval f: R|(kotlin/String?) -> kotlin/String| = l@fun <anonymous>(it: R|kotlin/String?|): R|kotlin/String| <inline=Unknown>  {
+            when () {
+                !=(R|<local>/it|, Null(null)) ->  {
+                    ^@l R|<local>/it|
+                }
+            }
+
+            ^ String()
+        }
+
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/String|>|(String()).R|kotlin/String.length|
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval f: R|(kotlin/String?) -> kotlin/String| = l@fun <anonymous>(it: R|kotlin/String?|): R|kotlin/String| <inline=Unknown>  {
+            ^ when () {
+                !=(R|<local>/it|, Null(null)) ->  {
+                    R|<local>/it|
+                }
+                else ->  {
+                    String()
+                }
+            }
+
+        }
+
+        R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/String|>|(String()).R|kotlin/String.length|
+    }

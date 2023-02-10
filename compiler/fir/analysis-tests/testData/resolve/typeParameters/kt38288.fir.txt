@@ -1,0 +1,20 @@
+FILE: kt38288.kt
+    public open class A<K : R|kotlin/Any|> : R|kotlin/Any| {
+        public constructor<K : R|kotlin/Any|>(): R|A<K>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class G : R|A<G.Key<*>>| {
+        public constructor(): R|G| {
+            super<R|A<G.Key<*>>|>()
+        }
+
+        public final class Key<T : R|kotlin/Any|> : R|kotlin/Any| {
+            public constructor<T : R|kotlin/Any|>(): R|G.Key<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }

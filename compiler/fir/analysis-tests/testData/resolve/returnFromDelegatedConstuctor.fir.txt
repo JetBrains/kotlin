@@ -1,0 +1,38 @@
+FILE: returnFromDelegatedConstuctor.kt
+    public final data class StringPair : R|kotlin/Any| {
+        public constructor(a: R|kotlin/String|, b: R|kotlin/String|): R|StringPair| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = R|<local>/a|
+            public get(): R|kotlin/String|
+
+        public final val b: R|kotlin/String| = R|<local>/b|
+            public get(): R|kotlin/String|
+
+        public constructor(): R|StringPair| {
+            this<R|StringPair|>(^ Unit, ^ Unit)
+        }
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final operator fun component2(): R|kotlin/String|
+
+        public final fun copy(a: R|kotlin/String| = this@R|/StringPair|.R|/StringPair.a|, b: R|kotlin/String| = this@R|/StringPair|.R|/StringPair.b|): R|StringPair|
+
+    }
+    public abstract class Abs : R|kotlin/Any| {
+        public constructor(a: R|kotlin/String|): R|Abs| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/String| = R|<local>/a|
+            public get(): R|kotlin/String|
+
+    }
+    public final class Smth : R|Abs| {
+        public constructor(): R|Smth| {
+            super<R|Abs|>(^ Unit)
+        }
+
+    }

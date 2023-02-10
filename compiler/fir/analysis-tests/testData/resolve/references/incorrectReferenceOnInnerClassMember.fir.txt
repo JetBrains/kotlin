@@ -1,0 +1,23 @@
+FILE: incorrectReferenceOnInnerClassMember.kt
+    package foo
+
+    public final class Outer<T> : R|kotlin/Any| {
+        public constructor<T>(): R|foo/Outer<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final inner class Inner<T> : R|kotlin/Any| {
+            public foo/Outer<T>.constructor(): R|foo/Outer.Inner<T>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun method(): R|kotlin/Unit| {
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|foo/Outer|.<Resolution to classifier>#(Int(42))
+        Q|foo/Outer|.<Resolution to classifier>#(Int(42))::<Unresolved reference: method>#
+    }

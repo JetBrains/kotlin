@@ -517,6 +517,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             }
 
             @Test
+            @TestMetadata("innerAnnotationInstantiation.kt")
+            public void testInnerAnnotationInstantiation() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/instances/innerAnnotationInstantiation.kt");
+            }
+
+            @Test
             @TestMetadata("javaAnnotation.kt")
             public void testJavaAnnotation() throws Exception {
                 runTest("compiler/testData/codegen/box/annotations/instances/javaAnnotation.kt");
@@ -652,6 +658,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @Test
             public void testAllFilesPresentInTypeAnnotations() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/annotations/typeAnnotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            }
+
+            @Test
+            @TestMetadata("annotationWithTypeParameterOnReturnType.kt")
+            public void testAnnotationWithTypeParameterOnReturnType() throws Exception {
+                runTest("compiler/testData/codegen/box/annotations/typeAnnotations/annotationWithTypeParameterOnReturnType.kt");
             }
 
             @Test
@@ -3211,6 +3223,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("kt52270.kt")
         public void testKt52270() throws Exception {
             runTest("compiler/testData/codegen/box/callableReference/kt52270.kt");
+        }
+
+        @Test
+        @TestMetadata("kt55138.kt")
+        public void testKt55138() throws Exception {
+            runTest("compiler/testData/codegen/box/callableReference/kt55138.kt");
         }
 
         @Test
@@ -6136,6 +6154,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
             @TestMetadata("extensionWithOuter.kt")
             public void testExtensionWithOuter() throws Exception {
                 runTest("compiler/testData/codegen/box/classes/inner/extensionWithOuter.kt");
+            }
+
+            @Test
+            @TestMetadata("innerClassDerivedFromOuterClass.kt")
+            public void testInnerClassDerivedFromOuterClass() throws Exception {
+                runTest("compiler/testData/codegen/box/classes/inner/innerClassDerivedFromOuterClass.kt");
             }
 
             @Test
@@ -47369,6 +47393,12 @@ public class FirBlackBoxCodegenTestGenerated extends AbstractFirBlackBoxCodegenT
         @TestMetadata("recordSubstitutedTypeForCallableSamParameter.kt")
         public void testRecordSubstitutedTypeForCallableSamParameter() throws Exception {
             runTest("compiler/testData/codegen/box/sam/recordSubstitutedTypeForCallableSamParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("samAsIndexInArrayAssignment.kt")
+        public void testSamAsIndexInArrayAssignment() throws Exception {
+            runTest("compiler/testData/codegen/box/sam/samAsIndexInArrayAssignment.kt");
         }
 
         @Test

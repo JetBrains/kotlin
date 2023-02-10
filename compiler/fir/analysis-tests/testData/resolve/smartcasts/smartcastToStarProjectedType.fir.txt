@@ -1,0 +1,101 @@
+FILE: smartcastToStarProjectedType.kt
+    public final data class NodePropertyDescriptor<TNode : R|Node|, TProperty : R|kotlin/Any|, TPropertyVal : R|TProperty?|> : R|kotlin/Any| {
+        public constructor<TNode : R|Node|, TProperty : R|kotlin/Any|, TPropertyVal : R|TProperty?|>(description: R|kotlin/String|, propertyRef: R|NodePropertyRef<TNode, TProperty, TPropertyVal>|): R|NodePropertyDescriptor<TNode, TProperty, TPropertyVal>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val description: R|kotlin/String| = R|<local>/description|
+            public get(): R|kotlin/String|
+
+        public final val propertyRef: R|NodePropertyRef<TNode, TProperty, TPropertyVal>| = R|<local>/propertyRef|
+            public get(): R|NodePropertyRef<TNode, TProperty, TPropertyVal>|
+
+        public final fun test_1(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            when () {
+                (R|<local>/other| !is R|NodePropertyDescriptor<*, *, *>|) ->  {
+                    ^test_1 Boolean(false)
+                }
+            }
+
+            when () {
+                !=(this@R|/NodePropertyDescriptor|.R|/NodePropertyDescriptor.description|, R|<local>/other|.R|SubstitutionOverride</NodePropertyDescriptor.description: R|kotlin/String|>|) ->  {
+                    ^test_1 Boolean(false)
+                }
+            }
+
+            when () {
+                !=(this@R|/NodePropertyDescriptor|.R|/NodePropertyDescriptor.propertyRef|, R|<local>/other|.R|SubstitutionOverride</NodePropertyDescriptor.propertyRef: R|NodePropertyRef<CapturedType(*), CapturedType(*), CapturedType(*)>|>|) ->  {
+                    ^test_1 Boolean(false)
+                }
+            }
+
+            ^test_1 Boolean(true)
+        }
+
+        public final fun test_2(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            when () {
+                (R|<local>/other| !is R|NodePropertyDescriptor<*, *, *>|) ->  {
+                    ^test_2 Boolean(false)
+                }
+            }
+
+            when () {
+                (R|<local>/other| is R|NodePropertyDescriptor<*, *, *>|) ->  {
+                    when () {
+                        !=(this@R|/NodePropertyDescriptor|.R|/NodePropertyDescriptor.description|, R|<local>/other|.R|SubstitutionOverride</NodePropertyDescriptor.description: R|kotlin/String|>|) ->  {
+                            ^test_2 Boolean(false)
+                        }
+                    }
+
+                    when () {
+                        !=(this@R|/NodePropertyDescriptor|.R|/NodePropertyDescriptor.propertyRef|, R|<local>/other|.R|SubstitutionOverride</NodePropertyDescriptor.propertyRef: R|NodePropertyRef<CapturedType(*), CapturedType(*), CapturedType(*)>|>|) ->  {
+                            ^test_2 Boolean(false)
+                        }
+                    }
+
+                }
+            }
+
+            ^test_2 Boolean(true)
+        }
+
+        public final fun test_3(other: R|kotlin/Any?|): R|kotlin/Boolean| {
+            when () {
+                (R|<local>/other| is R|NodePropertyDescriptor<*, *, *>|) ->  {
+                    when () {
+                        !=(this@R|/NodePropertyDescriptor|.R|/NodePropertyDescriptor.description|, R|<local>/other|.R|SubstitutionOverride</NodePropertyDescriptor.description: R|kotlin/String|>|) ->  {
+                            ^test_3 Boolean(false)
+                        }
+                    }
+
+                    when () {
+                        !=(this@R|/NodePropertyDescriptor|.R|/NodePropertyDescriptor.propertyRef|, R|<local>/other|.R|SubstitutionOverride</NodePropertyDescriptor.propertyRef: R|NodePropertyRef<CapturedType(*), CapturedType(*), CapturedType(*)>|>|) ->  {
+                            ^test_3 Boolean(false)
+                        }
+                    }
+
+                }
+            }
+
+            ^test_3 Boolean(true)
+        }
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final operator fun component2(): R|NodePropertyRef<TNode, TProperty, TPropertyVal>|
+
+        public final fun copy(description: R|kotlin/String| = this@R|/NodePropertyDescriptor|.R|/NodePropertyDescriptor.description|, propertyRef: R|NodePropertyRef<TNode, TProperty, TPropertyVal>| = this@R|/NodePropertyDescriptor|.R|/NodePropertyDescriptor.propertyRef|): R|NodePropertyDescriptor<TNode, TProperty, TPropertyVal>|
+
+    }
+    public final class NodePropertyRef<T, U, V> : R|kotlin/Any| {
+        public constructor<T, U, V>(): R|NodePropertyRef<T, U, V>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class Node : R|kotlin/Any| {
+        public constructor(): R|Node| {
+            super<R|kotlin/Any|>()
+        }
+
+    }

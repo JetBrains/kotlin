@@ -1,0 +1,40 @@
+FILE: complexConflictingProjections.kt
+    public final class Foo : R|kotlin/Any| {
+        public constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Bar<T1 : R|Foo|, out T2> : R|kotlin/Any| {
+        public constructor<T1 : R|Foo|, out T2>(): R|Bar<T1, T2>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Baz<T1, T2 : R|Bar<Foo, out T2>|> : R|kotlin/Any| {
+        public constructor<T1, T2 : R|Bar<Foo, out T2>|>(): R|Baz<T1, T2>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class Qux<T1, T2 : R|Baz<T2, Bar<Foo, T2>>|> : R|kotlin/Any| {
+        public constructor<T1, T2 : R|Baz<T2, Bar<Foo, T2>>|>(f: R|T2|): R|Qux<T1, T2>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var f: R|T2| = R|<local>/f|
+            public get(): R|T2|
+            public set(value: R|T2|): R|kotlin/Unit|
+
+    }
+    public final class Quux<T> : R|kotlin/Any| {
+        public constructor<T>(): R|Quux<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            lval x: R|Qux<in T, Baz<T, Bar<Foo, in T>>>| = Null(null)!!
+            R|<local>/x|.R|SubstitutionOverride</Qux.f: R|CapturedType(out Baz<T, out ERROR CLASS: Inconsistent type: Bar<Foo, in T> (1 parameter has declared variance: out, but argument variance is in)>)|>| = Null(null)!!
+        }
+
+    }

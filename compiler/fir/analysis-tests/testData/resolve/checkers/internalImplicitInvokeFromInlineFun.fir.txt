@@ -1,0 +1,17 @@
+FILE: internalImplicitInvokeFromInlineFun.kt
+    public final class Test : R|kotlin/Any| {
+        public constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        internal final operator fun invoke(): R|Test| {
+            ^invoke this@R|/Test|
+        }
+
+    }
+    public final inline fun testFunction(): R|Test| {
+        ^testFunction R|/Test.Test|().R|/Test.invoke|()
+    }
+    public final inline fun testOperator(): R|Test| {
+        ^testOperator R|/Test.Test|().R|/Test.invoke|()
+    }

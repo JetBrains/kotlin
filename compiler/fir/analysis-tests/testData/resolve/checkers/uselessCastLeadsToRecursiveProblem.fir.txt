@@ -1,0 +1,53 @@
+FILE: uselessCastLeadsToRecursiveProblem.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public open class C : R|A| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final val <T : R|C|> R|kotlin/reflect/KClass<T>|.extProp1: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String(I'm C)
+        }
+    public final val R|A|.extProp1: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ when (this@R|/extProp1|) {
+                ($subj$ is R|B|) ->  {
+                    String(I'm B)
+                }
+                ($subj$ is R|C|) ->  {
+                    <getClass>((this@R|/extProp1| as R|C|)).R|/extProp1|<R|CapturedType(out C)|>
+                }
+                else ->  {
+                    String(I don't know who I am..)
+                }
+            }
+
+        }
+    public final val <T : R|C|> R|kotlin/reflect/KClass<T>|.extProp2: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ String(I'm C)
+        }
+    public final val R|A|.extProp2: R|kotlin/String|
+        public get(): R|kotlin/String| {
+            ^ when (this@R|/extProp2|) {
+                ($subj$ is R|B|) ->  {
+                    String(I'm B)
+                }
+                ($subj$ is R|C|) ->  {
+                    <getClass>(this@R|/extProp2|).R|/extProp2|<R|CapturedType(out C)|>
+                }
+                else ->  {
+                    String(I don't know who I am..)
+                }
+            }
+
+        }
