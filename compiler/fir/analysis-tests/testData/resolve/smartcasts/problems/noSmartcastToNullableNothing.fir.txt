@@ -1,0 +1,19 @@
+FILE: noSmartcastToNullableNothing.kt
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public final fun foo(testFun: R|((kotlin/Int) -> kotlin/Unit)?|, anyInterface: R|A?|): R|kotlin/Unit| {
+    }
+    public final fun test(x: R|kotlin/Int?|): R|kotlin/Unit| {
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|(when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                foo@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Unit| <inline=Unknown>  {
+                    Int(0)
+                }
+
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+        , R|<local>/x|)
+    }

@@ -1,0 +1,22 @@
+FILE: kt43936.kt
+    public abstract interface Operation<T> : R|kotlin/Any| {
+    }
+    public final class FooOperation : R|Operation<FooOperation.Boom>| {
+        public constructor(foo: R|kotlin/String|): R|FooOperation| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val foo: R|kotlin/String| = R|<local>/foo|
+            public get(): R|kotlin/String|
+
+        @R|kotlin/Suppress|(names = vararg(String(test))) public final class Boom : R|kotlin/Any| {
+            public constructor(bar: R|kotlin/String|): R|FooOperation.Boom| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final val bar: R|kotlin/String| = R|<local>/bar|
+                public get(): R|kotlin/String|
+
+        }
+
+    }

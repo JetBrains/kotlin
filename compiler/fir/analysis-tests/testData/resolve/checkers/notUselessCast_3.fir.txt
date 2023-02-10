@@ -1,0 +1,43 @@
+FILE: notUselessCast_3.kt
+    public sealed interface Square : R|kotlin/Any| {
+    }
+    public final object MARKED : R|Square| {
+        private constructor(): R|MARKED| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final object UNMARKED : R|Square| {
+        private constructor(): R|UNMARKED| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun test_1(): R|kotlin/Unit| {
+        lval lines: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
+        lval cards: R|kotlin/collections/List<kotlin/collections/List<kotlin/collections/MutableList<Square>>>| = R|<local>/lines|.R|kotlin/collections/windowed|<R|kotlin/String|>(Int(6)).R|kotlin/collections/map|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/collections/List<kotlin/collections/MutableList<Square>>|>(<L> = map@fun <anonymous>(card: R|kotlin/collections/List<kotlin/String>|): R|kotlin/collections/List<kotlin/collections/MutableList<Square>>| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|<local>/card|.R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/collections/MutableList<Square>|>(<L> = map@fun <anonymous>(line: R|kotlin/String|): R|kotlin/collections/MutableList<Square>| <inline=Inline, kind=UNKNOWN>  {
+                ^ R|<local>/line|.R|kotlin/text/map|<R|Square|>(<L> = map@fun <anonymous>(it: R|kotlin/Char|): R|Square| <inline=Inline, kind=UNKNOWN>  {
+                    ^ (Q|UNMARKED| as R|Square|)
+                }
+                ).R|kotlin/collections/toMutableList|<R|Square|>()
+            }
+            )
+        }
+        )
+        R|<local>/cards|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/collections/List<kotlin/collections/MutableList<Square>>|>|(Int(0)).R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/collections/MutableList<Square>|>|(Int(0)).R|SubstitutionOverride<kotlin/collections/MutableList.set: R|Square|>|(Int(0), Q|MARKED|)
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval lines: R|kotlin/collections/List<kotlin/String>| = R|kotlin/collections/listOf|<R|kotlin/String|>()
+        lval cards: R|kotlin/collections/List<kotlin/collections/List<kotlin/collections/MutableList<UNMARKED>>>| = R|<local>/lines|.R|kotlin/collections/windowed|<R|kotlin/String|>(Int(6)).R|kotlin/collections/map|<R|kotlin/collections/List<kotlin/String>|, R|kotlin/collections/List<kotlin/collections/MutableList<UNMARKED>>|>(<L> = map@fun <anonymous>(card: R|kotlin/collections/List<kotlin/String>|): R|kotlin/collections/List<kotlin/collections/MutableList<UNMARKED>>| <inline=Inline, kind=UNKNOWN>  {
+            ^ R|<local>/card|.R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/collections/MutableList<UNMARKED>|>(<L> = map@fun <anonymous>(line: R|kotlin/String|): R|kotlin/collections/MutableList<UNMARKED>| <inline=Inline, kind=UNKNOWN>  {
+                ^ R|<local>/line|.R|kotlin/text/map|<R|UNMARKED|>(<L> = map@fun <anonymous>(it: R|kotlin/Char|): R|UNMARKED| <inline=Inline, kind=UNKNOWN>  {
+                    ^ Q|UNMARKED|
+                }
+                ).R|kotlin/collections/toMutableList|<R|UNMARKED|>()
+            }
+            )
+        }
+        )
+        R|<local>/cards|.R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/collections/List<kotlin/collections/MutableList<UNMARKED>>|>|(Int(0)).R|SubstitutionOverride<kotlin/collections/List.get: R|kotlin/collections/MutableList<UNMARKED>|>|(Int(0)).R|SubstitutionOverride<kotlin/collections/MutableList.set: R|UNMARKED|><Inapplicable(INAPPLICABLE): kotlin/collections/MutableList.set>#|(Int(0), Q|MARKED|)
+    }

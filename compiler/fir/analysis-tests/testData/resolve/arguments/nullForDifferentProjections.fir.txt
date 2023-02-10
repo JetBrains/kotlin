@@ -1,0 +1,23 @@
+FILE: nullForDifferentProjections.kt
+    public abstract interface SomeFace<T> : R|kotlin/Any| {
+    }
+    public final class SomeGene<T> : R|kotlin/Any| {
+        public constructor<T>(): R|SomeGene<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun setFace(face: R|SomeFace<T>?|): R|kotlin/Unit| {
+        }
+
+        public final fun setString(string: R|kotlin/String?|): R|kotlin/Unit| {
+        }
+
+    }
+    public final fun nullTypeArg(invP: R|SomeGene<kotlin/Any>|, inP: R|SomeGene<in kotlin/Any>|, outP: R|SomeGene<out kotlin/Any>|): R|kotlin/Unit| {
+        R|<local>/invP|.R|SubstitutionOverride</SomeGene.setFace: R|kotlin/Unit|>|(Null(null))
+        R|<local>/invP|.R|SubstitutionOverride</SomeGene.setString: R|kotlin/Unit|>|(Null(null))
+        R|<local>/inP|.R|SubstitutionOverride</SomeGene.setFace: R|kotlin/Unit|>|(Null(null))
+        R|<local>/inP|.R|SubstitutionOverride</SomeGene.setString: R|kotlin/Unit|>|(Null(null))
+        R|<local>/outP|.R|SubstitutionOverride</SomeGene.setFace: R|kotlin/Unit|>|(Null(null))
+        R|<local>/outP|.R|SubstitutionOverride</SomeGene.setString: R|kotlin/Unit|>|(Null(null))
+    }

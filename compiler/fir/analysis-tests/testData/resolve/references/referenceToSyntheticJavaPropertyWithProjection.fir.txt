@@ -1,0 +1,14 @@
+FILE: main.kt
+    public final class KotlinInv<T> : R|kotlin/Any| {
+        public constructor<T>(): R|KotlinInv<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val stringVal: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        Q|JavaInv|::R|/JavaInv.stringVal|
+        Q|KotlinInv|::R|SubstitutionOverride</KotlinInv.stringVal: R|kotlin/String|>|
+    }

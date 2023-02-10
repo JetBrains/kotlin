@@ -1,0 +1,11 @@
+FILE: suspendCOnversionForReceiver.kt
+    public final fun R|suspend () -> kotlin/Unit|.extensionFunc(): R|kotlin/Unit| {
+    }
+    public final fun parameterFunc(func: R|suspend () -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun testFunc(): R|kotlin/Unit| {
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/parameterFunc|(::R|/testFunc|)
+        ::R|/testFunc|.R|/extensionFunc|()
+    }

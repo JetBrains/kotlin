@@ -12201,6 +12201,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("approximationOfInProjection.kt")
+            public void testApproximationOfInProjection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/generics/approximationOfInProjection.kt");
+            }
+
+            @Test
             @TestMetadata("argumentsForT.kt")
             public void testArgumentsForT() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/generics/argumentsForT.kt");

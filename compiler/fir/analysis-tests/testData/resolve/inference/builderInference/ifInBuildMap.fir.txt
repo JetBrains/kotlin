@@ -1,0 +1,15 @@
+FILE: ifInBuildMap.kt
+    public final fun main(): R|kotlin/Unit| {
+        R|kotlin/collections/buildMap|<R|kotlin/String|, R|kotlin/String|>(<L> = buildMap@fun R|kotlin/collections/MutableMap<kotlin/String, kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            when () {
+                Boolean(true) ->  {
+                    R|kotlin/io/println|(String(test))
+                }
+                else ->  {
+                    this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableMap.put: R|Stub (chain inference): TypeVariable(V)?|>|(String(foo), String(bar))
+                }
+            }
+
+        }
+        )
+    }

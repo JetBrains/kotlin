@@ -1,0 +1,16 @@
+FILE: earlyReturnInNonExhaustiveWhen.kt
+    public final fun foo(str: R|kotlin/String?|): R|kotlin/Int| {
+        when () {
+            ==(R|<local>/str|, Null(null)) ->  {
+                ^foo Int(-1)
+            }
+        }
+
+        when () {
+            ==(R|<local>/str|.R|kotlin/String.length|, Int(123)) ->  {
+                ^foo Int(123)
+            }
+        }
+
+        ^foo Int(321)
+    }

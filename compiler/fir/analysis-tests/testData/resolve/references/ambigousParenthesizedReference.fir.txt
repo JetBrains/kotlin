@@ -1,0 +1,6 @@
+FILE: ambigousParenthesizedReference.kt
+    public final fun consume(x: R|kotlin/Any?|): R|kotlin/Unit| {
+    }
+    public final fun box(): R|kotlin/Unit| {
+        ^box R|/consume|(Q|kotlin/Int|::<Ambiguity: plus, [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#)
+    }

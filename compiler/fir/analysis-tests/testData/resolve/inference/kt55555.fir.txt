@@ -1,0 +1,24 @@
+FILE: kt55555.kt
+    private abstract interface Foo : R|kotlin/Any| {
+    }
+    private final class Bar<T : R|Foo|, L : R|kotlin/collections/List<T>|> : R|kotlin/Any| {
+        public constructor<T : R|Foo|, L : R|kotlin/collections/List<T>|>(): R|Bar<T, L>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    private final fun <T : R|Foo|> bar(t: R|T|): R|Bar<T, *>| {
+        ^bar Null(null)!!
+    }
+    private final fun <T : R|Foo|> foo(t: R|T|): R|T| {
+        lval map: R|Bar<T, *>| = when () {
+            (R|<local>/t| is R|Bar<*, *>|) ->  {
+                (R|<local>/t| as R|Bar<T, *>|)
+            }
+            else ->  {
+                R|/bar|<R|T|>(R|<local>/t|)
+            }
+        }
+
+        ^foo R|<local>/t|
+    }

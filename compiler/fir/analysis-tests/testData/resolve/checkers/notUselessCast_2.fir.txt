@@ -1,0 +1,61 @@
+FILE: notUselessCast_2.kt
+    public final data class Foo : R|kotlin/Any| {
+        public constructor(foo: R|kotlin/String|): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val foo: R|kotlin/String| = R|<local>/foo|
+            public get(): R|kotlin/String|
+
+        public final operator fun component1(): R|kotlin/String|
+
+        public final fun copy(foo: R|kotlin/String| = this@R|/Foo|.R|/Foo.foo|): R|Foo|
+
+    }
+    public final class Bar : R|kotlin/Any| {
+        public constructor(bar: R|kotlin/String|): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val bar: R|kotlin/String| = R|<local>/bar|
+            public get(): R|kotlin/String|
+
+    }
+    public final fun R|Bar|.toFoo(): R|Foo| {
+        ^toFoo R|/Foo.Foo|(this@R|/toFoo|.R|/Bar.bar|)
+    }
+    public final class Wrapper<T> : R|kotlin/Any| {
+        public constructor<T>(wrapped: R|T|): R|Wrapper<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val wrapped: R|T| = R|<local>/wrapped|
+            public get(): R|T|
+
+        public final fun <A> map(f: R|(T) -> A|): R|Wrapper<A>| {
+            ^map R|/Wrapper.Wrapper|<R|A|>(R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|A|>|(this@R|/Wrapper|.R|/Wrapper.wrapped|))
+        }
+
+        public final fun swapWrappedValue(f: R|(T) -> Wrapper<T>|): R|Wrapper<T>| {
+            ^swapWrappedValue R|<local>/f|.R|SubstitutionOverride<kotlin/Function1.invoke: R|Wrapper<T>|>|(this@R|/Wrapper|.R|/Wrapper.wrapped|)
+        }
+
+    }
+    public final fun test_1(): R|Wrapper<Foo?>| {
+        ^test_1 R|/Wrapper.Wrapper|<R|Bar|>(R|/Bar.Bar|(String(bar))).R|SubstitutionOverride</Wrapper.map: R|Wrapper<A>|>|<R|Foo?|>(<L> = map@fun <anonymous>(it: R|Bar|): R|Foo?| <inline=NoInline>  {
+            ^ (R|<local>/it|.R|/toFoo|() as R|Foo?|)
+        }
+        ).R|SubstitutionOverride</Wrapper.swapWrappedValue: R|Wrapper<Foo?>|>|(<L> = swapWrappedValue@fun <anonymous>(it: R|Foo?|): R|Wrapper<Foo?>| <inline=NoInline>  {
+            ^ R|/Wrapper.Wrapper|<R|Foo?|>(Null(null))
+        }
+        )
+    }
+    public final fun test_2(): R|Wrapper<Foo?>| {
+        ^test_2 R|/Wrapper.Wrapper|<R|Bar|>(R|/Bar.Bar|(String(bar))).R|SubstitutionOverride</Wrapper.map: R|Wrapper<A>|>|<R|Foo|>(<L> = map@fun <anonymous>(it: R|Bar|): R|Foo| <inline=NoInline>  {
+            ^ R|<local>/it|.R|/toFoo|()
+        }
+        ).R|SubstitutionOverride</Wrapper.swapWrappedValue: R|Wrapper<Foo>|><CS errors: /Wrapper.swapWrappedValue>#|(<L> = swapWrappedValue@fun <anonymous>(it: R|Foo|): R|Wrapper<Foo>| <inline=NoInline>  {
+            ^ R|/Wrapper.Wrapper<CS errors: /Wrapper.Wrapper>#|<R|Foo|>(Null(null))
+        }
+        )
+    }

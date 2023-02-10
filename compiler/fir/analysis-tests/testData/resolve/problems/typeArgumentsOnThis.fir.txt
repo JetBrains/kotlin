@@ -1,0 +1,6 @@
+FILE: typeArgumentsOnThis.kt
+    public final fun x(): R|kotlin/Unit| {
+        this#.<Unresolved name: invoke>#<<ERROR TYPE REF: Symbol not found for X>>::<Unresolved reference: y>#
+    }
+    public final val a: <ERROR TYPE REF: Unresolved reference: y> = this#.<Unresolved name: invoke>#<<ERROR TYPE REF: Symbol not found for X>>::<Unresolved reference: y>#
+        public get(): <ERROR TYPE REF: Unresolved reference: y>

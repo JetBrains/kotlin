@@ -1,0 +1,52 @@
+FILE: smartcastOnFunctionalType.kt
+    public final class MyClass : R|kotlin/Any| {
+        public constructor(provider: R|(() -> kotlin/String)?|): R|MyClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val provider: R|(() -> kotlin/String)?| = R|<local>/provider|
+            public get(): R|(() -> kotlin/String)?|
+
+        public final fun foo(): R|kotlin/Unit| {
+            when () {
+                !=(this@R|/MyClass|.R|/MyClass.provider|, Null(null)) ->  {
+                    this@R|/MyClass|.R|/MyClass.bar|(this@R|/MyClass|.R|/MyClass.provider|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|())
+                }
+            }
+
+        }
+
+        public final fun bar(s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class Test : R|kotlin/Any| {
+        public constructor(): R|Test| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val nullableCheckBox: R|B?| = Null(null)
+            public get(): R|B?|
+
+        public final fun fail(): R|kotlin/Unit| {
+            when () {
+                !=(this@R|/Test|.R|/Test.nullableCheckBox|, Null(null)) ->  {
+                    this@R|/Test|.R|kotlin/run|<R|Test|, R|kotlin/Unit|>(<L> = run@fun R|Test|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                        this@R|/Test|.R|/Test.nullableCheckBox|.R|/invoke|()
+                    }
+                    )
+                }
+            }
+
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final operator fun R|B|.invoke(): R|kotlin/Unit| {
+        ^invoke R|kotlin/TODO|()
+    }
