@@ -29,7 +29,7 @@ open class KotlinJsCompilation @Inject internal constructor(
     final override val compilerOptions: HasCompilerOptions<KotlinJsCompilerOptions>
         get() = compilation.compilerOptions as HasCompilerOptions<KotlinJsCompilerOptions>
 
-    internal val binaries: KotlinJsBinaryContainer =
+    val binaries: KotlinJsBinaryContainer =
         compilation.target.project.objects.newInstance(
             KotlinJsBinaryContainer::class.java,
             compilation.target,
