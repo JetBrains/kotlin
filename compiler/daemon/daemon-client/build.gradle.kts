@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 description = "Kotlin Daemon Client"
 
 plugins {
@@ -35,11 +38,14 @@ dependencies {
     }
 }
 
-tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
-    kotlinOptions {
+tasks.withType<KotlinCompilationTask<*>> {
+    compilerOptions {
         // This module is being run from within Gradle, older versions of which only have older kotlin-stdlib in the runtime classpath.
-        apiVersion = "1.4"
-        freeCompilerArgs += "-Xsuppress-version-warnings"
+        @Suppress("DEPRECATION")
+        apiVersion.set(KotlinVersion.KOTLIN_1_4)
+        @Suppress("DEPRECATION")
+        languageVersion.set(KotlinVersion.KOTLIN_1_4)
+        freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }
 
