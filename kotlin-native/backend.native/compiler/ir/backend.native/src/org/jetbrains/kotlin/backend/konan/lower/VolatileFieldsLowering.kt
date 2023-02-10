@@ -203,11 +203,27 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                     IntrinsicType.GET_AND_ADD_FIELD to ::getAndAddFunction,
             )
 
+            private fun resolveConstantProperty(expression: IrExpression?) : IrPropertyReference? = when (expression) {
+                null -> null
+                is IrPropertyReference -> expression
+                // This is required for handling calling intrinsic inside inline function,
+                // where constant property is passed in inline function argument.
+                // This is required for atomicfu atomic extensions machinery
+                is IrGetValue -> {
+                    val variable = expression.symbol.owner as? IrVariable
+                    resolveConstantProperty(variable?.takeIf { !it.isVar }?.initializer)
+                }
+                is IrBlock -> {
+                    resolveConstantProperty(expression.statements.singleOrNull() as? IrExpression)
+                }
+                else -> null
+            }
+
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid(this)
                 val intrinsicType = tryGetIntrinsicType(expression).takeIf { it in intrinsicMap } ?: return expression
                 builder.at(expression)
-                val reference = expression.extensionReceiver as? IrPropertyReference
+                val reference = resolveConstantProperty(expression.extensionReceiver)
                         ?: return unsupported("Only compile-time known IrProperties supported for $intrinsicType")
                 val property = reference.symbol.owner
                 val backingField = property.backingField
