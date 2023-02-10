@@ -225,7 +225,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         project("kotlin-js-ir-ic-rebuild-after-error", gradleVersion) {
             for (i in 0..1) {
                 buildAndFail("compileDevelopmentExecutableKotlinJs") {
-                    assertTasksFailed(":app:compileDevelopmentExecutableKotlinJs")
+                    assertTasksFailed(":app:compileKotlinJs")
 
                     projectPath.resolve("app/build/klib/cache/").toFile().walk().forEach { cachedFile ->
                         // could be empty directories
