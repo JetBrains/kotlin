@@ -42,7 +42,8 @@ class SinceKotlinTransformer(val context: DokkaContext) : DocumentableTransforme
         Platform.common to SinceKotlinVersion("1.0"),
         Platform.jvm to SinceKotlinVersion("1.0"),
         Platform.js to SinceKotlinVersion("1.1"),
-        Platform.native to SinceKotlinVersion("1.3")
+        Platform.native to SinceKotlinVersion("1.3"),
+        Platform.wasm to SinceKotlinVersion("1.8"),
     )
 
     override fun invoke(original: DModule, context: DokkaContext) = original.transform() as DModule
