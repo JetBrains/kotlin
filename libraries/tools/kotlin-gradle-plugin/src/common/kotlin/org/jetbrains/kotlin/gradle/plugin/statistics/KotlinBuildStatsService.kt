@@ -152,7 +152,11 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
             return if (File(gradle.gradleUserHomeDir, DISABLE_STATISTICS_FILE_NAME).exists()) {
                 false
             } else {
-                gradle.rootProject.properties[ENABLE_STATISTICS_PROPERTY_NAME]?.toString()?.toBoolean() ?: DEFAULT_STATISTICS_STATE
+                if (gradle.rootProject.hasProperty(ENABLE_STATISTICS_PROPERTY_NAME)) {
+                    gradle.rootProject.property(ENABLE_STATISTICS_PROPERTY_NAME).toString().toBoolean()
+                } else {
+                    DEFAULT_STATISTICS_STATE
+                }
             }
         }
     }
@@ -194,7 +198,11 @@ internal class DefaultKotlinBuildStatsService internal constructor(
     gradle: Gradle,
     val beanName: ObjectName
 ) : KotlinBuildStatsService(), KotlinBuildStatsMXBean {
-    private val forcePropertiesValidation = gradle.rootProject.properties[FORCE_VALUES_VALIDATION]?.toString()?.toBoolean() ?: false
+    private val forcePropertiesValidation = if (gradle.rootProject.hasProperty(FORCE_VALUES_VALIDATION)) {
+        gradle.rootProject.property(FORCE_VALUES_VALIDATION).toString().toBoolean()
+    } else {
+        false
+    }
     private val sessionLogger = BuildSessionLogger(gradle.gradleUserHomeDir, forceValuesValidation = forcePropertiesValidation)
 
     private fun gradleBuildStartTime(gradle: Gradle): Long? {
