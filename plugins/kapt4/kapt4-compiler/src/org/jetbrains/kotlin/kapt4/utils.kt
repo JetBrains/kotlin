@@ -117,6 +117,7 @@ val PsiType.qualifiedName: String
 val PsiType.qualifiedNameOrNull: String?
     get() {
         if (this is PsiPrimitiveType) return name
+        if (this is PsiWildcardType) return this.bound?.qualifiedNameOrNull
         return when (val resolvedClass = resolvedClass) {
             is PsiTypeParameter -> resolvedClass.name
             else -> resolvedClass?.qualifiedName
