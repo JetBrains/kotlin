@@ -64,15 +64,7 @@ fun main() {
         // KLIB binary compatibility tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeKlibBinaryCompatibilityTest>(
-                suiteTestClassName = "KlibBinaryCompatibilityTestGenerated"
-            ) {
-                model("binaryCompatibility/klibEvolution", recursive = false)
-            }
-        }
-
-        testGroup("native/native.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractNativeKlibBinaryCompatibilityTest>(
-                suiteTestClassName = "KlibBinaryCompatibilityK2TestGenerated",
+                suiteTestClassName = "KlibBinaryCompatibilityTestGenerated",
                 annotations = listOf(provider<K2Pipeline>())
             ) {
                 model("binaryCompatibility/klibEvolution", recursive = false)
