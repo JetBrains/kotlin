@@ -127,8 +127,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("save LLVM IR")
         val VERIFY_BITCODE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify bitcode")
-        val VERIFY_IR: CompilerConfigurationKey<Boolean>
-                = CompilerConfigurationKey.create("verify IR")
+        val VERIFY_IR: CompilerConfigurationKey<IrVerificationMode>
+                = CompilerConfigurationKey.create("IR verification mode")
         val VERIFY_COMPILER: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify compiler")
         val DEBUG_INFO_VERSION: CompilerConfigurationKey<Int>

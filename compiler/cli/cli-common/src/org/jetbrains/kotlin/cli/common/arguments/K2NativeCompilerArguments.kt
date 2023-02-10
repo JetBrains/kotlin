@@ -285,8 +285,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xverify-bitcode", deprecatedName = "--verify_bitcode", description = "Verify llvm bitcode after each method")
     var verifyBitCode: Boolean = false
 
-    @Argument(value = "-Xverify-ir", description = "Verify IR")
-    var verifyIr: Boolean = false
+    @Argument(
+        value = "-Xverify-ir",
+        valueDescription = "{none|warning|error}",
+        description = "IR verification mode (no verification by default)"
+    )
+    var verifyIr: String? = null
 
     @Argument(value = "-Xverify-compiler", description = "Verify compiler")
     var verifyCompiler: String? = null

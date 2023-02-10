@@ -24,6 +24,12 @@ import org.jetbrains.kotlin.konan.util.visibleName
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 
+enum class IrVerificationMode {
+    NONE,
+    WARNING,
+    ERROR
+}
+
 class KonanConfig(val project: Project, val configuration: CompilerConfiguration) {
     internal val distribution = run {
         val overridenProperties = mutableMapOf<String, String>().apply {
@@ -165,8 +171,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val gcMarkSingleThreaded: Boolean
         get() = configuration.get(BinaryOptions.gcMarkSingleThreaded) == true
 
-    val needVerifyIr: Boolean
-        get() = configuration.get(KonanConfigKeys.VERIFY_IR) == true
+    val irVerificationMode: IrVerificationMode
+        get() = configuration.getNotNull(KonanConfigKeys.VERIFY_IR)
 
     val needCompilerVerification: Boolean
         get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER)
