@@ -1,3 +1,7 @@
+// KT-54844 and/or KT-56603 with  -Pkotlin.internal.native.test.cacheMode=STATIC_EVERYWHERE
+// x.toString() is called not from data class, but from usual class
+// MUTED_WHEN: K2
+
 // MODULE: lib
 // FILE: A.kt
 // VERSION: 1

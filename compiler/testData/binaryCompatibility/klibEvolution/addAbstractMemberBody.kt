@@ -1,3 +1,6 @@
+// KT-56603: Segfault with K2 with  -Pkotlin.internal.native.test.cacheMode=STATIC_EVERYWHERE
+// MUTED_WHEN: K2
+
 // MODULE: lib
 // FILE: A.kt
 // VERSION: 1
