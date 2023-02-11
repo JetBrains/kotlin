@@ -22,38 +22,53 @@ object FirActualDeclarationChecker : FirBasicDeclarationChecker() {
         if (declaration !is FirMemberDeclaration || !declaration.isActual) return
 
         if (declaration is FirCallableDeclaration) {
-            val actualFunctionSymbol = declaration.symbol
-            val expectFunctionSymbol = actualFunctionSymbol.getSingleCompatibleExpectForActualOrNull() as? FirCallableSymbol ?: return
-
-            val expectTypeParameters = expectFunctionSymbol.getContainingClassSymbol(expectFunctionSymbol.moduleData.session)
-                ?.typeParameterSymbols.orEmpty()
-            val actualClassTypeParameters = actualFunctionSymbol.getContainingClassSymbol(context.session)?.typeParameterSymbols.orEmpty()
-            val parentSubstitutor =
-                createExpectActualTypeParameterSubstitutor(expectTypeParameters, actualClassTypeParameters, context.session)
-
-            val substitutor = createExpectActualTypeParameterSubstitutor(
-                expectFunctionSymbol.typeParameterSymbols,
-                actualFunctionSymbol.typeParameterSymbols,
-                context.session,
-                parentSubstitutor
-            )
-
-            if (!areCompatibleExpectActualTypes(
-                    substitutor.substituteOrSelf(expectFunctionSymbol.resolvedReturnType.type),
-                    actualFunctionSymbol.resolvedReturnType.type,
-                    expectFunctionSymbol.moduleData.session,
-                    context.session
-                )
-            ) {
-                @Suppress("UNCHECKED_CAST")
-                reporter.reportOn(
-                    declaration.source,
-                    FirErrors.ACTUAL_WITHOUT_EXPECT,
-                    actualFunctionSymbol,
-                    actualFunctionSymbol.expectForActual as Map<ExpectActualCompatibility.Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
-                    context
-                )
+            if (declaration is FirFunction) {
+                checkActualFunctionWithDefaultArguments(declaration, reporter, context)
             }
+            checkReturnTypes(declaration, context, reporter)
+        }
+    }
+
+    private fun checkActualFunctionWithDefaultArguments(function: FirFunction, reporter: DiagnosticReporter, context: CheckerContext) {
+        for (valueParameter in function.valueParameters) {
+            if (valueParameter.defaultValue != null) {
+                reporter.reportOn(valueParameter.source, FirErrors.ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS, context)
+            }
+        }
+    }
+
+    private fun checkReturnTypes(callableDeclaration: FirCallableDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
+        val actualFunctionSymbol = callableDeclaration.symbol
+        val expectFunctionSymbol = actualFunctionSymbol.getSingleCompatibleExpectForActualOrNull() as? FirCallableSymbol ?: return
+
+        val expectTypeParameters = expectFunctionSymbol.getContainingClassSymbol(expectFunctionSymbol.moduleData.session)
+            ?.typeParameterSymbols.orEmpty()
+        val actualClassTypeParameters = actualFunctionSymbol.getContainingClassSymbol(context.session)?.typeParameterSymbols.orEmpty()
+        val parentSubstitutor =
+            createExpectActualTypeParameterSubstitutor(expectTypeParameters, actualClassTypeParameters, context.session)
+
+        val substitutor = createExpectActualTypeParameterSubstitutor(
+            expectFunctionSymbol.typeParameterSymbols,
+            actualFunctionSymbol.typeParameterSymbols,
+            context.session,
+            parentSubstitutor
+        )
+
+        if (!areCompatibleExpectActualTypes(
+                substitutor.substituteOrSelf(expectFunctionSymbol.resolvedReturnType.type),
+                actualFunctionSymbol.resolvedReturnType.type,
+                expectFunctionSymbol.moduleData.session,
+                context.session
+            )
+        ) {
+            @Suppress("UNCHECKED_CAST")
+            reporter.reportOn(
+                callableDeclaration.source,
+                FirErrors.ACTUAL_WITHOUT_EXPECT,
+                actualFunctionSymbol,
+                actualFunctionSymbol.expectForActual as Map<ExpectActualCompatibility.Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
+                context
+            )
         }
     }
 }
