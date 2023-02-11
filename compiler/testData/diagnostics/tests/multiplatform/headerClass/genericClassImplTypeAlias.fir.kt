@@ -27,4 +27,4 @@ actual typealias C8<J> = MutableList<*>
 actual typealias C9<K> = MutableList<in K>
 
 typealias Tmp<K> = MutableList<K>
-actual typealias C10<L> = Tmp<L>
+<!ACTUAL_TYPE_ALIAS_NOT_TO_CLASS!>actual typealias C10<L> = Tmp<L><!>
