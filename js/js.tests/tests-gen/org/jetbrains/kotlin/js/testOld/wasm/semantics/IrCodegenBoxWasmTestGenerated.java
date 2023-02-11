@@ -12099,11 +12099,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             public void testAllFilesPresentInSelfTypes() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/selfTypes"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
-
-            @TestMetadata("transformationChainLazyContainer.kt")
-            public void testTransformationChainLazyContainer() throws Exception {
-                runTest("compiler/testData/codegen/box/fir/selfTypes/transformationChainLazyContainer.kt");
-            }
         }
     }
 

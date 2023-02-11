@@ -14834,12 +14834,6 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
                 public void testAllFilesPresentInSelfTypes() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/fir/selfTypes"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
-
-                @Test
-                @TestMetadata("transformationChainLazyContainer.kt")
-                public void testTransformationChainLazyContainer() throws Exception {
-                    runTest("compiler/testData/codegen/box/fir/selfTypes/transformationChainLazyContainer.kt");
-                }
             }
         }
 

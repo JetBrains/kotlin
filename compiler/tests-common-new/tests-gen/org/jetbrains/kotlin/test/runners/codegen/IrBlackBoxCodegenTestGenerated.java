@@ -18407,6 +18407,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("observer.kt")
+            public void testObserver() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/selfTypes/observer.kt");
+            }
+
+            @Test
             @TestMetadata("selfClassAsFunctionArgument.kt")
             public void testSelfClassAsFunctionArgument() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/selfTypes/selfClassAsFunctionArgument.kt");
