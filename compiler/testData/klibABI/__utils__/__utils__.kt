@@ -75,8 +75,8 @@ private class TestBuilderImpl : TestBuilder {
             val testFailureDetails: TestFailureDetails? = when (test) {
                 is FailingTest -> {
                     try {
-                        test.block()
-                        TestSuccessfulButMustFail
+                        val result = test.block()
+                        TestSuccessfulButMustFail(result)
                     } catch (t: Throwable) {
                         test.failurePattern.validateFailure(t)
                     }
@@ -177,7 +177,7 @@ private class TestFailure(val serialNumber: Int, val sourceLocation: String?, va
 }
 
 private sealed class TestFailureDetails(val description: String)
-private object TestSuccessfulButMustFail : TestFailureDetails("Test is successful but was expected to fail.")
+private class TestSuccessfulButMustFail(actualOutcome: Any?) : TestFailureDetails("Test was expected to fail, but passed successfully: $actualOutcome")
 private class TestFailedWithException(t: Throwable) : TestFailureDetails("Test unexpectedly failed with exception: $t")
 private class TestMismatchedExpectation(expectedOutcome: Any, actualOutcome: Any?) :
     TestFailureDetails("EXPECTED: $expectedOutcome, ACTUAL: $actualOutcome")
