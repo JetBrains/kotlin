@@ -256,11 +256,11 @@ private fun unfoldSetField(expression: IrSetField, callStack: CallStack) {
 }
 
 private fun unfoldGetValue(expression: IrGetValue, environment: IrInterpreterEnvironment) {
-    if (expression.isAccessToObject()) {
+    if (expression.isAccessToNotNullableObject()) {
         // used to evaluate constants inside object
         // TODO is this correct behaviour?
         val irGetObject = expression.type.classOrNull?.owner!!.createGetObject()
-        return unfoldGetObjectValue(irGetObject, environment)
+        return unfoldGetObjectValue(irGetObject, environment) // if object already exists, it will be taken from `mapOfObjects`
     }
     environment.callStack.pushState(environment.callStack.loadState(expression.symbol))
 }
