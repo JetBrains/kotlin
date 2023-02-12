@@ -294,10 +294,10 @@ internal fun IrClass.getSingleAbstractMethod(): IrFunction {
     return declarations.filterIsInstance<IrSimpleFunction>().single { it.modality == Modality.ABSTRACT }
 }
 
-internal fun IrGetValue.isAccessToObject(): Boolean {
+internal fun IrGetValue.isAccessToNotNullableObject(): Boolean {
     val owner = this.symbol.owner
     val expectedClass = this.type.classOrNull?.owner
-    if (expectedClass == null || !expectedClass.isObject) return false
+    if (expectedClass == null || !expectedClass.isObject || this.type.isNullable()) return false
     return owner.origin == IrDeclarationOrigin.INSTANCE_RECEIVER || owner.name.asString() == "<this>"
 }
 
