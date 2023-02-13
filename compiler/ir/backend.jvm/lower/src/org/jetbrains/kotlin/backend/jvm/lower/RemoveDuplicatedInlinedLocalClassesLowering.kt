@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.util.copyTypeAndValueArgumentsFrom
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.NameUtils
 
@@ -82,15 +79,6 @@ class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext
         return result
     }
 
-    private fun IrAttributeContainer.getOriginalDeclaration(): IrDeclaration? {
-        return when (val original = this.attributeOwnerId) {
-            is IrClass -> return original
-            is IrFunctionExpression -> original.function
-            is IrFunctionReference -> original.symbol.owner
-            else -> null
-        }
-    }
-
     private fun reuseConstructorFromOriginalClass(block: IrBlock, anonymousClass: IrClass) {
         val lastStatement = block.statements.last()
         val constructorCall = (lastStatement as? IrConstructorCall)
@@ -99,7 +87,7 @@ class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext
 
         // It is possible that inlined class will be lowered before original. In that case we must launch `LocalDeclarationsLowering` and
         // lower original declaration to get correct captured constructor.
-        val container = anonymousClass.getOriginalDeclaration()?.parents
+        val container = anonymousClass.attributeOwnerId.extractRelatedDeclaration()?.parents
             ?.filterIsInstance<IrFunction>()?.firstOrNull()?.takeIf { it.body != null }
         container?.let {
             LocalDeclarationsLowering(

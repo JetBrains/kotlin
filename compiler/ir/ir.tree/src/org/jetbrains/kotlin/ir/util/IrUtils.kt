@@ -1402,3 +1402,12 @@ val Int.previousOffset
             -1 -> UNDEFINED_OFFSET
             else -> minus(1)
         }
+
+fun IrAttributeContainer.extractRelatedDeclaration(): IrDeclaration? {
+    return when (this) {
+        is IrClass -> this
+        is IrFunctionExpression -> function
+        is IrFunctionReference -> symbol.owner
+        else -> null
+    }
+}

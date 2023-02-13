@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlock
-import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
@@ -93,12 +92,7 @@ fun IrFunction.isReifiable(): Boolean =
 
 private fun IrAttributeContainer.getDeclarationBeforeInline(): IrDeclaration? {
     val original = this.originalBeforeInline ?: return null
-    return when (original) {
-        is IrClass -> return original
-        is IrFunctionExpression -> original.function
-        is IrFunctionReference -> original.symbol.owner
-        else -> null
-    }
+    return original.extractRelatedDeclaration()
 }
 
 fun IrAttributeContainer.getAttributeOwnerBeforeInline(): IrAttributeContainer? {
