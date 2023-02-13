@@ -396,7 +396,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val useDebugInfoInNativeLibs= configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
-    internal val partialLinkage = configuration.get(KonanConfigKeys.PARTIAL_LINKAGE) == true
+    internal val partialLinkageEnabled = configuration[KonanConfigKeys.PARTIAL_LINKAGE] ?: false
 
     internal val additionalCacheFlags by lazy { platformManager.loader(target).additionalCacheFlags }
 
@@ -430,8 +430,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val userCacheFlavorString = buildString {
         appendCommonCacheFlavor()
-
-        if (partialLinkage) append("-pl")
+        if (partialLinkageEnabled) append("-pl")
     }
 
     private val systemCacheRootDirectory = File(distribution.konanHome).child("klib").child("cache")

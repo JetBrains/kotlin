@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
-interface PartialLinkageSupport {
-    val partialLinkageEnabled: Boolean
+interface PartialLinkageSupportForLinker {
+    val isEnabled: Boolean
 
     /**
      * For general use in IR linker.
@@ -38,8 +38,8 @@ interface PartialLinkageSupport {
     fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration)
 
     companion object {
-        val DISABLED = object : PartialLinkageSupport {
-            override val partialLinkageEnabled get() = false
+        val DISABLED = object : PartialLinkageSupportForLinker {
+            override val isEnabled get() = false
             override fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
             override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>) = Unit

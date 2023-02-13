@@ -375,7 +375,7 @@ internal class KonanIrLinker(
             mangler = KonanManglerIr,
             typeSystem = IrTypeSystemContextImpl(builtIns),
             friendModules = friendModules,
-            partialLinkageEnabled = partialLinkageSupport.partialLinkageEnabled,
+            partialLinkageEnabled = partialLinkageSupport.isEnabled,
             platformSpecificClassFilter = KonanFakeOverrideClassFilter
     )
 
@@ -698,7 +698,7 @@ internal class KonanIrLinker(
             deserializedSymbols[idSig]?.let { return it }
 
             val descriptor = descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) ?: return null
-            if (partialLinkageSupport.partialLinkageEnabled
+            if (partialLinkageSupport.isEnabled
                     && descriptor.isTopLevelInPackage()
                     && (descriptor as? DeclarationDescriptorWithVisibility)?.visibility == DescriptorVisibilities.PRIVATE
                     && with(KonanManglerDesc) { !descriptor.isPlatformSpecificExport() }

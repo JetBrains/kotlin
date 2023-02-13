@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.linkage.issues.*
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportImpl
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
@@ -53,10 +53,8 @@ abstract class KotlinIrLinker(
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
-    val partialLinkageSupport: PartialLinkageSupport = if (partialLinkageEnabled)
-        PartialLinkageSupportImpl(builtIns, messageLogger)
-    else
-        PartialLinkageSupport.DISABLED
+    val partialLinkageSupport: PartialLinkageSupportForLinker =
+        createPartialLinkageSupportForLinker(partialLinkageEnabled, builtIns, messageLogger)
 
     protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport get() = UserVisibleIrModulesSupport.DEFAULT
 
@@ -78,7 +76,7 @@ abstract class KotlinIrLinker(
         val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
 
         return symbol ?: run {
-            if (partialLinkageSupport.partialLinkageEnabled)
+            if (partialLinkageSupport.isEnabled)
                 referenceDeserializedSymbol(symbolTable, null, symbolKind, idSignature)
             else
                 SignatureIdNotFoundInModuleWithDependencies(

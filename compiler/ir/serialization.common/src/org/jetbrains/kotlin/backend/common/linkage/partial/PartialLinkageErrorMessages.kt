@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.backend.common.linkage.partial.DeclarationKind.*
-import org.jetbrains.kotlin.backend.common.linkage.partial.ExploredClassifier.Unusable
 import org.jetbrains.kotlin.backend.common.linkage.partial.ExpressionKind.*
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId.Companion.declarationId
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.UNKNOWN_NAME
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.guessName
@@ -18,13 +16,16 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier.Unusable
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature.*
 import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.Module as PLModule
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
 
 internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
     when (this@renderLinkageError) {
@@ -51,6 +52,10 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
                 expressionValueArgumentCount,
                 functionValueParameterCount
             )
+        }
+
+        is SuspendableFunctionCallWithoutCoroutineContext -> expression(expression) {
+            suspendableCallWithoutCoroutine()
         }
 
         is ExpressionHasInaccessibleDeclaration -> expression(expression) {
@@ -495,6 +500,9 @@ private fun Appendable.memberAccessExpressionArgumentsMismatch(
             .declarationKind(functionSymbol, capitalized = false).append(" requires (")
             .append(functionValueParameterCount.toString()).append(")")
 }
+
+private fun Appendable.suspendableCallWithoutCoroutine(): Appendable =
+    append("Suspend function can be called only from a coroutine or another suspend function")
 
 private fun Appendable.inaccessibleDeclaration(
     referencedDeclarationSymbol: IrSymbol,

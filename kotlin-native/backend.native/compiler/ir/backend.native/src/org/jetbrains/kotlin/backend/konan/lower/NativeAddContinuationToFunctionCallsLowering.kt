@@ -13,9 +13,6 @@ import org.jetbrains.kotlin.ir.util.overrides
 internal class NativeAddContinuationToFunctionCallsLowering(
         override val context: Context
 ) : AbstractAddContinuationToFunctionCallsLowering() {
-    override val partialLinkageEnabled: Boolean
-        get() = context.irLinker.partialLinkageSupport.partialLinkageEnabled
-
     /*
      * In complex cases suspend functions are converted to state-machine class with invokeSuspend method.
      * In that case continuation is an object itself

@@ -5,21 +5,24 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId.Companion.declarationId
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.*
+import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
 import org.jetbrains.kotlin.ir.linkage.partial.isPartialLinkageRuntimeError
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
@@ -27,15 +30,14 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.compact
 import java.util.*
 import kotlin.properties.Delegates
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.Module as PLModule
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.File as PLFile
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
 
 internal class PartiallyLinkedIrTreePatcher(
     private val builtIns: IrBuiltIns,
@@ -51,6 +53,9 @@ internal class PartiallyLinkedIrTreePatcher(
 
     private inline val PLModule.shouldBeSkipped: Boolean get() = this == PLModule.SyntheticBuiltInFunctions || this == stdlibModule
     private inline val IrModuleFragment.shouldBeSkipped: Boolean get() = files.isEmpty() || name.asString() == stdlibModule.name
+
+    // Used only to generate IR expressions that throw linkage errors.
+    private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(builtIns, messageLogger) }
 
     fun patchModuleFragments(roots: Sequence<IrModuleFragment>) {
         roots.forEach { root ->
@@ -425,7 +430,7 @@ internal class PartiallyLinkedIrTreePatcher(
         }
 
         private fun PartialLinkageCase.throwLinkageError(declaration: IrDeclaration, suppressWarningInCompilerOutput: Boolean): IrCall =
-            throwLinkageError(declaration, currentFile, suppressWarningInCompilerOutput)
+            supportForLowerings.throwLinkageError(this, declaration, currentFile, suppressWarningInCompilerOutput)
     }
 
     private inner class ExpressionTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
@@ -548,7 +553,12 @@ internal class PartiallyLinkedIrTreePatcher(
             val directChildren = if (!hasBranches())
                 DirectChildrenStatementsCollector().also(::acceptChildrenVoid).getResult() else DirectChildren.EMPTY
 
-            val linkageError = partialLinkageCase.throwLinkageError(element = this, currentFile, suppressWarningInCompilerOutput = false)
+            val linkageError = supportForLowerings.throwLinkageError(
+                partialLinkageCase,
+                element = this,
+                currentFile,
+                suppressWarningInCompilerOutput = false
+            )
 
             return if (directChildren.statements.isNotEmpty())
                 IrCompositeImpl(startOffset, endOffset, builtIns.nothingType, PARTIAL_LINKAGE_RUNTIME_ERROR).apply {
@@ -658,7 +668,7 @@ internal class PartiallyLinkedIrTreePatcher(
                         // Compute the declaring module.
                         declaration.allOverridden()
                             .firstOrNull { !it.isFakeOverride }
-                            ?.let(PartialLinkageUtils.Module.Companion::determineModuleFor)
+                            ?.let(PLModule::determineModuleFor)
                             ?: containingModule
                     } else
                         containingModule
@@ -735,7 +745,7 @@ internal class PartiallyLinkedIrTreePatcher(
                     } ?: return@filterTo true
 
                     // Just log a warning. Do not throw a linkage error as this would produce broken IR.
-                    partialLinkageCase.renderAndLogLinkageError(this, currentFile)
+                    supportForLowerings.renderAndLogLinkageError(partialLinkageCase, this, currentFile)
 
                     false // Drop it.
                 }.compact()
@@ -769,34 +779,6 @@ internal class PartiallyLinkedIrTreePatcher(
 
     private fun List<IrType>.toPartiallyLinkedMarkerTypeOrNull(): PartiallyLinkedMarkerType? =
         firstNotNullOfOrNull { it.toPartiallyLinkedMarkerTypeOrNull() }
-
-    private fun PartialLinkageCase.renderAndLogLinkageError(element: IrElement, file: PLFile): String {
-        val errorMessage = renderLinkageError()
-        val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
-
-        messageLogger.report(Severity.WARNING, errorMessage, locationInSourceCode) // It's OK. We log it as a warning.
-
-        return errorMessage
-    }
-
-    private fun PartialLinkageCase.throwLinkageError(element: IrElement, file: PLFile, suppressWarningInCompilerOutput: Boolean): IrCall {
-        val errorMessage = if (suppressWarningInCompilerOutput)
-            renderLinkageError()
-        else
-            renderAndLogLinkageError(element, file)
-
-        return IrCallImpl(
-            startOffset = element.startOffset,
-            endOffset = element.endOffset,
-            type = builtIns.nothingType,
-            symbol = builtIns.linkageErrorSymbol,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = 1,
-            origin = PARTIAL_LINKAGE_RUNTIME_ERROR
-        ).apply {
-            putValueArgument(0, IrConstImpl.string(startOffset, endOffset, builtIns.stringType, errorMessage))
-        }
-    }
 
     private data class DirectChildren(val statements: List<IrStatement>, val hasPartialLinkageRuntimeError: Boolean) {
         companion object {
@@ -832,22 +814,6 @@ internal class PartiallyLinkedIrTreePatcher(
         private fun IrExpression.hasBranches(): Boolean = when (this) {
             is IrWhen, is IrLoop, is IrTry, is IrSuspensionPoint, is IrSuspendableExpression -> true
             else -> false
-        }
-
-        private tailrec fun IrElement.startOffsetOfFirstDenotableIrElement(): Int = when (this) {
-            is IrPackageFragment -> UNDEFINED_OFFSET
-            !is IrDeclaration -> {
-                // We don't generate non-denotable IR expressions in the course of partial linkage.
-                startOffset
-            }
-
-            else -> if (origin is PartiallyLinkedDeclarationOrigin) {
-                // There is no sense to take coordinates from the declaration that does not exist in the code.
-                // Let's take the coordinates of the parent.
-                parent.startOffsetOfFirstDenotableIrElement()
-            } else {
-                startOffset
-            }
         }
     }
 }

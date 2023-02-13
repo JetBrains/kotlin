@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.linkage.partial
+package org.jetbrains.kotlin.ir.linkage.partial
 
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -13,7 +13,8 @@ import kotlin.reflect.KClass
  * Describes the reason why a certain classifier is considered as unusable (partially linked).
  * For more details see [ClassifierExplorer.exploreSymbol].
  */
-internal sealed interface ExploredClassifier {
+@Suppress("KDocUnresolvedReference")
+sealed interface ExploredClassifier {
     /** Indicated unusable classifier. */
     sealed interface Unusable : ExploredClassifier {
         val symbol: IrClassifierSymbol

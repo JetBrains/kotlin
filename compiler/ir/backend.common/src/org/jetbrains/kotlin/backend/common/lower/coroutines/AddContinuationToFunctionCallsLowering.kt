@@ -12,15 +12,12 @@ import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.util.IrMessageLogger
-import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageCase.SuspendableFunctionCallWithoutCoroutineContext
 import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.File as PLFile
 
 /**
  * Add continuation to suspend function calls.
@@ -29,7 +26,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
  */
 abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass {
     protected abstract val context: CommonBackendContext
-    protected abstract val partialLinkageEnabled: Boolean
 
     protected abstract fun IrSimpleFunction.isContinuationItself(): Boolean
 
@@ -45,6 +41,8 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
         val builder by lazy { context.createIrBuilder(container.symbol) }
         fun getContinuation(): IrGetValue? = continuation?.let(builder::irGet)
 
+        val plFile: PLFile by lazy { PLFile.determineFileFor(container) }
+
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitBody(body: IrBody): IrBody {
                 // Nested bodies are covered by separate `lower` invocation
@@ -56,7 +54,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
 
                 if (!expression.isSuspend) {
                     if (expression.symbol == context.ir.symbols.getContinuation)
-                        return getContinuation() ?: expression.throwLinkageError()
+                        return getContinuation() ?: expression.throwLinkageError(plFile)
                     return expression
                 }
 
@@ -69,7 +67,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
                     newReturnType = newFun.returnType,
                     newSuperQualifierSymbol = expression.superQualifierSymbol
                 ).also {
-                    it.putValueArgument(it.valueArgumentsCount - 1, getContinuation() ?: return expression.throwLinkageError())
+                    it.putValueArgument(it.valueArgumentsCount - 1, getContinuation() ?: return expression.throwLinkageError(plFile))
                 }
             }
         })
@@ -82,7 +80,7 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
         else {
             val isLoweredSuspendFunction = origin == IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION
             if (!isLoweredSuspendFunction) {
-                return if (partialLinkageEnabled)
+                return if (context.partialLinkageSupport.isEnabled)
                     null
                 else
                     throw IllegalArgumentException("Continuation parameter only exists in lowered suspend functions, but function origin is $origin")
@@ -96,25 +94,13 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
         }
     }
 
-    private fun IrExpression.throwLinkageError(): IrCall {
-        val errorMessage = "Suspend expression can be called only from a coroutine or another suspend function" // TODO: compute verbose error message
-        val locationInSourceCode: IrMessageLogger.Location? = null // TODO: compute location
-
-        val messageLogger = context.configuration.irMessageLogger
-        messageLogger.report(Severity.WARNING, errorMessage, locationInSourceCode)
-
-        return IrCallImpl(
-            startOffset = startOffset,
-            endOffset = endOffset,
-            type = context.irBuiltIns.nothingType,
-            symbol = context.irBuiltIns.linkageErrorSymbol,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = 1,
-            origin = IrStatementOrigin.PARTIAL_LINKAGE_RUNTIME_ERROR
-        ).apply {
-            putValueArgument(0, IrConstImpl.string(startOffset, endOffset, context.irBuiltIns.stringType, errorMessage))
-        }
-    }
+    private fun IrCall.throwLinkageError(file: PLFile): IrCall =
+        context.partialLinkageSupport.throwLinkageError(
+            SuspendableFunctionCallWithoutCoroutineContext(this),
+            element = this,
+            file,
+            suppressWarningInCompilerOutput = false
+        )
 }
 
 

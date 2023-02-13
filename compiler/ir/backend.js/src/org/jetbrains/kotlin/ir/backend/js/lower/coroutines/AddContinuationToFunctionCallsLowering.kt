@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 class AddContinuationToFunctionCallsLowering(
     override val context: JsCommonBackendContext
 ) : AbstractAddContinuationToFunctionCallsLowering() {
-    override val partialLinkageEnabled = context.configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
-
     override fun IrSimpleFunction.isContinuationItself(): Boolean = overriddenSymbols.any { overriddenSymbol ->
         overriddenSymbol.owner.name.asString() == "doResume" && overriddenSymbol.owner.parent == context.coroutineSymbols.coroutineImpl.owner
     }

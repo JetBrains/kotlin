@@ -14,12 +14,15 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.allUnbound
 
-internal class PartialLinkageSupportImpl(builtIns: IrBuiltIns, messageLogger: IrMessageLogger) : PartialLinkageSupport {
+fun createPartialLinkageSupportForLinker(isEnabled: Boolean, builtIns: IrBuiltIns, messageLogger: IrMessageLogger) =
+    if (isEnabled) PartialLinkageSupportForLinkerImpl(builtIns, messageLogger) else PartialLinkageSupportForLinker.DISABLED
+
+internal class PartialLinkageSupportForLinkerImpl(builtIns: IrBuiltIns, messageLogger: IrMessageLogger) : PartialLinkageSupportForLinker {
     private val stubGenerator = MissingDeclarationStubGenerator(builtIns)
     private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator)
     private val patcher = PartiallyLinkedIrTreePatcher(builtIns, classifierExplorer, stubGenerator, messageLogger)
 
-    override val partialLinkageEnabled get() = true
+    override val isEnabled get() = true
 
     override fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder) {
         val entries = fakeOverrideBuilder.fakeOverrideCandidates

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js
 import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -35,10 +36,7 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.DescriptorlessExternalPackageFragmentSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
-import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.getAnnotation
-import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.backend.ast.JsExpressionStatement
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
@@ -409,4 +407,10 @@ class JsIrBackendContext(
         outlinedJsCodeFunctions[symbol] = parsedJsFunction
         return parsedJsFunction
     }
+
+    override val partialLinkageSupport = createPartialLinkageSupportForLowerings(
+        isEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false,
+        irBuiltIns,
+        configuration.irMessageLogger
+    )
 }

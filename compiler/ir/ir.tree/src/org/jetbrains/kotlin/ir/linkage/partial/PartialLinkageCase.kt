@@ -3,19 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.linkage.partial
+package org.jetbrains.kotlin.ir.linkage.partial
 
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
 import org.jetbrains.kotlin.ir.symbols.*
 
 /**
  * Describes a reason why an [IrDeclaration] or an [IrExpression] is partially linked. Subclasses represent various causes of the p.l.
  */
-internal sealed interface PartialLinkageCase {
+@Suppress("KDocUnresolvedReference")
+sealed interface PartialLinkageCase {
     /**
      * Unusable (partially linked) classifier.
      *
@@ -102,6 +104,13 @@ internal sealed interface PartialLinkageCase {
     ) : PartialLinkageCase
 
     /**
+     * An [IrCall] of suspendable function at the place where no coroutine context is available.
+     *
+     * Applicable to: Expressions.
+     */
+    class SuspendableFunctionCallWithoutCoroutineContext(val expression: IrCall) : PartialLinkageCase
+
+    /**
      * Expression refers an IR declaration that is not accessible at the use site.
      * Example: An [IrCall] that refers a private [IrSimpleFunction] from another module.
      *
@@ -110,8 +119,8 @@ internal sealed interface PartialLinkageCase {
     class ExpressionHasInaccessibleDeclaration(
         val expression: IrExpression,
         val referencedDeclarationSymbol: IrSymbol,
-        val declaringModule: PartialLinkageUtils.Module,
-        val useSiteModule: PartialLinkageUtils.Module
+        val declaringModule: PLModule,
+        val useSiteModule: PLModule
     ) : PartialLinkageCase
 
     /**

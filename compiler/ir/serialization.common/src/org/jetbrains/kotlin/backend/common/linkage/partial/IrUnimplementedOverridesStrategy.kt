@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartiallyLinkedDeclarationOrigin.UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
-import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
+import org.jetbrains.kotlin.ir.linkage.partial.IrUnimplementedOverridesStrategy
+import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
 
 internal object ImplementAsErrorThrowingStubs : IrUnimplementedOverridesStrategy {
     override fun <T : IrOverridableMember> computeCustomization(overridableMember: T, parent: IrClass) =
@@ -18,7 +18,7 @@ internal object ImplementAsErrorThrowingStubs : IrUnimplementedOverridesStrategy
             && parent.modality != Modality.SEALED
         ) {
             IrUnimplementedOverridesStrategy.Customization(
-                origin = UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER,
+                origin = PartiallyLinkedDeclarationOrigin.UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER,
                 modality = parent.modality // Use modality of class for implemented callable member.
             )
         } else

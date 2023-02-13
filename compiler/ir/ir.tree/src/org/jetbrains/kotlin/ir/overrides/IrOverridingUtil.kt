@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.overrides
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.linkage.partial.IrUnimplementedOverridesStrategy
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -591,7 +592,7 @@ class IrOverridingUtil(
     private fun getBothWaysOverridability(
         overriderDescriptor: IrOverridableMember,
         candidateDescriptor: IrOverridableMember
-    ): OverrideCompatibilityInfo.Result {
+    ): Result {
         val result1 = isOverridableBy(
             candidateDescriptor,
             overriderDescriptor

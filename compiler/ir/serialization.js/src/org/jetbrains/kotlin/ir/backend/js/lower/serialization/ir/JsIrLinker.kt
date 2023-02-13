@@ -45,7 +45,7 @@ class JsIrLinker(
         mangler = JsManglerIr,
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = friendModules,
-        partialLinkageEnabled = partialLinkageSupport.partialLinkageEnabled
+        partialLinkageEnabled = partialLinkageSupport.isEnabled
     )
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.linkage.partial
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.linkage.partial.ExploredClassifier
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.types.Variance
 
