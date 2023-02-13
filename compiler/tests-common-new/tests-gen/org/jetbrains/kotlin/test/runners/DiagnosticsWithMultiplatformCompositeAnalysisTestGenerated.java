@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class DiagnosticsWithMultiplatformCompositeAnalysisTestGenerated extends AbstractDiagnosticsWithMultiplatformCompositeAnalysisTest {
     @Test
     public void testAllFilesPresentInTestsWithMultiplatformCompositeAnalysis() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
     @Nested
@@ -30,7 +30,7 @@ public class DiagnosticsWithMultiplatformCompositeAnalysisTestGenerated extends 
     public class ConstVals {
         @Test
         public void testAllFilesPresentInConstVals() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/constVals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/constVals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
         @Test
@@ -46,7 +46,7 @@ public class DiagnosticsWithMultiplatformCompositeAnalysisTestGenerated extends 
     public class DefaultArguments {
         @Test
         public void testAllFilesPresentInDefaultArguments() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/defaultArguments"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithMultiplatformCompositeAnalysis/defaultArguments"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
         }
 
         @Test

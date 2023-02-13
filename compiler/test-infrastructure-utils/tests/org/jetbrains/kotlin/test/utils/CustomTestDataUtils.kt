@@ -14,7 +14,7 @@ private const val KTS = ".kts"
 private const val FIR_PREFIX = ".fir"
 private const val LL_FIR_PREFIX = ".ll"
 
-const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(fir|ll)\\.kts?\$"
+const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(reversed|fir|ll)\\.kts?\$"
 
 val File.isFirTestData: Boolean
     get() = isCustomTestDataWithPrefix(FIR_PREFIX)
