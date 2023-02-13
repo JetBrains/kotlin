@@ -175,6 +175,11 @@ public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest 
         runTest("js/js.translator/testData/incremental/invalidation/functionTypeInterface/");
     }
 
+    @TestMetadata("functionTypeInterfaceReflect")
+    public void testFunctionTypeInterfaceReflect() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/functionTypeInterfaceReflect/");
+    }
+
     @TestMetadata("genericFunctions")
     public void testGenericFunctions() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/genericFunctions/");
