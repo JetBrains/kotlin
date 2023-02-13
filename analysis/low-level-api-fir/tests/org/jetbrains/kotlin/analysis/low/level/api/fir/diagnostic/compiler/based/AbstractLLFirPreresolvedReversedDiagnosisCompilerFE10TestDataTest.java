@@ -17789,6 +17789,12 @@ public class AbstractLLFirPreresolvedReversedDiagnosisCompilerFE10TestDataTest e
             }
 
             @Test
+            @TestMetadata("returnedAnonymousObjects_2.kt")
+            public void testReturnedAnonymousObjects_2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/returnedAnonymousObjects_2.kt");
+            }
+
+            @Test
             @TestMetadata("returns.kt")
             public void testReturns() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/returns.kt");
@@ -22086,6 +22092,18 @@ public class AbstractLLFirPreresolvedReversedDiagnosisCompilerFE10TestDataTest e
             @TestMetadata("ambiguousNamedArgumentsWithGenerics3.kt")
             public void testAmbiguousNamedArgumentsWithGenerics3() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/namedArguments/ambiguousNamedArgumentsWithGenerics3.kt");
+            }
+
+            @Test
+            @TestMetadata("disallowForDelegationToJavaMethods.kt")
+            public void testDisallowForDelegationToJavaMethods() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/namedArguments/disallowForDelegationToJavaMethods.kt");
+            }
+
+            @Test
+            @TestMetadata("disallowForFunctionTypes.kt")
+            public void testDisallowForFunctionTypes() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/namedArguments/disallowForFunctionTypes.kt");
             }
 
             @Test
