@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 interface IrOverridableDeclaration<S : IrSymbol> : IrOverridableMember {
     override val symbol: S
 
-    val isFakeOverride: Boolean
+    var isFakeOverride: Boolean
 
     var overriddenSymbols: List<S>
 }

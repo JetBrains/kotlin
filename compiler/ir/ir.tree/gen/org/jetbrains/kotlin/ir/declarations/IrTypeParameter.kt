@@ -26,11 +26,11 @@ abstract class IrTypeParameter : IrDeclarationBase(), IrDeclarationWithName {
 
     abstract override val symbol: IrTypeParameterSymbol
 
-    abstract val variance: Variance
+    abstract var variance: Variance
 
-    abstract val index: Int
+    abstract var index: Int
 
-    abstract val isReified: Boolean
+    abstract var isReified: Boolean
 
     abstract var superTypes: List<IrType>
 

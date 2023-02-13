@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 abstract class IrCall : IrFunctionAccessExpression() {
     abstract override val symbol: IrSimpleFunctionSymbol
 
-    abstract val superQualifierSymbol: IrClassSymbol?
+    abstract var superQualifierSymbol: IrClassSymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitCall(this, data)

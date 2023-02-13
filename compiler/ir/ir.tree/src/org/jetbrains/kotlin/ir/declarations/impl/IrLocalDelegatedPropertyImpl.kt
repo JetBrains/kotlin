@@ -20,7 +20,7 @@ class IrLocalDelegatedPropertyImpl(
     override val symbol: IrLocalDelegatedPropertySymbol,
     override var name: Name,
     override var type: IrType,
-    override val isVar: Boolean,
+    override var isVar: Boolean,
     override val factory: IrFactory = IrFactoryImpl,
 ) : IrLocalDelegatedProperty() {
     init {

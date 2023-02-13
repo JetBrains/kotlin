@@ -28,8 +28,8 @@ class IrConstImpl<T>(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val kind: IrConstKind<T>,
-    override val value: T
+    override var kind: IrConstKind<T>,
+    override var value: T
 ) : IrConst<T>() {
     companion object {
         fun string(startOffset: Int, endOffset: Int, type: IrType, value: String): IrConstImpl<String> =

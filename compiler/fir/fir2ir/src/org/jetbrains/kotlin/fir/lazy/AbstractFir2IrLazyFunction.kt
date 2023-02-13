@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.declareThisReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -38,37 +37,58 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
-    override val isFakeOverride: Boolean
+    override var isFakeOverride: Boolean
 ) : IrSimpleFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
     Fir2IrComponents by components {
 
     override lateinit var typeParameters: List<IrTypeParameter>
     override lateinit var parent: IrDeclarationParent
 
-    override val isTailrec: Boolean
+    override var isTailrec: Boolean
         get() = fir.isTailRec
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isSuspend: Boolean
+    override var isSuspend: Boolean
         get() = fir.isSuspend
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isOperator: Boolean
+    override var isOperator: Boolean
         get() = fir.isOperator
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isInfix: Boolean
+    override var isInfix: Boolean
         get() = fir.isInfix
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
         get() = symbol.descriptor
 
-    override val isInline: Boolean
+    override var isInline: Boolean
         get() = fir.isInline
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isExternal: Boolean
+    override var isExternal: Boolean
         get() = fir.isExternal
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isExpect: Boolean
+    override var isExpect: Boolean
         get() = fir.isExpect
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     override var body: IrBody? by lazyVar(lock) {
         if (tryLoadIr()) body else null
@@ -78,8 +98,11 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
     }
 
-    override val modality: Modality
+    override var modality: Modality
         get() = fir.modality!!
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 

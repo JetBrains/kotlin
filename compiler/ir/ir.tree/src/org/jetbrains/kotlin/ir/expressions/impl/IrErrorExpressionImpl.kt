@@ -23,5 +23,5 @@ class IrErrorExpressionImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val description: String
+    override var description: String
 ) : IrErrorExpression()

@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.declarations.impl
 
+import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
@@ -22,12 +22,12 @@ abstract class IrPropertyCommonImpl(
     override var origin: IrDeclarationOrigin,
     override var name: Name,
     override var visibility: DescriptorVisibility,
-    override val isVar: Boolean,
-    override val isConst: Boolean,
-    override val isLateinit: Boolean,
-    override val isDelegated: Boolean,
-    override val isExternal: Boolean,
-    override val isExpect: Boolean,
+    override var isVar: Boolean,
+    override var isConst: Boolean,
+    override var isLateinit: Boolean,
+    override var isDelegated: Boolean,
+    override var isExternal: Boolean,
+    override var isExpect: Boolean,
     override val containerSource: DeserializedContainerSource?,
 ) : IrProperty() {
 
@@ -54,14 +54,14 @@ class IrPropertyImpl(
     override val symbol: IrPropertySymbol,
     name: Name,
     visibility: DescriptorVisibility,
-    override val modality: Modality,
+    override var modality: Modality,
     isVar: Boolean,
     isConst: Boolean,
     isLateinit: Boolean,
     isDelegated: Boolean,
     isExternal: Boolean,
     isExpect: Boolean = false,
-    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     containerSource: DeserializedContainerSource? = null,
     override val factory: IrFactory = IrFactoryImpl,
 ) : IrPropertyCommonImpl(
@@ -90,7 +90,7 @@ class IrPropertyWithLateBindingImpl(
     isDelegated: Boolean,
     isExternal: Boolean,
     isExpect: Boolean,
-    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     override val factory: IrFactory = IrFactoryImpl,
 ) : IrPropertyCommonImpl(
     startOffset, endOffset, origin, name, visibility, isVar, isConst, isLateinit, isDelegated, isExternal, isExpect,

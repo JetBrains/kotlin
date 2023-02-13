@@ -33,15 +33,15 @@ class IrLazyFunction(
     override val descriptor: FunctionDescriptor,
     override var name: Name,
     override var visibility: DescriptorVisibility,
-    override val modality: Modality,
-    override val isInline: Boolean,
-    override val isExternal: Boolean,
-    override val isTailrec: Boolean,
-    override val isSuspend: Boolean,
-    override val isExpect: Boolean,
-    override val isFakeOverride: Boolean,
-    override val isOperator: Boolean,
-    override val isInfix: Boolean,
+    override var modality: Modality,
+    override var isInline: Boolean,
+    override var isExternal: Boolean,
+    override var isTailrec: Boolean,
+    override var isSuspend: Boolean,
+    override var isExpect: Boolean,
+    override var isFakeOverride: Boolean,
+    override var isOperator: Boolean,
+    override var isInfix: Boolean,
     override val stubGenerator: DeclarationStubGenerator,
     override val typeTranslator: TypeTranslator,
 ) : IrSimpleFunction(), IrLazyFunctionBase {
@@ -129,4 +129,3 @@ class IrLazyFunction(
         symbol.bind(this)
     }
 }
-

@@ -21,7 +21,7 @@ class IrTypeAliasImpl(
     override var name: Name,
     override var visibility: DescriptorVisibility,
     override var expandedType: IrType,
-    override val isActual: Boolean,
+    override var isActual: Boolean,
     override var origin: IrDeclarationOrigin,
     override val factory: IrFactory = IrFactoryImpl,
 ) : IrTypeAlias() {

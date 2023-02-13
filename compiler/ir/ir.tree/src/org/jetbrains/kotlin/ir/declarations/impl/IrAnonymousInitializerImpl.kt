@@ -20,7 +20,7 @@ class IrAnonymousInitializerImpl(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val symbol: IrAnonymousInitializerSymbol,
-    override val isStatic: Boolean = false,
+    override var isStatic: Boolean = false,
     override val factory: IrFactory = IrFactoryImpl,
 ) : IrAnonymousInitializer() {
     init {

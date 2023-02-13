@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.instanceInitializerCall
  */
 abstract class IrInstanceInitializerCall : IrExpression() {
-    abstract val classSymbol: IrClassSymbol
+    abstract var classSymbol: IrClassSymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitInstanceInitializerCall(this, data)

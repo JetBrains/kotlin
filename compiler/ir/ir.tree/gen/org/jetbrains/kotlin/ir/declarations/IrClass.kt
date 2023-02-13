@@ -34,21 +34,21 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract override val symbol: IrClassSymbol
 
-    abstract val kind: ClassKind
+    abstract var kind: ClassKind
 
     abstract var modality: Modality
 
-    abstract val isCompanion: Boolean
+    abstract var isCompanion: Boolean
 
-    abstract val isInner: Boolean
+    abstract var isInner: Boolean
 
-    abstract val isData: Boolean
+    abstract var isData: Boolean
 
-    abstract val isValue: Boolean
+    abstract var isValue: Boolean
 
-    abstract val isExpect: Boolean
+    abstract var isExpect: Boolean
 
-    abstract val isFun: Boolean
+    abstract var isFun: Boolean
 
     abstract val source: SourceElement
 

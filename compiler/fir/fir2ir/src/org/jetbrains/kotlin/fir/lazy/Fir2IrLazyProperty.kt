@@ -39,7 +39,7 @@ class Fir2IrLazyProperty(
     override val fir: FirProperty,
     val containingClass: FirRegularClass?,
     override val symbol: Fir2IrPropertySymbol,
-    override val isFakeOverride: Boolean
+    override var isFakeOverride: Boolean
 ) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by components {
     init {
         symbol.bind(this)
@@ -53,23 +53,41 @@ class Fir2IrLazyProperty(
     override val descriptor: PropertyDescriptor
         get() = symbol.descriptor
 
-    override val isVar: Boolean
+    override var isVar: Boolean
         get() = fir.isVar
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isConst: Boolean
+    override var isConst: Boolean
         get() = fir.isConst
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isLateinit: Boolean
+    override var isLateinit: Boolean
         get() = fir.isLateInit
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isDelegated: Boolean
+    override var isDelegated: Boolean
         get() = fir.delegate != null
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isExternal: Boolean
+    override var isExternal: Boolean
         get() = fir.isExternal
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isExpect: Boolean
+    override var isExpect: Boolean
         get() = fir.isExpect
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     override var name: Name
         get() = fir.name
@@ -83,8 +101,11 @@ class Fir2IrLazyProperty(
             error("Mutating Fir2Ir lazy elements is not possible")
         }
 
-    override val modality: Modality
+    override var modality: Modality
         get() = fir.modality!!
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     private val type: IrType by lazy {
         with(typeConverter) { fir.returnTypeRef.toIrType() }

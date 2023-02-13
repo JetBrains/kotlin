@@ -14,7 +14,7 @@ package org.jetbrains.kotlin.ir.expressions
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.loop
  */
 abstract class IrLoop : IrExpression() {
-    abstract val origin: IrStatementOrigin?
+    abstract var origin: IrStatementOrigin?
 
     var body: IrExpression? = null
 

@@ -25,7 +25,7 @@ class IrCompositeImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val origin: IrStatementOrigin? = null,
+    override var origin: IrStatementOrigin? = null,
 ) : IrComposite() {
     constructor(
         startOffset: Int,

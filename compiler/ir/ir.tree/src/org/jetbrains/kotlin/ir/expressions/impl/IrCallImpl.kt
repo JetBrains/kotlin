@@ -35,7 +35,7 @@ class IrCallImpl(
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
     override val origin: IrStatementOrigin? = null,
-    override val superQualifierSymbol: IrClassSymbol? = null
+    override var superQualifierSymbol: IrClassSymbol? = null
 ) : IrCall() {
 
     override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)

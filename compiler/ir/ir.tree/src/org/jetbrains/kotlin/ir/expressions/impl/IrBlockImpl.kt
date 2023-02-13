@@ -30,7 +30,7 @@ class IrBlockImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val origin: IrStatementOrigin? = null,
+    override var origin: IrStatementOrigin? = null,
 ) : IrBlock() {
     constructor(
         startOffset: Int,
@@ -60,8 +60,8 @@ class IrReturnableBlockImpl(
     override val endOffset: Int,
     override var type: IrType,
     override val symbol: IrReturnableBlockSymbol,
-    override val origin: IrStatementOrigin? = null,
-    override val inlineFunctionSymbol: IrFunctionSymbol? = null
+    override var origin: IrStatementOrigin? = null,
+    override var inlineFunctionSymbol: IrFunctionSymbol? = null
 ) : IrReturnableBlock() {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor

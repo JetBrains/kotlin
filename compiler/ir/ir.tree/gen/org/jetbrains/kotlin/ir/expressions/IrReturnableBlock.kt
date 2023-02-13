@@ -20,5 +20,5 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 abstract class IrReturnableBlock : IrBlock(), IrSymbolOwner, IrReturnTarget {
     abstract override val symbol: IrReturnableBlockSymbol
 
-    abstract val inlineFunctionSymbol: IrFunctionSymbol?
+    abstract var inlineFunctionSymbol: IrFunctionSymbol?
 }

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.dynamicOperatorExpression
  */
 abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
-    abstract val operator: IrDynamicOperator
+    abstract var operator: IrDynamicOperator
 
     abstract var receiver: IrExpression
 
