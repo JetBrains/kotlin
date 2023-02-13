@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsReportAggregatingTestRun
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.js.dsl.*
-import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.typescript.TypeScriptValidationTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -139,28 +137,19 @@ constructor(
         }
     }
 
-    private fun registerCompileSync(binary: JsIrBinary): TaskProvider<Copy> {
+    private fun registerCompileSync(binary: JsIrBinary): TaskProvider<SyncExecutableTask> {
         val compilation = binary.compilation
         val npmProject = compilation.npmProject
-        return project.registerTask<Copy>(
+
+        return project.registerTask<SyncExecutableTask>(
             binary.linkSyncTaskName
         ) { task ->
             task.from(binary.linkTask.flatMap { it.normalizedDestinationDirectory })
 
             task.from(project.tasks.named(compilation.processResourcesTaskName))
 
-            // Rewrite relative paths in sourcemaps in the target directory
-            task.eachFile {
-                if (it.name.endsWith(".js.map")) {
-                    it.filter(
-                        mapOf(
-                            "srcSourceRoot" to it.file.parentFile,
-                            "targetSourceRoot" to npmProject.dist
-                        ),
-                        RewriteSourceMapFilterReader::class.java
-                    )
-                }
-            }
+            val hashDir = npmProject.dir.resolve("sync-hashes")
+            task.hashDir.set(hashDir)
 
             task.into(npmProject.dist)
         }
