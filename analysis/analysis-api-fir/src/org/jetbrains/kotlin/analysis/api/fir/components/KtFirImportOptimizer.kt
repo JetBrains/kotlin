@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
@@ -370,6 +371,8 @@ private sealed interface TypeQualifier {
 
     companion object {
         fun createFor(qualifier: FirResolvedQualifier): TypeQualifier? {
+            if (qualifier.source?.kind !is KtRealSourceElementKind) return null
+
             val wholeClassId = qualifier.classId ?: return null
             val psi = qualifier.psi as? KtExpression ?: return null
 
