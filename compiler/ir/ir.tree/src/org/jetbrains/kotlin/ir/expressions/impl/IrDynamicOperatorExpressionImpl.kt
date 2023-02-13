@@ -15,7 +15,7 @@ class IrDynamicOperatorExpressionImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val operator: IrDynamicOperator
+    override var operator: IrDynamicOperator
 ) : IrDynamicOperatorExpression() {
     override lateinit var receiver: IrExpression
 

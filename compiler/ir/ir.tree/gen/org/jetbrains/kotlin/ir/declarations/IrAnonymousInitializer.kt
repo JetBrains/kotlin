@@ -25,7 +25,7 @@ abstract class IrAnonymousInitializer : IrDeclarationBase() {
 
     abstract override val symbol: IrAnonymousInitializerSymbol
 
-    abstract val isStatic: Boolean
+    abstract var isStatic: Boolean
 
     abstract var body: IrBlockBody
 

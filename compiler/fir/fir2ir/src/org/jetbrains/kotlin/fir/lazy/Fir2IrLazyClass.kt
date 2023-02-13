@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.lazy
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -83,29 +82,53 @@ class Fir2IrLazyClass(
             error("Mutating Fir2Ir lazy elements is not possible")
         }
 
-    override val kind: ClassKind
+    override var kind: ClassKind
         get() = fir.classKind
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isCompanion: Boolean
+    override var isCompanion: Boolean
         get() = fir.isCompanion
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isInner: Boolean
+    override var isInner: Boolean
         get() = fir.isInner
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isData: Boolean
+    override var isData: Boolean
         get() = fir.isData
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isExternal: Boolean
+    override var isExternal: Boolean
         get() = fir.isExternal
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isValue: Boolean
+    override var isValue: Boolean
         get() = fir.isInline
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isExpect: Boolean
+    override var isExpect: Boolean
         get() = fir.isExpect
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isFun: Boolean
+    override var isFun: Boolean
         get() = fir.isFun
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     override var superTypes: List<IrType> by lazyVar(lock) {
         fir.superTypeRefs.map { it.toIrType(typeConverter) }

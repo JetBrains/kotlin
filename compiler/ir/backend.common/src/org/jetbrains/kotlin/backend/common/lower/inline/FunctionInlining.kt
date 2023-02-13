@@ -655,7 +655,7 @@ class FunctionInlining(
 
     private class IrGetValueWithoutLocation(
         override val symbol: IrValueSymbol,
-        override val origin: IrStatementOrigin? = null
+        override var origin: IrStatementOrigin? = null
     ) : IrGetValue() {
         override val startOffset: Int get() = UNDEFINED_OFFSET
         override val endOffset: Int get() = UNDEFINED_OFFSET

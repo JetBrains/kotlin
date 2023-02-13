@@ -27,7 +27,7 @@ abstract class IrTypeAlias : IrDeclarationBase(), IrDeclarationWithName,
 
     abstract override val symbol: IrTypeAliasSymbol
 
-    abstract val isActual: Boolean
+    abstract var isActual: Boolean
 
     abstract var expandedType: IrType
 

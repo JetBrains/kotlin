@@ -28,14 +28,14 @@ abstract class IrFunctionCommonImpl(
     override var name: Name,
     override var visibility: DescriptorVisibility,
     returnType: IrType,
-    override val isInline: Boolean,
-    override val isExternal: Boolean,
-    override val isTailrec: Boolean,
-    override val isSuspend: Boolean,
-    override val isOperator: Boolean,
-    override val isInfix: Boolean,
-    override val isExpect: Boolean,
-    override val containerSource: DeserializedContainerSource?,
+    override var isInline: Boolean,
+    override var isExternal: Boolean,
+    override var isTailrec: Boolean,
+    override var isSuspend: Boolean,
+    override var isOperator: Boolean,
+    override var isInfix: Boolean,
+    override var isExpect: Boolean,
+    override var containerSource: DeserializedContainerSource?,
 ) : IrSimpleFunction() {
 
     override lateinit var parent: IrDeclarationParent
@@ -75,7 +75,7 @@ class IrFunctionImpl(
     override val symbol: IrSimpleFunctionSymbol,
     name: Name,
     visibility: DescriptorVisibility,
-    override val modality: Modality,
+    override var modality: Modality,
     returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
@@ -84,7 +84,7 @@ class IrFunctionImpl(
     isOperator: Boolean,
     isInfix: Boolean,
     isExpect: Boolean,
-    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     containerSource: DeserializedContainerSource? = null,
     override val factory: IrFactory = IrFactoryImpl,
 ) : IrFunctionCommonImpl(
@@ -116,7 +116,7 @@ class IrFunctionWithLateBindingImpl(
     isOperator: Boolean,
     isInfix: Boolean,
     isExpect: Boolean,
-    override val isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
+    override var isFakeOverride: Boolean = origin == IrDeclarationOrigin.FAKE_OVERRIDE,
     override val factory: IrFactory = IrFactoryImpl
 ) : IrFunctionCommonImpl(
     startOffset, endOffset, origin, name, visibility, returnType, isInline,

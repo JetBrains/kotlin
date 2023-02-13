@@ -24,5 +24,5 @@ abstract class IrPackageFragment : IrElementBase(), IrDeclarationContainer, IrSy
     @ObsoleteDescriptorBasedAPI
     abstract val packageFragmentDescriptor: PackageFragmentDescriptor
 
-    abstract val fqName: FqName
+    abstract var fqName: FqName
 }

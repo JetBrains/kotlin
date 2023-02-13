@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.when
  */
 abstract class IrWhen : IrExpression() {
-    abstract val origin: IrStatementOrigin?
+    abstract var origin: IrStatementOrigin?
 
     abstract val branches: MutableList<IrBranch>
 

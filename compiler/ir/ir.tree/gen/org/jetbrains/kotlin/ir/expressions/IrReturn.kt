@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 abstract class IrReturn : IrExpression() {
     abstract var value: IrExpression
 
-    abstract val returnTargetSymbol: IrReturnTargetSymbol
+    abstract var returnTargetSymbol: IrReturnTargetSymbol
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitReturn(this, data)

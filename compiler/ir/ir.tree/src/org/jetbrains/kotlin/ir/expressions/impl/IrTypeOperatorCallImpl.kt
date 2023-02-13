@@ -25,7 +25,7 @@ class IrTypeOperatorCallImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val operator: IrTypeOperator,
+    override var operator: IrTypeOperator,
     override var typeOperand: IrType,
     override var argument: IrExpression,
 ) : IrTypeOperatorCall()

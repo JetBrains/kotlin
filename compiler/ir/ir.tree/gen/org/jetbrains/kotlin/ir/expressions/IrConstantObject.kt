@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.constantObject
  */
 abstract class IrConstantObject : IrConstantValue() {
-    abstract val constructor: IrConstructorSymbol
+    abstract var constructor: IrConstructorSymbol
 
     abstract val valueArguments: MutableList<IrConstantValue>
 

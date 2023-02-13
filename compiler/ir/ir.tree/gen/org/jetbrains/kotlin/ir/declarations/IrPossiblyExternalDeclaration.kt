@@ -14,5 +14,5 @@ package org.jetbrains.kotlin.ir.declarations
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.possiblyExternalDeclaration
  */
 interface IrPossiblyExternalDeclaration : IrDeclarationWithName {
-    val isExternal: Boolean
+    var isExternal: Boolean
 }

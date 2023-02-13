@@ -26,17 +26,17 @@ abstract class IrProperty : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract override val symbol: IrPropertySymbol
 
-    abstract val isVar: Boolean
+    abstract var isVar: Boolean
 
-    abstract val isConst: Boolean
+    abstract var isConst: Boolean
 
-    abstract val isLateinit: Boolean
+    abstract var isLateinit: Boolean
 
-    abstract val isDelegated: Boolean
+    abstract var isDelegated: Boolean
 
-    abstract val isExpect: Boolean
+    abstract var isExpect: Boolean
 
-    abstract override val isFakeOverride: Boolean
+    abstract override var isFakeOverride: Boolean
 
     abstract var backingField: IrField?
 

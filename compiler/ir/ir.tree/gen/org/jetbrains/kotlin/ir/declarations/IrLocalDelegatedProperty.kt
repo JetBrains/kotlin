@@ -28,7 +28,7 @@ abstract class IrLocalDelegatedProperty : IrDeclarationBase(), IrDeclarationWith
 
     abstract var type: IrType
 
-    abstract val isVar: Boolean
+    abstract var isVar: Boolean
 
     abstract var delegate: IrVariable
 

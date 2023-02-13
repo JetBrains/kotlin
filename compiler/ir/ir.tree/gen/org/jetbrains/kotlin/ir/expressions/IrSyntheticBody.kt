@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.syntheticBody
  */
 abstract class IrSyntheticBody : IrBody() {
-    abstract val kind: IrSyntheticBodyKind
+    abstract var kind: IrSyntheticBodyKind
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitSyntheticBody(this, data)

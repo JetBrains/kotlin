@@ -30,7 +30,7 @@ class IrFunctionReferenceImpl(
     override val symbol: IrFunctionSymbol,
     typeArgumentsCount: Int,
     valueArgumentsCount: Int,
-    override val reflectionTarget: IrFunctionSymbol? = symbol,
+    override var reflectionTarget: IrFunctionSymbol? = symbol,
     override val origin: IrStatementOrigin? = null,
 ) : IrFunctionReference() {
     override val typeArgumentsByIndex: Array<IrType?> = arrayOfNulls(typeArgumentsCount)

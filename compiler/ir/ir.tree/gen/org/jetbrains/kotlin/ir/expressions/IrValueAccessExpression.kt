@@ -17,5 +17,5 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 abstract class IrValueAccessExpression : IrDeclarationReference() {
     abstract override val symbol: IrValueSymbol
 
-    abstract val origin: IrStatementOrigin?
+    abstract var origin: IrStatementOrigin?
 }

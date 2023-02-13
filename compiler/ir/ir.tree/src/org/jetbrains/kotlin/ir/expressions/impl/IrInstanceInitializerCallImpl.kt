@@ -23,6 +23,6 @@ import org.jetbrains.kotlin.ir.types.IrType
 class IrInstanceInitializerCallImpl(
     override val startOffset: Int,
     override val endOffset: Int,
-    override val classSymbol: IrClassSymbol,
+    override var classSymbol: IrClassSymbol,
     override var type: IrType,
 ) : IrInstanceInitializerCall()

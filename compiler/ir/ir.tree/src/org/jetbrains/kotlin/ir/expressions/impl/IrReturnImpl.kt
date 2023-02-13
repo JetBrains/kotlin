@@ -25,6 +25,6 @@ class IrReturnImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val returnTargetSymbol: IrReturnTargetSymbol,
+    override var returnTargetSymbol: IrReturnTargetSymbol,
     override var value: IrExpression
 ) : IrReturn()

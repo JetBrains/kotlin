@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.functionReference
  */
 abstract class IrFunctionReference : IrCallableReference<IrFunctionSymbol>() {
-    abstract val reflectionTarget: IrFunctionSymbol?
+    abstract var reflectionTarget: IrFunctionSymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFunctionReference(this, data)

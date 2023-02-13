@@ -46,21 +46,33 @@ class Fir2IrLazyConstructor(
     override lateinit var typeParameters: List<IrTypeParameter>
     override lateinit var parent: IrDeclarationParent
 
-    override val isPrimary: Boolean
+    override var isPrimary: Boolean
         get() = fir.isPrimary
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassConstructorDescriptor
         get() = symbol.descriptor
 
-    override val isInline: Boolean
+    override var isInline: Boolean
         get() = fir.isInline
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isExternal: Boolean
+    override var isExternal: Boolean
         get() = fir.isExternal
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
-    override val isExpect: Boolean
+    override var isExpect: Boolean
         get() = fir.isExpect
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     override var body: IrBody? = null
 

@@ -29,9 +29,9 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override val endOffset: Int,
     override var type: IrType,
     override val symbol: IrLocalDelegatedPropertySymbol,
-    override val delegate: IrVariableSymbol,
-    override val getter: IrSimpleFunctionSymbol,
-    override val setter: IrSimpleFunctionSymbol?,
+    override var delegate: IrVariableSymbol,
+    override var getter: IrSimpleFunctionSymbol,
+    override var setter: IrSimpleFunctionSymbol?,
     override val origin: IrStatementOrigin? = null,
 ) : IrLocalDelegatedPropertyReference() {
     override val typeArgumentsByIndex: Array<IrType?> = emptyArray()

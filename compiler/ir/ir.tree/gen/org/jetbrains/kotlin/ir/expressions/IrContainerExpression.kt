@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.containerExpression
  */
 abstract class IrContainerExpression : IrExpression(), IrStatementContainer {
-    abstract val origin: IrStatementOrigin?
+    abstract var origin: IrStatementOrigin?
 
     override val statements: MutableList<IrStatement> = ArrayList(2)
 

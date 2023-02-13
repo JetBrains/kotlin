@@ -19,11 +19,11 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  */
 abstract class IrLocalDelegatedPropertyReference :
         IrCallableReference<IrLocalDelegatedPropertySymbol>() {
-    abstract val delegate: IrVariableSymbol
+    abstract var delegate: IrVariableSymbol
 
-    abstract val getter: IrSimpleFunctionSymbol
+    abstract var getter: IrSimpleFunctionSymbol
 
-    abstract val setter: IrSimpleFunctionSymbol?
+    abstract var setter: IrSimpleFunctionSymbol?
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedPropertyReference(this, data)

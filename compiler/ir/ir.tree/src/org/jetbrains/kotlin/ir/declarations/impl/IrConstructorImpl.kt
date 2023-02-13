@@ -26,11 +26,11 @@ class IrConstructorImpl(
     override var name: Name,
     override var visibility: DescriptorVisibility,
     returnType: IrType,
-    override val isInline: Boolean,
-    override val isExternal: Boolean,
-    override val isPrimary: Boolean,
-    override val isExpect: Boolean,
-    override val containerSource: DeserializedContainerSource? = null,
+    override var isInline: Boolean,
+    override var isExternal: Boolean,
+    override var isPrimary: Boolean,
+    override var isExpect: Boolean,
+    override var containerSource: DeserializedContainerSource? = null,
     override val factory: IrFactory = IrFactoryImpl,
 ) : IrConstructor() {
     init {

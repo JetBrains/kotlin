@@ -25,7 +25,7 @@ class IrWhileLoopImpl(
     override val startOffset: Int,
     override val endOffset: Int,
     override var type: IrType,
-    override val origin: IrStatementOrigin?,
+    override var origin: IrStatementOrigin?,
 ) : IrWhileLoop() {
     override lateinit var condition: IrExpression
 }

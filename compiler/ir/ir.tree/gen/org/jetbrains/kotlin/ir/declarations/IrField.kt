@@ -30,9 +30,9 @@ abstract class IrField : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var type: IrType
 
-    abstract val isFinal: Boolean
+    abstract var isFinal: Boolean
 
-    abstract val isStatic: Boolean
+    abstract var isStatic: Boolean
 
     abstract var initializer: IrExpressionBody?
 

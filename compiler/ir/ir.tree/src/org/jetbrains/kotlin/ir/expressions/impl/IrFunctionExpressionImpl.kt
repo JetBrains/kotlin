@@ -15,5 +15,5 @@ class IrFunctionExpressionImpl(
     override val endOffset: Int,
     override var type: IrType,
     override var function: IrSimpleFunction,
-    override val origin: IrStatementOrigin
+    override var origin: IrStatementOrigin
 ) : IrFunctionExpression()

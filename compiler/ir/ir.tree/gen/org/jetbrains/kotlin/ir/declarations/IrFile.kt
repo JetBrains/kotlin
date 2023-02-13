@@ -22,9 +22,9 @@ abstract class IrFile : IrPackageFragment(), IrMetadataSourceOwner,
         IrMutableAnnotationContainer {
     abstract override val symbol: IrFileSymbol
 
-    abstract val module: IrModuleFragment
+    abstract var module: IrModuleFragment
 
-    abstract val fileEntry: IrFileEntry
+    abstract var fileEntry: IrFileEntry
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitFile(this, data)

@@ -16,5 +16,5 @@ import org.jetbrains.kotlin.descriptors.Modality
  */
 interface IrOverridableMember : IrDeclaration, IrDeclarationWithVisibility,
         IrDeclarationWithName, IrSymbolOwner {
-    val modality: Modality
+    var modality: Modality
 }
