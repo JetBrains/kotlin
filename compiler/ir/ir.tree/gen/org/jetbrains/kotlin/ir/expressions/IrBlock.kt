@@ -15,9 +15,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.block
  */
 abstract class IrBlock : IrContainerExpression() {
-    override val isTransparentScope: Boolean
-        get() = false
-
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =
         visitor.visitBlock(this, data)
 }

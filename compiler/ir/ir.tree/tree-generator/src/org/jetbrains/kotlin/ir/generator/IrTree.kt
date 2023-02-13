@@ -618,7 +618,6 @@ object IrTree : AbstractTreeBuilder() {
         parent(statementContainer)
 
         +field("origin", statementOriginType, nullable = true)
-        +field("isTransparentScope", boolean)
         +listField("statements", statement, mutability = List, isChild = true) {
             generationCallback = {
                 addModifiers(KModifier.OVERRIDE)
@@ -631,19 +630,11 @@ object IrTree : AbstractTreeBuilder() {
         accept = true
 
         parent(containerExpression)
-
-        +field("isTransparentScope", boolean) {
-            baseGetter = code("false")
-        }
     }
     val composite: ElementConfig by element(Expression) {
         visitorParent = containerExpression
 
         parent(containerExpression)
-
-        +field("isTransparentScope", boolean) {
-            baseGetter = code("true")
-        }
     }
     val returnableBlock: ElementConfig by element(Expression) {
         parent(block)

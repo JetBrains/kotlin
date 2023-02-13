@@ -48,3 +48,6 @@ fun IrVararg.addElement(varargElement: IrVarargElement) {
 fun IrStringConcatenation.addArgument(argument: IrExpression) {
     arguments.add(argument)
 }
+
+val IrContainerExpression.isTransparentScope: Boolean
+    get() = this is IrComposite

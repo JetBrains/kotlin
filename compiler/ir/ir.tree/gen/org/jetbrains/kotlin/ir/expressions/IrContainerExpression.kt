@@ -20,8 +20,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 abstract class IrContainerExpression : IrExpression(), IrStatementContainer {
     abstract val origin: IrStatementOrigin?
 
-    abstract val isTransparentScope: Boolean
-
     override val statements: MutableList<IrStatement> = ArrayList(2)
 
     override fun <D> acceptChildren(visitor: IrElementVisitor<Unit, D>, data: D) {
