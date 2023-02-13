@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.idea.references.KtReference
+import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.kapt3.base.javac.kaptError
 import org.jetbrains.kotlin.kapt3.base.javac.reportKaptError
 import org.jetbrains.kotlin.kapt3.base.stubs.KaptStubLineInformation
@@ -210,7 +211,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         val enumValues: JavacList<JCTree> = mapJList(lightClass.fields) { field ->
             if (field !is PsiEnumConstant) return@mapJList null
             val constructorArguments = lightClass.constructors.firstOrNull()?.parameters?.mapNotNull { it.type as? PsiType }.orEmpty()
-            val args = mapJList(constructorArguments) { convertLiteralExpression(lightClass, getDefaultValue(it)) }
+            val args = mapJList(constructorArguments) { convertLiteralExpression(getDefaultValue(it)) }
 
             convertField(
                 field, lightClass, lineMappings, packageFqName, treeMaker.NewClass(
@@ -366,7 +367,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             "xi" to metadata.extraInt,
         )
         val arguments = argumentsWithNames.map { (name, value) ->
-            val jValue = convertLiteralExpression(containingClass = null, value)
+            val jValue = convertLiteralExpression(value)
             treeMaker.Assign(treeMaker.SimpleName(name), jValue)
         }
         return treeMaker.Annotation(treeMaker.FqName(Metadata::class.java.canonicalName), JavacList.from(arguments))
@@ -420,7 +421,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
                 treeMaker.NewArray(null, null, arguments)
             }
 
-            is PsiLiteral -> convertLiteralExpression(containingClass = null, value.value)
+            is PsiLiteral -> convertLiteralExpression(value.value)
             is PsiClassObjectAccessExpression -> {
                 val type = value.operand.type
                 checkIfValidTypeName(containingClass, type)
@@ -575,72 +576,62 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         lineMappings.registerField(containingClass, field)
 
-        val initializer = explicitInitializer ?: convertPropertyInitializer(containingClass, field)
+        val initializer = explicitInitializer ?: convertPropertyInitializer(field.initializer, field.type, field.isFinal)
         return treeMaker.VarDef(modifiers, treeMaker.name(name), typeExpression, initializer).keepKdocCommentsIfNecessary(field)
     }
 
-    private fun convertPropertyInitializer(containingClass: PsiClass, field: PsiField): JCExpression? {
-//        val origin = field.ktOrigin
-
-        val propertyInitializer = field.initializer
-
-//        if (propertyInitializer is PsiEnumConstant) {
-//            if (propertyInitializer != null) {
-//                return convertConstantValueArguments(containingClass, value, listOf(propertyInitializer))
-//            }
-//
-//            return convertValueOfPrimitiveTypeOrString(value)
-//        }
-//
-//        val propertyType = (origin?.descriptor as? PropertyDescriptor)?.returnType
-//
-//        /*
-//            Work-around for enum classes in companions.
-//            In expressions "Foo.Companion.EnumClass", Java prefers static field over a type name, making the reference invalid.
-//        */
-//        if (propertyType != null && propertyType.isEnum()) {
-//            val enumClass = propertyType.constructor.declarationDescriptor
-//            if (enumClass is ClassDescriptor && enumClass.isInsideCompanionObject()) {
-//                return null
-//            }
-//        }
-//
-//        if (propertyInitializer != null && propertyType != null) {
-//            val constValue = getConstantValue(propertyInitializer, propertyType)
-//            if (constValue != null) {
-//                val asmValue = mapConstantValueToAsmRepresentation(constValue)
-//                if (asmValue !== UnknownConstantValue) {
-//                    return convertConstantValueArguments(containingClass, asmValue, listOf(propertyInitializer))
-//                }
-//            }
-//        }
-//
-        if (propertyInitializer != null || field.isFinal) {
-            val type = field.type
-            return if (propertyInitializer is PsiLiteralExpression) {
-                val rawValue = propertyInitializer.value
-                val rawNumberValue = rawValue as? Number
-                val actualValue = when (type) {
-                    PsiType.BYTE -> rawNumberValue?.toByte()
-                    PsiType.SHORT -> rawNumberValue?.toShort()
-                    PsiType.INT -> rawNumberValue?.toInt()
-                    PsiType.LONG -> rawNumberValue?.toLong()
-                    PsiType.FLOAT -> rawNumberValue?.toFloat()
-                    PsiType.DOUBLE -> rawNumberValue?.toDouble()
-                    PsiType.CHAR -> rawNumberValue?.toChar()
-                    else -> null
-                } ?: rawValue
-                convertValueOfPrimitiveTypeOrString(actualValue)
-            } else {
-                convertLiteralExpression(containingClass, getDefaultValue(type))
+    private fun convertPropertyInitializer(propertyInitializer: PsiExpression?, type: PsiType, usedDefault: Boolean): JCExpression? {
+        if (propertyInitializer != null || usedDefault) {
+            return when (propertyInitializer) {
+                is PsiLiteralExpression -> {
+                    val rawValue = propertyInitializer.value
+                    val rawNumberValue = rawValue as? Number
+                    val actualValue = when (type) {
+                        PsiType.BYTE -> rawNumberValue?.toByte()
+                        PsiType.SHORT -> rawNumberValue?.toShort()
+                        PsiType.INT -> rawNumberValue?.toInt()
+                        PsiType.LONG -> rawNumberValue?.toLong()
+                        PsiType.FLOAT -> rawNumberValue?.toFloat()
+                        PsiType.DOUBLE -> rawNumberValue?.toDouble()
+                        PsiType.CHAR -> rawNumberValue?.toChar()
+                        else -> null
+                    } ?: rawValue
+                    convertValueOfPrimitiveTypeOrString(actualValue)
+                }
+                is PsiPrefixExpression -> {
+                    assert(propertyInitializer.operationSign.tokenType == JavaTokenType.MINUS)
+                    val operand = convertPropertyInitializer(propertyInitializer.operand, type, usedDefault)
+                    if (operand.toString().startsWith("-")) operand // overflow
+                    else treeMaker.Unary(Tag.NEG, operand)
+                }
+                is PsiBinaryExpression -> {
+                    assert(propertyInitializer.operationSign.tokenType == JavaTokenType.DIV)
+                    treeMaker.Binary(
+                        Tag.DIV,
+                        convertPropertyInitializer(propertyInitializer.lOperand, type, false),
+                        convertPropertyInitializer(propertyInitializer.rOperand, type, false)
+                    )
+                }
+                is PsiReferenceExpression ->
+                    when (val resolved = propertyInitializer.resolve()) {
+                        is PsiEnumConstant ->
+                            treeMaker.FqName(resolved.containingClass!!.qualifiedName + "." + resolved.name)
+                        else -> null
+                    }
+                is PsiArrayInitializerExpression ->
+                    treeMaker.NewArray(
+                        null, JavacList.nil(),
+                        mapJList(propertyInitializer.initializers) { convertPropertyInitializer(it, type.deepComponentType, false) }
+                    )
+                else -> convertLiteralExpression(getDefaultValue(type))
             }
         }
 
         return null
     }
 
-    private fun convertLiteralExpression(containingClass: PsiClass?, value: Any?): JCExpression {
-        fun convertDeeper(value: Any?) = convertLiteralExpression(containingClass, value)
+    private fun convertLiteralExpression(value: Any?): JCExpression {
+        fun convertDeeper(value: Any?) = convertLiteralExpression(value)
 
         convertValueOfPrimitiveTypeOrString(value)?.let { return it }
 
@@ -804,7 +795,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             val superConstructor = containingClass.superClass?.constructors?.firstOrNull { !it.isPrivate }
             val superClassConstructorCall = if (superConstructor != null) {
                 val args = mapJList(superConstructor.parameterList.parameters) { param ->
-                    convertLiteralExpression(containingClass, getDefaultValue(param.type))
+                    convertLiteralExpression(getDefaultValue(param.type))
                 }
                 val call = treeMaker.Apply(JavacList.nil(), treeMaker.SimpleName("super"), args)
                 JavacList.of<JCStatement>(treeMaker.Exec(call))
@@ -815,7 +806,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         } else if (returnType == PsiType.VOID) {
             treeMaker.Block(0, JavacList.nil())
         } else {
-            val returnStatement = treeMaker.Return(convertLiteralExpression(containingClass, getDefaultValue(returnType)))
+            val returnStatement = treeMaker.Return(convertLiteralExpression(getDefaultValue(returnType)))
             treeMaker.Block(0, JavacList.of(returnStatement))
         }
 
