@@ -109,57 +109,15 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
-    @TestMetadata("removeClassAsConstructorCall")
-    public void testRemoveClassAsConstructorCall() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsConstructorCall/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsParameterType")
-    public void testRemoveClassAsParameterType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsParameterType/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsReturnType")
-    public void testRemoveClassAsReturnType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsReturnType/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsSuperType")
-    public void testRemoveClassAsSuperType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsSuperType/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsSuperTypeArgument")
-    public void testRemoveClassAsSuperTypeArgument() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsSuperTypeArgument/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsTypeArgument")
-    public void testRemoveClassAsTypeArgument() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsTypeArgument/");
-    }
-
-    @Test
-    @TestMetadata("removeClassAsVariableType")
-    public void testRemoveClassAsVariableType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsVariableType/");
+    @TestMetadata("removeClass")
+    public void testRemoveClass() throws Exception {
+        runTest("compiler/testData/klibABI/removeClass/");
     }
 
     @Test
     @TestMetadata("removeEnumEntry")
     public void testRemoveEnumEntry() throws Exception {
         runTest("compiler/testData/klibABI/removeEnumEntry/");
-    }
-
-    @Test
-    @TestMetadata("removeInlinedClass")
-    public void testRemoveInlinedClass() throws Exception {
-        runTest("compiler/testData/klibABI/removeInlinedClass/");
     }
 
     @Test

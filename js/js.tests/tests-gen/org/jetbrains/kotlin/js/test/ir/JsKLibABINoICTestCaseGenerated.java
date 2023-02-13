@@ -100,49 +100,14 @@ public class JsKLibABINoICTestCaseGenerated extends AbstractJsKLibABINoICTestCas
         runTest("compiler/testData/klibABI/removeCallable/");
     }
 
-    @TestMetadata("removeClassAsConstructorCall")
-    public void testRemoveClassAsConstructorCall() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsConstructorCall/");
-    }
-
-    @TestMetadata("removeClassAsParameterType")
-    public void testRemoveClassAsParameterType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsParameterType/");
-    }
-
-    @TestMetadata("removeClassAsReturnType")
-    public void testRemoveClassAsReturnType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsReturnType/");
-    }
-
-    @TestMetadata("removeClassAsSuperType")
-    public void testRemoveClassAsSuperType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsSuperType/");
-    }
-
-    @TestMetadata("removeClassAsSuperTypeArgument")
-    public void testRemoveClassAsSuperTypeArgument() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsSuperTypeArgument/");
-    }
-
-    @TestMetadata("removeClassAsTypeArgument")
-    public void testRemoveClassAsTypeArgument() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsTypeArgument/");
-    }
-
-    @TestMetadata("removeClassAsVariableType")
-    public void testRemoveClassAsVariableType() throws Exception {
-        runTest("compiler/testData/klibABI/removeClassAsVariableType/");
+    @TestMetadata("removeClass")
+    public void testRemoveClass() throws Exception {
+        runTest("compiler/testData/klibABI/removeClass/");
     }
 
     @TestMetadata("removeEnumEntry")
     public void testRemoveEnumEntry() throws Exception {
         runTest("compiler/testData/klibABI/removeEnumEntry/");
-    }
-
-    @TestMetadata("removeInlinedClass")
-    public void testRemoveInlinedClass() throws Exception {
-        runTest("compiler/testData/klibABI/removeInlinedClass/");
     }
 
     @TestMetadata("removeSealedSubclass")
