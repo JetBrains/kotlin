@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // FILE: 1.kt
 class E<T>(val x: T) {
     inner class Inner {

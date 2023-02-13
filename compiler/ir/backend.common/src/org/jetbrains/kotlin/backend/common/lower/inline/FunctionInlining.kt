@@ -258,7 +258,7 @@ class FunctionInlining(
                 if (!isLambdaCall(expression))
                     return super.visitCall(expression)
 
-                val dispatchReceiver = expression.dispatchReceiver as IrGetValue
+                val dispatchReceiver = expression.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() as IrGetValue
                 val functionArgument = substituteMap[dispatchReceiver.symbol.owner] ?: return super.visitCall(expression)
                 if ((dispatchReceiver.symbol.owner as? IrValueParameter)?.isNoinline == true)
                     return super.visitCall(expression)
@@ -414,6 +414,16 @@ class FunctionInlining(
             else
                 IrTypeOperatorCallImpl(startOffset, endOffset, type, IrTypeOperator.IMPLICIT_CAST, type, this)
 
+        // With `insertAdditionalImplicitCasts` flag we sometimes insert
+        // casts to inline lambda parameters before calling `invoke` on them.
+        // Unwrapping these casts helps us satisfy inline lambda call detection logic.
+        private fun IrExpression.unwrapAdditionalImplicitCastsIfNeeded(): IrExpression {
+            if (insertAdditionalImplicitCasts && this is IrTypeOperatorCall && this.operator == IrTypeOperator.IMPLICIT_CAST) {
+                return this.argument.unwrapAdditionalImplicitCastsIfNeeded()
+            }
+            return this
+        }
+
         private fun isLambdaCall(irCall: IrCall): Boolean {
             val callee = irCall.symbol.owner
             val dispatchReceiver = callee.dispatchReceiverParameter ?: return false
@@ -421,7 +431,7 @@ class FunctionInlining(
 
             return (dispatchReceiver.type.isFunction() || dispatchReceiver.type.isSuspendFunction())
                     && callee.name == OperatorNameConventions.INVOKE
-                    && irCall.dispatchReceiver is IrGetValue
+                    && irCall.dispatchReceiver?.unwrapAdditionalImplicitCastsIfNeeded() is IrGetValue
         }
 
         private inner class ParameterToArgument(
