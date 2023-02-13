@@ -2757,6 +2757,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/nullableIntegerLiteralType.kt");
         }
 
+        @TestMetadata("overloadResolutionByLambdaArgumentType.kt")
+        public void testOverloadResolutionByLambdaArgumentType() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/inference/overloadResolutionByLambdaArgumentType.kt");
+        }
+
         @TestMetadata("receiverWithCapturedType.kt")
         public void testReceiverWithCapturedType() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/receiverWithCapturedType.kt");
