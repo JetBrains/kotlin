@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesExtractionFromInlineFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -110,6 +113,36 @@ private val lateinitUsageLoweringPhase = makeWasmModulePhase(
     description = "Insert checks for lateinit field references"
 )
 
+private val sharedVariablesLoweringPhase = makeWasmModulePhase(
+    ::SharedVariablesLowering,
+    name = "SharedVariablesLowering",
+    description = "Box captured mutable variables",
+    prerequisite = setOf(
+        lateinitDeclarationLoweringPhase,
+        lateinitUsageLoweringPhase
+    )
+)
+
+private val localClassesInInlineLambdasPhase = makeWasmModulePhase(
+    ::LocalClassesInInlineLambdasLowering,
+    name = "LocalClassesInInlineLambdasPhase",
+    description = "Extract local classes from inline lambdas",
+)
+
+private val localClassesInInlineFunctionsPhase = makeWasmModulePhase(
+    ::LocalClassesInInlineFunctionsLowering,
+    name = "LocalClassesInInlineFunctionsPhase",
+    description = "Extract local classes from inline functions",
+)
+
+private val localClassesExtractionFromInlineFunctionsPhase = makeWasmModulePhase(
+    { context -> LocalClassesExtractionFromInlineFunctionsLowering(context) },
+    name = "localClassesExtractionFromInlineFunctionsPhase",
+    description = "Move local classes from inline functions into nearest declaration container",
+    prerequisite = setOf(localClassesInInlineFunctionsPhase)
+)
+
+
 private val wrapInlineDeclarationsWithReifiedTypeParametersPhase = makeWasmModulePhase(
     ::WrapInlineDeclarationsWithReifiedTypeParametersLowering,
     name = "WrapInlineDeclarationsWithReifiedTypeParametersPhase",
@@ -118,14 +151,20 @@ private val wrapInlineDeclarationsWithReifiedTypeParametersPhase = makeWasmModul
 
 private val functionInliningPhase = makeCustomWasmModulePhase(
     { context, module ->
-        FunctionInlining(context, null, true).inline(module)
+        FunctionInlining(
+            context = context,
+            innerClassesSupport = context.innerClassesSupport,
+            insertAdditionalImplicitCasts = true,
+        ).inline(module)
         module.patchDeclarationParents()
     },
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
     prerequisite = setOf(
         expectDeclarationsRemovingPhase,
-        wrapInlineDeclarationsWithReifiedTypeParametersPhase
+        wrapInlineDeclarationsWithReifiedTypeParametersPhase,
+        localClassesInInlineLambdasPhase,
+        localClassesInInlineFunctionsPhase,
     )
 )
 
@@ -237,12 +276,6 @@ private val enumEntryRemovalLoweringPhase = makeWasmModulePhase(
     prerequisite = setOf(enumUsageLoweringPhase)
 )
 
-
-private val sharedVariablesLoweringPhase = makeWasmModulePhase(
-    ::SharedVariablesLowering,
-    name = "SharedVariablesLowering",
-    description = "Box captured mutable variables"
-)
 
 private val propertyReferenceLowering = makeWasmModulePhase(
     ::WasmPropertyReferenceLowering,
@@ -563,6 +596,14 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             excludeDeclarationsFromCodegenPhase then
             expectDeclarationsRemovingPhase then
 
+            lateinitNullableFieldsPhase then
+            lateinitDeclarationLoweringPhase then
+            lateinitUsageLoweringPhase then
+            sharedVariablesLoweringPhase then
+            localClassesInInlineLambdasPhase then
+            localClassesInInlineFunctionsPhase then
+            localClassesExtractionFromInlineFunctionsPhase then
+
             // TODO: Need some helpers from stdlib
             // arrayConstructorPhase then
             wrapInlineDeclarationsWithReifiedTypeParametersPhase then
@@ -570,9 +611,6 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             functionInliningPhase then
             removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase then
 
-            lateinitNullableFieldsPhase then
-            lateinitDeclarationLoweringPhase then
-            lateinitUsageLoweringPhase then
             tailrecLoweringPhase then
 
             enumClassConstructorLoweringPhase then
@@ -583,7 +621,6 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             enumEntryCreateGetInstancesFunsLoweringPhase then
             enumSyntheticFunsLoweringPhase then
 
-            sharedVariablesLoweringPhase then
             propertyReferenceLowering then
             callableReferencePhase then
             singleAbstractMethodPhase then
