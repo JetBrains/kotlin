@@ -38,21 +38,11 @@ buildscript {
     }
 
     dependencies {
-        //classpath project(":kotlin-native-utils")
         classpath 'gradle.plugin.com.github.johnrengelman:shadow:7.1.2'
     }
 }
-import org.jetbrains.kotlin.konan.*
 
-// Allows generating wrappers for the root build and all the samples during execution of the default 'wrapper' task.
-// Run './gradlew wrapper --gradle-version <version>' to update all the wrappers.
-//apply plugin: org.jetbrains.kotlin.GradleWrappers
-//
-//wrappers.projects = ['samples', 'samples/calculator', 'samples/cocoapods/kotlin-library']
-//wrapper.distributionType = Wrapper.DistributionType.ALL
-
-// FIXME: Remove until IDEA-231214 is fixed.
-//defaultTasks 'clean', 'dist'
+defaultTasks 'clean', 'dist'
 
 convention.plugins.platformInfo = PlatformInfo
 
@@ -158,7 +148,6 @@ dependencies {
     distPack project(':kotlin-native:utilities:basic-utils')
     distPack project(':kotlin-native:klib')
     distPack project(path: ':kotlin-native:endorsedLibraries:kotlinx.cli', configuration: "jvmRuntimeElements")
-    //distPack "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     commonSources project(path: ':kotlin-stdlib-common', configuration: 'sources')
     commonSources project(path: ':kotlin-test:kotlin-test-common', configuration: 'sources')
     commonSources project(path: ':kotlin-test:kotlin-test-annotations-common', configuration: 'sources')
@@ -170,18 +159,6 @@ dependencies {
 apply plugin: GitClangFormatPlugin
 apply plugin: 'maven-publish'
 apply plugin: BasePlugin
-
-//task sharedJar {
-//    dependsOn gradle.includedBuild('shared').task(':jar')
-//}
-
-//task gradlePluginJar {
-//    dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':shadowJar')
-//}
-
-//task gradlePluginCheck {
-//    dependsOn gradle.includedBuild('kotlin-native-gradle-plugin').task(':check')
-//}
 
 task dist_compiler(dependsOn: "distCompiler")
 task dist_runtime(dependsOn: "distRuntime")
