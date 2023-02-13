@@ -90,8 +90,8 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
                         """.trimIndent()
             }
 
-            buildAndFail("assemble") {
-                assertTasksFailed(":compileKotlinJs")
+            build("assemble") {
+                assertTasksExecuted(":compileKotlinJs")
             }
 
             buildGradleKts.modify {
@@ -103,8 +103,8 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
                         """.trimIndent().also { added = it }
             }
 
-            buildAndFail("assemble") {
-                assertTasksFailed(":compileKotlinJs")
+            build("assemble") {
+                assertTasksUpToDate(":compileKotlinJs")
             }
 
             buildGradleKts.modify {
@@ -118,7 +118,7 @@ class KotlinJsDomApiDependencyIT : KGPBaseTest() {
             }
 
             build("assemble") {
-                assertTasksExecuted(":compileKotlinJs")
+                assertTasksUpToDate(":compileKotlinJs")
             }
 
             buildGradleKts.modify {
