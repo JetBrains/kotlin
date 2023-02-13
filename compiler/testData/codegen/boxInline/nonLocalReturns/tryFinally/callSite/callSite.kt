@@ -1,4 +1,3 @@
-// WITH_STDLIB
 // FILE: 1.kt
 
 package test

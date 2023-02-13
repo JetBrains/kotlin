@@ -28,6 +28,7 @@ public final inline enum class InlineEnum : kotlin.Enum<InlineEnum> {
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<InlineEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): InlineEnum
     public final /*synthesized*/ fun values(): kotlin.Array<InlineEnum>
 }

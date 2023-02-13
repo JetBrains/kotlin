@@ -1,4 +1,3 @@
-// WITH_STDLIB
 private fun parse(text: String) = when (text) {
     Numbers.One.name, "one", "1" -> 1
     Numbers.Two.name, "two", "2" -> 2

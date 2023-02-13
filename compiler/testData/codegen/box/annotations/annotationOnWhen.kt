@@ -1,4 +1,3 @@
-// WITH_STDLIB
 // TARGET_BACKEND: JVM
 
 enum class SomeEnum {

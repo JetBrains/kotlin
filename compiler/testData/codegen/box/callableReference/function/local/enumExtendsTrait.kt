@@ -1,4 +1,3 @@
-// WITH_STDLIB
 interface Named {
     val name: String
 }

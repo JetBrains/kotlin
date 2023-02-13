@@ -1,4 +1,3 @@
-// WITH_STDLIB
 enum class ClassTemplate(
         // var bug: Int = 1,
         var code: Int,

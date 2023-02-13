@@ -28,6 +28,7 @@ public final class C {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<C.`<no name provided>`>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): C.`<no name provided>`
         public final /*synthesized*/ fun values(): kotlin.Array<C.`<no name provided>`>
     }

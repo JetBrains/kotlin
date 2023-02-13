@@ -1,4 +1,3 @@
-// WITH_STDLIB
 enum class BigEnum {
     ITEM1,
     ITEM2

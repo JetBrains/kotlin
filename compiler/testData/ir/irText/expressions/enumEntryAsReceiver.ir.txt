@@ -152,6 +152,10 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.X
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.X>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

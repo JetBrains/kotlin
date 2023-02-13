@@ -35,8 +35,7 @@ open enum class Z : Enum<Z> {
 
   fun valueOf(value: String): Z /* Synthetic body for ENUM_VALUEOF */
 
-  val entries: EnumEntries
-    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+  val entries: EnumEntries<Z>
+    get(): EnumEntries<Z> /* Synthetic body for ENUM_ENTRIES */
 
 }
-

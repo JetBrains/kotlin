@@ -28,6 +28,7 @@ public final enum class E1 : kotlin.Enum<E1> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<E1>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E1
     public final /*synthesized*/ fun values(): kotlin.Array<E1>
 }
@@ -49,6 +50,7 @@ public final enum class E2 : kotlin.Enum<E2> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<E2>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E2
     public final /*synthesized*/ fun values(): kotlin.Array<E2>
 }
@@ -70,6 +72,7 @@ public final enum class E3 : kotlin.Enum<E3>, MyInterface {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<E3>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E3
     public final /*synthesized*/ fun values(): kotlin.Array<E3>
 }
@@ -89,6 +92,7 @@ public final enum class E4 : kotlin.Enum<E4>, Inv<kotlin.Int> {
     public open override /*2*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<E4>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): E4
     public final /*synthesized*/ fun values(): kotlin.Array<E4>
 }

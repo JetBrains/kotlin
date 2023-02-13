@@ -38,13 +38,17 @@ val copySources by task<Sync> {
         .include("kotlin/TypeAliases.kt",
                  "kotlin/text/TypeAliases.kt")
     from(stdlibProjectDir.resolve("src"))
-        .include("kotlin/collections/TypeAliases.kt")
+        .include("kotlin/collections/TypeAliases.kt",
+                 "kotlin/enums/EnumEntriesSerializationProxy.kt")
     from(stdlibProjectDir.resolve("../src"))
         .include("kotlin/util/Standard.kt",
                  "kotlin/internal/Annotations.kt",
                  "kotlin/contracts/ContractBuilder.kt",
                  "kotlin/contracts/Effect.kt",
-                 "kotlin/annotations/WasExperimental.kt")
+                 "kotlin/annotations/WasExperimental.kt",
+                 "kotlin/enums/EnumEntries.kt",
+                 "kotlin/collections/AbstractList.kt",
+                 "kotlin/io/Serializable.kt")
     into(File(buildDir, "src"))
 }
 

@@ -1,4 +1,3 @@
-// WITH_STDLIB
 // NO_FLAGS because we put enum in companion object of foo. When it will be fixed - MyClass should have ACC_PRIVATE flag
 
 class Foo {

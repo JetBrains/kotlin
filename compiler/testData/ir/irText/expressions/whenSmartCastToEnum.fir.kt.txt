@@ -15,8 +15,8 @@ enum class En : Enum<En> {
 
   fun valueOf(value: String): En /* Synthetic body for ENUM_VALUEOF */
 
-  val entries: EnumEntries
-    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+  val entries: EnumEntries<En>
+    get(): EnumEntries<En> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -55,4 +55,3 @@ fun test() {
     }
   }
 }
-

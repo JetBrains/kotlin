@@ -11,6 +11,9 @@ enum class A : Enum<A> {
 
   fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries<A>
+    get(): EnumEntries<A> /* Synthetic body for ENUM_ENTRIES */
+
 }
 
 fun testVariableAssignment_throws(a: A) {

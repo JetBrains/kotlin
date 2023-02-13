@@ -19,6 +19,7 @@ package kt2418 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kt2418.A>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt2418.A
         public final /*synthesized*/ fun values(): kotlin.Array<kt2418.A>
     }
@@ -39,6 +40,7 @@ package kt2418 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kt2418.B>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt2418.B
         public final /*synthesized*/ fun values(): kotlin.Array<kt2418.B>
     }
@@ -59,6 +61,7 @@ package kt2418 {
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kt2418.C>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt2418.C
         public final /*synthesized*/ fun values(): kotlin.Array<kt2418.C>
     }
@@ -85,6 +88,7 @@ package kt2418 {
         }
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<kt2418.D>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): kt2418.D
         public final /*synthesized*/ fun values(): kotlin.Array<kt2418.D>
     }

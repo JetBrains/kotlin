@@ -1,4 +1,3 @@
-// WITH_STDLIB
 abstract class Base(val fn: () -> Test)
 
 enum class Test(val ok: String) {

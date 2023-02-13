@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestFinalEnum1>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -87,7 +87,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestFinalEnum2>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -149,7 +149,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestFinalEnum3>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -257,7 +257,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestOpenEnum1>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -370,7 +370,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestOpenEnum2>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -482,7 +482,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestAbstractEnum1>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
     FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
@@ -609,7 +609,7 @@ FILE fqName:<root> fileName:/enumClassModality.kt
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
     PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
-      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestAbstractEnum2>
         correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
         SYNTHETIC_BODY kind=ENUM_ENTRIES
     FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IFoo) returnType:kotlin.Unit [fake_override]

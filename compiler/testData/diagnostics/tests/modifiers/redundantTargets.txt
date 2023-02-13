@@ -36,6 +36,7 @@ public final enum class Third : kotlin.Enum<Third> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<Third>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Third
     public final /*synthesized*/ fun values(): kotlin.Array<Third>
 }

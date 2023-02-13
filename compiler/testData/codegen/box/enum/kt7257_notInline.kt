@@ -1,4 +1,3 @@
-// WITH_STDLIB
 fun <T, R> T.letNoInline(fn: (T) -> R) =
         fn(this)
 

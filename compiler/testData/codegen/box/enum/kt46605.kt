@@ -1,4 +1,3 @@
-// WITH_STDLIB
 fun call(f: () -> Unit) {
     f()
 }

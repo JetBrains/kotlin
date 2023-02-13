@@ -1,4 +1,3 @@
-// WITH_STDLIB
 package example2
 
 fun box() = Context.OsType.OK.toString()

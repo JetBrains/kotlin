@@ -1,4 +1,3 @@
-// WITH_STDLIB
 interface A<T> {
     open fun foo(t: T) = "A"
 }

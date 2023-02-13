@@ -191,6 +191,10 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.TestEnum
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.TestEnum>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES
   CLASS ANNOTATION_CLASS name:TestAnnotation modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
       TestAnn(x = 'annotation')

@@ -51,9 +51,9 @@ public final enum class FooImpl : kotlin.Enum<FooImpl!> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<FooImpl>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): FooImpl
     public final /*synthesized*/ fun values(): kotlin.Array<FooImpl>
 }
 public actual typealias Foo = FooImpl
 public actual typealias _TimeUnit = java.util.concurrent.TimeUnit
-

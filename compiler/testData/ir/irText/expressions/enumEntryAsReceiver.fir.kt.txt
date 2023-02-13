@@ -33,12 +33,11 @@ abstract enum class X : Enum<X> {
 
   fun valueOf(value: String): X /* Synthetic body for ENUM_VALUEOF */
 
-  val entries: EnumEntries
-    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+  val entries: EnumEntries<X>
+    get(): EnumEntries<X> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
 fun box(): String {
   return X.B.<get-value>().invoke()
 }
-

@@ -1,4 +1,3 @@
-// WITH_STDLIB
 // IGNORE_BACKEND: JS
 fun f(): String = "O"
 fun g(): String = "K"

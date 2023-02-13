@@ -20,6 +20,7 @@ public final enum class ProtocolState : kotlin.Enum<ProtocolState> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<ProtocolState>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): ProtocolState
     public final /*synthesized*/ fun values(): kotlin.Array<ProtocolState>
 }

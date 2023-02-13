@@ -40,6 +40,7 @@ package test {
         }
 
         // Static members
+        public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.EnumSample>
         public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.EnumSample
         public final /*synthesized*/ fun values(): kotlin.Array<test.EnumSample>
     }

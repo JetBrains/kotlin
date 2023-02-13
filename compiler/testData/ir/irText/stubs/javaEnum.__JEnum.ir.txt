@@ -55,3 +55,6 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL vis
   FUN IR_EXTERNAL_DECLARATION_STUB name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.JEnum
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:value index:0 type:kotlin.String
   FUN IR_EXTERNAL_DECLARATION_STUB name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.JEnum>
+  PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries visibility:public modality:FINAL [val]
+    FUN IR_EXTERNAL_DECLARATION_STUB name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.JEnum>
+      correspondingProperty: PROPERTY IR_EXTERNAL_DECLARATION_STUB name:entries visibility:public modality:FINAL [val]

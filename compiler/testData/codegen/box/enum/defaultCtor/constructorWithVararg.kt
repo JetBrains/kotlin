@@ -1,4 +1,3 @@
-// WITH_STDLIB
 enum class Test(vararg xs: Int) {
     OK;
     val values = xs

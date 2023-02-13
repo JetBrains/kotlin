@@ -1,4 +1,3 @@
-// WITH_STDLIB
 private enum class MyClass() {
 }
 

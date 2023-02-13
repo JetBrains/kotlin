@@ -1,4 +1,3 @@
-// WITH_STDLIB
 public enum class MyClass() {
 }
 

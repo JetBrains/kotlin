@@ -1,4 +1,3 @@
-// WITH_STDLIB
 // !LANGUAGE: -ProhibitComparisonOfIncompatibleEnums
 
 enum class A {

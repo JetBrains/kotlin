@@ -1,4 +1,3 @@
-// WITH_STDLIB
 enum class ContentType {
 
     PLAIN_TEXT {

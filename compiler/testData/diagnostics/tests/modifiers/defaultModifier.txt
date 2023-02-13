@@ -91,6 +91,7 @@ public final enum class Enum : kotlin.Enum<Enum> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<Enum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Enum
     public final /*synthesized*/ fun values(): kotlin.Array<Enum>
 }

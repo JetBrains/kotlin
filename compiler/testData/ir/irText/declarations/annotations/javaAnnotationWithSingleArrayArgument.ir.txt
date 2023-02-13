@@ -93,6 +93,10 @@ FILE fqName:<root> fileName:/C.kt
     FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:<root>.E
       VALUE_PARAMETER name:value index:0 type:kotlin.String
       SYNTHETIC_BODY kind=ENUM_VALUEOF
+    PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<<root>.E>
+        correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [val]
+        SYNTHETIC_BODY kind=ENUM_ENTRIES
   CLASS ANNOTATION_CLASS name:Annos modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Annos
     CONSTRUCTOR visibility:public <> (value:kotlin.Array<<root>.Anno>) returnType:<root>.Annos [primary]

@@ -33,6 +33,9 @@ abstract enum class X : Enum<X> {
 
   fun valueOf(value: String): X /* Synthetic body for ENUM_VALUEOF */
 
+  val entries: EnumEntries<X>
+    get(): EnumEntries<X> /* Synthetic body for ENUM_ENTRIES */
+
 }
 
 fun box(): String {

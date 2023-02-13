@@ -1,5 +1,4 @@
 // CHECK_BYTECODE_LISTING
-// WITH_STDLIB
 
 enum class E { X }
 

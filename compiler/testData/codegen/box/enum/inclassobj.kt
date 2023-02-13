@@ -1,4 +1,3 @@
-// WITH_STDLIB
 fun box() = if(Context.operatingSystemType == Context.Companion.OsType.OTHER) "OK" else "fail"
 
 public class Context

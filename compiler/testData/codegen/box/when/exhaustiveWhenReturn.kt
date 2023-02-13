@@ -1,4 +1,3 @@
-// WITH_STDLIB
 enum class A { V }
 
 fun box(): String {

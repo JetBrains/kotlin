@@ -46,6 +46,7 @@ public final enum class Kind : kotlin.Enum<Kind> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<Kind>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Kind
     public final /*synthesized*/ fun values(): kotlin.Array<Kind>
 }
