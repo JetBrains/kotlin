@@ -883,31 +883,6 @@ val zipCompiler by task<Zip> {
     }
 }
 
-val zipStdlibTests by task<Zip> {
-    destinationDirectory.set(file(distDir))
-    archiveFileName.set("kotlin-stdlib-tests.zip")
-    from("libraries/stdlib/common/test") { into("common") }
-    from("libraries/stdlib/test") { into("test") }
-    from("libraries/kotlin.test/common/src/test/kotlin") { into("kotlin-test") }
-    doLast {
-        logger.lifecycle("Stdlib tests are packed to ${archiveFile.get()}")
-    }
-}
-
-val zipTestData by task<Zip> {
-    dependsOn(zipStdlibTests)
-    destinationDirectory.set(file(distDir))
-    archiveFileName.set("kotlin-test-data.zip")
-    isZip64 = true
-    from("compiler/testData") { into("compiler") }
-    from("idea/testData") { into("ide") }
-    from("idea/idea-completion/testData") { into("ide/completion") }
-    from("compiler/tests-common/tests/org/jetbrains/kotlin/coroutineTestUtil.kt") { into("compiler") }
-    doLast {
-        logger.lifecycle("Test data packed to ${archiveFile.get()}")
-    }
-}
-
 fun Project.secureZipTask(zipTask: TaskProvider<Zip>): RegisteringDomainObjectDelegateProviderWithAction<out TaskContainer, Task> {
     val checkSumTask = tasks.register("${zipTask.name}Checksum", Checksum::class) {
         dependsOn(zipTask)
