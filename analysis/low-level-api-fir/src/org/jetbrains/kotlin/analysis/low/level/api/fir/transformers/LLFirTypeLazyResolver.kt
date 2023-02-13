@@ -140,6 +140,7 @@ private class LLFirTypeTargetResolver(
                 resolveClassTypes(target)
             }
             is FirAnonymousInitializer -> {}
+            is FirScript -> {}
             else -> error("Unknown declaration ${target::class.java}")
         }
     }
