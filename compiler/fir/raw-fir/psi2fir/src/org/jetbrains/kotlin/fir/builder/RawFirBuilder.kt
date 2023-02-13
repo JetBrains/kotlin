@@ -1969,7 +1969,7 @@ open class RawFirBuilder(
                 }
                 null -> FirErrorTypeRefBuilder().apply {
                     this.source = source
-                    diagnostic = ConeSimpleDiagnostic("Unwrapped type is null", DiagnosticKind.Syntax)
+                    diagnostic = ConeSimpleDiagnostic("Incomplete code", DiagnosticKind.Syntax)
                 }
                 else -> throw AssertionError("Unexpected type element: ${unwrappedElement.text}")
             }

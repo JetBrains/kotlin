@@ -63,9 +63,9 @@ FILE: e.kt
             public get(): <ERROR TYPE REF: Expression 'bar' of type 'ERROR CLASS: cycle' cannot be invoked as a function>
             public set(value: <ERROR TYPE REF: Expression 'bar' of type 'ERROR CLASS: cycle' cannot be invoked as a function>): R|kotlin/Unit|
 
-        public final class EmptyContinuation : R|e/A<ERROR CLASS: Unwrapped type is null>| {
+        public final class EmptyContinuation : R|e/A<ERROR CLASS: Incomplete code>| {
             public constructor(): R|e/A.EmptyContinuation| {
-                super<R|e/A<ERROR CLASS: Unwrapped type is null>|>()
+                super<R|e/A<ERROR CLASS: Incomplete code>|>()
             }
 
         }
