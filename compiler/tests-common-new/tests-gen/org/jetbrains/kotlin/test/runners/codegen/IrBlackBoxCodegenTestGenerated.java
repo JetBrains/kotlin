@@ -28828,6 +28828,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("syntheticPropClashingWithJvmField.kt")
+        public void testSyntheticPropClashingWithJvmField() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/syntheticPropClashingWithJvmField.kt");
+        }
+
+        @Test
         @TestMetadata("unresolvedJavaClassInDifferentFile.kt")
         public void testUnresolvedJavaClassInDifferentFile() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/unresolvedJavaClassInDifferentFile.kt");

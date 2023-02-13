@@ -83,12 +83,17 @@ class FakeOverrideGenerator(
             // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
             realDeclarationSymbols = emptySet()
         )
-        FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(session, firClass.defaultType(), useSiteMemberScope)?.let {
-            generateFakeOverridesForName(
-                irClass, it, name, firClass, this,
-                // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
-                realDeclarationSymbols = emptySet()
-            )
+        // Only add synthetic properties if no real properties were found. This can happen in a mixed hierarchy when a Java class
+        // inherits an @JvmField property. When a Kotlin class extends that Java class, CONFLICTING_INHERITED_JVM_DECLARATIONS will be
+        // reported otherwise. See KT-56538.
+        if (none { it is IrProperty }) {
+            FirSyntheticPropertiesScope.createIfSyntheticNamesProviderIsDefined(session, firClass.defaultType(), useSiteMemberScope)?.let {
+                generateFakeOverridesForName(
+                    irClass, it, name, firClass, this,
+                    // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
+                    realDeclarationSymbols = emptySet()
+                )
+            }
         }
         if (firClass.isEnumClass) return@buildList // F/O for values/valueOf/entries aren't needed, for other members aren't possible
         val staticScope = firClass.scopeProvider.getStaticMemberScopeForCallables(firClass, session, scopeSession)
