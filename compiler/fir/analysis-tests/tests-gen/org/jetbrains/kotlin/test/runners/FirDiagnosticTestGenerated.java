@@ -1339,6 +1339,22 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
         }
 
         @Nested
+        @TestMetadata("compiler/fir/analysis-tests/testData/resolve/checkers")
+        @TestDataPath("$PROJECT_ROOT")
+        public class Checkers {
+            @Test
+            public void testAllFilesPresentInCheckers() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/checkers"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("redundantNullCheckOnAsCast.kt")
+            public void testRedundantNullCheckOnAsCast() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/checkers/redundantNullCheckOnAsCast.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constVal")
         @TestDataPath("$PROJECT_ROOT")
         public class ConstVal {
