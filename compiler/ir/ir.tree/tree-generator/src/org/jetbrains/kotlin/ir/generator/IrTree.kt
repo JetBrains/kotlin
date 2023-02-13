@@ -973,7 +973,6 @@ object IrTree : AbstractTreeBuilder() {
         +field("operator", type(Packages.exprs, "IrTypeOperator"))
         +field("argument", expression, mutable = true, isChild = true)
         +field("typeOperand", irTypeType, mutable = true)
-        +field("typeOperandClassifier", classifierSymbolType)
     }
     val valueAccessExpression: ElementConfig by element(Expression) {
         visitorParent = declarationReference

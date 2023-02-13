@@ -19,9 +19,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 
 class IrTypeOperatorCallImpl(
     override val startOffset: Int,
@@ -30,7 +28,4 @@ class IrTypeOperatorCallImpl(
     override val operator: IrTypeOperator,
     override var typeOperand: IrType,
     override var argument: IrExpression,
-) : IrTypeOperatorCall() {
-    override val typeOperandClassifier: IrClassifierSymbol
-        get() = typeOperand.classifierOrFail
-}
+) : IrTypeOperatorCall()

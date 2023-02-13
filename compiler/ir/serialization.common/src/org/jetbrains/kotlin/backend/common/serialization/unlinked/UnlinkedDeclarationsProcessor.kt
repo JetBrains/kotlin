@@ -23,9 +23,12 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Location
 import org.jetbrains.kotlin.ir.util.IrMessageLogger.Severity
+import org.jetbrains.kotlin.ir.util.fileOrNull
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -244,7 +247,7 @@ internal class UnlinkedDeclarationsProcessor(
         override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
             expression.transformChildrenVoid()
 
-            val classifierSymbol = expression.typeOperandClassifier
+            val classifierSymbol = expression.typeOperand.classifierOrFail
             return if (classifierSymbol.isUnlinked())
                 IrCompositeImpl(expression.startOffset, expression.endOffset, builtIns.nothingType).apply {
                     statements += expression.argument
