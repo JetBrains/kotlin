@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.IrElement
  * useful, for example, to keep track of generated names for anonymous declarations.
  * @property attributeOwnerId original element before copying. Always satisfies the following
  *   invariant: this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId.
- * @property attributeOwnerIdBeforeInline original element before inlining. Useful only with IR
+ * @property originalBeforeInline original element before inlining. Useful only with IR
  *   inliner. null if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
  *   idempotence invariant and can contain a chain of declarations.
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.attributeContainer
@@ -23,5 +23,5 @@ import org.jetbrains.kotlin.ir.IrElement
 interface IrAttributeContainer : IrElement {
     var attributeOwnerId: IrAttributeContainer
 
-    var attributeOwnerIdBeforeInline: IrAttributeContainer?
+    var originalBeforeInline: IrAttributeContainer?
 }

@@ -63,7 +63,7 @@ open class JvmInventNamesForLocalClasses(
 // TODO try to use only one "InventNames"
 class JvmInventNamesForInlinedAnonymousObjects(context: JvmBackendContext) : JvmInventNamesForLocalClasses(context, true) {
     override fun putLocalClassName(declaration: IrAttributeContainer, localClassName: String) {
-        if (declaration.attributeOwnerIdBeforeInline == null) return
+        if (declaration.originalBeforeInline == null) return
         context.putLocalClassType(declaration, Type.getObjectType(localClassName))
     }
 }

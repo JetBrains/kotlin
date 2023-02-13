@@ -235,5 +235,5 @@ class Fir2IrLazyProperty(
         get() = fir.containerSource
 
     override var attributeOwnerId: IrAttributeContainer = this
-    override var attributeOwnerIdBeforeInline: IrAttributeContainer? = null
+    override var originalBeforeInline: IrAttributeContainer? = null
 }

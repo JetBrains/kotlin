@@ -142,7 +142,7 @@ abstract class InventNamesForLocalClasses(
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: Data) {
-            if (data.processingInlinedFunction && expression.attributeOwnerIdBeforeInline == null) {
+            if (data.processingInlinedFunction && expression.originalBeforeInline == null) {
                 // skip IrFunctionReference from `singleArgumentInlineFunction`
                 return
             }

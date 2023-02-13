@@ -22,7 +22,7 @@ abstract class IrExpression : IrElementBase(), IrStatement, IrVarargElement,
         IrAttributeContainer {
     override var attributeOwnerId: IrAttributeContainer = this
 
-    override var attributeOwnerIdBeforeInline: IrAttributeContainer? = null
+    override var originalBeforeInline: IrAttributeContainer? = null
 
     abstract var type: IrType
 

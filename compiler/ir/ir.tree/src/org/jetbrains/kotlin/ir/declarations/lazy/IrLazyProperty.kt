@@ -89,7 +89,7 @@ class IrLazyProperty(
         get() = this
         set(_) = error("We should never need to change attributeOwnerId of external declarations.")
 
-    override var attributeOwnerIdBeforeInline: IrAttributeContainer?
+    override var originalBeforeInline: IrAttributeContainer?
         get() = this
-        set(_) = error("We should never need to change attributeOwnerIdBeforeInline of external declarations.")
+        set(_) = error("We should never need to change originalBeforeInline of external declarations.")
 }

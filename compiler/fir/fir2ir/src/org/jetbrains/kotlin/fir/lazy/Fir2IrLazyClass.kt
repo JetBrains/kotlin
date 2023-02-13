@@ -72,7 +72,7 @@ class Fir2IrLazyClass(
         get() = this
         set(_) = mutationNotSupported()
 
-    override var attributeOwnerIdBeforeInline: IrAttributeContainer?
+    override var originalBeforeInline: IrAttributeContainer?
         get() = null
         set(_) {
             error("Mutating Fir2Ir lazy elements is not possible")

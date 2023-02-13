@@ -92,7 +92,7 @@ fun IrFunction.isReifiable(): Boolean =
     typeParameters.any { it.isReified }
 
 private fun IrAttributeContainer.getDeclarationBeforeInline(): IrDeclaration? {
-    val original = this.attributeOwnerIdBeforeInline ?: return null
+    val original = this.originalBeforeInline ?: return null
     return when (original) {
         is IrClass -> return original
         is IrFunctionExpression -> original.function
@@ -102,8 +102,8 @@ private fun IrAttributeContainer.getDeclarationBeforeInline(): IrDeclaration? {
 }
 
 fun IrAttributeContainer.getAttributeOwnerBeforeInline(): IrAttributeContainer? {
-    if (this.attributeOwnerIdBeforeInline == null) return null
-    return generateSequence(this) { it.attributeOwnerIdBeforeInline }.last()
+    if (this.originalBeforeInline == null) return null
+    return generateSequence(this) { it.originalBeforeInline }.last()
 }
 
 val IrDeclaration.fileParentBeforeInline: IrFile

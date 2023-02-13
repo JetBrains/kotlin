@@ -141,7 +141,7 @@ class FunctionInlining(
         acceptVoid(object : IrElementVisitorVoid {
             private fun IrAttributeContainer.setUpCorrectAttributeOwner() {
                 if (this.attributeOwnerId == this) return
-                this.attributeOwnerIdBeforeInline = this.attributeOwnerId
+                this.originalBeforeInline = this.attributeOwnerId
                 this.attributeOwnerId = this
             }
 

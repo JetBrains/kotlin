@@ -35,7 +35,7 @@ internal val removeDuplicatedInlinedLocalClasses = makeIrFilePhase(
 
 // There are three types of inlined local classes:
 // 1. MUST BE regenerated according to set of rules in AnonymousObjectTransformationInfo.
-// They all have `attributeOwnerIdBeforeInline != null`.
+// They all have `originalBeforeInline != null`.
 // 2. MUST NOT BE regenerated and MUST BE CREATED only once because they are copied from call site.
 // This lambda will not exist after inline, so we copy declaration into new temporary inline call `singleArgumentInlineFunction`.
 // 3. MUST NOT BE created at all because will be created at callee site.
@@ -132,10 +132,10 @@ class RemoveDuplicatedInlinedLocalClassesLowering(val context: JvmBackendContext
     }
 
     // Basically we want to remove all anonymous classes after inline. Exceptions are:
-    // 1. classes that must be regenerated (declaration.attributeOwnerIdBeforeInline != null)
+    // 1. classes that must be regenerated (declaration.originalBeforeInline != null)
     // 2. classes that are originally declared on call site or are default lambdas (data == true)
     override fun visitClass(declaration: IrClass, data: Boolean): IrStatement {
-        if (!insideInlineBlock || declaration.attributeOwnerIdBeforeInline != null || !data) {
+        if (!insideInlineBlock || declaration.originalBeforeInline != null || !data) {
             return super.visitClass(declaration, data)
         }
 
