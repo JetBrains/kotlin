@@ -348,7 +348,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         var index = 0
         receiver?.let { call.putValueArgument(index++, it) }
         call.putValueArgument(index++, containerClass)
-        call.putValueArgument(index++, irString(expression.referencedName.asString()))
+        call.putValueArgument(index++, irString((expression.symbol.owner as IrDeclarationWithName).name.asString()))
         call.putValueArgument(index++, computeSignatureString(expression))
         if (useOptimizedSuperClass) {
             val isPackage = (container is IrClass && container.isFileClass) || container is IrPackageFragment
@@ -407,7 +407,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             val getName = superClass.functions.single { it.name.asString() == "getName" }
             val getOwner = superClass.functions.single { it.name.asString() == "getOwner" }
             val getSignature = superClass.functions.single { it.name.asString() == "getSignature" }
-            referenceClass.addOverride(getName) { irString(expression.referencedName.asString()) }
+            referenceClass.addOverride(getName) { irString((expression.symbol.owner as IrDeclarationWithName).name.asString()) }
             referenceClass.addOverride(getOwner) { calculateOwner(expression.propertyContainer) }
             referenceClass.addOverride(getSignature) { computeSignatureString(expression) }
         }
