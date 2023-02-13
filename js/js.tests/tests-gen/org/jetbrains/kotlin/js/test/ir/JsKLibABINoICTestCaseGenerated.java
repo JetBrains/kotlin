@@ -95,6 +95,11 @@ public class JsKLibABINoICTestCaseGenerated extends AbstractJsKLibABINoICTestCas
         runTest("compiler/testData/klibABI/removeAbstractCallableFromAbstractClassOrInterface/");
     }
 
+    @TestMetadata("removeCallable")
+    public void testRemoveCallable() throws Exception {
+        runTest("compiler/testData/klibABI/removeCallable/");
+    }
+
     @TestMetadata("removeClassAsConstructorCall")
     public void testRemoveClassAsConstructorCall() throws Exception {
         runTest("compiler/testData/klibABI/removeClassAsConstructorCall/");
@@ -135,39 +140,9 @@ public class JsKLibABINoICTestCaseGenerated extends AbstractJsKLibABINoICTestCas
         runTest("compiler/testData/klibABI/removeEnumEntry/");
     }
 
-    @TestMetadata("removeFunction")
-    public void testRemoveFunction() throws Exception {
-        runTest("compiler/testData/klibABI/removeFunction/");
-    }
-
     @TestMetadata("removeInlinedClass")
     public void testRemoveInlinedClass() throws Exception {
         runTest("compiler/testData/klibABI/removeInlinedClass/");
-    }
-
-    @TestMetadata("removeInlinedFunction")
-    public void testRemoveInlinedFunction() throws Exception {
-        runTest("compiler/testData/klibABI/removeInlinedFunction/");
-    }
-
-    @TestMetadata("removeInlinedProperty")
-    public void testRemoveInlinedProperty() throws Exception {
-        runTest("compiler/testData/klibABI/removeInlinedProperty/");
-    }
-
-    @TestMetadata("removeOpenFunction")
-    public void testRemoveOpenFunction() throws Exception {
-        runTest("compiler/testData/klibABI/removeOpenFunction/");
-    }
-
-    @TestMetadata("removeOpenProperty")
-    public void testRemoveOpenProperty() throws Exception {
-        runTest("compiler/testData/klibABI/removeOpenProperty/");
-    }
-
-    @TestMetadata("removeProperty")
-    public void testRemoveProperty() throws Exception {
-        runTest("compiler/testData/klibABI/removeProperty/");
     }
 
     @TestMetadata("removeSealedSubclass")
