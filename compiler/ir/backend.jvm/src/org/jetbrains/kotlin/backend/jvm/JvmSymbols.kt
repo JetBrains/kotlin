@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.ir.addExtensionReceiver
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_CALL_RESULT_NAME
@@ -40,6 +41,8 @@ import org.jetbrains.kotlin.resolve.JVM_INLINE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getArgument
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getType
 
 class JvmSymbols(
     private val context: JvmBackendContext,
@@ -233,7 +236,8 @@ class JvmSymbols(
     private val enumEntriesKt: IrClassSymbol = createClass(FqName("kotlin.enums.EnumEntriesKt")) { klass ->
         klass.addFunction("enumEntries", enumEntries.defaultType, isStatic = true).apply {
             addValueParameter("entriesProvider",
-                              irBuiltIns.functionN(0).typeWith(irBuiltIns.arrayClass.typeWith(klass.typeParameters.map { it.defaultType })))
+                              irBuiltIns.functionN(0).typeWith(irBuiltIns.arrayClass.typeWith(klass.typeParameters.map { it.defaultType }))
+            )
         }
     }
 
@@ -896,13 +900,29 @@ class JvmSymbols(
         }
     }
 
-    private val arraysCopyOfFunctions = HashMap<IrClassifierSymbol, IrSimpleFunction>()
+    private val primitiveTypeToArrayCopyFunction = HashMap<PrimitiveType, IrSimpleFunction>()
+    private lateinit var copyArrayOfAnyNFunction: IrSimpleFunction
 
     private fun IrClass.addArraysCopyOfFunction(arrayType: IrSimpleType) {
         addFunction("copyOf", arrayType, isStatic = true).apply {
             addValueParameter("original", arrayType)
             addValueParameter("newLength", irBuiltIns.intType)
-            arraysCopyOfFunctions[arrayType.classifierOrFail] = this
+            val primitiveType = arrayType.getPrimitiveArrayElementType()
+            if (primitiveType != null) {
+                primitiveTypeToArrayCopyFunction[primitiveType] = this
+            } else {
+                copyArrayOfAnyNFunction = this
+            }
+        }
+    }
+
+    fun IrType.getPrimitiveArrayElementType(): PrimitiveType? {
+        if (isPrimitiveVArray()) {
+            return ((this as IrSimpleType).arguments[0] as IrSimpleType).getPrimitiveType()
+        }
+        return (this as? IrSimpleType)?.let {
+            (it.classifier.owner as? IrClass)?.fqNameWhenAvailable?.toUnsafe()
+                ?.let { fqn -> StandardNames.FqNames.arrayClassFqNameToPrimitiveType[fqn] }
         }
     }
 
@@ -932,12 +952,9 @@ class JvmSymbols(
         }
 
     fun getArraysCopyOfFunction(arrayType: IrSimpleType): IrSimpleFunctionSymbol {
-        val classifier = arrayType.classifier
-        val copyOf = arraysCopyOfFunctions[classifier]
-        if (copyOf != null)
-            return copyOf.symbol
-        else
-            throw AssertionError("Array type expected: ${arrayType.render()}")
+        val primitiveElementType = arrayType.getPrimitiveArrayElementType()
+        if (primitiveElementType != null) return primitiveTypeToArrayCopyFunction[primitiveElementType]!!.symbol
+        return copyArrayOfAnyNFunction.symbol
     }
 
     private val javaLangInteger: IrClassSymbol = createJavaPrimitiveClass(FqName("java.lang.Integer"), irBuiltIns.intType)

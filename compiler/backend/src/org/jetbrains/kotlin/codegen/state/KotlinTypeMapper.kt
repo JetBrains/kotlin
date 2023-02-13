@@ -294,7 +294,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
         //  In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
         //  In<Nothing, Nothing> -> In
         //  Inv<in Nothing, Foo> -> Inv
-        if (signatureVisitor.skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.arguments.isEmpty()) {
+        if (signatureVisitor.skipGenericSignature()
+            || hasNothingInNonContravariantPosition(type)
+            || type.arguments.isEmpty()
+            || KotlinBuiltIns.isPrimitiveVArray(type)
+        ) {
             signatureVisitor.writeAsmType(asmType)
             return
         }
@@ -1509,7 +1513,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
         }
 
         //NB: similar platform agnostic code in DescriptorUtils.unwrapFakeOverride
-        private fun findSuperDeclaration(descriptor: FunctionDescriptor, isSuperCall: Boolean, jvmDefaultMode: JvmDefaultMode): FunctionDescriptor {
+        private fun findSuperDeclaration(
+            descriptor: FunctionDescriptor,
+            isSuperCall: Boolean,
+            jvmDefaultMode: JvmDefaultMode
+        ): FunctionDescriptor {
             var current = descriptor
             while (current.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 val classCallable = current.overriddenDescriptors.firstOrNull { !isInterface(it.containingDeclaration) }

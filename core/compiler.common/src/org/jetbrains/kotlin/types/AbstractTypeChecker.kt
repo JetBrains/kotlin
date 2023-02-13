@@ -266,7 +266,7 @@ object AbstractTypeChecker {
 
     private val oldPrimitiveArrayToVArray = mapOf(
         "BooleanArray" to "VArray<Boolean>",
-        "ByteArray" to "VArray<ByteArray>",
+        "ByteArray" to "VArray<Byte>",
         "ShortArray" to "VArray<Short>",
         "IntArray" to "VArray<Int>",
         "LongArray" to "VArray<Long>",

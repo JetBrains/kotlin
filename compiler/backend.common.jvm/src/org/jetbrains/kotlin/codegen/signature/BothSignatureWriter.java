@@ -75,6 +75,9 @@ public class BothSignatureWriter extends JvmSignatureWriter {
 
     @Override
     public void writeClassBegin(Type asmType) {
+        if (asmType.toString().contains("[")) {
+            System.out.println();
+        }
         signatureVisitor().visitClassType(asmType.getInternalName());
         super.writeClassBegin(asmType);
     }

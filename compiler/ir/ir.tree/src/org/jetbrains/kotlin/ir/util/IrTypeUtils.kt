@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.util
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -20,6 +21,13 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.asSimpleType
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getArgument
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getType
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getVariance
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isVArray
+import org.jetbrains.kotlin.types.model.TypeVariance
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.utils.DFS
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
@@ -78,10 +86,22 @@ private inline fun IrType.isTypeFromKotlinPackage(namePredicate: (Name) -> Boole
     } else return false
 }
 
-fun IrType.isPrimitiveArray() = isTypeFromKotlinPackage { it in FqNames.primitiveArrayTypeShortNames }
+fun IrType.isPrimitiveVArray(): Boolean {
+    if (!isVArray) return false
+    val typeArgument = (this as IrSimpleType).arguments[0]
+    (typeArgument as? IrSimpleType)!!.getPrimitiveType()
+    return (typeArgument as? IrSimpleType)?.isPrimitiveType() == true
+}
 
-fun IrType.getPrimitiveArrayElementType() = (this as? IrSimpleType)?.let {
-    (it.classifier.owner as? IrClass)?.fqNameWhenAvailable?.toUnsafe()?.let { fqn -> FqNames.arrayClassFqNameToPrimitiveType[fqn] }
+fun IrType.isPrimitiveArray() = isPrimitiveVArray() || isTypeFromKotlinPackage { it in FqNames.primitiveArrayTypeShortNames }
+
+fun IrType.getPrimitiveArrayElementType(): PrimitiveType? {
+    if (isPrimitiveVArray()) {
+        return ((this as IrSimpleType).arguments[0] as IrSimpleType).getPrimitiveType()
+    }
+    return (this as? IrSimpleType)?.let {
+        (it.classifier.owner as? IrClass)?.fqNameWhenAvailable?.toUnsafe()?.let { fqn -> FqNames.arrayClassFqNameToPrimitiveType[fqn] }
+    }
 }
 
 fun IrType.substitute(params: List<IrTypeParameter>, arguments: List<IrType>): IrType =
