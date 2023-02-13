@@ -51,10 +51,9 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     lockProvider: LLFirLockProvider,
     session: FirSession,
     scopeSession: ScopeSession,
-) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
+) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS, isJumpingPhase = true) {
     private val transformer =
         FirCompilerRequiredAnnotationsResolveTransformer(session, scopeSession, CompilerRequiredAnnotationsComputationSession())
-
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {
         transformer.annotationTransformer.withFileAndFileScopes(firFile) {
