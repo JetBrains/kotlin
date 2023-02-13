@@ -90,24 +90,9 @@ public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTes
         runTest("compiler/testData/klibABI/referencingUnusableDeclarations/");
     }
 
-    @TestMetadata("removeAbstractFunctionFromAbstractClass")
-    public void testRemoveAbstractFunctionFromAbstractClass() throws Exception {
-        runTest("compiler/testData/klibABI/removeAbstractFunctionFromAbstractClass/");
-    }
-
-    @TestMetadata("removeAbstractFunctionFromInterface")
-    public void testRemoveAbstractFunctionFromInterface() throws Exception {
-        runTest("compiler/testData/klibABI/removeAbstractFunctionFromInterface/");
-    }
-
-    @TestMetadata("removeAbstractPropertyFromAbstractClass")
-    public void testRemoveAbstractPropertyFromAbstractClass() throws Exception {
-        runTest("compiler/testData/klibABI/removeAbstractPropertyFromAbstractClass/");
-    }
-
-    @TestMetadata("removeAbstractPropertyFromInterface")
-    public void testRemoveAbstractPropertyFromInterface() throws Exception {
-        runTest("compiler/testData/klibABI/removeAbstractPropertyFromInterface/");
+    @TestMetadata("removeAbstractCallableFromAbstractClassOrInterface")
+    public void testRemoveAbstractCallableFromAbstractClassOrInterface() throws Exception {
+        runTest("compiler/testData/klibABI/removeAbstractCallableFromAbstractClassOrInterface/");
     }
 
     @TestMetadata("removeClassAsConstructorCall")
