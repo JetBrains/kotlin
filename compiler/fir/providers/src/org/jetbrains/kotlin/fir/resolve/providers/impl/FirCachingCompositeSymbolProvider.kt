@@ -106,11 +106,7 @@ class FirCachingCompositeSymbolProvider(
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         val knownClassifierNames = knownTopLevelClassifierNamesInPackage.getValue(classId.packageFqName)
-        if (knownClassifierNames != null && !isNameForFunctionClass(classId)) {
-            val outerClassId = classId.outerClassId
-            if (outerClassId == null && classId.shortClassName.asString() !in knownClassifierNames) return null
-            if (outerClassId != null && classId.outermostClassId.shortClassName.asString() !in knownClassifierNames) return null
-        }
+        if (knownClassifierNames != null && !mayHaveTopLevelClassifier(classId, knownClassifierNames)) return null
 
         return classLikeCache.getValue(classId)
     }
