@@ -30,6 +30,7 @@ public final enum class EnumWithLambda : kotlin.Enum<EnumWithLambda> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<EnumWithLambda>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumWithLambda
     public final /*synthesized*/ fun values(): kotlin.Array<EnumWithLambda>
 }
@@ -69,6 +70,7 @@ public final enum class OtherEnum : kotlin.Enum<OtherEnum> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<OtherEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): OtherEnum
     public final /*synthesized*/ fun values(): kotlin.Array<OtherEnum>
 }
@@ -108,7 +110,7 @@ public final enum class SomeEnum : kotlin.Enum<SomeEnum> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<SomeEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): SomeEnum
     public final /*synthesized*/ fun values(): kotlin.Array<SomeEnum>
 }
-

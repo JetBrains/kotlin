@@ -27,6 +27,7 @@ public final enum class B : kotlin.Enum<B> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<B>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): B
     public final /*synthesized*/ fun values(): kotlin.Array<B>
 }
@@ -58,6 +59,7 @@ public final enum class C : kotlin.Enum<C> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<C>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): C
     public final /*synthesized*/ fun values(): kotlin.Array<C>
 }
@@ -88,6 +90,7 @@ public final enum class EnumCompanion1 : kotlin.Enum<EnumCompanion1> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<EnumCompanion1>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumCompanion1
     public final /*synthesized*/ fun values(): kotlin.Array<EnumCompanion1>
 }
@@ -116,6 +119,7 @@ public final enum class EnumCompanion2 : kotlin.Enum<EnumCompanion2> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<EnumCompanion2>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumCompanion2
     public final /*synthesized*/ fun values(): kotlin.Array<EnumCompanion2>
 }
@@ -145,6 +149,7 @@ public final enum class EnumCompanion3 : kotlin.Enum<EnumCompanion3> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<EnumCompanion3>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): EnumCompanion3
     public final /*synthesized*/ fun values(): kotlin.Array<EnumCompanion3>
 }
@@ -183,6 +188,7 @@ public final enum class ExtractionTarget : kotlin.Enum<ExtractionTarget> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<ExtractionTarget>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): ExtractionTarget
     public final /*synthesized*/ fun values(): kotlin.Array<ExtractionTarget>
 }
@@ -212,6 +218,7 @@ public final enum class Fruit : kotlin.Enum<Fruit> {
     }
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<Fruit>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Fruit
     public final /*synthesized*/ fun values(): kotlin.Array<Fruit>
 }

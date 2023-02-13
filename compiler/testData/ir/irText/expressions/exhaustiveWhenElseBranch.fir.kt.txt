@@ -11,8 +11,8 @@ enum class A : Enum<A> {
 
   fun valueOf(value: String): A /* Synthetic body for ENUM_VALUEOF */
 
-  val entries: EnumEntries
-    get(): EnumEntries /* Synthetic body for ENUM_ENTRIES */
+  val entries: EnumEntries<A>
+    get(): EnumEntries<A> /* Synthetic body for ENUM_ENTRIES */
 
 }
 
@@ -120,4 +120,3 @@ fun testLambdaResultExpression_throws(a: A) {
   }
 .invoke() /*~> Unit */
 }
-

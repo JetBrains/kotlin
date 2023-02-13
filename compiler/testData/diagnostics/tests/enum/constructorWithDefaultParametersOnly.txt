@@ -20,6 +20,7 @@ public final enum class TestErrors : kotlin.Enum<TestErrors> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<TestErrors>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestErrors
     public final /*synthesized*/ fun values(): kotlin.Array<TestErrors>
 }
@@ -42,6 +43,7 @@ public final enum class TestMultipleConstructors : kotlin.Enum<TestMultipleConst
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<TestMultipleConstructors>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestMultipleConstructors
     public final /*synthesized*/ fun values(): kotlin.Array<TestMultipleConstructors>
 }
@@ -66,6 +68,7 @@ public final enum class TestOk : kotlin.Enum<TestOk> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<TestOk>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestOk
     public final /*synthesized*/ fun values(): kotlin.Array<TestOk>
 }
@@ -87,6 +90,7 @@ public final enum class TestVarargs : kotlin.Enum<TestVarargs> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<TestVarargs>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): TestVarargs
     public final /*synthesized*/ fun values(): kotlin.Array<TestVarargs>
 }

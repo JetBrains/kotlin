@@ -41,6 +41,7 @@ public open enum class MyEnum : kotlin.Enum<MyEnum> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<MyEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnum
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum>
 }
@@ -58,6 +59,7 @@ public final enum class MyEnum2 : kotlin.Enum<MyEnum2> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<MyEnum2>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyEnum2
     public final /*synthesized*/ fun values(): kotlin.Array<MyEnum2>
 }
@@ -75,6 +77,7 @@ public final enum class MyJavaEnum : kotlin.Enum<MyJavaEnum!> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<MyJavaEnum>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): MyJavaEnum
     public final /*synthesized*/ fun values(): kotlin.Array<MyJavaEnum>
 }

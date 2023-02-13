@@ -106,6 +106,7 @@ class CodeConformanceTest : TestCase() {
                 "libraries/stdlib/js-v1/.gradle",
                 "libraries/stdlib/js-v1/build",
                 "libraries/stdlib/js-v1/node_modules",
+                "libraries/stdlib/jvm-minimal-for-test/build",
                 "libraries/stdlib/wasm/build",
                 "libraries/tools/atomicfu/build",
                 "libraries/tools/gradle/android-test-fixes/build",

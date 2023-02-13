@@ -21,6 +21,7 @@ public final enum class Color : kotlin.Enum<Color> {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 
     // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<Color>
     public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Color
     public final /*synthesized*/ fun values(): kotlin.Array<Color>
 }

@@ -1,4 +1,3 @@
-// WITH_STDLIB
 // !LANGUAGE: +NestedClassesInAnnotations
 
 annotation class Foo(val kind: Kind) {

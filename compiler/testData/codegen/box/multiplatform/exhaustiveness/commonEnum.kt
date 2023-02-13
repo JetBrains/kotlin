@@ -1,4 +1,3 @@
-// WITH_STDLIB
 // TARGET_BACKEND: JVM
 // !LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-20306

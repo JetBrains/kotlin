@@ -1,4 +1,3 @@
-// WITH_STDLIB
 private var logs = ""
 
 enum class Foo(val text: String) {
