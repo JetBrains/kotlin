@@ -28,9 +28,6 @@ val KotlinBuildProperties.generateModularizedConfigurations: Boolean
 val KotlinBuildProperties.generateFullPipelineConfigurations: Boolean
     get() = getBoolean("kotlin.fir.modularized.fp.configurations", false)
 
-val KotlinBuildProperties.generateAdditionalConfigurations: Boolean
-    get() = getBoolean("kotlin.fir.modularized.additional.configurations", false)
-
 val KotlinBuildProperties.pathToKotlinModularizedTestData: String?
     get() = getOrNull("kotlin.fir.modularized.testdata.kotlin") as? String
 
