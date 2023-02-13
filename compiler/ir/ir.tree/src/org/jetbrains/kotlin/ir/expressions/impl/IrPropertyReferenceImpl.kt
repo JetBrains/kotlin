@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.name.Name
 
 class IrPropertyReferenceImpl(
     override val startOffset: Int,
@@ -43,7 +42,4 @@ class IrPropertyReferenceImpl(
 
     override val valueArgumentsCount: Int
         get() = 0
-
-    override val referencedName: Name
-        get() = symbol.owner.name
 }

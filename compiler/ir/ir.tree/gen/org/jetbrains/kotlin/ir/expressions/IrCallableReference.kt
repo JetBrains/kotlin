@@ -9,12 +9,9 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.name.Name
 
 /**
  * A non-leaf IR tree element.
  * @sample org.jetbrains.kotlin.ir.generator.IrTree.callableReference
  */
-abstract class IrCallableReference<S : IrSymbol> : IrMemberAccessExpression<S>() {
-    abstract val referencedName: Name
-}
+abstract class IrCallableReference<S : IrSymbol> : IrMemberAccessExpression<S>()

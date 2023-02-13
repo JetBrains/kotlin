@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.name.Name
 
 class IrLocalDelegatedPropertyReferenceImpl(
     override val startOffset: Int,
@@ -42,7 +41,4 @@ class IrLocalDelegatedPropertyReferenceImpl(
 
     override val valueArgumentsCount: Int
         get() = 0
-
-    override val referencedName: Name
-        get() = symbol.owner.name
 }

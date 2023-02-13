@@ -688,8 +688,6 @@ object IrTree : AbstractTreeBuilder() {
         val s = +param("S", symbolType)
 
         parent(memberAccessExpression.withArgs("S" to s))
-
-        +field("referencedName", type<Name>())
     }
     val functionReference: ElementConfig by element(Expression) {
         visitorParent = callableReference
