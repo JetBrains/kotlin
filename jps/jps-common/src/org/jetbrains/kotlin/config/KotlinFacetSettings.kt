@@ -113,21 +113,26 @@ interface ExternalSystemRunTask {
     val taskName: String
     val externalSystemProjectId: String
     val targetName: String
-    val kotlinPlatformId: String //one of id org.jetbrains.kotlin.idea.projectModel.KotlinPlatform
+    val kotlinPlatformId: String? //one of id org.jetbrains.kotlin.idea.projectModel.KotlinPlatform
 }
 
 data class ExternalSystemTestRunTask(
     override val taskName: String,
     override val externalSystemProjectId: String,
     override val targetName: String,
-    override val kotlinPlatformId: String,
+    override val kotlinPlatformId: String?,
 ) : ExternalSystemRunTask {
 
-    fun toStringRepresentation() = "$taskName|$externalSystemProjectId|$targetName|$kotlinPlatformId"
+    fun toStringRepresentation() = buildString {
+        append("$taskName|$externalSystemProjectId|$targetName")
+        kotlinPlatformId?.let { append("|$it") }
+    }
 
     companion object {
-        fun fromStringRepresentation(line: String) =
-            line.split("|").let { if (it.size == 4) ExternalSystemTestRunTask(it[0], it[1], it[2], it[3]) else null }
+        fun fromStringRepresentation(line: String) = line.split("|").let {
+            if (it.size < 3) null
+            else ExternalSystemTestRunTask(it[0], it[1], it[2], it.getOrNull(3))
+        }
     }
 
     override fun toString() = "$taskName@$externalSystemProjectId [$targetName]"
@@ -155,7 +160,7 @@ data class ExternalSystemNativeMainRunTask(
 class KotlinFacetSettings {
     companion object {
         // Increment this when making serialization-incompatible changes to configuration data
-        val CURRENT_VERSION = 6
+        val CURRENT_VERSION = 5
         val DEFAULT_VERSION = 0
     }
 
