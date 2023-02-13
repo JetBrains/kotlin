@@ -1,0 +1,9 @@
+FILE: redundantNullCheckOnAsCast.kt
+    public final fun test_1(a: R|kotlin/Any?|): R|kotlin/Unit| {
+        (R|<local>/a| as R|kotlin/String?|)!!
+        (R|<local>/a| as? R|kotlin/String|)!!
+    }
+    public final fun test_2(a: R|kotlin/Any?|): R|kotlin/Unit| {
+        (R|<local>/a| as R|kotlin/String?|)!!
+        R|<local>/a|!!
+    }
