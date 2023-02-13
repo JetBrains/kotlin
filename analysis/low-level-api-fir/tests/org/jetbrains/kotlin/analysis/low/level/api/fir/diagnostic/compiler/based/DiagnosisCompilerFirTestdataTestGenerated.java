@@ -1060,6 +1060,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             }
 
             @Test
+            @TestMetadata("kt50386.kt")
+            public void testKt50386() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/kt50386.kt");
+            }
+
+            @Test
             @TestMetadata("lambdaAsReceiver.kt")
             public void testLambdaAsReceiver() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/lambdaAsReceiver.kt");
@@ -1069,6 +1075,12 @@ public class DiagnosisCompilerFirTestdataTestGenerated extends AbstractDiagnosis
             @TestMetadata("objectInvoke.kt")
             public void testObjectInvoke() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/objectInvoke.kt");
+            }
+
+            @Test
+            @TestMetadata("overloadsWithGenericAndGenericLambda.kt")
+            public void testOverloadsWithGenericAndGenericLambda() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/overloadsWithGenericAndGenericLambda.kt");
             }
 
             @Test

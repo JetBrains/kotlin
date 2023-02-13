@@ -913,6 +913,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/kt37056.kt");
         }
 
+        @TestMetadata("kt50386.kt")
+        public void testKt50386() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/kt50386.kt");
+        }
+
         @TestMetadata("lambdaAsReceiver.kt")
         public void testLambdaAsReceiver() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/lambdaAsReceiver.kt");
@@ -921,6 +926,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("objectInvoke.kt")
         public void testObjectInvoke() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/objectInvoke.kt");
+        }
+
+        @TestMetadata("overloadsWithGenericAndGenericLambda.kt")
+        public void testOverloadsWithGenericAndGenericLambda() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/overloadsWithGenericAndGenericLambda.kt");
         }
 
         @TestMetadata("safeCallOnTypeAlias.kt")
