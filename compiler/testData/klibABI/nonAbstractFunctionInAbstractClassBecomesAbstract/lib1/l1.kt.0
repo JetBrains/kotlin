@@ -1,7 +1,0 @@
-package lib1
-
-abstract class A {
-    fun foo(): Int = 42
-    open fun bar(): Int = 42
-    open fun baz(): Int = 42
-}

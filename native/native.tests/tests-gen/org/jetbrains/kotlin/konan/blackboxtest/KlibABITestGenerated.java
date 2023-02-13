@@ -79,27 +79,9 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
-    @TestMetadata("nonAbstractFunctionInAbstractClassBecomesAbstract")
-    public void testNonAbstractFunctionInAbstractClassBecomesAbstract() throws Exception {
-        runTest("compiler/testData/klibABI/nonAbstractFunctionInAbstractClassBecomesAbstract/");
-    }
-
-    @Test
-    @TestMetadata("nonAbstractFunctionInInterfaceBecomesAbstract")
-    public void testNonAbstractFunctionInInterfaceBecomesAbstract() throws Exception {
-        runTest("compiler/testData/klibABI/nonAbstractFunctionInInterfaceBecomesAbstract/");
-    }
-
-    @Test
-    @TestMetadata("nonAbstractPropertyInAbstractClassBecomesAbstract")
-    public void testNonAbstractPropertyInAbstractClassBecomesAbstract() throws Exception {
-        runTest("compiler/testData/klibABI/nonAbstractPropertyInAbstractClassBecomesAbstract/");
-    }
-
-    @Test
-    @TestMetadata("nonAbstractPropertyInInterfaceBecomesAbstract")
-    public void testNonAbstractPropertyInInterfaceBecomesAbstract() throws Exception {
-        runTest("compiler/testData/klibABI/nonAbstractPropertyInInterfaceBecomesAbstract/");
+    @TestMetadata("nonAbstractCallableBecomesAbstract")
+    public void testNonAbstractCallableBecomesAbstract() throws Exception {
+        runTest("compiler/testData/klibABI/nonAbstractCallableBecomesAbstract/");
     }
 
     @Test
