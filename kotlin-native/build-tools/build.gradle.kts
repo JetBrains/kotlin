@@ -64,6 +64,8 @@ dependencies {
         }
     }
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+
     api(project(":native:kotlin-native-utils"))
     api(project(":kotlin-native-shared"))
     api(project(":kotlinx-metadata-klib"))
