@@ -3,10 +3,10 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization.unlinked
+package org.jetbrains.kotlin.backend.common.linkage.partial
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.guessName
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.guessName
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality

@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization.unlinked
+package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageCase.*
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.DeclarationId
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.DeclarationId.Companion.declarationId
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageCase.*
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.DeclarationId.Companion.declarationId
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin.PARTIAL_LINKAGE_RUN
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
+import org.jetbrains.kotlin.ir.linkage.partial.isPartialLinkageRuntimeError
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
@@ -33,8 +34,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.compact
 import java.util.*
 import kotlin.properties.Delegates
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.File as PLFile
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.Module as PLModule
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.File as PLFile
 
 internal class PartiallyLinkedIrTreePatcher(
     private val builtIns: IrBuiltIns,

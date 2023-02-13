@@ -3,13 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization.linkerissues
+package org.jetbrains.kotlin.backend.common.linkage.issues
 
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleDeserializer
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.PotentialConflictKind.*
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.PotentialConflictKind.Companion.mostSignificantConflictKind
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.PotentialConflictReason.Companion.mostSignificantConflictReasons
+import org.jetbrains.kotlin.backend.common.linkage.issues.PotentialConflictKind.*
+import org.jetbrains.kotlin.backend.common.linkage.issues.PotentialConflictKind.Companion.mostSignificantConflictKind
+import org.jetbrains.kotlin.backend.common.linkage.issues.PotentialConflictReason.Companion.mostSignificantConflictReasons
 import org.jetbrains.kotlin.ir.linkage.KotlinIrLinkerInternalException
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature

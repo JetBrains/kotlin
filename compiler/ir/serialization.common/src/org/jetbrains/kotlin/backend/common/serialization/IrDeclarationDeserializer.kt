@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.issues.IrDisallowedErrorNode
+import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchException
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.IrDisallowedErrorNode
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.IrSymbolTypeMismatchException
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration.DeclaratorCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType.KindCase.*
 import org.jetbrains.kotlin.descriptors.ClassKind

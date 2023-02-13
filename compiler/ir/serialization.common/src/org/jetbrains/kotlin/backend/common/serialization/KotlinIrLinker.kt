@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.issues.*
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupport
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportImpl
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.*
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageSupport
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageSupportImpl
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchException
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData.SymbolKind.*
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.IrSymbolTypeMismatchException
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst.ValueCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation.OperationCase.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement.StatementCase

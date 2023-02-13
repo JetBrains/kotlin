@@ -16,20 +16,17 @@
 
 package org.jetbrains.kotlin.backend.common.overrides
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.ImplementAsErrorThrowingStubs
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartiallyLinkedDeclarationOrigin
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.overrides.FakeOverrideBuilderStrategy
 import org.jetbrains.kotlin.ir.overrides.IrOverridingUtil
-import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy
-import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy.Customization
 import org.jetbrains.kotlin.ir.overrides.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
@@ -70,20 +67,6 @@ interface FileLocalAwareLinker {
 
 object DefaultFakeOverrideClassFilter : FakeOverrideClassFilter {
     override fun needToConstructFakeOverrides(clazz: IrClass): Boolean = true
-}
-
-private object ImplementAsErrorThrowingStubs : IrUnimplementedOverridesStrategy {
-    override fun <T : IrOverridableMember> computeCustomization(overridableMember: T, parent: IrClass) =
-        if (overridableMember.modality == Modality.ABSTRACT
-            && parent.modality != Modality.ABSTRACT
-            && parent.modality != Modality.SEALED
-        ) {
-            Customization(
-                origin = PartiallyLinkedDeclarationOrigin.UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER,
-                modality = parent.modality // Use modality of class for implemented callable member.
-            )
-        } else
-            Customization.NO
 }
 
 class FakeOverrideBuilder(

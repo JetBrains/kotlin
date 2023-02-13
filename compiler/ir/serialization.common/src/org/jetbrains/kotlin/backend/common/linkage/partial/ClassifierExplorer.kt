@@ -3,12 +3,13 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.common.serialization.unlinked
+package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Unusable.*
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.ExploredClassifier.Usable
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
+import org.jetbrains.kotlin.backend.common.linkage.partial.ExploredClassifier.Unusable
+import org.jetbrains.kotlin.backend.common.linkage.partial.ExploredClassifier.Unusable.*
+import org.jetbrains.kotlin.backend.common.linkage.partial.ExploredClassifier.Usable
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.isEffectivelyMissingLazyIrDeclaration
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageUtils.Module as PLModule
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.UnsignedType
@@ -27,7 +28,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageUtils.Module as PLModule
 
 internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val stubGenerator: MissingDeclarationStubGenerator) {
     private val exploredSymbols = ExploredClassifiers()
