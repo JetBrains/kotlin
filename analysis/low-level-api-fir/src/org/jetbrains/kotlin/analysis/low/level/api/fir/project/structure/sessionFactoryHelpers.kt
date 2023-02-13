@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdePredica
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.IdeRawTypeProjectionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.java.RawTypeProjectionProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
@@ -42,6 +44,7 @@ internal fun LLFirSession.registerIdeComponents(project: Project) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory)
     register(SealedClassInheritorsProvider::class, project.createSealedInheritorsProvider())
     register(FirExceptionHandler::class, LLFirExceptionHandler)
+    register(RawTypeProjectionProvider::class, IdeRawTypeProjectionProvider)
 }
 
 internal inline fun createCompositeSymbolProvider(

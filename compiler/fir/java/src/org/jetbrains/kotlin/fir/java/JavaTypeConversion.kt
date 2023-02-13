@@ -188,13 +188,14 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
             // types specifically there could be an infinite recursion on the type parameter itself.
             val mappedTypeArguments = when {
                 isRaw -> {
-                    val typeParameterSymbols =
+                    val classSymbolWithTypeParameters =
                         lookupTag.takeIf { lowerBound == null && mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
-                            ?.toFirRegularClassSymbol(session)?.typeParameterSymbols
+                            ?.toFirRegularClassSymbol(session)
+
                     // Given `C<T : X>`, `C` -> `C<X>..C<*>?`.
                     when (mode) {
                         FirJavaTypeConversionMode.ANNOTATION_MEMBER -> Array(classifier.typeParameters.size) { ConeStarProjection }
-                        else -> typeParameterSymbols?.eraseToUpperBounds(session)
+                        else -> classSymbolWithTypeParameters?.let { session.rawTypeProjectionProvider.typeParameters(it, session) }
                             ?: Array(classifier.typeParameters.size) { ConeStarProjection }
                     }
                 }
