@@ -179,8 +179,9 @@ class FunctionInlining(
 
         fun inline() = inlineFunction(callSite, callee, inlineFunctionResolver.getFunctionSymbol(callee).owner, true)
 
-        private fun IrElement.copy(): IrElement {
-            return copyIrElement.copy(this)
+        private fun <E : IrElement> E.copy(): E {
+            @Suppress("UNCHECKED_CAST")
+            return copyIrElement.copy(this) as E
         }
 
         private fun inlineFunction(
@@ -189,7 +190,7 @@ class FunctionInlining(
             originalInlinedElement: IrElement,
             performRecursiveInline: Boolean
         ): IrReturnableBlock {
-            val copiedCallee = (callee.copy() as IrFunction).apply {
+            val copiedCallee = callee.copy().apply {
                 parent = callee.parent
                 if (performRecursiveInline) {
                     body?.transformChildrenVoid()
@@ -268,7 +269,7 @@ class FunctionInlining(
                     if (argument is IrGetValueWithoutLocation)
                         argument.withLocation(newExpression.startOffset, newExpression.endOffset)
                     else
-                        (argument.copy() as IrExpression)
+                        argument.copy()
 
                 if (insertAdditionalImplicitCasts)
                     ret = ret.implicitCastIfNeededTo(newExpression.type)
@@ -440,10 +441,10 @@ class FunctionInlining(
                                 val arg = boundFunctionParametersMap[parameter]!!
                                 if (arg is IrGetValueWithoutLocation)
                                     arg.withLocation(irCall.startOffset, irCall.endOffset)
-                                else arg.copy() as IrExpression
+                                else arg.copy()
                             } else {
                                 if (unboundIndex == valueParameters.size && parameter.defaultValue != null)
-                                    parameter.defaultValue!!.expression.copy() as IrExpression
+                                    parameter.defaultValue!!.expression.copy()
                                 else if (!parameter.isVararg) {
                                     assert(unboundIndex < valueParameters.size) {
                                         "Attempt to use unbound parameter outside of the callee's value parameters"
