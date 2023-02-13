@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
@@ -224,7 +225,6 @@ class IrVerifier(
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall) {
-        expression.typeOperandClassifier.checkBinding("type operand", expression)
+        expression.typeOperand.classifierOrFail.checkBinding("type operand", expression)
     }
 }
-
