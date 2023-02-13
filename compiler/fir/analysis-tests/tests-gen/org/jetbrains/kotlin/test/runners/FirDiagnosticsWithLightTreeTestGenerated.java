@@ -4016,6 +4016,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("longElvisChain.kt")
+            public void testLongElvisChain() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/longElvisChain.kt");
+            }
+
+            @Test
             @TestMetadata("multipleCasts.kt")
             public void testMultipleCasts() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/multipleCasts.kt");
