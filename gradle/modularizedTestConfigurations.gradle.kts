@@ -142,36 +142,21 @@ data class Configuration(val path: String, val name: String, val additionalParam
     }
 }
 
-val languageVersionKey = "fir.bench.language.version"
-val useBuildFileKey = "fir.bench.use.build.file"
-
 val testDataPathList = listOfNotNull(
     Configuration(kotlinBuildProperties.pathToKotlinModularizedTestData, "Kotlin"),
-    Configuration(kotlinBuildProperties.pathToIntellijModularizedTestData, "IntelliJ", mapOf(useBuildFileKey to "true")),
-    Configuration(kotlinBuildProperties.pathToYoutrackModularizedTestData, "YouTrack", mapOf(languageVersionKey to "1.5")),
-    Configuration(kotlinBuildProperties.pathToSpaceModularizedTestData, "Space", mapOf(languageVersionKey to "1.6"))
-)
-
-val additionalConfigurationsWithFilter = mapOf(
-    "Kotlin" to listOf(
-        "Kotlin. idea.main module" to ".*/idea/build/.*/main",
-    )
+    Configuration(kotlinBuildProperties.pathToIntellijModularizedTestData, "IntelliJ"),
+    Configuration(kotlinBuildProperties.pathToYoutrackModularizedTestData, "YouTrack"),
+    Configuration(kotlinBuildProperties.pathToSpaceModularizedTestData, "Space")
 )
 
 val generateMT = kotlinBuildProperties.generateModularizedConfigurations
 val generateFP = kotlinBuildProperties.generateFullPipelineConfigurations
-val generateAdditionalConfigurations = kotlinBuildProperties.generateAdditionalConfigurations
 
 for ((path, projectName, additionalParameters) in testDataPathList) {
     rootProject.afterEvaluate {
         val configurations = mutableListOf<Pair<String, String?>>(
             "Full $projectName" to null
         )
-        if (generateAdditionalConfigurations) {
-            additionalConfigurationsWithFilter[projectName]?.let {
-                configurations.addAll(it)
-            }
-        }
 
         val jpsBuildEnabled = kotlinBuildProperties.isInJpsBuildIdeaSync
 
