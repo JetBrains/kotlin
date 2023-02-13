@@ -20,13 +20,10 @@ import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.fir.deserialization.DeserializedClassConfigurator
 import org.jetbrains.kotlin.fir.deserialization.JvmDeserializedClassConfigurator
 import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.java.FirJavaVisibilityChecker
-import org.jetbrains.kotlin.fir.java.FirJvmDefaultModeComponent
-import org.jetbrains.kotlin.fir.java.JvmSupertypeUpdater
+import org.jetbrains.kotlin.fir.java.*
 import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResolver
 import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
-import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
@@ -86,6 +83,7 @@ fun FirSession.registerCliCompilerOnlyComponents() {
     register(SealedClassInheritorsProvider::class, SealedClassInheritorsProviderImpl)
     register(FirLazyDeclarationResolver::class, FirDummyCompilerLazyDeclarationResolver)
     register(FirExceptionHandler::class, FirCliExceptionHandler)
+    register(RawTypeProjectionProvider::class, CompilerRawTypeProjectionProvider)
 
     register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
     register(FirPredicateBasedProvider::class, FirPredicateBasedProviderImpl(this))
