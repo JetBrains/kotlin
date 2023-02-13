@@ -26,10 +26,10 @@ State state = buildLogFile.readLines().collect { it.replaceAll("\\u001b[^m]*m", 
     def m = pattern.matcher(line)
     if (m.find()) {
         acc.currentPlugin = m.group(1)
-    } else if (line.startsWith("[INFO] Downloaded:") ||
-               line.startsWith("[INFO] Downloading:") ||
-               line.startsWith("Downloaded:") ||
-               line.startsWith("Downloading:") ||
+    } else if (line.startsWith("[INFO] Downloaded") ||
+               line.startsWith("[INFO] Downloading") ||
+               line.startsWith("Downloaded") ||
+               line.startsWith("Downloading") ||
                line.startsWith("[INFO] PERF:")) {
         // ignore line
     } else if (acc.currentPlugin == "kotlin-maven-plugin") {
