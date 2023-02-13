@@ -212,27 +212,6 @@ task sanity {
     dependsOn(":kotlin-native-shared:check")
 }
 
-// Collect reports in one json.
-task resultsTask() {
-    doLast {
-        def statistics = new Statistics()
-
-        tasks.withType(KonanGTest).matching { it.state.executed }.each {
-            statistics.add(it.statistics)
-        }
-
-        ExternalReportUtilsKt.saveReport("$testOutputExternal/reports.json", statistics)
-        use(KonanTestSuiteReportKt) {
-            project.logger.quiet("DONE.\n\n" +
-                    "TOTAL: $statistics.total\n" +
-                    "PASSED: $statistics.passed\n" +
-                    "FAILED: $statistics.failed\n" +
-                    (statistics.error != 0 ? "ERROR: $statistics.error\n" : "") +
-                    "SKIPPED: $statistics.skipped")
-        }
-    }
-}
-
 boolean isExcluded(String dir) {
     // List of tests that fail due to unresolved compiler bugs
     def excluded = [ ]
@@ -331,16 +310,6 @@ Task dynamicTest(String name, Closure<KonanDynamicTest> configureClosure) {
             UtilsKt.dependsOnDist(buildTask)
         }
     }
-}
-
-task slackReport(type:Reporter) {
-    reportHome = rootProject.file("test.output").absoluteFile
-}
-
-task slackReportNightly(type:NightlyReporter) {
-    externalMacosReport = "external_macos_results/reports.json"
-    externalLinuxReport = "external_linux_results/reports.json"
-    externalWindowsReport = "external_windows_results/reports.json"
 }
 
 linkTest("localDelegatedPropertyLink") {
@@ -6125,8 +6094,6 @@ KotlinNativeTestKt.createTest(project, 'harmonyRegexTest', KonanGTest) { task ->
             extraOpts project.globalTestArgs
         }
     }
-
-    task.finalizedBy("resultsTask")
 }
 
 if (UtilsKt.getTestTargetSupportsCodeCoverage(project)) {

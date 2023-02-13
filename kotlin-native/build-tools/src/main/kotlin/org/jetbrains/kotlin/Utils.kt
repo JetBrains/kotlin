@@ -6,6 +6,7 @@
 
 package org.jetbrains.kotlin
 
+import com.google.gson.GsonBuilder
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.jetbrains.kotlin.konan.properties.loadProperties
@@ -481,3 +482,5 @@ internal val Project.testTargetConfigurables: Configurables
         val testTarget = project.testTarget
         return platformManager.platform(testTarget).configurables
     }
+
+internal val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create()!!
