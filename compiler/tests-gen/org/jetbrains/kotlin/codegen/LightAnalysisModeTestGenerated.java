@@ -23283,6 +23283,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/javaInterop/superCallOfPrintStackTrace.kt");
         }
 
+        @TestMetadata("syntheticPropClashingWithJvmField.kt")
+        public void testSyntheticPropClashingWithJvmField() throws Exception {
+            runTest("compiler/testData/codegen/box/javaInterop/syntheticPropClashingWithJvmField.kt");
+        }
+
         @TestMetadata("unresolvedJavaClassInDifferentFile.kt")
         public void testUnresolvedJavaClassInDifferentFile() throws Exception {
             runTest("compiler/testData/codegen/box/javaInterop/unresolvedJavaClassInDifferentFile.kt");
