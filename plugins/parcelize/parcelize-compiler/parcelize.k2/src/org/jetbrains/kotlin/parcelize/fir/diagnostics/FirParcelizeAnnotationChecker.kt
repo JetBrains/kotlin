@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationCallChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.findClosestClassOrObject
-import org.jetbrains.kotlin.fir.correspondingProperty
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.toAnnotationClassLikeType
@@ -89,9 +88,9 @@ object FirParcelizeAnnotationChecker : FirAnnotationCallChecker() {
 
         checkIfTheContainingClassIsParcelize(annotationCall, context, reporter)
 
-        // If we are looking at a parameter of the primary constructor of a class, check that the
+        // If we are looking at a property defined in the primary constructor of a class, check that the
         // enclosing class doesn't have the same TypeParceler annotation.
-        if (annotationContainer is FirValueParameter && annotationContainer.correspondingProperty?.fromPrimaryConstructor == true) {
+        if (annotationContainer is FirProperty && annotationContainer.fromPrimaryConstructor == true) {
             val enclosingClass = context.findClosestClassOrObject() ?: return
 
             val annotationType = annotationCall.toAnnotationClassLikeType(context.session) ?: return
