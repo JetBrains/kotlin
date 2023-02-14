@@ -309,6 +309,12 @@ fun compileModuleToAnalyzedFir(
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
     val rootModuleName = input.targetId.name
 
+    val incrementalCompilationScope = createIncrementalCompilationScope(
+        moduleConfiguration,
+        projectEnvironment,
+        incrementalExcludesScope
+    )?.also { librariesScope -= it }
+
     val extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)
         ?.let { FirExtensionRegistrar.getInstances(it.project) }
         ?: emptyList()
@@ -331,10 +337,8 @@ fun compileModuleToAnalyzedFir(
                 projectEnvironment,
                 scope,
                 previousStepsSymbolProviders,
-                incrementalExcludesScope
-            )?.also { (_, _, precompiledBinariesFileScope) ->
-                precompiledBinariesFileScope?.let { librariesScope -= it }
-            }
+                incrementalCompilationScope
+            )
         }
     )
 
@@ -390,30 +394,43 @@ fun writeOutputs(
     return true
 }
 
+fun createIncrementalCompilationScope(
+    configuration: CompilerConfiguration,
+    projectEnvironment: AbstractProjectEnvironment,
+    incrementalExcludesScope: AbstractProjectFileSearchScope?
+): AbstractProjectFileSearchScope? {
+    if (!needCreateIncrementalCompilationScope(configuration)) return null
+    val dir = configuration[JVMConfigurationKeys.OUTPUT_DIRECTORY] ?: return null
+    return projectEnvironment.getSearchScopeByDirectories(setOf(dir)).let {
+        if (incrementalExcludesScope?.isEmpty != false) it
+        else it - incrementalExcludesScope
+    }
+}
+
+private fun needCreateIncrementalCompilationScope(configuration: CompilerConfiguration, ): Boolean {
+    if (configuration.get(JVMConfigurationKeys.MODULES) == null) return false
+    if (configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS) == null) return false
+    return true
+}
+
 fun createContextForIncrementalCompilation(
-    compilerConfiguration: CompilerConfiguration,
+    configuration: CompilerConfiguration,
     projectEnvironment: AbstractProjectEnvironment,
     sourceScope: AbstractProjectFileSearchScope,
     previousStepsSymbolProviders: List<FirSymbolProvider>,
-    incrementalExcludesScope: AbstractProjectFileSearchScope?,
+    incrementalCompilationScope: AbstractProjectFileSearchScope?
 ): IncrementalCompilationContext? {
-    val targetIds = compilerConfiguration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId)
-    val incrementalComponents = compilerConfiguration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS)
-    if (targetIds == null || incrementalComponents == null) return null
-    val incrementalCompilationScope =
-        compilerConfiguration[JVMConfigurationKeys.OUTPUT_DIRECTORY]?.let { dir ->
-            projectEnvironment.getSearchScopeByDirectories(setOf(dir)).let {
-                if (incrementalExcludesScope?.isEmpty != false) it
-                else it - incrementalExcludesScope
-            }
-        }
+    if (incrementalCompilationScope == null && previousStepsSymbolProviders.isEmpty()) return null
+    val targetIds = configuration.get(JVMConfigurationKeys.MODULES)?.map(::TargetId) ?: return null
+    val incrementalComponents = configuration.get(JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS) ?: return null
 
-    return if (incrementalCompilationScope == null && previousStepsSymbolProviders.isEmpty()) null
-    else IncrementalCompilationContext(
-        previousStepsSymbolProviders, IncrementalPackagePartProvider(
+    return IncrementalCompilationContext(
+        previousStepsSymbolProviders,
+        IncrementalPackagePartProvider(
             projectEnvironment.getPackagePartProvider(sourceScope),
             targetIds.map(incrementalComponents::getIncrementalCache)
-        ), incrementalCompilationScope
+        ),
+        incrementalCompilationScope
     )
 }
 
