@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.code
 
-import junit.framework.TestCase
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase.assertEmpty
 import org.junit.Test
 import java.io.File
 
@@ -38,5 +38,19 @@ class LicensesTests {
             linksUsages.sortedBy { it },
             linksDefinitions.sortedBy { it }
         )
+    }
+
+    @Test
+    fun testLicensesAreExistingFiles() {
+        val licenseReferenceRegexp = Regex("\\[([^]]*third_party/[^]]*\\.txt)]")
+        val readmeFile = File("license/README.md")
+        val linkedInReadme = readmeFile.useLines { lineSequence ->
+            lineSequence.flatMap { line ->
+                licenseReferenceRegexp.findAll(line).map { it.groups[1]?.value ?: error("Should be present because of match") }
+            }.toSet()
+        }
+
+        val missingFiles = linkedInReadme.filterNot { path -> File(path).exists() }
+        assertEmpty("Files for licenses are missing", missingFiles)
     }
 }
