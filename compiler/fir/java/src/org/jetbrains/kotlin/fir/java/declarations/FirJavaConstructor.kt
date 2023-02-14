@@ -156,7 +156,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        thrownFieldInJavaDeclarationCannotBeReplacedError(::status)
+        status = newStatus
     }
 
     override fun replaceDispatchReceiverType(newDispatchReceiverType: ConeSimpleKotlinType?) {
