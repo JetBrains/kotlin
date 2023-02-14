@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
@@ -87,6 +88,8 @@ internal class ICHasher {
     private val hashCalculator = HashCalculatorForIC()
 
     fun calculateConfigHash(config: CompilerConfiguration): ICHash {
+        hashCalculator.update(KotlinCompilerVersion.VERSION)
+
         val importantSettings = listOf(
             JSConfigurationKeys.GENERATE_DTS,
             JSConfigurationKeys.MODULE_KIND,

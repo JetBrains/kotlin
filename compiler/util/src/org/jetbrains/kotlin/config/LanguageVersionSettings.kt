@@ -537,7 +537,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
 
     override fun toString() = buildString {
         append("Language = $languageVersion, API = $apiVersion")
-        specificFeatures.forEach { (feature, state) ->
+        specificFeatures.entries.sortedBy { (feature, _) -> feature.ordinal }.forEach { (feature, state) ->
             val char = when (state) {
                 LanguageFeature.State.ENABLED -> '+'
                 LanguageFeature.State.ENABLED_WITH_WARNING -> '~'
@@ -545,7 +545,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
             }
             append(" $char$feature")
         }
-        analysisFlags.forEach { (flag, value) ->
+        analysisFlags.entries.sortedBy { (flag, _) -> flag.toString() }.forEach { (flag, value) ->
             append(" $flag:$value")
         }
     }

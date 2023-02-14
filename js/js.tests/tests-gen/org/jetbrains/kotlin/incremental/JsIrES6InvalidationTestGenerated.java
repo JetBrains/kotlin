@@ -255,6 +255,11 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
         runTest("js/js.translator/testData/incremental/invalidation/jsModuleAnnotation/");
     }
 
+    @TestMetadata("languageVersionSettings")
+    public void testLanguageVersionSettings() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/languageVersionSettings/");
+    }
+
     @TestMetadata("localInlineFunction")
     public void testLocalInlineFunction() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/localInlineFunction/");
