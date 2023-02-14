@@ -356,7 +356,6 @@ class JvmTargetValidationTest : KGPBaseTest() {
     }
 
     @DisplayName("Default value becomes 'error' with Gradle 8+")
-    @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_0)
     @GradleTest
     internal fun errorByDefaultWithGradle8(gradleVersion: GradleVersion) {
         project("simple".fullProjectName, gradleVersion) {

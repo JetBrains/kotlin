@@ -20,12 +20,13 @@ interface TestVersions {
         const val G_7_4 = "7.4.2"
         const val G_7_5 = "7.5.1"
         const val G_7_6 = "7.6"
+        const val G_8_0 = "8.0"
         // https://gradle.org/nightly/
         // Retention policy is 3 months
-        const val G_8_0 = "8.0-rc-1"
+        const val G_DEV = "8.0-rc-1"
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
-        const val MAX_SUPPORTED = G_7_6
+        const val MAX_SUPPORTED = G_8_0
     }
 
     object Kotlin {
