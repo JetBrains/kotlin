@@ -1,17 +1,28 @@
+@kotlin.Metadata
+public final class DPoint$Companion {
+    // source: 'defaultParameters.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method invoke(): DPoint
+    public final inner class DPoint$Companion
+}
+
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class DPoint {
     // source: 'defaultParameters.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: DPoint$Companion
     private final field x: double
     private final field y: double
+    static method <clinit>(): void
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): DPoint
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
-    public synthetic static method f1-lIoT8es$default(p0: double, p1: double, p2: int, p3: int, p4: double, p5: double, p6: int, p7: java.lang.Object): java.util.List
-    public final static @org.jetbrains.annotations.NotNull method f1-lIoT8es(p0: double, p1: double, p2: int, p3: int, p4: double, p5: double): java.util.List
+    public synthetic static method f1-lrN9jSQ$default(p0: double, p1: double, p2: int, p3: int, p4: double, p5: double, p6: int, p7: java.lang.Object): java.util.List
+    public final static @org.jetbrains.annotations.NotNull method f1-lrN9jSQ(p0: double, p1: double, p2: int, p3: int, p4: double, p5: double): java.util.List
     public final method getX(): double
     public final method getY(): double
     public method hashCode(): int
@@ -20,6 +31,7 @@ public final class DPoint {
     public static method toString-impl(p0: double, p1: double): java.lang.String
     public synthetic final method unbox-impl-x(): double
     public synthetic final method unbox-impl-y(): double
+    public final inner class DPoint$Companion
 }
 
 @kotlin.jvm.JvmInline
@@ -37,8 +49,8 @@ public final class DSegment {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: double, p3: double, p4: int, p5: java.lang.Object): boolean
     public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double, p4: int, p5: double, p6: double, p7: double, p8: double, p9: int): boolean
-    public synthetic static method f2-lIoT8es$default(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: int, p7: double, p8: double, p9: int, p10: java.lang.Object): java.util.List
-    public final static @org.jetbrains.annotations.NotNull method f2-lIoT8es(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: int, p7: double, p8: double): java.util.List
+    public synthetic static method f2-lrN9jSQ$default(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: int, p7: double, p8: double, p9: int, p10: java.lang.Object): java.util.List
+    public final static @org.jetbrains.annotations.NotNull method f2-lrN9jSQ(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: int, p7: double, p8: double): java.util.List
     public final method getN(): int
     public final @org.jetbrains.annotations.NotNull method getP1(): DPoint
     public final @org.jetbrains.annotations.NotNull method getP2(): DPoint
@@ -59,10 +71,26 @@ public final class DSegment {
 public final class DefaultParametersKt {
     // source: 'defaultParameters.kt'
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
-    public synthetic static method complexFun-552ch2I$default(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double, p6: int, p7: java.lang.Object): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method complexFun-552ch2I(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double): java.lang.String
-    public synthetic static method complexInlineFun-552ch2I$default(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double, p6: int, p7: java.lang.Object): java.lang.String
-    public final static @org.jetbrains.annotations.NotNull method complexInlineFun-552ch2I(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double): java.lang.String
+    public synthetic static method complexFun-A7c95m0$default(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double, p6: int, p7: java.lang.Object): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method complexFun-A7c95m0(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double): java.lang.String
+    public synthetic static method complexInlineFun-A7c95m0$default(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double, p6: int, p7: java.lang.Object): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method complexInlineFun-A7c95m0(p0: double, p1: double, p2: double, p3: double, p4: double, p5: double): java.lang.String
+    public synthetic static method getIntersectXY-nuuzChU$default(p0: double, p1: double, p2: int, p3: java.lang.Object): DPoint
+    public final static @org.jetbrains.annotations.Nullable method getIntersectXY-nuuzChU(p0: double, p1: double): DPoint
+    public synthetic static method getLineIntersectionPoint-nuuzChU$default(p0: double, p1: double, p2: int, p3: java.lang.Object): DPoint
+    public final static @org.jetbrains.annotations.Nullable method getLineIntersectionPoint-nuuzChU(p0: double, p1: double): DPoint
+    public final inner class DPoint$Companion
+}
+
+@kotlin.Metadata
+public final class RegularObject {
+    // source: 'defaultParameters.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: RegularObject
+    static method <clinit>(): void
+    private method <init>(): void
+    public synthetic static method pointToString$default(p0: RegularObject, p1: DPoint, p2: int, p3: java.lang.Object): java.lang.String
+    public final @org.jetbrains.annotations.NotNull method pointToString(@org.jetbrains.annotations.Nullable p0: DPoint): java.lang.String
+    public final inner class DPoint$Companion
 }
 
 @kotlin.Metadata
@@ -79,11 +107,11 @@ public final class Wrapper {
     public synthetic method <init>(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int, p6: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @org.jetbrains.annotations.NotNull method component1(): DSegment
     public final method component2(): int
-    public synthetic static method copy-GPBa7dw$default(p0: Wrapper, p1: double, p2: double, p3: double, p4: double, p5: int, p6: int, p7: int, p8: java.lang.Object): Wrapper
-    public final @org.jetbrains.annotations.NotNull method copy-GPBa7dw(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int): Wrapper
+    public synthetic static method copy-X39isKk$default(p0: Wrapper, p1: double, p2: double, p3: double, p4: double, p5: int, p6: int, p7: int, p8: java.lang.Object): Wrapper
+    public final @org.jetbrains.annotations.NotNull method copy-X39isKk(p0: double, p1: double, p2: double, p3: double, p4: int, p5: int): Wrapper
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
-    public synthetic static method f3-lIoT8es$default(p0: Wrapper, p1: int, p2: int, p3: double, p4: double, p5: int, p6: java.lang.Object): java.util.List
-    public final @org.jetbrains.annotations.NotNull method f3-lIoT8es(p0: int, p1: int, p2: double, p3: double): java.util.List
+    public synthetic static method f3-lrN9jSQ$default(p0: Wrapper, p1: int, p2: int, p3: double, p4: double, p5: int, p6: java.lang.Object): java.util.List
+    public final @org.jetbrains.annotations.NotNull method f3-lrN9jSQ(p0: int, p1: int, p2: double, p3: double): java.util.List
     public final method getN(): int
     public final @org.jetbrains.annotations.NotNull method getSegment(): DSegment
     public synthetic final method getSegment-n(): int

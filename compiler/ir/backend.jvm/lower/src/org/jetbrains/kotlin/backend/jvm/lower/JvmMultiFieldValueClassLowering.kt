@@ -26,7 +26,11 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrEnumConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionReferenceImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
@@ -64,6 +68,8 @@ internal class JvmMultiFieldValueClassLowering(
 
     private val irCurrentScope
         get() = currentScope!!.irElement as IrDeclaration
+    private val irCurrentClass
+        get() = currentClass!!.irElement as IrClass
 
     private fun registerPossibleExtraBoxUsage() {
         possibleExtraBoxUsageGenerated.add(irCurrentScope)
@@ -95,7 +101,7 @@ internal class JvmMultiFieldValueClassLowering(
         fun IrBuilderWithScope.makeReplacement(expression: IrGetValue): IrExpression? {
             oldValueSymbol2NewValueSymbol[expression.symbol]?.let { return irGet(it.owner) }
             val instance = oldSymbol2MfvcNodeInstance[expression.symbol] ?: return null
-            val res = instance.makeGetterExpression(this, ::registerPossibleExtraBoxUsage)
+            val res = instance.makeGetterExpression(this, irCurrentClass, ::registerPossibleExtraBoxUsage)
             expression2MfvcNodeInstanceAccessor[res] = MfvcNodeInstanceAccessor.Getter(instance)
             return res
         }
@@ -146,8 +152,8 @@ internal class JvmMultiFieldValueClassLowering(
             val node = replacements.getMfvcFieldNode(field) ?: return null
             val typeArguments = makeTypeArgumentsFromField(expression)
             val instance: ReceiverBasedMfvcNodeInstance =
-                node.createInstanceFromBox(this, typeArguments, expression.receiver, AccessType.AlwaysPrivate, ::variablesSaver)
-            val getterExpression = instance.makeGetterExpression(this, ::registerPossibleExtraBoxUsage)
+                node.createInstanceFromBox(this, typeArguments, expression.receiver, AccessType.UseFields, ::variablesSaver)
+            val getterExpression = instance.makeGetterExpression(this, irCurrentClass, ::registerPossibleExtraBoxUsage)
             expression2MfvcNodeInstanceAccessor[getterExpression] = MfvcNodeInstanceAccessor.Getter(instance)
             +getterExpression
             return getterExpression
@@ -162,7 +168,7 @@ internal class JvmMultiFieldValueClassLowering(
                 scope = this,
                 typeArguments = makeTypeArgumentsFromField(expression),
                 receiver = expression.receiver,
-                accessType = AccessType.AlwaysPrivate,
+                accessType = AccessType.UseFields,
                 saveVariable = ::variablesSaver
             )
             val values: List<IrExpression> = makeFlattenedExpressionsWithGivenSafety(
@@ -182,14 +188,9 @@ internal class JvmMultiFieldValueClassLowering(
             val node = replacements.getMfvcPropertyNode(property) ?: return null
             val typeArguments = makeTypeArgumentsFromFunction(expression)
             // Optimization: pure function access to leaf can be replaced with field access if the field itself is accessible
-            val accessType = when {
-                !node.hasPureUnboxMethod -> AccessType.AlwaysPublic
-                dispatchReceiver == null -> AccessType.PrivateWhenNoBox
-                else -> getOptimizedPublicAccess(dispatchReceiver.type.erasedUpperBound)
-            }
             val instance: ReceiverBasedMfvcNodeInstance =
-                node.createInstanceFromBox(this, typeArguments, dispatchReceiver, accessType, ::variablesSaver)
-            val getterExpression = instance.makeGetterExpression(this, ::registerPossibleExtraBoxUsage)
+                node.createInstanceFromBox(this, typeArguments, dispatchReceiver, AccessType.ChooseEffective, ::variablesSaver)
+            val getterExpression = instance.makeGetterExpression(this, irCurrentClass, ::registerPossibleExtraBoxUsage)
             expression2MfvcNodeInstanceAccessor[getterExpression] = MfvcNodeInstanceAccessor.Getter(instance)
             +getterExpression
             return getterExpression
@@ -238,7 +239,9 @@ internal class JvmMultiFieldValueClassLowering(
             val newAccessor = accessor[name] ?: return@handleSavedExpression null
             val expression = when (newAccessor) {
                 is MfvcNodeInstanceAccessor.Setter -> newAccessor.instance.makeSetterExpressions(scope, newAccessor.values)
-                is MfvcNodeInstanceAccessor.Getter -> newAccessor.instance.makeGetterExpression(scope, ::registerPossibleExtraBoxUsage)
+                is MfvcNodeInstanceAccessor.Getter -> newAccessor.instance.makeGetterExpression(
+                    scope, irCurrentClass, ::registerPossibleExtraBoxUsage
+                )
             }
             expression2MfvcNodeInstanceAccessor[expression] = newAccessor
             expression
@@ -249,7 +252,8 @@ internal class JvmMultiFieldValueClassLowering(
             expression: IrExpression,
             handler: IrBlockBuilder.(values: List<IrExpression>) -> IrExpression
         ): IrExpression? = scope.handleSavedExpression(expression) {
-            irBlock { +handler(it.instance.makeFlattenedGetterExpressions(this, ::registerPossibleExtraBoxUsage)) }.unwrapBlock()
+            irBlock { +handler(it.instance.makeFlattenedGetterExpressions(this, irCurrentClass, ::registerPossibleExtraBoxUsage)) }
+                .unwrapBlock()
         }
 
         fun registerReplacement(expression: IrExpression, instance: MfvcNodeInstance) {
@@ -354,6 +358,9 @@ internal class JvmMultiFieldValueClassLowering(
             val newDeclarations = makeNewDeclarationsForRegularClass(fieldsToRemove, propertiesOrFieldsReplacement, irClass)
             irClass.declarations.replaceAll(newDeclarations)
         }
+        for (field in fieldsToRemove) {
+            field.correspondingPropertySymbol?.owner?.backingField = null
+        }
     }
 
     private fun collectRegularClassMfvcPropertiesOrFieldsReplacement(propertiesOrFields: LinkedHashSet<IrPropertyOrIrField>) =
@@ -416,17 +423,35 @@ internal class JvmMultiFieldValueClassLowering(
 
     override fun handleSpecificNewClass(declaration: IrClass) {
         val rootNode = replacements.getRootMfvcNode(declaration)
-        rootNode.replaceFields()
+        rootNode.replaceMfvcNotStaticFields()
         declaration.declarations += rootNode.allUnboxMethods + listOfNotNull(
             // `takeIf` is a workaround for double addition problem: user-defined typed equals is already defined in the class
             rootNode.boxMethod, rootNode.specializedEqualsMethod.takeIf { rootNode.createdNewSpecializedEqualsMethod }
         )
         rootNode.replacePrimaryMultiFieldValueClassConstructor()
+
+        replaceMfvcStaticFields(declaration)
+    }
+
+    private fun replaceMfvcStaticFields(declaration: IrClass) {
+        val staticFieldMapping: Map<IrField, List<IrDeclaration>> = buildMap {
+            for (staticField in declaration.fields.filter { it.isStatic }) {
+                val node = replacements.getMfvcFieldNode(staticField) ?: continue
+                val fields = node.fields ?: listOf()
+                val initializer = staticField.initializer?.let { makeInitializerReplacement(declaration, staticField, it) }
+                staticField.correspondingPropertySymbol?.owner?.backingField = null
+                put(staticField, fields + listOfNotNull(initializer))
+            }
+        }
+        if (staticFieldMapping.isNotEmpty()) {
+            declaration.declarations.replaceAll(declaration.declarations.flatMap { staticFieldMapping[it] ?: listOf(it) })
+        }
     }
 
     override fun transformSecondaryConstructorFlat(constructor: IrConstructor, replacement: IrSimpleFunction): List<IrDeclaration> {
         for (param in replacement.valueParameters) {
-            param.transformChildrenVoid()
+            param.defaultValue?.patchDeclarationParents(replacement)
+            visitParameter(param)
         }
 
         allScopes.push(createScope(replacement))
@@ -478,9 +503,13 @@ internal class JvmMultiFieldValueClassLowering(
 
     private object UNSAFE_MFVC_SET_ORIGIN : IrStatementOrigin
 
-    private fun RootMfvcNode.replaceFields() {
-        mfvc.declarations.removeIf { it is IrField && (!it.isStatic || it.type.needsMfvcFlattening()) }
-        mfvc.declarations += fields
+    private fun RootMfvcNode.replaceMfvcNotStaticFields() {
+        val fieldsToRemove = mfvc.fields.filter { !it.isStatic }.toList()
+        for (field in fieldsToRemove) {
+            field.correspondingPropertySymbol?.owner?.backingField = null
+        }
+        mfvc.declarations.removeAll(fieldsToRemove)
+        mfvc.declarations += fields ?: emptyList()
     }
 
     override fun createBridgeDeclaration(source: IrSimpleFunction, replacement: IrSimpleFunction, mangledName: Name): IrSimpleFunction =
@@ -613,10 +642,11 @@ internal class JvmMultiFieldValueClassLowering(
                                     val receiver = sourceExplicitParameters[flattenedSourceIndex++]
                                     val rootNode = remappedTargetParameter.rootMfvcNode
                                     val instance = rootNode.createInstanceFromBox(
-                                        this@irBlock, irGet(receiver), getOptimizedPublicAccess(rootNode.mfvc), ::variablesSaver,
+                                        this@irBlock, irGet(receiver), AccessType.ChooseEffective, ::variablesSaver,
                                     )
-                                    val flattenedExpressions =
-                                        instance.makeFlattenedGetterExpressions(this@irBlock, ::registerPossibleExtraBoxUsage)
+                                    val flattenedExpressions = instance.makeFlattenedGetterExpressions(
+                                        this@irBlock, irCurrentClass, ::registerPossibleExtraBoxUsage
+                                    )
                                     for (expression in flattenedExpressions) {
                                         putArgument(targetExplicitParameters[flattenedTargetIndex++], expression)
                                     }
@@ -706,22 +736,43 @@ internal class JvmMultiFieldValueClassLowering(
             val defaultValue = replacements.oldMfvcDefaultArguments[param] ?: continue
             val structure = parametersStructure[i]
             if (structure is MultiFieldValueClassMapping) {
-                newParamList[0].defaultValue = with(context.createJvmIrBuilder(replacement.symbol)) {
-                    irExprBody(irBlock {
-                        val mfvcNodeInstance = structure.rootMfvcNode.createInstanceFromValueDeclarationsAndBoxType(
-                            param.type as IrSimpleType, newParamList
-                        )
-                        flattenExpressionTo(defaultValue, mfvcNodeInstance)
-                        +irGet(newParamList[0])
-                    })
+                val fakeFunction = context.irFactory.buildFun {
+                    returnType = context.irBuiltIns.unitType
+                    name = Name.identifier("fake")
+                    visibility = DescriptorVisibilities.LOCAL
+                }.apply { parent = replacement }
+                newParamList[0].defaultValue = with(context.createJvmIrBuilder(fakeFunction.symbol)) {
+                    withinScope(fakeFunction) {
+                        fakeFunction.body = irExprBody(irBlock {
+                            val mfvcNodeInstance = structure.rootMfvcNode.createInstanceFromValueDeclarationsAndBoxType(
+                                param.type as IrSimpleType, newParamList
+                            )
+                            flattenExpressionTo(defaultValue, mfvcNodeInstance)
+                            +irGet(newParamList[0])
+                        })
+                        postActionAfterTransformingClassDeclaration(fakeFunction)
+                        fakeFunction.body?.patchDeclarationParents(replacement) as IrExpressionBody
+                    }
                 }
             }
         }
     }
 
     override fun visitParameter(parameter: IrValueParameter) {
-        if (parameter.origin != JvmLoweredDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER) {
-            super.visitParameter(parameter)
+        // default MFVC parameter is the special case, it is handled separately
+        if (parameter.origin == JvmLoweredDeclarationOrigin.GENERATED_MULTI_FIELD_VALUE_CLASS_PARAMETER) return
+        if (parameter.defaultValue == null) return
+        val fakeFunction = context.irFactory.buildFun {
+            returnType = context.irBuiltIns.unitType
+            name = Name.identifier("fake")
+            visibility = DescriptorVisibilities.LOCAL
+        }.apply { parent = parameter.parent }
+        parameter.defaultValue = with(context.createJvmIrBuilder(fakeFunction.symbol)) {
+            withinScope(fakeFunction) {
+                fakeFunction.body = irExprBody(parameter.defaultValue!!.expression).transform(this@JvmMultiFieldValueClassLowering, null)
+                postActionAfterTransformingClassDeclaration(fakeFunction)
+                fakeFunction.body?.patchDeclarationParents(parameter.parent) as IrExpressionBody
+            }
         }
     }
 
@@ -732,17 +783,19 @@ internal class JvmMultiFieldValueClassLowering(
 
         val initializersBlocks = mfvc.declarations.filterIsInstance<IrAnonymousInitializer>()
         val typeArguments = makeTypeParameterSubstitutionMap(mfvc, primaryConstructorImpl)
-        primaryConstructorImpl.body = context.createJvmIrBuilder(primaryConstructorImpl.symbol).irBlockBody {
-            val mfvcNodeInstance =
-                ValueDeclarationMfvcNodeInstance(rootMfvcNode, typeArguments, primaryConstructorImpl.valueParameters)
-            valueDeclarationsRemapper.registerReplacement(
-                oldPrimaryConstructor.constructedClass.thisReceiver!!,
-                mfvcNodeInstance
-            )
-            for (initializer in initializersBlocks) {
-                +irBlock {
-                    for (stmt in initializer.body.statements) {
-                        +stmt.patchDeclarationParents(primaryConstructorImpl) // transformation is done later
+        if (!mfvc.isKotlinExternalStub()) {
+            primaryConstructorImpl.body = context.createJvmIrBuilder(primaryConstructorImpl.symbol).irBlockBody {
+                val mfvcNodeInstance =
+                    ValueDeclarationMfvcNodeInstance(rootMfvcNode, typeArguments, primaryConstructorImpl.valueParameters)
+                valueDeclarationsRemapper.registerReplacement(
+                    oldPrimaryConstructor.constructedClass.thisReceiver!!,
+                    mfvcNodeInstance
+                )
+                for (initializer in initializersBlocks) {
+                    +irBlock {
+                        for (stmt in initializer.body.statements) {
+                            +stmt.patchDeclarationParents(primaryConstructorImpl) // transformation is done later
+                        }
                     }
                 }
             }
@@ -793,8 +846,8 @@ internal class JvmMultiFieldValueClassLowering(
                             // thus it is useless to show it in debugger
                             parameter.origin = JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_PARAMETER
                             val rootNode = replacements.getRootMfvcNode(parameter.type.erasedUpperBound)
-                            rootNode.createInstanceFromBox(this, irGet(parameter), AccessType.AlwaysPublic, ::variablesSaver)
-                                .makeFlattenedGetterExpressions(this, ::registerPossibleExtraBoxUsage)
+                            rootNode.createInstanceFromBox(this, irGet(parameter), AccessType.ChooseEffective, ::variablesSaver)
+                                .makeFlattenedGetterExpressions(this, irCurrentClass, ::registerPossibleExtraBoxUsage)
                                 .mapIndexed { index, expression ->
                                     savableStandaloneVariableWithSetter(
                                         expression = expression,
@@ -826,8 +879,8 @@ internal class JvmMultiFieldValueClassLowering(
         }.unwrapBlock()
     }
 
-    private fun IrFunction.getReplacement(): IrFunction? =
-        replacements.getReplacementFunction(this) ?: (this as? IrConstructor)?.let { replacements.getReplacementForRegularClassConstructor(it) }
+    private fun IrFunction.getReplacement(): IrFunction? = replacements.getReplacementFunction(this)
+        ?: (this as? IrConstructor)?.let { replacements.getReplacementForRegularClassConstructor(it) }
 
     private fun makeNewLambda(
         originalFunction: IrFunction, expression: IrFunctionReference, makeBody: (wrapper: IrSimpleFunction) -> IrBody
@@ -886,8 +939,8 @@ internal class JvmMultiFieldValueClassLowering(
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val function = expression.symbol.owner
-        val replacement = replacements.getReplacementFunction(function)
         val currentScope = currentScope!!.irElement as IrDeclaration
+        val replacement = replacements.getReplacementFunction(function)
         return when {
             function is IrConstructor && function.isPrimary && function.constructedClass.isMultiFieldValueClass &&
                     currentScope.origin != JvmLoweredDeclarationOrigin.SYNTHETIC_MULTI_FIELD_VALUE_CLASS_MEMBER -> {
@@ -904,7 +957,7 @@ internal class JvmMultiFieldValueClassLowering(
                         valueDeclaration.origin = JvmLoweredDeclarationOrigin.TEMPORARY_MULTI_FIELD_VALUE_CLASS_VARIABLE
                     }
                     flattenExpressionTo(expression, instance)
-                    val getterExpression = instance.makeGetterExpression(this, ::registerPossibleExtraBoxUsage)
+                    val getterExpression = instance.makeGetterExpression(this, irCurrentClass, ::registerPossibleExtraBoxUsage)
                     valueDeclarationsRemapper.registerReplacement(getterExpression, instance)
                     +getterExpression
                 }
@@ -918,8 +971,27 @@ internal class JvmMultiFieldValueClassLowering(
                 val newConstructor = (function as? IrConstructor)
                     ?.let { replacements.getReplacementForRegularClassConstructor(it) }
                     ?: return super.visitFunctionAccess(expression)
+                val callFactory: (IrConstructorSymbol) -> IrFunctionAccessExpression = when (expression) {
+                    is IrConstructorCall -> { constructorSymbol ->
+                        IrConstructorCallImpl.fromSymbolOwner(
+                            expression.startOffset, expression.endOffset, expression.type, constructorSymbol, expression.origin
+                        )
+                    }
+                    is IrDelegatingConstructorCall -> { constructorSymbol ->
+                        IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                            expression.startOffset, expression.endOffset, expression.type, constructorSymbol
+                        )
+                    }
+                    is IrEnumConstructorCall -> { constructorSymbol ->
+                        IrEnumConstructorCallImpl(
+                            expression.startOffset, expression.endOffset, expression.type, constructorSymbol,
+                            expression.typeArgumentsCount, expression.valueArgumentsCount
+                        )
+                    }
+                    else -> error("Unknown constructor call type:\n${expression.dump()}")
+                }
                 context.createJvmIrBuilder(currentScope.symbol, expression).irBlock {
-                    buildReplacement(function, expression, newConstructor)
+                    buildReplacement(function, expression, newConstructor) { callFactory(it as IrConstructorSymbol) }
                 }.unwrapBlock()
             }
         }
@@ -1039,7 +1111,9 @@ internal class JvmMultiFieldValueClassLowering(
         return super.visitStringConcatenation(expression)
     }
 
-    private fun IrBlockBuilder.makeNewArguments(oldArguments: List<IrExpression?>, structure: List<RemappedParameter>): List<IrExpression?> {
+    private fun IrBlockBuilder.makeNewArguments(
+        oldArguments: List<IrExpression?>, structure: List<RemappedParameter>
+    ): List<IrExpression?> {
         val argumentSizes: List<Int> = structure.map { argTemplate -> argTemplate.valueParameters.size }
         val newArguments = (oldArguments zip argumentSizes).flatMapIndexed { index, (oldArgument, parametersCount) ->
             when {
@@ -1271,7 +1345,7 @@ internal class JvmMultiFieldValueClassLowering(
                 +irCall(rootNode.primaryConstructorImpl).apply {
                     copyTypeArgumentsFrom(expression)
                     val flattenedGetterExpressions =
-                        instance.makeFlattenedGetterExpressions(this@flattenExpressionTo, ::registerPossibleExtraBoxUsage)
+                        instance.makeFlattenedGetterExpressions(this@flattenExpressionTo, irCurrentClass, ::registerPossibleExtraBoxUsage)
                     for ((index, leafExpression) in flattenedGetterExpressions.withIndex()) {
                         putValueArgument(index, leafExpression)
                     }
@@ -1290,14 +1364,13 @@ internal class JvmMultiFieldValueClassLowering(
             return
         }
         val expressionInstance = rootNode.createInstanceFromBox(
-            this, transformedExpression, getOptimizedPublicAccess(rootNode.mfvc), ::variablesSaver,
+            this, transformedExpression, AccessType.ChooseEffective, ::variablesSaver,
         )
         require(expressionInstance.size == instance.size) { "Incompatible assignment sizes: ${expressionInstance.size}, ${instance.size}" }
-        instance.addSetterStatements(this, expressionInstance.makeFlattenedGetterExpressions(this, ::registerPossibleExtraBoxUsage))
+        instance.addSetterStatements(
+            this, expressionInstance.makeFlattenedGetterExpressions(this, irCurrentClass, ::registerPossibleExtraBoxUsage)
+        )
     }
-
-    private fun getOptimizedPublicAccess(parent: IrClass): AccessType =
-        currentScope?.irElement?.let { getOptimizedPublicAccess(it, parent) } ?: AccessType.AlwaysPublic
 
     /**
      * Removes boxing when the result is not used

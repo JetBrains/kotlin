@@ -1,0 +1,56 @@
+@kotlin.Metadata
+public final class Line {
+    // source: 'regularClassSecondaryConstructorWithMfvc.kt'
+    private final field a-x: double
+    private final field a-y: double
+    private final field b-x: double
+    private final field b-y: double
+    private method <init>(p0: double, p1: double, p2: double, p3: double): void
+    public synthetic method <init>(p0: double, p1: double, p2: double, p3: double, p4: int, p5: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: double, p1: double, p2: double, p3: double, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: double, p1: double, p2: float, p3: float): void
+    public synthetic method <init>(p0: double, p1: double, p2: float, p3: float, p4: int, p5: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public synthetic method <init>(p0: double, p1: double, p2: float, p3: float, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public method <init>(p0: float, p1: float, p2: float, p3: float): void
+    public final @org.jetbrains.annotations.NotNull method component1(): Point
+    public final @org.jetbrains.annotations.NotNull method component2(): Point
+    public synthetic static method copy-twsj498$default(p0: Line, p1: double, p2: double, p3: double, p4: double, p5: int, p6: java.lang.Object): Line
+    public final @org.jetbrains.annotations.NotNull method copy-twsj498(p0: double, p1: double, p2: double, p3: double): Line
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public final @org.jetbrains.annotations.NotNull method getA(): Point
+    public synthetic final method getA-x(): double
+    public synthetic final method getA-y(): double
+    public final @org.jetbrains.annotations.NotNull method getB(): Point
+    public synthetic final method getB-x(): double
+    public synthetic final method getB-y(): double
+    public method hashCode(): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class Point {
+    // source: 'regularClassSecondaryConstructorWithMfvc.kt'
+    private final field x: double
+    private final field y: double
+    private synthetic method <init>(p0: double, p1: double): void
+    public synthetic final static method box-impl(p0: double, p1: double): Point
+    public final static method constructor-impl(p0: double, p1: double): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: double, p1: double, p2: double, p3: double): boolean
+    public final method getX(): double
+    public final method getY(): double
+    public method hashCode(): int
+    public static method hashCode-impl(p0: double, p1: double): int
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: double, p1: double): java.lang.String
+    public synthetic final method unbox-impl-x(): double
+    public synthetic final method unbox-impl-y(): double
+}
+
+@kotlin.Metadata
+public final class RegularClassSecondaryConstructorWithMfvcKt {
+    // source: 'regularClassSecondaryConstructorWithMfvc.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}

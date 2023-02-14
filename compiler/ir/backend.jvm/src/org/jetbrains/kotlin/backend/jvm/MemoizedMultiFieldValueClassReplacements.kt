@@ -271,12 +271,11 @@ class MemoizedMultiFieldValueClassReplacements(
                         createStaticReplacement(function)
                 }
 
-                function is IrSimpleFunction && !function.isFromJava() &&
-                        function.fullValueParameterList.any { it.type.needsMfvcFlattening() } &&
-                        (!function.isFakeOverride ||
-                                findSuperDeclaration(function, false, context.state.jvmDefaultMode)
-                                in bindingOldFunctionToParameterTemplateStructure) ->
-                    createMethodReplacement(function)
+                function is IrSimpleFunction && !function.isFromJava() && function.fullValueParameterList.any { it.type.needsMfvcFlattening() } && run {
+                    if (!function.isFakeOverride) return@run true
+                    val superDeclaration = findSuperDeclaration(function, false, context.state.jvmDefaultMode)
+                    getReplacementFunction(superDeclaration) != null
+                } -> createMethodReplacement(function)
 
                 else -> null
             }
@@ -341,7 +340,9 @@ class MemoizedMultiFieldValueClassReplacements(
 
     private fun getRegularClassMfvcPropertyNode(property: IrProperty): IntermediateMfvcNode? {
         val parent = property.parent
-        val types = listOfNotNull(property.backingField?.takeUnless { property.isDelegated }?.type, property.getter?.returnType)
+        val types = listOfNotNull(
+            property.backingFieldIfNotToRemove?.takeUnless { property.isDelegated }?.type, property.getter?.returnType
+        )
         return when {
             types.isEmpty() || types.any { !it.needsMfvcFlattening() } -> null
             parent !is IrClass -> null
@@ -364,6 +365,8 @@ class MemoizedMultiFieldValueClassReplacements(
     private fun useRootNode(parent: IrClass, property: IrProperty): Boolean {
         val getter = property.getter
         if (getter != null && (getter.contextReceiverParametersCount > 0 || getter.extensionReceiverParameter != null)) return false
-        return parent.isMultiFieldValueClass && (getter?.isStatic ?: property.backingField?.isStatic) == false
+        return parent.isMultiFieldValueClass && (getter?.isStatic ?: property.backingFieldIfNotToRemove?.isStatic) == false
     }
+
+    private val IrProperty.backingFieldIfNotToRemove get() = backingField?.takeUnless { it in getFieldsToRemove(this.parentAsClass) }
 }

@@ -64,11 +64,11 @@ public final class GenericFakeOverrideMFVC {
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object, p1: java.lang.Object): int
     public synthetic bridge method setP(p0: java.lang.Object): void
-    public method setP-sUp7gFk(@org.jetbrains.annotations.NotNull p0: XPoint): void
-    public static method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: XPoint): void
+    public static method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
-    public method setP1-sUp7gFk(@org.jetbrains.annotations.NotNull p0: XPoint): void
-    public static method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: XPoint): void
+    public static method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl-field1(): java.lang.Object
@@ -96,10 +96,10 @@ public final class GenericFakeOverrideMFVCWithMFVCUpperBound {
     public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: java.lang.Object, p1: java.lang.Object): XPoint
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object, p1: java.lang.Object): int
-    public method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public static method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public static method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public static method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public static method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl-field1(): java.lang.Object
@@ -113,8 +113,8 @@ public final class GenericFakeOverrideWithMFVCUpperBound {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method getP(): XPoint
     public @org.jetbrains.annotations.NotNull method getP1(): XPoint
-    public method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
+    public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
@@ -156,8 +156,8 @@ public interface GenericMFVCHolderWithMFVCUpperBound {
     public abstract @org.jetbrains.annotations.NotNull method getP1(): XPoint
     public synthetic abstract method getP1-x(): java.lang.Object
     public synthetic abstract method getP1-y(): java.lang.Object
-    public abstract method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public abstract method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
 }
 
 @kotlin.Metadata
@@ -169,8 +169,8 @@ public final class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls {
     public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): XPoint
     public synthetic static method getP1-x(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
     public synthetic static method getP1-y(p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls): java.lang.Object
-    public static method setP-sUp7gFk(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
-    public static method setP1-sUp7gFk(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public static method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public static method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: GenericMFVCHolderWithMFVCUpperBoundWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
@@ -183,8 +183,8 @@ public interface GenericMFVCHolderWithMFVCUpperBoundWithImpls {
     public abstract @org.jetbrains.annotations.NotNull method getP1(): XPoint
     public synthetic abstract method getP1-x(): java.lang.Object
     public synthetic abstract method getP1-y(): java.lang.Object
-    public abstract method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public abstract method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public final inner class GenericMFVCHolderWithMFVCUpperBoundWithImpls$DefaultImpls
 }
 
@@ -2371,7 +2371,7 @@ public final class Overrides_typeParametersKt {
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static method equal(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function0, @org.jetbrains.annotations.NotNull p1: kotlin.jvm.functions.Function0): void
     public final static method genericFunctionIC-lld4ICU(@org.jetbrains.annotations.NotNull p0: java.lang.Object): void
-    public final static method genericFunctionMFVC-sUp7gFk(@org.jetbrains.annotations.NotNull p0: java.util.List, @org.jetbrains.annotations.NotNull p1: java.util.List): void
+    public final static method genericFunctionMFVC-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: java.util.List, @org.jetbrains.annotations.NotNull p1: java.util.List): void
 }
 
 @kotlin.Metadata
@@ -2390,9 +2390,9 @@ public final class RealOverride {
     public synthetic method getP1-x(): java.lang.Object
     public synthetic method getP1-y(): java.lang.Object
     public synthetic bridge method setP(p0: java.lang.Object): void
-    public method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
+    public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
-    public method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
+    public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
 }
 
 @kotlin.Metadata
@@ -2401,8 +2401,8 @@ public final class ReifiedFakeOverride {
     public method <init>(): void
     public @org.jetbrains.annotations.NotNull method getP(): XPoint
     public @org.jetbrains.annotations.NotNull method getP1(): XPoint
-    public method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
+    public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -2426,10 +2426,10 @@ public final class ReifiedFakeOverrideMFVC {
     public static @org.jetbrains.annotations.NotNull method getP1-impl(p0: java.lang.Object, p1: java.lang.Object): XPoint
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object, p1: java.lang.Object): int
-    public method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public static method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public static method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public static method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public static method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl-field1(): java.lang.Object
@@ -2446,8 +2446,8 @@ public interface ReifiedMFVCHolder {
     public abstract @org.jetbrains.annotations.NotNull method getP1(): XPoint
     public synthetic abstract method getP1-x(): java.lang.Object
     public synthetic abstract method getP1-y(): java.lang.Object
-    public abstract method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public abstract method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
 }
 
 @kotlin.Metadata
@@ -2459,8 +2459,8 @@ public final class ReifiedMFVCHolderWithImpls$DefaultImpls {
     public static @org.jetbrains.annotations.NotNull method getP1(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls): XPoint
     public synthetic static method getP1-x(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
     public synthetic static method getP1-y(p0: ReifiedMFVCHolderWithImpls): java.lang.Object
-    public static method setP-sUp7gFk(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
-    public static method setP1-sUp7gFk(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public static method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
+    public static method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: ReifiedMFVCHolderWithImpls, p1: java.lang.Object, p2: java.lang.Object): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -2473,8 +2473,8 @@ public interface ReifiedMFVCHolderWithImpls {
     public abstract @org.jetbrains.annotations.NotNull method getP1(): XPoint
     public synthetic abstract method getP1-x(): java.lang.Object
     public synthetic abstract method getP1-y(): java.lang.Object
-    public abstract method setP-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public abstract method setP1-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public final inner class ReifiedMFVCHolderWithImpls$DefaultImpls
 }
 
@@ -2482,7 +2482,7 @@ public interface ReifiedMFVCHolderWithImpls {
 public final class SomeInterface$DefaultImpls {
     // source: 'overrides_typeParameters.kt'
     public static method someFunction1(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public static method someFunction2-lIoT8es(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): void
+    public static method someFunction2-bw8FDaY(@org.jetbrains.annotations.NotNull p0: SomeInterface, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object): void
     public final inner class SomeInterface$DefaultImpls
 }
 
@@ -2490,7 +2490,7 @@ public final class SomeInterface$DefaultImpls {
 public interface SomeInterface {
     // source: 'overrides_typeParameters.kt'
     public abstract method someFunction1(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): void
-    public abstract method someFunction2-lIoT8es(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object): void
+    public abstract method someFunction2-bw8FDaY(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object): void
     public final inner class SomeInterface$DefaultImpls
 }
 
@@ -2503,7 +2503,7 @@ public interface SomePointInterface {
     public synthetic abstract method getSomethingMFVC-y(): java.lang.Object
     public abstract method getSomethingRegular(): int
     public abstract method setSomethingGeneric(p0: java.lang.Object): void
-    public abstract method setSomethingMFVC-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setSomethingMFVC-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public abstract method setSomethingRegular(p0: int): void
 }
 
@@ -2517,8 +2517,8 @@ public interface SomePointInterfaceWithMFVCBound {
     public synthetic abstract method getSomethingMFVC-x(): java.lang.Object
     public synthetic abstract method getSomethingMFVC-y(): java.lang.Object
     public abstract method getSomethingRegular(): int
-    public abstract method setSomethingGeneric-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public abstract method setSomethingMFVC-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setSomethingGeneric-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public abstract method setSomethingMFVC-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
     public abstract method setSomethingRegular(p0: int): void
 }
 
@@ -2540,8 +2540,8 @@ public final class XPoint {
     public static method hashCode-impl(p0: java.lang.Object, p1: java.lang.Object): int
     public method someFunction1(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object): void
     public static method someFunction1-impl(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object): void
-    public method someFunction2-lIoT8es(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object): void
-    public static method someFunction2-lIoT8es(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object, p7: java.lang.Object): void
+    public method someFunction2-bw8FDaY(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object): void
+    public static method someFunction2-bw8FDaY(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object, p4: java.lang.Object, p5: java.lang.Object, p6: java.lang.Object, p7: java.lang.Object): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String
     public synthetic final method unbox-impl-x(): java.lang.Object
@@ -2572,10 +2572,10 @@ public final class XPointWithInterface {
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object, p1: java.lang.Object): int
     public synthetic bridge method setSomethingGeneric(p0: java.lang.Object): void
-    public method setSomethingGeneric-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public static method setSomethingGeneric-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
-    public method setSomethingMFVC-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object): void
-    public static method setSomethingMFVC-sUp7gFk(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public method setSomethingGeneric-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public static method setSomethingGeneric-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
+    public method setSomethingMFVC-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object): void
+    public static method setSomethingMFVC-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
     public method setSomethingRegular(p0: int): void
     public static method setSomethingRegular-impl(p0: java.lang.Object, p1: java.lang.Object, p2: int): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String

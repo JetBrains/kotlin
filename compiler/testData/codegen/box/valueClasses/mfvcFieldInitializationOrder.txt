@@ -8,7 +8,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getX(): DPoint
     public synthetic final method getX-x(): double
     public synthetic final method getX-y(): double
-    public final method setX-sUp7gFk(p0: double, p1: double): void
+    public final method setX-nuuzChU(p0: double, p1: double): void
 }
 
 @kotlin.Metadata
@@ -30,7 +30,7 @@ public final class B {
     public final @org.jetbrains.annotations.NotNull method getC(): DPoint
     public synthetic final method getC-x(): double
     public synthetic final method getC-y(): double
-    public final method setA-sUp7gFk(p0: double, p1: double): void
+    public final method setA-nuuzChU(p0: double, p1: double): void
 }
 
 @kotlin.jvm.JvmInline

@@ -1,6 +1,168 @@
+Module: dependency
+@kotlin.Metadata
+public final class MfvcDependency$Companion {
+    // source: 'module_dependency_visibility.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getT(): MfvcDependency
+    public synthetic final method getT-x(): int
+    public synthetic final method getT-y(): int
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getTStatic$annotations(): void
+    public final @org.jetbrains.annotations.NotNull method getTStatic(): MfvcDependency
+    public synthetic final method getTStatic-x(): int
+    public synthetic final method getTStatic-y(): int
+    public final method getX(): int
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getXStatic$annotations(): void
+    public final method getXStatic(): int
+    public final method getY(): int
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getYStatic$annotations(): void
+    public final method getYStatic(): int
+    public final @org.jetbrains.annotations.NotNull method getZ(): MfvcDependency
+    public synthetic final method getZ-x(): int
+    public synthetic final method getZ-y(): int
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getZStatic$annotations(): void
+    public final @org.jetbrains.annotations.NotNull method getZStatic(): MfvcDependency
+    public synthetic final method getZStatic-x(): int
+    public synthetic final method getZStatic-y(): int
+    public final method setX(p0: int): void
+    public final method setXStatic(p0: int): void
+    public final method setZ-qW3ZXps(p0: int, p1: int): void
+    public final method setZStatic-qW3ZXps(p0: int, p1: int): void
+    public final inner class MfvcDependency$Companion
+}
+
+@kotlin.jvm.JvmInline
+@kotlin.Metadata
+public final class MfvcDependency {
+    // source: 'module_dependency_visibility.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: MfvcDependency$Companion
+    private final field x$1: int
+    private static field x: int
+    private static field xStatic: int
+    private final field y: int
+    private static field z-x: int
+    private static field z-y: int
+    private static field zStatic-x: int
+    private static field zStatic-y: int
+    static method <clinit>(): void
+    private synthetic method <init>(p0: int, p1: int): void
+    public synthetic final static method access$getX$cp(): int
+    public synthetic final static method access$getXStatic$cp(): int
+    public synthetic final static method access$getZ-x$cp(): int
+    public synthetic final static method access$getZ-y$cp(): int
+    public synthetic final static method access$getZStatic-x$cp(): int
+    public synthetic final static method access$getZStatic-y$cp(): int
+    public synthetic final static method access$setX$cp(p0: int): void
+    public synthetic final static method access$setXStatic$cp(p0: int): void
+    public synthetic final static method access$setZ-x$cp(p0: int): void
+    public synthetic final static method access$setZ-y$cp(p0: int): void
+    public synthetic final static method access$setZStatic-x$cp(p0: int): void
+    public synthetic final static method access$setZStatic-y$cp(p0: int): void
+    public synthetic final static method box-impl(p0: int, p1: int): MfvcDependency
+    public final static method constructor-impl(p0: int, p1: int): void
+    public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
+    public static method equals-impl(p0: int, p1: int, p2: java.lang.Object): boolean
+    public final static method equals-impl0(p0: int, p1: int, p2: int, p3: int): boolean
+    public final static @org.jetbrains.annotations.NotNull method getT-impl(p0: int, p1: int): MfvcDependency
+    public final static @org.jetbrains.annotations.NotNull method getTStatic(): MfvcDependency
+    public final method getX(): int
+    public final static method getXStatic(): int
+    public final method getY(): int
+    public final static method getYStatic(): int
+    public final static method getZ-impl(p0: int, p1: int): int
+    public final static @org.jetbrains.annotations.NotNull method getZStatic(): MfvcDependency
+    public method hashCode(): int
+    public static method hashCode-impl(p0: int, p1: int): int
+    public final static method setXStatic(p0: int): void
+    public final static method setZStatic-qW3ZXps(p0: int, p1: int): void
+    public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
+    public static method toString-impl(p0: int, p1: int): java.lang.String
+    public synthetic final method unbox-impl-x(): int
+    public synthetic final method unbox-impl-y(): int
+    public final inner class MfvcDependency$Companion
+}
+
+@kotlin.Metadata
+public final class RegularDependency$Companion {
+    // source: 'module_dependency_visibility.kt'
+    private method <init>(): void
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final @org.jetbrains.annotations.NotNull method getT(): MfvcDependency
+    public synthetic final method getT-x(): int
+    public synthetic final method getT-y(): int
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getTStatic$annotations(): void
+    public final @org.jetbrains.annotations.NotNull method getTStatic(): MfvcDependency
+    public synthetic final method getTStatic-x(): int
+    public synthetic final method getTStatic-y(): int
+    public final method getX(): int
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getXStatic$annotations(): void
+    public final method getXStatic(): int
+    public final method getY(): int
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getYStatic$annotations(): void
+    public final method getYStatic(): int
+    public final @org.jetbrains.annotations.NotNull method getZ(): MfvcDependency
+    public synthetic final method getZ-x(): int
+    public synthetic final method getZ-y(): int
+    public synthetic deprecated static @kotlin.jvm.JvmStatic method getZStatic$annotations(): void
+    public final @org.jetbrains.annotations.NotNull method getZStatic(): MfvcDependency
+    public synthetic final method getZStatic-x(): int
+    public synthetic final method getZStatic-y(): int
+    public final method setX(p0: int): void
+    public final method setXStatic(p0: int): void
+    public final method setZ-qW3ZXps(p0: int, p1: int): void
+    public final method setZStatic-qW3ZXps(p0: int, p1: int): void
+    public final inner class RegularDependency$Companion
+}
+
+@kotlin.Metadata
+public final class RegularDependency {
+    // source: 'module_dependency_visibility.kt'
+    public final static @org.jetbrains.annotations.NotNull field Companion: RegularDependency$Companion
+    private field x$1: int
+    private static field x: int
+    private static field xStatic: int
+    private field z-x$1: int
+    private static field z-x: int
+    private field z-y$1: int
+    private static field z-y: int
+    private static field zStatic-x: int
+    private static field zStatic-y: int
+    static method <clinit>(): void
+    public method <init>(): void
+    public synthetic final static method access$getX$cp(): int
+    public synthetic final static method access$getXStatic$cp(): int
+    public synthetic final static method access$getZ-x$cp(): int
+    public synthetic final static method access$getZ-y$cp(): int
+    public synthetic final static method access$getZStatic-x$cp(): int
+    public synthetic final static method access$getZStatic-y$cp(): int
+    public synthetic final static method access$setX$cp(p0: int): void
+    public synthetic final static method access$setXStatic$cp(p0: int): void
+    public synthetic final static method access$setZ-x$cp(p0: int): void
+    public synthetic final static method access$setZ-y$cp(p0: int): void
+    public synthetic final static method access$setZStatic-x$cp(p0: int): void
+    public synthetic final static method access$setZStatic-y$cp(p0: int): void
+    public final @org.jetbrains.annotations.NotNull method getT(): MfvcDependency
+    public synthetic final method getT-x(): int
+    public synthetic final method getT-y(): int
+    public final static @org.jetbrains.annotations.NotNull method getTStatic(): MfvcDependency
+    public final method getX(): int
+    public final static method getXStatic(): int
+    public final method getY(): int
+    public final static method getYStatic(): int
+    public final @org.jetbrains.annotations.NotNull method getZ(): MfvcDependency
+    public synthetic final method getZ-x(): int
+    public synthetic final method getZ-y(): int
+    public final static @org.jetbrains.annotations.NotNull method getZStatic(): MfvcDependency
+    public final method setX(p0: int): void
+    public final static method setXStatic(p0: int): void
+    public final method setZ-qW3ZXps(p0: int, p1: int): void
+    public final static method setZStatic-qW3ZXps(p0: int, p1: int): void
+    public final inner class RegularDependency$Companion
+}
+Module: main
 @kotlin.Metadata
 public final class Internal$Companion {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getT$annotations(): void
@@ -15,18 +177,20 @@ public final class Internal$Companion {
     public synthetic final method getZ-x(): int
     public synthetic final method getZ-y(): int
     public final method setX(p0: int): void
-    public final method setZ-sUp7gFk(p0: int, p1: int): void
+    public final method setZ-LJYh5uw(p0: int, p1: int): void
     public final inner class Internal$Companion
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Internal {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: Internal$Companion
     private final field x$1: int
     private static field x: int
     private final field y: int
+    private static field z-x: int
+    private static field z-y: int
     static method <clinit>(): void
     private synthetic method <init>(p0: int, p1: int): void
     public synthetic final static method access$getX$cp(): int
@@ -58,7 +222,7 @@ public final class Internal {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class InternalInternal {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -80,7 +244,7 @@ public final class InternalInternal {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class InternalPrivate {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -102,7 +266,7 @@ public final class InternalPrivate {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class InternalPublic {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -121,10 +285,19 @@ public final class InternalPublic {
     public synthetic final method unbox-impl-value-y(): int
 }
 
+@kotlin.Metadata
+public final class Module_main_visibilityKt {
+    // source: 'module_main_visibility.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final inner class MfvcDependency$Companion
+    public final inner class Regular$Companion
+    public final inner class RegularDependency$Companion
+}
+
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Private {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private final field x: int
     private final field y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -144,7 +317,7 @@ public final class Private {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PrivateInternal {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -166,7 +339,7 @@ public final class PrivateInternal {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PrivatePrivate {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -188,7 +361,7 @@ public final class PrivatePrivate {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PrivatePublic {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -209,7 +382,7 @@ public final class PrivatePublic {
 
 @kotlin.Metadata
 public final class Public$Companion {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public final @org.jetbrains.annotations.NotNull method getT(): Public
@@ -221,18 +394,20 @@ public final class Public$Companion {
     public synthetic final method getZ-x(): int
     public synthetic final method getZ-y(): int
     public final method setX(p0: int): void
-    public final method setZ-sUp7gFk(p0: int, p1: int): void
+    public final method setZ-3S9c-qc(p0: int, p1: int): void
     public final inner class Public$Companion
 }
 
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class Public {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: Public$Companion
     private final field x$1: int
     private static field x: int
     private final field y: int
+    private static field z-x: int
+    private static field z-y: int
     static method <clinit>(): void
     private synthetic method <init>(p0: int, p1: int): void
     public synthetic final static method access$getX$cp(): int
@@ -260,7 +435,7 @@ public final class Public {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PublicInternal {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -282,7 +457,7 @@ public final class PublicInternal {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PublicPrivate {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -304,7 +479,7 @@ public final class PublicPrivate {
 @kotlin.jvm.JvmInline
 @kotlin.Metadata
 public final class PublicPublic {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private final field value-x: int
     private final field value-y: int
     private synthetic method <init>(p0: int, p1: int): void
@@ -325,21 +500,21 @@ public final class PublicPublic {
 
 @kotlin.Metadata
 public final class Regular$Companion {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     private method <init>(): void
     public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
     public synthetic final static method access$getJvmStaticX3(p0: Regular$Companion): Public
     public synthetic final static method access$getJvmStaticY3(p0: Regular$Companion): Internal
     public synthetic final static method access$getJvmStaticZ3(p0: Regular$Companion): Private
-    public synthetic final static method access$setJvmStaticX3-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
-    public synthetic final static method access$setJvmStaticX4-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
-    public synthetic final static method access$setJvmStaticX5-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
-    public synthetic final static method access$setJvmStaticY3-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
-    public synthetic final static method access$setJvmStaticY4-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
-    public synthetic final static method access$setJvmStaticY5-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
-    public synthetic final static method access$setJvmStaticZ3-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
-    public synthetic final static method access$setJvmStaticZ4-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
-    public synthetic final static method access$setJvmStaticZ5-sUp7gFk(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticX3-3S9c-qc(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticX4-3S9c-qc(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticX5-3S9c-qc(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticY3-LJYh5uw(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticY4-LJYh5uw(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticY5-LJYh5uw(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticZ3-ebpot8A(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticZ4-ebpot8A(p0: Regular$Companion, p1: int, p2: int): void
+    public synthetic final static method access$setJvmStaticZ5-ebpot8A(p0: Regular$Companion, p1: int, p2: int): void
     public synthetic deprecated static @kotlin.jvm.JvmStatic method getJvmStaticX1$annotations(): void
     public final @org.jetbrains.annotations.NotNull method getJvmStaticX1(): Public
     public synthetic final method getJvmStaticX1-x(): int
@@ -466,48 +641,48 @@ public final class Regular$Companion {
     public final @org.jetbrains.annotations.NotNull method getStaticZ6(): Private
     public synthetic final method getStaticZ6-x(): int
     public synthetic final method getStaticZ6-y(): int
-    public final method setJvmStaticX1-sUp7gFk(p0: int, p1: int): void
-    public final method setJvmStaticX2-sUp7gFk$main(p0: int, p1: int): void
-    private final method setJvmStaticX3-sUp7gFk(p0: int, p1: int): void
-    private final method setJvmStaticX4-sUp7gFk(p0: int, p1: int): void
-    private final method setJvmStaticX5-sUp7gFk(p0: int, p1: int): void
-    public final method setJvmStaticX6-sUp7gFk$main(p0: int, p1: int): void
-    public final method setJvmStaticY1-sUp7gFk(p0: int, p1: int): void
-    public final method setJvmStaticY2-sUp7gFk$main(p0: int, p1: int): void
-    private final method setJvmStaticY3-sUp7gFk(p0: int, p1: int): void
-    private final method setJvmStaticY4-sUp7gFk(p0: int, p1: int): void
-    private final method setJvmStaticY5-sUp7gFk(p0: int, p1: int): void
-    public final method setJvmStaticY6-sUp7gFk$main(p0: int, p1: int): void
-    public final method setJvmStaticZ1-sUp7gFk(p0: int, p1: int): void
-    public final method setJvmStaticZ2-sUp7gFk$main(p0: int, p1: int): void
-    private final method setJvmStaticZ3-sUp7gFk(p0: int, p1: int): void
-    private final method setJvmStaticZ4-sUp7gFk(p0: int, p1: int): void
-    private final method setJvmStaticZ5-sUp7gFk(p0: int, p1: int): void
-    public final method setJvmStaticZ6-sUp7gFk$main(p0: int, p1: int): void
-    public final method setStaticX1-sUp7gFk(p0: int, p1: int): void
-    public final method setStaticX2-sUp7gFk$main(p0: int, p1: int): void
-    private final method setStaticX3-sUp7gFk(p0: int, p1: int): void
-    private final method setStaticX4-sUp7gFk(p0: int, p1: int): void
-    private final method setStaticX5-sUp7gFk(p0: int, p1: int): void
-    public final method setStaticX6-sUp7gFk$main(p0: int, p1: int): void
-    public final method setStaticY1-sUp7gFk(p0: int, p1: int): void
-    public final method setStaticY2-sUp7gFk$main(p0: int, p1: int): void
-    private final method setStaticY3-sUp7gFk(p0: int, p1: int): void
-    private final method setStaticY4-sUp7gFk(p0: int, p1: int): void
-    private final method setStaticY5-sUp7gFk(p0: int, p1: int): void
-    public final method setStaticY6-sUp7gFk$main(p0: int, p1: int): void
-    public final method setStaticZ1-sUp7gFk(p0: int, p1: int): void
-    public final method setStaticZ2-sUp7gFk$main(p0: int, p1: int): void
-    private final method setStaticZ3-sUp7gFk(p0: int, p1: int): void
-    private final method setStaticZ4-sUp7gFk(p0: int, p1: int): void
-    private final method setStaticZ5-sUp7gFk(p0: int, p1: int): void
-    public final method setStaticZ6-sUp7gFk$main(p0: int, p1: int): void
+    public final method setJvmStaticX1-3S9c-qc(p0: int, p1: int): void
+    public final method setJvmStaticX2-3S9c-qc$main(p0: int, p1: int): void
+    private final method setJvmStaticX3-3S9c-qc(p0: int, p1: int): void
+    private final method setJvmStaticX4-3S9c-qc(p0: int, p1: int): void
+    private final method setJvmStaticX5-3S9c-qc(p0: int, p1: int): void
+    public final method setJvmStaticX6-3S9c-qc$main(p0: int, p1: int): void
+    public final method setJvmStaticY1-LJYh5uw(p0: int, p1: int): void
+    public final method setJvmStaticY2-LJYh5uw$main(p0: int, p1: int): void
+    private final method setJvmStaticY3-LJYh5uw(p0: int, p1: int): void
+    private final method setJvmStaticY4-LJYh5uw(p0: int, p1: int): void
+    private final method setJvmStaticY5-LJYh5uw(p0: int, p1: int): void
+    public final method setJvmStaticY6-LJYh5uw$main(p0: int, p1: int): void
+    public final method setJvmStaticZ1-ebpot8A(p0: int, p1: int): void
+    public final method setJvmStaticZ2-ebpot8A$main(p0: int, p1: int): void
+    private final method setJvmStaticZ3-ebpot8A(p0: int, p1: int): void
+    private final method setJvmStaticZ4-ebpot8A(p0: int, p1: int): void
+    private final method setJvmStaticZ5-ebpot8A(p0: int, p1: int): void
+    public final method setJvmStaticZ6-ebpot8A$main(p0: int, p1: int): void
+    public final method setStaticX1-3S9c-qc(p0: int, p1: int): void
+    public final method setStaticX2-3S9c-qc$main(p0: int, p1: int): void
+    private final method setStaticX3-3S9c-qc(p0: int, p1: int): void
+    private final method setStaticX4-3S9c-qc(p0: int, p1: int): void
+    private final method setStaticX5-3S9c-qc(p0: int, p1: int): void
+    public final method setStaticX6-3S9c-qc$main(p0: int, p1: int): void
+    public final method setStaticY1-LJYh5uw(p0: int, p1: int): void
+    public final method setStaticY2-LJYh5uw$main(p0: int, p1: int): void
+    private final method setStaticY3-LJYh5uw(p0: int, p1: int): void
+    private final method setStaticY4-LJYh5uw(p0: int, p1: int): void
+    private final method setStaticY5-LJYh5uw(p0: int, p1: int): void
+    public final method setStaticY6-LJYh5uw$main(p0: int, p1: int): void
+    public final method setStaticZ1-ebpot8A(p0: int, p1: int): void
+    public final method setStaticZ2-ebpot8A$main(p0: int, p1: int): void
+    private final method setStaticZ3-ebpot8A(p0: int, p1: int): void
+    private final method setStaticZ4-ebpot8A(p0: int, p1: int): void
+    private final method setStaticZ5-ebpot8A(p0: int, p1: int): void
+    public final method setStaticZ6-ebpot8A$main(p0: int, p1: int): void
     public final inner class Regular$Companion
 }
 
 @kotlin.Metadata
 public final class Regular {
-    // source: 'visibility.kt'
+    // source: 'module_main_visibility.kt'
     public final static @org.jetbrains.annotations.NotNull field Companion: Regular$Companion
     private static field jvmStaticX1-x: int
     private static field jvmStaticX1-y: int
@@ -836,48 +1011,41 @@ public final class Regular {
     public final @org.jetbrains.annotations.NotNull method getZ6(): Private
     public synthetic final method getZ6-x(): int
     public synthetic final method getZ6-y(): int
-    public final static method setJvmStaticX1-sUp7gFk(p0: int, p1: int): void
-    public final static method setJvmStaticX2-sUp7gFk$main(p0: int, p1: int): void
-    private final static method setJvmStaticX3-sUp7gFk(p0: int, p1: int): void
-    private final static method setJvmStaticX4-sUp7gFk(p0: int, p1: int): void
-    private final static method setJvmStaticX5-sUp7gFk(p0: int, p1: int): void
-    public final static method setJvmStaticX6-sUp7gFk$main(p0: int, p1: int): void
-    public final static method setJvmStaticY1-sUp7gFk(p0: int, p1: int): void
-    public final static method setJvmStaticY2-sUp7gFk$main(p0: int, p1: int): void
-    private final static method setJvmStaticY3-sUp7gFk(p0: int, p1: int): void
-    private final static method setJvmStaticY4-sUp7gFk(p0: int, p1: int): void
-    private final static method setJvmStaticY5-sUp7gFk(p0: int, p1: int): void
-    public final static method setJvmStaticY6-sUp7gFk$main(p0: int, p1: int): void
-    public final static method setJvmStaticZ1-sUp7gFk(p0: int, p1: int): void
-    public final static method setJvmStaticZ2-sUp7gFk$main(p0: int, p1: int): void
-    private final static method setJvmStaticZ3-sUp7gFk(p0: int, p1: int): void
-    private final static method setJvmStaticZ4-sUp7gFk(p0: int, p1: int): void
-    private final static method setJvmStaticZ5-sUp7gFk(p0: int, p1: int): void
-    public final static method setJvmStaticZ6-sUp7gFk$main(p0: int, p1: int): void
-    public final method setX1-sUp7gFk(p0: int, p1: int): void
-    public final method setX2-sUp7gFk$main(p0: int, p1: int): void
-    private final method setX3-sUp7gFk(p0: int, p1: int): void
-    private final method setX4-sUp7gFk(p0: int, p1: int): void
-    private final method setX5-sUp7gFk(p0: int, p1: int): void
-    public final method setX6-sUp7gFk$main(p0: int, p1: int): void
-    public final method setY1-sUp7gFk(p0: int, p1: int): void
-    public final method setY2-sUp7gFk$main(p0: int, p1: int): void
-    private final method setY3-sUp7gFk(p0: int, p1: int): void
-    private final method setY4-sUp7gFk(p0: int, p1: int): void
-    private final method setY5-sUp7gFk(p0: int, p1: int): void
-    public final method setY6-sUp7gFk$main(p0: int, p1: int): void
-    public final method setZ1-sUp7gFk(p0: int, p1: int): void
-    public final method setZ2-sUp7gFk$main(p0: int, p1: int): void
-    private final method setZ3-sUp7gFk(p0: int, p1: int): void
-    private final method setZ4-sUp7gFk(p0: int, p1: int): void
-    private final method setZ5-sUp7gFk(p0: int, p1: int): void
-    public final method setZ6-sUp7gFk$main(p0: int, p1: int): void
-    public final inner class Regular$Companion
-}
-
-@kotlin.Metadata
-public final class VisibilityKt {
-    // source: 'visibility.kt'
-    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    public final static method setJvmStaticX1-3S9c-qc(p0: int, p1: int): void
+    public final static method setJvmStaticX2-3S9c-qc$main(p0: int, p1: int): void
+    private final static method setJvmStaticX3-3S9c-qc(p0: int, p1: int): void
+    private final static method setJvmStaticX4-3S9c-qc(p0: int, p1: int): void
+    private final static method setJvmStaticX5-3S9c-qc(p0: int, p1: int): void
+    public final static method setJvmStaticX6-3S9c-qc$main(p0: int, p1: int): void
+    public final static method setJvmStaticY1-LJYh5uw(p0: int, p1: int): void
+    public final static method setJvmStaticY2-LJYh5uw$main(p0: int, p1: int): void
+    private final static method setJvmStaticY3-LJYh5uw(p0: int, p1: int): void
+    private final static method setJvmStaticY4-LJYh5uw(p0: int, p1: int): void
+    private final static method setJvmStaticY5-LJYh5uw(p0: int, p1: int): void
+    public final static method setJvmStaticY6-LJYh5uw$main(p0: int, p1: int): void
+    public final static method setJvmStaticZ1-ebpot8A(p0: int, p1: int): void
+    public final static method setJvmStaticZ2-ebpot8A$main(p0: int, p1: int): void
+    private final static method setJvmStaticZ3-ebpot8A(p0: int, p1: int): void
+    private final static method setJvmStaticZ4-ebpot8A(p0: int, p1: int): void
+    private final static method setJvmStaticZ5-ebpot8A(p0: int, p1: int): void
+    public final static method setJvmStaticZ6-ebpot8A$main(p0: int, p1: int): void
+    public final method setX1-3S9c-qc(p0: int, p1: int): void
+    public final method setX2-3S9c-qc$main(p0: int, p1: int): void
+    private final method setX3-3S9c-qc(p0: int, p1: int): void
+    private final method setX4-3S9c-qc(p0: int, p1: int): void
+    private final method setX5-3S9c-qc(p0: int, p1: int): void
+    public final method setX6-3S9c-qc$main(p0: int, p1: int): void
+    public final method setY1-LJYh5uw(p0: int, p1: int): void
+    public final method setY2-LJYh5uw$main(p0: int, p1: int): void
+    private final method setY3-LJYh5uw(p0: int, p1: int): void
+    private final method setY4-LJYh5uw(p0: int, p1: int): void
+    private final method setY5-LJYh5uw(p0: int, p1: int): void
+    public final method setY6-LJYh5uw$main(p0: int, p1: int): void
+    public final method setZ1-ebpot8A(p0: int, p1: int): void
+    public final method setZ2-ebpot8A$main(p0: int, p1: int): void
+    private final method setZ3-ebpot8A(p0: int, p1: int): void
+    private final method setZ4-ebpot8A(p0: int, p1: int): void
+    private final method setZ5-ebpot8A(p0: int, p1: int): void
+    public final method setZ6-ebpot8A$main(p0: int, p1: int): void
     public final inner class Regular$Companion
 }

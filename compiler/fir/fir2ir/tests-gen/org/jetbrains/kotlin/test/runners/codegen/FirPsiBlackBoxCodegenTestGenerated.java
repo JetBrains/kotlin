@@ -51732,6 +51732,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("fakeOverrideCall.kt")
+        public void testFakeOverrideCall() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/fakeOverrideCall.kt");
+        }
+
+        @Test
         @TestMetadata("forStatement.kt")
         public void testForStatement() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/forStatement.kt");
@@ -51798,6 +51804,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("multiModules.kt")
+        public void testMultiModules() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/multiModules.kt");
+        }
+
+        @Test
         @TestMetadata("mutableSharedMfvcVar.kt")
         public void testMutableSharedMfvcVar() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/mutableSharedMfvcVar.kt");
@@ -51819,6 +51831,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         @TestMetadata("overrides_typeParameters.kt")
         public void testOverrides_typeParameters() throws Exception {
             runTest("compiler/testData/codegen/box/valueClasses/overrides_typeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("regularClassSecondaryConstructorWithMfvc.kt")
+        public void testRegularClassSecondaryConstructorWithMfvc() throws Exception {
+            runTest("compiler/testData/codegen/box/valueClasses/regularClassSecondaryConstructorWithMfvc.kt");
         }
 
         @Test

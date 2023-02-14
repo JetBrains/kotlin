@@ -41,7 +41,7 @@ public final class MFVC2 {
     public synthetic final static method box-impl(p0: Generic, p1: int): MFVC2
     public final static method constructor-impl(@org.jetbrains.annotations.NotNull p0: Generic, p1: int): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
-    public final static method equals-GPBa7dw(@org.jetbrains.annotations.NotNull p0: Generic, p1: int, p2: double, p3: int, p4: int): boolean
+    public final static method equals-7Pc2DFw(@org.jetbrains.annotations.NotNull p0: Generic, p1: int, p2: double, p3: int, p4: int): boolean
     public static method equals-impl(p0: Generic, p1: int, p2: java.lang.Object): boolean
     public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: Generic, p1: int, @org.jetbrains.annotations.NotNull p2: Generic, p3: int): boolean
     public final method getOther(): int

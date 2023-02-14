@@ -70,9 +70,9 @@ public final class DSegment {
 @kotlin.Metadata
 public final class DependencyKt {
     // source: 'dependency.kt'
-    public final static method getLength1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): double
-    public final static @org.jetbrains.annotations.NotNull method getMiddle1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): DPoint
-    public final static @org.jetbrains.annotations.NotNull method myLet-GPBa7dw(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function1): DPoint
+    public final static method getLength1-3dRLH6g(p0: double, p1: double, p2: double, p3: double): double
+    public final static @org.jetbrains.annotations.NotNull method getMiddle1-3dRLH6g(p0: double, p1: double, p2: double, p3: double): DPoint
+    public final static @org.jetbrains.annotations.NotNull method myLet-X39isKk(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function1): DPoint
     public final static method square(p0: double): double
 }
 

@@ -65,7 +65,7 @@ public final class B {
     public synthetic final method getX-x(): int
     public synthetic final method getX-y(): int
     public final @org.jetbrains.annotations.Nullable method getY(): A
-    public final method setX-sUp7gFk(p0: int, p1: int): void
+    public final method setX-iUtXLc0(p0: int, p1: int): void
     public final method setY(@org.jetbrains.annotations.Nullable p0: A): void
 }
 

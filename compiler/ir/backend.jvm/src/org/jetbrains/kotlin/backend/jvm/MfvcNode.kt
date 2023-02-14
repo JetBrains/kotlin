@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode
-import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode.*
+import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode.Getter
+import org.jetbrains.kotlin.backend.jvm.NameableMfvcNodeImpl.Companion.MethodFullNameMode.UnboxFunction
 import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.ir.isMultiFieldValueClassType
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
@@ -84,6 +85,7 @@ fun makeTypeArgumentsFromType(type: IrSimpleType): TypeArguments {
 
 sealed interface NameableMfvcNode : MfvcNode {
     val namedNodeImpl: NameableMfvcNodeImpl
+    val hasPureUnboxMethod: Boolean
 }
 
 val NameableMfvcNode.nameParts: List<Name>
@@ -96,15 +98,12 @@ val NameableMfvcNode.fullMethodName: Name
     get() = namedNodeImpl.fullMethodName
 val NameableMfvcNode.fullFieldName: Name
     get() = namedNodeImpl.fullFieldName
-val NameableMfvcNode.hasPureUnboxMethod: Boolean
-    get() = namedNodeImpl.hasPureUnboxMethod
 
 
 class NameableMfvcNodeImpl(
     methodFullNameMode: MethodFullNameMode,
     val nameParts: List<Name>,
     val unboxMethod: IrSimpleFunction,
-    val hasPureUnboxMethod: Boolean,
 ) {
     val fullMethodName = makeFullMethodName(methodFullNameMode, nameParts)
     val fullFieldName = makeFullFieldName(nameParts)
@@ -239,8 +238,8 @@ val MfvcNodeWithSubnodes.leaves: List<LeafMfvcNode>
     get() = subnodesImpl.leaves
 val MfvcNodeWithSubnodes.fields: List<IrField>?
     get() = subnodesImpl.fields
-val RootMfvcNode.fields: List<IrField>
-    get() = subnodesImpl.fields!!
+val RootMfvcNode.fields: List<IrField>?
+    get() = subnodesImpl.fields
 val MfvcNodeWithSubnodes.indices: IntRange
     get() = subnodesImpl.indices
 val MfvcNodeWithSubnodes.subnodeIndices: Map<NameableMfvcNode, IntRange>
@@ -286,9 +285,11 @@ class LeafMfvcNode(
     nameParts: List<Name>,
     val field: IrField?,
     unboxMethod: IrSimpleFunction,
-    hasPureUnboxMethod: Boolean,
+    defaultMethodsImplementationSourceNode: UnboxFunctionImplementation
 ) : NameableMfvcNode {
-    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(methodFullNameMode, nameParts, unboxMethod, hasPureUnboxMethod)
+
+    override val hasPureUnboxMethod: Boolean = defaultMethodsImplementationSourceNode.hasPureUnboxMethod
+    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(methodFullNameMode, nameParts, unboxMethod)
 
     override val leavesCount: Int
         get() = 1
@@ -327,10 +328,12 @@ class IntermediateMfvcNode(
     nameParts: List<Name>,
     subnodes: List<NameableMfvcNode>,
     unboxMethod: IrSimpleFunction,
-    hasPureUnboxMethod: Boolean,
+    defaultMethodsImplementationSourceNode: UnboxFunctionImplementation,
     val rootNode: RootMfvcNode, // root node corresponding type of the node
 ) : NameableMfvcNode, MfvcNodeWithSubnodes {
-    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(methodFullNameMode, nameParts, unboxMethod, hasPureUnboxMethod)
+    override val hasPureUnboxMethod: Boolean =
+        defaultMethodsImplementationSourceNode.hasPureUnboxMethod && subnodes.all { it.hasPureUnboxMethod }
+    override val namedNodeImpl: NameableMfvcNodeImpl = NameableMfvcNodeImpl(methodFullNameMode, nameParts, unboxMethod)
     override val subnodesImpl: MfvcNodeWithSubnodesImpl = MfvcNodeWithSubnodesImpl(subnodes, unboxMethod)
     override val leavesCount
         get() = leaves.size
@@ -401,7 +404,7 @@ class RootMfvcNode internal constructor(
     override val leavesUnboxMethods: List<IrSimpleFunction> = collectLeavesUnboxMethods()
 
     init {
-        require(type.needsMfvcFlattening()) { "MFVC type expected but got% ${type.render()}" }
+        require(type.needsMfvcFlattening()) { "MFVC type expected but got: ${type.render()}" }
         for (constructor in listOf(oldPrimaryConstructor, newPrimaryConstructor)) {
             require(constructor.isPrimary) { "Expected a primary constructor but got:\n${constructor.dump()}" }
         }
