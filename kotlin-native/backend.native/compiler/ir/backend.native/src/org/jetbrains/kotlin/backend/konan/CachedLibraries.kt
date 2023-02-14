@@ -175,16 +175,16 @@ class CachedLibraries(
                     ?: error("No cache found for library ${library.libraryName} at $explicitPath")
         } else {
             val libraryPath = library.libraryFile.absolutePath
-            if (autoCacheableFrom.any { libraryPath.startsWith(it.absolutePath) }) {
-                val dir = computeVersionedCacheDirectory(autoCacheDirectory, library, uniqueNameToLibrary)
+            implicitCacheDirectories.firstNotNullOfOrNull { dir ->
                 selectCache(library, dir.child(getPerFileCachedLibraryName(library)))
                         ?: selectCache(library, dir.child(getCachedLibraryName(library)))
-            } else {
-                implicitCacheDirectories.firstNotNullOfOrNull { dir ->
-                    selectCache(library, dir.child(getPerFileCachedLibraryName(library)))
-                            ?: selectCache(library, dir.child(getCachedLibraryName(library)))
-                }
             }
+                    ?: autoCacheDirectory.takeIf { autoCacheableFrom.any { libraryPath.startsWith(it.absolutePath) } }
+                            ?.let {
+                                val dir = computeVersionedCacheDirectory(it, library, uniqueNameToLibrary)
+                                selectCache(library, dir.child(getPerFileCachedLibraryName(library)))
+                                        ?: selectCache(library, dir.child(getCachedLibraryName(library)))
+                            }
         }
 
         cache?.let { library to it }
