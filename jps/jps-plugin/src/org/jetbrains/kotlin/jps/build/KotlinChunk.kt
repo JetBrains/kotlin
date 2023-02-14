@@ -135,7 +135,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
     }
 
     val isEnabled: Boolean by lazy {
-        representativeTarget.isEnabled(compilerArguments)
+        representativeTarget.isEnabled(lazy { compilerArguments })
     }
 
     fun shouldRebuild(): Boolean {
