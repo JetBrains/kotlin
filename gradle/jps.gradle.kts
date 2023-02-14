@@ -71,6 +71,7 @@ fun updateCompilerXml() {
         "libraries/examples",
         "libraries/tools/kotlin-gradle-plugin-idea-proto",
         "libraries/tools/kotlin-project-model-tests-generator",
+        "repo/gradle-settings-conventions",
     )
 
     val d = '$'
