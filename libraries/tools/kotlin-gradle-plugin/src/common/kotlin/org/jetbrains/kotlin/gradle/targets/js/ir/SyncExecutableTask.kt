@@ -27,11 +27,11 @@ abstract class SyncExecutableTask : Copy() {
     abstract val hashDir: Property<File>
 
     override fun copy() {
-        val actualFiles = mutableSetOf<String>()
+        val actualFiles = mutableSetOf<File>()
 
         val hashDirFile = hashDir.get()
         eachFile {
-            actualFiles.add(it.relativeSourcePath.pathString)
+            actualFiles.add(it.relativeSourcePath.getFile(destinationDir))
 
             val hashFile = hashDirFile.resolve(it.relativeSourcePath.pathString + ".$HASH_EXTENSION")
 
@@ -71,7 +71,7 @@ abstract class SyncExecutableTask : Copy() {
             .from(hashDirFile)
             .files
             .forEach {
-                if (it.relativeTo(hashDirFile).path.removeSuffix(".$HASH_EXTENSION") !in actualFiles) {
+                if (destinationDir.resolve(it.relativeTo(hashDirFile).path.removeSuffix(".$HASH_EXTENSION")) !in actualFiles) {
                     it.delete()
                 }
             }
@@ -80,7 +80,7 @@ abstract class SyncExecutableTask : Copy() {
             .from(destinationDir)
             .files
             .forEach {
-                if (it.relativeTo(destinationDir).path !in actualFiles) {
+                if (it !in actualFiles) {
                     it.delete()
                 }
             }
