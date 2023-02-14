@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
-import org.jetbrains.kotlin.ir.types.impl.*
+import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
+import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -158,7 +161,7 @@ class Fir2IrTypeConverter(
                 val approximatedType = approximateType(expandedType)
                 IrSimpleTypeImpl(
                     irSymbol,
-                    hasQuestionMark = !typeContext.definitelyNotNull && approximatedType.isMarkedNullable,
+                    hasQuestionMark = approximatedType.isMarkedNullable,
                     arguments = approximatedType.typeArguments.map { it.toIrTypeArgument(typeContext) },
                     annotations = typeAnnotations
                 )

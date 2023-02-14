@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -103,35 +102,26 @@ internal enum class ConversionTypeOrigin {
 }
 
 class ConversionTypeContext internal constructor(
-    internal val definitelyNotNull: Boolean,
     internal val invariantProjection: Boolean = false,
     internal val origin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
 ) {
-    fun definitelyNotNull() = ConversionTypeContext(
-        definitelyNotNull = true,
-        invariantProjection = invariantProjection,
-        origin = origin
-    )
-
     fun inSetter() = ConversionTypeContext(
-        definitelyNotNull = definitelyNotNull,
         invariantProjection = invariantProjection,
         origin = ConversionTypeOrigin.SETTER
     )
 
     fun withInvariantProjections() = ConversionTypeContext(
-        definitelyNotNull = definitelyNotNull,
         invariantProjection = true,
         origin = origin
     )
 
     companion object {
         internal val DEFAULT = ConversionTypeContext(
-            definitelyNotNull = false, origin = ConversionTypeOrigin.DEFAULT, invariantProjection = false
+            invariantProjection = false, origin = ConversionTypeOrigin.DEFAULT
         )
         internal val WITH_INVARIANT = DEFAULT.withInvariantProjections()
         internal val IN_SETTER = ConversionTypeContext(
-            definitelyNotNull = false, origin = ConversionTypeOrigin.SETTER, invariantProjection = false
+            invariantProjection = false, origin = ConversionTypeOrigin.SETTER
         )
     }
 }
