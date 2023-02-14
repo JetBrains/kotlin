@@ -78,13 +78,13 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 /* Find posix library */
                 run {
                     nativeMainDependencies.assertMatches(
-                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:platform.posix:.*")),
-                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:platform.*"))
+                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:posix:.*")),
+                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:.*"))
                     )
 
                     linuxMainDependencies.assertMatches(
-                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:platform.posix:.*")),
-                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:platform.*"))
+                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:posix:.*")),
+                        binaryCoordinates(Regex("org\\.jetbrains\\.kotlin\\.native:.*"))
                     )
                 }
             }

@@ -40,8 +40,8 @@ internal fun Project.resolveNativeDistributionLibraryForIde(
         classpath = IdeaKotlinClasspath(library),
         coordinates = IdeaKotlinBinaryCoordinates(
             group = "org.jetbrains.kotlin.native",
-            module = resolvedLibrary.packageFqName ?: resolvedLibrary.shortName ?: resolvedLibrary.uniqueName,
-            version = project.konanVersion.toString(),
+            module = resolvedLibrary.shortName ?: resolvedLibrary.uniqueName.split(".").last(),
+            version = project.konanVersion,
             sourceSetName = target.identityString
         ),
     ).apply {
