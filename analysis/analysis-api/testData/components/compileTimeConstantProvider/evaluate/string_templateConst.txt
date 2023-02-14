@@ -1,0 +1,9 @@
+expression: "The answer to ${QUESTION} is ${ANSWER}."
+
+CONSTANT_EXPRESSION_EVALUATION
+constant: "The answer to the ultimate question of life, the universe, and everything is 42."
+constantValueKind: String
+
+CONSTANT_LIKE_EXPRESSION_EVALUATION
+constantLike: "The answer to the ultimate question of life, the universe, and everything is 42."
+constantLikeValueKind: String

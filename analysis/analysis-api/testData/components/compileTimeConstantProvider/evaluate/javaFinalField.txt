@@ -1,8 +1,8 @@
 expression: Build.VERSION_CODES().CUPCAKE
 
 CONSTANT_EXPRESSION_EVALUATION
-constant: 3
-constantValueKind: Int
+constant: NOT_EVALUATED
+constantValueKind: NOT_EVALUATED
 
 CONSTANT_LIKE_EXPRESSION_EVALUATION
 constantLike: 3
