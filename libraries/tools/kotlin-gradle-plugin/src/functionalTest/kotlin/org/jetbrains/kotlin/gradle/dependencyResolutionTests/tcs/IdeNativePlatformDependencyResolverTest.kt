@@ -33,7 +33,7 @@ class IdeNativePlatformDependencyResolverTest {
         val linuxX64Test = kotlin.sourceSets.getByName("linuxX64Test")
 
         val dependencies = listOf(
-            binaryCoordinates("org.jetbrains.kotlin.native:platform.posix:${project.konanVersion}:$LINUX_X64"),
+            binaryCoordinates("org.jetbrains.kotlin.native:posix:${project.konanVersion}:$LINUX_X64"),
             binaryCoordinates(Regex("""org\.jetbrains\.kotlin\.native:.*:${project.konanVersion}:$LINUX_X64"""))
         )
 
@@ -56,7 +56,7 @@ class IdeNativePlatformDependencyResolverTest {
         val macosArm64Test = kotlin.sourceSets.getByName("macosArm64Test")
 
         val dependencies = listOf(
-            binaryCoordinates("org.jetbrains.kotlin.native:platform.CoreFoundation:${project.konanVersion}:$MACOS_ARM64"),
+            binaryCoordinates("org.jetbrains.kotlin.native:CoreFoundation:${project.konanVersion}:$MACOS_ARM64"),
             binaryCoordinates(Regex("""org\.jetbrains\.kotlin\.native:.*:${project.konanVersion}:$MACOS_ARM64"""))
         )
 
