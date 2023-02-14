@@ -94,7 +94,7 @@ the Kotlin IntelliJ IDEA plugin:
       - Origin: Derived from boost special math functions, Copyright Eric Ford & Hubert Holin 2001.
 
  - Path: libraries/stdlib/wasm/internal/kotlin/wasm/internal/Number2String.kt
-      - License: Apache 2 ([third_party/assemblyscript_license.txt][assemblyscript])
+      - License: Apache 2 ([license/third_party/assemblyscript_license.txt][assemblyscript])
       - Origin: Derived from assemblyscript standard library
 
  - Path: plugins/lint/android-annotations
