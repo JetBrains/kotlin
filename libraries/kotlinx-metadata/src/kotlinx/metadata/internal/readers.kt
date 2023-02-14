@@ -515,7 +515,7 @@ private fun ProtoBuf.Expression.accept(v: KmEffectExpressionVisitor, c: ReadCont
 }
 
 private val ProtoBuf.Type.typeFlags: Flags
-    get() = (if (nullable) 1 shl 0 else 0) +
+    get() = (if (nullable) 1 else 0) +
             (flags shl 1)
 
 private val ProtoBuf.TypeParameter.typeParameterFlags: Flags
