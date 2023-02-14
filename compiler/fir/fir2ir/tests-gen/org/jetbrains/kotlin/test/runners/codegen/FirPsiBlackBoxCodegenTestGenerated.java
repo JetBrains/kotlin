@@ -43019,6 +43019,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primaryValOfInlineClass.kt");
                 }
 
+                @Test
+                @TestMetadata("simpleConstructorWithInlineClassParameter.kt")
+                public void testSimpleConstructorWithInlineClassParameter() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/simpleConstructorWithInlineClassParameter.kt");
+                }
+
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject")
                 @TestDataPath("$PROJECT_ROOT")

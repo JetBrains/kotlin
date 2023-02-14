@@ -32674,6 +32674,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/primaryValOfInlineClass.kt");
                 }
 
+                @TestMetadata("simpleConstructorWithInlineClassParameter.kt")
+                public void testSimpleConstructorWithInlineClassParameter() throws Exception {
+                    runTest("compiler/testData/codegen/box/reflection/call/inlineClasses/simpleConstructorWithInlineClassParameter.kt");
+                }
+
                 @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject")
                 @TestDataPath("$PROJECT_ROOT")
                 @RunWith(JUnit3RunnerWithInners.class)

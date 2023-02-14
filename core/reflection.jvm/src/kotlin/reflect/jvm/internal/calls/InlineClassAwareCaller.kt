@@ -125,16 +125,21 @@ internal class InlineClassAwareCaller<out M : Member?>(
         val (range, unbox, box) = data
 
         @Suppress("UNCHECKED_CAST")
-        val unboxed = args.copyOf() as Array<Any?>
-        for (index in range) {
-            val method = unbox[index]
+        val unboxed = Array(args.size) { index ->
             val arg = args[index]
-            // Note that arg may be null in case we're calling a $default method and it's an optional parameter of an inline class type
-            unboxed[index] = if (method != null) {
-                if (arg != null) {
-                    method.invoke(arg)
+
+            if (index in range) {
+                // Note that arg may be null in case we're calling a $default method and it's an optional parameter of an inline class type
+                val method = unbox[index]
+
+                if (method != null) {
+                    if (arg != null) {
+                        method.invoke(arg)
+                    } else {
+                        defaultPrimitiveValue(method.returnType)
+                    }
                 } else {
-                    defaultPrimitiveValue(method.returnType)
+                    arg
                 }
             } else {
                 arg
