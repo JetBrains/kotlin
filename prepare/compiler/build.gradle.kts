@@ -172,8 +172,6 @@ dependencies {
         sources(project(it, configuration = "sources"))
     }
 
-    sources(project(":kotlin-test", "combinedJvmSourcesJar"))
-
     sources(kotlinStdlib("jdk7", classifier = "sources"))
     sources(kotlinStdlib("jdk8", classifier = "sources"))
 
@@ -184,6 +182,7 @@ dependencies {
         sources(project(":kotlin-stdlib", configuration = "distSources"))
         sources(project(":kotlin-stdlib-js", configuration = "distSources"))
         sources(project(":kotlin-reflect", configuration = "sources"))
+        sources(project(":kotlin-test", "combinedJvmSourcesJar"))
 
         distStdlibMinimalForTests(project(":kotlin-stdlib-jvm-minimal-for-test"))
 
