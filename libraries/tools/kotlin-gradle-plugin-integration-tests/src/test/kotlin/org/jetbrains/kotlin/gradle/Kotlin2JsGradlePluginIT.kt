@@ -29,6 +29,7 @@ import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -260,6 +261,46 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             appBuildGradleKts.writeText(buildGradleKtsWithoutDependency)
             build("compileDevelopmentExecutableKotlinJs") {
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
+            }
+        }
+    }
+
+    @GradleTest
+    fun testJsIrOnlyChangedFilesSynced(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            val filesModified: MutableMap<String, Long> = mutableMapOf()
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                projectPath.resolve("build/js/packages/kotlin-js-browser-app").resolve("kotlin")
+                    .listDirectoryEntries()
+                    .map { it.toFile() }
+                    .associateByTo(filesModified, { it.path }) {
+                        it.lastModified()
+                    }
+            }
+
+            projectPath.resolve("base/src/main/kotlin/Base.kt").modify {
+                it.replace("73", "37")
+            }
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                val modified = projectPath.resolve("build/js/packages/kotlin-js-browser-app").resolve("kotlin")
+                    .listDirectoryEntries()
+                    .filterNot { filesModified[it.pathString] == it.toFile().lastModified() }
+                    .toSet()
+
+                assertEquals(
+                    setOf(
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/kotlin-js-browser-base-js-ir.js"),
+                    ),
+                    modified.toSet()
+                )
             }
         }
     }
