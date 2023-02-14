@@ -6700,6 +6700,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             }
 
             @Test
+            @TestMetadata("classCastWithRawKotlinType.kt")
+            public void testClassCastWithRawKotlinType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/classCastWithRawKotlinType.kt");
+            }
+
+            @Test
             @TestMetadata("DeepCopyIrTree.kt")
             public void testDeepCopyIrTree() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/DeepCopyIrTree.kt");

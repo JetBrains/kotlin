@@ -236,7 +236,7 @@ class ConeRawScopeSubstitutor(
         return when {
             type is ConeTypeParameterType -> {
                 substituteOrSelf(
-                    listOf(type.lookupTag.symbol).eraseToUpperBounds(useSiteSession)[0] as ConeKotlinType
+                    listOf(type.lookupTag.symbol).getProjectionsForRawType(useSiteSession)[0] as ConeKotlinType
                 )
             }
             type is ConeClassLikeType && type.typeArguments.isNotEmpty() -> {
@@ -251,7 +251,7 @@ class ConeRawScopeSubstitutor(
 
                 val firClass = type.fullyExpandedType(useSiteSession).lookupTag.toFirRegularClassSymbol(useSiteSession) ?: return null
                 ConeRawType.create(
-                    type.withArguments(firClass.typeParameterSymbols.eraseToUpperBounds(useSiteSession)),
+                    type.withArguments(firClass.typeParameterSymbols.getProjectionsForRawType(useSiteSession)),
                     type.replaceArgumentsWithStarProjections()
                 )
             }

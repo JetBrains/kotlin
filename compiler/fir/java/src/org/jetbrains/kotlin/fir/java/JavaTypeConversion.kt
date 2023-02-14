@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
@@ -194,7 +193,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                     // Given `C<T : X>`, `C` -> `C<X>..C<*>?`.
                     when (mode) {
                         FirJavaTypeConversionMode.ANNOTATION_MEMBER -> Array(classifier.typeParameters.size) { ConeStarProjection }
-                        else -> typeParameterSymbols?.eraseToUpperBounds(session)
+                        else -> typeParameterSymbols?.getProjectionsForRawType(session)
                             ?: Array(classifier.typeParameters.size) { ConeStarProjection }
                     }
                 }

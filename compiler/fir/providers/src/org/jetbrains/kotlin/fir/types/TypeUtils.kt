@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -630,13 +631,17 @@ fun List<FirTypeParameterSymbol>.eraseToUpperBoundsAssociated(
     eraseRecursively: Boolean = false
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
     val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
-    return associateWith { it.fir.eraseToUpperBound(session, cache, intersectUpperBounds, eraseRecursively) }
+    return associateWith {
+        it.fir.eraseToUpperBound(session, cache, intersectUpperBounds, eraseRecursively, boundsShouldBeResolved = true)
+    }
 }
 
-fun List<FirTypeParameterSymbol>.eraseToUpperBounds(session: FirSession): Array<ConeTypeProjection> {
+fun List<FirTypeParameterSymbol>.getProjectionsForRawType(session: FirSession): Array<ConeTypeProjection> {
     val cache = mutableMapOf<FirTypeParameter, ConeKotlinType>()
     return Array(size) { index ->
-        this[index].fir.eraseToUpperBound(session, cache, intersectUpperBounds = false, eraseRecursively = false)
+        this[index].fir.eraseToUpperBound(
+            session, cache, intersectUpperBounds = false, eraseRecursively = false, boundsShouldBeResolved = false
+        )
     }
 }
 
@@ -644,10 +649,11 @@ private fun FirTypeParameter.eraseToUpperBound(
     session: FirSession,
     cache: MutableMap<FirTypeParameter, ConeKotlinType>,
     intersectUpperBounds: Boolean,
-    eraseRecursively: Boolean
+    eraseRecursively: Boolean,
+    boundsShouldBeResolved: Boolean
 ): ConeKotlinType {
     fun eraseAsUpperBound(type: FirResolvedTypeRef) =
-        type.coneType.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively)
+        type.coneType.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively, boundsShouldBeResolved)
 
     return cache.getOrPut(this) {
         // Mark to avoid loops.
@@ -656,7 +662,22 @@ private fun FirTypeParameter.eraseToUpperBound(
         if (intersectUpperBounds) {
             ConeTypeIntersector.intersectTypes(session.typeContext, symbol.resolvedBounds.map(::eraseAsUpperBound))
         } else {
-            eraseAsUpperBound(symbol.fir.bounds.first() as FirResolvedTypeRef)
+            val boundTypeRef = bounds.first()
+            when {
+                boundTypeRef is FirResolvedTypeRef -> eraseAsUpperBound(boundTypeRef)
+                // As we currently know, a raw supertype is the only example
+                // when bounds can be unresolved here (see the branch below).
+                // This exception is expected to find other possible occurrences, if any.
+                boundsShouldBeResolved -> throw IllegalStateException(
+                    "Bounds of ${render()} type parameter of ${containingDeclarationSymbol.fir.render()} aren't resolved"
+                )
+                // While resolving raw supertype in Java we may encounter a situation
+                // when this supertype constructor has some type parameters and
+                // their bounds aren't yet resolved. See KT-56630 and comments inside.
+                // Yet we are replacing these bounds with just 'Any'.
+                // TODO: think how can we replace it with more correct decision.
+                else -> session.builtinTypes.anyType.type
+            }
         }
     }
 }
@@ -665,6 +686,7 @@ private fun SimpleTypeMarker.eraseArgumentsDeeply(
     typeContext: ConeInferenceContext,
     cache: MutableMap<FirTypeParameter, ConeKotlinType>,
     intersectUpperBounds: Boolean,
+    boundsShouldBeResolved: Boolean
 ): ConeKotlinType = with(typeContext) {
     replaceArgumentsDeeply { typeArgument ->
         if (typeArgument.isStarProjection())
@@ -676,7 +698,7 @@ private fun SimpleTypeMarker.eraseArgumentsDeeply(
         typeConstructor as ConeTypeParameterLookupTag
 
         val erasedType = typeConstructor.typeParameterSymbol.fir.eraseToUpperBound(
-            session, cache, intersectUpperBounds, eraseRecursively = true
+            session, cache, intersectUpperBounds, eraseRecursively = true, boundsShouldBeResolved = boundsShouldBeResolved
         )
 
         if ((erasedType as? ConeErrorType)?.diagnostic is ConeRecursiveTypeParameterDuringErasureError)
@@ -690,12 +712,13 @@ private fun ConeKotlinType.eraseAsUpperBound(
     session: FirSession,
     cache: MutableMap<FirTypeParameter, ConeKotlinType>,
     intersectUpperBounds: Boolean,
-    eraseRecursively: Boolean
+    eraseRecursively: Boolean,
+    boundsShouldBeResolved: Boolean
 ): ConeKotlinType =
     when (this) {
         is ConeClassLikeType -> {
             if (eraseRecursively) {
-                eraseArgumentsDeeply(session.typeContext, cache, intersectUpperBounds)
+                eraseArgumentsDeeply(session.typeContext, cache, intersectUpperBounds, boundsShouldBeResolved)
             } else {
                 withArguments(typeArguments.map { ConeStarProjection }.toTypedArray())
             }
@@ -706,17 +729,19 @@ private fun ConeKotlinType.eraseAsUpperBound(
             // so there is no exponential complexity here due to cache lookups.
             coneFlexibleOrSimpleType(
                 session.typeContext,
-                lowerBound.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively),
-                upperBound.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively)
+                lowerBound.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively, boundsShouldBeResolved),
+                upperBound.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively, boundsShouldBeResolved)
             )
 
         is ConeTypeParameterType ->
-            lookupTag.typeParameterSymbol.fir.eraseToUpperBound(session, cache, intersectUpperBounds, eraseRecursively).let {
+            lookupTag.typeParameterSymbol.fir.eraseToUpperBound(
+                session, cache, intersectUpperBounds, eraseRecursively, boundsShouldBeResolved
+            ).let {
                 if (isNullable) it.withNullability(nullability, session.typeContext) else it
             }
 
         is ConeDefinitelyNotNullType ->
-            original.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively)
+            original.eraseAsUpperBound(session, cache, intersectUpperBounds, eraseRecursively, boundsShouldBeResolved)
                 .makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
 
         else -> error("unexpected Java type parameter upper bound kind: $this")
