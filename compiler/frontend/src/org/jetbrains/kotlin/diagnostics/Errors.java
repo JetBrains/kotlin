@@ -915,6 +915,7 @@ public interface Errors {
 
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION = DiagnosticFactory2.create(WARNING);
     DiagnosticFactory2<PsiElement, KotlinType, KotlinType> RECEIVER_TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION = DiagnosticFactory2.create(WARNING);
+    DiagnosticFactory2<PsiElement, KotlinType, KotlinType> RECEIVER_TYPE_MISMATCH = DiagnosticFactory2.create(ERROR);
 
     // Type inference
 

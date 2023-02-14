@@ -459,19 +459,22 @@ class DiagnosticReporterByTrackingStrategy(
             is ArgumentConstraintPosition<*> -> {
                 reportArgumentConstraintErrorByPosition(
                     error, position.argument as KotlinCallArgument,
-                    isWarning, typeMismatchDiagnostic, report
+                    isWarning, typeMismatchDiagnostic,
+                    kotlinCall = null, report
                 )
             }
             is ReceiverConstraintPosition<*> -> {
                 reportArgumentConstraintErrorByPosition(
                     error, position.argument as KotlinCallArgument,
-                    isWarning, typeMismatchDiagnostic, report
+                    isWarning, typeMismatchDiagnostic,
+                    kotlinCall = (position as ReceiverConstraintPositionImpl).kotlinCall, report
                 )
             }
             is LambdaArgumentConstraintPosition<*> -> {
                 reportArgumentConstraintErrorByPosition(
                     error, (position.lambda as ResolvedLambdaAtom).atom,
-                    isWarning, typeMismatchDiagnostic, report
+                    isWarning, typeMismatchDiagnostic,
+                    kotlinCall = null, report
                 )
             }
             is BuilderInferenceExpectedTypeConstraintPosition -> {
@@ -545,6 +548,7 @@ class DiagnosticReporterByTrackingStrategy(
         argument: KotlinCallArgument,
         isWarning: Boolean,
         typeMismatchDiagnostic: DiagnosticFactory2<KtExpression, KotlinType, KotlinType>,
+        kotlinCall: KotlinCall?,
         report: (Diagnostic) -> Unit
     ) {
         if (argument is LambdaKotlinCallArgument) {
@@ -562,8 +566,15 @@ class DiagnosticReporterByTrackingStrategy(
             }
         }
 
-        // TODO: FIXME (KT-55056)
-        val expression = argument.psiExpression ?: return
+        val expression = argument.psiExpression ?: run {
+            val psiCall = (kotlinCall as? PSIKotlinCall)?.psiCall ?: psiKotlinCall.psiCall
+            report(
+                RECEIVER_TYPE_MISMATCH.on(
+                    psiCall.calleeExpression ?: psiCall.callElement, error.upperKotlinType, error.lowerKotlinType
+                )
+            )
+            return
+        }
 
         val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
         if (reportConstantTypeMismatch(error, deparenthesized)) return
