@@ -339,18 +339,12 @@ private fun doCompileWithK2(
     val projectEnvironment = context.environment.toAbstractProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
-    val sourcesScope = compilerEnvironment.projectEnvironment.getSearchScopeBySourceFiles(sources)
     var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-    val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
+    val incrementalCompilationScope = createIncrementalCompilationScope(
         compilerInput.configuration,
         projectEnvironment,
-        sourcesScope,
-        emptyList(),
-        null
-    )?.also { (_, _, precompiledBinariesFileScope) ->
-        precompiledBinariesFileScope?.let { librariesScope -= it }
-    }
-
+        incrementalExcludesScope = null
+    )?.also { librariesScope -= it }
     val extensionRegistrars = (projectEnvironment as? VfsBasedProjectEnvironment)
         ?.let { FirExtensionRegistrar.getInstances(it.project) }
         .orEmpty()
@@ -364,7 +358,15 @@ private fun doCompileWithK2(
     val session = prepareJvmSessions(
         sourceFiles, kotlinCompilerConfiguration, projectEnvironment, rootModuleName, extensionRegistrars,
         librariesScope, libraryList, isCommonSourceForPsi, fileBelongsToModuleForPsi,
-        createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
+        createProviderAndScopeForIncrementalCompilation = { files ->
+            createContextForIncrementalCompilation(
+                compilerInput.configuration,
+                projectEnvironment,
+                compilerEnvironment.projectEnvironment.getSearchScopeBySourceFiles(files.map { KtPsiSourceFile(it) }),
+                emptyList(),
+                incrementalCompilationScope
+            )
+        }
     ).single().session
 
     session.scriptDefinitionProviderService?.run {

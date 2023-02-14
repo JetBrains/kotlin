@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.createContextForIncrementalCompilation
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.collectSources
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createContextForIncrementalCompilation
+import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.createIncrementalCompilationScope
 import org.jetbrains.kotlin.cli.jvm.compiler.toAbstractProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
@@ -76,20 +77,23 @@ internal class FirMetadataSerializer(
             val groupedSources = collectSources(configuration, projectEnvironment, messageCollector)
             val extensionRegistrars = FirExtensionRegistrar.getInstances(projectEnvironment.project)
             val ltFiles = groupedSources.let { it.commonSources + it.platformSources }.toList()
-            val sourceScope = projectEnvironment.getSearchScopeBySourceFiles(ltFiles)
-            val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
+            val incrementalCompilationScope = createIncrementalCompilationScope(
                 configuration,
                 projectEnvironment,
-                sourceScope,
-                previousStepsSymbolProviders = emptyList(),
                 incrementalExcludesScope = null
-            )?.also { (_, _, precompiledBinariesFileScope) ->
-                precompiledBinariesFileScope?.let { librariesScope -= it }
-            }
+            )?.also { librariesScope -= it }
             val sessionsWithSources = prepareCommonSessions(
                 ltFiles, configuration, projectEnvironment, rootModuleName, extensionRegistrars,
                 librariesScope, libraryList, groupedSources.isCommonSourceForLt, groupedSources.fileBelongsToModuleForLt,
-                createProviderAndScopeForIncrementalCompilation = { providerAndScopeForIncrementalCompilation }
+                createProviderAndScopeForIncrementalCompilation = { files ->
+                    createContextForIncrementalCompilation(
+                        configuration,
+                        projectEnvironment,
+                        projectEnvironment.getSearchScopeBySourceFiles(files),
+                        previousStepsSymbolProviders = emptyList(),
+                        incrementalCompilationScope
+                    )
+                }
             )
             sessionsWithSources.map { (session, files) ->
                 val firFiles = session.buildFirViaLightTree(files, diagnosticsReporter, performanceManager::addSourcesStats)
