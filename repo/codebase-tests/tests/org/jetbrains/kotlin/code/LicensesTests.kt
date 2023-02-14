@@ -11,17 +11,19 @@ import org.junit.Test
 import java.io.File
 
 class LicensesTests {
+    companion object {
+        private const val licenseReadmePath = "license/README.md"
+    }
+
     @Test
     fun testLinksDefinitions() {
-        val licenseDir = File("license")
-
         val linkDefinitionRegExp = Regex(pattern = "\\[(\\w+)]:.+")
         val linkRegExp = Regex(pattern = "]\\s?\\[(\\w+)]")
 
         val linksUsages = mutableSetOf<String>()
         val linksDefinitions = mutableSetOf<String>()
 
-        val readmeFile = File(licenseDir, "README.md")
+        val readmeFile = File(licenseReadmePath)
         readmeFile.useLines { lineSequence ->
             lineSequence.forEach { line ->
                 val definitionMatch = linkDefinitionRegExp.matchEntire(line)
@@ -35,15 +37,15 @@ class LicensesTests {
 
         KtUsefulTestCase.assertOrderedEquals(
             "Incorrect links definitions usage in $readmeFile. Expected - links definitions. Actual - links usages",
-            linksUsages.sortedBy { it },
-            linksDefinitions.sortedBy { it }
+            linksUsages.sorted(),
+            linksDefinitions.sorted()
         )
     }
 
     @Test
     fun testLicensesAreExistingFiles() {
         val licenseReferenceRegexp = Regex("\\[([^]]*third_party/[^]]*\\.txt)]")
-        val readmeFile = File("license/README.md")
+        val readmeFile = File(licenseReadmePath)
         val linkedInReadme = readmeFile.useLines { lineSequence ->
             lineSequence.flatMap { line ->
                 licenseReferenceRegexp.findAll(line).map { it.groups[1]?.value ?: error("Should be present because of match") }
