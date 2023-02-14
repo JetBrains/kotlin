@@ -38,12 +38,12 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             fun Int.Foo(content: @Composable Int.(foo: String) -> Unit) {
-                content(<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>)<!>
+                content<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>()<!>
             }
 
             @Composable
             fun Bar(content: @Composable Int.() -> Unit) {
-                content(<!NO_VALUE_FOR_PARAMETER!>)<!>
+                content<!NO_VALUE_FOR_PARAMETER!>()<!>
             }
         """
     )
@@ -208,10 +208,10 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             // otherwise correct file "red".
             @Composable fun Test(F: @Composable (x: Foo) -> Unit) {
                 // NOTE: constructor attributes and fn params get a "missing parameter" diagnostic
-                A(<!NO_VALUE_FOR_PARAMETER!>)<!>
+                A<!NO_VALUE_FOR_PARAMETER!>()<!>
 
                 // local
-                F(<!NO_VALUE_FOR_PARAMETER!>)<!>
+                F<!NO_VALUE_FOR_PARAMETER!>()<!>
 
                 val x = Foo(123)
 
@@ -271,7 +271,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
             @Composable fun Test() {
                 <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Foo()<!>
-                <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Bar(<!NO_VALUE_FOR_PARAMETER!>)<!><!>
+                <!CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS!>Bar<!NO_VALUE_FOR_PARAMETER!>()<!><!>
             }
 
         """.trimIndent()
@@ -358,7 +358,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
             }
 
             @Composable fun Test() {
-                Foo(abc=<!NO_VALUE_FOR_PARAMETER!>)<!>
+                Foo(<!NO_VALUE_FOR_PARAMETER!>abc=)<!>
 
                 // NOTE(lmr): even though there is NO diagnostic here, there *is* a parse
                 // error. This is intentional and done to mimic how kotlin handles function
@@ -502,7 +502,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
             @Composable fun Test() {
                 ChildrenRequired2 {}
-                ChildrenRequired2(<!NO_VALUE_FOR_PARAMETER!>)<!>
+                ChildrenRequired2<!NO_VALUE_FOR_PARAMETER!>()<!>
 
                 ChildrenOptional3 {}
                 ChildrenOptional3()
