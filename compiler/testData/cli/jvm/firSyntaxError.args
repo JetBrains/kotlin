@@ -1,0 +1,5 @@
+$TESTDATA_DIR$/firSyntaxError.kt
+-language-version
+2.0
+-d
+$TEMP_DIR$

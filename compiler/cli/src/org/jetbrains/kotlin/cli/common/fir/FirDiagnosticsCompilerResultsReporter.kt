@@ -166,7 +166,7 @@ private class SequentialFilePositionFinder(file: File) : Closeable {
         fun posInCurrentLine(): KtSourceFilePos? {
             val col = offset - (charsRead - currentLineContent!!.length - 1)/* beginning of line offset */ + 1 /* col is 1-based */
             assert(col > 0)
-            return if (col <= currentLineContent!!.length)
+            return if (col <= currentLineContent!!.length + 1 /* accounting for a report on EOL (e.g. syntax errors) */ )
                 KtSourceFilePos(currentLine, col, if (withLineContents) currentLineContent else null)
             else null
         }
@@ -195,6 +195,8 @@ private class SequentialFilePositionFinder(file: File) : Closeable {
                 bufPos = 0
                 if (bufLength < 0) {
                     endOfStream = true
+                    currentLine++
+                    charsRead++ // assuming virtual EOL at EOF for calculations
                     break
                 }
             } else {
