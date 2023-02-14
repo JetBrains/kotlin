@@ -28,7 +28,7 @@ class CacheVersionManager(
         else CacheVersion(expectedOwnVersion, JvmBytecodeBinaryVersion.INSTANCE, JvmMetadataVersion.INSTANCE)
 
     override fun loadActual(): CacheVersion? =
-        if (Files.notExists(versionFile)) null
+        if (!versionFile.toFile().exists()) null
         else try {
             CacheVersion(Files.newInputStream(versionFile).bufferedReader().use { it.readText() }.toInt())
         } catch (e: NumberFormatException) {
