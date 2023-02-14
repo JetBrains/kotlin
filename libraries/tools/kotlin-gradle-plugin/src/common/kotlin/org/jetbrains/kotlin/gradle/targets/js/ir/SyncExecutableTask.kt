@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.OutputDirectory
@@ -18,6 +19,9 @@ abstract class SyncExecutableTask : Copy() {
 
     @get:Inject
     abstract val fileHasher: FileHasher
+
+    @get:Inject
+    abstract val objects: ObjectFactory
 
     @get:OutputDirectory
     abstract val hashDir: Property<File>
@@ -63,15 +67,19 @@ abstract class SyncExecutableTask : Copy() {
 
         super.copy()
 
-        hashDirFile.listFiles()
-            ?.forEach {
+        objects.fileTree()
+            .from(hashDirFile)
+            .files
+            .forEach {
                 if (it.relativeTo(hashDirFile).path.removeSuffix(".$HASH_EXTENSION") !in actualFiles) {
                     it.delete()
                 }
             }
 
-        destinationDir.listFiles()
-            ?.forEach {
+        objects.fileTree()
+            .from(destinationDir)
+            .files
+            .forEach {
                 if (it.relativeTo(destinationDir).path !in actualFiles) {
                     it.delete()
                 }
