@@ -233,6 +233,18 @@ public class FirIdeNormalAnalysisSourceModuleCompileTimeConstantEvaluatorTestGen
     }
 
     @Test
+    @TestMetadata("string_templateConst.kt")
+    public void testString_templateConst() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_templateConst.kt");
+    }
+
+    @Test
+    @TestMetadata("string_templateNonConst.kt")
+    public void testString_templateNonConst() throws Exception {
+        runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_templateNonConst.kt");
+    }
+
+    @Test
     @TestMetadata("string_toString.kt")
     public void testString_toString() throws Exception {
         runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/string_toString.kt");
