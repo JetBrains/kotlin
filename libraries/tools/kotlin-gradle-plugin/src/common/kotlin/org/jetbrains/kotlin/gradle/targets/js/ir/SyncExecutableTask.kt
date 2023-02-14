@@ -27,10 +27,9 @@ abstract class SyncExecutableTask : Copy() {
 
         val hashDirFile = hashDir.get()
         eachFile {
-            actualFiles.add(it.file.name)
-            val hashFileString = it.name + ".$HASH_EXTENSION"
+            actualFiles.add(it.relativeSourcePath.pathString)
 
-            val hashFile = hashDirFile.resolve(hashFileString)
+            val hashFile = hashDirFile.resolve(it.relativeSourcePath.pathString + ".$HASH_EXTENSION")
 
             val currentHash = fileHasher.hash(it.file)
             val currentHashHex = currentHash.toByteArray().toHex()
@@ -42,6 +41,8 @@ abstract class SyncExecutableTask : Copy() {
                     it.exclude()
                     return@eachFile
                 }
+            } else {
+                hashFile.parentFile.mkdirs()
             }
 
             hashFile.writeText(currentHashHex)
@@ -64,14 +65,14 @@ abstract class SyncExecutableTask : Copy() {
 
         hashDirFile.listFiles()
             ?.forEach {
-                if (it.name.removeSuffix(".$HASH_EXTENSION") !in actualFiles) {
+                if (it.relativeTo(hashDirFile).path.removeSuffix(".$HASH_EXTENSION") !in actualFiles) {
                     it.delete()
                 }
             }
 
         destinationDir.listFiles()
             ?.forEach {
-                if (it.name !in actualFiles) {
+                if (it.relativeTo(destinationDir).path !in actualFiles) {
                     it.delete()
                 }
             }
