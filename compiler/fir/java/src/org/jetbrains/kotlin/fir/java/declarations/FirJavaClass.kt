@@ -135,7 +135,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
-        thrownFieldInJavaDeclarationCannotBeReplacedError(::status)
+        status = newStatus
     }
 
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirJavaClass {
