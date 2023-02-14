@@ -442,6 +442,16 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firError.args");
         }
 
+        @TestMetadata("firErrorOnLastLine.args")
+        public void testFirErrorOnLastLine() throws Exception {
+            runTest("compiler/testData/cli/jvm/firErrorOnLastLine.args");
+        }
+
+        @TestMetadata("firErrorOnLastLineNoEol.args")
+        public void testFirErrorOnLastLineNoEol() throws Exception {
+            runTest("compiler/testData/cli/jvm/firErrorOnLastLineNoEol.args");
+        }
+
         @TestMetadata("firHello.args")
         public void testFirHello() throws Exception {
             runTest("compiler/testData/cli/jvm/firHello.args");
@@ -490,6 +500,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("firStdlibDependency.args")
         public void testFirStdlibDependency() throws Exception {
             runTest("compiler/testData/cli/jvm/firStdlibDependency.args");
+        }
+
+        @TestMetadata("firSyntaxError.args")
+        public void testFirSyntaxError() throws Exception {
+            runTest("compiler/testData/cli/jvm/firSyntaxError.args");
         }
 
         @TestMetadata("firVsClassicAnnotation.args")
