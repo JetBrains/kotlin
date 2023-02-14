@@ -16,13 +16,14 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
     id("kotlin")
 }
 
 val rootBuildDirectory by extra(file(".."))
-apply(from = "../gradle/loadRootProperties.gradle")
+apply(from="../gradle/loadRootProperties.gradle")
 
 val kotlinVersion = project.bootstrapKotlinVersion
 
@@ -33,16 +34,12 @@ repositories {
     mavenCentral()
 }
 
-kotlin {
-    sourceSets {
-        main {
-            kotlin.srcDir("src/main/kotlin")
-            kotlin.srcDir("src/library/kotlin")
-        }
-    }
+sourceSets["main"].withConvention(KotlinSourceSet::class) {
+    kotlin.srcDir("src/main/kotlin")
+    kotlin.srcDir("src/library/kotlin")
 }
 
-tasks.withType<KotlinCompile>().configureEach {
+tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
     kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
 }

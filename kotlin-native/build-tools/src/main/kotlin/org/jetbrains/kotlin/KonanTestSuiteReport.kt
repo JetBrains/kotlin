@@ -18,6 +18,7 @@ data class Statistics(
         @Expose var error: Int = 0,
         @Expose var skipped: Int = 0) {
 
+
     fun pass(count: Int = 1) { passed += count }
 
     fun skip(count: Int = 1) { skipped += count }
@@ -47,10 +48,8 @@ data class KonanTestSuiteReport(@Expose val name: String, val tests: List<KonanT
 data class KonanTestCaseReport(@Expose val name: String, @Expose val status: TestStatus, @Expose val comment: String? = null)
 
 class KonanTestSuiteReportEnvironment(val name: String, val project: Project, val statistics: Statistics) {
-    private val tc = if ((System.getenv("TEAMCITY_BUILD_PROPERTIES_FILE") != null)) TeamCityTestPrinter(project) else null
-
+    private val tc = if (Tc.enabled) TeamCityTestPrinter(project) else null
     val tests = mutableListOf<KonanTestCaseReport>()
-
     fun executeTest(testName: String, action:() -> Unit) {
         var test: KonanTestCaseReport?
         try {
