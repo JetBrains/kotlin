@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyAnnotationDescriptor
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isEnum
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.slicedMap.Slices
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
@@ -501,7 +502,10 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
             checkSerializerNullability(type, serializer.defaultType, element, trace, fallbackElement)
             checkTypeArguments(module, type, element, trace, fallbackElement)
         } else {
-            trace.report(SerializationErrors.SERIALIZER_NOT_FOUND.on(element ?: fallbackElement, type))
+            if (!type.isEnum()) {
+                // enums are always serializable
+                trace.report(SerializationErrors.SERIALIZER_NOT_FOUND.on(element ?: fallbackElement, type))
+            }
         }
     }
 

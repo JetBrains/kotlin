@@ -539,7 +539,10 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             }
             checkTypeArguments(type, source, reporter)
         } else {
-            reporter.reportOn(source, FirSerializationErrors.SERIALIZER_NOT_FOUND, type)
+            if (!type.isEnum) {
+                // enums are always serializable
+                reporter.reportOn(source, FirSerializationErrors.SERIALIZER_NOT_FOUND, type)
+            }
         }
     }
 
