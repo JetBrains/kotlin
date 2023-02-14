@@ -209,8 +209,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     fun testRelocationNative(gradleVersion: GradleVersion) {
         val (firstProject, secondProject) = prepareTestProjects(
             "native-build-cache",
-            gradleVersion,
-            defaultBuildOptions.copy(parallel = false) // disabled to be able to consume published library before app compilation
+            gradleVersion
         ) {
             val localRepoUri = it.projectPath.resolve("repo").toUri()
             it.subProject("build-cache-app").buildGradleKts.append(
@@ -228,9 +227,17 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf(":build-cache-lib:publish", ":build-cache-app:assemble"),
+            listOf(":build-cache-lib:publish"),
             listOf(
                 ":build-cache-lib:compileKotlinHost",
+            )
+        )
+
+        checkBuildCacheRelocation(
+            firstProject,
+            secondProject,
+            listOf(":build-cache-app:assemble"),
+            listOf(
                 ":build-cache-app:compileKotlinHost",
                 ":build-cache-app:lib-module:compileKotlinHost",
                 ":build-cache-app:linkDebugStaticHost",
