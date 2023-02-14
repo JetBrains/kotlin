@@ -26,11 +26,13 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_CLASS_I
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.RuntimeVersions
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
+import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationErrors.EXTERNAL_SERIALIZER_USELESS
 import org.jetbrains.kotlinx.serialization.compiler.fir.getSerializerForClass
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySerializationInfoProvider
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.findTypeSerializerOrContextUnchecked
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.serializablePropertiesProvider
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.versionReader
+import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializersClassIds
 
@@ -74,6 +76,32 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     private fun checkExternalSerializer(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         val serializableKType = classSymbol.getSerializerForClass(session) ?: return
         val serializableClassSymbol = serializableKType.toRegularClassSymbol(session) ?: return
+
+        val declarations = classSymbol.declarationSymbols
+        val descriptorOverridden = declarations.filterIsInstance<FirPropertySymbol>().singleOrNull {
+            it.name == SerialEntityNames.SERIAL_DESC_FIELD_NAME
+                    && it.isOverride
+                    && it.origin == FirDeclarationOrigin.Source
+        } != null
+        val serializeOverridden = declarations.filterIsInstance<FirFunctionSymbol<*>>().singleOrNull {
+            it.name == SerialEntityNames.SAVE_NAME
+                    && it.valueParameterSymbols.size == 2
+                    && it.isOverride
+                    && it.origin == FirDeclarationOrigin.Source
+        } != null
+        val deserializeOverridden = declarations.filterIsInstance<FirFunctionSymbol<*>>().singleOrNull {
+            it.name == SerialEntityNames.LOAD_NAME
+                    && it.valueParameterSymbols.size == 1
+                    && it.isOverride
+                    && it.origin == FirDeclarationOrigin.Source
+        } != null
+
+        if (descriptorOverridden && serializeOverridden && deserializeOverridden) {
+            val source = classSymbol.getSerializerAnnotation(session)?.source ?: classSymbol.source
+            reporter.reportOn(source, EXTERNAL_SERIALIZER_USELESS, classSymbol)
+            return
+        }
+
         val properties = session.serializablePropertiesProvider.getSerializablePropertiesForClass(serializableClassSymbol)
         if (!properties.isExternallySerializable) {
             val source = classSymbol.getSerializerAnnotation(session)?.source ?: classSymbol.source

@@ -181,7 +181,7 @@ FILE: serializerViaCompanion.kt
         public final val i: R|kotlin/Int| = R|<local>/i|
             public get(): R|kotlin/Int|
 
-        @R|kotlinx/serialization/Serializer|(forClass = <getClass>(Q|com/example/FullyOverridden|)) public final companion object Companion : R|kotlinx/serialization/KSerializer<com/example/FullyOverridden>| {
+        public final companion object Companion : R|kotlinx/serialization/KSerializer<com/example/FullyOverridden>| {
             private constructor(): R|com/example/FullyOverridden.Companion| {
                 super<R|kotlin/Any|>()
             }
