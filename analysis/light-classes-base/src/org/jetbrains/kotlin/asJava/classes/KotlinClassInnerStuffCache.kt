@@ -23,6 +23,7 @@ import gnu.trove.THashMap
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.elements.KtLightParameter
+import org.jetbrains.kotlin.builtins.StandardNames.DEFAULT_VALUE_PARAMETER
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
@@ -201,17 +202,24 @@ private class KotlinEnumSyntheticMethod(
     private val parameterList = LightParameterListBuilder(manager, language).apply {
         if (kind == Kind.VALUE_OF) {
             val stringType = PsiType.getJavaLangString(manager, GlobalSearchScope.allScope(project))
-            val nameParameter = object : LightParameter("name", stringType, this, language, false), KtLightParameter {
-                override val method: KtLightMethod get() = this@KotlinEnumSyntheticMethod
-                override val kotlinOrigin: KtParameter? get() = null
-                override fun getParent(): PsiElement = this@KotlinEnumSyntheticMethod
-                override fun getContainingFile(): PsiFile = this@KotlinEnumSyntheticMethod.containingFile
+            val valueParameter =
+                object : LightParameter(
+                    DEFAULT_VALUE_PARAMETER.identifier,
+                    stringType,
+                    this,
+                    language,
+                    false
+                ), KtLightParameter {
+                    override val method: KtLightMethod get() = this@KotlinEnumSyntheticMethod
+                    override val kotlinOrigin: KtParameter? get() = null
+                    override fun getParent(): PsiElement = this@KotlinEnumSyntheticMethod
+                    override fun getContainingFile(): PsiFile = this@KotlinEnumSyntheticMethod.containingFile
 
-                override fun getText(): String = name
-                override fun getTextRange(): TextRange = TextRange.EMPTY_RANGE
-            }
+                    override fun getText(): String = name
+                    override fun getTextRange(): TextRange = TextRange.EMPTY_RANGE
+                }
 
-            addParameter(nameParameter)
+            addParameter(valueParameter)
         }
     }
 
