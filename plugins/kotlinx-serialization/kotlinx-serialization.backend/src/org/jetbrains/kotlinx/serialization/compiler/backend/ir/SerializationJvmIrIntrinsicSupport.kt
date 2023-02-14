@@ -166,7 +166,7 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
     }
 
     override val runtimeHasEnumSerializerFactoryFunctions: Boolean
-        get() = currentVersion != null && currentVersion!! > ApiVersion.parse("1.4.0")!!
+        get() = currentVersion != null && currentVersion!! >= ApiVersion.parse("1.5.0")!!
 
     private val hasNewContextSerializerSignature: Boolean
         get() = currentVersion != null && currentVersion!! >= ApiVersion.parse("1.2.0")!!
