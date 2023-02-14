@@ -104,6 +104,8 @@ private fun collectDesignationPath(target: FirElementWithResolvePhase): List<Fir
             return if (target.diagnostic == ConeDestructuringDeclarationsOnTopLevel) emptyList() else null
         }
 
+        is FirScript -> return emptyList()
+
         else -> {
             return null
         }

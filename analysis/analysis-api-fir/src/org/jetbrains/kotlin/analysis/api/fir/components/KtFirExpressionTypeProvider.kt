@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -38,6 +39,7 @@ internal class KtFirExpressionTypeProvider(
 
     override fun getKtExpressionType(expression: KtExpression): KtType? {
         return when (val fir = expression.unwrap().getOrBuildFir(firResolveSession)) {
+            is FirScript -> null
             is FirFunctionCall -> {
                 getReturnTypeForArrayStyleAssignmentTarget(expression, fir)
                     ?: fir.typeRef.coneType.asKtType()
@@ -303,3 +305,33 @@ private val PsiElement.nonContainerParent: PsiElement?
     }
 
 private enum class DefiniteNullability { DEFINITELY_NULL, DEFINITELY_NOT_NULL, UNKNOWN }
+
+
+
+public fun PsiElement.printTree(withMeAsRoot: Boolean = false, indentStep: Int = 3): String {
+
+    fun PsiElement.printTreeInternal(
+        indent: Int = 0,
+        result: StringBuilder = StringBuilder(),
+        toMark: PsiElement? = this,
+        entire: Boolean = true,
+        indentStep: Int
+    ): String {
+        if (entire) return containingFile.printTreeInternal(toMark = toMark, entire = false, indentStep = indentStep)
+
+        val indentSymbols = if (indent > 0) ".".repeat(indent) else ""
+        result.append(javaClass.simpleName.prependIndent(indentSymbols))
+            .append(" [").append(text).append("]")
+            .append(if (this == toMark) " (*)" else "")
+
+        val nextIndent = indent + indentStep
+        this.allChildren.forEach {
+            result.append("\n")
+            it.printTreeInternal(nextIndent, result, toMark, entire = false, indentStep = indentStep)
+        }
+
+        return result.toString()
+    }
+
+    return printTreeInternal(entire = !withMeAsRoot, indentStep = indentStep)
+}

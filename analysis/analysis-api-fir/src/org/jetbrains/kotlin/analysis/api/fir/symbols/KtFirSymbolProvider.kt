@@ -184,4 +184,10 @@ internal class KtFirSymbolProvider(
             psi.resolveToFirSymbolOfType<FirPropertySymbol>(firResolveSession)
         )
     }
+
+    override fun getScriptSymbol(psi: KtScript): KtScriptSymbol {
+        val symbol = psi.resolveToFirSymbolOfType<FirScriptSymbol>(firResolveSession)
+
+        return KtFirScriptSymbol(token, symbol, analysisSession)
+    }
 }

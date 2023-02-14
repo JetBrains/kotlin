@@ -82,6 +82,7 @@ public object KtDeclarationRendererForSource {
         annotationRenderer = KtAnnotationRendererForSource.WITH_QUALIFIED_NAMES
         declarationTypeApproximator = KtRendererTypeApproximator.TO_DENOTABLE
         returnTypeFilter = KtCallableReturnTypeFilter.NO_UNIT_FOR_FUNCTIONS
+        scriptRenderer = KtScriptRenderer.RENDERER
     }
 
     public val WITH_SHORT_NAMES: KtDeclarationRenderer = WITH_QUALIFIED_NAMES.with {

@@ -81,6 +81,7 @@ public class KtDeclarationRenderer private constructor(
     public val anonymousObjectRenderer: KtAnonymousObjectSymbolRenderer,
     public val singleTypeParameterRenderer: KtSingleTypeParameterSymbolRenderer,
     public val returnTypeFilter: KtCallableReturnTypeFilter,
+    public val scriptRenderer: KtScriptRenderer
 ) {
 
     context(KtAnalysisSession)
@@ -104,6 +105,7 @@ public class KtDeclarationRenderer private constructor(
             is KtSyntheticJavaPropertySymbol -> syntheticJavaPropertyRenderer.renderSymbol(symbol, printer)
             is KtTypeParameterSymbol -> singleTypeParameterRenderer.renderSymbol(symbol, printer)
             is KtClassInitializerSymbol -> classInitializerRender.renderClassInitializer(symbol, printer)
+            is KtScriptSymbol -> scriptRenderer.renderSymbol(symbol, printer)
         }
     }
 
@@ -164,7 +166,7 @@ public class KtDeclarationRenderer private constructor(
             this.anonymousObjectRenderer = renderer.anonymousObjectRenderer
             this.singleTypeParameterRenderer = renderer.singleTypeParameterRenderer
             this.returnTypeFilter = renderer.returnTypeFilter
-
+            this.scriptRenderer = renderer.scriptRenderer
             action()
         }
     }
@@ -228,6 +230,7 @@ public class KtDeclarationRenderer private constructor(
         public lateinit var typeAliasRenderer: KtTypeAliasSymbolRenderer
         public lateinit var anonymousObjectRenderer: KtAnonymousObjectSymbolRenderer
         public lateinit var singleTypeParameterRenderer: KtSingleTypeParameterSymbolRenderer
+        public lateinit var scriptRenderer: KtScriptRenderer
 
 
         public fun build(): KtDeclarationRenderer = KtDeclarationRenderer(
@@ -284,6 +287,7 @@ public class KtDeclarationRenderer private constructor(
             anonymousObjectRenderer,
             singleTypeParameterRenderer,
             returnTypeFilter,
+            scriptRenderer
         )
     }
 }

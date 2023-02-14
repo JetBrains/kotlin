@@ -69,8 +69,7 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 val outerFirClassifier = symbol.firSymbol.llFirSession.firProvider.getFirClassifierByFqName(outerClassId) ?: return null
                 firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
             }
-
-
+            is KtScriptSymbol -> getParentSymbolByPsi()
         }
     }
 

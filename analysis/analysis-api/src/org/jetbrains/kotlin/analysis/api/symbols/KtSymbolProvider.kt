@@ -31,6 +31,7 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
         is KtPropertyAccessor -> getPropertyAccessorSymbol(psi)
         is KtClassInitializer -> getClassInitializerSymbol(psi)
         is KtDestructuringDeclarationEntry -> getDestructuringDeclarationEntrySymbol(psi)
+        is KtScript -> getScriptSymbol(psi)
         else -> error("Cannot build symbol for ${psi::class}")
     }
 
@@ -58,6 +59,8 @@ public abstract class KtSymbolProvider : KtAnalysisSessionComponent() {
     public abstract fun getTypeAliasByClassId(classId: ClassId): KtTypeAliasSymbol?
 
     public abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): Sequence<KtCallableSymbol>
+
+    public abstract fun getScriptSymbol(psi: KtScript): KtScriptSymbol
 
     @Suppress("PropertyName")
     public abstract val ROOT_PACKAGE_SYMBOL: KtPackageSymbol

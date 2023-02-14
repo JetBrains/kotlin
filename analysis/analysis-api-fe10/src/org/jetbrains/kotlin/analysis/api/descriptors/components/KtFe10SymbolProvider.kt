@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10FileSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10PackageSymbol
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.KtFe10ScriptSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
@@ -144,5 +145,9 @@ internal class KtFe10SymbolProvider(
 
     override fun getDestructuringDeclarationEntrySymbol(psi: KtDestructuringDeclarationEntry): KtLocalVariableSymbol {
         return KtFe10PsiLocalVariableSymbol(psi, analysisContext)
+    }
+
+    override fun getScriptSymbol(psi: KtScript): KtScriptSymbol {
+        return KtFe10ScriptSymbol()
     }
 }
