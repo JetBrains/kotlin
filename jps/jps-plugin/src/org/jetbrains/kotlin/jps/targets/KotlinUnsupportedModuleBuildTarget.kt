@@ -24,7 +24,7 @@ class KotlinUnsupportedModuleBuildTarget(
 
     private fun shouldNotBeCalled(): Nothing = error("Should not be called")
 
-    override fun isEnabled(chunkCompilerArguments: CommonCompilerArguments): Boolean {
+    override fun isEnabled(chunkCompilerArguments: Lazy<CommonCompilerArguments>): Boolean {
         return false
     }
 
