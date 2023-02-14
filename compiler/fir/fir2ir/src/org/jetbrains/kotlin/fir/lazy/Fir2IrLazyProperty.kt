@@ -179,7 +179,6 @@ class Fir2IrLazyProperty(
             with(classifierStorage) {
                 setTypeParameters(
                     this@Fir2IrLazyProperty.fir, ConversionTypeContext(
-                        definitelyNotNull = false,
                         origin = ConversionTypeOrigin.DEFAULT
                     )
                 )
@@ -212,7 +211,6 @@ class Fir2IrLazyProperty(
                     with(classifierStorage) {
                         setTypeParameters(
                             this@Fir2IrLazyProperty.fir, ConversionTypeContext(
-                                definitelyNotNull = false,
                                 origin = ConversionTypeOrigin.SETTER
                             )
                         )

@@ -332,7 +332,6 @@ class Fir2IrDeclarationStorage(
         }
         val forSetter = function is FirPropertyAccessor && function.isSetter
         val typeContext = ConversionTypeContext(
-            definitelyNotNull = false,
             origin = if (forSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
         )
         if (function is FirDefaultPropertySetter) {
@@ -728,7 +727,6 @@ class Fir2IrDeclarationStorage(
                 with(classifierStorage) {
                     setTypeParameters(
                         property, ConversionTypeContext(
-                            definitelyNotNull = false,
                             origin = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
                         )
                     )
