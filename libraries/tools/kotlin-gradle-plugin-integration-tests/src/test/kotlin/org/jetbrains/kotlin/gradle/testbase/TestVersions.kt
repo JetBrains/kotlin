@@ -48,7 +48,7 @@ interface TestVersions {
         const val AGP_80 = "8.0.0-alpha11"
 
         const val MIN_SUPPORTED = AGP_41 // KotlinAndroidPlugin.MINIMAL_SUPPORTED_AGP_VERSION
-        const val MAX_SUPPORTED = AGP_74 // Update once Gradle MAX_SUPPORTED version will be bumped
+        const val MAX_SUPPORTED = AGP_80
     }
 
     enum class AgpCompatibilityMatrix(
