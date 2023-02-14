@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
 import org.jetbrains.kotlin.fir.psi
@@ -66,6 +67,9 @@ internal object FirCompileTimeConstantEvaluator {
             is FirFunctionCall -> {
                 evaluateFunctionCall(fir, mode)
             }
+            is FirStringConcatenationCall -> {
+                evaluateStringConcatenationCall(fir, mode)
+            }
             is FirNamedReference -> {
                 fir.toResolvedPropertySymbol()?.toConstExpression(mode)
             }
@@ -93,7 +97,7 @@ internal object FirCompileTimeConstantEvaluator {
         mode: KtConstantEvaluationMode,
     ): FirConstExpression<*>? {
         return when {
-            mode == KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !isFinal -> null
+            mode == KtConstantEvaluationMode.CONSTANT_EXPRESSION_EVALUATION && !(isStatic && isFinal) -> null
             isVal && hasInitializer -> {
                 evaluate(fir.initializer, mode)
             }
@@ -150,6 +154,20 @@ internal object FirCompileTimeConstantEvaluator {
             source,
             kind.convertToNumber(value as? Number) ?: value
         )
+    }
+
+    private fun evaluateStringConcatenationCall(
+        stringConcatenationCall: FirStringConcatenationCall,
+        mode: KtConstantEvaluationMode,
+    ): FirConstExpression<String>? {
+        val concatenated = buildString {
+            for (arg in stringConcatenationCall.arguments) {
+                val evaluated = evaluate(arg, mode) ?: return null
+                append(evaluated.value.toString())
+            }
+        }
+
+        return ConstantValueKind.String.toConstExpression(stringConcatenationCall.source, concatenated)
     }
 
     private fun evaluateFunctionCall(
