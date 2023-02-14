@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunnerType
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExistingDependency
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.LibraryCompilation
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.StaticCacheCompilation
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependency
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType
@@ -70,6 +71,20 @@ internal fun AbstractNativeSimpleTest.compileToExecutable(
 
 internal fun AbstractNativeSimpleTest.compileToExecutable(testCase: TestCase, vararg dependencies: TestCompilationDependency<*>) =
     compileToExecutable(testCase, dependencies.asList())
+
+internal fun AbstractNativeSimpleTest.compileToStaticCache(
+    klib: TestCompilationArtifact.KLIB,
+    cacheDir: File,
+): TestCompilationResult<out TestCompilationArtifact.KLIBStaticCache> {
+    val compilation = StaticCacheCompilation(
+        settings = testRunSettings,
+        freeCompilerArgs = TestCompilerArgs.EMPTY,
+        StaticCacheCompilation.Options.Regular,
+        dependencies = listOf(klib.asLibraryDependency()),
+        expectedArtifact = TestCompilationArtifact.KLIBStaticCache(cacheDir, klib)
+    )
+    return compilation.result
+}
 
 internal fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
     moduleDir: File?,
