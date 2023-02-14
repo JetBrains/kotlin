@@ -355,6 +355,7 @@ class KonanPlugin @Inject constructor(private val registry: ToolingModelBuilderR
         project.plugins.apply("base")
         project.plugins.apply("java")
         // Create necessary tasks and extensions.
+        project.tasks.create(KONAN_DOWNLOAD_TASK_NAME, KonanCompilerDownloadTask::class.java)
         project.extensions.create(KONAN_EXTENSION_NAME, KonanExtension::class.java)
         val container = project.extensions.create(
                 KonanArtifactContainer::class.java,

@@ -3,6 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
@@ -29,6 +30,8 @@ val rootProperties = Properties().apply {
 
 val kotlinVersion = project.bootstrapKotlinVersion
 val slackApiVersion: String by rootProperties
+val ktorVersion: String by rootProperties
+val shadowVersion: String by rootProperties
 val metadataVersion: String by rootProperties
 
 group = "org.jetbrains.kotlin"
@@ -50,6 +53,9 @@ dependencies {
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
 
+    implementation("com.ullink.slack:simpleslackapi:$slackApiVersion") {
+        exclude(group = "com.google.code.gson", module = "gson") // Workaround for Gradle dependency resolution error
+    }
     val versionProperties = Properties()
     project.rootProject.projectDir.resolve("gradle/versions.properties").inputStream().use { propInput ->
         versionProperties.load(propInput)
@@ -64,17 +70,18 @@ dependencies {
         }
     }
 
+    implementation("io.ktor:ktor-client-auth:$ktorVersion")
+    implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
+
     api(project(":native:kotlin-native-utils"))
     api(project(":kotlin-native-shared"))
     api(project(":kotlinx-metadata-klib"))
+    implementation("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}")
 }
 
-kotlin {
-    sourceSets {
-        main {
-            kotlin.srcDir("$projectDir/../tools/benchmarks/shared/src/main/kotlin/report")
-        }
-    }
+sourceSets["main"].withConvention(KotlinSourceSet::class) {
+    kotlin.srcDir("$projectDir/../tools/benchmarks/shared/src/main/kotlin/report")
 }
 
 val compileKotlin: KotlinCompile by tasks
