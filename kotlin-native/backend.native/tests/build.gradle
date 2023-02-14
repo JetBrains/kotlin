@@ -5251,6 +5251,7 @@ if (PlatformInfo.isAppleTarget(project)) {
                 "-Xauto-cache-from=$testOutputRoot/local/objc_kt55938",
                 "-Xauto-cache-from=$testOutputRoot/local/interop_objc_kt55938",
                 "-Xauto-cache-dir=$testOutputRoot/local/interop_objc_kt55938/cache",
+                "-Xsuppress-version-warnings",  // suppresses warning about experimental language version, otherwise test fails with K2 due to -Werror
                 "-Werror" // to forbid retry with auto-cache disabled
         ]
 
