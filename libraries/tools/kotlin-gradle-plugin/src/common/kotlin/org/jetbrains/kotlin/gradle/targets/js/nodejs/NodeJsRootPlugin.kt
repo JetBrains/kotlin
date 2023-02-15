@@ -126,8 +126,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
         YarnPlugin.apply(project)
 
         npmInstall.configure {
-            it.npmResolutionManager.set(npmResolutionManager)
-            it.npmResolutionManager.disallowChanges()
+            it.npmResolutionManager.value(npmResolutionManager).disallowChanges()
         }
 
         project.tasks.register("node" + CleanDataTask.NAME_SUFFIX, CleanDataTask::class.java) {

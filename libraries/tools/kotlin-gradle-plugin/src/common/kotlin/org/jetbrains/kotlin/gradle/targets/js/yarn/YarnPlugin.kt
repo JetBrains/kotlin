@@ -55,10 +55,8 @@ open class YarnPlugin : Plugin<Project> {
             task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
             task.description = "Create root package.json"
 
-            task.npmResolutionManager.apply {
-                set(kotlinNpmResolutionManager)
-                disallowChanges()
-            }
+            task.npmResolutionManager.value(kotlinNpmResolutionManager)
+                .disallowChanges()
 
             task.onlyIf {
                 it as RootPackageJsonTask

@@ -111,20 +111,14 @@ abstract class KotlinPackageJsonTask :
                 task.description = "Create package.json file for $compilation"
                 task.group = NodeJsRootPlugin.TASKS_GROUP_NAME
 
-                task.npmResolutionManager.apply {
-                    set(npmResolutionManager)
-                    disallowChanges()
-                }
+                task.npmResolutionManager.value(npmResolutionManager)
+                    .disallowChanges()
 
-                task.gradleNodeModules.apply {
-                    set(gradleNodeModules)
-                    disallowChanges()
-                }
+                task.gradleNodeModules.value(gradleNodeModules)
+                    .disallowChanges()
 
-                task.compositeNodeModules.apply {
-                    set(compositeNodeModules)
-                    disallowChanges()
-                }
+                task.compositeNodeModules.value(compositeNodeModules)
+                    .disallowChanges()
 
                 task.packageJson.set(compilation.npmProject.packageJsonFile)
 

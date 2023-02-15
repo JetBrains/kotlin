@@ -71,10 +71,8 @@ class KotlinCompilationNpmResolver(
 
             it.compilationDisambiguatedName.set(compilation.disambiguatedName)
 
-            it.npmResolutionManager.apply {
-                set(npmResolutionManager)
-                disallowChanges()
-            }
+            it.npmResolutionManager.value(npmResolutionManager)
+                .disallowChanges()
 
             it.jsIrCompilation.set(compilation is KotlinJsIrCompilation)
             it.npmProjectName.set(npmProject.name)
