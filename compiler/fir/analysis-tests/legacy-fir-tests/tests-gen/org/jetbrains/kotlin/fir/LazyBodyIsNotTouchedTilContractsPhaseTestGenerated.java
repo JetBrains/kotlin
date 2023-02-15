@@ -2895,11 +2895,6 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/kt54990.kt");
         }
 
-        @TestMetadata("kt55555.kt")
-        public void testKt55555() throws Exception {
-            runTest("compiler/fir/analysis-tests/testData/resolve/inference/kt55555.kt");
-        }
-
         @TestMetadata("lambdaAsReturnStatementOfLambda.kt")
         public void testLambdaAsReturnStatementOfLambda() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdaAsReturnStatementOfLambda.kt");

@@ -3304,12 +3304,6 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("kt55555.kt")
-            public void testKt55555() throws Exception {
-                runTest("compiler/fir/analysis-tests/testData/resolve/inference/kt55555.kt");
-            }
-
-            @Test
             @TestMetadata("lambdaAsReturnStatementOfLambda.kt")
             public void testLambdaAsReturnStatementOfLambda() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/inference/lambdaAsReturnStatementOfLambda.kt");
