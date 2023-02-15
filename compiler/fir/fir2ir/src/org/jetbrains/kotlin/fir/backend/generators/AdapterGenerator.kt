@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi2ir.generators.implicitCastTo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeVariance
@@ -443,7 +444,25 @@ internal class AdapterGenerator(
         val samType = samFirType.toIrType(ConversionTypeContext.DEFAULT)
         // Make sure the converted IrType owner indeed has a single abstract method, since FunctionReferenceLowering relies on it.
         if (!samType.isSamType) return this
-        return IrTypeOperatorCallImpl(this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType, this)
+        return IrTypeOperatorCallImpl(
+            this.startOffset, this.endOffset, samType, IrTypeOperator.SAM_CONVERSION, samType,
+            castArgumentToFunctionalInterfaceForSamType(this, argument.typeRef.coneType, samFirType)
+        )
+    }
+
+    // See org.jetbrains.kotlin.psi2ir.generators.ArgumentsGenerationUtilsKt.castArgumentToFunctionalInterfaceForSamType (K1 counterpart)
+    private fun castArgumentToFunctionalInterfaceForSamType(
+        argument: IrExpression,
+        argumentConeType: ConeKotlinType,
+        samType: ConeKotlinType
+    ): IrExpression {
+        val coneKotlinFunctionType = getFunctionTypeForPossibleSamType(samType) ?: return argument
+        // This line is not present in the K1 counterpart because there is InsertImplicitCasts::cast that effectively removes
+        // such unnecessary casts. At the same time, many IR lowerings assume that there are no such redundant casts and many
+        // tests from FirBlackBoxCodegenTestGenerated relevant to INDY start failing once this line is removed.
+        if (argumentConeType.isSubtypeOf(coneKotlinFunctionType, session)) return argument
+        val irFunctionType = coneKotlinFunctionType.toIrType()
+        return argument.implicitCastTo(irFunctionType)
     }
 
     // This function is mostly a mirror of org.jetbrains.kotlin.backend.common.SamTypeApproximator.removeExternalProjections
