@@ -22003,6 +22003,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
                     }
 
                     @Test
+                    @TestMetadata("expectAndActualInTheSameModule.kt")
+                    public void testExpectAndActualInTheSameModule() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/expectAndActualInTheSameModule.kt");
+                    }
+
+                    @Test
                     @TestMetadata("intermediateWithActualAndExpect.kt")
                     public void testIntermediateWithActualAndExpect() throws Exception {
                         runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/intermediateWithActualAndExpect.kt");
