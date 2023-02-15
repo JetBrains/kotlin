@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 
 object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker() {
     override fun analyze(data: PropertyInitializationInfoData, reporter: DiagnosticReporter, context: CheckerContext) {
-        data.checkPropertyAccesses(context, reporter)
+        data.checkPropertyAccesses(isForClassInitialization = false, context, reporter)
     }
 }
 
@@ -44,15 +44,36 @@ val FirDeclaration.evaluatedInPlace: Boolean
         else -> true // property initializer, etc.
     }
 
-@OptIn(SymbolInternals::class)
-val FirPropertySymbol.requiresInitialization: Boolean
-    get() = this !is FirSyntheticPropertySymbol && !hasInitializer && !hasExplicitBackingField &&
-            hasBackingField && fir.isCatchParameter != true
+/**
+ * [isForClassInitialization] means that caller is interested in member property in the scope
+ *   of class initialization section. In this case the fact that property has initializer does
+ *   not mean that it's safe to access this property in any place:
+ *
+ * class A {
+ *     val b = a // a is not initialized here
+ *     val a = 10
+ *     val c = a // but initialized here
+ * }
+ */
 
-fun PropertyInitializationInfoData.checkPropertyAccesses(context: CheckerContext, reporter: DiagnosticReporter) {
+@OptIn(SymbolInternals::class)
+fun FirPropertySymbol.requiresInitialization(isForClassInitialization: Boolean): Boolean {
+    val hasImplicitBackingField = !hasExplicitBackingField && hasBackingField
+    return when {
+        this is FirSyntheticPropertySymbol -> false
+        isForClassInitialization -> hasDelegate || hasImplicitBackingField
+        else -> !hasInitializer && hasImplicitBackingField && fir.isCatchParameter != true
+    }
+}
+
+fun PropertyInitializationInfoData.checkPropertyAccesses(
+    isForClassInitialization: Boolean,
+    context: CheckerContext,
+    reporter: DiagnosticReporter
+) {
     // If a property has an initializer (or does not need one), then any reads are OK while any writes are OK
     // if it's a `var` and bad if it's a `val`. `FirReassignmentAndInvisibleSetterChecker` does this without a CFG.
-    val filtered = properties.filterTo(mutableSetOf()) { it.requiresInitialization }
+    val filtered = properties.filterTo(mutableSetOf()) { it.requiresInitialization(isForClassInitialization) }
     if (filtered.isEmpty()) return
 
     checkPropertyAccesses(graph, filtered, context, reporter, null, mutableMapOf())

@@ -5697,6 +5697,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("delegatedMemberProperyWriteInInit.kt")
+            public void testDelegatedMemberProperyWriteInInit() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/delegatedMemberProperyWriteInInit.kt");
+            }
+
+            @Test
             @TestMetadata("delegatedPropertyEarlyAccess.kt")
             public void testDelegatedPropertyEarlyAccess() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/delegatedPropertyEarlyAccess.kt");
@@ -6114,6 +6120,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             @TestMetadata("tryWithAssignmentUsedInCatch.kt")
             public void testTryWithAssignmentUsedInCatch() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/tryWithAssignmentUsedInCatch.kt");
+            }
+
+            @Test
+            @TestMetadata("uninintializedProperyWithDirectAndDelayedInitialization.kt")
+            public void testUninintializedProperyWithDirectAndDelayedInitialization() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/uninintializedProperyWithDirectAndDelayedInitialization.kt");
             }
 
             @Test

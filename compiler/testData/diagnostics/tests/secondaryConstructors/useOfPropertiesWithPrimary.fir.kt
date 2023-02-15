@@ -3,7 +3,7 @@ class A(val w: Int) {
     val x: Int
     val useUnitialized = <!UNINITIALIZED_VARIABLE!>x<!> +
                          <!UNINITIALIZED_VARIABLE!>y<!> +
-                         v
+                         <!UNINITIALIZED_VARIABLE!>v<!>
     var y: Int
     val v = -1
     val useInitialized = useUnitialized + v + w

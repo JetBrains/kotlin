@@ -47,12 +47,12 @@ object FirMemberPropertiesChecker : FirClassChecker() {
     private fun FirClass.collectInitializationInfo(context: CheckerContext, reporter: DiagnosticReporter): PropertyInitializationInfo? {
         val graph = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return null
         val memberPropertySymbols = declarations.mapNotNullTo(mutableSetOf()) {
-            (it.symbol as? FirPropertySymbol)?.takeIf { symbol -> symbol.requiresInitialization }
+            (it.symbol as? FirPropertySymbol)?.takeIf { symbol -> symbol.requiresInitialization(isForClassInitialization = true) }
         }
         if (memberPropertySymbols.isEmpty()) return null
         // TODO: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
         val data = PropertyInitializationInfoData(memberPropertySymbols, symbol, graph)
-        data.checkPropertyAccesses(context, reporter)
+        data.checkPropertyAccesses(isForClassInitialization = true, context, reporter)
         return data.getValue(graph.exitNode)[NormalPath]
     }
 

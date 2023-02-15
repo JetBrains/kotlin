@@ -64,10 +64,10 @@ fun <T> exec(f: () -> T): T = f()
 
 class Demo4 {
     private val some = exec {
-        if (state)
+        if (<!UNINITIALIZED_VARIABLE!>state<!>)
             state = true
 
-        println(state)
+        println(<!UNINITIALIZED_VARIABLE!>state<!>)
     }
 
     private var state: Boolean = true

@@ -43,7 +43,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         }
     }
 
-    private class ReassignedVariableCollector(val data: PropertyInitializationInfoData, ) : ControlFlowGraphVisitorVoid() {
+    private class ReassignedVariableCollector(val data: PropertyInitializationInfoData) : ControlFlowGraphVisitorVoid() {
         private val reassigned = mutableSetOf<FirPropertySymbol>()
 
         override fun visitNode(node: CFGNode<*>) {}
@@ -51,7 +51,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
         override fun visitVariableAssignmentNode(node: VariableAssignmentNode) {
             val symbol = node.fir.calleeReference?.toResolvedPropertySymbol() ?: return
             if (symbol.isVar && symbol.source?.kind !is KtFakeSourceElementKind && symbol in data.properties &&
-                (!symbol.requiresInitialization || data.getValue(node).values.any { it[symbol]?.canBeRevisited() == true })
+                (!symbol.requiresInitialization(isForClassInitialization = data.graph.kind == ControlFlowGraph.Kind.Class) || data.getValue(node).values.any { it[symbol]?.canBeRevisited() == true })
             ) {
                 reassigned.add(symbol)
             }

@@ -73,6 +73,18 @@ class PropertyInitializationInfoCollector(
         }
     }
 
+    override fun visitPropertyInitializerExitNode(
+        node: PropertyInitializerExitNode,
+        data: PathAwareControlFlowInfo<PropertyInitializationInfo>
+    ): PathAwareControlFlowInfo<PropertyInitializationInfo> {
+        // If member property initializer is empty (there are no nodes between enter and exit node)
+        //   then property is not initialized in its declaration
+        // Otherwise it is
+        val dataForNode = visitNode(node, data)
+        if (node.firstPreviousNode is PropertyInitializerEnterNode) return dataForNode
+        return overwriteRange(dataForNode, node.fir.symbol, EventOccurrencesRange.EXACTLY_ONCE)
+    }
+
     // --------------------------------------------------
     // Data flows of declared/assigned variables in loops
     // --------------------------------------------------
