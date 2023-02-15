@@ -1,4 +1,4 @@
-// See also KT-10869: Accessing lazy properties from init causes IllegalArgumentException
+// ISSUE: KT-10869, KT-56682
 
 import kotlin.reflect.KProperty
 
@@ -9,14 +9,14 @@ class CustomDelegate {
 class Kaboom() {
     // Here and below we should have errors for simple AND delegated
     init {
-        delegated.hashCode()
-        simple.hashCode()
+        <!UNINITIALIZED_VARIABLE!>delegated<!>.hashCode()
+        <!UNINITIALIZED_VARIABLE!>simple<!>.hashCode()
         withGetter.hashCode()
     }
 
-    val other = delegated
+    val other = <!UNINITIALIZED_VARIABLE!>delegated<!>
 
-    val another = simple
+    val another = <!UNINITIALIZED_VARIABLE!>simple<!>
 
     val something = withGetter
     
