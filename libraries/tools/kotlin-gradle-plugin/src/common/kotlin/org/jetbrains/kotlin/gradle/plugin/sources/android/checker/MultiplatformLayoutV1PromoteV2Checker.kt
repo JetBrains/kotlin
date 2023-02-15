@@ -38,6 +38,8 @@ internal object MultiplatformLayoutV1PromoteV2Checker : KotlinAndroidSourceSetLa
                 
                 To suppress this warning: put the following in your gradle.properties:
                 ${PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION_1_NO_WARN}=true
+                
+                Learn more: https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
             """.trimIndent()
 
         override fun toString(): String = "PromoteV2LayoutDiagnostic"
