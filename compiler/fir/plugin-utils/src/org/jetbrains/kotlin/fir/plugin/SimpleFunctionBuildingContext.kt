@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -34,16 +34,16 @@ public class SimpleFunctionBuildingContext(
     private var extensionReceiverTypeProvider: ((List<FirTypeParameter>) -> ConeKotlinType)? = null
 
     /**
-     * Sets [type] as extension receiver type of constructed function
+     * Sets [type] as extension receiver type of the function.
      */
     public fun extensionReceiverType(type: ConeKotlinType) {
         extensionReceiverType { type }
     }
 
     /**
-     * Sets type, provided by [typeProvider], as extension receiver type of constructed function
+     * Sets type, provided by [typeProvider], as extension receiver type of the function.
      *
-     * Use this overload when extension receiver type uses type parameters of constructed function
+     * Use this overload when extension receiver type references type parameters of the function.
      */
     public fun extensionReceiverType(typeProvider: (List<FirTypeParameter>) -> ConeKotlinType) {
         require(extensionReceiverTypeProvider == null) { "Extension receiver type is already initialized" }
@@ -85,9 +85,9 @@ public class SimpleFunctionBuildingContext(
 // ---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Creates a member function for [owner] class with [returnType] return type
+ * Creates a member function for [owner] class with specified [returnType].
  *
- * Type and value parameters can be configured with [config] builder lambda
+ * Type and value parameters can be configured with [config] builder.
  */
 public fun FirExtension.createMemberFunction(
     owner: FirClassSymbol<*>,
@@ -100,10 +100,10 @@ public fun FirExtension.createMemberFunction(
 }
 
 /**
- * Creates a member function for [owner] class with return type provided by [returnTypeProvider]
- * Use this overload when return type uses type parameters of constructed property
+ * Creates a member function for [owner] class with return type provided by [returnTypeProvider].
+ * Use this overload when return type references type parameters of created function.
  *
- * Type and value parameters can be configured with [config] builder lambda
+ * Type and value parameters can be configured with [config] builder.
  */
 public fun FirExtension.createMemberFunction(
     owner: FirClassSymbol<*>,
@@ -117,9 +117,9 @@ public fun FirExtension.createMemberFunction(
 }
 
 /**
- * Creates a top-level function with [returnType] return type
+ * Creates a top-level function with [callableId] and specified [returnType].
  *
- * Type and value parameters can be configured with [config] builder lambda
+ * Type and value parameters can be configured with [config] builder.
  */
 public fun FirExtension.createTopLevelFunction(
     key: GeneratedDeclarationKey,
@@ -131,10 +131,10 @@ public fun FirExtension.createTopLevelFunction(
 }
 
 /**
- * Creates a top-level function for [owner] class with return type provided by [returnTypeProvider]
- * Use this overload when those types use type parameters of constructed property
+ * Creates a top-level function with [callableId] and return type provided by [returnTypeProvider].
+ * Use this overload when return type references type parameters of created function.
  *
- * Type and value parameters can be configured with [config] builder lambda
+ * Type and value parameters can be configured with [config] builder.
  */
 public fun FirExtension.createTopLevelFunction(
     key: GeneratedDeclarationKey,
