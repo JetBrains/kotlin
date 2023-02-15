@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
@@ -276,10 +277,13 @@ internal class FunctionReferenceLowering(val generationState: NativeGenerationSt
          */
         private fun substituteTypeParameterOfReferencedFunction(typeParameter: IrTypeParameter): IrType {
             if (typeParameter.parent != referencedFunction) {
-                compilationException(
-                        "The type parameter ${typeParameter.render()} is not defined in the referenced function ${referencedFunction.render()}",
-                        functionReference
-                )
+                // TODO: We might have references to off-scope type parameters (because of the inliner, see KT-56500 for details).
+                // Fixing inliner requires a lot of work, so just return the upper bound for now instead of throwing an error.
+                // compilationException(
+                //         "The type parameter ${typeParameter.render()} is not defined in the referenced function ${referencedFunction.render()}",
+                //         functionReference
+                // )
+                return typeParameter.erasedUpperBound.defaultType
             }
             return typeParameterRemapper.remapType(allTypeParametersAndArguments[typeParameter.index].second)
         }
