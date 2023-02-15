@@ -487,10 +487,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         )
     }
 
-    override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+    override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean, includeClasspath: Boolean) {
         abstractKotlinCompileArgumentsContributor.contributeArguments(
             args,
-            compilerArgumentsConfigurationFlags(defaultsOnly, ignoreClasspathResolutionErrors)
+            compilerArgumentsConfigurationFlags(defaultsOnly, ignoreClasspathResolutionErrors, includeClasspath)
         )
         if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
             args.reportPerf = true
@@ -681,11 +681,12 @@ abstract class KotlinCompile @Inject constructor(
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
 
-    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean, includeClasspath: Boolean) {
         compilerArgumentsContributor.contributeArguments(
             args, compilerArgumentsConfigurationFlags(
                 defaultsOnly,
-                ignoreClasspathResolutionErrors
+                ignoreClasspathResolutionErrors,
+                includeClasspath
             )
         )
 
@@ -980,9 +981,14 @@ abstract class Kotlin2JsCompile @Inject constructor(
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
 
-    override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+    override fun setupCompilerArgs(
+        args: K2JSCompilerArguments,
+        defaultsOnly: Boolean,
+        ignoreClasspathResolutionErrors: Boolean,
+        includeClasspath: Boolean
+    ) {
         (compilerOptions as KotlinJsCompilerOptionsDefault).fillDefaultValues(args)
-        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
+        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors, includeClasspath = includeClasspath)
 
         if (defaultsOnly) return
 

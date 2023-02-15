@@ -421,7 +421,8 @@ internal constructor(
     override fun setupCompilerArgs(
         args: StubK2NativeCompilerArguments,
         defaultsOnly: Boolean,
-        ignoreClasspathResolutionErrors: Boolean
+        ignoreClasspathResolutionErrors: Boolean,
+        includeClasspath: Boolean
     ) = Unit
 
     override fun buildCommonArgs(defaultsOnly: Boolean): List<String> {

@@ -28,11 +28,13 @@ internal interface CompilerArgumentsConfigurationFlag
 
 internal object DefaultsOnly : CompilerArgumentsConfigurationFlag
 internal object IgnoreClasspathResolutionErrors : CompilerArgumentsConfigurationFlag
+internal object IncludeClasspath : CompilerArgumentsConfigurationFlag
 
-internal fun compilerArgumentsConfigurationFlags(defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) =
+internal fun compilerArgumentsConfigurationFlags(defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean, includeClasspath: Boolean) =
     mutableSetOf<CompilerArgumentsConfigurationFlag>().apply {
         if (defaultsOnly) add(DefaultsOnly)
         if (ignoreClasspathResolutionErrors) add(IgnoreClasspathResolutionErrors)
+        if (includeClasspath) add(IncludeClasspath)
     }
 
 /** The primary purpose of this class is to encapsulate compiler arguments setup done by the AbstractKotlinCompiler tasks,
@@ -91,10 +93,12 @@ internal open class KotlinJvmCompilerArgumentsContributor(
         if (DefaultsOnly in flags) return
 
         args.allowNoSourceFiles = true
-        args.classpathAsList = try {
-            compileClasspath.toList().filter { it.exists() }
-        } catch (e: Exception) {
-            if (IgnoreClasspathResolutionErrors in flags) emptyList() else throw(e)
+        if (IncludeClasspath in flags) {
+            args.classpathAsList = try {
+                compileClasspath.toList().filter { it.exists() }
+            } catch (e: Exception) {
+                if (IgnoreClasspathResolutionErrors in flags) emptyList() else throw (e)
+            }
         }
         args.destinationAsFile = destinationDir
 

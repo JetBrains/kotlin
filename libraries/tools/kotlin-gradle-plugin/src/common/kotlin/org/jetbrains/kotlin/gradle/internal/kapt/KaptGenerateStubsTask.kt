@@ -98,13 +98,15 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     override fun setupCompilerArgs(
         args: K2JVMCompilerArguments,
         defaultsOnly: Boolean,
-        ignoreClasspathResolutionErrors: Boolean
+        ignoreClasspathResolutionErrors: Boolean,
+        includeClasspath: Boolean
     ) {
         compileKotlinArgumentsContributor.get().contributeArguments(
             args,
             compilerArgumentsConfigurationFlags(
                 defaultsOnly,
-                ignoreClasspathResolutionErrors
+                ignoreClasspathResolutionErrors,
+                includeClasspath
             )
         )
 
