@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 JetBrains s.r.o.
+ * Copyright 2016-2023 JetBrains s.r.o.
  * Use of this source code is governed by the Apache 2.0 License that can be found in the LICENSE.txt file.
  */
 
@@ -39,7 +39,3 @@ private fun CharSequence.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
         this.lineSequence().map { it.trimEnd() }.joinToString(separator = "\n").let {
             if (it.endsWith("\n")) it else it + "\n"
         }
-
-
-private val UPPER_CASE_CHARS = Regex("[A-Z]+")
-fun String.replaceCamelCaseWithDashedLowerCase() = replace(UPPER_CASE_CHARS) { "-" + it.value.toLowerCase() }

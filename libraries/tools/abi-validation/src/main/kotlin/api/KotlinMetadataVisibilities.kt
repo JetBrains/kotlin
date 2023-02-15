@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 JetBrains s.r.o.
+ * Copyright 2016-2023 JetBrains s.r.o.
  * Use of this source code is governed by the Apache 2.0 License that can be found in the LICENSE.txt file.
  */
 
@@ -7,7 +7,7 @@ package kotlinx.validation.api
 
 import kotlinx.metadata.*
 import kotlinx.metadata.jvm.*
-import kotlinx.metadata.jvm.KotlinClassHeader.Companion.COMPATIBLE_METADATA_VERSION
+import kotlinx.metadata.jvm.KotlinClassMetadata.Companion.COMPATIBLE_METADATA_VERSION
 import org.objectweb.asm.tree.*
 
 class ClassVisibility(
@@ -58,7 +58,7 @@ val ClassNode.kotlinMetadata: KotlinClassMetadata?
         val metadata = findAnnotation("kotlin/Metadata", false) ?: return null
         @Suppress("UNCHECKED_CAST")
         val header = with(metadata) {
-            KotlinClassHeader(
+            Metadata(
                 kind = get("k") as Int?,
                 metadataVersion = (get("mv") as List<Int>?)?.toIntArray(),
                 data1 = (get("d1") as List<String>?)?.toTypedArray(),
