@@ -86,9 +86,6 @@ abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionMana
         }
     }
 
-//    internal val packageJsonFiles: Collection<File>
-//        get() = state.npmProjects.map { it.packageJsonFile }
-
     private fun prepareIfNeeded(
         logger: Logger,
         npmEnvironment: NpmEnvironment,
