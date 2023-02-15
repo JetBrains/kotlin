@@ -24,6 +24,7 @@ tasks.register("jvmJar") {
 
 val targetList: List<String> by project
 val cacheableTargetNames: List<String> by project
+val hostName: String by project
 
 // Build all default libraries.
 targetList.forEach { target ->
@@ -35,12 +36,17 @@ targetList.forEach { target ->
 
                 from(library.project.file("build/${target}${library.name}")) {
                     include("**")
-                    eachFile {
-                        if (name == "manifest") {
-                            val existingManifest = file("$destinationDir/$path")
-                            if (existingManifest.exists()) {
-                                project.mergeManifestsByTargets(file, existingManifest)
-                                exclude()
+                    // Merge manifest for non-host targets
+                    if (target != hostName) {
+                        // Should be done only after the host is copied with to create "existing manifest"
+                        this@create.mustRunAfter("${hostName}${library.name}EndorsedLibraries")
+                        eachFile {
+                            if (name == "manifest") {
+                                val existingManifest = file("$destinationDir/$path")
+                                if (existingManifest.exists()) {
+                                    project.mergeManifestsByTargets(file, existingManifest)
+                                    exclude()
+                                }
                             }
                         }
                     }
