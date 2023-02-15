@@ -77,7 +77,7 @@ private class Degrade(val rootProject: Project) {
 
         if (commands.isEmpty()) return null
 
-        val konanHome = project.properties["konanHome"]
+        val konanHome = project.properties["konanHome"] ?: project.properties["kotlinNativeDist"]
 
         val scriptName = task.path.substring(1).replace(':', '_') + ".sh"
 
@@ -116,7 +116,16 @@ private class Degrade(val rootProject: Project) {
 
             val transformedArguments = generateSequence(nextLine)
                     .takeWhile { it != "]" }
-                    .map { it.trimStart() }
+                    .flatMap {
+                        val line = it.trimStart()
+                        if (line.startsWith("@")) { // argument with filename containing list of arguments
+                            File(line.substringAfter("@"))
+                                    .readText()
+                                    .split("\n")
+                                    .map { it.substringAfter('"').substringBeforeLast('"') }
+                        } else
+                            listOf(line)
+                    }
                     .toList()
 
             result += KotlinNativeCommand(transformedArguments)
