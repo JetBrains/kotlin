@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.utils.errors
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiInvalidElementAccessException
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtElement
 
@@ -18,8 +20,14 @@ public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement
             else -> psiElement.text
         }
     }
+    if (psi != null) {
+        withKtModuleEntry("${name}KtModule", psi.getKtModule())
+    }
 }
 
+public fun ExceptionAttachmentBuilder.withKtModuleEntry(name: String, module: KtModule?) {
+    withEntry(name, module) { ktModule -> ktModule.moduleDescription }
+}
 
 public fun ExceptionAttachmentBuilder.withClassEntry(name: String, element: Any?) {
     withEntry(name, element) { it::class.java.name }
