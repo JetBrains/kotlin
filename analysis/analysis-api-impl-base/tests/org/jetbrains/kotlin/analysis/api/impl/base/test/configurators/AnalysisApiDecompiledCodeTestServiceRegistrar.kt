@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.analysis.test.framework.services.disposableProvider
 
 
-object AnalysisApiLibraryBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
+object AnalysisApiDecompiledCodeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
     }
 
@@ -34,12 +34,9 @@ object AnalysisApiLibraryBaseTestServiceRegistrar : AnalysisApiTestServiceRegist
     }
 
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        FileTypeFileViewProviders.INSTANCE.addExplicitExtension(JavaClassFileType.INSTANCE, ClassFileViewProviderFactory())
-
-        ClassFileDecompilers.getInstance().EP_NAME.point.apply {
-            registerExtension(KotlinClassFileDecompiler(), LoadingOrder.FIRST, testServices.disposableProvider.getApplicationDisposable())
-            registerExtension(KotlinBuiltInDecompiler(), LoadingOrder.FIRST, testServices.disposableProvider.getApplicationDisposable())
+        application.apply {
+            registerService(ClsKotlinBinaryClassCache::class.java)
+            registerService(FileAttributeService::class.java, DummyFileAttributeService)
         }
-
     }
 }

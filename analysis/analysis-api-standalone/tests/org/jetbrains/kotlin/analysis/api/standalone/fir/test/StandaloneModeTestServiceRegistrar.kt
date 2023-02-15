@@ -10,9 +10,12 @@ import com.intellij.mock.MockProject
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticModuleProvider
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
+import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -41,6 +44,7 @@ object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
                     projectEnvironment.environment.jarFileSystem as CoreJarFileSystem
                 )
             )
+            registerService(JvmFirDeserializedSymbolProviderFactory::class.java, JvmFirDeserializedSymbolProviderFactory::class.java)
         }
     }
 

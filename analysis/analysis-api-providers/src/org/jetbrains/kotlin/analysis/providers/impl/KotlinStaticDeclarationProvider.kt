@@ -5,24 +5,34 @@
 
 package org.jetbrains.kotlin.analysis.providers.impl
 
+import com.intellij.ide.highlighter.JavaClassFileType
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubElement
+import com.intellij.util.containers.CollectionFactory
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.URLUtil
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
@@ -84,6 +94,11 @@ public class KotlinStaticDeclarationProvider internal constructor(
         return index.scriptMap[scriptFqName].orEmpty().filter { it.containingKtFile.virtualFile in scope }
     }
 
+    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
+        val packageNames = index.topLevelPropertyMap.keys + index.topLevelFunctionMap.keys
+        return packageNames.mapTo(mutableSetOf()) { it.asString() }
+    }
+
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
         index.topLevelPropertyMap[callableId.packageName]
             ?.filter { ktProperty ->
@@ -109,6 +124,7 @@ public class KotlinStaticDeclarationProviderFactory(
     private val project: Project,
     files: Collection<KtFile>,
     private val jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
+    additionalRoots: List<VirtualFile> = emptyList(),
 ) : KotlinDeclarationProviderFactory() {
 
     private val index = KotlinStaticDeclarationIndex()
@@ -247,13 +263,23 @@ public class KotlinStaticDeclarationProviderFactory(
                     // member functions and properties
                     stub.childrenStubs.forEach(::indexStub)
                 }
+                is KotlinObjectStubImpl -> {
+                    addToClassMap(stub.psi)
+                    // member functions and properties
+                    stub.childrenStubs.forEach(::indexStub)
+                }
                 is KotlinTypeAliasStubImpl -> addToTypeAliasMap(stub.psi)
                 is KotlinFunctionStubImpl -> addToFunctionMap(stub.psi)
                 is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
+                is KotlinPlaceHolderStubImpl -> {
+                    if (stub.stubType == KtStubElementTypes.CLASS_BODY) {
+                        stub.getChildrenStubs().filterIsInstance<KotlinClassOrObjectStub<*>>().forEach(::indexStub)
+                    }
+                }
             }
         }
 
-        loadBuiltIns().forEach { ktFileStub ->
+        fun processStub(ktFileStub: KotlinFileStubImpl) {
             val ktFile: KtFile = ktFileStub.psi
             addToFacadeFileMap(ktFile)
 
@@ -270,6 +296,32 @@ public class KotlinStaticDeclarationProviderFactory(
             ktFileStub.childrenStubs.forEach(::indexStub)
         }
 
+        loadBuiltIns().forEach { processStub(it) }
+
+        val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
+        for (root in additionalRoots) {
+            KotlinFakeClsStubsCache.processAdditionalRoot(root) { additionalRoot ->
+                val stubs = mutableListOf<KotlinFileStubImpl>()
+                VfsUtilCore.visitChildrenRecursively(additionalRoot, object : VirtualFileVisitor<Void>() {
+                    override fun visitFile(file: VirtualFile): Boolean {
+                        if (!file.isDirectory && file.fileType == JavaClassFileType.INSTANCE) {
+                            val fileContent = FileContentImpl.createByFile(file)
+                            if (!binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content)) return true
+                            val stub = KotlinClsStubBuilder().buildFileStub(fileContent) as? KotlinFileStubImpl ?: return true
+                            val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, fileContent.file), isCompiled = true) {
+                                override fun getStub() = stub
+                                override fun isPhysical() = false
+                            }
+                            stub.psi = fakeFile
+                            stubs.add(stub)
+                        }
+                        return true
+                    }
+                })
+                stubs
+            }?.forEach { processStub(it) }
+        }
+
         // Indexing user source files
         files.forEach {
             it.accept(recorder)
@@ -278,5 +330,26 @@ public class KotlinStaticDeclarationProviderFactory(
 
     override fun createDeclarationProvider(searchScope: GlobalSearchScope): KotlinDeclarationProvider {
         return KotlinStaticDeclarationProvider(index, searchScope)
+    }
+}
+
+/**
+ * Test application service to store stubs of shared between tests libraries.
+ *
+ * Otherwise, each test would start indexing of stdlib from scratch,
+ * and under the lock which makes tests extremely slow*/
+class KotlinFakeClsStubsCache {
+    private val fakeFileClsStubs = CollectionFactory.createConcurrentWeakValueMap<String, List<KotlinFileStubImpl>>()
+
+    companion object {
+        fun processAdditionalRoot(root: VirtualFile, storage: (VirtualFile) -> List<KotlinFileStubImpl>): List<KotlinFileStubImpl>? {
+            val service = ApplicationManager.getApplication().getService(KotlinFakeClsStubsCache::class.java) ?: return null
+            if (service.fakeFileClsStubs[root.path] == null) {
+                service.fakeFileClsStubs[root.path] = storage(root)
+            }
+            return service.fakeFileClsStubs.computeIfAbsent(root.path) { _ ->
+                storage(root)
+            }
+        }
     }
 }

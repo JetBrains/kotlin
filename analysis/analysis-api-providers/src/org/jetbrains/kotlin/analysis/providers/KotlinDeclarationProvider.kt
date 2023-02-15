@@ -42,6 +42,8 @@ public abstract class KotlinDeclarationProvider {
     public abstract fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile>
 
     public abstract fun findFilesForScript(scriptFqName: FqName): Collection<KtScript>
+
+    public abstract fun computePackageSetWithTopLevelCallableDeclarations(): Set<String>
 }
 
 public abstract class KotlinDeclarationProviderFactory {

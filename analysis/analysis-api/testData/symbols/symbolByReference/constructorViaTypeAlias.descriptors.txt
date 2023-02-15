@@ -40,11 +40,9 @@ KtConstructorSymbol:
         type: (kotlin/collections/MutableCollection<out E!>..kotlin/collections/Collection<E!>?)
       symbolKind: LOCAL
       typeParameters: []
-      getContainingModule: Could not render due to java.util.NoSuchElementException: Collection contains no element matching the predicate.
-
+      getContainingModule: KtSdkModule "SDK jdk"
       deprecationStatus: null
   ]
   visibility: Public
-  getContainingModule: Could not render due to java.util.NoSuchElementException: Collection contains no element matching the predicate.
-
+  getContainingModule: KtSdkModule "SDK jdk"
   deprecationStatus: null

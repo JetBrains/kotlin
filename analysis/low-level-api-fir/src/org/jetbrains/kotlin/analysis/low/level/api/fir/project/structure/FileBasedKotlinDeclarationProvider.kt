@@ -129,6 +129,9 @@ internal class FileBasedKotlinDeclarationProvider(val kotlinFile: KtFile) : Kotl
     }
 
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = emptyList()
+    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
+        return setOf(kotlinFile.packageFqName.asString())
+    }
 
     override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> =
         listOfNotNull(kotlinFile.script?.takeIf { it.fqName == scriptFqName })

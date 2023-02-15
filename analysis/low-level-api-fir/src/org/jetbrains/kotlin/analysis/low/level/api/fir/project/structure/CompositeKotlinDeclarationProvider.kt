@@ -65,6 +65,10 @@ private constructor(
         return providers.flatMapTo(mutableListOf()) { it.findFilesForScript(scriptFqName) }
     }
 
+     override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
+        return providers.flatMapTo(mutableSetOf()) { it.computePackageSetWithTopLevelCallableDeclarations() }
+    }
+
     companion object {
         fun create(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider {
             return when (providers.size) {

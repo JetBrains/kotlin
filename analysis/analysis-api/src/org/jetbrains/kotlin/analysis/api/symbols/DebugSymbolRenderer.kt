@@ -266,7 +266,11 @@ public class DebugSymbolRenderer(
 
         withIndent {
             appendLine().append("psi: ")
-            renderValue(call.psi?.javaClass?.simpleName, renderSymbolsFully = false)
+            val psi =
+                if (call.psi?.containingKtFile?.isCompiled == true) {
+                    null
+                } else call.psi
+            renderValue(psi?.javaClass?.simpleName, renderSymbolsFully = false)
         }
     }
 
