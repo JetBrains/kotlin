@@ -21988,27 +21988,37 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
                 }
 
                 @Test
-                @TestMetadata("intermediateWithActualAndExpect.kt")
-                public void testIntermediateWithActualAndExpect() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/intermediateWithActualAndExpect.kt");
-                }
-
-                @Test
                 @TestMetadata("kt-55570.kt")
                 public void testKt_55570() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/kt-55570.kt");
                 }
 
                 @Test
-                @TestMetadata("sealedInheritorsInComplexModuleStructure.kt")
-                public void testSealedInheritorsInComplexModuleStructure() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/sealedInheritorsInComplexModuleStructure.kt");
-                }
-
-                @Test
                 @TestMetadata("simple.kt")
                 public void testSimple() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/simple.kt");
+                }
+
+                @Nested
+                @TestMetadata("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis")
+                @TestDataPath("$PROJECT_ROOT")
+                public class MultiplatformCompositeAnalysis {
+                    @Test
+                    public void testAllFilesPresentInMultiplatformCompositeAnalysis() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    }
+
+                    @Test
+                    @TestMetadata("intermediateWithActualAndExpect.kt")
+                    public void testIntermediateWithActualAndExpect() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/intermediateWithActualAndExpect.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("sealedInheritorsInComplexModuleStructure.kt")
+                    public void testSealedInheritorsInComplexModuleStructure() throws Exception {
+                        runTest("compiler/testData/diagnostics/tests/multiplatform/hmpp/multiplatformCompositeAnalysis/sealedInheritorsInComplexModuleStructure.kt");
+                    }
                 }
             }
 

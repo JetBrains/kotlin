@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.test.frontend.classic
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analyzer.AnalysisResult
+import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.analyzer.common.CommonDependenciesContainer
+import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -27,6 +30,7 @@ import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.context.withModule
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDependenciesImpl
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
@@ -38,12 +42,13 @@ import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
-import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.load.java.lazy.SingleModuleClassResolver
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.native.FakeTopDownAnalyzerFacadeForNative
+import org.jetbrains.kotlin.platform.CommonPlatforms
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -51,6 +56,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.LazyTopDownAnalyzer
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
@@ -156,7 +162,14 @@ class ClassicFrontendFacade(
             targetPlatform.isNative() -> performNativeModuleResolve(
                 module, project, compilerEnvironment, files, dependencyDescriptors, friendsDescriptors, dependsOnDescriptors
             )
-            targetPlatform.isCommon() -> performCommonModuleResolve(module, compilerEnvironment, files)
+            targetPlatform.isCommon() -> performCommonModuleResolve(
+                module,
+                project,
+                compilerEnvironment,
+                dependencyDescriptors,
+                friendsDescriptors,
+                files
+            )
             else -> error("Should not be here")
         }
     }
@@ -347,15 +360,19 @@ class ClassicFrontendFacade(
 
     private fun performCommonModuleResolve(
         module: TestModule,
+        project: Project,
         compilerEnvironment: TargetEnvironment,
+        dependencyDescriptors: List<ModuleDescriptorImpl>,
+        friendsDescriptors: List<ModuleDescriptorImpl>,
         files: List<KtFile>,
     ): AnalysisResult {
-        // See 'TODO' for adding dependency manager
-        require(module.dependsOnDependencies.isEmpty() || ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE !in module.directives) {
-            "Analyzing common modules with 'dependsOn' edges in ${ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE.name} is not supported yet.\n" +
-                    "Module: ${module.name}\n" +
-                    "dependsOn: ${module.dependsOnDependencies.map { it.moduleName }}"
-        }
+        val moduleDescriptor = createModuleContext(
+            module, project,
+            dependencyDescriptors = dependencyDescriptors,
+            friendsDescriptors = friendsDescriptors,
+            dependsOnDescriptors = dependencyDescriptors
+        ) { DefaultBuiltIns.Instance }.module
+        (moduleDescriptor as ModuleDescriptorImpl).initialize(PackageFragmentProvider.Empty)
         return CommonResolverForModuleFactory.analyzeFiles(
             files,
             Name.special("<${module.name}>"),
@@ -363,11 +380,37 @@ class ClassicFrontendFacade(
             module.languageVersionSettings,
             module.targetPlatform,
             compilerEnvironment,
-            // TODO: add dependency manager
+            dependenciesContainer = CommonDependenciesContainerImpl(moduleDescriptor)
         ) {
             // TODO
             MetadataPartProvider.Empty
         }
+    }
+
+    private class CommonDependenciesContainerImpl(module: ModuleDescriptor) : CommonDependenciesContainer {
+        private class ModuleInfoImpl(val module: ModuleDescriptor) : ModuleInfo {
+            override val name: Name get() = module.name
+
+            override fun dependencies(): List<ModuleInfo> = module.allDependencyModules.map(::ModuleInfoImpl)
+
+            override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.LAST
+
+            override val platform: TargetPlatform get() = CommonPlatforms.defaultCommonPlatform
+            override val analyzerServices: PlatformDependentAnalyzerServices get() = CommonPlatformAnalyzerServices
+        }
+
+        private val _moduleInfos: List<ModuleInfoImpl> =
+            ModuleInfoImpl(module).let { listOf(it) + it.module.allDependencyModules.map(::ModuleInfoImpl) }
+        override val moduleInfos: List<ModuleInfo> get() = _moduleInfos
+
+        override fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor =
+            _moduleInfos.singleOrNull { it.name == moduleInfo.name }?.module ?: error("Can't find ModuleDescriptor for $moduleInfo")
+
+        override fun registerDependencyForAllModules(moduleInfo: ModuleInfo, descriptorForModule: ModuleDescriptorImpl) = Unit
+        override fun packageFragmentProviderForModuleInfo(moduleInfo: ModuleInfo): PackageFragmentProvider? = null
+
+        override val friendModuleInfos: List<ModuleInfo> get() = emptyList()
+        override val refinesModuleInfos: List<ModuleInfo> get() = emptyList()
     }
 
     @OptIn(ExperimentalStdlibApi::class)
