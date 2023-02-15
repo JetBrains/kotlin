@@ -396,10 +396,11 @@ class ScopeTowerLevel(
         callInfo: CallInfo,
         processor: TowerScopeLevelProcessor<T>
     ) {
-        val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
+        val candidateReceiverTypeRef = candidate.resolvedReceiverTypeRef
         if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers, session) == null) {
             return
         }
+
         val receiverExpected = withHideMembersOnly || areThereExtensionReceiverOptions()
         if (candidateReceiverTypeRef == null == receiverExpected) return
         val dispatchReceiverValue = dispatchReceiverValue(candidate, callInfo)
