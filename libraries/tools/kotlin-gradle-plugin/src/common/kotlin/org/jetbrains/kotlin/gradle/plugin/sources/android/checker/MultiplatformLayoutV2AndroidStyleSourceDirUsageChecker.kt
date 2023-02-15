@@ -45,6 +45,8 @@ internal object MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker : KotlinA
                 
                 To suppress this warning: put the following in your gradle.properties:
                 ${PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN}=true
+                
+                Learn more: https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
             """.trimIndent()
     }
 }
