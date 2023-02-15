@@ -5679,6 +5679,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
             }
 
             @Test
+            @TestMetadata("capturingUninitializedVariableInNonInPlaceLambda.kt")
+            public void testCapturingUninitializedVariableInNonInPlaceLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/capturingUninitializedVariableInNonInPlaceLambda.kt");
+            }
+
+            @Test
             @TestMetadata("checkInnerLocalDeclarations.kt")
             public void testCheckInnerLocalDeclarations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/checkInnerLocalDeclarations.kt");

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.expressions.unwrapLValue
 import org.jetbrains.kotlin.fir.isCatchParameter
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph.Kind
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
@@ -76,7 +77,10 @@ fun PropertyInitializationInfoData.checkPropertyAccesses(
     val filtered = properties.filterTo(mutableSetOf()) { it.requiresInitialization(isForClassInitialization) }
     if (filtered.isEmpty()) return
 
-    checkPropertyAccesses(graph, filtered, context, reporter, null, mutableMapOf())
+    checkPropertyAccesses(
+        graph, filtered, context, reporter, scope = null,
+        isForClassInitialization, doNotReportUninitializedVariable = false, mutableMapOf()
+    )
 }
 
 @OptIn(SymbolInternals::class)
@@ -86,7 +90,9 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
     context: CheckerContext,
     reporter: DiagnosticReporter,
     scope: FirDeclaration?,
-    scopes: MutableMap<FirPropertySymbol, FirDeclaration?>,
+    isForClassInitialization: Boolean,
+    doNotReportUninitializedVariable: Boolean,
+    scopes: MutableMap<FirPropertySymbol, FirDeclaration?>
 ) {
     fun FirQualifiedAccessExpression.hasCorrectReceiver() =
         (dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol == receiver
@@ -121,6 +127,7 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
             }
 
             node is QualifiedAccessNode -> {
+                if (doNotReportUninitializedVariable) continue
                 val symbol = node.fir.calleeReference.toResolvedPropertySymbol() ?: continue
                 if (!symbol.isLateInit && node.fir.hasCorrectReceiver() && symbol in properties &&
                     getValue(node).values.any { it[symbol]?.isDefinitelyVisited() != true }
@@ -134,10 +141,27 @@ private fun PropertyInitializationInfoData.checkPropertyAccesses(
             // needed. The errors on reassignments will be emitted by `FirReassignmentAndInvisibleSetterChecker`.
             node is CFGNodeWithSubgraphs<*> && (receiver == null || node !== graph.exitNode) -> {
                 for (subGraph in node.subGraphs) {
+                    /*
+                     * For class initialization graph we allow to read properties in non-in-place lambdas
+                     *   even if they may be not initialized at this point, because if lambda is not in-place,
+                     *   then it most likely will be called after object will be initialized
+                     */
+                    val doNotReportForSubGraph = doNotReportUninitializedVariable ||
+                            (isForClassInitialization && subGraph.kind.doNotReportUninitializedVariableForClassInitialization)
+
                     val newScope = subGraph.declaration?.takeIf { !it.evaluatedInPlace } ?: scope
-                    checkPropertyAccesses(subGraph, properties, context, reporter, newScope, scopes)
+                    checkPropertyAccesses(
+                        subGraph, properties, context, reporter, newScope,
+                        isForClassInitialization, doNotReportForSubGraph, scopes
+                    )
                 }
             }
         }
     }
 }
+
+private val Kind.doNotReportUninitializedVariableForClassInitialization: Boolean
+    get() = when (this) {
+        Kind.AnonymousFunction, Kind.LocalFunction -> true
+        else -> false
+    }
