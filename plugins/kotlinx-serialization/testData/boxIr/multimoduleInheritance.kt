@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR
 // TARGET_BACKEND: JVM_IR
 
 // WITH_STDLIB
@@ -18,6 +17,15 @@ open class OpenBody {
 @Serializable
 abstract class AbstractConstructor(var optional: String = "foo")
 
+// TODO: test fails for K2 if places of 'color' and 'name' are swapped
+// because of https://youtrack.jetbrains.com/issue/KT-54792 (KT-20980)
+// and serialization proto extension is not available in K2.
+@Serializable
+open class Vehicle {
+    var color: String? = null
+    var name: String? = null
+}
+
 
 // MODULE: app(lib)
 // FILE: app.kt
@@ -35,6 +43,11 @@ class Test1: OpenBody()
 @Serializable
 class Test2: AbstractConstructor()
 
+@Serializable
+open class Car : Vehicle() {
+    var maxSpeed: Int = 100
+}
+
 fun test1() {
     val string = Json.encodeToString(Test1.serializer(), Test1())
     assertEquals("{}", string)
@@ -49,8 +62,29 @@ fun test2() {
     assertEquals("foo", reconstructed.optional)
 }
 
+fun test3() {
+    val json = Json { allowStructuredMapKeys = true; encodeDefaults = true }
+
+    val car = Car()
+    car.maxSpeed = 100
+    car.name = "ford"
+    val s = json.encodeToString(Car.serializer(), car)
+    assertEquals("""{"color":null,"name":"ford","maxSpeed":100}""", s)
+    val restoredCar = json.decodeFromString(Car.serializer(), s)
+    assertEquals(100, restoredCar.maxSpeed)
+    assertEquals("ford", restoredCar.name)
+    assertEquals(null, restoredCar.color)
+}
+
 fun box(): String {
-    test1()
-    test2()
-    return "OK"
+    try {
+        test1()
+        test2()
+        test3()
+        return "OK"
+    } catch (e: Throwable) {
+        e.printStackTrace()
+        return e.message!!
+    }
+
 }

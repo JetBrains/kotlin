@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,10 +39,7 @@ class SerializableIrGenerator(
     protected val properties = serializablePropertiesForIrBackend(irClass)
 
     private val serialDescriptorClass = compilerContext.referenceClass(
-        ClassId(
-            SerializationPackages.descriptorsPackageFqName,
-            Name.identifier(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS)
-        )
+        SerializationRuntimeClassIds.descriptorClassId
     )!!.owner
 
     private val serialDescriptorImplClass = compilerContext.referenceClass(

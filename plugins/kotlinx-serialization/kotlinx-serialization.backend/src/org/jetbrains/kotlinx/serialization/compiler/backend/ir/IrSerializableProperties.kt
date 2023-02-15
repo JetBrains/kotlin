@@ -6,6 +6,9 @@
 package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -40,6 +43,41 @@ class IrSerializableProperties(
     override val serializableConstructorProperties: List<IrSerializableProperty>,
     override val serializableStandaloneProperties: List<IrSerializableProperty>
 ) : ISerializableProperties<IrSerializableProperty>
+
+/**
+ * This function checks if a deserialized property declares default value and has backing field.
+ *
+ * Returns (declaresDefaultValue, hasBackingField) boolean pair. Returns (false, false) for properties from current module.
+ */
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun IrProperty.analyzeIfFromAnotherModule(): Pair<Boolean, Boolean> {
+    return if (descriptor is DeserializedPropertyDescriptor) {
+        // IrLazyProperty does not deserialize backing fields correctly, so we should fall back to info from descriptor.
+        // DeserializedPropertyDescriptor can be encountered only after K1, so it is safe to check it.
+        val hasDefault = descriptor.declaresDefaultValue()
+        hasDefault to (descriptor.backingField != null || hasDefault)
+    } else if (this is Fir2IrLazyProperty) {
+        // Fir2IrLazyProperty after K2 correctly deserializes information about backing field.
+        // However, nor Fir2IrLazyProp nor deserialized FirProperty do not store default value (initializer expression) for property,
+        // so we either should find corresponding constructor parameter and check its default, or rely on less strict check for default getter.
+        // Comments are copied from PropertyDescriptor.declaresDefaultValue() as it has similar logic.
+        val hasBackingField = backingField != null
+        val matchingPrimaryConstructorParam = containingClass?.declarations?.filterIsInstance<FirPrimaryConstructor>()
+            ?.singleOrNull()?.valueParameters?.find { it.name == this.name }
+        if (matchingPrimaryConstructorParam != null) {
+            // If property is a constructor parameter, check parameter default value
+            // (serializable classes always have parameters-as-properties, so no name clash here)
+            (matchingPrimaryConstructorParam.defaultValue != null) to hasBackingField
+        } else {
+            // If it is a body property, then it is likely to have initializer when getter is not specified
+            // note this approach is not working well if we have smth like `get() = field`, but such cases on cross-module boundaries
+            // should be very marginal. If we want to solve them, we need to add protobuf metadata extension.
+            (fir.getter is FirDefaultPropertyGetter) to hasBackingField
+        }
+    } else {
+        false to false
+    }
+}
 
 /**
  * typeReplacement should be populated from FakeOverrides and is used when we want to determine the type for property
@@ -83,11 +121,7 @@ internal fun serializablePropertiesForIrBackend(
         .filter(::isPropSerializable)
         .map {
             val isConstructorParameterWithDefault = primaryParamsAsProps[it] ?: false
-            // FIXME: workaround because IrLazyProperty doesn't deserialize information about backing fields. Fallback to descriptor won't work with FIR.
-            val isPropertyFromAnotherModuleDeclaresDefaultValue =
-                it.descriptor is DeserializedPropertyDescriptor && it.descriptor.declaresDefaultValue()
-            val isPropertyWithBackingFieldFromAnotherModule =
-                it.descriptor is DeserializedPropertyDescriptor && (it.descriptor.backingField != null || isPropertyFromAnotherModuleDeclaresDefaultValue)
+            val (isPropertyFromAnotherModuleDeclaresDefaultValue, isPropertyWithBackingFieldFromAnotherModule) = it.analyzeIfFromAnotherModule()
             IrSerializableProperty(
                 it,
                 isConstructorParameterWithDefault,

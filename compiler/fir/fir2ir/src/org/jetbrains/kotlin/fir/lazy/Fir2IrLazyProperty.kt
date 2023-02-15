@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -37,7 +37,7 @@ class Fir2IrLazyProperty(
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
     override val fir: FirProperty,
-    internal val containingClass: FirRegularClass?,
+    val containingClass: FirRegularClass?,
     override val symbol: Fir2IrPropertySymbol,
     override val isFakeOverride: Boolean
 ) : IrProperty(), AbstractFir2IrLazyDeclaration<FirProperty>, Fir2IrComponents by components {
