@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
 private val DEFAULT_DECLARATION_CHECKERS = listOf(
+    ExpectActualInTheSameModuleChecker,
     DataClassDeclarationChecker(),
     ConstModifierChecker,
     UnderscoreChecker,

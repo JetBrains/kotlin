@@ -409,8 +409,8 @@ class ClassicFrontendFacade(
         override fun registerDependencyForAllModules(moduleInfo: ModuleInfo, descriptorForModule: ModuleDescriptorImpl) = Unit
         override fun packageFragmentProviderForModuleInfo(moduleInfo: ModuleInfo): PackageFragmentProvider? = null
 
-        override val friendModuleInfos: List<ModuleInfo> get() = emptyList()
-        override val refinesModuleInfos: List<ModuleInfo> get() = emptyList()
+        override val friendModuleInfos: List<ModuleInfo> = _moduleInfos.filter { it.module.shouldSeeInternalsOf(module) }
+        override val refinesModuleInfos: List<ModuleInfo> = _moduleInfos.filter { it.module in module.allExpectedByModules }
     }
 
     @OptIn(ExperimentalStdlibApi::class)
