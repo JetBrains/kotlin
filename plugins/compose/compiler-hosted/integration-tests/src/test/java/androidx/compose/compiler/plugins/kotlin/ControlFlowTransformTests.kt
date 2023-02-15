@@ -5699,7 +5699,9 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   traceEventStart(<>, %changed, -1, <>)
                 }
                 Wrapper({ %composer: Composer?, %changed: Int ->
-                  sourceInformationMarkerStart(%composer, <>, "C*<Leaf(0...>:Test.kt")
+                  sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
+                  %composer.startReplaceableGroup(<>)
+                  sourceInformation(%composer, "*<Leaf(0...>")
                   repeat(1) { it: Int ->
                     %composer.startReplaceableGroup(<>)
                     sourceInformation(%composer, "*<Leaf(0...>")
@@ -5709,6 +5711,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                     %composer.endReplaceableGroup()
                     Leaf(0, %composer, 0b0110, 0)
                   }
+                  %composer.endReplaceableGroup()
                   sourceInformationMarkerEnd(%composer)
                 }, %composer, 0)
                 if (isTraceInProgress()) {
@@ -5980,6 +5983,163 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 UiTextField(isError, keyboardActions2, %composer, updateChangedFlags(%changed or 0b0001), %default)
               }
             }
+        """
+    )
+
+    @Test
+    fun testRememberInConditionalCallArgument() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            private fun Test(param: String?) {
+                Test(
+                    if (param == null) {
+                       remember { "" }
+                    } else {
+                        null
+                    },
+                )
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            private fun Test(param: String?, %composer: Composer?, %changed: Int) {
+              %composer = %composer.startRestartGroup(<>)
+              sourceInformation(%composer, "C(Test)<Test(>:Test.kt")
+              val %dirty = %changed
+              if (%changed and 0b1110 === 0) {
+                %dirty = %dirty or if (%composer.changed(param)) 0b0100 else 0b0010
+              }
+              if (%dirty and 0b1011 !== 0b0010 || !%composer.skipping) {
+                if (isTraceInProgress()) {
+                  traceEventStart(<>, %changed, -1, <>)
+                }
+                Test(%composer.startReplaceableGroup(<>)
+                sourceInformation(%composer, "<rememb...>")
+                val tmp0_group = if (param == null) {
+                  remember({
+                    ""
+                  }, %composer, 0)
+                } else {
+                  null
+                }
+                %composer.endReplaceableGroup()
+                tmp0_group, %composer, 0)
+                if (isTraceInProgress()) {
+                  traceEventEnd()
+                }
+              } else {
+                %composer.skipToGroupEnd()
+              }
+              %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+                Test(param, %composer, updateChangedFlags(%changed or 0b0001))
+              }
+            }
+        """
+    )
+
+    @Test
+    fun testRememberInNestedConditionalCallArgument() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            private fun Test(param: String?): String? {
+                return Test(
+                    if (param == null) {
+                       Test(
+                            if (param == null) {
+                                remember { "" }
+                            } else {
+                                null
+                            }
+                       )
+                    } else {
+                        null
+                    },
+                )
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Test)<Test(>:Test.kt")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
+              val tmp0 = Test(%composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "<Test(>")
+              val tmp2_group = if (param == null) {
+                Test(%composer.startReplaceableGroup(<>)
+                sourceInformation(%composer, "<rememb...>")
+                val tmp1_group = if (param == null) {
+                  remember({
+                    ""
+                  }, %composer, 0)
+                } else {
+                  null
+                }
+                %composer.endReplaceableGroup()
+                tmp1_group, %composer, 0)
+              } else {
+                null
+              }
+              %composer.endReplaceableGroup()
+              tmp2_group, %composer, 0)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+              %composer.endReplaceableGroup()
+              return tmp0
+            }
+        """
+    )
+
+    @Test
+    fun testInlineLambdaBeforeACall() = verifyComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            private fun Test(param: String?): String? {
+                InlineNonComposable {
+                    repeat(10) {
+                        Test("InsideInline")
+                    }
+                }
+                return Test("AfterInline")
+            }
+        """,
+        expectedTransformed = """
+            @Composable
+            private fun Test(param: String?, %composer: Composer?, %changed: Int): String? {
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "C(Test)<Test("...>:Test.kt")
+              if (isTraceInProgress()) {
+                traceEventStart(<>, %changed, -1, <>)
+              }
+              %composer.startReplaceableGroup(<>)
+              sourceInformation(%composer, "*<Test("...>")
+              InlineNonComposable {
+                repeat(10) { it: Int ->
+                  Test("InsideInline", %composer, 0b0110)
+                }
+              }
+              %composer.endReplaceableGroup()
+              val tmp0 = Test("AfterInline", %composer, 0b0110)
+              if (isTraceInProgress()) {
+                traceEventEnd()
+              }
+              %composer.endReplaceableGroup()
+              return tmp0
+            }
+        """,
+        extra = """
+            import androidx.compose.runtime.*
+
+            inline fun InlineNonComposable(block: () -> Unit) {}
         """
     )
 }
