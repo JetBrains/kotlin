@@ -504,7 +504,9 @@ class Fir2IrDeclarationStorage(
         val isLambda = function is FirAnonymousFunction && function.isLambda
         val updatedOrigin = when {
             isLambda -> IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-            function.symbol.callableId.isKFunctionInvoke() -> IrDeclarationOrigin.FAKE_OVERRIDE
+            function.symbol.callableId.isKFunctionInvoke() -> {
+                IrDeclarationOrigin.FAKE_OVERRIDE
+            }
             simpleFunction?.isStatic == true && simpleFunction.name in ENUM_SYNTHETIC_NAMES -> IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER
 
             // Kotlin built-in class and Java originated method (Collection.forEach, etc.)
@@ -1541,7 +1543,9 @@ class Fir2IrDeclarationStorage(
         symbol: FirCallableSymbol<*>,
         parentOrigin: IrDeclarationOrigin
     ): IrDeclarationOrigin = when {
-        symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride -> IrDeclarationOrigin.FAKE_OVERRIDE
+        symbol.fir.isIntersectionOverride || symbol.fir.isSubstitutionOverride -> {
+            IrDeclarationOrigin.FAKE_OVERRIDE
+        }
         parentOrigin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB && symbol.isJavaOrEnhancement -> {
             IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB
         }
