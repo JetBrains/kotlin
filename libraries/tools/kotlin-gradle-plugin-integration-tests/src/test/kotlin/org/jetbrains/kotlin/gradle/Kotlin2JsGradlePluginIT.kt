@@ -252,6 +252,34 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         }
     }
 
+    @DisplayName("Test cache invalidation after detecting guard file")
+    @GradleTest
+    fun testCacheGuardInvalidation(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrICProject", gradleVersion) {
+            build("nodeDevelopmentRun") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
+                assertOutputContains("module [main] was built clean")
+                assertOutputContains(">>> TEST OUT: Hello, Gradle.")
+            }
+
+            val cacheGuard = projectPath.resolve("build/klib/cache/cache.guard").toFile()
+            assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
+
+            val srcFile = projectPath.resolve("src/main/kotlin/Main.kt").toFile()
+            srcFile.writeText(srcFile.readText().replace("greeting(\"Gradle\")", "greeting(\"Kotlin\")"))
+
+            cacheGuard.createNewFile()
+            build("nodeDevelopmentRun") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
+                assertOutputContains(Regex("Cache guard file detected, cache directory '.+' cleared"))
+                assertOutputContains("module [main] was built clean")
+                assertOutputContains(">>> TEST OUT: Hello, Kotlin.")
+            }
+
+            assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
+        }
+    }
+
     @DisplayName("Only changed files synced during JS IR build")
     @GradleTest
     fun testJsIrOnlyChangedFilesSynced(gradleVersion: GradleVersion) {
