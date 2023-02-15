@@ -21,9 +21,12 @@ import com.intellij.psi.stubs.StubInputStream;
 import com.intellij.psi.stubs.StubOutputStream;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.psi.KtUserType;
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinUserTypeStubImpl;
+
+import java.io.IOException;
 
 public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub, KtUserType> {
     public KtUserTypeElementType(@NotNull @NonNls String debugName) {
@@ -33,16 +36,30 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
     @NotNull
     @Override
     public KotlinUserTypeStub createStub(@NotNull KtUserType psi, StubElement parentStub) {
-        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub);
+        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub, false, null);
     }
 
     @Override
-    public void serialize(@NotNull KotlinUserTypeStub stub, @NotNull StubOutputStream dataStream) {
+    public void serialize(@NotNull KotlinUserTypeStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+        dataStream.writeBoolean(stub.onTypeParameter());
+        ClassId classId = stub.classId();
+        if (classId != null) {
+            dataStream.writeName(classId.getPackageFqName().asString());
+            dataStream.writeName(classId.getShortClassName().asString());
+        }
+        else {
+            dataStream.writeName(null);
+            dataStream.writeName(null);
+        }
     }
 
     @NotNull
     @Override
-    public KotlinUserTypeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) {
-        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub);
+    public KotlinUserTypeStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+        boolean onTypeParameter = dataStream.readBoolean();
+        String packageName = dataStream.readNameString();
+        String className = dataStream.readNameString();
+        ClassId classId = packageName != null ? ClassId.fromString(packageName + "/" + className) : null;
+        return new KotlinUserTypeStubImpl((StubElement<?>) parentStub, onTypeParameter, classId);
     }
 }

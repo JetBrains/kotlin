@@ -74,16 +74,20 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             createDefinitelyNotNullTypeStub(parent, FqName.topLevel(name))
         } else {
             val nullableParentWrapper = nullableTypeParent(parent, type)
-            createStubForTypeName(ClassId.topLevel(FqName.topLevel(name)), nullableParentWrapper)
+            createStubForTypeName(
+                ClassId.topLevel(FqName.topLevel(name)),
+                nullableParentWrapper,
+                forTypeParameter = true
+            )
         }
     }
 
     private fun createDefinitelyNotNullTypeStub(parent: KotlinStubBaseImpl<*>, name: FqName) {
         val intersectionType = KotlinPlaceHolderStubImpl<KtIntersectionType>(parent, KtStubElementTypes.INTERSECTION_TYPE)
         val leftReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
-        createStubForTypeName(ClassId.topLevel(name), leftReference)
+        createStubForTypeName(ClassId.topLevel(name), leftReference, forTypeParameter = true)
         val rightReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
-        val userType = KotlinUserTypeStubImpl(rightReference)
+        val userType = KotlinUserTypeStubImpl(rightReference, onTypeParameter = true, classId = null)
         KotlinNameReferenceExpressionStubImpl(userType, StandardNames.FqNames.any.shortName().ref())
     }
 

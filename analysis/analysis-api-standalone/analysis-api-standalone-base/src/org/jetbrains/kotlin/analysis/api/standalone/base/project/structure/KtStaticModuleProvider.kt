@@ -21,6 +21,10 @@ class KtStaticModuleProvider(
             return builtinsModule
         }
 
+        projectStructure.binaryModules.firstOrNull { binaryModule ->
+            containingFileAsVirtualFile in binaryModule.contentScope
+        }?.let { return it }
+
         return projectStructure.mainModules
             .first { module ->
                 element in module.ktModule.contentScope

@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.providers.impl
 
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
@@ -17,12 +20,16 @@ import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
@@ -108,6 +115,7 @@ public class KotlinStaticDeclarationProviderFactory(
     private val project: Project,
     files: Collection<KtFile>,
     private val jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
+    additionalRoots: List<VirtualFile> = emptyList(),
 ) : KotlinDeclarationProviderFactory() {
 
     private val index = KotlinStaticDeclarationIndex()
@@ -239,13 +247,23 @@ public class KotlinStaticDeclarationProviderFactory(
                     // member functions and properties
                     stub.childrenStubs.forEach(::indexStub)
                 }
+                is KotlinObjectStubImpl -> {
+                    addToClassMap(stub.psi)
+                    // member functions and properties
+                    stub.childrenStubs.forEach(::indexStub)
+                }
                 is KotlinTypeAliasStubImpl -> addToTypeAliasMap(stub.psi)
                 is KotlinFunctionStubImpl -> addToFunctionMap(stub.psi)
                 is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
+                is KotlinPlaceHolderStubImpl -> {
+                    if (stub.stubType == KtStubElementTypes.CLASS_BODY) {
+                        stub.getChildrenStubs().filterIsInstance<KotlinClassOrObjectStub<*>>().forEach(::indexStub)
+                    }
+                }
             }
         }
 
-        loadBuiltIns().forEach { ktFileStub ->
+        fun processStub(ktFileStub: KotlinFileStubImpl) {
             val ktFile: KtFile = ktFileStub.psi
             addToFacadeFileMap(ktFile)
 
@@ -260,6 +278,28 @@ public class KotlinStaticDeclarationProviderFactory(
 
             // top-level functions and properties, built-in classes
             ktFileStub.childrenStubs.forEach(::indexStub)
+        }
+
+        loadBuiltIns().forEach { processStub(it) }
+
+        val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
+        for (root in additionalRoots) {
+            VfsUtilCore.visitChildrenRecursively(root, object : VirtualFileVisitor<Void>() {
+                override fun visitFile(file: VirtualFile): Boolean {
+                    if (!file.isDirectory && file.fileType == JavaClassFileType.INSTANCE) {
+                        val fileContent = FileContentImpl.createByFile(file)
+                        if (!binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content)) return true
+                        val stub = KotlinClsStubBuilder().buildFileStub(fileContent) as? KotlinFileStubImpl ?: return true
+                        val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, fileContent.file), isCompiled = true) {
+                            override fun getStub() = stub
+                            override fun isPhysical() = false
+                        }
+                        stub.psi = fakeFile
+                        processStub(stub)
+                    }
+                    return true
+                }
+            })
         }
 
         // Indexing user source files

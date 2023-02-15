@@ -18,10 +18,16 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinUserTypeStubImpl(
-    parent: StubElement<out PsiElement>?
-) : KotlinStubBaseImpl<KtUserType>(parent, KtStubElementTypes.USER_TYPE), KotlinUserTypeStub
+    parent: StubElement<out PsiElement>?,
+    private val onTypeParameter: Boolean,
+    private val classId: ClassId?
+) : KotlinStubBaseImpl<KtUserType>(parent, KtStubElementTypes.USER_TYPE), KotlinUserTypeStub {
+    override fun onTypeParameter(): Boolean = onTypeParameter
+    override fun classId(): ClassId? = classId
+}
