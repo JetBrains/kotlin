@@ -170,14 +170,14 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
         runTest("js/js.translator/testData/incremental/invalidation/functionSignature/");
     }
 
-    @TestMetadata("functionalInterface")
-    public void testFunctionalInterface() throws Exception {
-        runTest("js/js.translator/testData/incremental/invalidation/functionalInterface/");
-    }
-
     @TestMetadata("functionTypeInterfaceReflect")
     public void testFunctionTypeInterfaceReflect() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/functionTypeInterfaceReflect/");
+    }
+
+    @TestMetadata("functionalInterface")
+    public void testFunctionalInterface() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/functionalInterface/");
     }
 
     @TestMetadata("genericFunctions")
