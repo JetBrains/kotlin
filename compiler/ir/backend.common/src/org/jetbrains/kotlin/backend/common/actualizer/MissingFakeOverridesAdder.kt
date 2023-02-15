@@ -43,25 +43,48 @@ class MissingFakeOverridesAdder(
         }
 
         for (superType in declaration.superTypes) {
-            val actualClass = expectActualMap[superType.classifierOrFail]?.owner as? IrClass ?: continue
-            for (actualMember in actualClass.declarations) {
-                if (actualMember.isBuiltinMember()) continue
-                when (actualMember) {
-                    is IrFunctionImpl,
-                    is IrPropertyImpl -> {
-                        if (members[generateIrElementFullName(actualMember, expectActualMap, typeAliasMap)] != null) {
-                            reportManyInterfacesMembersNotImplemented(declaration, actualMember as IrDeclarationWithName)
-                            continue
-                        }
+            val expectClass = superType.classifierOrFail.owner as? IrClass ?: continue
+            val added = mutableSetOf<IrDeclaration>()
+            for (expectMember in expectClass.declarations) {
+                if (expectMember.isBuiltinMember()) continue
+                val actualMember = expectActualMap[expectMember.symbol]?.owner as? IrDeclaration ?: continue
 
-                        val newMember = if (actualMember is IrFunctionImpl) {
-                            createFakeOverrideFunction(actualMember, declaration)
-                        } else {
-                            createFakeOverrideProperty(actualMember as IrPropertyImpl, declaration)
-                        }
-                        declaration.declarations.add(newMember)
-                    }
+                // Do not add FAKE_OVERRIDE if the subclass already has overridden member
+                if (declaration.declarations.filterIsInstance<IrOverridableDeclaration<*>>()
+                        .any { expectMember.symbol in it.overriddenSymbols }
+                ) {
+                    continue
                 }
+                addFakeOverride(actualMember, members, declaration)
+                added += actualMember
+            }
+            val actualClass = expectActualMap[expectClass.symbol]?.owner as? IrClass ?: continue
+            for (actualMember in actualClass.declarations) {
+                if (actualMember.isBuiltinMember() || actualMember in added) continue
+                addFakeOverride(actualMember, members, declaration)
+            }
+        }
+    }
+
+    private fun addFakeOverride(
+        actualMember: IrDeclaration,
+        members: Map<String, IrDeclaration>,
+        declaration: IrClass
+    ) {
+        when (actualMember) {
+            is IrFunctionImpl,
+            is IrPropertyImpl -> {
+                if (members[generateIrElementFullName(actualMember, expectActualMap, typeAliasMap)] != null) {
+                    reportManyInterfacesMembersNotImplemented(declaration, actualMember as IrDeclarationWithName)
+                    return
+                }
+
+                val newMember = if (actualMember is IrFunctionImpl) {
+                    createFakeOverrideFunction(actualMember, declaration)
+                } else {
+                    createFakeOverrideProperty(actualMember as IrPropertyImpl, declaration)
+                }
+                declaration.declarations.add(newMember)
             }
         }
     }
