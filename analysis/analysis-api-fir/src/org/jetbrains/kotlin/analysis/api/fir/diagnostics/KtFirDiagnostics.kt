@@ -3428,4 +3428,9 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = Syntax::class
     }
 
+    abstract class SyntaxWithMessage : KtFirDiagnostic<PsiElement>() {
+        override val diagnosticClass get() = SyntaxWithMessage::class
+        abstract val message: String
+    }
+
 }
