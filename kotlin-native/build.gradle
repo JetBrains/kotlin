@@ -385,13 +385,13 @@ targetList.each { target ->
     task("${target}CrossDistStdlib", type: Copy) {
         dependsOn ":kotlin-native:runtime:${target}Stdlib"
         // TODO: add explicit dependency on host task with IR klib stdlib parts
-        // As for now it is possibly to build up distribution from the tc-dist to crossdist
+        // As for now, it is possible to build up distribution from the tc-dist to crossdist
         // by request of tests that need cross-targets or platform libs. It may create undesired
         // issues with overwriting the file being used by the concurrent build/test.
         // This building (by request) should be turned off when this to-do is fixed.
-//        if (target != hostName) {
-//            dependsOn ":kotlin-native:${hostName}CrossDistStdlib"
-//        }
+        if (target != hostName) {
+            mustRunAfter(":kotlin-native:${hostName}CrossDistStdlib")
+        }
 
         destinationDir project.file("$distDir/$stdlib")
 
@@ -403,13 +403,13 @@ targetList.each { target ->
                 // by the other build phases like caching or endorsed libraries.
                 include('*/targets/**')
                 include('*/manifest')
-            }
-            eachFile {
-                if (name == 'manifest') {
-                    def existingManifest = file("$destinationDir/$path")
-                    if (existingManifest.exists()) {
-                        UtilsKt.mergeManifestsByTargets(project, file, existingManifest)
-                        exclude()
+                eachFile {
+                    if (name == 'manifest') {
+                        def existingManifest = file("$destinationDir/$path")
+                        if (existingManifest.exists()) {
+                            UtilsKt.mergeManifestsByTargets(project, file, existingManifest)
+                            exclude()
+                        }
                     }
                 }
             }
