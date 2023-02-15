@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -108,12 +108,12 @@ public class ConstructorBuildingContext(
 // ---------------------------------------------------------------------------------------------------------------------
 
 /**
- * Creates constructor for [owner] class
+ * Creates constructor for [owner] class.
+ * Created constructor is public, unless [config] changes this.
  *
- * Setting [generateDelegatedNoArgConstructorCall] to true automatically generates delegating constructor call to superclass
- *   This generation works only if single superclass of the class contains constructor without arguments
- *
- * If you want to create custom delegated constructor call please do it in the [IrGenerationExtension]
+ * [generateDelegatedNoArgConstructorCall] specifies whether default delegating constructor call to superclass should be generated.
+ * This generation works only if superclass of the [owner] has constructor without arguments.
+ * Custom delegated constructor calls should be generated in IR backend (see `IrGenerationExtension`).
  */
 public fun FirExtension.createConstructor(
     owner: FirClassSymbol<*>,
@@ -130,15 +130,13 @@ public fun FirExtension.createConstructor(
 }
 
 /**
- * Creates constructor for [owner] object
- * This constructor will be private primary constructor without parameters
+ * Creates private primary constructor without parameters for [owner] object.
  *
- * This is a shorthand for createConstructor() which is useful for creating constructors for companions and other objects, as they should be private
+ * This is a shorthand for [createConstructor] which is useful for creating constructors for companions and other objects, as they should be private.
  *
- * Setting [generateDelegatedNoArgConstructorCall] to true automatically generates delegating constructor call to superclass
- *   This generation works only if single superclass of the class contains constructor without arguments
- *
- * If you want to create custom delegated constructor call please do it in the [IrGenerationExtension]
+ * [generateDelegatedNoArgConstructorCall] specifies whether default delegating constructor call to superclass should be generated.
+ * This generation works only if superclass of the [owner] has constructor without arguments.
+ * Custom delegated constructor calls should be generated in IR backend (see `IrGenerationExtension`).
  */
 public fun FirExtension.createDefaultPrivateConstructor(
     owner: FirClassSymbol<*>,
