@@ -147,7 +147,8 @@ projectTest(
     shortenTempRootName = shortenTempRootName,
     jUnitMode = JUnitMode.JUnit5
 ) {
-    filter.includeTest("org.jetbrains.kotlin.gradle.NewMultiplatformIT", "testLibWithTests")
+    filter.includeTest("org.jetbrains.kotlin.gradle.NewMultiplatformIT", "testDemo")
+//    filter.includeTest("org.jetbrains.kotlin.gradle.NewMultiplatformIT", "testLibWithTests")
     //filter.includeTest("org.jetbrains.kotlin.gradle.NewMultiplatformIT", "testResourceProcessing")
 }
 

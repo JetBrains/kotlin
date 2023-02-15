@@ -671,6 +671,24 @@ class NewMultiplatformIT : BaseGradleIT() {
         }
 
     @Test
+    fun testDemo() {
+        println("""
+                |test output new-mpp-lib-with-tests|2023-02-03T23:30:41.581+0000 [DEBUG] [TestEventLogger] 
+                |test output new-mpp-lib-with-tests|2023-02-03T23:30:41.581+0000 [DEBUG] [TestEventLogger] Gradle Test Executor 2 STARTED
+                |test output new-mpp-lib-with-tests|2023-02-03T23:30:41.582+0000 [DEBUG] [TestEventLogger] 
+                |test output new-mpp-lib-with-tests|2023-02-03T23:30:41.583+0000 [DEBUG] [TestEventLogger] com.example.lib.TestJava STARTED
+                |test output new-mpp-lib-with-tests|2023-02-03T23:30:41.638+0000 [DEBUG] [TestEventLogger] 
+                |test output new-mpp-lib-with-tests|2023-02-03T23:30:41.638+0000 [DEBUG] [TestEventLogger] com.example.lib.TestJava > testJava STARTED
+                |test output new-mpp-lib-with-tests|2023-02-03T23:30:41.642+0000 [DEBUG] [TestEventLogger] 
+                |test output new-mpp-lib-with-tests|2023-02-03T23:30:41.642+0000 [DEBUG] [TestEventLogger] com.example.lib.TestJava > testJava PASSED
+                |test output new-mpp-lib-with-tests|2023-02-03T23:30:41.643+0000 [DEBUG] [TestEventLogger] 
+                |test output new-mpp-lib-with-tests|2023-02-03T23:30:41.643+0000 [DEBUG] [TestEventLogger] com.example.lib.TestJava PASSED
+        """.trimIndent())
+
+        fail("Demo failing test")
+    }
+
+    @Test
     fun testLibWithTests() = doTestLibWithTests(transformNativeTestProject("new-mpp-lib-with-tests", gradleVersion))
 
     @Test
