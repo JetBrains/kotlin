@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.library.metadata.KlibModuleDescriptorFactory
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.isInteropLibrary
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
-import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.storage.StorageManager
 
 internal class KlibModuleDescriptorFactoryImpl(val createBuiltIns: (StorageManager) -> KotlinBuiltIns) : KlibModuleDescriptorFactory {
@@ -30,7 +28,6 @@ internal class KlibModuleDescriptorFactoryImpl(val createBuiltIns: (StorageManag
         builtIns,
         capabilities = customCapabilities + mapOf(
             KlibModuleOrigin.CAPABILITY to origin,
-            ImplicitIntegerCoercion.MODULE_CAPABILITY to origin.isInteropLibrary()
         ),
         // TODO: don't use hardcoded platform; it should be supplied as a parameter
         platform = NativePlatforms.unspecifiedNativePlatform

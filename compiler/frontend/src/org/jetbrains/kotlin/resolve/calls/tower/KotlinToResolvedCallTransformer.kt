@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
@@ -370,7 +371,7 @@ class KotlinToResolvedCallTransformer(
 
         var reportErrorDuringTypeCheck = reportErrorForTypeMismatch
 
-        if (parameter != null && ImplicitIntegerCoercion.isEnabledForParameter(parameter)) {
+        if (parameter != null && context.languageVersionSettings.supportsFeature(LanguageFeature.ImplicitSignedToUnsignedIntegerConversion)) {
             val argumentCompileTimeValue = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
             if (argumentCompileTimeValue != null && argumentCompileTimeValue.parameters.isConvertableConstVal) {
                 val generalNumberType = createTypeForConvertableConstant(argumentCompileTimeValue)

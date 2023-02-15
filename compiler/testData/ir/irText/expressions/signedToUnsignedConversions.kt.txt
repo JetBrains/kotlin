@@ -1,63 +1,43 @@
-// FILE: signedToUnsignedConversions_annotation.kt
-package kotlin.internal
-
-open annotation class ImplicitIntegerCoercion : Annotation {
-  constructor() /* primary */ {
-    super/*Any*/()
-    /* <init>() */
-
-  }
-
-}
-
-// FILE: signedToUnsignedConversions_test.kt
-
-@ImplicitIntegerCoercion
 const val IMPLICIT_INT: Int
   field = 255
   get
 
-@ImplicitIntegerCoercion
 const val EXPLICIT_INT: Int
   field = 255
   get
 
-@ImplicitIntegerCoercion
 const val LONG_CONST: Long
   field = 255L
   get
 
-@ImplicitIntegerCoercion
 val NON_CONST: Int
   field = 255
   get
 
-@ImplicitIntegerCoercion
 const val BIGGER_THAN_UBYTE: Int
   field = 256
   get
 
-@ImplicitIntegerCoercion
 const val UINT_CONST: UInt
   field = 42
   get
 
-fun takeUByte(@ImplicitIntegerCoercion u: UByte) {
+fun takeUByte(u: UByte) {
 }
 
-fun takeUShort(@ImplicitIntegerCoercion u: UShort) {
+fun takeUShort(u: UShort) {
 }
 
-fun takeUInt(@ImplicitIntegerCoercion u: UInt) {
+fun takeUInt(u: UInt) {
 }
 
-fun takeULong(@ImplicitIntegerCoercion u: ULong) {
+fun takeULong(u: ULong) {
 }
 
-fun takeUBytes(@ImplicitIntegerCoercion vararg u: UByte) {
+fun takeUBytes(vararg u: UByte) {
 }
 
-fun takeLong(@ImplicitIntegerCoercion l: Long) {
+fun takeLong(l: Long) {
 }
 
 fun test() {
