@@ -327,6 +327,7 @@ enum class LanguageFeature(
     InlineLateinit(sinceVersion = null, kind = OTHER), // KT-23814
     EnableDfaWarningsInK2(sinceVersion = null, kind = OTHER), // KT-50965
     ContractSyntaxV2(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-56127
+    ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null), // KT-56583
     ;
 
     init {
