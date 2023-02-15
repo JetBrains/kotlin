@@ -34,9 +34,11 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
     enum class Kind {
         Class,
         Function,
+        LocalFunction,
         AnonymousFunction,
         AnonymousFunctionCalledInPlace,
         PropertyInitializer,
+        ClassInitializer,
         FieldInitializer,
         FakeCall,
         DefaultArgument,

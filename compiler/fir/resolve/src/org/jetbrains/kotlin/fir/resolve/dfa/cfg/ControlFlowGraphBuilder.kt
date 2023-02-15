@@ -155,7 +155,8 @@ class ControlFlowGraphBuilder {
         val localFunctionNode = runIf(function is FirSimpleFunction && function.isLocal && bodyBuildingMode) {
             createLocalFunctionDeclarationNode(function).also { addNewSimpleNode(it) }
         }
-        val enterNode = enterGraph(function, name, ControlFlowGraph.Kind.Function) {
+        val kind = if (localFunctionNode != null) ControlFlowGraph.Kind.LocalFunction else ControlFlowGraph.Kind.Function
+        val enterNode = enterGraph(function, name, kind) {
             createFunctionEnterNode(it) to createFunctionExitNode(it).also { exit -> exitTargetsForReturn[it.symbol] = exit }
         }
         if (localFunctionNode != null) {
@@ -1151,7 +1152,7 @@ class ControlFlowGraphBuilder {
 
     fun enterInitBlock(initBlock: FirAnonymousInitializer): InitBlockEnterNode {
         // TODO: questionable moment that we should pass data flow from init to init
-        return enterGraph(initBlock, "init block", ControlFlowGraph.Kind.Function) {
+        return enterGraph(initBlock, "init block", ControlFlowGraph.Kind.ClassInitializer) {
             createInitBlockEnterNode(it) to createInitBlockExitNode(it)
         }.also { addEdgeIfLocalClassMember(it) }
     }
