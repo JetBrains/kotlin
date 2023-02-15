@@ -59,7 +59,7 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^.*Expect.*"), TargetBackend.JVM_IR, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)"), TargetBackend.JVM_IR, false);
         }
 
         @TestMetadata("annotations")
