@@ -673,8 +673,9 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testDemo() {
         val project = transformNativeTestProject("demo", gradleVersion)
-        project.build("debug") {}
-        fail("Demo failing test")
+        project.build("debug") {
+            fail("Demo failing test")
+        }
     }
 
     @Test
