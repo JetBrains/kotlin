@@ -103,6 +103,7 @@ open class NodeJsRootPlugin : Plugin<Project> {
 
         val objectFactory = project.objects
 
+        // TODO: Could we use common approach with build services to KotlinNpmResolutionManager?
         val npmResolutionManager = project.gradle.sharedServices.registerIfAbsent(
             KotlinNpmResolutionManager::class.java.name,
             KotlinNpmResolutionManager::class.java

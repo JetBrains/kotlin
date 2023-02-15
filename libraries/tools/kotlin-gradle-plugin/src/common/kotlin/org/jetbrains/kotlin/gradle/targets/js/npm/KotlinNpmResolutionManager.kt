@@ -15,12 +15,33 @@ import org.gradle.api.tasks.Internal
 import org.gradle.internal.service.ServiceRegistry
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.Installation
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinProjectNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
 
 internal interface UsesKotlinNpmResolutionManager : Task {
     @get:Internal
     val npmResolutionManager: Property<KotlinNpmResolutionManager>
 }
 
+/**
+ * [KotlinNpmResolutionManager] is build service which holds state of resolution process of JS-related projects.
+ *
+ * Terms:
+ * `*Resolver` means entities which should exist only in Configuration phase
+ * `*Resolution` means entities which should be created from `*Resolver` in the end of Configuration phase (when all projects are registered themselves)
+ *
+ * The process is following:
+ * Every project register itself via [NpmResolverPlugin] in [KotlinRootNpmResolver].
+ * [KotlinRootNpmResolver] creates for every project [KotlinProjectNpmResolver],
+ * and [KotlinProjectNpmResolver] creates [KotlinCompilationNpmResolver] for every compilation.
+ * [KotlinCompilationNpmResolver] exist to resolve all JS-related dependencies (inter-project dependencies and NPM dependencies)`.
+ * In [KotlinCompilationNpmResolver] one can get [KotlinCompilationNpmResolver.compilationNpmResolution] to get resolution,
+ * but it must be called only after all projects were registered in [KotlinRootNpmResolver]
+ *
+ * After configuration phase, on execution, tasks can call [org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.kotlinNpmResolutionManager]
+ * It provides [KotlinRootNpmResolution] into [KotlinNpmResolutionManager] and since then it stores all information about resolution process in execution phase
+ */
 abstract class KotlinNpmResolutionManager : BuildService<KotlinNpmResolutionManager.Parameters> {
 
     interface Parameters : BuildServiceParameters {
