@@ -229,7 +229,7 @@ class Fir2IrTypeConverter(
     private fun ConeTypeProjection.toIrTypeArgument(typeContext: ConversionTypeContext): IrTypeArgument {
         fun toIrTypeArgument(type: ConeKotlinType, variance: Variance): IrTypeProjection {
             val irType = type.toIrType(typeContext)
-            return makeTypeProjection(irType, if (typeContext.invariantProjection) Variance.INVARIANT else variance)
+            return makeTypeProjection(irType, variance)
         }
 
         return when (this) {

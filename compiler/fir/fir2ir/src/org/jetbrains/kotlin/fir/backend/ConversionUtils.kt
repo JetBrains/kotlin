@@ -101,27 +101,17 @@ internal enum class ConversionTypeOrigin {
     SETTER
 }
 
-class ConversionTypeContext internal constructor(
-    internal val invariantProjection: Boolean = false,
-    internal val origin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
-) {
+class ConversionTypeContext internal constructor(internal val origin: ConversionTypeOrigin) {
     fun inSetter() = ConversionTypeContext(
-        invariantProjection = invariantProjection,
         origin = ConversionTypeOrigin.SETTER
-    )
-
-    fun withInvariantProjections() = ConversionTypeContext(
-        invariantProjection = true,
-        origin = origin
     )
 
     companion object {
         internal val DEFAULT = ConversionTypeContext(
-            invariantProjection = false, origin = ConversionTypeOrigin.DEFAULT
+            origin = ConversionTypeOrigin.DEFAULT
         )
-        internal val WITH_INVARIANT = DEFAULT.withInvariantProjections()
         internal val IN_SETTER = ConversionTypeContext(
-            invariantProjection = false, origin = ConversionTypeOrigin.SETTER
+            origin = ConversionTypeOrigin.SETTER
         )
     }
 }
