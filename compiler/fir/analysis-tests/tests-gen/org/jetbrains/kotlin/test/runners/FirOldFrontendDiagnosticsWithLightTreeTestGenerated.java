@@ -5673,6 +5673,12 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("capturingUninitializedVariableInNonInPlaceLambda.kt")
+            public void testCapturingUninitializedVariableInNonInPlaceLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/capturingUninitializedVariableInNonInPlaceLambda.kt");
+            }
+
+            @Test
             @TestMetadata("checkInnerLocalDeclarations.kt")
             public void testCheckInnerLocalDeclarations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/checkInnerLocalDeclarations.kt");
