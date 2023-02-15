@@ -1,0 +1,7 @@
+FILE: backingFieldWithSmartTypeParameters.reversed.kt
+    public final val items: R|kotlin/collections/List<kotlin/String>|
+        private <explicit backing field>: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
+        public get(): R|kotlin/collections/List<kotlin/String>|
+    public final fun test(): R|kotlin/Unit| {
+        R|/items|.<Unresolved name: add>#(String(one more item))
+    }

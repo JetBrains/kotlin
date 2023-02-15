@@ -1,0 +1,45 @@
+Module: lib
+FILE: A.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val a: R|kotlin/Number|
+            private <explicit backing field>: R|kotlin/Int| = Int(1)
+            public get(): R|kotlin/Number|
+
+        public final val b: R|kotlin/Number|
+            internal <explicit backing field>: R|kotlin/Int| = Int(2)
+            public get(): R|kotlin/Number|
+
+        public final val c: R|kotlin/Number|
+            protected <explicit backing field>: R|kotlin/Int| = Int(3)
+            public get(): R|kotlin/Number|
+
+        public final val d: R|kotlin/Number|
+            public <explicit backing field>: R|kotlin/Int| = Int(5)
+            public get(): R|kotlin/Number|
+
+        public final fun rest(): R|kotlin/Unit| {
+            lval aI: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.a|.<Unresolved name: plus>#(Int(10))
+            lval bI: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.b|.<Unresolved name: plus>#(Int(20))
+            lval cI: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.c|.<Unresolved name: plus>#(Int(30))
+            lval dI: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.d|.<Unresolved name: plus>#(Int(40))
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval aA: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.a|.<Unresolved name: plus>#(Int(10))
+        lval bA: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.b|.<Unresolved name: plus>#(Int(20))
+        lval cA: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.c|.<Unresolved name: plus>#(Int(30))
+        lval dA: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.d|.<Unresolved name: plus>#(Int(40))
+    }
+Module: main
+FILE: B.kt
+    public final fun main(): R|kotlin/Unit| {
+        lval aB: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.a|.<Unresolved name: plus>#(Int(10))
+        lval bB: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.b|.<Unresolved name: plus>#(Int(20))
+        lval cB: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.c|.<Unresolved name: plus>#(Int(30))
+        lval dB: <ERROR TYPE REF: Unresolved name: plus> = R|/A.A|().R|/A.d|.<Unresolved name: plus>#(Int(40))
+    }

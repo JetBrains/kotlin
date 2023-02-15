@@ -1,0 +1,95 @@
+FILE: kt50994.reversed.kt
+    public final class ProcessorWithParent : R|Entity| {
+        public constructor(): R|ProcessorWithParent| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var processor: R|ProcessorWithChildren?|by this@R|/ProcessorWithParent|.R|/parent|<R|ProcessorWithParent|, R|ProcessorWithChildren|>(Q|ProcessorWithChildren|::R|/ProcessorWithChildren.processors|)
+            public get(): R|ProcessorWithChildren?| {
+                ^ this@R|/ProcessorWithParent|.D|/ProcessorWithParent.processor|.R|SubstitutionOverride</Delegate.getValue: R|Stub (chain inference): TypeVariable(_TP)?|>|(this@R|/ProcessorWithParent|, ::R|/ProcessorWithParent.processor|)
+            }
+            public set(<set-?>: R|ProcessorWithChildren?|): R|kotlin/Unit| {
+                this@R|/ProcessorWithParent|.D|/ProcessorWithParent.processor|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/ProcessorWithParent|, ::R|/ProcessorWithParent.processor|, R|<local>/processor|)
+            }
+
+    }
+    public final class ProcessorWithChildren : R|Entity| {
+        public constructor(): R|ProcessorWithChildren| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var processors: R|kotlin/collections/MutableCollection<ProcessorWithParent>|by this@R|/ProcessorWithChildren|.R|/children|<R|ProcessorWithChildren|, R|ProcessorWithParent|>(<getClass>(Q|ProcessorWithParent|).R|kotlin/jvm/java|<R|ProcessorWithParent|>, Q|ProcessorWithParent|::R|/ProcessorWithParent.processor|)
+            public get(): R|kotlin/collections/MutableCollection<ProcessorWithParent>| {
+                ^ this@R|/ProcessorWithChildren|.D|/ProcessorWithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<Stub (chain inference): TypeVariable(_TC)>|>|(this@R|/ProcessorWithChildren|, ::R|/ProcessorWithChildren.processors|)
+            }
+            public set(<set-?>: R|kotlin/collections/MutableCollection<ProcessorWithParent>|): R|kotlin/Unit| {
+                this@R|/ProcessorWithChildren|.D|/ProcessorWithChildren.processors|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/ProcessorWithChildren|, ::R|/ProcessorWithChildren.processors|, R|<local>/processors|)
+            }
+
+    }
+    public final class Processor2WithParent : R|Entity| {
+        public constructor(): R|Processor2WithParent| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var processor: R|Processor2WithChildren?|by this@R|/Processor2WithParent|.R|/parent|<R|Processor2WithParent|, R|Processor2WithChildren|>(Q|Processor2WithChildren|::R|/Processor2WithChildren.processors|)
+            public get(): R|Processor2WithChildren?| {
+                ^ this@R|/Processor2WithParent|.D|/Processor2WithParent.processor|.R|SubstitutionOverride</Delegate.getValue: R|Processor2WithChildren?|>|(this@R|/Processor2WithParent|, ::R|/Processor2WithParent.processor|)
+            }
+            public set(<set-?>: R|Processor2WithChildren?|): R|kotlin/Unit| {
+                this@R|/Processor2WithParent|.D|/Processor2WithParent.processor|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor2WithParent|, ::R|/Processor2WithParent.processor|, R|<local>/processor|)
+            }
+
+    }
+    public final class Processor2WithChildren : R|Entity| {
+        public constructor(): R|Processor2WithChildren| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var processors: R|kotlin/collections/MutableCollection<Processor2WithParent>|by this@R|/Processor2WithChildren|.R|/children|<R|Processor2WithChildren|, R|Processor2WithParent|>(<getClass>(Q|Processor2WithParent|).R|kotlin/jvm/java|<R|Processor2WithParent|>, Q|Processor2WithParent|::R|/Processor2WithParent.processor|)
+            public get(): R|kotlin/collections/MutableCollection<Processor2WithParent>| {
+                ^ this@R|/Processor2WithChildren|.D|/Processor2WithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<Stub (chain inference): TypeVariable(_TC)>|>|(this@R|/Processor2WithChildren|, ::R|/Processor2WithChildren.processors|)
+            }
+            public set(<set-?>: R|kotlin/collections/MutableCollection<Processor2WithParent>|): R|kotlin/Unit| {
+                this@R|/Processor2WithChildren|.D|/Processor2WithChildren.processors|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor2WithChildren|, ::R|/Processor2WithChildren.processors|, R|<local>/processors|)
+            }
+
+    }
+    public final class Processor3WithParent : R|Entity| {
+        public constructor(): R|Processor3WithParent| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var processor: R|Processor3WithChildren?|by this@R|/Processor3WithParent|.R|/parent|<R|Processor3WithParent|, R|Processor3WithChildren|>(Q|Processor3WithChildren|::R|/Processor3WithChildren.processors|)
+            public get(): R|Processor3WithChildren?| {
+                ^ this@R|/Processor3WithParent|.D|/Processor3WithParent.processor|.R|SubstitutionOverride</Delegate.getValue: R|Processor3WithChildren?|>|(this@R|/Processor3WithParent|, ::R|/Processor3WithParent.processor|)
+            }
+            public set(<set-?>: R|Processor3WithChildren?|): R|kotlin/Unit| {
+                this@R|/Processor3WithParent|.D|/Processor3WithParent.processor|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor3WithParent|, ::R|/Processor3WithParent.processor|, R|<local>/processor|)
+            }
+
+    }
+    public final class Processor3WithChildren : R|Entity| {
+        public constructor(): R|Processor3WithChildren| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var processors: R|kotlin/collections/MutableCollection<Processor3WithParent>|by this@R|/Processor3WithChildren|.R|/children|<R|Processor3WithChildren|, R|Processor3WithParent|>(<getClass>(Q|Processor3WithParent|).R|kotlin/jvm/java|<R|Processor3WithParent|>, Q|Processor3WithParent|::R|/Processor3WithParent.processor|)
+            public get(): R|kotlin/collections/MutableCollection<Processor3WithParent>| {
+                ^ this@R|/Processor3WithChildren|.D|/Processor3WithChildren.processors|.R|SubstitutionOverride</Delegate.getValue: R|kotlin/collections/MutableCollection<Stub (chain inference): TypeVariable(_TC)>|>|(this@R|/Processor3WithChildren|, ::R|/Processor3WithChildren.processors|)
+            }
+            public set(<set-?>: R|kotlin/collections/MutableCollection<Processor3WithParent>|): R|kotlin/Unit| {
+                this@R|/Processor3WithChildren|.D|/Processor3WithChildren.processors|.R|SubstitutionOverride</Delegate.setValue: R|kotlin/Unit|>|(this@R|/Processor3WithChildren|, ::R|/Processor3WithChildren.processors|, R|<local>/processors|)
+            }
+
+    }
+    public final inline fun <reified SP : R|Entity|, reified TP : R|Entity|> R|SP|.parent(property: R|kotlin/reflect/KProperty1<TP, kotlin/collections/MutableCollection<SP>>|): R|Delegate<SP, TP?>| {
+        ^parent Null(null)!!
+    }
+    public final fun <SC : R|Entity|, TC : R|Entity|> R|SC|.children(clazz: R|java/lang/Class<TC>|, property: R|kotlin/reflect/KProperty1<TC, SC?>|, name: R|kotlin/String| = R|<local>/property|.R|SubstitutionOverride<kotlin/reflect/KProperty1.name: R|kotlin/String|>|): R|Delegate<SC, kotlin/collections/MutableCollection<TC>>| {
+        ^children Null(null)!!
+    }
+    public abstract interface Delegate<R : R|Entity|, T> : R|kotlin/properties/ReadWriteProperty<R, T>| {
+    }
+    public abstract interface Entity : R|kotlin/Any| {
+    }
