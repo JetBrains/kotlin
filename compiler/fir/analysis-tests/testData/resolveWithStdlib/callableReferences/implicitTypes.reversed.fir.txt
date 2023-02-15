@@ -1,0 +1,16 @@
+FILE: implicitTypes.reversed.kt
+    public final fun <T, R> use(x: R|(T) -> R|): R|(T) -> R| {
+        ^use R|<local>/x|
+    }
+    public final fun foo(): R|(kotlin/String) -> kotlin/Int| {
+        ^foo R|/use|<R|kotlin/String|, R|kotlin/Int|>(::R|/bar|)
+    }
+    public final fun bar(x: R|kotlin/String|): R|kotlin/Int| {
+        ^bar Int(1)
+    }
+    public final fun loop1(): R|(ERROR CLASS: Cannot infer argument for type parameter T) -> ERROR CLASS: Cannot infer argument for type parameter R| {
+        ^loop1 R|/use<Inapplicable(INAPPLICABLE): /use>#|<<ERROR TYPE REF: Cannot infer argument for type parameter T>, <ERROR TYPE REF: Cannot infer argument for type parameter R>>(::<Unresolved reference: loop2>#)
+    }
+    public final fun loop2(): R|(ERROR CLASS: Cannot infer argument for type parameter T) -> ERROR CLASS: Cannot infer argument for type parameter R| {
+        ^loop2 R|/loop1|()
+    }
