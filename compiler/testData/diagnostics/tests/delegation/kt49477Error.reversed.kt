@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +ForbidRecursiveDelegateExpressions
 // WITH_STDLIB
 
@@ -9,7 +10,7 @@ inline fun <reified Self : DatabaseEntity, reified Target : DatabaseEntity> Self
     property: KProperty1<Target, MutableCollection<Self>>): Delegate<Self, Target?> = TODO()
 
 class GitLabBuildProcessor: DatabaseEntity {
-    var processor by <!DEBUG_INFO_EXPRESSION_TYPE("Delegate<GitLabBuildProcessor, GitLabChangesProcessor?>")!>parent(GitLabChangesProcessor::buildProcessors)<!>
+    var processor by parent(<!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM!>GitLabChangesProcessor::buildProcessors<!>)
 }
 
 interface DatabaseEntity: Entity
@@ -25,10 +26,10 @@ interface Delegate<R : Entity, T> : ReadWriteProperty<R, T>, ValueFilter<R> {
 }
 
 class GitLabChangesProcessor: DatabaseEntity {
-    var buildProcessors by <!DEBUG_INFO_EXPRESSION_TYPE("Delegate<GitLabChangesProcessor, kotlin.collections.MutableCollection<GitLabBuildProcessor>>"), TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>child_many(
+    var buildProcessors by child_many(
         GitLabBuildProcessor::class.java,
         GitLabBuildProcessor::processor
-    )<!>
+    )
 }
 
 fun <Self : DatabaseEntity, Target : DatabaseEntity> Self.child_many(

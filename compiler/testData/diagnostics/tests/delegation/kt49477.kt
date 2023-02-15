@@ -18,9 +18,9 @@ interface ValueFilter<K>
 
 interface Delegate<R : Entity, T> : ReadWriteProperty<R, T>, ValueFilter<R> {
     infix fun name(desc: KProperty<*>): String
-infix fun by(name: String): Delegate<R, T>
-infix fun resource(factory: ResourceFactory<R, T>): Delegate<R, T>
-infix fun filter(filter: (R, Any?) -> Boolean): Delegate<R, T>
+    infix fun by(name: String): Delegate<R, T>
+    infix fun resource(factory: ResourceFactory<R, T>): Delegate<R, T>
+    infix fun filter(filter: (R, Any?) -> Boolean): Delegate<R, T>
 }
 
 class GitLabChangesProcessor: DatabaseEntity {
