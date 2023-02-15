@@ -334,7 +334,7 @@ sourcesJar {
         }
     }
 
-    dependsOn(":compiler:fir:checkers:generateCheckersComponents")
+    dependsOn(":compiler:fir:checkers:generateCheckersComponents", ":compiler:ir.tree:generateTree")
 }
 
 javadocJar()
