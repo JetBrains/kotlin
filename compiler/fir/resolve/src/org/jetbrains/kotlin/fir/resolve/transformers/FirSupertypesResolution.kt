@@ -560,7 +560,11 @@ class SupertypeComputationSession {
         val path = mutableListOf<FirClassLikeDeclaration>()
         val pathSet = mutableSetOf<FirClassLikeDeclaration>()
 
-        fun checkIsInLoop(classLikeDecl: FirClassLikeDeclaration?) {
+        fun checkIsInLoop(
+            classLikeDecl: FirClassLikeDeclaration?,
+            wasSubtypingInvolved: Boolean,
+            wereTypeArgumentsInvolved: Boolean,
+        ) {
             if (classLikeDecl == null) return
 
             val supertypeRefs: List<FirResolvedTypeRef>
@@ -581,7 +585,8 @@ class SupertypeComputationSession {
             }
 
             if (classLikeDecl in visitedClassLikeDecls) {
-                if (classLikeDecl in pathSet) {
+                val isAllowedLoop = wasSubtypingInvolved && wereTypeArgumentsInvolved
+                if (classLikeDecl in pathSet && !isAllowedLoop) {
                     loopedClassLikeDecls.add(classLikeDecl)
                     loopedClassLikeDecls.addAll(path.takeLastWhile { element -> element != classLikeDecl })
                 }
@@ -596,7 +601,7 @@ class SupertypeComputationSession {
             if (!parentId.isRoot) {
                 val parentSymbol = session.symbolProvider.getClassLikeSymbolByClassId(ClassId.fromString(parentId.asString()))
                 if (parentSymbol is FirRegularClassSymbol) {
-                    checkIsInLoop(parentSymbol.fir)
+                    checkIsInLoop(parentSymbol.fir, wasSubtypingInvolved, wereTypeArgumentsInvolved)
                 }
             }
 
@@ -605,15 +610,18 @@ class SupertypeComputationSession {
             val resultSupertypeRefs = mutableListOf<FirResolvedTypeRef>()
             for (supertypeRef in supertypeRefs) {
                 val supertypeFir = supertypeRef.firClassLike(session)
-                checkIsInLoop(supertypeFir)
+                val isSubtypingInvolved = wasSubtypingInvolved || !isTypeAlias
+                checkIsInLoop(supertypeFir, isSubtypingInvolved, wereTypeArgumentsInvolved)
 
-                if (isTypeAlias) {
+                // This is an optimization that prevents collecting
+                // loops we're not going to report anyway.
+                if (!isSubtypingInvolved) {
                     fun checkTypeArgumentsRecursively(type: ConeKotlinType, visitedTypes: MutableSet<ConeKotlinType>) {
                         if (type in visitedTypes) return
                         visitedTypes += type
                         for (typeArgument in type.typeArguments) {
                             if (typeArgument is ConeClassLikeType) {
-                                checkIsInLoop(typeArgument.lookupTag.toSymbol(session)?.fir)
+                                checkIsInLoop(typeArgument.lookupTag.toSymbol(session)?.fir, wasSubtypingInvolved, true)
                                 checkTypeArgumentsRecursively(typeArgument, visitedTypes)
                             }
                         }
@@ -645,7 +653,7 @@ class SupertypeComputationSession {
         }
 
         for (classifier in newClassifiersForBreakingLoops) {
-            checkIsInLoop(classifier)
+            checkIsInLoop(classifier, wasSubtypingInvolved = false, wereTypeArgumentsInvolved = false)
             require(path.isEmpty()) {
                 "Path should be empty"
             }
