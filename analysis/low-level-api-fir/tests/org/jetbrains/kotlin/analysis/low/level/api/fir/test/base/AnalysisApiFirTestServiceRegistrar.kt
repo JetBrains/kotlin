@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.NoOpKtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
@@ -59,6 +61,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(KtCompilerPluginsProvider::class.java, NoOpKtCompilerPluginsProvider)
             registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl())
             registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
+            registerService(JvmFirDeserializedSymbolProviderFactory::class.java, JvmStubBasedDeserializedSymbolProviderFactory::class.java)
         }
     }
 

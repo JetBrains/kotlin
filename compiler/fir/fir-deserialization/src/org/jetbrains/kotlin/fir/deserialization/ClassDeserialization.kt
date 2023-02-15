@@ -270,7 +270,7 @@ private fun FirRegularClassBuilder.addSerializableIfNeeded(classId: ClassId) {
     }
 }
 
-private fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchReceiver: ConeClassLikeType?) {
+fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchReceiver: ConeClassLikeType?) {
     if (classId.packageFqName != StandardClassIds.BASE_KOTLIN_PACKAGE) return
     if (classId.shortClassName !in ARRAY_CLASSES) return
     superTypeRefs += buildResolvedTypeRef {
