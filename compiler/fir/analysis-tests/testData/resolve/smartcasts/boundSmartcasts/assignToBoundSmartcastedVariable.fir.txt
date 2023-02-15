@@ -15,7 +15,7 @@ FILE: assignToBoundSmartcastedVariable.kt
         when () {
             (R|<local>/ab| is R|B|) ->  {
                 lvar z: R|it(B & A)| = R|/id|<R|it(B & A)|>(R|<local>/ab|)
-                R|<local>/z| = R|/Foo.Foo<CS errors: /Foo.Foo>#|()
+                R|<local>/z| = R|/Foo.Foo|()
                 R|<local>/z|.R|/B.fooB|(Int(1))
             }
         }

@@ -54,7 +54,7 @@ FILE: notUselessCast_2.kt
         ^test_2 R|/Wrapper.Wrapper|<R|Bar|>(R|/Bar.Bar|(String(bar))).R|SubstitutionOverride</Wrapper.map: R|Wrapper<A>|>|<R|Foo|>(<L> = map@fun <anonymous>(it: R|Bar|): R|Foo| <inline=NoInline>  {
             ^ R|<local>/it|.R|/toFoo|()
         }
-        ).R|SubstitutionOverride</Wrapper.swapWrappedValue: R|Wrapper<Foo>|><CS errors: /Wrapper.swapWrappedValue>#|(<L> = swapWrappedValue@fun <anonymous>(it: R|Foo|): R|Wrapper<Foo>| <inline=NoInline>  {
+        ).R|SubstitutionOverride</Wrapper.swapWrappedValue: R|Wrapper<Foo>|>|(<L> = swapWrappedValue@fun <anonymous>(it: R|Foo|): R|Wrapper<Foo>| <inline=NoInline>  {
             ^ R|/Wrapper.Wrapper<CS errors: /Wrapper.Wrapper>#|<R|Foo|>(Null(null))
         }
         )

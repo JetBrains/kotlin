@@ -16,13 +16,13 @@ fun test_1() {
 }
 
 fun test_2(x: Base<*>) {
-    x.foo = <!ASSIGNMENT_TYPE_MISMATCH!>invOf()<!>
+    x.foo = <!ASSIGNMENT_TYPE_MISMATCH!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>invOf<!>()<!>
     x.foo = null
 }
 
 fun test_3(x: Any) {
     if (x is Base<*>) {
-        x.foo = <!ASSIGNMENT_TYPE_MISMATCH!>invOf()<!>
+        x.foo = <!ASSIGNMENT_TYPE_MISMATCH!><!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>invOf<!>()<!>
         x.foo = null
     }
 }
