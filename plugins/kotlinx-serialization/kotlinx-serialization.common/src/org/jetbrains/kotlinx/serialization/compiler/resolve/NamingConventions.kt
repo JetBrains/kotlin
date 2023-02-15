@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,6 +30,7 @@ object SerializationAnnotations {
     val serialNameAnnotationFqName = FqName("kotlinx.serialization.SerialName")
     val requiredAnnotationFqName = FqName("kotlinx.serialization.Required")
     val serialTransientFqName = FqName("kotlinx.serialization.Transient")
+
     // Also implicitly used in kotlin-native.compiler.backend.native/CodeGenerationInfo.kt
     val serialInfoFqName = FqName("kotlinx.serialization.SerialInfo")
     val inheritableSerialInfoFqName = FqName("kotlinx.serialization.InheritableSerialInfo")
@@ -200,13 +201,22 @@ object SerializersClassIds {
     val kSerializerId = ClassId(SerializationPackages.packageFqName, SerialEntityNames.KSERIALIZER_NAME)
     val enumSerializerId = ClassId(SerializationPackages.internalPackageFqName, Name.identifier(SpecialBuiltins.enumSerializer))
     val polymorphicSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.polymorphicSerializer))
-    val referenceArraySerializerId = ClassId(SerializationPackages.internalPackageFqName, Name.identifier(SpecialBuiltins.referenceArraySerializer))
+    val referenceArraySerializerId =
+        ClassId(SerializationPackages.internalPackageFqName, Name.identifier(SpecialBuiltins.referenceArraySerializer))
     val objectSerializerId = ClassId(SerializationPackages.internalPackageFqName, Name.identifier(SpecialBuiltins.objectSerializer))
     val sealedSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.sealedSerializer))
     val contextSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.contextSerializer))
     val generatedSerializerId = ClassId(SerializationPackages.internalPackageFqName, SerialEntityNames.GENERATED_SERIALIZER_CLASS)
 
     val setOfSpecialSerializers = setOf(contextSerializerId, polymorphicSerializerId)
+}
+
+object SerializationRuntimeClassIds {
+
+    val descriptorClassId =
+        ClassId(SerializationPackages.descriptorsPackageFqName, Name.identifier(SerialEntityNames.SERIAL_DESCRIPTOR_CLASS))
+    val compositeEncoderClassId =
+        ClassId(SerializationPackages.encodingPackageFqName, Name.identifier(SerialEntityNames.STRUCTURE_ENCODER_CLASS))
 }
 
 fun findStandardKotlinTypeSerializerName(typeName: String?): String? {
