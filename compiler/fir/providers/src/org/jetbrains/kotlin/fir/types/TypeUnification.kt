@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -22,8 +23,8 @@ fun FirSession.doUnify(
     targetTypeParameters: Set<FirTypeParameterSymbol>,
     result: MutableMap<FirTypeParameterSymbol, ConeTypeProjection>,
 ): Boolean {
-    val originalType = originalTypeProjection.type?.lowerBoundIfFlexible()
-    val typeWithParameters = typeWithParametersProjection.type
+    val originalType = originalTypeProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
+    val typeWithParameters = typeWithParametersProjection.type?.fullyExpandedType(this)
 
     if (originalType is ConeIntersectionType) {
         val intersectionResult = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
