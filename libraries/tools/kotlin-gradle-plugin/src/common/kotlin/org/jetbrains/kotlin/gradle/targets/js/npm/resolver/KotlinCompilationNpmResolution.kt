@@ -44,14 +44,14 @@ class KotlinCompilationNpmResolution(
     private var resolution: PreparedKotlinCompilationNpmResolution? = null
 
     @Synchronized
-    fun resolve(
+    fun prepareWithDependencies(
         skipWriting: Boolean = false,
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger
     ): PreparedKotlinCompilationNpmResolution {
         check(resolution == null) { "$this already resolved" }
 
-        return createPackageJson(
+        return createPreparedResolution(
             skipWriting,
             npmResolutionManager,
             logger
@@ -66,7 +66,7 @@ class KotlinCompilationNpmResolution(
         logger: Logger,
     ): PreparedKotlinCompilationNpmResolution {
 
-        return resolution ?: resolve(
+        return resolution ?: prepareWithDependencies(
             skipWriting = true,
             npmResolutionManager,
             logger
@@ -83,7 +83,7 @@ class KotlinCompilationNpmResolution(
         return getResolutionOrResolve(npmResolutionManager, logger)
     }
 
-    fun createPackageJson(
+    fun createPreparedResolution(
         skipWriting: Boolean,
         npmResolutionManager: KotlinNpmResolutionManager,
         logger: Logger

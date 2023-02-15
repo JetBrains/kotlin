@@ -87,7 +87,7 @@ abstract class KotlinPackageJsonTask :
     @TaskAction
     fun resolve() {
         npmResolutionManager.get().resolution.get()[projectPath][compilationDisambiguatedName.get()]
-            .resolve(
+            .prepareWithDependencies(
                 npmResolutionManager = npmResolutionManager.get(),
                 logger = logger
             )
