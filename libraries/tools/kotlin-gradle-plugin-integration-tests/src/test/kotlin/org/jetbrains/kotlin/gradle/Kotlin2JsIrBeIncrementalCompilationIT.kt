@@ -13,6 +13,7 @@ import kotlin.io.path.appendText
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
@@ -54,11 +55,16 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             }
 
             srcFile.writeText(badCode)
+
+            val guardFile = projectPath.resolve("app/build/klib/cache/cache.guard").toFile()
             for (i in 0..1) {
                 buildAndFail("nodeDevelopmentRun") {
                     assertTasksFailed(":app:compileDevelopmentExecutableKotlinJs")
                     val failedBuildCacheFiles = readCacheFiles()
-                    assertEquals(successfulBuildCacheFiles, failedBuildCacheFiles, "The cache files should not be modified")
+                    val expectedFiles = successfulBuildCacheFiles.toMutableMap()
+                    expectedFiles[guardFile.absolutePath] = ByteArray(0).contentHashCode()
+                    assertEquals(expectedFiles, failedBuildCacheFiles, "The cache files should not be modified")
+                    guardFile.delete()
                 }
             }
 
@@ -196,6 +202,35 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             build("compileDevelopmentExecutableKotlinJs") {
                 assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
             }
+        }
+    }
+
+
+    @DisplayName("Test cache invalidation after detecting guard file")
+    @GradleTest
+    fun testCacheGuardInvalidation(gradleVersion: GradleVersion) {
+        project("kotlin2JsIrICProject", gradleVersion) {
+            build("nodeDevelopmentRun") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
+                assertOutputContains("module [main] was built clean")
+                assertOutputContains(">>> TEST OUT: Hello, Gradle.")
+            }
+
+            val cacheGuard = projectPath.resolve("build/klib/cache/cache.guard").toFile()
+            assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
+
+            val srcFile = projectPath.resolve("src/main/kotlin/Main.kt").toFile()
+            srcFile.writeText(srcFile.readText().replace("greeting(\"Gradle\")", "greeting(\"Kotlin\")"))
+
+            cacheGuard.createNewFile()
+            build("nodeDevelopmentRun") {
+                assertTasksExecuted(":compileDevelopmentExecutableKotlinJs")
+                assertOutputContains(Regex("Cache guard file detected, cache directory '.+' cleared"))
+                assertOutputContains("module [main] was built clean")
+                assertOutputContains(">>> TEST OUT: Hello, Kotlin.")
+            }
+
+            assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
         }
     }
 }
