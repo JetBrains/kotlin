@@ -61,10 +61,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
-import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
-import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
-import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
-import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -298,19 +295,29 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             messageCollector.report(INFO, "Produce executable: $outputDirPath")
             messageCollector.report(INFO, "Cache directory: ${arguments.cacheDirectory}")
 
-            if (icCaches.isNotEmpty()) {
+            if (icCaches != null) {
                 val beforeIc2Js = System.currentTimeMillis()
+
+                // We use one cache directory for both caches: JS AST and JS code.
+                // This guard MUST be unlocked after a successful preparing icCaches (see prepareIcCaches()).
+                // Do not use IncrementalCacheGuard::acquire() - it may drop an entire cache here, and
+                // it breaks the logic from JsExecutableProducer(), therefore use IncrementalCacheGuard::tryAcquire() instead
+                // TODO: One day, when we will lower IR and produce JS AST per module,
+                //      think about using different directories for JS AST and JS code.
+                icCaches.cacheGuard.tryAcquire()
 
                 val jsExecutableProducer = JsExecutableProducer(
                     mainModuleName = moduleName,
                     moduleKind = moduleKind,
                     sourceMapsInfo = SourceMapsInfo.from(configurationJs),
-                    caches = icCaches,
+                    caches = icCaches.artifacts,
                     relativeRequirePath = true
                 )
 
                 val (outputs, rebuiltModules) = jsExecutableProducer.buildExecutable(arguments.irPerModule, outJsProgram = false)
                 outputs.writeAll(outputDir, outputName, arguments.generateDts, moduleName, moduleKind)
+
+                icCaches.cacheGuard.release()
 
                 messageCollector.report(INFO, "Executable production duration (IC): ${System.currentTimeMillis() - beforeIc2Js}ms")
                 for ((event, duration) in jsExecutableProducer.getStopwatchLaps()) {
@@ -609,6 +616,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         )
     }
 
+    class IcCachesArtifacts(val artifacts: List<ModuleArtifact>, val cacheGuard: IncrementalCacheGuard)
+
     private fun prepareIcCaches(
         arguments: K2JSCompilerArguments,
         messageCollector: MessageCollector,
@@ -617,11 +626,17 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         friendLibraries: List<String>,
         configurationJs: CompilerConfiguration,
         mainCallArguments: List<String>?
-    ): List<ModuleArtifact> {
+    ): IcCachesArtifacts? {
         val cacheDirectory = arguments.cacheDirectory
 
         // TODO: Use JS IR IC infrastructure for WASM?
-        val icCaches = if (!arguments.wasm && cacheDirectory != null) {
+        if (!arguments.wasm && cacheDirectory != null) {
+            val cacheGuard = IncrementalCacheGuard(cacheDirectory).also {
+                if (it.acquire() == IncrementalCacheGuard.AcquireStatus.CACHE_CLEARED) {
+                    messageCollector.report(INFO, "Cache guard file detected, cache directory '$cacheDirectory' cleared")
+                }
+            }
+
             messageCollector.report(INFO, "")
             messageCollector.report(INFO, "Building cache:")
             messageCollector.report(INFO, "to: $outputDir")
@@ -650,6 +665,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             )
 
             val artifacts = cacheUpdater.actualizeCaches()
+            cacheGuard.release()
+
             messageCollector.report(INFO, "IC rebuilt overall time: ${System.currentTimeMillis() - start}ms")
             for ((event, duration) in cacheUpdater.getStopwatchLastLaps()) {
                 messageCollector.report(INFO, "  $event: ${(duration / 1e6).toInt()}ms")
@@ -678,9 +695,9 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 }
             }
 
-            artifacts
-        } else emptyList()
-        return icCaches
+            return IcCachesArtifacts(artifacts, cacheGuard)
+        }
+        return null
     }
 
     override fun setupPlatformSpecificArgumentsAndServices(
