@@ -268,7 +268,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
     }
 
-    override fun TypeConstructorMarker.getParameters(): List<TypeParameterMarker> {
+    override fun TypeConstructorMarker.getParameters(): List<ConeTypeParameterLookupTag> {
         return when (val symbol = toClassLikeSymbol()) {
             is FirAnonymousObjectSymbol -> symbol.fir.typeParameters.map { it.symbol.toLookupTag() }
             is FirRegularClassSymbol -> symbol.fir.typeParameters.map { it.symbol.toLookupTag() }

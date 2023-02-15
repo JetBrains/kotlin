@@ -196,7 +196,7 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
             <class: T>: <root>.B
       CALL 'public final fun checkFoo (x: <root>.IFoo<in T of <root>.G1>): kotlin.Unit declared in <root>.G1' type=kotlin.Unit origin=null
         $this: GET_VAR 'val g: <root>.G1<*> [val] declared in <root>.test1' type=<root>.G1<*> origin=null
-        x: TYPE_OP type=<root>.IFoo<kotlin.Nothing> origin=SAM_CONVERSION typeOperand=<root>.IFoo<kotlin.Nothing>
+        x: TYPE_OP type=<root>.IFoo<in kotlin.Nothing> origin=SAM_CONVERSION typeOperand=<root>.IFoo<in kotlin.Nothing>
           FUN_EXPR type=kotlin.Function1<kotlin.Nothing, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.X) returnType:kotlin.Unit
               VALUE_PARAMETER name:it index:0 type:<root>.X
@@ -214,7 +214,7 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
             <class: T>: <root>.B
       CALL 'public final fun checkFoo (x: <root>.IFoo<in T of <root>.G2>): kotlin.Unit declared in <root>.G2' type=kotlin.Unit origin=null
         $this: GET_VAR 'val g: <root>.G2<*> [val] declared in <root>.test2' type=<root>.G2<*> origin=null
-        x: TYPE_OP type=<root>.IFoo<kotlin.Nothing> origin=SAM_CONVERSION typeOperand=<root>.IFoo<kotlin.Nothing>
+        x: TYPE_OP type=<root>.IFoo<in kotlin.Nothing> origin=SAM_CONVERSION typeOperand=<root>.IFoo<in kotlin.Nothing>
           FUN_EXPR type=kotlin.Function1<kotlin.Nothing, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.X) returnType:kotlin.Unit
               VALUE_PARAMETER name:it index:0 type:<root>.X
@@ -223,7 +223,7 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun checkBar1 (x: <root>.IBar1<in T of <root>.G2>): kotlin.Unit declared in <root>.G2' type=kotlin.Unit origin=null
         $this: GET_VAR 'val g: <root>.G2<*> [val] declared in <root>.test2' type=<root>.G2<*> origin=null
-        x: TYPE_OP type=<root>.IBar1<kotlin.Nothing> origin=SAM_CONVERSION typeOperand=<root>.IBar1<kotlin.Nothing>
+        x: TYPE_OP type=<root>.IBar1<in kotlin.Nothing> origin=SAM_CONVERSION typeOperand=<root>.IBar1<in kotlin.Nothing>
           FUN_EXPR type=kotlin.Function1<kotlin.Nothing, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.X) returnType:kotlin.Unit
               VALUE_PARAMETER name:it index:0 type:<root>.X
@@ -232,7 +232,7 @@ FILE fqName:<root> fileName:/intersectionTypeInSamType.kt
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun checkBar2 (x: <root>.IBar2<in T of <root>.G2>): kotlin.Unit declared in <root>.G2' type=kotlin.Unit origin=null
         $this: GET_VAR 'val g: <root>.G2<*> [val] declared in <root>.test2' type=<root>.G2<*> origin=null
-        x: TYPE_OP type=<root>.IBar2<kotlin.Nothing> origin=SAM_CONVERSION typeOperand=<root>.IBar2<kotlin.Nothing>
+        x: TYPE_OP type=<root>.IBar2<in kotlin.Nothing> origin=SAM_CONVERSION typeOperand=<root>.IBar2<in kotlin.Nothing>
           FUN_EXPR type=kotlin.Function1<kotlin.Nothing, kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:<root>.X) returnType:kotlin.Unit
               VALUE_PARAMETER name:it index:0 type:<root>.X

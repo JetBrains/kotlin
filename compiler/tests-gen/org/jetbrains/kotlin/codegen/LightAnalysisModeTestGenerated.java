@@ -22167,6 +22167,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/simpleIndySam.kt");
             }
 
+            @TestMetadata("starProjectionSam.kt")
+            public void testStarProjectionSam() throws Exception {
+                runTest("compiler/testData/codegen/box/invokedynamic/sam/starProjectionSam.kt");
+            }
+
             @TestMetadata("streamApi1.kt")
             public void testStreamApi1() throws Exception {
                 runTest("compiler/testData/codegen/box/invokedynamic/sam/streamApi1.kt");

@@ -3,8 +3,7 @@ fun f(x: Any): String {
     x is A<*> -> return x /*as A<*> */.call(block = local fun <anonymous>(y: Any?): @FlexibleNullability String? {
       return "OK"
     }
- /*-> @FlexibleNullability I<@FlexibleNullability Any?>? */) /*!! String */
+ /*-> @FlexibleNullability I<out @FlexibleNullability Any?>? */) /*!! String */
   }
   return "Fail"
 }
-
