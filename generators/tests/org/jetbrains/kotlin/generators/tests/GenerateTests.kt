@@ -20,10 +20,11 @@ import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssig
 import org.jetbrains.kotlin.assignment.plugin.AbstractAssignmentPluginDiagnosticTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginBlackBoxCodegenTest
 import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginDiagnosticTest
-import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.model.annotation
+import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.IcTestTypes.*
+import org.jetbrains.kotlin.generators.tests.IncrementalTestsGeneratorUtil.Companion.incrementalJvmTestData
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.jvm.abi.*
 import org.jetbrains.kotlin.kapt.cli.test.AbstractArgumentParsingTest
@@ -45,41 +46,29 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuite(args) {
         testGroup("compiler/incremental-compilation-impl/test", "jps/jps-plugin/testData") {
-            fun incrementalJvmTestData(targetBackend: TargetBackend, excludePattern: String? = null): TestGroup.TestClass.() -> Unit = {
-                model(
-                    "incremental/pureKotlin",
-                    extension = null,
-                    recursive = false,
-                    targetBackend = targetBackend,
-                    excludedPattern = excludePattern
-                )
-                model("incremental/classHierarchyAffected", extension = null, recursive = false, targetBackend = targetBackend)
-                model("incremental/inlineFunCallSite", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
-                model("incremental/withJava", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
-                model("incremental/incrementalJvmCompilerOnly", extension = null, excludeParentDirs = true, targetBackend = targetBackend)
-            }
             testClass<AbstractIncrementalJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     targetBackend = TargetBackend.JVM_IR,
-                    excludePattern = ".*SinceK2"
+                    folderToExcludePatternMap = mapOf(PURE_KOTLIN to ".*SinceK2")
                 )
             )
+
             testClass<AbstractIncrementalFirJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
-                    excludePattern = "^.*Expect.*"
+                    folderToExcludePatternMap = mapOf(PURE_KOTLIN to "^.*Expect.*")
                 )
             )
             testClass<AbstractIncrementalFirICLightTreeJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
-                    excludePattern = "^.*Expect.*"
+                    folderToExcludePatternMap = mapOf(PURE_KOTLIN to "^.*Expect.*")
                 )
             )
             testClass<AbstractIncrementalFirLightTreeJvmCompilerRunnerTest>(
                 init = incrementalJvmTestData(
                     TargetBackend.JVM_IR,
-                    excludePattern = "^.*Expect.*"
+                    folderToExcludePatternMap = mapOf(PURE_KOTLIN to "^.*Expect.*")
                 )
             )
 
