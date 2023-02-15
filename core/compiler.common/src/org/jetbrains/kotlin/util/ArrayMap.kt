@@ -87,9 +87,12 @@ internal class ArrayMapImpl<T : Any> private constructor(
 
 
     private fun ensureCapacity(index: Int) {
-        if (data.size <= index) {
-            data = data.copyOf(data.size * INCREASE_K)
-        }
+        if (data.size > index) return
+        var newSize = data.size
+        do {
+            newSize *= INCREASE_K
+        } while (newSize <= index)
+        data = data.copyOf(newSize)
     }
 
     override operator fun set(index: Int, value: T) {
