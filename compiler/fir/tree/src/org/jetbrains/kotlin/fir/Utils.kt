@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
@@ -254,3 +253,6 @@ fun <T> List<T>.smartPlus(other: List<T>): List<T> = when {
         result
     }
 }
+
+// Source element may be missing if the class came from a library
+fun FirVariable.isEnumEntries(containingClass: FirClass) = name == StandardNames.ENUM_ENTRIES && containingClass.isEnumClass

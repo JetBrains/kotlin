@@ -245,6 +245,10 @@ fun deserializeClassToSymbol(
         session.deserializedClassConfigurator?.run {
             configure(classId)
         }
+
+        if (!Flags.HAS_ENUM_ENTRIES.get(flags)) {
+            hasNoEnumEntriesAttr = true
+        }
     }
 }
 
