@@ -40,6 +40,12 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
         }
 
         @Test
+        @TestMetadata("external.kt")
+        public void testExternal() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/external.kt");
+        }
+
+        @Test
         @TestMetadata("inheritance.kt")
         public void testInheritance() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/inheritance.kt");
