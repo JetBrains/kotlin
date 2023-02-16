@@ -23959,6 +23959,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("manyImplFromOneJavaInterfaceWithDelegation.kt")
+            public void testManyImplFromOneJavaInterfaceWithDelegation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/manyImplFromOneJavaInterfaceWithDelegation.kt");
+            }
+
+            @Test
+            @TestMetadata("manyImplFromOneKotlinInterfaceWithDelegation.kt")
+            public void testManyImplFromOneKotlinInterfaceWithDelegation() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/manyImplFromOneKotlinInterfaceWithDelegation.kt");
+            }
+
+            @Test
             @TestMetadata("MissingDelegate.kt")
             public void testMissingDelegate() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/override/MissingDelegate.kt");

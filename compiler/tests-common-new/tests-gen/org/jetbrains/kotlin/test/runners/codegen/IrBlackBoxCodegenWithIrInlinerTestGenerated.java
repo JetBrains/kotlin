@@ -18446,6 +18446,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("manyImplFromOneJavaInterfaceWithDelegation.kt")
+        public void testManyImplFromOneJavaInterfaceWithDelegation() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/manyImplFromOneJavaInterfaceWithDelegation.kt");
+        }
+
+        @Test
         @TestMetadata("NameHighlighter.kt")
         public void testNameHighlighter() throws Exception {
             runTest("compiler/testData/codegen/box/fir/NameHighlighter.kt");
