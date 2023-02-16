@@ -35563,6 +35563,18 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("TypeParameterError.kt")
+            public void testTypeParameterError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/TypeParameterError.kt");
+            }
+
+            @Test
+            @TestMetadata("TypeParameterWarning.kt")
+            public void testTypeParameterWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/when/TypeParameterWarning.kt");
+            }
+
+            @Test
             @TestMetadata("When.kt")
             public void testWhen() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/when/When.kt");
