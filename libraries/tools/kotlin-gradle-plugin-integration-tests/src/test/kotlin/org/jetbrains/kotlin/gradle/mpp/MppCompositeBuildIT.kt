@@ -318,7 +318,7 @@ class MppCompositeBuildIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
-    fun `test - sample6-KT-56712-umbrella-composite - compileCommonMainKotlinMetadata`(
+    fun `test - sample6-KT-56712-umbrella-composite`(
         gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         val producer = project("mpp-composite-build/sample6-KT-56712-umbrella-composite/producer", gradleVersion)
@@ -339,6 +339,26 @@ class MppCompositeBuildIT : KGPBaseTest() {
 
             build(":consumerB:compileCommonMainKotlinMetadata") {
                 assertTasksExecuted(":consumerB:compileCommonMainKotlinMetadata")
+            }
+
+            build(":consumerA:resolveIdeDependencies") {
+                consumerA.readIdeDependencies()["commonMain"].assertMatches(
+                    regularSourceDependency("producer::/commonMain"),
+                    kotlinStdlibDependencies
+                )
+            }
+
+            build(":consumerB:resolveIdeDependencies") {
+                consumerB.readIdeDependencies()["commonMain"].assertMatches(
+                    regularSourceDependency("producer::/commonMain"),
+                    kotlinStdlibDependencies
+                )
+            }
+
+            build(":producer:resolveIdeDependencies") {
+                producer.readIdeDependencies()["commonMain"].assertMatches(
+                    kotlinStdlibDependencies
+                )
             }
         }
     }
