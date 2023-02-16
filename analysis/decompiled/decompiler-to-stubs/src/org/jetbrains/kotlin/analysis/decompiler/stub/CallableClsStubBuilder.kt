@@ -14,10 +14,12 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstructorStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
+import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun createPackageDeclarationsStubs(
@@ -242,7 +244,7 @@ private class PropertyClsStubBuilder(
 
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // This info is anyway irrelevant for the purposes these stubs are used
-        return KotlinPropertyStubImpl(
+        val propertyStub = KotlinPropertyStubImpl(
             parent,
             callableName.ref(),
             isVar,
@@ -254,6 +256,42 @@ private class PropertyClsStubBuilder(
             hasReturnTypeRef = true,
             fqName = c.containerFqName.child(callableName)
         )
+
+        val flags = propertyProto.flags
+        val defaultAccessorFlags = Flags.getAccessorFlags(
+            Flags.HAS_ANNOTATIONS[flags],
+            Flags.VISIBILITY[flags],
+            Flags.MODALITY[flags],
+            false, false, false
+        )
+        if (Flags.HAS_GETTER[flags]) {
+            val hasCustomGetter = propertyProto.hasGetterFlags()
+            val getterStub = KotlinPropertyAccessorStubImpl(propertyStub, true, hasCustomGetter, false)
+            createModifierListStubForDeclaration(
+                getterStub,
+                if (hasCustomGetter) propertyProto.getterFlags else defaultAccessorFlags,
+                listOf(VISIBILITY, MODALITY, INLINE, EXTERNAL_FUN)
+            )
+        }
+
+        if (Flags.HAS_SETTER[flags]) {
+            val hasCustomSetter = propertyProto.hasSetterFlags()
+            val setterStub = KotlinPropertyAccessorStubImpl(propertyStub, false, hasCustomSetter, false)
+            createModifierListStubForDeclaration(
+                setterStub,
+                if (hasCustomSetter) propertyProto.setterFlags else defaultAccessorFlags,
+                listOf(VISIBILITY, MODALITY, INLINE, EXTERNAL_FUN)
+            )
+            if (propertyProto.hasSetterValueParameter()) {
+                typeStubBuilder.createValueParameterListStub(
+                    setterStub,
+                    propertyProto,
+                    listOf(propertyProto.setterValueParameter),
+                    protoContainer
+                )
+            }
+        }
+        return propertyStub
     }
 }
 
