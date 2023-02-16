@@ -316,4 +316,30 @@ class MppCompositeBuildIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleAndroidTest
+    fun `test - sample6-KT-56712-umbrella-composite - compileCommonMainKotlinMetadata`(
+        gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
+    ) {
+        val producer = project("mpp-composite-build/sample6-KT-56712-umbrella-composite/producer", gradleVersion)
+        val consumerA = project("mpp-composite-build/sample6-KT-56712-umbrella-composite/consumerA", gradleVersion)
+        val consumerB = project("mpp-composite-build/sample6-KT-56712-umbrella-composite/consumerB", gradleVersion)
+
+        project(
+            "mpp-composite-build/sample6-KT-56712-umbrella-composite/composite", gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion), buildJdk = jdkVersion.location
+        ) {
+            settingsGradleKts.toFile().replaceText("<producer_path>", producer.projectPath.toUri().path)
+            settingsGradleKts.toFile().replaceText("<consumerA_path>", consumerA.projectPath.toUri().path)
+            settingsGradleKts.toFile().replaceText("<consumerB_path>", consumerB.projectPath.toUri().path)
+
+            build(":consumerA:compileCommonMainKotlinMetadata") {
+                assertTasksExecuted(":consumerA:compileCommonMainKotlinMetadata")
+            }
+
+            build(":consumerB:compileCommonMainKotlinMetadata") {
+                assertTasksExecuted(":consumerB:compileCommonMainKotlinMetadata")
+            }
+        }
+    }
 }
