@@ -19,6 +19,6 @@ internal inline fun <KEY : Any, RESULT> ConcurrentMap<KEY, Any>.getOrPutWithNull
     key: KEY,
     crossinline compute: (KEY) -> Any?
 ): RESULT {
-    val value = computeIfAbsent(key) { compute(key) ?: NullValue }
+    val value = getOrPut(key) { compute(key) ?: NullValue }
     return value.nullValueToNull()
 }

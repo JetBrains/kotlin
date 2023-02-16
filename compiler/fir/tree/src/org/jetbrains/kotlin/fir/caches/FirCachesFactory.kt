@@ -15,6 +15,9 @@ abstract class FirCachesFactory : FirSessionComponent {
      *
      * [FirCache.getValue] should not be called inside [createValue]
      *
+     * Note, that [createValue] might be called multiple times for the same value,
+     * but all threads will always get the same value
+     *
      * Where:
      * [CONTEXT] -- type of value which be used to create value by [createValue]
      */
