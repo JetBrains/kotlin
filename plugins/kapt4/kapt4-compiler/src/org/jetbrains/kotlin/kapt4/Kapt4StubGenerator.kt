@@ -702,7 +702,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
                 value.isFinite() -> treeMaker.Literal(value)
                 else -> treeMaker.Binary(Tag.DIV, treeMaker.Literal(specialFpValueNumerator(value)), treeMaker.Literal(0.0))
             }
-
+            null -> treeMaker.Literal(TypeTag.BOT, null)
             else -> null
         }
 
