@@ -49,7 +49,7 @@ FILE: for.kt
         }
 
     }
-    public? final? data class Some : R|kotlin/Any| {
+    public? final? data [HasEnumEntriesKey=true] class Some : R|kotlin/Any| {
         public? [ContainingClassKey=Some] constructor([CorrespondingProperty=/Some.x] x: Int, [CorrespondingProperty=/Some.y] y: Int): R|Some| {
             super<R|kotlin/Any|>()
         }

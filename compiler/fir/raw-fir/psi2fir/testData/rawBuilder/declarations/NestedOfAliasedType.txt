@@ -1,10 +1,10 @@
 FILE: NestedOfAliasedType.kt
-    public? abstract class A : R|kotlin/Any| {
+    public? abstract [HasEnumEntriesKey=true] class A : R|kotlin/Any| {
         public? [ContainingClassKey=A] constructor(): R|A| {
             super<R|kotlin/Any|>()
         }
 
-        public? abstract class Nested : R|kotlin/Any| {
+        public? abstract [HasEnumEntriesKey=true] class Nested : R|kotlin/Any| {
             public? [ContainingClassKey=Nested] constructor(): R|A.Nested| {
                 super<R|kotlin/Any|>()
             }
@@ -13,12 +13,12 @@ FILE: NestedOfAliasedType.kt
 
     }
     public? final typealias TA = A
-    public? final? class B : TA {
+    public? final? [HasEnumEntriesKey=true] class B : TA {
         public? [ContainingClassKey=B] constructor(): R|B| {
             super<TA>()
         }
 
-        public? final? class NestedInB : Nested {
+        public? final? [HasEnumEntriesKey=true] class NestedInB : Nested {
             public? [ContainingClassKey=NestedInB] constructor(): R|B.NestedInB| {
                 super<Nested>()
             }

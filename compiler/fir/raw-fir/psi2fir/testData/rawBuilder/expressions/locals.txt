@@ -1,6 +1,6 @@
 FILE: locals.kt
     public? final? fun withLocals(p: Int): Int {
-        local final? class Local : R|kotlin/Any| {
+        local final? [HasEnumEntriesKey=true] class Local : R|kotlin/Any| {
             public? [ContainingClassKey=Local] constructor([CorrespondingProperty=<local>/pp] pp: Int): R|Local| {
                 super<R|kotlin/Any|>()
             }

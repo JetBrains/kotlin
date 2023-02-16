@@ -45,6 +45,11 @@ var FirCallableDeclaration.containingClassForStaticMemberAttr: ConeClassLikeLook
 var FirRegularClass.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 var FirDanglingModifierList.containingClassAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 
+private object HasEnumEntriesKey : FirDeclarationDataKey()
+var FirClass.hasEnumEntriesAttr: Boolean? by FirDeclarationDataRegistry.data(HasEnumEntriesKey)
+
+val FirClass.hasEnumEntries get() = hasEnumEntriesAttr == true
+
 private object IsNewPlaceForBodyGeneration : FirDeclarationDataKey()
 var FirRegularClass.isNewPlaceForBodyGeneration: Boolean? by FirDeclarationDataRegistry.data(IsNewPlaceForBodyGeneration)
 

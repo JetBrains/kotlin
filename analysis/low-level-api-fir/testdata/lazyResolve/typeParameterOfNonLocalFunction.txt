@@ -1,7 +1,7 @@
 
 RAW_FIR:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -12,7 +12,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 IMPORTS:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -23,7 +23,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -34,7 +34,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 COMPANION_GENERATION:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -45,7 +45,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 SUPER_TYPES:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [RAW_FIR] class X : R|kotlin/Any| {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -56,7 +56,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 TYPES:
 FILE: typeParameterOfNonLocalFunction.kt
-    public? final? [SUPER_TYPES] class X : R|kotlin/Any| {
+    public? final? [SUPER_TYPES] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -67,7 +67,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 STATUS:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [SUPER_TYPES] class X : R|kotlin/Any| {
+    public final [SUPER_TYPES] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -78,7 +78,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] class X : R|kotlin/Any| {
+    public final [STATUS] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -89,7 +89,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 CONTRACTS:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] class X : R|kotlin/Any| {
+    public final [STATUS] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -101,7 +101,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] class X : R|kotlin/Any| {
+    public final [STATUS] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -113,7 +113,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] class X : R|kotlin/Any| {
+    public final [STATUS] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -125,7 +125,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] class X : R|kotlin/Any| {
+    public final [STATUS] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -137,7 +137,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 BODY_RESOLVE:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] class X : R|kotlin/Any| {
+    public final [STATUS] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -149,7 +149,7 @@ FILE: typeParameterOfNonLocalFunction.kt
 
 FILE RAW TO BODY:
 FILE: typeParameterOfNonLocalFunction.kt
-    public final [BODY_RESOLVE] class X : R|kotlin/Any| {
+    public final [BODY_RESOLVE] [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public [BODY_RESOLVE] [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }

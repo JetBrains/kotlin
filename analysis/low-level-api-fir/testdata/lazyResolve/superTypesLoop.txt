@@ -1,25 +1,25 @@
 
 RAW_FIR:
 FILE: superTypesLoop.kt
-    public? open [RAW_FIR] class resolveMe : C {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class resolveMe : C {
         public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
         }
 
     }
-    public? open [RAW_FIR] class A : B {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class A : B {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [RAW_FIR] class B : C {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class B : C {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public? open [RAW_FIR] class C : A {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class C : A {
         public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -28,25 +28,25 @@ FILE: superTypesLoop.kt
 
 IMPORTS:
 FILE: superTypesLoop.kt
-    public? open [RAW_FIR] class resolveMe : C {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class resolveMe : C {
         public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
         }
 
     }
-    public? open [RAW_FIR] class A : B {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class A : B {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [RAW_FIR] class B : C {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class B : C {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public? open [RAW_FIR] class C : A {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class C : A {
         public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -55,25 +55,25 @@ FILE: superTypesLoop.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: superTypesLoop.kt
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class resolveMe : C {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class resolveMe : C {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
         }
 
     }
-    public? open [RAW_FIR] class A : B {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class A : B {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [RAW_FIR] class B : C {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class B : C {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public? open [RAW_FIR] class C : A {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class C : A {
         public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -82,25 +82,25 @@ FILE: superTypesLoop.kt
 
 COMPANION_GENERATION:
 FILE: superTypesLoop.kt
-    public? open [COMPANION_GENERATION] class resolveMe : C {
+    public? open [COMPANION_GENERATION] [HasEnumEntriesKey=true] class resolveMe : C {
         public? [COMPANION_GENERATION] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
         }
 
     }
-    public? open [RAW_FIR] class A : B {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class A : B {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [RAW_FIR] class B : C {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class B : C {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public? open [RAW_FIR] class C : A {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class C : A {
         public? [RAW_FIR] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -109,25 +109,25 @@ FILE: superTypesLoop.kt
 
 SUPER_TYPES:
 FILE: superTypesLoop.kt
-    public? open [SUPER_TYPES] class resolveMe : R|C| {
+    public? open [SUPER_TYPES] [HasEnumEntriesKey=true] class resolveMe : R|C| {
         public? [SUPER_TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<C>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -136,25 +136,25 @@ FILE: superTypesLoop.kt
 
 TYPES:
 FILE: superTypesLoop.kt
-    public? open [TYPES] class resolveMe : R|C| {
+    public? open [TYPES] [HasEnumEntriesKey=true] class resolveMe : R|C| {
         public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<R|C|>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public? open [SUPER_TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public? open [SUPER_TYPES] [HasEnumEntriesKey=true] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public? [SUPER_TYPES] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<A>
         }
@@ -163,25 +163,25 @@ FILE: superTypesLoop.kt
 
 STATUS:
 FILE: superTypesLoop.kt
-    public open [STATUS] class resolveMe : R|C| {
+    public open [STATUS] [HasEnumEntriesKey=true] class resolveMe : R|C| {
         public [STATUS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<R|C|>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [TYPES] [HasEnumEntriesKey=true] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|A|>
         }
@@ -190,25 +190,25 @@ FILE: superTypesLoop.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: superTypesLoop.kt
-    public open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|C| {
+    public open [ARGUMENTS_OF_ANNOTATIONS] [HasEnumEntriesKey=true] class resolveMe : R|C| {
         public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             LAZY_super<R|C|>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [TYPES] [HasEnumEntriesKey=true] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|A|>
         }
@@ -217,25 +217,25 @@ FILE: superTypesLoop.kt
 
 CONTRACTS:
 FILE: superTypesLoop.kt
-    public open [CONTRACTS] class resolveMe : R|C| {
+    public open [CONTRACTS] [HasEnumEntriesKey=true] class resolveMe : R|C| {
         public [CONTRACTS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [TYPES] [HasEnumEntriesKey=true] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|A|>
         }
@@ -244,25 +244,25 @@ FILE: superTypesLoop.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: superTypesLoop.kt
-    public open [IMPLICIT_TYPES_BODY_RESOLVE] class resolveMe : R|C| {
+    public open [IMPLICIT_TYPES_BODY_RESOLVE] [HasEnumEntriesKey=true] class resolveMe : R|C| {
         public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [TYPES] [HasEnumEntriesKey=true] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|A|>
         }
@@ -271,25 +271,25 @@ FILE: superTypesLoop.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: superTypesLoop.kt
-    public open [ANNOTATIONS_ARGUMENTS_MAPPING] class resolveMe : R|C| {
+    public open [ANNOTATIONS_ARGUMENTS_MAPPING] [HasEnumEntriesKey=true] class resolveMe : R|C| {
         public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [TYPES] [HasEnumEntriesKey=true] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|A|>
         }
@@ -298,25 +298,25 @@ FILE: superTypesLoop.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: superTypesLoop.kt
-    public open [EXPECT_ACTUAL_MATCHING] class resolveMe : R|C| {
+    public open [EXPECT_ACTUAL_MATCHING] [HasEnumEntriesKey=true] class resolveMe : R|C| {
         public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [TYPES] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [TYPES] [HasEnumEntriesKey=true] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [TYPES] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|A|>
         }
@@ -325,25 +325,25 @@ FILE: superTypesLoop.kt
 
 BODY_RESOLVE:
 FILE: superTypesLoop.kt
-    public open [BODY_RESOLVE] class resolveMe : R|C| {
+    public open [BODY_RESOLVE] [HasEnumEntriesKey=true] class resolveMe : R|C| {
         public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<B>
         }
 
     }
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public? open [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<C>
         }
 
     }
-    public open [STATUS] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [STATUS] [HasEnumEntriesKey=true] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [STATUS] [ContainingClassKey=C] constructor(): R|C| {
             LAZY_super<R|A|>
         }
@@ -352,25 +352,25 @@ FILE: superTypesLoop.kt
 
 FILE RAW TO BODY:
 FILE: superTypesLoop.kt
-    public open [BODY_RESOLVE] class resolveMe : R|C| {
+    public open [BODY_RESOLVE] [HasEnumEntriesKey=true] class resolveMe : R|C| {
         public [BODY_RESOLVE] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|C|>()
         }
 
     }
-    public open [BODY_RESOLVE] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
+    public open [BODY_RESOLVE] [HasEnumEntriesKey=true] class A : <ERROR TYPE REF: Loop in supertype: /A -> /B> {
         public [BODY_RESOLVE] [ContainingClassKey=A] constructor(): R|A| {
             super<R|B|>()
         }
 
     }
-    public open [BODY_RESOLVE] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
+    public open [BODY_RESOLVE] [HasEnumEntriesKey=true] class B : <ERROR TYPE REF: Loop in supertype: /B -> /C> {
         public [BODY_RESOLVE] [ContainingClassKey=B] constructor(): R|B| {
             super<R|C|>()
         }
 
     }
-    public open [BODY_RESOLVE] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
+    public open [BODY_RESOLVE] [HasEnumEntriesKey=true] class C : <ERROR TYPE REF: Loop in supertype: /C -> /A> {
         public [BODY_RESOLVE] [ContainingClassKey=C] constructor(): R|C| {
             super<R|A|>()
         }

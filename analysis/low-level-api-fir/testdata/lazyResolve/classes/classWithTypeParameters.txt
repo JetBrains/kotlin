@@ -1,7 +1,7 @@
 
 RAW_FIR:
 FILE: classWithTypeParameters.kt
-    public? final? [RAW_FIR] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : Int, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -10,7 +10,7 @@ FILE: classWithTypeParameters.kt
 
 IMPORTS:
 FILE: classWithTypeParameters.kt
-    public? final? [RAW_FIR] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class ResolveMe<[RAW_FIR] T : Int, [RAW_FIR] K> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=ResolveMe] constructor<[RAW_FIR] T : Int, [RAW_FIR] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -19,7 +19,7 @@ FILE: classWithTypeParameters.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: classWithTypeParameters.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class ResolveMe<[COMPILER_REQUIRED_ANNOTATIONS] T : Int, [COMPILER_REQUIRED_ANNOTATIONS] K> : R|kotlin/Any| {
+    public? final? [COMPILER_REQUIRED_ANNOTATIONS] [HasEnumEntriesKey=true] class ResolveMe<[COMPILER_REQUIRED_ANNOTATIONS] T : Int, [COMPILER_REQUIRED_ANNOTATIONS] K> : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=ResolveMe] constructor<[COMPILER_REQUIRED_ANNOTATIONS] T : Int, [COMPILER_REQUIRED_ANNOTATIONS] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -28,7 +28,7 @@ FILE: classWithTypeParameters.kt
 
 COMPANION_GENERATION:
 FILE: classWithTypeParameters.kt
-    public? final? [COMPANION_GENERATION] class ResolveMe<[COMPANION_GENERATION] T : Int, [COMPANION_GENERATION] K> : R|kotlin/Any| {
+    public? final? [COMPANION_GENERATION] [HasEnumEntriesKey=true] class ResolveMe<[COMPANION_GENERATION] T : Int, [COMPANION_GENERATION] K> : R|kotlin/Any| {
         public? [COMPANION_GENERATION] [ContainingClassKey=ResolveMe] constructor<[COMPANION_GENERATION] T : Int, [COMPANION_GENERATION] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -37,7 +37,7 @@ FILE: classWithTypeParameters.kt
 
 SUPER_TYPES:
 FILE: classWithTypeParameters.kt
-    public? final? [SUPER_TYPES] class ResolveMe<[SUPER_TYPES] T : Int, [SUPER_TYPES] K> : R|kotlin/Any| {
+    public? final? [SUPER_TYPES] [HasEnumEntriesKey=true] class ResolveMe<[SUPER_TYPES] T : Int, [SUPER_TYPES] K> : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=ResolveMe] constructor<[SUPER_TYPES] T : Int, [SUPER_TYPES] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -46,7 +46,7 @@ FILE: classWithTypeParameters.kt
 
 TYPES:
 FILE: classWithTypeParameters.kt
-    public? final? [TYPES] class ResolveMe<[TYPES] T : R|kotlin/Int|, [TYPES] K> : R|kotlin/Any| {
+    public? final? [TYPES] [HasEnumEntriesKey=true] class ResolveMe<[TYPES] T : R|kotlin/Int|, [TYPES] K> : R|kotlin/Any| {
         public? [TYPES] [ContainingClassKey=ResolveMe] constructor<[TYPES] T : R|kotlin/Int|, [TYPES] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -55,7 +55,7 @@ FILE: classWithTypeParameters.kt
 
 STATUS:
 FILE: classWithTypeParameters.kt
-    public final [STATUS] class ResolveMe<[STATUS] T : R|kotlin/Int|, [STATUS] K> : R|kotlin/Any| {
+    public final [STATUS] [HasEnumEntriesKey=true] class ResolveMe<[STATUS] T : R|kotlin/Int|, [STATUS] K> : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=ResolveMe] constructor<[STATUS] T : R|kotlin/Int|, [STATUS] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -64,7 +64,7 @@ FILE: classWithTypeParameters.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: classWithTypeParameters.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] class ResolveMe<[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K> : R|kotlin/Any| {
+    public final [ARGUMENTS_OF_ANNOTATIONS] [HasEnumEntriesKey=true] class ResolveMe<[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K> : R|kotlin/Any| {
         public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=ResolveMe] constructor<[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -73,7 +73,7 @@ FILE: classWithTypeParameters.kt
 
 CONTRACTS:
 FILE: classWithTypeParameters.kt
-    public final [CONTRACTS] class ResolveMe<[CONTRACTS] T : R|kotlin/Int|, [CONTRACTS] K> : R|kotlin/Any| {
+    public final [CONTRACTS] [HasEnumEntriesKey=true] class ResolveMe<[CONTRACTS] T : R|kotlin/Int|, [CONTRACTS] K> : R|kotlin/Any| {
         public [CONTRACTS] [ContainingClassKey=ResolveMe] constructor<[CONTRACTS] T : R|kotlin/Int|, [CONTRACTS] K>(): R|ResolveMe<T, K>| {
             super<R|kotlin/Any|>()
         }
@@ -82,7 +82,7 @@ FILE: classWithTypeParameters.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: classWithTypeParameters.kt
-    public final [IMPLICIT_TYPES_BODY_RESOLVE] class ResolveMe<[IMPLICIT_TYPES_BODY_RESOLVE] T : R|kotlin/Int|, [IMPLICIT_TYPES_BODY_RESOLVE] K> : R|kotlin/Any| {
+    public final [IMPLICIT_TYPES_BODY_RESOLVE] [HasEnumEntriesKey=true] class ResolveMe<[IMPLICIT_TYPES_BODY_RESOLVE] T : R|kotlin/Int|, [IMPLICIT_TYPES_BODY_RESOLVE] K> : R|kotlin/Any| {
         public [IMPLICIT_TYPES_BODY_RESOLVE] [ContainingClassKey=ResolveMe] constructor<[IMPLICIT_TYPES_BODY_RESOLVE] T : R|kotlin/Int|, [IMPLICIT_TYPES_BODY_RESOLVE] K>(): R|ResolveMe<T, K>| {
             super<R|kotlin/Any|>()
         }
@@ -91,7 +91,7 @@ FILE: classWithTypeParameters.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: classWithTypeParameters.kt
-    public final [ANNOTATIONS_ARGUMENTS_MAPPING] class ResolveMe<[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> : R|kotlin/Any| {
+    public final [ANNOTATIONS_ARGUMENTS_MAPPING] [HasEnumEntriesKey=true] class ResolveMe<[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> : R|kotlin/Any| {
         public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=ResolveMe] constructor<[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K>(): R|ResolveMe<T, K>| {
             super<R|kotlin/Any|>()
         }
@@ -100,7 +100,7 @@ FILE: classWithTypeParameters.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: classWithTypeParameters.kt
-    public final [EXPECT_ACTUAL_MATCHING] class ResolveMe<[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> : R|kotlin/Any| {
+    public final [EXPECT_ACTUAL_MATCHING] [HasEnumEntriesKey=true] class ResolveMe<[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> : R|kotlin/Any| {
         public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=ResolveMe] constructor<[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K>(): R|ResolveMe<T, K>| {
             super<R|kotlin/Any|>()
         }
@@ -109,7 +109,7 @@ FILE: classWithTypeParameters.kt
 
 BODY_RESOLVE:
 FILE: classWithTypeParameters.kt
-    public final [BODY_RESOLVE] class ResolveMe<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> : R|kotlin/Any| {
+    public final [BODY_RESOLVE] [HasEnumEntriesKey=true] class ResolveMe<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> : R|kotlin/Any| {
         public [BODY_RESOLVE] [ContainingClassKey=ResolveMe] constructor<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K>(): R|ResolveMe<T, K>| {
             super<R|kotlin/Any|>()
         }
@@ -118,7 +118,7 @@ FILE: classWithTypeParameters.kt
 
 FILE RAW TO BODY:
 FILE: classWithTypeParameters.kt
-    public final [BODY_RESOLVE] class ResolveMe<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> : R|kotlin/Any| {
+    public final [BODY_RESOLVE] [HasEnumEntriesKey=true] class ResolveMe<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K> : R|kotlin/Any| {
         public [BODY_RESOLVE] [ContainingClassKey=ResolveMe] constructor<[BODY_RESOLVE] T : R|kotlin/Int|, [BODY_RESOLVE] K>(): R|ResolveMe<T, K>| {
             super<R|kotlin/Any|>()
         }

@@ -244,6 +244,8 @@ fun deserializeClassToSymbol(
         session.deserializedClassConfigurator?.run {
             configure(classId)
         }
+
+        hasEnumEntriesAttr = Flags.HAS_ENUM_ENTRIES.get(flags)
     }
 }
 

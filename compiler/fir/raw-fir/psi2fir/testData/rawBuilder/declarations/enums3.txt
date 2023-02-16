@@ -1,11 +1,11 @@
 FILE: enums3.kt
-    public? final? class C : R|kotlin/Any| {
+    public? final? [HasEnumEntriesKey=true] class C : R|kotlin/Any| {
         public? [ContainingClassKey=C] constructor(): R|C| {
             super<R|kotlin/Any|>()
         }
 
         init {
-            local final? enum class Planet : R|kotlin/Enum<C.Planet>| {
+            local final? [HasEnumEntriesKey=true] enum class Planet : R|kotlin/Enum<C.Planet>| {
                 private [ContainingClassKey=Planet] constructor([CorrespondingProperty=<local>/m] m: Double, [CorrespondingProperty=<local>/r] r: Double): R|C.Planet| {
                     super<R|kotlin/Enum<C.Planet>|>()
                 }
@@ -54,7 +54,7 @@ FILE: enums3.kt
 
                 public? abstract fun sayHello(): R|kotlin/Unit|
 
-                local final? companion [ContainingClassKey=Planet] object Companion : R|kotlin/Any| {
+                local final? companion [ContainingClassKey=Planet, HasEnumEntriesKey=true] object Companion : R|kotlin/Any| {
                     private [ContainingClassKey=Companion] constructor(): R|C.Planet.Companion| {
                         super<R|kotlin/Any|>()
                     }

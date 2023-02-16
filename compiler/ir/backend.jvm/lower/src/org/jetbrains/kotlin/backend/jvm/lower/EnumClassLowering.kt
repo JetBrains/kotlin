@@ -124,7 +124,13 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
             val valuesField = buildValuesField(valuesHelperFunction)
 
             val entriesField = when {
-                irClass.declarations.any { it.isGetEntriesFunction } -> {
+                !irClass.hasGetEntriesFunction -> {
+                    null
+                }
+                !supportsEnumEntries -> {
+                    error("The frontend must have checked if the feature is supported while emitting the IR")
+                }
+                else -> {
                     // Constructs the synthetic $entries() function that returns plain $VALUES without copy
                     val entriesHelperFunction = buildEntriesHelperFunction(valuesField)
 
@@ -137,12 +143,6 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
                      */
                     buildEntriesField(entriesHelperFunction)
                 }
-                supportsEnumEntries -> {
-                    error("kotlin.enums.EnumEntries is not available to the frontend. Is non-full kotlin stdlib being used?")
-                }
-                else -> {
-                    null
-                }
             }
 
             // Add synthetic parameters to enum constructors and implement the values and valueOf functions
@@ -151,6 +151,9 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
             // Add synthetic arguments to enum constructor calls and remap enum constructor parameters
             irClass.transformChildrenVoid(EnumClassCallTransformer())
         }
+
+        private val IrClass.hasGetEntriesFunction: Boolean
+            get() = declarations.any { it.isGetEntriesFunction }
 
         private val IrDeclaration.isGetEntriesFunction: Boolean
             get() = this is IrFunction && name == SpecialNames.ENUM_GET_ENTRIES && origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER

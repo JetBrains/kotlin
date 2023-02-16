@@ -1,11 +1,11 @@
 FILE: initBlockWithDeclarations.kt
-    public? final? class X : R|kotlin/Any| {
+    public? final? [HasEnumEntriesKey=true] class X : R|kotlin/Any| {
         public? [ContainingClassKey=X] constructor(): R|X| {
             super<R|kotlin/Any|>()
         }
 
         init {
-            local final? class classInInit : R|kotlin/Any| {
+            local final? [HasEnumEntriesKey=true] class classInInit : R|kotlin/Any| {
                 public? [ContainingClassKey=classInInit] constructor(): R|X.classInInit| {
                     super<R|kotlin/Any|>()
                 }
@@ -21,13 +21,13 @@ FILE: initBlockWithDeclarations.kt
         }
 
     }
-    public? final? object <no name provided> : R|kotlin/Any| {
+    public? final? [HasEnumEntriesKey=true] object <no name provided> : R|kotlin/Any| {
         private [ContainingClassKey=<no name provided>] constructor(): R|<no name provided>| {
             super<R|kotlin/Any|>()
         }
 
         init {
-            local final? class classInInit : R|kotlin/Any| {
+            local final? [HasEnumEntriesKey=true] class classInInit : R|kotlin/Any| {
                 public? [ContainingClassKey=classInInit] constructor(): R|<no name provided>.classInInit| {
                     super<R|kotlin/Any|>()
                 }

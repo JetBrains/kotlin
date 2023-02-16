@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -254,3 +252,6 @@ fun <T> List<T>.smartPlus(other: List<T>): List<T> = when {
         result
     }
 }
+
+val FirVariable.isEnumEntries
+    get() = source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration && name == StandardNames.ENUM_ENTRIES

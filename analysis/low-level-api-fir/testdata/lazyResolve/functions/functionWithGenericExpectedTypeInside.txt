@@ -1,13 +1,13 @@
 
 RAW_FIR:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -18,13 +18,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 IMPORTS:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -35,13 +35,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -52,13 +52,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 COMPANION_GENERATION:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -69,13 +69,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 SUPER_TYPES:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -86,13 +86,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 TYPES:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -103,13 +103,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 STATUS:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -120,13 +120,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -137,13 +137,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 CONTRACTS:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -156,13 +156,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -175,13 +175,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -194,13 +194,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
+    public? open [RAW_FIR] [HasEnumEntriesKey=true] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public? final? [RAW_FIR] class Bar : Foo<String> {
+    public? final? [RAW_FIR] [HasEnumEntriesKey=true] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -213,13 +213,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 BODY_RESOLVE:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public open [TYPES] class Foo<[TYPES] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
+    public open [TYPES] [HasEnumEntriesKey=true] class Foo<[TYPES] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=Foo] constructor<[TYPES] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
             LAZY_super<R|kotlin/Any|>
         }
 
     }
-    public final [TYPES] class Bar : R|Foo<kotlin/String>| {
+    public final [TYPES] [HasEnumEntriesKey=true] class Bar : R|Foo<kotlin/String>| {
         public [STATUS] [ContainingClassKey=Bar] constructor(): R|Bar| {
             LAZY_super<<implicit>>
         }
@@ -234,13 +234,13 @@ FILE: functionWithGenericExpectedTypeInside.kt
 
 FILE RAW TO BODY:
 FILE: functionWithGenericExpectedTypeInside.kt
-    public open [BODY_RESOLVE] class Foo<[BODY_RESOLVE] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
+    public open [BODY_RESOLVE] [HasEnumEntriesKey=true] class Foo<[BODY_RESOLVE] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
         public [BODY_RESOLVE] [ContainingClassKey=Foo] constructor<[BODY_RESOLVE] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
             super<R|kotlin/Any|>()
         }
 
     }
-    public final [BODY_RESOLVE] class Bar : R|Foo<kotlin/String>| {
+    public final [BODY_RESOLVE] [HasEnumEntriesKey=true] class Bar : R|Foo<kotlin/String>| {
         public [BODY_RESOLVE] [ContainingClassKey=Bar] constructor(): R|Bar| {
             super<R|Foo<kotlin/String>|>()
         }
