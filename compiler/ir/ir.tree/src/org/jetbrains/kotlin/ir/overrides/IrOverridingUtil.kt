@@ -631,79 +631,72 @@ class IrOverridingUtil(
         // The frontend goes into external overridability condition details here, but don't deal with them in IR (yet?).
     }
 
-    private val IrOverridableMember.compiledValueParameters
-        get() = when (this) {
-            is IrSimpleFunction -> extensionReceiverParameter?.let { listOf(it) + valueParameters } ?: valueParameters
-            is IrProperty -> getter!!.extensionReceiverParameter?.let { listOf(it) } ?: emptyList()
-            else -> error("Unexpected declaration for compiledValueParameters: $this")
-        }
-
-    private val IrOverridableMember.returnType
-        get() = when (this) {
-            is IrSimpleFunction -> this.returnType
-            is IrProperty -> this.getter!!.returnType
-            else -> error("Unexpected declaration for returnType: $this")
-        }
-
-    private val IrOverridableMember.typeParameters
-        get() = when (this) {
-            is IrSimpleFunction -> this.typeParameters
-            is IrProperty -> this.getter!!.typeParameters
-            else -> error("Unexpected declaration for typeParameters: $this")
-        }
-
     private fun isOverridableByWithoutExternalConditions(
         superMember: IrOverridableMember,
         subMember: IrOverridableMember,
         checkReturnType: Boolean
     ): OverrideCompatibilityInfo {
-        val basicOverridability = getBasicOverridabilityProblem(superMember, subMember)
-        if (basicOverridability != null) return basicOverridability
+        val superTypeParameters: List<IrTypeParameter>
+        val subTypeParameters: List<IrTypeParameter>
 
-        val superValueParameters = superMember.compiledValueParameters
-        val subValueParameters = subMember.compiledValueParameters
-        val superTypeParameters = superMember.typeParameters
-        val subTypeParameters = subMember.typeParameters
+        val superValueParameters: List<IrValueParameter>
+        val subValueParameters: List<IrValueParameter>
 
-        if (superTypeParameters.size != subTypeParameters.size) {
-            /* TODO: do we need this in IR?
-            superValueParameters.forEachIndexed { index, superParameter ->
-                if (!AbstractTypeChecker.equalTypes(
-                        defaultTypeCheckerContext as AbstractTypeCheckerContext,
-                        superParameter.type,
-                        subValueParameters[index].type
-                    )
-                ) {
-                    return OverrideCompatibilityInfo.incompatible("Type parameter number mismatch")
+        when (superMember) {
+            is IrSimpleFunction -> when {
+                subMember !is IrSimpleFunction -> return incompatible("Member kind mismatch")
+                superMember.hasExtensionReceiver != subMember.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
+                superMember.isSuspend != subMember.isSuspend -> return incompatible("Incompatible suspendability")
+
+                else -> {
+                    superTypeParameters = superMember.typeParameters
+                    subTypeParameters = subMember.typeParameters
+                    superValueParameters = superMember.compiledValueParameters
+                    subValueParameters = subMember.compiledValueParameters
                 }
             }
-            return OverrideCompatibilityInfo.conflict("Type parameter number mismatch")
-            */
+            is IrProperty -> when {
+                subMember !is IrProperty -> return incompatible("Member kind mismatch")
+                superMember.getter.hasExtensionReceiver != subMember.getter.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
 
-            return incompatible("Type parameter number mismatch")
+                else -> {
+                    superTypeParameters = superMember.typeParameters
+                    subTypeParameters = subMember.typeParameters
+                    superValueParameters = superMember.compiledValueParameters
+                    subValueParameters = subMember.compiledValueParameters
+                }
+            }
+            else -> error("Unexpected type of declaration: ${superMember::class.java}, $superMember")
         }
 
-        val typeCheckerState =
-            createIrTypeCheckerState(
-                IrTypeSystemContextWithAdditionalAxioms(
-                    typeSystem,
-                    superTypeParameters,
-                    subTypeParameters
-                )
+        when {
+            superMember.name != subMember.name -> {
+                // Check name after member kind checks. This way FO builder will first check types of overridable members and crash
+                // if member types are not supported (ex: IrConstructor).
+                return incompatible("Name mismatch")
+            }
+
+            superTypeParameters.size != subTypeParameters.size -> return incompatible("Type parameter number mismatch")
+            superValueParameters.size != subValueParameters.size -> return incompatible("Value parameter number mismatch")
+        }
+
+        // TODO: check the bounds. See OverridingUtil.areTypeParametersEquivalent()
+//        superTypeParameters.forEachIndexed { index, parameter ->
+//            if (!AbstractTypeChecker.areTypeParametersEquivalent(
+//                    typeCheckerContext as AbstractTypeCheckerContext,
+//                    subTypeParameters[index].type,
+//                    parameter.type
+//                )
+//            ) return OverrideCompatibilityInfo.incompatible("Type parameter bounds mismatch")
+//        }
+
+        val typeCheckerState = createIrTypeCheckerState(
+            IrTypeSystemContextWithAdditionalAxioms(
+                typeSystem,
+                superTypeParameters,
+                subTypeParameters
             )
-
-        /* TODO: check the bounds. See OverridingUtil.areTypeParametersEquivalent()
-        superTypeParameters.forEachIndexed { index, parameter ->
-            if (!AbstractTypeChecker.areTypeParametersEquivalent(
-                    typeCheckerContext as AbstractTypeCheckerContext,
-                    subTypeParameters[index].type,
-                    parameter.type
-                )
-            ) return OverrideCompatibilityInfo.incompatible("Type parameter bounds mismatch")
-        }
-        */
-
-        require(superValueParameters.size == subValueParameters.size)
+        )
 
         superValueParameters.forEachIndexed { index, parameter ->
             if (!AbstractTypeChecker.equalTypes(
@@ -714,10 +707,6 @@ class IrOverridingUtil(
             ) return incompatible("Value parameter type mismatch")
         }
 
-        if (superMember is IrSimpleFunction && subMember is IrSimpleFunction && superMember.isSuspend != subMember.isSuspend) {
-            return incompatible("Incompatible suspendability")
-        }
-
         if (checkReturnType) {
             if (!AbstractTypeChecker.isSubtypeOf(
                     typeCheckerState,
@@ -726,64 +715,48 @@ class IrOverridingUtil(
                 )
             ) return conflict("Return type mismatch")
         }
+
         return success()
-    }
-
-    private fun getBasicOverridabilityProblem(
-        superMember: IrOverridableMember,
-        subMember: IrOverridableMember
-    ): OverrideCompatibilityInfo? {
-        if (superMember is IrSimpleFunction && subMember !is IrSimpleFunction ||
-            superMember is IrProperty && subMember !is IrProperty
-        ) {
-            return incompatible("Member kind mismatch")
-        }
-        require((superMember is IrSimpleFunction || superMember is IrProperty)) {
-            "This type of IrDeclaration cannot be checked for overridability: $superMember"
-        }
-
-        return if (superMember.name != subMember.name) {
-            incompatible("Name mismatch")
-        } else
-            checkReceiverAndParameterCount(superMember, subMember)
-    }
-
-    private fun checkReceiverAndParameterCount(
-        superMember: IrOverridableMember,
-        subMember: IrOverridableMember
-    ): OverrideCompatibilityInfo? {
-        return when (superMember) {
-            is IrSimpleFunction -> {
-                require(subMember is IrSimpleFunction)
-                when {
-                    superMember.extensionReceiverParameter == null != (subMember.extensionReceiverParameter == null) -> {
-                        incompatible("Receiver presence mismatch")
-                    }
-                    superMember.valueParameters.size != subMember.valueParameters.size -> {
-                        incompatible("Value parameter number mismatch")
-                    }
-                    else -> null
-                }
-            }
-            is IrProperty -> {
-                require(subMember is IrProperty)
-                if (superMember.getter?.extensionReceiverParameter == null != (subMember.getter?.extensionReceiverParameter == null)) {
-                    incompatible("Receiver presence mismatch")
-                } else null
-            }
-            else -> error("Unxpected declaration for value parameter check: $this")
-        }
     }
 }
 
+private inline val IrSimpleFunction?.hasExtensionReceiver: Boolean
+    get() = this?.extensionReceiverParameter != null
+
+private inline val IrSimpleFunction?.hasDispatchReceiver: Boolean
+    get() = this?.dispatchReceiverParameter != null
+
+private inline val IrSimpleFunction.compiledValueParameters: List<IrValueParameter>
+    get() = ArrayList<IrValueParameter>(valueParameters.size + 1).apply {
+        extensionReceiverParameter?.let(::add)
+        addAll(valueParameters)
+    }
+
+private inline val IrProperty.compiledValueParameters: List<IrValueParameter>
+    get() = getter?.extensionReceiverParameter?.let(::listOf).orEmpty()
+
+private inline val IrProperty.typeParameters: List<IrTypeParameter>
+    get() = getter?.typeParameters.orEmpty()
+
+private inline val IrOverridableMember.typeParameters: List<IrTypeParameter>
+    get() = when (this) {
+        is IrSimpleFunction -> typeParameters
+        is IrProperty -> getter?.typeParameters.orEmpty()
+        else -> error("Unexpected type of declaration: ${this::class.java}, $this")
+    }
+
+private inline val IrOverridableMember.returnType
+    get() = when (this) {
+        is IrSimpleFunction -> returnType
+        is IrProperty -> getter!!.returnType
+        else -> error("Unexpected type of declaration: ${this::class.java}, $this")
+    }
+
 fun IrSimpleFunction.isOverridableFunction(): Boolean =
-    this.visibility != DescriptorVisibilities.PRIVATE &&
-            this.dispatchReceiverParameter != null
+    visibility != DescriptorVisibilities.PRIVATE && hasDispatchReceiver
 
 fun IrProperty.isOverridableProperty(): Boolean =
-    this.visibility != DescriptorVisibilities.PRIVATE &&
-            (this.getter?.dispatchReceiverParameter != null ||
-                    this.setter?.dispatchReceiverParameter != null)
+    visibility != DescriptorVisibilities.PRIVATE && (getter.hasDispatchReceiver || setter.hasDispatchReceiver)
 
 fun IrDeclaration.isOverridableMemberOrAccessor(): Boolean = when (this) {
     is IrSimpleFunction -> isOverridableFunction()
