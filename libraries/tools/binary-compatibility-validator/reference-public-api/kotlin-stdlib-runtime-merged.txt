@@ -35,6 +35,7 @@ public final class kotlin/DeprecationLevel : java/lang/Enum {
 	public static final field ERROR Lkotlin/DeprecationLevel;
 	public static final field HIDDEN Lkotlin/DeprecationLevel;
 	public static final field WARNING Lkotlin/DeprecationLevel;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/DeprecationLevel;
 	public static fun values ()[Lkotlin/DeprecationLevel;
 }
@@ -116,6 +117,7 @@ public final class kotlin/LazyThreadSafetyMode : java/lang/Enum {
 	public static final field NONE Lkotlin/LazyThreadSafetyMode;
 	public static final field PUBLICATION Lkotlin/LazyThreadSafetyMode;
 	public static final field SYNCHRONIZED Lkotlin/LazyThreadSafetyMode;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/LazyThreadSafetyMode;
 	public static fun values ()[Lkotlin/LazyThreadSafetyMode;
 }
@@ -194,6 +196,7 @@ public abstract interface annotation class kotlin/RequiresOptIn : java/lang/anno
 public final class kotlin/RequiresOptIn$Level : java/lang/Enum {
 	public static final field ERROR Lkotlin/RequiresOptIn$Level;
 	public static final field WARNING Lkotlin/RequiresOptIn$Level;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/RequiresOptIn$Level;
 	public static fun values ()[Lkotlin/RequiresOptIn$Level;
 }
@@ -534,6 +537,7 @@ public final class kotlin/annotation/AnnotationRetention : java/lang/Enum {
 	public static final field BINARY Lkotlin/annotation/AnnotationRetention;
 	public static final field RUNTIME Lkotlin/annotation/AnnotationRetention;
 	public static final field SOURCE Lkotlin/annotation/AnnotationRetention;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/annotation/AnnotationRetention;
 	public static fun values ()[Lkotlin/annotation/AnnotationRetention;
 }
@@ -554,6 +558,7 @@ public final class kotlin/annotation/AnnotationTarget : java/lang/Enum {
 	public static final field TYPEALIAS Lkotlin/annotation/AnnotationTarget;
 	public static final field TYPE_PARAMETER Lkotlin/annotation/AnnotationTarget;
 	public static final field VALUE_PARAMETER Lkotlin/annotation/AnnotationTarget;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/annotation/AnnotationTarget;
 	public static fun values ()[Lkotlin/annotation/AnnotationTarget;
 }
@@ -2963,6 +2968,7 @@ public final class kotlin/contracts/InvocationKind : java/lang/Enum {
 	public static final field AT_MOST_ONCE Lkotlin/contracts/InvocationKind;
 	public static final field EXACTLY_ONCE Lkotlin/contracts/InvocationKind;
 	public static final field UNKNOWN Lkotlin/contracts/InvocationKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/contracts/InvocationKind;
 	public static fun values ()[Lkotlin/contracts/InvocationKind;
 }
@@ -3081,6 +3087,7 @@ public final class kotlin/coroutines/intrinsics/CoroutineSingletons : java/lang/
 	public static final field COROUTINE_SUSPENDED Lkotlin/coroutines/intrinsics/CoroutineSingletons;
 	public static final field RESUMED Lkotlin/coroutines/intrinsics/CoroutineSingletons;
 	public static final field UNDECIDED Lkotlin/coroutines/intrinsics/CoroutineSingletons;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/coroutines/intrinsics/CoroutineSingletons;
 	public static fun values ()[Lkotlin/coroutines/intrinsics/CoroutineSingletons;
 }
@@ -3194,6 +3201,7 @@ public final class kotlin/io/FileTreeWalk : kotlin/sequences/Sequence {
 public final class kotlin/io/FileWalkDirection : java/lang/Enum {
 	public static final field BOTTOM_UP Lkotlin/io/FileWalkDirection;
 	public static final field TOP_DOWN Lkotlin/io/FileWalkDirection;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/FileWalkDirection;
 	public static fun values ()[Lkotlin/io/FileWalkDirection;
 }
@@ -3256,6 +3264,7 @@ public final class kotlin/io/NoSuchFileException : kotlin/io/FileSystemException
 public final class kotlin/io/OnErrorAction : java/lang/Enum {
 	public static final field SKIP Lkotlin/io/OnErrorAction;
 	public static final field TERMINATE Lkotlin/io/OnErrorAction;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/OnErrorAction;
 	public static fun values ()[Lkotlin/io/OnErrorAction;
 }
@@ -3313,6 +3322,7 @@ public final class kotlin/io/path/CopyActionResult : java/lang/Enum {
 	public static final field CONTINUE Lkotlin/io/path/CopyActionResult;
 	public static final field SKIP_SUBTREE Lkotlin/io/path/CopyActionResult;
 	public static final field TERMINATE Lkotlin/io/path/CopyActionResult;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/path/CopyActionResult;
 	public static fun values ()[Lkotlin/io/path/CopyActionResult;
 }
@@ -3330,6 +3340,7 @@ public abstract interface class kotlin/io/path/FileVisitorBuilder {
 public final class kotlin/io/path/OnErrorResult : java/lang/Enum {
 	public static final field SKIP_SUBTREE Lkotlin/io/path/OnErrorResult;
 	public static final field TERMINATE Lkotlin/io/path/OnErrorResult;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/path/OnErrorResult;
 	public static fun values ()[Lkotlin/io/path/OnErrorResult;
 }
@@ -3338,6 +3349,7 @@ public final class kotlin/io/path/PathWalkOption : java/lang/Enum {
 	public static final field BREADTH_FIRST Lkotlin/io/path/PathWalkOption;
 	public static final field FOLLOW_LINKS Lkotlin/io/path/PathWalkOption;
 	public static final field INCLUDE_DIRECTORIES Lkotlin/io/path/PathWalkOption;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/io/path/PathWalkOption;
 	public static fun values ()[Lkotlin/io/path/PathWalkOption;
 }
@@ -5006,6 +5018,7 @@ public final class kotlin/reflect/KParameter$Kind : java/lang/Enum {
 	public static final field EXTENSION_RECEIVER Lkotlin/reflect/KParameter$Kind;
 	public static final field INSTANCE Lkotlin/reflect/KParameter$Kind;
 	public static final field VALUE Lkotlin/reflect/KParameter$Kind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/reflect/KParameter$Kind;
 	public static fun values ()[Lkotlin/reflect/KParameter$Kind;
 }
@@ -5091,6 +5104,7 @@ public final class kotlin/reflect/KVariance : java/lang/Enum {
 	public static final field IN Lkotlin/reflect/KVariance;
 	public static final field INVARIANT Lkotlin/reflect/KVariance;
 	public static final field OUT Lkotlin/reflect/KVariance;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/reflect/KVariance;
 	public static fun values ()[Lkotlin/reflect/KVariance;
 }
@@ -5100,6 +5114,7 @@ public final class kotlin/reflect/KVisibility : java/lang/Enum {
 	public static final field PRIVATE Lkotlin/reflect/KVisibility;
 	public static final field PROTECTED Lkotlin/reflect/KVisibility;
 	public static final field PUBLIC Lkotlin/reflect/KVisibility;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/reflect/KVisibility;
 	public static fun values ()[Lkotlin/reflect/KVisibility;
 }
@@ -5364,6 +5379,7 @@ public final class kotlin/text/CharCategory : java/lang/Enum {
 	public static final field UPPERCASE_LETTER Lkotlin/text/CharCategory;
 	public final fun contains (C)Z
 	public final fun getCode ()Ljava/lang/String;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/text/CharCategory;
 	public static fun values ()[Lkotlin/text/CharCategory;
@@ -5395,6 +5411,7 @@ public final class kotlin/text/CharDirectionality : java/lang/Enum {
 	public static final field SEGMENT_SEPARATOR Lkotlin/text/CharDirectionality;
 	public static final field UNDEFINED Lkotlin/text/CharDirectionality;
 	public static final field WHITESPACE Lkotlin/text/CharDirectionality;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public final fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/text/CharDirectionality;
 	public static fun values ()[Lkotlin/text/CharDirectionality;
@@ -5518,6 +5535,7 @@ public final class kotlin/text/RegexOption : java/lang/Enum, kotlin/text/FlagEnu
 	public static final field LITERAL Lkotlin/text/RegexOption;
 	public static final field MULTILINE Lkotlin/text/RegexOption;
 	public static final field UNIX_LINES Lkotlin/text/RegexOption;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public fun getMask ()I
 	public fun getValue ()I
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/text/RegexOption;
@@ -6098,6 +6116,7 @@ public final class kotlin/time/DurationUnit : java/lang/Enum {
 	public static final field MINUTES Lkotlin/time/DurationUnit;
 	public static final field NANOSECONDS Lkotlin/time/DurationUnit;
 	public static final field SECONDS Lkotlin/time/DurationUnit;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lkotlin/time/DurationUnit;
 	public static fun values ()[Lkotlin/time/DurationUnit;
 }
