@@ -1,21 +1,5 @@
 plugins {
     kotlin("multiplatform")
-    `maven-publish`
-}
-
-group = "org.jetbrains.kotlin.sample.native"
-version = "1.0"
-
-val localRepo = rootProject.file("build/.m2-local")
-
-publishing {
-    repositories {
-        maven("file://$localRepo")
-    }
-}
-
-val cleanLocalRepo by tasks.creating(Delete::class) {
-    delete(localRepo)
 }
 
 val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
@@ -41,16 +25,6 @@ kotlin {
                     presets["linuxX64"] -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu")
                     presets["mingwX64"] -> includeDirs.headerFilterOnly(mingwPath.resolve("include"))
                 }
-            }
-        }
-
-        mavenPublication {
-            pom {
-                 withXml {
-                     val root = asNode()
-                     root.appendNode("name", "libcurl interop library")
-                     root.appendNode("description", "A library providing interoperability with host libcurl")
-                 }
             }
         }
     }
