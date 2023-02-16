@@ -34,6 +34,12 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
         }
 
         @Test
+        @TestMetadata("dynamicUnsupported.kt")
+        public void testDynamicUnsupported() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/dynamicUnsupported.kt");
+        }
+
+        @Test
         @TestMetadata("inheritance.kt")
         public void testInheritance() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/inheritance.kt");
