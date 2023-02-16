@@ -19,13 +19,13 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static final kotlin.Lazy<java.lang.String> lazyProp$delegate;
 
   @org.jetbrains.annotations.NotNull()
+  private static final kotlin.annotation.AnnotationTarget[] enums = {kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD} /* initializer type: null */;
+
+  @org.jetbrains.annotations.NotNull()
   private static final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> sum;
 
   @org.jetbrains.annotations.NotNull()
-  private static final kotlin.reflect.KClass<C> localClass = C.class /* initializer type: java.lang.Class<C> */;
-
-  @org.jetbrains.annotations.NotNull()
-  private static final kotlin.reflect.KClass<java.lang.String> nonLocalClass = kotlin.String.class /* initializer type: java.lang.Class<kotlin.String> */;
+  private static final kotlin.reflect.KClass<? extends java.lang.Object>[] classes = {kotlin.String.class, C.class} /* initializer type: null */;
 
   @org.jetbrains.annotations.NotNull()
   private static java.lang.String name = "x" /* initializer type: java.lang.String */;
