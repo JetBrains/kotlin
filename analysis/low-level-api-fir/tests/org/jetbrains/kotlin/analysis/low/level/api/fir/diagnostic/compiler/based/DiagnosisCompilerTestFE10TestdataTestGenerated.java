@@ -490,6 +490,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
         }
 
         @Test
+        @TestMetadata("kt56665.kt")
+        public void testKt56665() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/kt56665.kt");
+        }
+
+        @Test
         @TestMetadata("LValueAssignment.kt")
         public void testLValueAssignment() throws Exception {
             runTest("compiler/testData/diagnostics/tests/LValueAssignment.kt");
