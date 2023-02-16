@@ -24,7 +24,7 @@ fun FirSession.doUnify(
     result: MutableMap<FirTypeParameterSymbol, ConeTypeProjection>,
 ): Boolean {
     val originalType = originalTypeProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
-    val typeWithParameters = typeWithParametersProjection.type?.fullyExpandedType(this)
+    val typeWithParameters = typeWithParametersProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
 
     if (originalType is ConeIntersectionType) {
         val intersectionResult = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
@@ -67,14 +67,6 @@ fun FirSession.doUnify(
     // in Foo ~ X  =>  may be OK
     if (originalTypeProjection.kind != typeWithParametersProjection.kind && typeWithParametersProjection.kind != ProjectionKind.INVARIANT) {
         return true
-    }
-
-    if (typeWithParameters is ConeFlexibleType) {
-        return doUnify(
-            originalTypeProjection,
-            typeWithParametersProjection.replaceType(typeWithParameters.lowerBound),
-            targetTypeParameters, result,
-        )
     }
 
     if (typeWithParameters is ConeDefinitelyNotNullType) {
