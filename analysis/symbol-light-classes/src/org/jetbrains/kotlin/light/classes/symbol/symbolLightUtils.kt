@@ -196,8 +196,8 @@ internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiA
 
         is KtEnumEntryAnnotationValue -> {
             val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
-            val psiExpression = PsiElementFactory.getInstance(parent.project).createExpressionFromText(fqName, parent)
-            SymbolPsiExpression(sourcePsi, parent, psiExpression)
+            val psiReference = PsiElementFactory.getInstance(parent.project).createReferenceFromText(fqName, parent)
+            SymbolPsiReference(sourcePsi, parent, psiReference)
         }
 
         KtUnsupportedAnnotationValue -> null
