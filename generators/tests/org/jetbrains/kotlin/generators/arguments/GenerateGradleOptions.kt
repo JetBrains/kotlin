@@ -32,7 +32,7 @@ interface AdditionalGradleProperties {
 
 private data class GeneratedOptions(
     val optionsName: FqName,
-    val deprecatedOptionsName: FqName,
+    val deprecatedOptionsName: FqName?,
     val properties: List<KProperty1<*, *>>
 )
 
@@ -89,6 +89,19 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
         jsOptions.optionsName,
         commonCompilerOptionsImplFqName,
         jsOptions.properties,
+        withPrinterToFile
+    )
+
+    val nativeOptions = generateKotlinNativeOptions(
+        apiSrcDir,
+        commonCompilerOptions,
+        withPrinterToFile
+    )
+    generateKotlinNativeOptionsImpl(
+        srcDir,
+        nativeOptions.optionsName,
+        commonCompilerOptionsImplFqName,
+        nativeOptions.properties,
         withPrinterToFile
     )
 
@@ -339,6 +352,48 @@ private fun generateKotlinJsOptionsImpl(
         )
     }
 }
+
+private fun generateKotlinNativeOptions(
+    apiSrcDir: File,
+    commonCompilerOptions: GeneratedOptions,
+    withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
+): GeneratedOptions {
+    val nativeInterfaceFqName = FqName("$OPTIONS_PACKAGE_PREFIX.KotlinNativeCompilerOptions")
+    val nativeOptions = gradleOptions<K2NativeCompilerArguments>()
+    withPrinterToFile(fileFromFqName(apiSrcDir, nativeInterfaceFqName)) {
+        generateInterface(
+            nativeInterfaceFqName,
+            nativeOptions,
+            parentType = commonCompilerOptions.optionsName,
+        )
+    }
+
+    println("\n### Attributes specific for Native\n")
+    generateMarkdown(nativeOptions)
+
+    return GeneratedOptions(nativeInterfaceFqName, null, nativeOptions)
+}
+
+private fun generateKotlinNativeOptionsImpl(
+    srcDir: File,
+    nativeInterfaceFqName: FqName,
+    commonCompilerImpl: FqName,
+    nativeOptions: List<KProperty1<*, *>>,
+    withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit
+) {
+    val k2NativeCompilerArgumentsFqName = FqName(K2NativeCompilerArguments::class.qualifiedName!!)
+    val nativeImplFqName = FqName("${nativeInterfaceFqName.asString()}$IMPLEMENTATION_SUFFIX")
+    withPrinterToFile(fileFromFqName(srcDir, nativeImplFqName)) {
+        generateImpl(
+            nativeImplFqName,
+            commonCompilerImpl,
+            nativeInterfaceFqName,
+            k2NativeCompilerArgumentsFqName,
+            nativeOptions
+        )
+    }
+}
+
 
 private fun generateJsDceOptions(
     apiSrcDir: File,
