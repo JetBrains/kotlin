@@ -78,4 +78,10 @@ val x: String = ""
 	get;
 var x: String = ""
 	private set;
+
+class C
+val classes = arrayOf(String::class, C::class)
+
+val enums = arrayOf(AnnotationTarget.PROPERTY, AnnotationTarget.FIELD)
+
 // COMPILATION_ERRORS

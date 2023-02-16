@@ -1,3 +1,7 @@
+public final class C /* C*/ {
+  public  C();//  .ctor()
+}
+
 public final class PropertiesKt /* PropertiesKt*/ {
   @org.jetbrains.annotations.NotNull()
   private static final error.NonExistentClass delegatedProp$delegate;
@@ -16,6 +20,12 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   @org.jetbrains.annotations.NotNull()
   private static final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> sum;
+
+  @org.jetbrains.annotations.NotNull()
+  private static final kotlin.reflect.KClass<C> localClass = C.class /* initializer type: java.lang.Class<C> */;
+
+  @org.jetbrains.annotations.NotNull()
+  private static final kotlin.reflect.KClass<java.lang.String> nonLocalClass = kotlin.String.class /* initializer type: java.lang.Class<kotlin.String> */;
 
   @org.jetbrains.annotations.NotNull()
   private static java.lang.String name = "x" /* initializer type: java.lang.String */;
@@ -107,6 +117,12 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   @org.jetbrains.annotations.NotNull()
   public static final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> getSum();//  getSum()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final kotlin.reflect.KClass<C> getLocalClass();//  getLocalClass()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final kotlin.reflect.KClass<java.lang.String> getNonLocalClass();//  getNonLocalClass()
 
   @org.jetbrains.annotations.Nullable()
   public static final java.lang.Boolean getIslowercase();//  getIslowercase()
