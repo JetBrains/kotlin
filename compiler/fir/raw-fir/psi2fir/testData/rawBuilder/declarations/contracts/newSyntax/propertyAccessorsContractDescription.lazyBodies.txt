@@ -7,7 +7,7 @@ FILE: propertyAccessorsContractDescription.kt
         public? final? var myInt: Int = LAZY_EXPRESSION
             public? get(): Int
                 [Contract description] <
-                    returnsNotNull#()
+                    LAZY_EXPRESSION
                 >
              { LAZY_BLOCK }
             public? set(value: Int): R|kotlin/Unit| { LAZY_BLOCK }
@@ -21,12 +21,12 @@ FILE: propertyAccessorsContractDescription.kt
         public? final? var anotherInt: Int = LAZY_EXPRESSION
             public? get(): Int
                 [Contract description] <
-                    returnsNotNull#()
+                    LAZY_EXPRESSION
                 >
              { LAZY_BLOCK }
             public? set(value: Int): R|kotlin/Unit|
                 [Contract description] <
-                    returns#()
+                    LAZY_EXPRESSION
                 >
              { LAZY_BLOCK }
 
@@ -39,12 +39,12 @@ FILE: propertyAccessorsContractDescription.kt
         public? final? var someInt: Int = LAZY_EXPRESSION
             public? get(): Int
                 [Contract description] <
-                    returnsNotNull#()
+                    LAZY_EXPRESSION
                 >
              { LAZY_BLOCK }
             public? set(value: Int): R|kotlin/Unit|
                 [Contract description] <
-                    returns#().implies#(!=(value#, Null(null)))
+                    LAZY_EXPRESSION
                 >
              { LAZY_BLOCK }
 
