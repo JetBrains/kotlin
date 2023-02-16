@@ -566,6 +566,9 @@ class SupertypeComputationSession {
             wereTypeArgumentsInvolved: Boolean,
         ) {
             if (classLikeDecl == null) return
+            require(!wasSubtypingInvolved || !wereTypeArgumentsInvolved) {
+                "This must hold by induction, because otherwise such a loop is allowed"
+            }
 
             val supertypeRefs: List<FirResolvedTypeRef>
             val supertypeComputationStatus = supertypeStatusMap[classLikeDecl]
@@ -585,8 +588,7 @@ class SupertypeComputationSession {
             }
 
             if (classLikeDecl in visitedClassLikeDecls) {
-                val isAllowedLoop = wasSubtypingInvolved && wereTypeArgumentsInvolved
-                if (classLikeDecl in pathSet && !isAllowedLoop) {
+                if (classLikeDecl in pathSet) {
                     loopedClassLikeDecls.add(classLikeDecl)
                     loopedClassLikeDecls.addAll(path.takeLastWhile { element -> element != classLikeDecl })
                 }
@@ -606,22 +608,37 @@ class SupertypeComputationSession {
             }
 
             val isTypeAlias = classLikeDecl is FirTypeAlias
+            val isSubtypingCurrentlyInvolved = !isTypeAlias
+
+            // This is an optimization that prevents collecting
+            // loops we don't want to report anyway.
+            if (wereTypeArgumentsInvolved && isSubtypingCurrentlyInvolved) {
+                path.removeAt(path.size - 1)
+                pathSet.remove(classLikeDecl)
+                return
+            }
+
+            val isSubtypingInvolved = wasSubtypingInvolved || isSubtypingCurrentlyInvolved
             var isErrorInSupertypesFound = false
             val resultSupertypeRefs = mutableListOf<FirResolvedTypeRef>()
             for (supertypeRef in supertypeRefs) {
                 val supertypeFir = supertypeRef.firClassLike(session)
-                val isSubtypingInvolved = wasSubtypingInvolved || !isTypeAlias
                 checkIsInLoop(supertypeFir, isSubtypingInvolved, wereTypeArgumentsInvolved)
 
                 // This is an optimization that prevents collecting
-                // loops we're not going to report anyway.
+                // loops we don't want to report anyway.
                 if (!isSubtypingInvolved) {
+                    val areTypeArgumentsCurrentlyInvolved = true
+
                     fun checkTypeArgumentsRecursively(type: ConeKotlinType, visitedTypes: MutableSet<ConeKotlinType>) {
                         if (type in visitedTypes) return
                         visitedTypes += type
                         for (typeArgument in type.typeArguments) {
                             if (typeArgument is ConeClassLikeType) {
-                                checkIsInLoop(typeArgument.lookupTag.toSymbol(session)?.fir, wasSubtypingInvolved, true)
+                                checkIsInLoop(
+                                    typeArgument.lookupTag.toSymbol(session)?.fir,
+                                    wasSubtypingInvolved, areTypeArgumentsCurrentlyInvolved,
+                                )
                                 checkTypeArgumentsRecursively(typeArgument, visitedTypes)
                             }
                         }
