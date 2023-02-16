@@ -1915,6 +1915,11 @@ public class KlibTextTestCaseGenerated extends AbstractKlibTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/emptyWhen.kt");
         }
 
+        @TestMetadata("ErrorInDefaultValue.kt")
+        public void testErrorInDefaultValue() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/ErrorInDefaultValue.kt");
+        }
+
         @TestMetadata("Fir2IrClassifierStorage.kt")
         public void testFir2IrClassifierStorage() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/Fir2IrClassifierStorage.kt");
