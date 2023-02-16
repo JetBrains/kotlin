@@ -1526,8 +1526,11 @@ open class RawFirBuilder(
         }
 
         private fun KtContractEffectList.extractRawEffects(destination: MutableList<FirExpression>) {
-            getExpressions()
-                .mapTo(destination) { it.accept(this@Visitor, Unit) as FirExpression }
+            getContractEffects().mapTo(destination) { effect ->
+                buildOrLazyExpression(effect.toFirSourceElement()) {
+                    effect.getExpression().accept(this@Visitor, Unit) as FirExpression
+                }
+            }
         }
 
         override fun visitLambdaExpression(expression: KtLambdaExpression, data: Unit): FirElement {
