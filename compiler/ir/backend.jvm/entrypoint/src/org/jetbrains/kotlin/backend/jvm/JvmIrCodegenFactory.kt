@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.analyzer.hasJdkCapability
+import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -209,15 +210,19 @@ open class JvmIrCodegenFactory(
             irLinker,
             messageLogger
         )
-        if (pluginExtensions.isNotEmpty() && psi2irContext.configuration.generateBodies) {
+        if (pluginExtensions.isNotEmpty()) {
             for (extension in pluginExtensions) {
-                psi2ir.addPostprocessingStep { module ->
-                    val old = stubGenerator.unboundSymbolGeneration
-                    try {
-                        stubGenerator.unboundSymbolGeneration = true
-                        extension.generate(module, pluginContext)
-                    } finally {
-                        stubGenerator.unboundSymbolGeneration = old
+                if (psi2irContext.configuration.generateBodies ||
+                    @OptIn(FirIncompatiblePluginAPI::class) extension.shouldAlsoBeAppliedInKaptStubGenerationMode
+                ) {
+                    psi2ir.addPostprocessingStep { module ->
+                        val old = stubGenerator.unboundSymbolGeneration
+                        try {
+                            stubGenerator.unboundSymbolGeneration = true
+                            extension.generate(module, pluginContext)
+                        } finally {
+                            stubGenerator.unboundSymbolGeneration = old
+                        }
                     }
                 }
             }
