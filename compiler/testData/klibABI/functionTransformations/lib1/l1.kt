@@ -1,4 +1,4 @@
-@file:Suppress("RedundantSuspendModifier")
+@file:Suppress("RedundantSuspendModifier", "NOTHING_TO_INLINE")
 
 class Cache {
     private val cache = mutableMapOf<String, String>()
@@ -77,4 +77,14 @@ open class OpenClass {
 
     open suspend fun suspendToNonSuspendFunctionWithDelegation(x: Int): String = Functions.wrapCoroutine { "OpenClass.suspendToNonSuspendFunctionWithDelegation($x)" }
     open fun nonSuspendToSuspendFunctionWithDelegation(x: Int): String = "OpenClass.nonSuspendToSuspendFunctionWithDelegation($x)"
+
+    open fun openNonInlineToInlineFunction(x: Int): String = "OpenClass.openNonInlineToInlineFunction($x)"
+    open fun openNonInlineToInlineFunctionWithDelegation(x: Int): String = "OpenClass.openNonInlineToInlineFunctionWithDelegation($x)"
+    //inline fun newInlineFunction1(x: Int): String = "OpenClass.newInlineFunction1($x)"
+    //inline fun newInlineFunction2(x: Int): String = "OpenClass.newInlineFunction2($x)"
+    //fun newNonInlineFunction(x: Int): String = "OpenClass.newNonInlineFunction($x)"
+
+    fun newInlineFunction1Caller(x: Int): String = TODO("Not implemented: OpenClass.newInlineFunction1Caller($x)")
+    fun newInlineFunction2Caller(x: Int): String = TODO("Not implemented: OpenClass.newInlineFunction2Caller($x)")
+    fun newNonInlineFunctionCaller(x: Int): String = TODO("Not implemented: OpenClass.newNonInlineFunctionCaller($x)")
 }
