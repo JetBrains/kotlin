@@ -17,8 +17,8 @@ expect interface C10<L>
 // FILE: jvm.kt
 
 actual typealias C1 = String
-actual typealias C2<A> = List<String>
-actual typealias C3<B> = List<B>
+<!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias C2<A> = List<String><!>
+<!ACTUAL_TYPE_ALIAS_TO_CLASS_WITH_DECLARATION_SITE_VARIANCE!>actual typealias C3<B> = List<B><!>
 actual typealias C4<D, E> = MutableMap<D, E>
 actual typealias C5<F, G> = MutableMap<G, F>
 actual typealias C6<H> = MutableList<H>
