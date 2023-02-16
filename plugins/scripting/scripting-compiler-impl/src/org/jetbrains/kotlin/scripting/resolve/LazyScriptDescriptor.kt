@@ -36,10 +36,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScopeImpl
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.utils.addImportingScope
 import org.jetbrains.kotlin.resolve.source.toSourceElement
-import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
-import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
-import org.jetbrains.kotlin.scripting.definitions.findScriptCompilationConfiguration
+import org.jetbrains.kotlin.scripting.definitions.*
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.isNothing
@@ -121,7 +118,12 @@ class LazyScriptDescriptor(
     override fun getPriority() = priority
 
     val scriptCompilationConfiguration: () -> ScriptCompilationConfiguration = resolveSession.storageManager.createLazyValue {
-        scriptInfo.script.containingKtFile.findScriptCompilationConfiguration()
+        run {
+            val containingFile = scriptInfo.script.containingKtFile
+            val provider = ScriptDependenciesProvider.getInstance(containingFile.project)
+            provider?.getScriptConfiguration(containingFile)?.configuration
+                ?: containingFile.findScriptDefinition()?.compilationConfiguration
+        }
             ?: throw IllegalArgumentException("Unable to find script compilation configuration for the script ${scriptInfo.script.containingFile}")
     }
 
