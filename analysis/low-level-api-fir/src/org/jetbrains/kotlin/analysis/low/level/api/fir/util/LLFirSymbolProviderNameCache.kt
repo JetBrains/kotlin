@@ -56,6 +56,7 @@ internal abstract class LLFirSymbolProviderNameCache(private val firSession: Fir
     }
 
     fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
+        if (name.isSpecial) return true
         val names = getTopLevelCallableNamesInPackage(packageFqName) ?: return true
         return name in names
     }

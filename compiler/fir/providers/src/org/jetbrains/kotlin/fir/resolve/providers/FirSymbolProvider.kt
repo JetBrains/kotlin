@@ -131,16 +131,21 @@ fun Set<String>.mayHaveTopLevelClassifier(
 ): Boolean {
     if (mayBeFunctionClass && isNameForFunctionClass(classId, session)) return true
 
-    val outerClassId = classId.outerClassId
-    if (outerClassId == null && classId.shortClassName.asString() !in this) return false
-    if (outerClassId != null && classId.outermostClassId.shortClassName.asString() !in this) return false
+    if (classId.outerClassId == null) {
+        if (!mayHaveTopLevelClassifier(classId.shortClassName)) return false
+    } else {
+        if (!mayHaveTopLevelClassifier(classId.outermostClassId.shortClassName)) return false
+    }
 
     return true
 }
 
-private fun isNameForFunctionClass(classId: ClassId, session: FirSession): Boolean {
-    return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
-}
+@Suppress("NOTHING_TO_INLINE")
+private inline fun Set<String>.mayHaveTopLevelClassifier(shortClassName: Name): Boolean =
+    shortClassName.asString() in this || shortClassName.isSpecial
+
+private fun isNameForFunctionClass(classId: ClassId, session: FirSession): Boolean =
+    session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
 
 fun ClassId.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
     return session.symbolProvider.getClassLikeSymbolByClassId(this)
