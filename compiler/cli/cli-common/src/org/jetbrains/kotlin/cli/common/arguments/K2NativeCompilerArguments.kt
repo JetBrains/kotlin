@@ -59,7 +59,16 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-memory-model", valueDescription = "<model>", description = "Memory model to use, 'strict' and 'experimental' are currently supported")
     var memoryModel: String? = null
 
-    @Argument(value="-module-name", deprecatedName = "-module_name", valueDescription = "<name>", description = "Specify a name for the compilation module")
+    @GradleOption(
+        value = DefaultValue.STRING_NULL_DEFAULT,
+        gradleInputType = GradleInputTypes.INPUT
+    )
+    @Argument(
+        value = "-module-name",
+        deprecatedName = "-module_name",
+        valueDescription = "<name>",
+        description = "Specify a name for the compilation module"
+    )
     var moduleName: String? = null
 
     @Argument(

@@ -464,6 +464,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeArti
 public abstract interface annotation class org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifactDSL$ExperimentalArtifactDsl : java/lang/annotation/Annotation {
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeCompilerOptions : org/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions {
+	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeFatFramework : org/jetbrains/kotlin/gradle/dsl/KotlinNativeArtifact {
 	public abstract fun getEmbedBitcode ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/BitcodeEmbeddingMode;
 	public abstract fun getTargets ()Ljava/util/Set;
