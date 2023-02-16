@@ -30,6 +30,7 @@ class FunctionTypeKindExtractor(kinds: List<FunctionTypeKind>) {
     }
 
     private val knownKindsByPackageFqName = kinds.groupBy { it.packageFqName }
+    private val knownPacakgeNames = knownKindsByPackageFqName.keys
 
     fun getFunctionalClassKind(packageFqName: FqName, className: String): FunctionTypeKind? {
         return getFunctionalClassKindWithArity(packageFqName, className)?.kind
@@ -48,6 +49,8 @@ class FunctionTypeKindExtractor(kinds: List<FunctionTypeKind>) {
     fun hasKindWithSpecificPackage(packageFqName: FqName): Boolean {
         return packageFqName in knownKindsByPackageFqName
     }
+
+    fun getKnownPackageNames(): Set<FqName> = knownPacakgeNames
 
     data class KindWithArity(val kind: FunctionTypeKind, val arity: Int)
 

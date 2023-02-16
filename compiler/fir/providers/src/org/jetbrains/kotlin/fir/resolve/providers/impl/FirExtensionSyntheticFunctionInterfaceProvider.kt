@@ -70,6 +70,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     val kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSymbolProvider(session) {
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
+        if (classId.packageFqName !in session.functionTypeService.getKnownPacakgeNames()) return null
         return cache.getValue(classId)
     }
 
