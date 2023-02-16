@@ -22,9 +22,9 @@ actual typealias C1 = String
 actual typealias C4<D, E> = MutableMap<D, E>
 actual typealias C5<F, G> = MutableMap<G, F>
 actual typealias C6<H> = MutableList<H>
-actual typealias C7<I> = MutableList<out I>
-actual typealias C8<J> = MutableList<*>
-actual typealias C9<K> = MutableList<in K>
+<!ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE!>actual typealias C7<I> = MutableList<out I><!>
+<!ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE!>actual typealias C8<J> = MutableList<*><!>
+<!ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE!>actual typealias C9<K> = MutableList<in K><!>
 
 typealias Tmp<K> = MutableList<K>
 <!ACTUAL_TYPE_ALIAS_NOT_TO_CLASS!>actual typealias C10<L> = Tmp<L><!>
