@@ -3126,7 +3126,7 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
 
                 @Test
                 public void testAllFilesPresentInAdapted() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Test

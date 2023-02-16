@@ -3120,7 +3120,7 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
 
                 @Test
                 public void testAllFilesPresentInAdapted() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/callableReference/adapted"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
 
                 @Test
