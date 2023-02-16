@@ -1,4 +1,3 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 class Iter {
     @Deprecated("text")
     operator fun iterator() : IterIterator = throw Exception()
