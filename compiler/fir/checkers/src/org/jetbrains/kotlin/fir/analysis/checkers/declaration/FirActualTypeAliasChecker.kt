@@ -13,8 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ProjectionKind
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.types.Variance
 
 object FirActualTypeAliasChecker : FirTypeAliasChecker() {
@@ -40,6 +39,27 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker() {
                 reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_WITH_USE_SITE_VARIANCE, context)
                 break
             }
+        }
+
+        var reportActualTypeAliasWithComplexSubstitution = false
+        if (declaration.typeParameters.size != expandedTypeRef.coneType.typeArguments.size) {
+            reportActualTypeAliasWithComplexSubstitution = true
+        } else {
+            for (i in 0 until declaration.typeParameters.size) {
+                val typeArgument = expandedTypeRef.coneType.typeArguments[i]
+                if (typeArgument is ConeTypeParameterType) {
+                    if (declaration.typeParameters[i].symbol != typeArgument.lookupTag.typeParameterSymbol) {
+                        reportActualTypeAliasWithComplexSubstitution = true
+                        break
+                    }
+                } else if (typeArgument is ConeKotlinType && typeArgument.typeArguments.isNotEmpty()) {
+                    reportActualTypeAliasWithComplexSubstitution = true
+                    break
+                }
+            }
+        }
+        if (reportActualTypeAliasWithComplexSubstitution) {
+            reporter.reportOn(declaration.source, FirErrors.ACTUAL_TYPE_ALIAS_WITH_COMPLEX_SUBSTITUTION, context)
         }
     }
 }
