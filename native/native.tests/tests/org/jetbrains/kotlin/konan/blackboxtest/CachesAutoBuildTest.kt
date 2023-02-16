@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.settings.OptimizationMode
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.junit.jupiter.api.Assumptions
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -26,6 +28,12 @@ import java.io.File
 @TestMetadata(TEST_SUITE_PATH)
 @TestDataPath("\$PROJECT_ROOT")
 class CachesAutoBuildTest : AbstractNativeSimpleTest() {
+
+    @BeforeEach
+    fun assumeCachesAreEnabled() {
+        Assumptions.assumeFalse(testRunSettings.get<CacheMode>() == CacheMode.WithoutCache)
+    }
+
     @Test
     @TestMetadata("simple")
     fun testSimple() {
