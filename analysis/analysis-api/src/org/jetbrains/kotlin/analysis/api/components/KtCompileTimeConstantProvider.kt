@@ -38,9 +38,17 @@ public abstract class KtCompileTimeConstantProvider : KtAnalysisSessionComponent
 }
 
 public interface KtCompileTimeConstantProviderMixIn : KtAnalysisSessionMixIn {
+    /**
+     * Tries to evaluate the provided expression using the specified mode.
+     * Returns a [KtConstantValue] if the expression evaluates to a compile-time constant, otherwise returns null..
+     */
     public fun KtExpression.evaluate(mode: KtConstantEvaluationMode): KtConstantValue? =
         withValidityAssertion { analysisSession.compileTimeConstantProvider.evaluate(this, mode) }
 
+    /**
+     * Returns a [KtConstantValue] if the expression evaluates to a value that can be used as an annotation parameter value,
+     * e.g. an array of constants, otherwise returns null.
+     */
     public fun KtExpression.evaluateAsAnnotationValue(): KtAnnotationValue? =
         withValidityAssertion { analysisSession.compileTimeConstantProvider.evaluateAsAnnotationValue(this) }
 }
