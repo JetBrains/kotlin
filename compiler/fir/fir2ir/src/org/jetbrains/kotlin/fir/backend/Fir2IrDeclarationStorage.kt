@@ -349,7 +349,7 @@ class Fir2IrDeclarationStorage(
                         valueParameter, index + contextReceiverParametersCount,
                         useStubForDefaultValueStub = function !is FirConstructor || containingClass?.name != Name.identifier("Enum"),
                         typeContext,
-                        skipDefaultParameter = isFakeOverride
+                        skipDefaultParameter = isFakeOverride || origin == IrDeclarationOrigin.DELEGATED_MEMBER
                     ).apply {
                         this.parent = parent
                     }

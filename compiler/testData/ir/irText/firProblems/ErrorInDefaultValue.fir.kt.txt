@@ -23,7 +23,7 @@ class C : A {
 
   }
 
-  override fun f(x: String = error("") /* ErrorExpression */): String {
+  override fun f(x: String): String {
     return <this>.#x.f(x = x)
   }
 
