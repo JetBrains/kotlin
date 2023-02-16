@@ -109,49 +109,42 @@ internal class LLFirProvider(
     @NoMutableState
     private inner class SymbolProvider : FirSymbolProvider(session) {
         override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-            val classifierNamesInPackage = providerHelper.getTopLevelClassifierNamesInPackage(classId.packageFqName)
-            if (!mayHaveTopLevelClassifier(classId, classifierNamesInPackage.names, classifierNamesInPackage.mayHaveFunctionClass)) {
-                return null
-            }
-
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelClassifier(classId)) return null
             return getFirClassifierByFqName(classId)?.symbol
         }
 
         override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-            if (!mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
             return providerHelper.getTopLevelCallableSymbols(packageFqName, name)
         }
 
         @FirSymbolProviderInternals
         override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-            if (!mayHaveTopLevelCallable(packageFqName, name)) return
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return
             destination += providerHelper.getTopLevelCallableSymbols(packageFqName, name)
         }
 
         override fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> {
-            if (!mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
             return providerHelper.getTopLevelFunctionSymbols(packageFqName, name)
         }
 
         @FirSymbolProviderInternals
         override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-            if (!mayHaveTopLevelCallable(packageFqName, name)) return
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return
             destination += providerHelper.getTopLevelFunctionSymbols(packageFqName, name)
         }
 
         override fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> {
-            if (!mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
             return providerHelper.getTopLevelPropertySymbols(packageFqName, name)
         }
 
         @FirSymbolProviderInternals
         override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-            if (!mayHaveTopLevelCallable(packageFqName, name)) return
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return
             destination += providerHelper.getTopLevelPropertySymbols(packageFqName, name)
         }
-
-        private fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean =
-            name in computeCallableNamesInPackage(packageFqName)
 
         override fun getPackage(fqName: FqName): FqName? =
             providerHelper.getPackage(fqName)
@@ -159,10 +152,10 @@ internal class LLFirProvider(
         // Computing the set of such package names is expensive and would require a new index. For now, it is not worth the marginal gains.
         override fun computePackageSetWithTopLevelCallables(): Set<String>? = null
 
-        override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> =
-            providerHelper.getTopLevelClassifierNamesInPackage(packageFqName).names
+        override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
+            providerHelper.symbolNameCache.getTopLevelClassifierNamesInPackage(packageFqName)?.names
 
-        override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> =
-            providerHelper.getTopLevelCallableNamesInPackage(packageFqName)
+        override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
+            providerHelper.symbolNameCache.getTopLevelCallableNamesInPackage(packageFqName)
     }
 }

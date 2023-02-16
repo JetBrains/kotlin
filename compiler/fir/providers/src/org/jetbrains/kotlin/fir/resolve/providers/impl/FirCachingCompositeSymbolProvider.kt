@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.flatMapToNullableSet
+import org.jetbrains.kotlin.fir.resolve.providers.mayHaveTopLevelClassifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -106,7 +107,7 @@ class FirCachingCompositeSymbolProvider(
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         val knownClassifierNames = knownTopLevelClassifierNamesInPackage.getValue(classId.packageFqName)
-        if (knownClassifierNames != null && !mayHaveTopLevelClassifier(classId, knownClassifierNames)) return null
+        if (knownClassifierNames != null && !knownClassifierNames.mayHaveTopLevelClassifier(classId, session)) return null
 
         return classLikeCache.getValue(classId)
     }

@@ -79,31 +79,6 @@ abstract class FirSymbolProvider(val session: FirSession) : FirSessionComponent 
      * @returns top-level callable names that belong to `packageFqName` or null if it's complicated to compute the set
      */
     abstract fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>?
-
-    /**
-     * Whether [classId] may be contained in the [knownClassifierNames].
-     *
-     * If it's certain that [classId] cannot be a function class (for example when [classId] is known to come from a package without
-     * function classes), [mayBeFunctionClass] can be set to `false`. This avoids a hash map access in
-     * [org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor.getFunctionalClassKindWithArity].
-     */
-    protected fun mayHaveTopLevelClassifier(
-        classId: ClassId,
-        knownClassifierNames: Set<String>,
-        mayBeFunctionClass: Boolean = true,
-    ): Boolean {
-        if (mayBeFunctionClass && isNameForFunctionClass(classId)) return true
-
-        val outerClassId = classId.outerClassId
-        if (outerClassId == null && classId.shortClassName.asString() !in knownClassifierNames) return false
-        if (outerClassId != null && classId.outermostClassId.shortClassName.asString() !in knownClassifierNames) return false
-
-        return true
-    }
-
-    private fun isNameForFunctionClass(classId: ClassId): Boolean {
-        return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
-    }
 }
 
 /**
@@ -140,6 +115,31 @@ inline fun <reified T : FirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(
 
 fun FirSymbolProvider.getRegularClassSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
     return getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+}
+
+/**
+ * Whether [classId] may be contained in the set of known classifier names.
+ *
+ * If it's certain that [classId] cannot be a function class (for example when [classId] is known to come from a package without
+ * function classes), [mayBeFunctionClass] can be set to `false`. This avoids a hash map access in
+ * [org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor.getFunctionalClassKindWithArity].
+ */
+fun Set<String>.mayHaveTopLevelClassifier(
+    classId: ClassId,
+    session: FirSession,
+    mayBeFunctionClass: Boolean = true,
+): Boolean {
+    if (mayBeFunctionClass && isNameForFunctionClass(classId, session)) return true
+
+    val outerClassId = classId.outerClassId
+    if (outerClassId == null && classId.shortClassName.asString() !in this) return false
+    if (outerClassId != null && classId.outermostClassId.shortClassName.asString() !in this) return false
+
+    return true
+}
+
+private fun isNameForFunctionClass(classId: ClassId, session: FirSession): Boolean {
+    return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
 }
 
 fun ClassId.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
