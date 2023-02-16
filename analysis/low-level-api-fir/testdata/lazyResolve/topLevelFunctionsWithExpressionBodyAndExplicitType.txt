@@ -41,9 +41,19 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
+    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+        receive#(functionWithLazyBody#())
+    }
+    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
+    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        receive#(functionWithLazyBody#())
+    }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
     public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
 
@@ -66,14 +76,6 @@ FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
-        receive#(functionWithLazyBody#())
-    }
-    public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [RAW_FIR] fun functionWithLazyBody(): String { LAZY_BLOCK }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: topLevelFunctionsWithExpressionBodyAndExplicitType.kt
-    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         receive#(functionWithLazyBody#())
     }
     public? final? [RAW_FIR] fun receive([RAW_FIR] value: String): R|kotlin/Unit| { LAZY_BLOCK }

@@ -97,6 +97,21 @@ FILE: functionInValueClass.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: functionInValueClass.kt
+    @R|kotlin/jvm/JvmInline|() public final inline [SUPER_TYPES] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
+        public [TYPES] [ContainingClassKey=Value] constructor([TYPES] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [TYPES] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
+            public [TYPES] [ContainingClassKey=Value] get(): R|kotlin/Int|
+
+        public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+        }
+
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: functionInValueClass.kt
     @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
@@ -107,7 +122,8 @@ FILE: functionInValueClass.kt
         public final [STATUS] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
             public [STATUS] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
-        public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        }
 
     }
 
@@ -152,21 +168,6 @@ FILE: functionInValueClass.kt
             public [STATUS] [ContainingClassKey=Value] get(): R|kotlin/Int|
 
         public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
-        }
-
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: functionInValueClass.kt
-    @R|kotlin/jvm/JvmInline|() public final inline [STATUS] [FirValueClassRepresentationKey=InlineClassRepresentation(underlyingPropertyName=value, underlyingType=kotlin/Int)] class Value : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=Value] constructor([STATUS] [CorrespondingProperty=/Value.value] value: R|kotlin/Int|): R|Value| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final [STATUS] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-            public [STATUS] [ContainingClassKey=Value] get(): R|kotlin/Int|
-
-        public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         }
 
     }

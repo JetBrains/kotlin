@@ -3,8 +3,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND_K2: JS_IR
-// FIR status: not supported in JVM
 // IGNORE_BACKEND: JVM
 
 // FILE: lib.kt

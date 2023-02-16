@@ -41,11 +41,21 @@ FILE: functionWithParameter.kt
     }
     public final [STATUS] fun resolveMe([STATUS] param: R|I|): <implicit> { LAZY_BLOCK }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: functionWithParameter.kt
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
+    }
+    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe([EXPECT_ACTUAL_MATCHING] param: R|I|): <implicit> {
+        ^resolveMe Unit#
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: functionWithParameter.kt
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([ARGUMENTS_OF_ANNOTATIONS] param: R|I|): <implicit> { LAZY_BLOCK }
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([ARGUMENTS_OF_ANNOTATIONS] param: R|I|): <implicit> {
+        ^resolveMe Unit#
+    }
 
 CONTRACTS:
 FILE: functionWithParameter.kt
@@ -68,14 +78,6 @@ FILE: functionWithParameter.kt
     public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe([ANNOTATIONS_ARGUMENTS_MAPPING] param: R|I|): R|kotlin/Unit| {
-        ^resolveMe Q|kotlin/Unit|
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: functionWithParameter.kt
-    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
-    }
-    public final [EXPECT_ACTUAL_MATCHING] fun resolveMe([EXPECT_ACTUAL_MATCHING] param: R|I|): R|kotlin/Unit| {
         ^resolveMe Q|kotlin/Unit|
     }
 

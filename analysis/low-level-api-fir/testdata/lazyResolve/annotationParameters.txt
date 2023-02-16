@@ -265,6 +265,45 @@ FILE: annotationParameters.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: annotationParameters.kt
+    public? final? [RAW_FIR] enum class X : R|kotlin/Enum<X>| {
+        private [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
+            LAZY_super<R|kotlin/Enum<X>|>
+        }
+
+        public final static [RAW_FIR] [ContainingClassKey=X] enum entry A: R|X|
+        public final static [RAW_FIR] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
+        }
+
+        public final static [RAW_FIR] [ContainingClassKey=X] fun valueOf([RAW_FIR] value: R|kotlin/String|): R|X| {
+        }
+
+        public final static [RAW_FIR] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
+            public [RAW_FIR] get(): R|kotlin/enums/EnumEntries<X>|
+
+    }
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor([RAW_FIR] [CorrespondingProperty=/Anno.args] args: A.X): R|Anno| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [RAW_FIR] [IsFromPrimaryConstructor=true] val args: A.X = R|<local>/args|
+            public? [RAW_FIR] [ContainingClassKey=Anno] get(): A.X
+
+    }
+    public final [SUPER_TYPES] class B : R|kotlin/Any| {
+        public [TYPES] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        @R|Anno|(X#.A#) public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+        }
+
+        @R|Anno|(LAZY_EXPRESSION) public final [TYPES] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: annotationParameters.kt
     public final [STATUS] enum class X : R|kotlin/Enum<X>| {
@@ -297,7 +336,8 @@ FILE: annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|(Q|X|.R|/X.A|) public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+        }
 
         @R|Anno|(LAZY_EXPRESSION) public final [STATUS] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -414,45 +454,6 @@ FILE: annotationParameters.kt
         }
 
         @R|Anno|(args = Q|X|.R|/X.A|) public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
-        }
-
-        @R|Anno|(X#.A#) public final [STATUS] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
-
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: annotationParameters.kt
-    public final [STATUS] enum class X : R|kotlin/Enum<X>| {
-        private [STATUS] [ContainingClassKey=X] constructor(): R|X| {
-            LAZY_super<R|kotlin/Enum<X>|>
-        }
-
-        public final static [STATUS] [ContainingClassKey=X] enum entry A: R|X|
-        public final static [STATUS] [ContainingClassKey=X] fun values(): R|kotlin/Array<X>| {
-        }
-
-        public final static [STATUS] [ContainingClassKey=X] fun valueOf([STATUS] value: R|kotlin/String|): R|X| {
-        }
-
-        public final static [STATUS] [ContainingClassKey=X] val entries: R|kotlin/enums/EnumEntries<X>|
-            public [STATUS] get(): R|kotlin/enums/EnumEntries<X>|
-
-    }
-    public final [SUPER_TYPES] annotation class Anno : R|kotlin/Annotation| {
-        public [STATUS] [ContainingClassKey=Anno] constructor([STATUS] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final [TYPES] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
-            public [TYPES] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
-
-    }
-    public final [STATUS] class B : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=B] constructor(): R|B| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        @R|Anno|(args = Q|X|.R|/X.A|) public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
         }
 
         @R|Anno|(X#.A#) public final [STATUS] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }

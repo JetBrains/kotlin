@@ -27,6 +27,10 @@ STATUS:
 FILE: typeAliasWithTypeParameters.kt
     public final [STATUS] typealias ResolveMe<[STATUS] T : R|kotlin/Int|, [STATUS] K> = R|kotlin/collections/Map<T, K>|
 
+EXPECT_ACTUAL_MATCHING:
+FILE: typeAliasWithTypeParameters.kt
+    public final [EXPECT_ACTUAL_MATCHING] typealias ResolveMe<[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> = R|kotlin/collections/Map<T, K>|
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: typeAliasWithTypeParameters.kt
     public final [ARGUMENTS_OF_ANNOTATIONS] typealias ResolveMe<[ARGUMENTS_OF_ANNOTATIONS] T : R|kotlin/Int|, [ARGUMENTS_OF_ANNOTATIONS] K> = R|kotlin/collections/Map<T, K>|
@@ -42,10 +46,6 @@ FILE: typeAliasWithTypeParameters.kt
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: typeAliasWithTypeParameters.kt
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] typealias ResolveMe<[ANNOTATIONS_ARGUMENTS_MAPPING] T : R|kotlin/Int|, [ANNOTATIONS_ARGUMENTS_MAPPING] K> = R|kotlin/collections/Map<T, K>|
-
-EXPECT_ACTUAL_MATCHING:
-FILE: typeAliasWithTypeParameters.kt
-    public final [EXPECT_ACTUAL_MATCHING] typealias ResolveMe<[EXPECT_ACTUAL_MATCHING] T : R|kotlin/Int|, [EXPECT_ACTUAL_MATCHING] K> = R|kotlin/collections/Map<T, K>|
 
 BODY_RESOLVE:
 FILE: typeAliasWithTypeParameters.kt

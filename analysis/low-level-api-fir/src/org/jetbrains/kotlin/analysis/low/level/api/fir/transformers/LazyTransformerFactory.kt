@@ -40,6 +40,11 @@ internal object LazyTransformerFactory {
             designation.firFile.moduleData.session,
             scopeSession,
         )
+        FirResolvePhase.EXPECT_ACTUAL_MATCHING -> LLFirDesignatedExpectActualMatcherTransformer(
+            designation,
+            designation.firFile.moduleData.session,
+            scopeSession
+        )
         FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS -> LLFirDesignatedAnnotationsResolveTransformed(
             designation,
             designation.firFile.moduleData.session,
@@ -71,11 +76,6 @@ internal object LazyTransformerFactory {
             designation.firFile.moduleData.session,
             scopeSession,
             towerDataContextCollector
-        )
-        FirResolvePhase.EXPECT_ACTUAL_MATCHING -> LLFirDesignatedExpectActualMatcherTransformer(
-            designation,
-            designation.firFile.moduleData.session,
-            scopeSession
         )
         FirResolvePhase.RAW_FIR -> error("Non-lazy phase $phase")
         FirResolvePhase.IMPORTS -> error("Non-lazy phase $phase")

@@ -6,20 +6,21 @@
 package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.backend.common.ir.isProperExpect
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.name.FqName
 
 object IrActualizer {
     fun actualize(mainFragment: IrModuleFragment, dependentFragments: List<IrModuleFragment>) {
         val (expectActualMap, typeAliasMap) = ExpectActualCollector(mainFragment, dependentFragments).collect()
-        removeExpectDeclaration(dependentFragments) // TODO: consider removing this call. See ExpectDeclarationRemover.kt
+        FunctionDefaultParametersActualizer(expectActualMap).actualize()
+        removeExpectDeclarations(dependentFragments)
         addMissingFakeOverrides(expectActualMap, dependentFragments, typeAliasMap)
         linkExpectToActual(expectActualMap, dependentFragments)
         mergeIrFragments(mainFragment, dependentFragments)
     }
 
-    private fun removeExpectDeclaration(dependentFragments: List<IrModuleFragment>) {
+    private fun removeExpectDeclarations(dependentFragments: List<IrModuleFragment>) {
         for (fragment in dependentFragments) {
             for (file in fragment.files) {
                 file.declarations.removeAll { it.isProperExpect }

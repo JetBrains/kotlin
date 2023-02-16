@@ -62,9 +62,36 @@ FILE: anonymousObjectInInvalidPosition.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: anonymousObjectInInvalidPosition.kt
+    private final [EXPECT_ACTUAL_MATCHING] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {
+        private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            super<<implicit>>()
+        }
+
+        public? open? override [RAW_FIR] fun x(): R|kotlin/Unit| {
+        }
+
+    }
+
+        private [EXPECT_ACTUAL_MATCHING] get(): <ERROR TYPE REF: Wrong number of type arguments>
+    public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
+        public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
+
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: anonymousObjectInInvalidPosition.kt
-    private final [ARGUMENTS_OF_ANNOTATIONS] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
+    private final [ARGUMENTS_OF_ANNOTATIONS] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {
+        private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+            super<<implicit>>()
+        }
+
+        public? open? override [RAW_FIR] fun x(): R|kotlin/Unit| {
+        }
+
+    }
+
         private [ARGUMENTS_OF_ANNOTATIONS] get(): <ERROR TYPE REF: Wrong number of type arguments>
     public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
         public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
@@ -120,24 +147,6 @@ FILE: anonymousObjectInInvalidPosition.kt
     }
 
         private [ANNOTATIONS_ARGUMENTS_MAPPING] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
-        public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
-
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: anonymousObjectInInvalidPosition.kt
-    private final [EXPECT_ACTUAL_MATCHING] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {
-        private [RAW_FIR] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-            super<<implicit>>()
-        }
-
-        public? open? override [RAW_FIR] fun x(): R|kotlin/Unit| {
-        }
-
-    }
-
-        private [EXPECT_ACTUAL_MATCHING] get(): <ERROR TYPE REF: Wrong number of type arguments>
     public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
         public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
 

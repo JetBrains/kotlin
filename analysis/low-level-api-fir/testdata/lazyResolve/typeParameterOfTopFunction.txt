@@ -27,9 +27,15 @@ STATUS:
 FILE: typeParameterOfTopFunction.kt
     public final [STATUS] fun <[STATUS] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: typeParameterOfTopFunction.kt
+    public final [EXPECT_ACTUAL_MATCHING] fun <[EXPECT_ACTUAL_MATCHING] resolveMe> ddd(): R|kotlin/Unit| {
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: typeParameterOfTopFunction.kt
-    public final [ARGUMENTS_OF_ANNOTATIONS] fun <[ARGUMENTS_OF_ANNOTATIONS] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+    public final [ARGUMENTS_OF_ANNOTATIONS] fun <[ARGUMENTS_OF_ANNOTATIONS] resolveMe> ddd(): R|kotlin/Unit| {
+    }
 
 CONTRACTS:
 FILE: typeParameterOfTopFunction.kt
@@ -44,11 +50,6 @@ FILE: typeParameterOfTopFunction.kt
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: typeParameterOfTopFunction.kt
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun <[ANNOTATIONS_ARGUMENTS_MAPPING] resolveMe> ddd(): R|kotlin/Unit| {
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: typeParameterOfTopFunction.kt
-    public final [EXPECT_ACTUAL_MATCHING] fun <[EXPECT_ACTUAL_MATCHING] resolveMe> ddd(): R|kotlin/Unit| {
     }
 
 BODY_RESOLVE:

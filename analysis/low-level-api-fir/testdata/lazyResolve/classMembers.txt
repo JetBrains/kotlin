@@ -125,6 +125,26 @@ FILE: classMembers.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: classMembers.kt
+    public final [SUPER_TYPES] class A : R|kotlin/Any| {
+        public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+            receive#(functionWithLazyBody#())
+        }
+
+        public final [TYPES] val x: R|kotlin/Int| = LAZY_EXPRESSION
+            public [TYPES] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+        public final [TYPES] fun receive([TYPES] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final [TYPES] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
+
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: classMembers.kt
     public final [STATUS] class A : R|kotlin/Any| {
@@ -132,7 +152,9 @@ FILE: classMembers.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+            receive#(functionWithLazyBody#())
+        }
 
         public final [STATUS] val x: R|kotlin/Int| = LAZY_EXPRESSION
             public [STATUS] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
@@ -191,26 +213,6 @@ FILE: classMembers.kt
         }
 
         public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
-            receive#(functionWithLazyBody#())
-        }
-
-        public final [STATUS] val x: R|kotlin/Int| = LAZY_EXPRESSION
-            public [STATUS] [ContainingClassKey=A] get(): R|kotlin/Int| { LAZY_BLOCK }
-
-        public final [STATUS] fun receive([STATUS] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
-
-        public final [STATUS] fun functionWithLazyBody(): R|kotlin/String| { LAZY_BLOCK }
-
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: classMembers.kt
-    public final [STATUS] class A : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
             receive#(functionWithLazyBody#())
         }
 

@@ -1,6 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR
-// FIR status: default argument mapping in MPP isn't designed yet
+// FIR status: outdated code (expect/actual in the same module)
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // FILE: J.java

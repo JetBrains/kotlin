@@ -90,6 +90,21 @@ FILE: parameterOfNonLocalSetter.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: parameterOfNonLocalSetter.kt
+    public final [SUPER_TYPES] class X : R|kotlin/Any| {
+        public [TYPES] [ContainingClassKey=X] constructor(): R|X| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [EXPECT_ACTUAL_MATCHING] var x: R|kotlin/Int| = IntegerLiteral(2)
+            public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=X] get(): R|kotlin/Int|
+            public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=X] set([EXPECT_ACTUAL_MATCHING] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                ^ Unit#
+            }
+
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: parameterOfNonLocalSetter.kt
     public final [STATUS] class X : R|kotlin/Any| {
@@ -97,9 +112,11 @@ FILE: parameterOfNonLocalSetter.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = LAZY_EXPRESSION
+        public final [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = IntegerLiteral(2)
             public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=X] set([ARGUMENTS_OF_ANNOTATIONS] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+            public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=X] set([ARGUMENTS_OF_ANNOTATIONS] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
+                ^ Unit#
+            }
 
     }
 
@@ -143,21 +160,6 @@ FILE: parameterOfNonLocalSetter.kt
         public final [ANNOTATIONS_ARGUMENTS_MAPPING] var x: R|kotlin/Int| = IntegerLiteral(2)
             public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=X] get(): R|kotlin/Int|
             public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=X] set([ANNOTATIONS_ARGUMENTS_MAPPING] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
-
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: parameterOfNonLocalSetter.kt
-    public final [STATUS] class X : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final [EXPECT_ACTUAL_MATCHING] var x: R|kotlin/Int| = IntegerLiteral(2)
-            public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=X] set([EXPECT_ACTUAL_MATCHING] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
             }
 

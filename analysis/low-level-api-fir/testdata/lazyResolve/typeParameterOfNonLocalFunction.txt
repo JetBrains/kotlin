@@ -76,6 +76,18 @@ FILE: typeParameterOfNonLocalFunction.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: typeParameterOfNonLocalFunction.kt
+    public final [SUPER_TYPES] class X : R|kotlin/Any| {
+        public [TYPES] [ContainingClassKey=X] constructor(): R|X| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [EXPECT_ACTUAL_MATCHING] fun <[EXPECT_ACTUAL_MATCHING] resolveMe> ddd(): R|kotlin/Unit| {
+        }
+
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: typeParameterOfNonLocalFunction.kt
     public final [STATUS] class X : R|kotlin/Any| {
@@ -83,7 +95,8 @@ FILE: typeParameterOfNonLocalFunction.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ARGUMENTS_OF_ANNOTATIONS] fun <[ARGUMENTS_OF_ANNOTATIONS] resolveMe> ddd(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ARGUMENTS_OF_ANNOTATIONS] fun <[ARGUMENTS_OF_ANNOTATIONS] resolveMe> ddd(): R|kotlin/Unit| {
+        }
 
     }
 
@@ -119,18 +132,6 @@ FILE: typeParameterOfNonLocalFunction.kt
         }
 
         public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun <[ANNOTATIONS_ARGUMENTS_MAPPING] resolveMe> ddd(): R|kotlin/Unit| {
-        }
-
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: typeParameterOfNonLocalFunction.kt
-    public final [STATUS] class X : R|kotlin/Any| {
-        public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-        public final [EXPECT_ACTUAL_MATCHING] fun <[EXPECT_ACTUAL_MATCHING] resolveMe> ddd(): R|kotlin/Unit| {
         }
 
     }

@@ -34,10 +34,17 @@ FILE: annotations.kt
     @FILE:Suppress(LAZY_EXPRESSION)
     @R|kotlin/Suppress|(LAZY_EXPRESSION) public final [STATUS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: annotations.kt
+    @FILE:Suppress(LAZY_EXPRESSION)
+    @R|kotlin/Suppress|(String(2)) public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: annotations.kt
     @FILE:Suppress(LAZY_EXPRESSION)
-    @R|kotlin/Suppress|(String(2)) public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+    @R|kotlin/Suppress|(String(2)) public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe(): R|kotlin/Unit| {
+    }
 
 CONTRACTS:
 FILE: annotations.kt
@@ -55,12 +62,6 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: annotations.kt
     @FILE:Suppress(String(1))
     @R|kotlin/Suppress|(names = vararg(String(2))) public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe(): R|kotlin/Unit| {
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: annotations.kt
-    @FILE:Suppress(String(1))
-    @R|kotlin/Suppress|(names = vararg(String(2))) public final [EXPECT_ACTUAL_MATCHING] fun resolveMe(): R|kotlin/Unit| {
     }
 
 BODY_RESOLVE:

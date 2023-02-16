@@ -173,13 +173,13 @@ private class CallablesLinkCollector(
 
     private fun addLink(declaration: IrDeclarationBase) {
         if (!declaration.isExpect) return
-        val member = actualMembers[generateIrElementFullName(declaration, expectActualMap, typeAliasMap)]
-        if (member != null) {
-            expectActualMap[declaration.symbol] = member.symbol
+        val actualMember = actualMembers[generateIrElementFullName(declaration, expectActualMap, typeAliasMap)]
+        if (actualMember != null) {
+            expectActualMap[declaration.symbol] = actualMember.symbol
             if (declaration is IrProperty) {
-                member as IrProperty
-                declaration.getter?.symbol?.let { expectActualMap[it] = member.getter!!.symbol }
-                declaration.setter?.symbol?.let { expectActualMap[it] = member.setter!!.symbol }
+                val actualProperty = actualMember as IrProperty
+                declaration.getter?.symbol?.let { expectActualMap[it] = actualProperty.getter!!.symbol }
+                declaration.setter?.symbol?.let { expectActualMap[it] = actualProperty.setter!!.symbol }
             }
         } else {
             reportMissingActual(declaration)

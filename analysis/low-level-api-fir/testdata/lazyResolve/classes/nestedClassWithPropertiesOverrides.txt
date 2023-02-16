@@ -167,6 +167,30 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: nestedClassWithPropertiesOverrides.kt
+    public abstract [SUPER_TYPES] interface OV : R|kotlin/Any| {
+        public abstract [TYPES] val originalExpressions: R|A|
+            public [TYPES] [ContainingClassKey=OV] get(): R|A|
+
+        public final [EXPECT_ACTUAL_MATCHING] class ResolveMe : R|OV| {
+            public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
+                super<<implicit>>()
+            }
+
+            public open override [EXPECT_ACTUAL_MATCHING] val originalExpressions: R|A|
+                public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=ResolveMe] get(): R|A|
+
+        }
+
+    }
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: nestedClassWithPropertiesOverrides.kt
     public abstract [STATUS] interface OV : R|kotlin/Any| {
@@ -175,7 +199,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
         public final [ARGUMENTS_OF_ANNOTATIONS] class ResolveMe : R|OV| {
             public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                LAZY_super<<implicit>>
+                super<<implicit>>()
             }
 
             public open override [ARGUMENTS_OF_ANNOTATIONS] val originalExpressions: R|A|
@@ -252,30 +276,6 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
             public open override [ANNOTATIONS_ARGUMENTS_MAPPING] val originalExpressions: R|A|
                 public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=ResolveMe] get(): R|A|
-
-        }
-
-    }
-    public? final? [RAW_FIR] class A : R|kotlin/Any| {
-        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: nestedClassWithPropertiesOverrides.kt
-    public abstract [STATUS] interface OV : R|kotlin/Any| {
-        public abstract [STATUS] val originalExpressions: R|A|
-            public [STATUS] [ContainingClassKey=OV] get(): R|A|
-
-        public final [EXPECT_ACTUAL_MATCHING] class ResolveMe : R|OV| {
-            public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
-            }
-
-            public open override [EXPECT_ACTUAL_MATCHING] val originalExpressions: R|A|
-                public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=ResolveMe] get(): R|A|
 
         }
 

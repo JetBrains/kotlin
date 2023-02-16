@@ -146,6 +146,27 @@ FILE: superTypes.kt
 
     }
 
+EXPECT_ACTUAL_MATCHING:
+FILE: superTypes.kt
+    public open [TYPES] class A : R|kotlin/Any| {
+        public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? open [RAW_FIR] class B : A {
+        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public open [EXPECT_ACTUAL_MATCHING] class resolveMe : R|A| {
+        public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
+            super<R|A|>()
+        }
+
+    }
+
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: superTypes.kt
     public open [TYPES] class A : R|kotlin/Any| {
@@ -162,7 +183,7 @@ FILE: superTypes.kt
     }
     public open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|A| {
         public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
-            LAZY_super<R|A|>
+            super<R|A|>()
         }
 
     }
@@ -225,27 +246,6 @@ FILE: superTypes.kt
     }
     public open [ANNOTATIONS_ARGUMENTS_MAPPING] class resolveMe : R|A| {
         public [ANNOTATIONS_ARGUMENTS_MAPPING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
-            super<R|A|>()
-        }
-
-    }
-
-EXPECT_ACTUAL_MATCHING:
-FILE: superTypes.kt
-    public open [TYPES] class A : R|kotlin/Any| {
-        public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
-            LAZY_super<R|kotlin/Any|>
-        }
-
-    }
-    public? open [RAW_FIR] class B : A {
-        public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            LAZY_super<A>
-        }
-
-    }
-    public open [EXPECT_ACTUAL_MATCHING] class resolveMe : R|A| {
-        public [EXPECT_ACTUAL_MATCHING] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
             super<R|A|>()
         }
 
