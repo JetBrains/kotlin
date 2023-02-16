@@ -308,7 +308,7 @@ public inline fun CharSequence.isNotEmpty(): Boolean = length > 0
 
 
 /**
- * Returns `true` if this char sequence is not empty and contains some characters except of whitespace characters.
+ * Returns `true` if this char sequence is not empty and contains some characters except whitespace characters.
  *
  * @sample samples.text.Strings.stringIsNotBlank
  */
