@@ -171,8 +171,6 @@ internal class SymbolLightFieldForProperty private constructor(
     private val _initializerValue: KtConstantValue? by lazyPub {
         withPropertySymbol { propertySymbol ->
             if (propertySymbol !is KtKotlinPropertySymbol) return@withPropertySymbol null
-//            compileTimeConstantProviderImpl.evaluate()
-
             (propertySymbol.initializer as? KtConstantInitializerValue)?.constant
         }
     }
