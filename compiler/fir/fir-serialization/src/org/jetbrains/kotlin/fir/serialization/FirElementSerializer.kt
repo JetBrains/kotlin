@@ -35,10 +35,7 @@ import org.jetbrains.kotlin.fir.serialization.constant.EnumValue
 import org.jetbrains.kotlin.fir.serialization.constant.IntValue
 import org.jetbrains.kotlin.fir.serialization.constant.StringValue
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -346,9 +343,9 @@ class FirElementSerializer private constructor(
             val nonSourceAnnotations = setter.nonSourceAnnotations(session)
             if (Flags.IS_NOT_DEFAULT.get(accessorFlags)) {
                 val setterLocal = local.createChildSerializer(setter)
-                for (valueParameterDescriptor in setter.valueParameters) {
+                for ((index, valueParameterDescriptor) in setter.valueParameters.withIndex()) {
                     val annotations = nonSourceAnnotations.filter { it.useSiteTarget == AnnotationUseSiteTarget.SETTER_PARAMETER }
-                    builder.setSetterValueParameter(setterLocal.valueParameterProto(valueParameterDescriptor, annotations))
+                    builder.setSetterValueParameter(setterLocal.valueParameterProto(valueParameterDescriptor, index, setter, annotations))
                 }
             }
         }
@@ -481,8 +478,8 @@ class FirElementSerializer private constructor(
             }
         }
 
-        for (valueParameter in function.valueParameters) {
-            builder.addValueParameter(local.valueParameterProto(valueParameter))
+        for ((index, valueParameter) in function.valueParameters.withIndex()) {
+            builder.addValueParameter(local.valueParameterProto(valueParameter, index, function))
         }
 
         contractSerializer.serializeContractOfFunctionIfAny(function, builder, this)
@@ -586,8 +583,8 @@ class FirElementSerializer private constructor(
             builder.flags = flags
         }
 
-        for (valueParameter in constructor.valueParameters) {
-            builder.addValueParameter(local.valueParameterProto(valueParameter))
+        for ((index, valueParameter) in constructor.valueParameters.withIndex()) {
+            builder.addValueParameter(local.valueParameterProto(valueParameter, index, constructor))
         }
 
         versionRequirementTable?.run {
@@ -609,11 +606,14 @@ class FirElementSerializer private constructor(
 
     private fun valueParameterProto(
         parameter: FirValueParameter,
+        index: Int,
+        function: FirFunction,
         additionalAnnotations: List<FirAnnotation> = emptyList()
     ): ProtoBuf.ValueParameter.Builder = whileAnalysing(session, parameter) {
         val builder = ProtoBuf.ValueParameter.newBuilder()
 
-        val declaresDefaultValue = parameter.defaultValue != null // TODO: || parameter.isActualParameterWithAnyExpectedDefault
+        val declaresDefaultValue = parameter.defaultValue != null ||
+                function.symbol.getSingleCompatibleExpectForActualOrNull().containsDefaultValue(index)
 
         val flags = Flags.getValueParameterFlags(
             additionalAnnotations.isNotEmpty() || parameter.nonSourceAnnotations(session).isNotEmpty(),

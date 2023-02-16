@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 
 class FirDefaultParametersResolver : FirSessionComponent {
     fun declaresDefaultValue(
@@ -22,7 +21,7 @@ class FirDefaultParametersResolver : FirSessionComponent {
         originScope: FirScope?,
         index: Int,
     ): Boolean {
-        if (valueParameter.defaultValue != null || containsDefaultValue(function.symbol.getSingleCompatibleExpectForActualOrNull(), index)) {
+        if (valueParameter.defaultValue != null || function.symbol.getSingleCompatibleExpectForActualOrNull().containsDefaultValue(index)) {
             return true
         }
         if (function !is FirSimpleFunction) return false
@@ -44,10 +43,8 @@ class FirDefaultParametersResolver : FirSessionComponent {
         var result = false
 
         typeScope.processOverriddenFunctions(symbol) { overridden ->
-            if (containsDefaultValue(overridden, index) || containsDefaultValue(
-                    overridden.getSingleCompatibleExpectForActualOrNull(),
-                    index
-                )
+            if (overridden.containsDefaultValue(index) ||
+                overridden.getSingleCompatibleExpectForActualOrNull().containsDefaultValue(index)
             ) {
                 result = true
                 return@processOverriddenFunctions ProcessorAction.STOP
@@ -57,11 +54,6 @@ class FirDefaultParametersResolver : FirSessionComponent {
         }
 
         return result
-    }
-
-    private fun containsDefaultValue(functionSymbol: FirFunctionSymbol<*>?, index: Int): Boolean {
-        if (functionSymbol == null) return false
-        return functionSymbol.fir.valueParameters[index].defaultValue != null
     }
 }
 

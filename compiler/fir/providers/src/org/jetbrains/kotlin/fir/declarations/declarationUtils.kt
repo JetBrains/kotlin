@@ -116,3 +116,7 @@ inline val FirBasedSymbol<*>.isJavaOrEnhancement: Boolean
     get() = origin.isJavaOrEnhancement ||
             (fir as? FirCallableDeclaration)?.importedFromObjectOrStaticData?.original?.isJavaOrEnhancement == true
 
+fun FirFunctionSymbol<*>?.containsDefaultValue(index: Int): Boolean {
+    if (this == null) return false
+    return this.fir.valueParameters[index].defaultValue != null
+}
