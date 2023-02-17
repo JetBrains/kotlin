@@ -55,14 +55,14 @@ private fun Project.createCInteropMetadataDependencyClasspathFromProjectDependen
         sourceSet.metadataTransformation
             .metadataDependencyResolutionsOrEmpty
             .filterIsInstance<ChooseVisibleSourceSets>()
-            .flatMap { chooseVisibleSourceSets ->
+            .mapNotNull { chooseVisibleSourceSets ->
                 /* We only want to access resolutions that provide metadata from dependency projects */
                 val projectMetadataProvider = when (chooseVisibleSourceSets.metadataProvider) {
                     is ProjectMetadataProvider -> chooseVisibleSourceSets.metadataProvider
-                    is ArtifactMetadataProvider -> return@flatMap emptyList()
+                    is ArtifactMetadataProvider -> return@mapNotNull null
                 }
 
-                chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops.mapNotNull { visibleSourceSetName ->
+                chooseVisibleSourceSets.visibleSourceSetProvidingCInterops?.let { visibleSourceSetName ->
                     projectMetadataProvider.getSourceSetCInteropMetadata(visibleSourceSetName, if (forIde) Ide else Cli)
                 }
             }
@@ -95,11 +95,16 @@ private fun Project.createCInteropMetadataDependencyClasspathFromAssociatedCompi
  * Names of all source sets that may potentially provide necessary cinterops for this resolution.
  * This will select 'the most bottom' source sets in [ChooseVisibleSourceSets.allVisibleSourceSetNames]
  */
-internal val ChooseVisibleSourceSets.visibleSourceSetsProvidingCInterops: Set<String>
+internal val ChooseVisibleSourceSets.visibleSourceSetProvidingCInterops: String?
     get() {
         val dependsOnSourceSets = allVisibleSourceSetNames
             .flatMap { projectStructureMetadata.sourceSetsDependsOnRelation[it].orEmpty() }
             .toSet()
 
-        return allVisibleSourceSetNames.filter { it !in dependsOnSourceSets }.toSet()
+        val bottomSourceSets = allVisibleSourceSetNames.filter { it !in dependsOnSourceSets }.toSet()
+
+        /* Select the source set participating in the least amount of variants (the most special one) */
+        return bottomSourceSets.minByOrNull { sourceSetName ->
+            projectStructureMetadata.sourceSetNamesByVariantName.count { (_, sourceSetNames) -> sourceSetName in sourceSetNames }
+        }
     }

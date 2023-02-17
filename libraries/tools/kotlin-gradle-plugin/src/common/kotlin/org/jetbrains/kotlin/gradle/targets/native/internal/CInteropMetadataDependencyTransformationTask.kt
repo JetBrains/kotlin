@@ -137,12 +137,12 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     class ChooseVisibleSourceSetProjection(
         @Input val dependencyModuleIdentifiers: List<KpmModuleIdentifier>,
         @Nested val projectStructureMetadata: KotlinProjectStructureMetadata,
-        @Input val visibleSourceSetsProvidingCInterops: Set<String>
+        @Input val visibleSourceSetProvidingCInterops: String?
     ) {
         constructor(chooseVisibleSourceSets: ChooseVisibleSourceSets) : this(
             dependencyModuleIdentifiers = chooseVisibleSourceSets.dependency.toKpmModuleIdentifiers(),
             projectStructureMetadata = chooseVisibleSourceSets.projectStructureMetadata,
-            visibleSourceSetsProvidingCInterops = chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
+            visibleSourceSetProvidingCInterops = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops
         )
     }
 
@@ -201,9 +201,9 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
         /* Extract/Materialize all cinterop files from composite jar file */
         is ArtifactMetadataProvider -> chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
-            chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
-                .mapNotNull { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
-                .flatMap { sourceSetContent -> sourceSetContent.cinteropMetadataBinaries }
+            val visibleSourceSetName = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops ?: return emptyList()
+            val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return emptyList()
+            sourceSetContent.cinteropMetadataBinaries
                 .onEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
                 .map { cInteropMetadataBinary -> outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
         }
