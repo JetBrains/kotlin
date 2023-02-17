@@ -25,10 +25,10 @@ import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.jsCompilerType
 import org.jetbrains.kotlin.gradle.util.normalizePath
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -110,7 +110,6 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     }
 
     @GradleTest
-    @Disabled  // Persistent IR is no longer supported
     fun testJsIrIncrementalInParallel(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
@@ -123,6 +122,95 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             )
 
             build("assemble")
+        }
+    }
+
+    @DisplayName("Only changed files synced during JS IR build")
+    @GradleTest
+    fun testJsIrOnlyChangedFilesSynced(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            val filesModified: MutableMap<String, Long> = mutableMapOf()
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve("kotlin")
+                    .toFile()
+                    .walkTopDown()
+                    .associateByTo(filesModified, { it.path }) {
+                        it.lastModified()
+                    }
+            }
+
+            projectPath.resolve("base/src/main/kotlin/Base.kt").modify {
+                it.replace("73", "37")
+            }
+
+            val fooTxt = projectPath.resolve("app/src/main/resources/foo/foo.txt")
+            fooTxt.parent.toFile().mkdirs()
+            fooTxt.createFile().writeText("foo")
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                val modified = projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve("kotlin")
+                    .toFile()
+                    .walkTopDown()
+                    .filter { it.isFile }
+                    .filterNot { filesModified[it.path] == it.lastModified() }
+                    .toSet()
+
+                assertEquals(
+                    setOf(
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/kotlin-js-browser-base-js-ir.js").toFile(),
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt").toFile(),
+                    ),
+                    modified.toSet()
+                )
+            }
+
+            projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                .resolve("kotlin")
+                .toFile()
+                .walkTopDown()
+                .associateByTo(filesModified, { it.path }) {
+                    it.lastModified()
+                }
+
+            fooTxt.writeText("bar")
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                val modified = projectPath.resolve("build/js/packages/kotlin-js-browser-app")
+                    .resolve("kotlin")
+                    .toFile()
+                    .walkTopDown()
+                    .filter { it.isFile }
+                    .filterNot { filesModified[it.path] == it.lastModified() }
+                    .toSet()
+
+                assertEquals(
+                    setOf(
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt").toFile(),
+                    ),
+                    modified.toSet()
+                )
+            }
+
+            fooTxt.deleteExisting()
+
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                assertTasksExecuted(":app:developmentExecutableCompileSync")
+
+                assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt")
+                assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/sync-hashes/foo/foo.txt.hash")
+            }
         }
     }
 
