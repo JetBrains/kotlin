@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.backend.konan.lower
 
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.PrimitiveBinaryType
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.cgen.*
@@ -56,7 +57,7 @@ private fun InteropCallContext.findMemoryAccessFunction(isRead: Boolean, valueTy
     val nativeMemUtilsClass = symbols.nativeMemUtils.owner
     return nativeMemUtilsClass.functions.filter {
         val annotationArgument = it.annotations
-                .findAnnotation(RuntimeNames.typedIntrinsicAnnotation)
+                .findAnnotation(KonanFqNames.typedIntrinsic)
                 ?.getAnnotationStringValue()
         annotationArgument == requiredType.name
     }.firstOrNull {

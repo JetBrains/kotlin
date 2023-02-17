@@ -136,7 +136,7 @@ internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): Intrinsi
 
 private fun getIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType {
     val function = callSite.symbol.owner
-    val annotation = function.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
+    val annotation = function.annotations.findAnnotation(KonanFqNames.typedIntrinsic)!!
     val value = annotation.getAnnotationStringValue()!!
     return IntrinsicType.valueOf(value)
 }

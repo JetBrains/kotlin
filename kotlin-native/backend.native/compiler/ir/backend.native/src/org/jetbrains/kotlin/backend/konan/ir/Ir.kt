@@ -97,7 +97,7 @@ internal abstract class KonanSymbols(
     val symbolName = topLevelClass(RuntimeNames.symbolNameAnnotation)
     val filterExceptions = topLevelClass(RuntimeNames.filterExceptions)
     val exportForCppRuntime = topLevelClass(RuntimeNames.exportForCppRuntime)
-    val typedIntrinsic = topLevelClass(RuntimeNames.typedIntrinsicAnnotation)
+    val typedIntrinsic = topLevelClass(KonanFqNames.typedIntrinsic)
 
     val objCMethodImp = symbolTable.referenceClass(descriptorsLookup.interopBuiltIns.objCMethodImp)
 
