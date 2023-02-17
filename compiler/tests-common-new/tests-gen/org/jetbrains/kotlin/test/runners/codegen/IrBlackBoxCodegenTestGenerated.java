@@ -13536,6 +13536,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 }
 
                 @Test
+                @TestMetadata("inlineOnly.kt")
+                public void testInlineOnly() throws Exception {
+                    runTest("compiler/testData/codegen/box/coroutines/varSpilling/debugMode/inlineOnly.kt");
+                }
+
+                @Test
                 @TestMetadata("nullCleanup.kt")
                 public void testNullCleanup() throws Exception {
                     runTest("compiler/testData/codegen/box/coroutines/varSpilling/debugMode/nullCleanup.kt");

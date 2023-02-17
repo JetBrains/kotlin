@@ -76,6 +76,9 @@ class CoroutineTransformerMethodVisitor(
             if (isForNamedFunction) getLastParameterIndex(methodNode.desc, methodNode.access) else 0
         )
 
+        // If there are in-place argument and call markers around suspend call, they end up in separate
+        // states of state-machine, leading to AnalyzerError.
+        InplaceArgumentsMethodTransformer().transform(containingClassInternalName, methodNode)
         FixStackMethodTransformer().transform(containingClassInternalName, methodNode)
         val suspensionPoints = collectSuspensionPoints(methodNode)
         RedundantLocalsEliminationMethodTransformer(suspensionPoints)
