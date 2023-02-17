@@ -159,9 +159,15 @@ internal class ReanalyzablePropertyStructureElement(
                 getter.copyAllExceptBodyForFunction(originalProperty.getter!!)
                 getter.replaceResolveState(FirResolvePhase.STATUS.asResolveState())
             }
+
             setter?.let { setter ->
                 setter.copyAllExceptBodyForFunction(originalProperty.setter!!)
                 setter.replaceResolveState(FirResolvePhase.STATUS.asResolveState())
+            }
+
+            backingField?.let { backingField ->
+                backingField.copyAllExceptBodyFromCallable(originalProperty.backingField!!)
+                backingField.replaceResolveState(FirResolvePhase.STATUS.asResolveState())
             }
         }
 
