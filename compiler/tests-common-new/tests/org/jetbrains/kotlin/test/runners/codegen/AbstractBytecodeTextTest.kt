@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -82,7 +83,7 @@ open class AbstractIrBytecodeTextTest : AbstractBytecodeTextTestBase<ClassicFron
         get() = ::JvmIrBackendFacade
 }
 
-open class AbstractFirBytecodeTextTest : AbstractBytecodeTextTestBase<FirOutputArtifact, IrBackendInput>(
+open class AbstractFirBytecodeTextTestBase(val useLightTree: Boolean) : AbstractBytecodeTextTestBase<FirOutputArtifact, IrBackendInput>(
     targetBackend = TargetBackend.JVM_IR,
     targetFrontend = FrontendKinds.FIR
 ) {
@@ -101,7 +102,15 @@ open class AbstractFirBytecodeTextTest : AbstractBytecodeTextTestBase<FirOutputA
             defaultDirectives {
                 // See KT-44152
                 -USE_PSI_CLASS_FILES_READING
+                if (useLightTree) {
+                    +FirDiagnosticsDirectives.USE_LIGHT_TREE
+                }
             }
         }
     }
 }
+
+open class AbstractFirBytecodeTextTest : AbstractFirBytecodeTextTestBase(useLightTree = true)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiBytecodeTextTest : AbstractFirBytecodeTextTestBase(useLightTree = false)

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.frontend.classic.*
@@ -80,9 +81,11 @@ open class AbstractIrBytecodeListingTest : AbstractBytecodeListingTestBase<Class
         get() = ::JvmIrBackendFacade
 }
 
-open class AbstractFirBytecodeListingTest : AbstractBytecodeListingTestBase<FirOutputArtifact, IrBackendInput>(
-    TargetBackend.JVM_IR, FrontendKinds.FIR
-) {
+abstract class AbstractFirBytecodeListingTestBase(val useLightTree: Boolean) :
+    AbstractBytecodeListingTestBase<FirOutputArtifact, IrBackendInput>(
+        TargetBackend.JVM_IR,
+        FrontendKinds.FIR
+    ) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirFrontendFacade
 
@@ -91,4 +94,16 @@ open class AbstractFirBytecodeListingTest : AbstractBytecodeListingTestBase<FirO
 
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
         get() = ::JvmIrBackendFacade
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        if (useLightTree) {
+            builder.defaultDirectives { +FirDiagnosticsDirectives.USE_LIGHT_TREE }
+        }
+    }
 }
+
+open class AbstractFirBytecodeListingTest : AbstractFirBytecodeListingTestBase(useLightTree = true)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiBytecodeListingTest : AbstractFirBytecodeListingTestBase(useLightTree = false)

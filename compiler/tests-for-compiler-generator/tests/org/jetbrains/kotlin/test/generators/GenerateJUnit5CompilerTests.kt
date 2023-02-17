@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.runners.*
 import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.ir.AbstractFir2IrTextTest
 import org.jetbrains.kotlin.test.runners.ir.AbstractIrTextTest
-import org.jetbrains.kotlin.test.runners.ir.AbstractLightTreeFir2IrTextTest
+import org.jetbrains.kotlin.test.runners.ir.AbstractFirPsi2IrTextTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterFir2IrTest
 import org.jetbrains.kotlin.test.runners.ir.interpreter.AbstractJvmIrInterpreterAfterPsi2IrTest
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
@@ -245,7 +245,15 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/box")
             }
 
+            testClass<AbstractFirPsiBlackBoxCodegenTest> {
+                model("codegen/box")
+            }
+
             testClass<AbstractFirBlackBoxCodegenTest>("FirBlackBoxModernJdkCodegenTestGenerated") {
+                model("codegen/boxModernJdk")
+            }
+
+            testClass<AbstractFirPsiBlackBoxCodegenTest>("FirPsiBlackBoxModernJdkCodegenTestGenerated") {
                 model("codegen/boxModernJdk")
             }
 
@@ -253,7 +261,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirLightTreeBlackBoxInlineCodegenTest> {
+            testClass<AbstractFirPsiBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
             }
 
@@ -261,7 +269,15 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("debug/stepping")
             }
 
+            testClass<AbstractFirPsiSteppingTest> {
+                model("debug/stepping")
+            }
+
             testClass<AbstractFirLocalVariableTest> {
+                model("debug/localVariables")
+            }
+
+            testClass<AbstractFirPsiLocalVariableTest> {
                 model("debug/localVariables")
             }
 
@@ -276,11 +292,22 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest> {
                 model("codegen/boxInline")
             }
+
+            testClass<AbstractFirPsiSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/boxInline")
+            }
         }
 
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/fir/fir2ir/testData") {
             testClass<AbstractFirBlackBoxCodegenTest>(
                 suiteTestClassName = "FirSpecificBlackBoxCodegenTestGenerated"
+            ) {
+                model("codegen/box")
+                model("codegen/boxWithStdLib")
+            }
+
+            testClass<AbstractFirPsiBlackBoxCodegenTest>(
+                suiteTestClassName = "FirPsiSpecificBlackBoxCodegenTestGenerated"
             ) {
                 model("codegen/box")
                 model("codegen/boxWithStdLib")
@@ -292,7 +319,7 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("ir/irText")
             }
 
-            testClass<AbstractLightTreeFir2IrTextTest>(
+            testClass<AbstractFirPsi2IrTextTest>(
                 suiteTestClassName = "LightTreeFir2IrSpecificTextTestGenerated"
             ) {
                 model("ir/irText")
@@ -300,6 +327,12 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
 
             testClass<AbstractFirBytecodeListingTest>(
                 suiteTestClassName = "Fir2IrSpecificBytecodeListingTestGenerated"
+            ) {
+                model("codegen/bytecodeListing")
+            }
+
+            testClass<AbstractFirPsiBytecodeListingTest>(
+                suiteTestClassName = "Fir2IrSpecificBytecodeListingPsiTestGenerated"
             ) {
                 model("codegen/bytecodeListing")
             }
@@ -322,11 +355,15 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
                 model("ir/irText")
             }
 
-            testClass<AbstractLightTreeFir2IrTextTest> {
+            testClass<AbstractFirPsi2IrTextTest> {
                 model("ir/irText")
             }
 
             testClass<AbstractFirBytecodeTextTest> {
+                model("codegen/bytecodeText")
+            }
+
+            testClass<AbstractFirPsiBytecodeTextTest> {
                 model("codegen/bytecodeText")
             }
         }

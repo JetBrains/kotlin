@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_MULTI_MODULE
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
@@ -102,7 +103,7 @@ open class AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest : AbstractIrC
     }
 }
 
-open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest :
+open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestBase(val useLightTree: Boolean) :
     AbstractCompileKotlinAgainstInlineKotlinTestBase<FirOutputArtifact, IrBackendInput>(FrontendKinds.FIR, TargetBackend.JVM_IR_SERIALIZE) {
 
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
@@ -119,5 +120,15 @@ open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest :
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureForSerialization()
+        if (useLightTree) {
+            builder.defaultDirectives { +FirDiagnosticsDirectives.USE_LIGHT_TREE }
+        }
     }
 }
+
+open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTest :
+    AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestBase(useLightTree = true)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiSerializeCompileKotlinAgainstInlineKotlinTest :
+    AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestBase(useLightTree = false)
