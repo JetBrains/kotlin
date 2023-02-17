@@ -282,7 +282,7 @@ abstract class KotlinCompile @Inject constructor(
 
         @Suppress("ConvertArgumentToSet")
         val environment = GradleCompilerEnvironment(
-            defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
+            defaultCompilerClasspath, compilerFacadeClasspath, gradleMessageCollector, outputItemCollector,
             // In the incremental compiler, outputFiles will be cleaned on rebuild. However, because classpathSnapshotDir is not included in
             // TaskOutputsBackup, we don't want classpathSnapshotDir to be cleaned immediately on rebuild, and therefore we exclude it from
             // outputFiles here. (See TaskOutputsBackup's kdoc for more info.)

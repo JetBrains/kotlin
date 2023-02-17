@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfigu
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_COMPILER_EMBEDDABLE
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_IC_FACADE
 import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied
@@ -82,6 +83,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         }
 
         addKotlinCompilerConfiguration(project)
+        addKotlinIcFacadeConfiguration(project)
 
         project.registerDefaultVariantImplementations()
 
@@ -122,6 +124,26 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             .configureEach { task ->
                 task.defaultCompilerClasspath.setFrom(
                     project.configurations.named(COMPILER_CLASSPATH_CONFIGURATION_NAME)
+                )
+            }
+    }
+
+    private fun addKotlinIcFacadeConfiguration(project: Project) {
+        project
+            .configurations
+            .maybeCreate(IC_FACADE_CLASSPATH_CONFIGURATION_NAME)
+            .markResolvable()
+            .defaultDependencies {
+                it.add(
+                    project.dependencies.create("$KOTLIN_MODULE_GROUP:$KOTLIN_IC_FACADE:${project.getKotlinPluginVersion()}")
+                )
+            }
+        project
+            .tasks
+            .withType(AbstractKotlinCompileTool::class.java)
+            .configureEach { task ->
+                task.compilerFacadeClasspath.setFrom(
+                    project.configurations.named(IC_FACADE_CLASSPATH_CONFIGURATION_NAME)
                 )
             }
     }

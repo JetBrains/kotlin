@@ -12,6 +12,7 @@ import java.io.File
 
 internal class GradleCompilerEnvironment(
     val compilerClasspath: Iterable<File>,
+    val facadeClasspath: Iterable<File>,
     messageCollector: GradleErrorMessageCollector,
     outputItemsCollector: OutputItemsCollector,
     val outputFiles: List<File>,

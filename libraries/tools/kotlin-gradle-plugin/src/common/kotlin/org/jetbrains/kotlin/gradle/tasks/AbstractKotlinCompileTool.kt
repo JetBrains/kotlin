@@ -120,6 +120,10 @@ abstract class AbstractKotlinCompileTool<T : CommonToolArguments> @Inject constr
     internal val defaultCompilerClasspath: ConfigurableFileCollection =
         project.objects.fileCollection()
 
+    @get:Classpath
+    internal val compilerFacadeClasspath: ConfigurableFileCollection =
+        project.objects.fileCollection()
+
     protected fun validateCompilerClasspath() {
         // Note that the check triggers configuration resolution
         require(!defaultCompilerClasspath.isEmpty) {

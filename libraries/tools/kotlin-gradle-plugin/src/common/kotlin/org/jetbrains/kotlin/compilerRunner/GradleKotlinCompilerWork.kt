@@ -56,6 +56,7 @@ internal class ProjectFilesForCompilation(
 internal class GradleKotlinCompilerWorkArguments(
     val projectFiles: ProjectFilesForCompilation,
     val compilerFullClasspath: List<File>,
+    val compilerFacadeClasspath: List<File>,
     val compilerClassName: String,
     val compilerArgs: Array<String>,
     val isVerbose: Boolean,

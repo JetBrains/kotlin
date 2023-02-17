@@ -119,6 +119,8 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
             task.incremental = false
             task.useModuleDetection.convention(false)
+
+            task.useEmbeddedCompiler.convention(propertiesProvider.useEmbeddedCompiler).finalizeValueOnRead()
         }
     }
 

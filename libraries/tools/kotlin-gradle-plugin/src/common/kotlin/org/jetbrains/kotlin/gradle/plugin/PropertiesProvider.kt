@@ -500,6 +500,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val kotlinDaemonUseFallbackStrategy: Boolean
         get() = booleanProperty("kotlin.daemon.useFallbackStrategy") ?: true
 
+    val useEmbeddedCompiler: Boolean
+        get() = booleanProperty("kotlin.compiler.embedded") ?: true
+
     val preciseCompilationResultsBackup: Boolean
         get() = booleanProperty(KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP) ?: false
 

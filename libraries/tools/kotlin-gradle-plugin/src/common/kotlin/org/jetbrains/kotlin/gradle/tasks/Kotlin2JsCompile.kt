@@ -303,7 +303,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         } else null
 
         val environment = GradleCompilerEnvironment(
-            defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
+            defaultCompilerClasspath, compilerFacadeClasspath, gradleMessageCollector, outputItemCollector,
             outputFiles = allOutputFiles(),
             reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv

@@ -114,7 +114,7 @@ abstract class KotlinCompileCommon @Inject constructor(
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
         val environment = GradleCompilerEnvironment(
-            defaultCompilerClasspath, gradleMessageCollector, outputItemCollector,
+            defaultCompilerClasspath, compilerFacadeClasspath, gradleMessageCollector, outputItemCollector,
             reportingSettings = reportingSettings(),
             outputFiles = allOutputFiles()
         )

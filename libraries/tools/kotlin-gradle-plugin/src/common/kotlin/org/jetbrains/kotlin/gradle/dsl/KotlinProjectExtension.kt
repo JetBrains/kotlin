@@ -14,6 +14,8 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_IC_FACADE
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
@@ -144,6 +146,10 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
                 named(name).configure(configure)
             }
         }
+    }
+
+    fun useCompilerVersion(version: String) {
+        project.dependencies.add(IC_FACADE_CLASSPATH_CONFIGURATION_NAME, "$KOTLIN_MODULE_GROUP:$KOTLIN_IC_FACADE:$version")
     }
 }
 
