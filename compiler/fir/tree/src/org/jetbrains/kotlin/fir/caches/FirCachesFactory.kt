@@ -59,9 +59,7 @@ abstract class FirCachesFactory : FirSessionComponent {
         postCompute: (K, V, DATA) -> Unit
     ): FirCache<K, V, CONTEXT>
 
-    fun <V, CONTEXT> createLazyValue(createValue: (CONTEXT) -> V): FirLazyValue<V, CONTEXT> {
-        return FirLazyValue(createCache { _, context -> createValue(context) })
-    }
+    abstract fun <V> createLazyValue(createValue: () -> V): FirLazyValue<V>
 }
 
 val FirSession.firCachesFactory: FirCachesFactory by FirSession.sessionComponentAccessor()
