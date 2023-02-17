@@ -675,7 +675,8 @@ class CommonizerIT : BaseGradleIT() {
     fun `test KT-52243 cinterop caching`() {
         with(preparedProject("commonizeCurlInterop")) {
             val localBuildCacheDir = projectDir.resolve("local-build-cache-dir").also { assertTrue(it.mkdirs()) }
-            gradleSettingsScript().appendText("""
+            gradleSettingsScript().appendText(
+                """
                 
                 buildCache {
                     local {
@@ -704,6 +705,20 @@ class CommonizerIT : BaseGradleIT() {
                 assertTasksExecuted(":lib:compileCommonMainKotlinMetadata")
                 assertTasksExecuted(":app:commonizeCInterop")
                 assertTasksExecuted(":app:compileNativeMainKotlinMetadata")
+            }
+        }
+    }
+
+    @Test
+    fun `test KT-56729 commonization with library containing two roots`() {
+        with(Project("commonize-kt-56729-consume-library-with-two-roots")) {
+            build("publish") {
+                assertSuccessful()
+            }
+
+            build(":consumer:assemble") {
+                assertSuccessful()
+                assertTasksExecuted(":consumer:compileCommonMainKotlinMetadata")
             }
         }
     }
