@@ -106,11 +106,12 @@ internal class ReanalyzableFunctionStructureElement(
         val originalFunction = firSymbol.fir as FirSimpleFunction
         val originalDesignation = originalFunction.collectDesignation()
 
-        val newFunction = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
+        val newFunction = RawFirNonLocalDeclarationBuilder.buildWithReplacement(
             session = originalFunction.moduleData.session,
             scopeProvider = originalFunction.moduleData.session.kotlinScopeProvider,
             designation = originalDesignation,
             rootNonLocalDeclaration = newKtDeclaration,
+            replacement = null,
         ) as FirSimpleFunction
 
         newFunction.apply {
@@ -143,13 +144,13 @@ internal class ReanalyzablePropertyStructureElement(
         val originalProperty = firSymbol.fir
         val originalDesignation = originalProperty.collectDesignation()
 
-        val newProperty = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
+        val newProperty = RawFirNonLocalDeclarationBuilder.buildWithReplacement(
             session = originalProperty.moduleData.session,
             scopeProvider = originalProperty.moduleData.session.kotlinScopeProvider,
             designation = originalDesignation,
             rootNonLocalDeclaration = newKtDeclaration,
+            replacement = null,
         ) as FirProperty
-
 
         newProperty.apply {
             copyAllExceptBodyFromCallable(originalProperty)
