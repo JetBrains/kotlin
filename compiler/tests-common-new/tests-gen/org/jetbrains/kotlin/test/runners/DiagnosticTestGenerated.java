@@ -27751,6 +27751,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("samConversionWithSafeCallAndInference.kt")
+            public void testSamConversionWithSafeCallAndInference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/samConversions/samConversionWithSafeCallAndInference.kt");
+            }
+
+            @Test
             @TestMetadata("samConversionsWithSmartCasts.kt")
             public void testSamConversionsWithSmartCasts() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/samConversions/samConversionsWithSmartCasts.kt");
