@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.Analys
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClass
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.prevLeaf
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
@@ -32,42 +34,45 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
         val declarationToStructureElement = allStructureElements.associateBy { it.psi }
 
         val elementToComment = mutableMapOf<PsiElement, String>()
-        ktFile.forEachDescendantOfType<KtDeclaration> { ktDeclaration ->
-            val structureElement = declarationToStructureElement[ktDeclaration] ?: return@forEachDescendantOfType
+        declarationToStructureElement.entries.forEach { (ktElement, structureElement) ->
             val comment = structureElement.createComment()
-            when (ktDeclaration) {
+            when (ktElement) {
                 is KtClassOrObject -> {
-                    val body = ktDeclaration.body
+                    val body = ktElement.body
                     val lBrace = body?.lBrace
                     if (lBrace != null) {
                         elementToComment[lBrace] = comment
                     } else {
-                        elementToComment[ktDeclaration] = comment
+                        elementToComment[ktElement] = comment
                     }
                 }
                 is KtFunction -> {
-                    val lBrace = ktDeclaration.bodyBlockExpression?.lBrace
+                    val lBrace = ktElement.bodyBlockExpression?.lBrace
                     if (lBrace != null) {
                         elementToComment[lBrace] = comment
                     } else {
-                        elementToComment[ktDeclaration] = comment
+                        elementToComment[ktElement] = comment
                     }
                 }
                 is KtProperty -> {
-                    val initializerOrTypeReference = ktDeclaration.initializer ?: ktDeclaration.typeReference
+                    val initializerOrTypeReference = ktElement.initializer ?: ktElement.typeReference
                     if (initializerOrTypeReference != null) {
                         elementToComment[initializerOrTypeReference] = comment
                     } else {
-                        elementToComment[ktDeclaration] = comment
+                        elementToComment[ktElement] = comment
                     }
                 }
                 is KtTypeAlias -> {
-                    elementToComment[ktDeclaration.getTypeReference()!!] = comment
+                    elementToComment[ktElement.getTypeReference()!!] = comment
                 }
                 is KtClassInitializer -> {
-                    elementToComment[ktDeclaration.openBraceNode!!] = comment
+                    elementToComment[ktElement.openBraceNode!!] = comment
                 }
-                else -> error("Unsupported declaration $ktDeclaration")
+                is KtSuperTypeList -> {
+                    elementToComment[(ktElement.parent as KtClassOrObject).nameIdentifier!!] = comment
+                }
+                is KtFile -> {}
+                else -> error("Unsupported declaration $ktElement")
             }
         }
 

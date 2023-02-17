@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
 
 internal sealed class FileStructureElement(val firFile: FirFile, protected val moduleComponents: LLFirModuleResolveComponents) {
-    abstract val psi: KtAnnotated
+    abstract val psi: KtElement
     abstract val mappings: KtToFirMapping
     abstract val diagnostics: FileStructureElementDiagnostics
 }
@@ -236,7 +236,7 @@ internal class NonReanalyzableClassDeclarationStructureElement(
 internal class NonReanalyzableNonClassDeclarationStructureElement(
     firFile: FirFile,
     val fir: FirDeclaration,
-    override val psi: KtDeclaration,
+    override val psi: KtElement,
     moduleComponents: LLFirModuleResolveComponents,
 ) : NonReanalyzableDeclarationStructureElement(firFile, moduleComponents) {
 

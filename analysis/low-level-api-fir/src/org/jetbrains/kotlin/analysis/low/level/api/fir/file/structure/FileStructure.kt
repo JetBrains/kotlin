@@ -17,9 +17,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFi
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
-import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
@@ -48,24 +47,27 @@ internal class FileStructure private constructor(
 
     fun getStructureElementFor(element: KtElement): FileStructureElement {
         val declaration = getStructureKtElement(element)
-        val container: KtElement
-        if (declaration != null) {
-            container = declaration
+        val container: KtElement = if (declaration != null) {
+            declaration
         } else {
             val modifierList = PsiTreeUtil.getParentOfType(element, KtModifierList::class.java, false)
-            container = if (modifierList != null && modifierList.nextSibling is PsiErrorElement) {
+            if (modifierList != null && modifierList.nextSibling is PsiErrorElement) {
                 modifierList
-            } else element.containingKtFile
+            } else {
+                element.containingKtFile
+            }
         }
+
         return getStructureElementForDeclaration(container)
     }
 
-    private fun getStructureKtElement(element: KtElement): KtDeclaration? {
+    private fun getStructureKtElement(element: KtElement): KtElement? {
         val container = element.getNonLocalContainingOrThisDeclaration()
         when {
             container is KtClassOrObject && container.isInsideSuperClassCall(element) -> {
-                container.primaryConstructor?.let { return it }
+                (container.primaryConstructor ?: container.getSuperTypeList())?.let { return it }
             }
+
             container is KtPrimaryConstructor && container.isInsideAnnotationOnParameter(element) -> {
                 container.containingClassOrObject?.let { return it }
             }
@@ -169,12 +171,35 @@ internal class FileStructure private constructor(
             firProvider,
             firFile
         )
+
         firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
         return FileElementFactory.createFileStructureElement(
             firDeclaration = firDeclaration,
             ktDeclaration = declaration,
             firFile = firFile,
             moduleComponents = moduleComponents
+        )
+    }
+
+    private fun createPrimaryConstructorStructure(superTypeList: KtSuperTypeList): FileStructureElement {
+        val ktClassOrObject = superTypeList.parent as KtClassOrObject
+        val firClassDeclaration = ktClassOrObject.findSourceNonLocalFirDeclaration(
+            moduleComponents.firFileBuilder,
+            firProvider,
+            firFile,
+        )
+
+        val firDeclaration = (firClassDeclaration as? FirClass)?.declarations
+            ?.firstOrNull { it is FirPrimaryConstructor }
+            ?: firClassDeclaration
+
+        firDeclaration.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
+
+        return NonReanalyzableNonClassDeclarationStructureElement(
+            firFile = firFile,
+            fir = firDeclaration,
+            psi = superTypeList,
+            moduleComponents = moduleComponents,
         )
     }
 
@@ -199,6 +224,7 @@ internal class FileStructure private constructor(
             RootStructureElement(firFile, container, moduleComponents)
         }
         container is KtDeclaration -> createDeclarationStructure(container)
+        container is KtSuperTypeList -> createPrimaryConstructorStructure(container)
         container is KtModifierList && container.nextSibling is PsiErrorElement -> createDanglingModifierListStructure(container)
         else -> error("Invalid container $container")
     }

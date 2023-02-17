@@ -115,6 +115,12 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("superClassCall.kt")
+    public void testSuperClassCall() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/superClassCall.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelExpressionBodyFunWithType.kt")
     public void testTopLevelExpressionBodyFunWithType() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/topLevelExpressionBodyFunWithType.kt");
