@@ -148,10 +148,11 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
                     /* This task only cares about extracting artifacts. Project to Project dependencies can return emptyList */
                     if (chooseVisibleSourceSets.metadataProvider !is ArtifactMetadataProvider) return@flatMap emptyList()
                     chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
-                        chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
-                            .mapNotNull { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
-                            .flatMap { sourceSetContent -> sourceSetContent.cinteropMetadataBinaries }
-                            .map { cInteropMetadataBinary -> outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
+                        chooseVisibleSourceSets.visibleSourceSetProvidingCInterops
+                            ?.let { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
+                            ?.cinteropMetadataBinaries
+                            ?.map { cInteropMetadataBinary -> outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
+                            .orEmpty()
                     }
                 }.toSet()
             }
@@ -176,21 +177,22 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     class ChooseVisibleSourceSetProjection(
         @Input val dependencyModuleIdentifiers: List<KpmModuleIdentifier>,
         @Nested val projectStructureMetadata: KotlinProjectStructureMetadata,
-        @Input val visibleSourceSetsProvidingCInterops: Set<String>
+        @Input val visibleSourceSetProvidingCInterops: String?
     ) {
         constructor(chooseVisibleSourceSets: ChooseVisibleSourceSets) : this(
             dependencyModuleIdentifiers = chooseVisibleSourceSets.dependency.toKpmModuleIdentifiers(),
             projectStructureMetadata = chooseVisibleSourceSets.projectStructureMetadata,
-            visibleSourceSetsProvidingCInterops = chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
+            visibleSourceSetProvidingCInterops = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops
         )
     }
 
     @Suppress("unused")
     @get:Classpath
-    protected val inputArtifactFiles: FileCollection get() = sourceSet
-        .compileDependenciesTransformationOrFail
-        .configurationToResolve
-        .withoutProjectDependencies()
+    protected val inputArtifactFiles: FileCollection
+        get() = sourceSet
+            .compileDependenciesTransformationOrFail
+            .configurationToResolve
+            .withoutProjectDependencies()
 
     @get:Internal
     protected val chooseVisibleSourceSets
@@ -224,9 +226,9 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
 
         /* Extract/Materialize all cinterop files from composite jar file */
         is ArtifactMetadataProvider -> chooseVisibleSourceSets.metadataProvider.read { artifactContent ->
-            chooseVisibleSourceSets.visibleSourceSetsProvidingCInterops
-                .mapNotNull { visibleSourceSetName -> artifactContent.findSourceSet(visibleSourceSetName) }
-                .flatMap { sourceSetContent -> sourceSetContent.cinteropMetadataBinaries }
+            val visibleSourceSetName = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops ?: return
+            val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return
+            sourceSetContent.cinteropMetadataBinaries
                 .forEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
         }
     }
