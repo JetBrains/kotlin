@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.test.framework.services
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiWhiteSpace
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.psi.KtElement
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -105,6 +107,18 @@ class ExpressionMarkerProvider : TestService {
                 }
             }
         }
+    }
+
+    inline fun <reified P : KtElement> getElementsOfTypeAtCarets(
+        moduleStructure: TestModuleStructure,
+        testServices: TestServices,
+        caretTag: String? = null
+    ): Collection<Pair<P, KtFile>> {
+        return moduleStructure.modules.flatMap { module ->
+            val ktFiles = testServices.ktModuleProvider.getModuleFiles(module).filterIsInstance<KtFile>()
+            getElementsOfTypeAtCarets<P>(ktFiles, caretTag)
+        }
+
     }
 
     fun getSelectedElement(file: KtFile): KtElement {
