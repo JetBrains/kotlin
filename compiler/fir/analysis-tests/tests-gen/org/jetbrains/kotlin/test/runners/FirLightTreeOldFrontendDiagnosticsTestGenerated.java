@@ -17913,6 +17913,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("recursiveTypeInPrivateInlineFunction.kt")
+            public void testRecursiveTypeInPrivateInlineFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inline/recursiveTypeInPrivateInlineFunction.kt");
+            }
+
+            @Test
             @TestMetadata("returnedAnonymousObjects.kt")
             public void testReturnedAnonymousObjects() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inline/returnedAnonymousObjects.kt");

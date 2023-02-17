@@ -29,6 +29,7 @@ object PrivateInlineFunctionsReturningAnonymousObjectsChecker : DeclarationCheck
     private fun checkTypeAndArguments(type: KotlinType, reportOn: PsiElement, context: DeclarationCheckerContext) {
         checkType(type, reportOn, context)
         for (argument in type.arguments) {
+            if (argument.isStarProjection) continue
             checkTypeAndArguments(argument.type, reportOn, context)
         }
     }
