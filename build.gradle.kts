@@ -685,17 +685,6 @@ tasks {
         dependsOn(":compiler:fir:fir2ir:test")
     }
 
-    register("firAllTest") {
-        dependsOn(
-            ":dist",
-            ":compiler:fir:raw-fir:psi2fir:test",
-            ":compiler:fir:raw-fir:light-tree2fir:test",
-            ":compiler:fir:analysis-tests:test",
-            ":compiler:fir:analysis-tests:legacy-fir-tests:test",
-            ":compiler:fir:fir2ir:test",
-        )
-    }
-
     register("compilerFrontendVisualizerTest") {
         dependsOn("compiler:visualizer:test")
     }
