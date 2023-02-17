@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -60,7 +61,7 @@ open class AbstractLocalVariableTest : AbstractLocalVariableTestBase<ClassicFron
     }
 }
 
-open class AbstractFirLocalVariableTest : AbstractLocalVariableTestBase<FirOutputArtifact, IrBackendInput>(
+open class AbstractFirLocalVariableTestBase(val useLightTree: Boolean) : AbstractLocalVariableTestBase<FirOutputArtifact, IrBackendInput>(
     FrontendKinds.FIR,
     TargetBackend.JVM_IR
 ) {
@@ -76,5 +77,13 @@ open class AbstractFirLocalVariableTest : AbstractLocalVariableTestBase<FirOutpu
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureDumpHandlersForCodegenTest()
+        if (useLightTree) {
+            builder.defaultDirectives { +FirDiagnosticsDirectives.USE_LIGHT_TREE }
+        }
     }
 }
+
+open class AbstractFirLocalVariableTest : AbstractFirLocalVariableTestBase(useLightTree = true)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiLocalVariableTest : AbstractFirLocalVariableTestBase(useLightTree = false)

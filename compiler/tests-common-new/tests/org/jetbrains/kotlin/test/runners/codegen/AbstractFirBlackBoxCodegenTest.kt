@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LIGHT_TREE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
@@ -24,7 +25,9 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 import org.jetbrains.kotlin.test.model.*
 
-open class AbstractFirBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput>(
+abstract class AbstractFirBlackBoxCodegenTestBase(
+    val useLightTree: Boolean
+) : AbstractJvmBlackBoxCodegenTestBase<FirOutputArtifact, IrBackendInput>(
     FrontendKinds.FIR,
     TargetBackend.JVM_IR
 ) {
@@ -43,6 +46,9 @@ open class AbstractFirBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<F
             defaultDirectives {
                 // See KT-44152
                 -USE_PSI_CLASS_FILES_READING
+                if (useLightTree) {
+                    +USE_LIGHT_TREE
+                }
             }
 
             forTestsMatching("*WithStdLib/*") {
@@ -77,3 +83,8 @@ open class AbstractFirBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<F
         }
     }
 }
+
+open class AbstractFirBlackBoxCodegenTest : AbstractFirBlackBoxCodegenTestBase(useLightTree = true)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiBlackBoxCodegenTest : AbstractFirBlackBoxCodegenTestBase(useLightTree = false)
