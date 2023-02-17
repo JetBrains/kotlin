@@ -4,8 +4,8 @@ import kotlinx.cinterop.cValuesOf
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.MemoryModel
-import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationStringValue
+import org.jetbrains.kotlin.backend.konan.descriptors.getTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.descriptors.isConstantConstructorIntrinsic
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.llvm.objc.genObjCSelector
@@ -136,7 +136,8 @@ internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): Intrinsi
 
 private fun getIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType {
     val function = callSite.symbol.owner
-    val annotation = function.annotations.findAnnotation(KonanFqNames.typedIntrinsic)!!
+    val annotation = function.getTypedIntrinsic()
+            ?: error("Can't find getIntrinsicType in $function at $callSite")
     val value = annotation.getAnnotationStringValue()!!
     return IntrinsicType.valueOf(value)
 }

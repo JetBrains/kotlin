@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
 import org.jetbrains.kotlin.resolve.constants.StringValue
 
@@ -36,8 +39,30 @@ internal val IrClass.implementedInterfaces: List<IrClass>
                 superInterfaces).distinct()
     }
 
-internal val IrFunction.isTypedIntrinsic: Boolean
-    get() = annotations.hasAnnotation(KonanFqNames.typedIntrinsic)
+internal val IrFunction.isTypedIntrinsic: Boolean get() = getTypedIntrinsic() != null
+
+internal fun IrFunction.getTypedIntrinsic(): IrConstructorCall? {
+    // KT-56446 - We search here in kotlin.native.internal.* subpackages instead of a fixed FqName
+    return annotations.findAnnotationInSubpackage(KonanFqNames.typedIntrinsic)
+}
+
+private val IrConstructorCall.annotationClass get() = this.symbol.owner.constructedClass
+internal fun List<IrConstructorCall>.findAnnotationInSubpackage(fqName: FqName): IrConstructorCall? =
+        firstOrNull { it.annotationClass.hasEqualNameInSubpackage(fqName) }
+
+private fun IrDeclarationWithName.hasEqualNameInSubpackage(fqName: FqName): Boolean =
+        symbol.hasEqualNameInSubpackage(fqName) || (name == fqName.shortName() && when (val parent = parent) {
+            is IrPackageFragment -> fqName.parent().isSubpackageOf(parent.fqName)
+            is IrDeclarationWithName -> parent.hasEqualNameInSubpackage(fqName.parent())
+            else -> false
+        })
+
+private fun IrSymbol.hasEqualNameInSubpackage(fqName: FqName): Boolean {
+    return this is IrClassPublicSymbolImpl && with(signature as? IdSignature.CommonSignature ?: return false) {
+        val thisFq = FqName("$packageFqName.$declarationFqName")
+        thisFq.shortName() == fqName.shortName() && fqName.parent().isSubpackageOf(thisFq)
+    }
+}
 
 internal val IrConstructor.isConstantConstructorIntrinsic: Boolean
     get() = annotations.hasAnnotation(KonanFqNames.constantConstructorIntrinsic)
@@ -270,7 +295,7 @@ fun IrFunction.externalSymbolOrThrow(): String? {
 
     if (annotations.hasAnnotation(KonanFqNames.objCMethod)) return null
 
-    if (annotations.hasAnnotation(KonanFqNames.typedIntrinsic)) return null
+    if (isTypedIntrinsic) return null
 
     if (annotations.hasAnnotation(RuntimeNames.cCall)) return null
 
