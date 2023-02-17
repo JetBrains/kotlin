@@ -32,6 +32,11 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
+    val IGNORE_BACKEND_K2_LIGHT_TREE by enumDirective<TargetBackend>(
+        description = "Ignore specific backend if test uses K2 frontend in Light tree mode",
+        applicability = Global
+    )
+
     val IGNORE_BACKEND_MULTI_MODULE by enumDirective<TargetBackend>(
         description = "Ignore failures of multimodule test on target backend",
         applicability = Global
@@ -191,27 +196,41 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
     )
 }
 
-fun extractIgnoredDirectiveForTargetBackend(
+fun extractIgnoredDirectivesForTargetBackend(
     module: TestModule,
     targetBackend: TargetBackend,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null
-): ValueDirective<TargetBackend>? =
-    when (module.frontendKind) {
-        FrontendKinds.ClassicFrontend -> CodegenTestDirectives.IGNORE_BACKEND_K1
-        FrontendKinds.FIR -> CodegenTestDirectives.IGNORE_BACKEND_K2
-        else -> null
-    }?.let { specificIgnoreDirective ->
-        when {
-            customIgnoreDirective != null -> customIgnoreDirective
-            !module.directives.contains(specificIgnoreDirective) -> CodegenTestDirectives.IGNORE_BACKEND
-            else -> {
-                val inCommonIgnored = module.directives[CodegenTestDirectives.IGNORE_BACKEND].let { targetBackend in it || TargetBackend.ANY in it }
-                val inSpecificIgnored = module.directives[specificIgnoreDirective].let { targetBackend in it || TargetBackend.ANY in it }
-                if (inCommonIgnored && inSpecificIgnored) {
-                    throw AssertionError("Both, IGNORE_BACKEND and ${specificIgnoreDirective.name} contain target backend ${targetBackend.name}. Please remove one of them.")
-                }
-                if (inCommonIgnored) CodegenTestDirectives.IGNORE_BACKEND else specificIgnoreDirective
+): List<ValueDirective<TargetBackend>> {
+    val specificIgnoreDirectives = when (module.frontendKind) {
+        FrontendKinds.ClassicFrontend -> listOf(CodegenTestDirectives.IGNORE_BACKEND_K1)
+        FrontendKinds.FIR -> listOfNotNull(
+            CodegenTestDirectives.IGNORE_BACKEND_K2,
+            CodegenTestDirectives.IGNORE_BACKEND_K2_LIGHT_TREE.takeIf { module.directives.contains(FirDiagnosticsDirectives.USE_LIGHT_TREE) }
+        )
+        else -> return emptyList()
+    }
+    val result = specificIgnoreDirectives.mapNotNull {
+        extractIgnoredDirectiveForTargetBackendForSpecificIgnoreDirective(module, targetBackend, it, customIgnoreDirective)
+    }
+    return result.takeIf { it.isNotEmpty() } ?: listOf(CodegenTestDirectives.IGNORE_BACKEND)
+}
+
+private fun extractIgnoredDirectiveForTargetBackendForSpecificIgnoreDirective(
+    module: TestModule,
+    targetBackend: TargetBackend,
+    specificIgnoreDirective: ValueDirective<TargetBackend>,
+    customIgnoreDirective: ValueDirective<TargetBackend>?
+): ValueDirective<TargetBackend>? {
+    return when {
+        customIgnoreDirective != null -> customIgnoreDirective
+        !module.directives.contains(specificIgnoreDirective) -> null//CodegenTestDirectives.IGNORE_BACKEND
+        else -> {
+            val inCommonIgnored = module.directives[CodegenTestDirectives.IGNORE_BACKEND].let { targetBackend in it || TargetBackend.ANY in it }
+            val inSpecificIgnored = module.directives[specificIgnoreDirective].let { targetBackend in it || TargetBackend.ANY in it }
+            if (inCommonIgnored && inSpecificIgnored) {
+                throw AssertionError("Both, IGNORE_BACKEND and ${specificIgnoreDirective.name} contain target backend ${targetBackend.name}. Please remove one of them.")
             }
+            if (inCommonIgnored) null else specificIgnoreDirective
         }
     }
-
+}
