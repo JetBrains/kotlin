@@ -1,4 +1,11 @@
+public final class C /* C*/ {
+  public  C();//  .ctor()
+}
+
 public final class PropertiesKt /* PropertiesKt*/ {
+  @org.jetbrains.annotations.NotNull()
+  private static final java.lang.Double[] doubleArrayConst;
+
   @org.jetbrains.annotations.NotNull()
   private static final java.lang.Object arrayConst;
 
@@ -6,7 +13,13 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static final java.lang.String x;
 
   @org.jetbrains.annotations.NotNull()
+  private static final kotlin.annotation.AnnotationTarget[] enums;
+
+  @org.jetbrains.annotations.NotNull()
   private static final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> sum;
+
+  @org.jetbrains.annotations.NotNull()
+  private static final kotlin.reflect.KClass<? extends java.lang.Object>[] classes;
 
   @org.jetbrains.annotations.NotNull()
   private static java.lang.String name;
@@ -19,6 +32,9 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */ /* constant value This subsystem is deprecated */;
+
+  @org.jetbrains.annotations.Nullable()
+  private static final java.lang.String nothing;
 
   @org.jetbrains.annotations.Nullable()
   private static java.lang.Boolean isEmptyMutable;
@@ -71,6 +87,9 @@ public final class PropertiesKt /* PropertiesKt*/ {
   protected static final java.lang.String getProtectedWithPrivateSet();//  getProtectedWithPrivateSet()
 
   @org.jetbrains.annotations.NotNull()
+  public static final java.lang.Double[] getDoubleArrayConst();//  getDoubleArrayConst()
+
+  @org.jetbrains.annotations.NotNull()
   public static final java.lang.Object getArrayConst();//  getArrayConst()
 
   @org.jetbrains.annotations.NotNull()
@@ -95,7 +114,13 @@ public final class PropertiesKt /* PropertiesKt*/ {
   public static final java.lang.String getX();//  getX()
 
   @org.jetbrains.annotations.NotNull()
+  public static final kotlin.annotation.AnnotationTarget[] getEnums();//  getEnums()
+
+  @org.jetbrains.annotations.NotNull()
   public static final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> getSum();//  getSum()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final kotlin.reflect.KClass<? extends java.lang.Object>[] getClasses();//  getClasses()
 
   @org.jetbrains.annotations.Nullable()
   public static final java.lang.Boolean getIslowercase();//  getIslowercase()
@@ -111,6 +136,9 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   @org.jetbrains.annotations.Nullable()
   public static final java.lang.Integer isEmptyInt();//  isEmptyInt()
+
+  @org.jetbrains.annotations.Nullable()
+  public static final java.lang.String getNothing();//  getNothing()
 
   private static final int privateFun();//  privateFun()
 
