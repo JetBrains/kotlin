@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
-import kotlinx.collections.immutable.PersistentMap
-import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.collections.immutable.toPersistentMap
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
@@ -113,7 +110,7 @@ class LLFirSessionProviderStorage(val project: Project) {
 
 private class LLFirSessionsCache {
     @Volatile
-    private var mappings: PersistentMap<KtModule, FirSessionWithModificationTracker> = persistentMapOf()
+    private var mappings: Map<KtModule, FirSessionWithModificationTracker> = emptyMap()
 
     val sessionInvalidator: LLFirSessionInvalidator = LLFirSessionInvalidator { session ->
         mappings[session.llFirModuleData.ktModule]?.invalidate()
@@ -125,7 +122,7 @@ private class LLFirSessionsCache {
         action: (Map<KtModule, LLFirSession>) -> Pair<Map<KtModule, LLFirSession>, R>
     ): Pair<Map<KtModule, LLFirSession>, R> {
         val (newMappings, result) = action(getSessions().mapValues { it.value })
-        mappings = newMappings.mapValues { FirSessionWithModificationTracker(project, it.value) }.toPersistentMap()
+        mappings = newMappings.mapValues { FirSessionWithModificationTracker(project, it.value) }
         return newMappings to result
     }
 
