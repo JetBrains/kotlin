@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2_LIGHT_TREE: JVM_IR
+//   Reason: KT-53846
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 
