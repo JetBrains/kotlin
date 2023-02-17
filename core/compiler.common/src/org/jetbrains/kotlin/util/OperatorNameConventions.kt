@@ -95,4 +95,7 @@ object OperatorNameConventions {
 
     @JvmField
     val MOD_OPERATORS_REPLACEMENT = mapOf(MOD to REM, MOD_ASSIGN to REM_ASSIGN)
+
+    @JvmField
+    val STATEMENT_LIKE_OPERATORS = setOf(SET) + ASSIGNMENT_OPERATIONS
 }

@@ -49,8 +49,8 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.SmartcastStability
 import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
@@ -498,31 +498,38 @@ fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     file: FirFile,
 ) {
     val receiverType = nullableReceiverExpression.typeRef.coneTypeSafe<ConeKotlinType>()
-    val typeAfterNullCheck = selector.expressionTypeOrUnitForAssignment() ?: return
-    val isReceiverActuallyNullable = if (session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)) {
-        true
-    } else {
-        receiverType != null && session.typeContext.run { receiverType.isNullableType() }
+    val selector = selector
+
+    val resultingType = when {
+        selector is FirExpression && !selector.isCallToStatementLikeFunction -> {
+            val type = selector.typeRef.coneTypeSafe<ConeKotlinType>() ?: return
+
+            val isReceiverActuallyNullable = session.languageVersionSettings.supportsFeature(LanguageFeature.SafeCallsAreAlwaysNullable)
+                    || receiverType != null && session.typeContext.run { receiverType.isNullableType() }
+
+            if (isReceiverActuallyNullable) {
+                type.withNullability(ConeNullability.NULLABLE, session.typeContext)
+            } else {
+                type
+            }
+        }
+        // Branch for things that shouldn't be used as expressions.
+        // They are forced to return not-null `Unit`, regardless of the receiver.
+        else -> {
+            StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false)
+        }
     }
-    val resultingType =
-        if (isReceiverActuallyNullable)
-            typeAfterNullCheck.withNullability(ConeNullability.NULLABLE, session.typeContext)
-        else
-            typeAfterNullCheck
 
     val resolvedTypeRef = typeRef.resolvedTypeFromPrototype(resultingType)
     replaceTypeRef(resolvedTypeRef)
     session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, source, file.source)
 }
 
-private fun FirStatement.expressionTypeOrUnitForAssignment(): ConeKotlinType? {
-    if (this is FirExpression) return typeRef.coneTypeSafe()
-
-    require(this is FirVariableAssignment) {
-        "The only non-expression FirQualifiedAccess is FirVariableAssignment, but ${this::class} was found"
+private val FirExpression.isCallToStatementLikeFunction: Boolean
+    get() {
+        val symbol = (this as? FirFunctionCall)?.calleeReference?.toResolvedFunctionSymbol() ?: return false
+        return origin == FirFunctionCallOrigin.Operator && symbol.name in OperatorNameConventions.STATEMENT_LIKE_OPERATORS
     }
-    return StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false)
-}
 
 fun FirAnnotation.getCorrespondingClassSymbolOrNull(session: FirSession): FirRegularClassSymbol? {
     return annotationTypeRef.coneType.fullyExpandedType(session).classId?.let {
