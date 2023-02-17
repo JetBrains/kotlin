@@ -85,11 +85,12 @@ fun deserializeClassToSymbol(
     val context =
         parentContext?.childContext(
             classProto.typeParameterList,
+            containingDeclarationSymbol = symbol,
             nameResolver,
             TypeTable(classProto.typeTable),
             classId.relativeClassName,
             containerSource,
-            symbol,
+            outerClassSymbol = symbol,
             annotationDeserializer,
             if (status.isCompanion) {
                 parentContext.constDeserializer
