@@ -252,14 +252,16 @@ public final class ListOfUsers : java/lang/Object {
           LDC (list)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-        LINENUMBER (13)
+        LINENUMBER (12)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
+        LABEL (L2)
+        LINENUMBER (13)
           ALOAD (0)
           ALOAD (1)
           PUTFIELD (ListOfUsers, list, Ljava/util/List;)
           RETURN
-        LABEL (L2)
+        LABEL (L3)
     }
 
     public void <init>(int seen0, java.util.List list, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
@@ -538,14 +540,16 @@ public final class OptionalUser : java/lang/Object {
           LDC (user)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-        LINENUMBER (10)
+        LINENUMBER (9)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
+        LABEL (L2)
+        LINENUMBER (10)
           ALOAD (0)
           ALOAD (1)
           PUTFIELD (OptionalUser, user, LUser;)
           RETURN
-        LABEL (L2)
+        LABEL (L3)
     }
 
     public void <init>(User p0, int p1, kotlin.jvm.internal.DefaultConstructorMarker p2) {
@@ -924,9 +928,11 @@ public final class User : java/lang/Object {
           LDC (lastName)
           INVOKESTATIC (kotlin/jvm/internal/Intrinsics, checkNotNullParameter, (Ljava/lang/Object;Ljava/lang/String;)V)
         LABEL (L1)
-        LINENUMBER (7)
+        LINENUMBER (6)
           ALOAD (0)
           INVOKESPECIAL (java/lang/Object, <init>, ()V)
+        LABEL (L2)
+        LINENUMBER (7)
           ALOAD (0)
           ALOAD (1)
           PUTFIELD (User, firstName, Ljava/lang/String;)
@@ -934,7 +940,7 @@ public final class User : java/lang/Object {
           ALOAD (2)
           PUTFIELD (User, lastName, Ljava/lang/String;)
           RETURN
-        LABEL (L2)
+        LABEL (L3)
     }
 
     public void <init>(int seen0, java.lang.String firstName, java.lang.String lastName, kotlinx.serialization.internal.SerializationConstructorMarker serializationConstructorMarker) {
