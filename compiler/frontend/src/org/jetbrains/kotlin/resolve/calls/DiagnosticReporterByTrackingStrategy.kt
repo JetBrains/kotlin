@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.StubTypeForBuilderInference
 import org.jetbrains.kotlin.types.TypeUtils
@@ -148,6 +149,17 @@ class DiagnosticReporterByTrackingStrategy(
                 val callElement = psiKotlinCall.psiCall.callElement
                 trace.report(UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL.on(callElement))
             }
+
+            is AdaptedCallableReferenceIsUsedWithReflection, is NotCallableMemberReference, is CallableReferencesDefaultArgumentUsed -> {
+                // AdaptedCallableReferenceIsUsedWithReflection -> reported in onCallArgument
+                // NotCallableMemberReference -> UNSUPPORTED reported in DoubleColonExpressionResolver
+                // CallableReferencesDefaultArgumentUsed -> possible in 1.3 and earlier versions only
+                return
+            }
+
+            else -> {
+                unknownError(diagnostic, "onCall")
+            }
         }
     }
 
@@ -164,6 +176,23 @@ class DiagnosticReporterByTrackingStrategy(
                 val expectedTypeArgumentsCount = diagnostic.descriptor.typeParameters.size
                 trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(reportElement, expectedTypeArgumentsCount, diagnostic.descriptor))
             }
+            else -> {
+                unknownError(diagnostic, "onTypeArguments")
+            }
+        }
+    }
+
+    private fun unknownError(diagnostic: KotlinCallDiagnostic, onTarget: String) {
+        if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+            throw AssertionError("$onTarget should not be called with ${diagnostic::class.java}")
+        } else {
+            trace.report(
+                NEW_INFERENCE_UNKNOWN_ERROR.on(
+                    psiKotlinCall.psiCall.callElement,
+                    diagnostic.candidateApplicability,
+                    onTarget
+                )
+            )
         }
     }
 
@@ -205,6 +234,9 @@ class DiagnosticReporterByTrackingStrategy(
                         originalTypeParameter?.containingDeclaration?.name ?: SpecialNames.NO_NAME_PROVIDED
                     )
                 )
+            }
+            else -> {
+                unknownError(diagnostic, "onCallReceiver")
             }
         }
     }
@@ -324,6 +356,16 @@ class DiagnosticReporterByTrackingStrategy(
                     )
                 )
             }
+
+            is NotCallableMemberReference, is NotCallableExpectedType -> {
+                // NotCallableMemberReference -> UNSUPPORTED is reported in DoubleColonExpressionResolver
+                // NotCallableExpectedType -> TYPE_MISMATCH is reported in reportConstraintErrorByPosition
+                return
+            }
+
+            else -> {
+                unknownError(diagnostic, "onCallArgument")
+            }
         }
     }
 
@@ -348,6 +390,9 @@ class DiagnosticReporterByTrackingStrategy(
                 )
             )
             is ArgumentPassedTwice -> trace.report(ARGUMENT_PASSED_TWICE.on(nameReference))
+            else -> {
+                unknownError(diagnostic, "onCallArgumentName")
+            }
         }
     }
 
@@ -368,6 +413,9 @@ class DiagnosticReporterByTrackingStrategy(
                         trace.report(NON_VARARG_SPREAD.on(context.languageVersionSettings, spreadElement))
                     }
                 }
+            }
+            else -> {
+                unknownError(diagnostic, "onCallArgumentSpread")
             }
         }
     }
@@ -515,7 +563,6 @@ class DiagnosticReporterByTrackingStrategy(
             BuilderInferencePosition -> {
                 // some error reported later?
             }
-            is CallableReferenceConstraintPosition<*> -> TODO()
             is DeclaredUpperBoundConstraintPosition<*> -> {
                 val originalCall = (position as DeclaredUpperBoundConstraintPositionImpl).kotlinCall
                 val typeParameterDescriptor = position.typeParameter
@@ -533,13 +580,27 @@ class DiagnosticReporterByTrackingStrategy(
             is DelegatedPropertyConstraintPosition<*> -> {
                 // DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, reported later
             }
-            is IncorporationConstraintPosition -> TODO()
-            is InjectedAnotherStubTypeConstraintPosition<*> -> TODO()
             is KnownTypeParameterConstraintPosition<*> -> {
                 // UPPER_BOUND_VIOLATED, reported later?
             }
-            is LHSArgumentConstraintPosition<*, *> -> TODO()
-            SimpleConstraintSystemConstraintPosition -> TODO()
+            is CallableReferenceConstraintPosition<*>,
+            is IncorporationConstraintPosition,
+            is InjectedAnotherStubTypeConstraintPosition<*>,
+            is LHSArgumentConstraintPosition<*, *>,
+            SimpleConstraintSystemConstraintPosition -> {
+                if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                    throw AssertionError("Constraint error in unexpected position: $position")
+                } else {
+                    report(
+                        TYPE_MISMATCH_IN_CONSTRAINT.on(
+                            psiKotlinCall.psiCall.callElement,
+                            error.upperKotlinType,
+                            error.lowerKotlinType,
+                            position
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -716,10 +777,16 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.reportDiagnosticOnce(diagnostic)
                 }
             }
+            // ConstrainingTypeIsError means that some type isError, so it's reported somewhere else
             is ConstrainingTypeIsError -> {}
+            // LowerPriorityToPreserveCompatibility is not expected to report something
             is LowerPriorityToPreserveCompatibility -> {}
+            // NoSuccessfulFork does not exist in K1
             is NoSuccessfulFork -> {}
-            is NotEnoughInformationForTypeParameter<*> -> {}
+            // NotEnoughInformationForTypeParameterImpl is already considered above
+            is NotEnoughInformationForTypeParameter<*> -> {
+                throw AssertionError("constraintError should not be called with ${error::class.java}")
+            }
         }
     }
 
