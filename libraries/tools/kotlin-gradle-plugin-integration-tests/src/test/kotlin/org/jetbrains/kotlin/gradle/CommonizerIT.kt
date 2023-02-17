@@ -719,6 +719,8 @@ class CommonizerIT : BaseGradleIT() {
             build(":consumer:assemble") {
                 assertSuccessful()
                 assertTasksExecuted(":consumer:compileCommonMainKotlinMetadata")
+                assertNotContains("Duplicated libraries:")
+                assertNotContains("w: duplicate library name")
             }
         }
     }
