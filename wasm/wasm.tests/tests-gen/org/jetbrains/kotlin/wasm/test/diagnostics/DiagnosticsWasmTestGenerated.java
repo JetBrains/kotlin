@@ -50,5 +50,11 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
         public void testInheritance() throws Exception {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/inheritance.kt");
         }
+
+        @Test
+        @TestMetadata("jsExport.kt")
+        public void testJsExport() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsExport.kt");
+        }
     }
 }
