@@ -23,6 +23,7 @@ import org.gradle.process.ExecOperations
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner.Companion.run
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -307,12 +308,13 @@ internal constructor(
     @get:Internal
     @Transient  // can't be serialized for Gradle configuration cache
     final override val compilation: KotlinCompilationInfo,
+    override val compilerOptions: KotlinNativeCompilerOptions,
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, StubK2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
-    KotlinCompilationTask<KotlinCommonCompilerOptions> {
+    KotlinCompilationTask<KotlinNativeCompilerOptions> {
 
     @get:Input
     override val outputKind = LIBRARY
@@ -332,10 +334,12 @@ internal constructor(
     // Store as an explicit provider in order to allow Gradle Instant Execution to capture the state
 //    private val allSourceProvider = compilation.map { project.files(it.allSources).asFileTree }
 
-    @get:Input
-    val moduleName: String by lazy {
-        project.klibModuleName(baseName)
-    }
+    @Deprecated(
+        message = "Please use 'compilerOptions.moduleName' to configure",
+        replaceWith = ReplaceWith("compilerOptions.moduleName.get()")
+    )
+    @get:Internal
+    val moduleName: String get() = compilerOptions.moduleName.get()
 
     @get:OutputFile
     override val outputFile: Provider<File>
@@ -377,8 +381,7 @@ internal constructor(
         @Input get() = languageSettings.optInAnnotationsInUse
     // endregion.
 
-    // region Kotlin options.
-    override val compilerOptions: KotlinCommonCompilerOptions = compilation.compilerOptions.options
+    // region Kotlin options
 
     override val kotlinOptions: KotlinCommonOptions = object : KotlinCommonOptions {
         override val options: KotlinCommonCompilerOptions
@@ -471,7 +474,6 @@ internal constructor(
             languageSettings,
             compilerOptions,
             plugins,
-            moduleName,
             shortModuleName,
             friendModule,
             artifactVersion,
