@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSi
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolRestoreFromDifferentModuleTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractAnalysisApiSubstitutorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.types.AbstractTypeByDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.components.psiDeclarationProvider.AbstractPsiDeclarationProviderTest
@@ -124,6 +125,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
         test(AbstractSingleSymbolByPsi::class) {
             model("singleSymbolByPsi")
+        }
+
+        test(AbstractSymbolRestoreFromDifferentModuleTest::class) {
+            model("symbolRestoreFromDifferentModule")
         }
 
         test(
