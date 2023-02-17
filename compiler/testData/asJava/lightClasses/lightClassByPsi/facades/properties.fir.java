@@ -116,13 +116,13 @@ public final class PropertiesKt /* PropertiesKt*/ {
   public static final java.lang.String getX();//  getX()
 
   @org.jetbrains.annotations.NotNull()
+  public static final kotlin.annotation.AnnotationTarget[] getEnums();//  getEnums()
+
+  @org.jetbrains.annotations.NotNull()
   public static final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> getSum();//  getSum()
 
   @org.jetbrains.annotations.NotNull()
-  public static final kotlin.reflect.KClass<C> getLocalClass();//  getLocalClass()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final kotlin.reflect.KClass<java.lang.String> getNonLocalClass();//  getNonLocalClass()
+  public static final kotlin.reflect.KClass<? extends java.lang.Object>[] getClasses();//  getClasses()
 
   @org.jetbrains.annotations.Nullable()
   public static final java.lang.Boolean getIslowercase();//  getIslowercase()
