@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.AbstractIrLazyFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrBody
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.DeserializableClass
 import org.jetbrains.kotlin.ir.util.isFacadeClass
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.name.ClassId
@@ -38,7 +38,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     override var origin: IrDeclarationOrigin,
     override val symbol: IrSimpleFunctionSymbol,
     override var isFakeOverride: Boolean
-) : IrSimpleFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
+) : AbstractIrLazyFunction(), AbstractFir2IrLazyDeclaration<F>, Fir2IrTypeParametersContainer, IrLazyFunctionBase,
     Fir2IrComponents by components {
 
     override lateinit var typeParameters: List<IrTypeParameter>
@@ -120,11 +120,11 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
         return super<AbstractFir2IrLazyDeclaration>.createLazyAnnotations()
     }
 
-    private fun tryLoadIr(): Boolean {
-        if (!isInline || isFakeOverride) return false
-        if (!extensions.irNeedsDeserialization) return false
-        val toplevel = getTopLevelDeclaration()
-        return (toplevel as? DeserializableClass)?.loadIr() ?: false
+    override val isDeserializationEnabled: Boolean
+        get() = extensions.irNeedsDeserialization
+
+    override fun lazyParent(): IrDeclarationParent {
+        return super<AbstractFir2IrLazyDeclaration>.lazyParent()
     }
 
     companion object {
