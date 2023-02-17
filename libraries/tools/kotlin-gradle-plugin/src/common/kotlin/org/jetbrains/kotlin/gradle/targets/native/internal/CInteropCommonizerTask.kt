@@ -132,7 +132,7 @@ internal open class CInteropCommonizerTask
         }
         getAllInteropsGroups().associateWith { group ->
             (group.targets + group.targets.allLeaves()).map { target ->
-                val externalDependencyFiles = when (target) {
+                val externalDependencyFiles: List<FileCollection> = when (target) {
                     is LeafCommonizerTarget -> {
                         cinterops
                             .filter { cinterop -> cinterop.identifier in group.interops && cinterop.konanTarget == target.konanTarget }
@@ -144,6 +144,12 @@ internal open class CInteropCommonizerTask
                         val groupSourceSets = sourceSetsByGroup[group].orEmpty().toSet()
                         targetSourceSets.intersect(groupSourceSets)
                             .filterIsInstance<DefaultKotlinSourceSet>()
+                            /*
+                            We take dependencies just from a single matching source set!
+                            This is because all source sets matching the target and group constraints
+                            will provide the same dependencies (since cinterops are just based upon KonanTarget)
+                             */
+                            .take(1)
                             .map { sourceSet -> project.createCInteropMetadataDependencyClasspath(sourceSet) }
                     }
                 }
