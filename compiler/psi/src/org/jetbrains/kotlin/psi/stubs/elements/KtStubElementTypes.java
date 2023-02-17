@@ -128,6 +128,9 @@ public interface KtStubElementTypes {
     KtContractEffectElementType CONTRACT_EFFECT =
             new KtContractEffectElementType("CONTRACT_EFFECT", KtContractEffect.class);
 
+    KtContractExpressionElementType CONTRACT_EXPRESSION =
+            new KtContractExpressionElementType("CONTRACT_EXPRESSION");
+
     KtValueArgumentElementType<KtLambdaArgument> LAMBDA_ARGUMENT =
             new KtValueArgumentElementType<>("LAMBDA_ARGUMENT", KtLambdaArgument.class);
 

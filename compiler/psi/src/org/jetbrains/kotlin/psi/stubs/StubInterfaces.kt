@@ -20,6 +20,8 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.stubs.NamedStub
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.contracts.description.EffectType
+import org.jetbrains.kotlin.contracts.description.ExpressionType
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -69,7 +71,14 @@ interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T
     fun isSpread(): Boolean
 }
 
-interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect> {}
+interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect> {
+    fun effectType(): EffectType?
+}
+
+interface KotlinContractExpressionStub : KotlinPlaceHolderStub<KtContractExpression> {
+    fun type(): ExpressionType
+    fun data(): String
+}
 
 interface KotlinAnnotationEntryStub : StubElement<KtAnnotationEntry> {
     fun getShortName(): String?

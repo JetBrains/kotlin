@@ -448,14 +448,13 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
             function.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers, ::loadContextReceiver)
         }
-        //todo contracts
-//        if (function.hasContract()) {
-//            val contractDeserializer = if (function.typeParameters.isEmpty()) this.contractDeserializer else FirContractDeserializer(local)
-//            val contractDescription = contractDeserializer.loadContract(function.contract, simpleFunction)
-//            if (contractDescription != null) {
-//                simpleFunction.replaceContractDescription(contractDescription)
-//            }
-//        }
+        val contractDescription = function.contractDescription
+        if (contractDescription != null) {
+            val resolvedDescription = StubBasedFirContractDeserializer(simpleFunction, local.typeDeserializer).loadContract(contractDescription)
+            if (resolvedDescription != null) {
+                simpleFunction.replaceContractDescription(resolvedDescription)
+            }
+        }
         return simpleFunction
     }
 

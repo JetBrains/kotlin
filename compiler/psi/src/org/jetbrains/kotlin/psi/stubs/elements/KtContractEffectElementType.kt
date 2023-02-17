@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
+import org.jetbrains.kotlin.contracts.description.EffectType
 import org.jetbrains.kotlin.psi.KtContractEffect
 import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectStubImpl
@@ -16,13 +17,14 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectStubImpl
 class KtContractEffectElementType(debugName: String, psiClass: Class<KtContractEffect>) :
     KtStubElementType<KotlinContractEffectStub, KtContractEffect>(debugName, psiClass, KotlinContractEffectStub::class.java) {
     override fun serialize(stub: KotlinContractEffectStub, dataStream: StubOutputStream) {
+        dataStream.writeName(stub.effectType()?.name)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>?): KotlinContractEffectStub {
-        return KotlinContractEffectStubImpl(parentStub, this)
+        return KotlinContractEffectStubImpl(parentStub, this, dataStream.readNameString()?.let { EffectType.valueOf(it) })
     }
 
     override fun createStub(psi: KtContractEffect, parentStub: StubElement<*>?): KotlinContractEffectStub {
-        return KotlinContractEffectStubImpl(parentStub, this)
+        return KotlinContractEffectStubImpl(parentStub, this, null)
     }
 }
