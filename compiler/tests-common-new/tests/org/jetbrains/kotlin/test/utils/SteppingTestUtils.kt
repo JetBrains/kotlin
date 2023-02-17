@@ -114,6 +114,9 @@ fun checkSteppingTestResult(
     }
 
     actualLineNumbersIterator.forEach { actual.add(it) }
+    if (actual.last().isNotBlank()) {
+        actual.add("")
+    }
 
     assertEqualsToFile(wholeFile, actual.joinToString("\n"))
 }

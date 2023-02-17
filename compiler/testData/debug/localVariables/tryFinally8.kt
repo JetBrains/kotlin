@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2_LIGHT_TREE: JVM_IR
+//   Reason: KT-56755
 // The old backend has `y` and `i` visible on the finally block.
 // IGNORE_BACKEND: JVM
 // WITH_STDLIB
@@ -36,37 +38,37 @@ fun box() {
 }
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:34 box:
-// test.kt:20 compute:
-// test.kt:21 compute:
-// test.kt:22 compute: y:int=42:int
-// test.kt:23 compute: y:int=42:int, i:int=0:int
-// test.kt:7 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
-// test.kt:8 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
-// test.kt:9 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, z$iv:int=32:int
-// test.kt:10 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, z$iv:int=32:int, j$iv:int=0:int
-// test.kt:12 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
-// test.kt:13 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, e$iv:java.lang.Exception=java.lang.RuntimeException
-// test.kt:24 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, e$iv:java.lang.Exception=java.lang.RuntimeException, $i$a$-f-TestKt$compute$1:int=0:int
-// test.kt:28 compute:
-// test.kt:34 box:
-// test.kt:35 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
-// test.kt:36 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
+// test.kt:36 box:
+// test.kt:22 compute:
+// test.kt:23 compute:
+// test.kt:24 compute: y:int=42:int
+// test.kt:25 compute: y:int=42:int, i:int=0:int
+// test.kt:9 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
+// test.kt:10 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
+// test.kt:11 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, z$iv:int=32:int
+// test.kt:12 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, z$iv:int=32:int, j$iv:int=0:int
+// test.kt:14 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int
+// test.kt:15 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, e$iv:java.lang.Exception=java.lang.RuntimeException
+// test.kt:26 compute: y:int=42:int, i:int=0:int, $i$f$f:int=0:int, e$iv:java.lang.Exception=java.lang.RuntimeException, $i$a$-f-TestKt$compute$1:int=0:int
+// test.kt:30 compute:
+// test.kt:36 box:
+// test.kt:37 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String
+// test.kt:38 box: result:java.lang.String="NON_LOCAL_RETURN":java.lang.String, localX:java.lang.String="OK":java.lang.String
 
 // EXPECTATIONS JS_IR
-// test.kt:34 box:
-// test.kt:21 compute:
-// test.kt:22 compute: y=42:number
-// test.kt:22 compute: y=42:number
-// test.kt:22 compute: y=42:number
-// test.kt:22 compute: y=42:number, i=0:number
-// test.kt:8 compute: y=42:number, i=0:number
-// test.kt:9 compute: y=42:number, i=0:number, z=32:number
-// test.kt:9 compute: y=42:number, i=0:number, z=32:number
-// test.kt:9 compute: y=42:number, i=0:number, z=32:number
-// test.kt:9 compute: y=42:number, i=0:number, z=32:number, j=0:number
-// test.kt:10 compute: y=42:number, i=0:number, z=32:number, j=0:number
+// test.kt:36 box:
+// test.kt:23 compute:
+// test.kt:24 compute: y=42:number
+// test.kt:24 compute: y=42:number
+// test.kt:24 compute: y=42:number
+// test.kt:24 compute: y=42:number, i=0:number
+// test.kt:10 compute: y=42:number, i=0:number
+// test.kt:11 compute: y=42:number, i=0:number, z=32:number
+// test.kt:11 compute: y=42:number, i=0:number, z=32:number
+// test.kt:11 compute: y=42:number, i=0:number, z=32:number
+// test.kt:11 compute: y=42:number, i=0:number, z=32:number, j=0:number
 // test.kt:12 compute: y=42:number, i=0:number, z=32:number, j=0:number
-// test.kt:12 compute: y=42:number, i=0:number, z=32:number, j=0:number
-// test.kt:24 compute: y=42:number, i=0:number, z=32:number, j=0:number, e=kotlin.RuntimeException
-// test.kt:28 compute: y=42:number, i=0:number, z=32:number, j=0:number, e=kotlin.RuntimeException
+// test.kt:14 compute: y=42:number, i=0:number, z=32:number, j=0:number
+// test.kt:14 compute: y=42:number, i=0:number, z=32:number, j=0:number
+// test.kt:26 compute: y=42:number, i=0:number, z=32:number, j=0:number, e=kotlin.RuntimeException
+// test.kt:30 compute: y=42:number, i=0:number, z=32:number, j=0:number, e=kotlin.RuntimeException
