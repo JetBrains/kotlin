@@ -923,15 +923,11 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitFinallyBlock(): FinallyBlockExitNode {
-        val enterNode = finallyBlocksInProgress.pop()
+        val enterNode = finallyBlocksInProgress.top()
         val tryExitNode = tryExitNodes.top()
         val exitNode = createFinallyBlockExitNode(enterNode.fir)
         popAndAddEdge(exitNode)
-        val allNormalInputsAreDead = enterNode.previousNodes.all {
-            val edge = enterNode.edgeFrom(it)
-            edge.kind.isDead || edge.label != NormalPath
-        }
-        addEdge(exitNode, tryExitNode, isDead = allNormalInputsAreDead)
+        addEdge(exitNode, tryExitNode, isDead = enterNode.allNormalInputsAreDead)
         // TODO: there should also be edges to outer catch blocks? Control flow can go like this:
         //   try { try { throw E2() } catch (e: E1) { } finally { } } catch (e: E2) { }
         //                        \-----------------------------^ \-----------------^
@@ -960,6 +956,12 @@ class ControlFlowGraphBuilder {
         return exitNode
     }
 
+    private val FinallyBlockEnterNode.allNormalInputsAreDead: Boolean
+        get() = previousNodes.all {
+            val edge = edgeFrom(it)
+            edge.kind.isDead || edge.label != NormalPath
+        }
+
     private fun <T> CFGNode<*>.addReturnEdges(nodes: Iterable<T>, minLevel: Int) where T : CFGNode<*>, T : EdgeLabel {
         for (node in nodes) {
             when {
@@ -974,8 +976,23 @@ class ControlFlowGraphBuilder {
     }
 
     fun exitTryExpression(callCompleted: Boolean): TryExpressionExitNode {
-        notCompletedFunctionCalls.pop().forEach(::completeFunctionCall)
+        var haveNothingReturnCall = false
+        notCompletedFunctionCalls.pop().forEach { haveNothingReturnCall = completeFunctionCall(it) || haveNothingReturnCall }
         val node = tryExitNodes.pop()
+        if (node.fir.finallyBlock != null) {
+            val enterFinallyNode = finallyBlocksInProgress.pop()
+            /**
+             * If it appears that after completion try main expression returns nothing and try has finally block,
+             *   we should make edge from finally exist to try exit a dead (and it may be not dead originally
+             *   before completion)
+             */
+            if (haveNothingReturnCall && enterFinallyNode.allNormalInputsAreDead) {
+                val exitFinallyNode = node.previousNodes.single()
+                assert(exitFinallyNode is FinallyBlockExitNode)
+                CFGNode.removeAllIncomingEdges(node)
+                addEdge(exitFinallyNode, node, isDead = true)
+            }
+        }
         mergeDataFlowFromPostponedLambdas(node, callCompleted)
         node.updateDeadStatus()
         lastNodes.push(node)
@@ -1001,13 +1018,14 @@ class ControlFlowGraphBuilder {
     private fun levelOfNextExceptionCatchingGraph(): Int =
         graphs.all().first { it.kind != ControlFlowGraph.Kind.AnonymousFunctionCalledInPlace }.exitNode.level
 
-    //this is a workaround to make function call dead when call is completed _after_ building its node in the graph
-    //this happens when completing the last call in try/catch blocks
-    //todo this doesn't make fully 'right' Nothing node (doesn't support going to catch and pass through finally)
-    // because doing those afterwards is quite challenging
-    // it would be much easier if we could build calls after full completion only, at least for Nothing calls
-    private fun completeFunctionCall(node: FunctionCallNode) {
-        if (!node.fir.resultType.isNothing) return
+    // this is a workaround to make function call dead when call is completed _after_ building its node in the graph
+    // this happens when completing the last call in try/catch blocks
+    // todo this doesn't make fully 'right' Nothing node (doesn't support going to catch and pass through finally)
+    //  because doing those afterwards is quite challenging
+    //  it would be much easier if we could build calls after full completion only, at least for Nothing calls
+    // @returns `true` if node actually returned Nothing
+    private fun completeFunctionCall(node: FunctionCallNode): Boolean {
+        if (!node.fir.resultType.isNothing) return false
         val stub = StubNode(node.owner, node.level)
         val edges = node.followingNodes.map { it to node.edgeTo(it) }
         CFGNode.removeAllOutgoingEdges(node)
@@ -1018,6 +1036,7 @@ class ControlFlowGraphBuilder {
             to.updateDeadStatus()
             propagateDeadnessForward(to)
         }
+        return true
     }
 
     // ----------------------------------- Resolvable call -----------------------------------

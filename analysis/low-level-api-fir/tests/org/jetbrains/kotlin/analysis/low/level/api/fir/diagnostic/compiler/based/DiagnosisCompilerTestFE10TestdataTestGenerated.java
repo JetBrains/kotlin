@@ -6410,6 +6410,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
                 public void testSimpleClass() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/simpleClass.kt");
                 }
+
+                @Test
+                @TestMetadata("singleReturnFromTry.kt")
+                public void testSingleReturnFromTry() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/controlFlowAnalysis/definiteReturn/singleReturnFromTry.kt");
+                }
             }
 
             @Nested
