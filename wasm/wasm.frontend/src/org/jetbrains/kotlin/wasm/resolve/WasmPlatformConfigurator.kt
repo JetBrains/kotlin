@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.LateinitIntrinsicApplicabilit
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmExternalDeclarationChecker
 import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmExternalInheritanceChecker
+import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmImportAnnotationChecker
 
 // TODO: Review the list of used K/JS checkers.
 //       Refactor useful checkers into common module.
@@ -28,6 +29,7 @@ object WasmPlatformConfigurator : PlatformConfiguratorBase(
         JsExportAnnotationChecker,
         JsExportDeclarationChecker,
         WasmExternalDeclarationChecker,
+        WasmImportAnnotationChecker,
     ),
     additionalCallCheckers = listOf(
         JsModuleCallChecker,

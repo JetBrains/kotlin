@@ -19,6 +19,13 @@ public interface ErrorsWasm {
     DiagnosticFactory1<KtElement, KotlinType> NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE =
             DiagnosticFactory1.create(ERROR, PositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT);
 
+    DiagnosticFactory0<PsiElement> NESTED_WASM_IMPORT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> WASM_IMPORT_PARAMETER_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> WASM_IMPORT_VARARG_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> WASM_IMPORT_UNSUPPORTED_PARAMETER_TYPE = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory1<PsiElement, KotlinType> WASM_IMPORT_UNSUPPORTED_RETURN_TYPE = DiagnosticFactory1.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {
