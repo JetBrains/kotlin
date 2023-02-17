@@ -74,7 +74,7 @@ internal class LibraryCommonizer internal constructor(
 
     private fun createDependenciesProvider(): TargetDependent<ModulesProvider?> {
         return TargetDependent(outputTargets + outputTargets.allLeaves()) { target ->
-            DefaultModulesProvider.create(dependencies.getLibraries(target))
+            DefaultModulesProvider.forDependencies(dependencies.getLibraries(target), logger)
         }
     }
 
