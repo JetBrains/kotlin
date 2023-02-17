@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2_LIGHT_TREE: JVM_IR
+//   Reason: KT-56759
 data class A(val a: Int, val b: Int)
 
 fun box() : String
