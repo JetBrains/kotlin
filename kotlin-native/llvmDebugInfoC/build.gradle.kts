@@ -49,6 +49,6 @@ native {
 
     target(lib("debugInfo"), objSet) {
         tool(*platformManager.hostPlatform.clangForJni.llvmAr("").toTypedArray())
-        flags("-qv", ruleOut(), *ruleInAll())
+        flags("-qcv", ruleOut(), *ruleInAll())
     }
 }
