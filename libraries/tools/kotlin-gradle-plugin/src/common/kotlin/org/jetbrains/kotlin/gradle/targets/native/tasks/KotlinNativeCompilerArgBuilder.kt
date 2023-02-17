@@ -9,6 +9,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.BitcodeEmbeddingMode
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -37,10 +38,9 @@ internal fun buildKotlinNativeKlibCompilerArgs(
     libraries: List<File>,
 
     languageSettings: LanguageSettings,
-    compilerOptions: KotlinCommonCompilerOptions,
+    compilerOptions: KotlinNativeCompilerOptions,
     compilerPlugins: List<CompilerPluginData>,
 
-    moduleName: String,
     shortModuleName: String,
     friendModule: FileCollection,
     libraryVersion: String,
@@ -58,7 +58,7 @@ internal fun buildKotlinNativeKlibCompilerArgs(
     }
 
     // Configure FQ module name to avoid cyclic dependencies in klib manifests (see KT-36721).
-    addArg("-module-name", moduleName)
+    addArg("-module-name", compilerOptions.moduleName.get())
     add("-Xshort-module-name=$shortModuleName")
 
     val friends = friendModule.files

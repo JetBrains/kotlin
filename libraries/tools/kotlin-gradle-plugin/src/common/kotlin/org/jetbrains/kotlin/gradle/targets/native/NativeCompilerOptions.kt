@@ -7,15 +7,16 @@ package org.jetbrains.kotlin.gradle.targets.native
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptionsDefault
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
 class NativeCompilerOptions(project: Project) : HasCompilerOptions<KotlinCommonCompilerOptions> {
 
-    override val options: KotlinCommonCompilerOptions = project.objects
-        .newInstance(KotlinCommonCompilerOptionsDefault::class.java)
+    override val options: KotlinNativeCompilerOptions = project.objects
+        .newInstance(KotlinNativeCompilerOptionsDefault::class.java)
         .apply {
             useK2.finalizeValue()
         }
