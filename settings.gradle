@@ -80,6 +80,8 @@ include ":benchmarks",
         ":compiler:cli-base",
         ":compiler:cli",
         ":compiler:cli-js",
+        ":incremental-compilation-facade-api",
+        ":incremental-compilation-facade-impl",
         ":compiler:incremental-compilation-impl",
         ":compiler:tests-compiler-utils",
         ":compiler:tests-common",
@@ -630,6 +632,8 @@ project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as Fil
 project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File
 project(':daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
 project(':kotlin-daemon-client').projectDir = "$rootDir/compiler/daemon/daemon-client" as File
+project(':incremental-compilation-facade-api').projectDir = "$rootDir/compiler/incremental-compilation-facade/api" as File
+project(':incremental-compilation-facade-impl').projectDir = "$rootDir/compiler/incremental-compilation-facade/impl" as File
 project(':kotlin-daemon-tests').projectDir = "$rootDir/compiler/daemon/daemon-tests" as File
 project(':kotlin-compiler-runner-unshaded').projectDir = "$rootDir/compiler/compiler-runner-unshaded" as File
 project(':kotlin-compiler-runner').projectDir = "$rootDir/compiler/compiler-runner" as File
