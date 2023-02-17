@@ -4836,6 +4836,12 @@ public class FirDiagnosticsWithLightTreeTestGenerated extends AbstractFirDiagnos
             }
 
             @Test
+            @TestMetadata("bareWithDnnArg.kt")
+            public void testBareWithDnnArg() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/types/bareWithDnnArg.kt");
+            }
+
+            @Test
             @TestMetadata("bareWithFlexibleArg.kt")
             public void testBareWithFlexibleArg() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/types/bareWithFlexibleArg.kt");

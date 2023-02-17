@@ -1,0 +1,16 @@
+FILE: main.kt
+    public abstract interface KotlinCancellablePromise<E> : R|Promise<E>| {
+    }
+    public final class D<T> : R|kotlin/Any| {
+        public constructor<T>(): R|D<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun foo(x: R|Promise<T & Any>|): R|kotlin/Unit| {
+            this@R|/D|.R|/D.bar|((R|<local>/x| as R|KotlinCancellablePromise<T & Any>|))
+        }
+
+        public final fun bar(x: R|KotlinCancellablePromise<T & Any>|): R|kotlin/Unit| {
+        }
+
+    }
