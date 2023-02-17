@@ -24,12 +24,16 @@ sealed interface FailurePattern
 
 private typealias Block<T> = () -> T
 
-enum class TestMode {
-    JS_NO_IC,
-    JS_WITH_IC,
-    NATIVE_CACHE_NO,
-    NATIVE_CACHE_STATIC_ONLY_DIST,
-    NATIVE_CACHE_STATIC_EVERYWHERE,
+enum class TestMode(val isJs: Boolean = false, val isNative: Boolean = false) {
+    JS_NO_IC(isJs = true),
+    JS_WITH_IC(isJs = true),
+    NATIVE_CACHE_NO(isNative = true),
+    NATIVE_CACHE_STATIC_ONLY_DIST(isNative = true),
+    NATIVE_CACHE_STATIC_EVERYWHERE(isNative = true);
+
+    init {
+        check(isJs xor isNative)
+    }
 }
 
 fun abiTest(init: TestBuilder.() -> Unit): String {
