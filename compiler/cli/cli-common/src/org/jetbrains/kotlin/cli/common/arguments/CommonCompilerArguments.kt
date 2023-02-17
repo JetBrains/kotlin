@@ -729,7 +729,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
 
     @Argument(
-        value = "-XdependsOn",
+        value = "-Xdepends-on",
         valueDescription = "<fromModuleName>:<onModuleName>",
         description = "Declares that <fromModuleName> depends on <onModuleName> with dependsOn relation",
         delimiter = ""

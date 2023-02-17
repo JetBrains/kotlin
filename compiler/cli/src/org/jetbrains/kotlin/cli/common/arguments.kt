@@ -145,7 +145,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     if (rawModules == null) {
         if (rawDependencies != null) {
-            reportError("-XdependsOn flag can not be used without -Xmodule")
+            reportError("-Xdepends-on flag can not be used without -Xmodule")
         }
         return null
     }
@@ -207,7 +207,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     if (modules.size == 1) {
         if (rawDependencies?.isNotEmpty() == true) {
-            reportError("-XdependsOn flag is specified but there is only one module declared")
+            reportError("-Xdepends-on flag is specified but there is only one module declared")
         }
         return HmppCliModuleStructure(modules, emptyMap())
     }
@@ -224,7 +224,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     val dependenciesMap = rawDependencies.orEmpty().mapNotNull {
         val split = it.split(":")
         if (split.size != 2) {
-            reportError("Incorrect syntax for -XdependsOn argument. Expected <fromModuleName>:<onModuleName> but got `$it`")
+            reportError("Incorrect syntax for -Xdepends-on argument. Expected <fromModuleName>:<onModuleName> but got `$it`")
             return@mapNotNull null
         }
         val moduleName1 = split[0]

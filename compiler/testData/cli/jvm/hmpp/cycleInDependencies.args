@@ -9,6 +9,6 @@ $TEMP_DIR$
 -Xmodule=a;$TESTDATA_DIR$/src/a.kt
 -Xmodule=b;$TESTDATA_DIR$/src/b.kt
 -Xmodule=c;$TESTDATA_DIR$/src/c.kt
--XdependsOn=b\:a
--XdependsOn=c\:b
--XdependsOn=a\:c
+-Xdepends-on=b\:a
+-Xdepends-on=c\:b
+-Xdepends-on=a\:c
