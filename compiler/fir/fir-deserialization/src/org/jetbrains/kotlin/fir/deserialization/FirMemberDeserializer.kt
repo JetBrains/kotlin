@@ -60,6 +60,7 @@ class FirDeserializationContext(
 
     fun childContext(
         typeParameterProtos: List<ProtoBuf.TypeParameter>,
+        containingDeclarationSymbol: FirBasedSymbol<*>,
         nameResolver: NameResolver = this.nameResolver,
         typeTable: TypeTable = this.typeTable,
         relativeClassName: FqName? = this.relativeClassName,
@@ -68,7 +69,6 @@ class FirDeserializationContext(
         annotationDeserializer: AbstractAnnotationDeserializer = this.annotationDeserializer,
         constDeserializer: FirConstDeserializer = this.constDeserializer,
         capturesTypeParameters: Boolean = true,
-        containingDeclarationSymbol: FirBasedSymbol<*>? = this.outerClassSymbol
     ): FirDeserializationContext = FirDeserializationContext(
         nameResolver,
         typeTable,

@@ -17582,6 +17582,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("nestedClassTypeParameterDeserialization.kt")
+        public void testNestedClassTypeParameterDeserialization() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/nestedClassTypeParameterDeserialization.kt");
+        }
+
+        @Test
         @TestMetadata("notFoundClasses.kt")
         public void testNotFoundClasses() throws Exception {
             runTest("compiler/testData/codegen/box/fir/notFoundClasses.kt");
