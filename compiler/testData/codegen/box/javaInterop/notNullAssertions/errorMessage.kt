@@ -1,3 +1,5 @@
+// IGNORE_BACKEND_K2_LIGHT_TREE: JVM_IR
+//   Reason: KT-56760
 // TARGET_BACKEND: JVM
 // FILE: test.kt
 fun f(x: String) = "Fail 1"
