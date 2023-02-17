@@ -57,4 +57,20 @@ public class DiagnosticsWasmTestGenerated extends AbstractDiagnosticsWasmTest {
             runTest("compiler/testData/diagnostics/wasmTests/jsInterop/jsExport.kt");
         }
     }
+
+    @Nested
+    @TestMetadata("compiler/testData/diagnostics/wasmTests/wasmInterop")
+    @TestDataPath("$PROJECT_ROOT")
+    public class WasmInterop {
+        @Test
+        public void testAllFilesPresentInWasmInterop() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmTests/wasmInterop"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("wasmImport.kt")
+        public void testWasmImport() throws Exception {
+            runTest("compiler/testData/diagnostics/wasmTests/wasmInterop/wasmImport.kt");
+        }
+    }
 }

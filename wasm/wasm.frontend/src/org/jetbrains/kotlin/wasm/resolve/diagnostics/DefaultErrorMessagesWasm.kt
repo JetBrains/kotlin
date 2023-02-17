@@ -16,6 +16,9 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
             "Non-external type extends external type {0}",
             Renderers.RENDER_TYPE
         )
+
+        put(ErrorsWasm.NESTED_WASM_IMPORT, "Only top-level functions can be imported with @WasmImport")
+        put(ErrorsWasm.WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION, "Functions annotated with @WasmImport must be external")
     }
 }
 
