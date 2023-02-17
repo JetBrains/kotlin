@@ -1,4 +1,4 @@
-rootProject.name = "build-tools"
+rootProject.name = "native-build-tools"
 
 pluginManagement {
     apply(from = "../../repo/scripts/cache-redirector.settings.gradle.kts")

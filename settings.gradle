@@ -788,7 +788,9 @@ project(':kotlin-scripting-ide-common').projectDir = "$rootDir/plugins/scripting
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
 if (buildProperties.isKotlinNativeEnabled) {
-    includeBuild("kotlin-native/build-tools")
+    includeBuild("kotlin-native/build-tools") {
+        name = "native-build-tools"
+    }
     include ':kotlin-native:dependencies'
     include ':kotlin-native:endorsedLibraries:kotlinx.cli'
     include ':kotlin-native:endorsedLibraries'
