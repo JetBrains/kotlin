@@ -42222,6 +42222,12 @@ public class K2NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTes
             }
 
             @Test
+            @TestMetadata("kt56500.kt")
+            public void testKt56500() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/capture/kt56500.kt");
+            }
+
+            @Test
             @TestMetadata("simpleCapturingInClass.kt")
             public void testSimpleCapturingInClass() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/capture/simpleCapturingInClass.kt");
