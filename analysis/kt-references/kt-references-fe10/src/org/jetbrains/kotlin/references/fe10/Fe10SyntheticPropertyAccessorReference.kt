@@ -5,22 +5,16 @@
 
 package org.jetbrains.kotlin.references.fe10
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMethod
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.references.fe10.base.KtFe10Reference
-import org.jetbrains.kotlin.asJava.canHaveSyntheticGetter
-import org.jetbrains.kotlin.asJava.canHaveSyntheticSetter
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.references.SyntheticPropertyAccessorReference
-import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtImportAlias
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getReferenceTargets
-import org.jetbrains.kotlin.resolve.references.ReferenceAccess
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -28,13 +22,6 @@ class Fe10SyntheticPropertyAccessorReference(
     expression: KtNameReferenceExpression,
     getter: Boolean
 ) : SyntheticPropertyAccessorReference(expression, getter), KtFe10Reference {
-
-    override fun canBeReferenceTo(candidateTarget: PsiElement): Boolean {
-        if (candidateTarget !is PsiMethod || !isAccessorName(candidateTarget.name)) return false
-        if (getter && !candidateTarget.canHaveSyntheticGetter || !getter && !candidateTarget.canHaveSyntheticSetter) return false
-        if (!getter && expression.readWriteAccess(true) == ReferenceAccess.READ) return false
-        return true
-    }
 
     override fun getTargetDescriptors(context: BindingContext): Collection<DeclarationDescriptor> {
         val descriptors = expression.getReferenceTargets(context)
