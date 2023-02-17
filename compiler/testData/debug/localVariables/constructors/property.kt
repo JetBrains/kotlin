@@ -1,5 +1,5 @@
-
-
+// IGNORE_BACKEND_K2_LIGHT_TREE: JVM_IR
+//   Reason: KT-56755
 // FILE: test.kt
 class F(val a: String)
 
