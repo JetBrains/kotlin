@@ -187,15 +187,16 @@ class FakeOverrideBuilder(
 
         if (!partialLinkageEnabled
             || !symbol.isBound
-            || symbol.owner.let { it.isSuspend == function.isSuspend || it.parent != parent }
+            || symbol.owner.let { it.isSuspend == function.isSuspend && !it.isInline && !function.isInline }
         ) {
             return signature to symbol
         }
 
-        // In old KLIB signatures we don't distinguish between suspend and non-suspend functions. So we need to manually patch
-        // the signature of the fake override to avoid clash with the existing function with the different `isSuspend` flag state.
+        // In old KLIB signatures we don't distinguish between suspend and non-suspend, inline and non-inline functions. So we need to
+        // manually patch the signature of the fake override to avoid clash with the existing function with the different `isSuspend` flag
+        // state or the existing function is `isInline=true`.
         // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
-        // In new KLIB signatures `isSuspend` flag will be taken into account as a part of the signature.
+        // In new KLIB signatures `isSuspend` and `isInline` flags will be taken into account as a part of signature.
         val irFactory = function.factory
 
         val functionWithDisambiguatedSignature = irFactory.buildFun {

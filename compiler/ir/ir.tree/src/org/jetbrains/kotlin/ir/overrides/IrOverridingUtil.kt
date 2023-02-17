@@ -647,6 +647,7 @@ class IrOverridingUtil(
                 subMember !is IrSimpleFunction -> return incompatible("Member kind mismatch")
                 superMember.hasExtensionReceiver != subMember.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
                 superMember.isSuspend != subMember.isSuspend -> return incompatible("Incompatible suspendability")
+                superMember.isInline -> return incompatible("Inline function can't be overridden")
 
                 else -> {
                     superTypeParameters = superMember.typeParameters
@@ -658,6 +659,7 @@ class IrOverridingUtil(
             is IrProperty -> when {
                 subMember !is IrProperty -> return incompatible("Member kind mismatch")
                 superMember.getter.hasExtensionReceiver != subMember.getter.hasExtensionReceiver -> return incompatible("Receiver presence mismatch")
+                superMember.isInline -> return incompatible("Inline property can't be overridden")
 
                 else -> {
                     superTypeParameters = superMember.typeParameters
