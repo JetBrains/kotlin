@@ -73,10 +73,28 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
     dependsOn(":dist")
     workingDir = rootDir
-    useJUnitPlatform()
+    useJUnitPlatform {
+        configureJUnit()
+    }
+}
+
+projectTest(jUnitMode = JUnitMode.JUnit5) {
+    configure()
+}
+
+projectTest("aggregateTests", jUnitMode = JUnitMode.JUnit5) {
+    configure {
+        excludeTags("FirPsiCodegenTest")
+    }
+}
+
+projectTest("nightlyTests", jUnitMode = JUnitMode.JUnit5) {
+    configure {
+        includeTags("FirPsiCodegenTest")
+    }
 }
 
 testsJar()

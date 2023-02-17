@@ -682,7 +682,11 @@ tasks {
         dependsOn(":compiler:fir:raw-fir:light-tree2fir:test")
         dependsOn(":compiler:fir:analysis-tests:test")
         dependsOn(":compiler:fir:analysis-tests:legacy-fir-tests:test")
-        dependsOn(":compiler:fir:fir2ir:test")
+        dependsOn(":compiler:fir:fir2ir:aggregateTests")
+    }
+
+    register("nightlyFirCompilerTest") {
+        dependsOn(":compiler:fir:fir2ir:nightlyTests")
     }
 
     register("compilerFrontendVisualizerTest") {
