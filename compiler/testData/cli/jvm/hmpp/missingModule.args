@@ -7,4 +7,4 @@ $TEMP_DIR$
 -XXLanguage\:+MultiPlatformProjects
 -Xmodule=a;$TESTDATA_DIR$/src/a.kt
 -Xmodule=b;$TESTDATA_DIR$/src/b.kt
--XdependsOn=c\:a
+-Xdepends-on=c\:a

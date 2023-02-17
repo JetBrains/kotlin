@@ -8,5 +8,5 @@ as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
 warning: language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features
-error: -XdependsOn flag is specified but there is only one module declared
+error: -Xdepends-on flag is specified but there is only one module declared
 COMPILATION_ERROR
