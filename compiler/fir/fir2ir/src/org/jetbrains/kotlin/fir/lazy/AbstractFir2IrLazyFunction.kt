@@ -123,16 +123,8 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
     private fun tryLoadIr(): Boolean {
         if (!isInline || isFakeOverride) return false
         if (!extensions.irNeedsDeserialization) return false
-        val toplevel = getToplevel()
+        val toplevel = getTopLevelDeclaration()
         return (toplevel as? DeserializableClass)?.loadIr() ?: false
-    }
-
-    private fun getToplevel(): IrDeclaration {
-        var current: IrDeclaration = this
-        while (current.parent !is IrPackageFragment) {
-            current = current.parent as IrDeclaration
-        }
-        return current
     }
 
     companion object {

@@ -113,16 +113,8 @@ class IrLazyFunction(
     private fun tryLoadIr(): Boolean {
         if (!stubGenerator.extensions.irDeserializationEnabled) return false
         if (!isInline || isFakeOverride) return false
-        val toplevel = getToplevel()
+        val toplevel = getTopLevelDeclaration()
         return (toplevel as? DeserializableClass)?.loadIr() ?: false
-    }
-
-    private fun getToplevel(): IrDeclaration {
-        var current: IrDeclaration = this
-        while (current.parent !is IrPackageFragment) {
-            current = current.parent as IrDeclaration
-        }
-        return current
     }
 
     init {
