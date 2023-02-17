@@ -37,13 +37,13 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.shouldIjPlatformExceptionBeRethrown
 
 class FirTypeDeserializer(
-    val moduleData: FirModuleData,
-    val nameResolver: NameResolver,
-    val typeTable: TypeTable,
-    val annotationDeserializer: AbstractAnnotationDeserializer,
+    private val moduleData: FirModuleData,
+    private val nameResolver: NameResolver,
+    private val typeTable: TypeTable,
+    private val annotationDeserializer: AbstractAnnotationDeserializer,
     typeParameterProtos: List<ProtoBuf.TypeParameter>,
-    val parent: FirTypeDeserializer?,
-    val containingSymbol: FirBasedSymbol<*>?
+    private val parent: FirTypeDeserializer?,
+    private val containingSymbol: FirBasedSymbol<*>?
 ) {
     private val typeParameterDescriptors: Map<Int, FirTypeParameterSymbol> = if (typeParameterProtos.isNotEmpty()) {
         LinkedHashMap<Int, FirTypeParameterSymbol>()
