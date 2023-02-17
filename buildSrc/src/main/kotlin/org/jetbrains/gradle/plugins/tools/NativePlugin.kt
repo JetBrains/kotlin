@@ -54,6 +54,7 @@ abstract class ToolExecutionTask : DefaultTask() {
 
     @TaskAction
     fun action() {
+        if (output.exists()) output.delete()
         project.exec {
             executable(cmd)
             args(*this@ToolExecutionTask.args.toTypedArray())
@@ -79,7 +80,7 @@ class ToolPatternImpl(val extension: NativeToolsExtension, val output:String, va
     override fun env(name: String) = emptyArray<String>()
 
     fun configure(task: ToolExecutionTask, configureDepencies:Boolean) {
-        extension.cleanupfiles += output
+        extension.cleanupFiles += output
         task.input = input.map {
             extension.project.file(it)
         }
@@ -184,7 +185,7 @@ class ToolConfigurationPatterns(
 open class NativeToolsExtension(val project: Project) {
     val sourceSets = SourceSets(project, this, mutableMapOf<String, SourceSet>())
     val toolPatterns = ToolConfigurationPatterns(this, mutableMapOf<Pair<String, String>, ToolPatternConfiguration>())
-    val cleanupfiles = mutableListOf<String>()
+    val cleanupFiles = mutableListOf<String>()
     fun sourceSet(configuration: SourceSets.() -> Unit) {
         sourceSets.configuration()
     }
@@ -197,13 +198,13 @@ open class NativeToolsExtension(val project: Project) {
     fun suffixes(configuration: ToolConfigurationPatterns.() -> Unit) = toolPatterns.configuration()
 
     fun target(name: String, vararg objSet: SourceSet, configuration: ToolPatternConfiguration) {
-        project.tasks.withType<Delete>().named(LifecycleBasePlugin.CLEAN_TASK_NAME).configure {
+        project.tasks.named(LifecycleBasePlugin.CLEAN_TASK_NAME, Delete::class.java).configure {
             doLast {
-                delete(*this@NativeToolsExtension.cleanupfiles.toTypedArray())
+                delete(*this@NativeToolsExtension.cleanupFiles.toTypedArray())
             }
         }
 
-        sourceSets.project.tasks.create<ToolExecutionTask>(name, ToolExecutionTask::class.java) {
+        sourceSets.project.tasks.create(name, ToolExecutionTask::class.java) {
             objSet.forEach {
                 dependsOn(it.implicitTasks())
             }

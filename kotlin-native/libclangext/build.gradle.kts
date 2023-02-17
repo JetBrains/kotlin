@@ -48,6 +48,6 @@ native {
     val objSet = sourceSets["main"]!!.transform(".cpp" to ".$obj")
     target(lib("clangext"), objSet) {
         tool(*platformManager.hostPlatform.clangForJni.llvmAr("").toTypedArray())
-        flags("-qv", ruleOut(), *ruleInAll())
+        flags("-qcv", ruleOut(), *ruleInAll())
     }
 }
