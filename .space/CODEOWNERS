@@ -392,6 +392,7 @@
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle.kts "Kotlin Build Tools" "Kotlin Multiplatform" 
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/**/*.gradle "Kotlin Build Tools" "Kotlin Multiplatform"
 /kotlin-native/backend.native/tests/**.gradle "Kotlin Native"
+/kotlin-native/backend.native/tests/**/*.gradle.kts "Kotlin Native"
 /kotlin-native/tools/**/*.gradle "Kotlin Native"
 /kotlin-native/tools/**/*.gradle.kts "Kotlin Native"
 /kotlin-native/performance/**/*.gradle "Kotlin Native"
