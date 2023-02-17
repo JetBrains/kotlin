@@ -53,7 +53,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
         hasPackage(packageFqName)
     }
 
-    private val callableNamesInPackageCache: FirLazyValue<Map<FqName, Set<Name>>, Nothing?> =
+    private val callableNamesInPackageCache: FirLazyValue<Map<FqName, Set<Name>>> =
         cachesFactory.createLazyValue {
             computeNamesGroupedByPackage(
                 FirDeclarationGenerationExtension::getTopLevelCallableIds,
@@ -61,7 +61,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
             )
         }
 
-    private val classNamesInPackageCache: FirLazyValue<Map<FqName, Set<String>>, Nothing?> =
+    private val classNamesInPackageCache: FirLazyValue<Map<FqName, Set<String>>> =
         cachesFactory.createLazyValue {
             computeNamesGroupedByPackage(
                 FirDeclarationGenerationExtension::getTopLevelClassIds,
@@ -82,12 +82,12 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
             }
         }
 
-    private val extensionsByTopLevelClassId: FirLazyValue<Map<ClassId, List<FirDeclarationGenerationExtension>>, Nothing?> =
+    private val extensionsByTopLevelClassId: FirLazyValue<Map<ClassId, List<FirDeclarationGenerationExtension>>> =
         session.firCachesFactory.createLazyValue {
             extensions.flatGroupBy { it.topLevelClassIdsCache.getValue() }
         }
 
-    private val extensionsByTopLevelCallableId: FirLazyValue<Map<CallableId, List<FirDeclarationGenerationExtension>>, Nothing?> =
+    private val extensionsByTopLevelCallableId: FirLazyValue<Map<CallableId, List<FirDeclarationGenerationExtension>>> =
         session.firCachesFactory.createLazyValue {
             extensions.flatGroupBy { it.topLevelCallableIdsCache.getValue() }
         }
@@ -171,7 +171,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
 
     override fun computePackageSetWithTopLevelCallables(): Set<String> =
         extensions.flatMapTo(mutableSetOf()) { extension ->
-            extension.topLevelCallableIdsCache.getValue(null).map { it.packageName.asString() }
+            extension.topLevelCallableIdsCache.getValue().map { it.packageName.asString() }
         }
 
     override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> =

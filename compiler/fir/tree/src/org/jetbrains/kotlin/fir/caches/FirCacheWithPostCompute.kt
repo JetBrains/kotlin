@@ -20,17 +20,10 @@ operator fun <K : Any, V> FirCache<K, V, Nothing>.contains(key: K): Boolean {
     return getValueIfComputed(key) != null
 }
 
-class FirLazyValue<out V, in CONTEXT>(private val cache: FirCache<Unit, V, CONTEXT>) {
-    fun getValue(context: CONTEXT): V {
-        return cache.getValue(Unit, context)
-    }
+abstract class FirLazyValue<out V> {
+    abstract fun getValue(): V
 }
 
-operator fun <V> FirLazyValue<V, Nothing?>.getValue(thisRef: Any?, property: KProperty<*>): V {
-    return getValue(context = null)
-}
-
-@Suppress("NOTHING_TO_INLINE")
-inline fun <V> FirLazyValue<V, Nothing?>.getValue(): V {
-    return getValue(null)
+operator fun <V> FirLazyValue<V>.getValue(thisRef: Any?, property: KProperty<*>): V {
+    return getValue()
 }

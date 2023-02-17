@@ -85,11 +85,11 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
         }
 
     @FirExtensionApiInternals
-    val topLevelClassIdsCache: FirLazyValue<Set<ClassId>, Nothing?> =
+    val topLevelClassIdsCache: FirLazyValue<Set<ClassId>> =
         session.firCachesFactory.createLazyValue { getTopLevelClassIds() }
 
     @FirExtensionApiInternals
-    val topLevelCallableIdsCache: FirLazyValue<Set<CallableId>, Nothing?> =
+    val topLevelCallableIdsCache: FirLazyValue<Set<CallableId>> =
         session.firCachesFactory.createLazyValue { getTopLevelCallableIds() }
 
 }
