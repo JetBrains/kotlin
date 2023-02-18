@@ -21,6 +21,11 @@ public interface ErrorsWasm {
 
     DiagnosticFactory0<PsiElement> NESTED_WASM_IMPORT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> WASM_IMPORT_PARAMETER_DEFAULT_VALUE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> WASM_IMPORT_VARARG_PARAMETER = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> WASM_IMPORT_UNSUPPORTED_PARAMETER_TYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> WASM_IMPORT_UNSUPPORTED_RETURN_TYPE = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement> WASM_IMPORT_UNSUPPORTED_UPPER_BOUND = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

@@ -37,9 +37,14 @@ object WasmImportAnnotationChecker : DeclarationChecker {
         if (!DescriptorUtils.isTopLevelDeclaration(descriptor)) {
             trace.report(ErrorsWasm.NESTED_WASM_IMPORT.on(wasmImportPsi))
         }
-        if (descriptor is MemberDescriptor) {
+        if (descriptor is FunctionDescriptor) {
             if (!descriptor.isEffectivelyExternal()) {
                 trace.report(ErrorsWasm.WASM_IMPORT_ON_NON_EXTERNAL_DECLARATION.on(wasmImportPsi))
+            }
+            for (parameter: ValueParameterDescriptor in descriptor.valueParameters) {
+                if (parameter.declaresDefaultValue()) {
+                    trace.report(ErrorsWasm.WASM_IMPORT_PARAMETER_DEFAULT_VALUE.on(parameter.source.getPsi()))
+                }
             }
         }
     }
