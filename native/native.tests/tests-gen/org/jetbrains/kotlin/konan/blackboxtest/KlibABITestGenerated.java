@@ -91,6 +91,12 @@ public class KlibABITestGenerated extends AbstractNativeKlibABITest {
     }
 
     @Test
+    @TestMetadata("propertyTransformations")
+    public void testPropertyTransformations() throws Exception {
+        runTest("compiler/testData/klibABI/propertyTransformations/");
+    }
+
+    @Test
     @TestMetadata("referencingUnusableDeclarations")
     public void testReferencingUnusableDeclarations() throws Exception {
         runTest("compiler/testData/klibABI/referencingUnusableDeclarations/");

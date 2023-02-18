@@ -85,6 +85,11 @@ public class JsKLibABIWithICTestCaseGenerated extends AbstractJsKLibABIWithICTes
         runTest("compiler/testData/klibABI/nonExhaustivenessOfWhenClause/");
     }
 
+    @TestMetadata("propertyTransformations")
+    public void testPropertyTransformations() throws Exception {
+        runTest("compiler/testData/klibABI/propertyTransformations/");
+    }
+
     @TestMetadata("referencingUnusableDeclarations")
     public void testReferencingUnusableDeclarations() throws Exception {
         runTest("compiler/testData/klibABI/referencingUnusableDeclarations/");
