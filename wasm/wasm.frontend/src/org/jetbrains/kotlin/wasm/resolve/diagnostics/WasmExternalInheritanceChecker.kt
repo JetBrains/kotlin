@@ -38,7 +38,6 @@ object WasmExternalInheritanceChecker : DeclarationChecker {
                             superClass.defaultType
                         )
                     )
-                    break
                 }
             }
         }
