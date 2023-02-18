@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureSerializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.linkage.partial.IrUnimplementedOverridesStrategy.ProcessAsFakeOverrides
@@ -187,36 +188,22 @@ class FakeOverrideBuilder(
 
         if (!partialLinkageEnabled
             || !symbol.isBound
-            || symbol.owner.let { it.isSuspend == function.isSuspend && !it.isInline && !function.isInline }
+            || symbol.owner.let { boundFunction ->
+                boundFunction.isSuspend == function.isSuspend && !boundFunction.isInline && !function.isInline
+            }
         ) {
             return signature to symbol
         }
 
         // In old KLIB signatures we don't distinguish between suspend and non-suspend, inline and non-inline functions. So we need to
         // manually patch the signature of the fake override to avoid clash with the existing function with the different `isSuspend` flag
-        // state or the existing function is `isInline=true`.
+        // state or the existing function with `isInline=true`.
         // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
         // In new KLIB signatures `isSuspend` and `isInline` flags will be taken into account as a part of signature.
-        val irFactory = function.factory
-
-        val functionWithDisambiguatedSignature = irFactory.buildFun {
-            updateFrom(function)
-            name = function.name
-            returnType = irBuiltIns.unitType // Does not matter.
-        }.apply {
-            this.parent = parent
-            copyAnnotationsFrom(function)
-            copyParameterDeclarationsFrom(function)
-
-            typeParameters = typeParameters + buildTypeParameter(this) {
-                name = Name.identifier("disambiguation type parameter")
-                index = typeParameters.size
-                superTypes += irBuiltIns.nothingType // This is something that can't be expressed in the source code.
-            }
-        }
-
+        val functionWithDisambiguatedSignature = buildFunctionWithDisambiguatedSignature(function)
         val disambiguatedSignature = composeSignature(functionWithDisambiguatedSignature, compatibilityMode)
         assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $function" }
+
         val symbolWithDisambiguatedSignature = linker.tryReferencingSimpleFunctionByLocalSignature(parent, disambiguatedSignature)
             ?: symbolTable.referenceSimpleFunction(disambiguatedSignature)
 
@@ -227,14 +214,66 @@ class FakeOverrideBuilder(
         property: IrPropertyWithLateBinding,
         compatibilityMode: Boolean
     ): Pair<IdSignature, IrPropertySymbol> {
+        require(property is IrProperty) { "Unexpected fake override property: $property" }
         val parent = property.parentAsClass
 
         val signature = composeSignature(property, compatibilityMode)
         val symbol = linker.tryReferencingPropertyByLocalSignature(parent, signature)
             ?: symbolTable.referenceProperty(signature)
 
-        return signature to symbol
+        if (!partialLinkageEnabled
+            || !symbol.isBound
+            || symbol.owner.let { boundProperty ->
+                boundProperty.getter?.isInline != true && boundProperty.setter?.isInline != true
+                        && property.getter?.isInline != true && property.setter?.isInline != true
+            }
+        ) {
+            return signature to symbol
+        }
+
+        // In old KLIB signatures we don't distinguish between inline and non-inline property accessors. So we need to
+        // manually patch the signature of the fake override to avoid clash with the existing property with `inline` accessors.
+        // This signature is not supposed to be ever serialized (as fake overrides are not serialized in KLIBs).
+        // In new KLIB signatures `isInline` flag will be taken into account as a part of signature.
+
+        val propertyWithDisambiguatedSignature = buildPropertyWithDisambiguatedSignature(property)
+        val disambiguatedSignature = composeSignature(propertyWithDisambiguatedSignature, compatibilityMode)
+        assert(disambiguatedSignature != signature) { "Failed to compute disambiguated signature for fake override $property" }
+
+        val symbolWithDisambiguatedSignature = linker.tryReferencingPropertyByLocalSignature(parent, disambiguatedSignature)
+            ?: symbolTable.referenceProperty(disambiguatedSignature)
+
+        return disambiguatedSignature to symbolWithDisambiguatedSignature
     }
+
+    private fun buildFunctionWithDisambiguatedSignature(function: IrSimpleFunction): IrSimpleFunction =
+        function.factory.buildFun {
+            updateFrom(function)
+            name = function.name
+            returnType = irBuiltIns.unitType // Does not matter.
+        }.apply {
+            parent = function.parent
+            copyAnnotationsFrom(function)
+            copyParameterDeclarationsFrom(function)
+
+            typeParameters = typeParameters + buildTypeParameter(this) {
+                name = Name.identifier("disambiguation type parameter")
+                index = typeParameters.size
+                superTypes += irBuiltIns.nothingType // This is something that can't be expressed in the source code.
+            }
+        }
+
+    private fun buildPropertyWithDisambiguatedSignature(property: IrProperty): IrProperty =
+        property.factory.buildProperty {
+            updateFrom(property)
+            name = property.name
+        }.apply {
+            parent = property.parent
+            copyAnnotationsFrom(property)
+
+            getter = property.getter?.let { buildFunctionWithDisambiguatedSignature(it) }
+            setter = property.setter?.let { buildFunctionWithDisambiguatedSignature(it) }
+        }
 
     fun provideFakeOverrides(klass: IrClass, compatibleMode: CompatibilityMode) {
         buildFakeOverrideChainsForClass(klass, compatibleMode)

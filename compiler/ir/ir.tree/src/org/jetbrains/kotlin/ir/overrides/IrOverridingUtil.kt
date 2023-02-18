@@ -740,6 +740,9 @@ private inline val IrProperty.compiledValueParameters: List<IrValueParameter>
 private inline val IrProperty.typeParameters: List<IrTypeParameter>
     get() = getter?.typeParameters.orEmpty()
 
+private inline val IrProperty.isInline: Boolean
+    get() = getter?.isInline == true || setter?.isInline == true
+
 private inline val IrOverridableMember.typeParameters: List<IrTypeParameter>
     get() = when (this) {
         is IrSimpleFunction -> typeParameters
