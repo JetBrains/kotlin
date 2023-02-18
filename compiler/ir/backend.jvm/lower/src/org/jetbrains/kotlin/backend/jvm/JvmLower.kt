@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.ir.constantValue
 import org.jetbrains.kotlin.backend.jvm.ir.shouldContainSuspendMarkers
 import org.jetbrains.kotlin.backend.jvm.lower.*
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
@@ -90,7 +91,12 @@ private val arrayConstructorPhase = makeIrFilePhase(
 )
 
 internal val expectDeclarationsRemovingPhase = makeIrModulePhase(
-    ::ExpectDeclarationRemover,
+    { context: JvmBackendContext ->
+        if (context.state.configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
+            FileLoweringPass.Empty
+        else
+            ExpectDeclarationRemover(context)
+    },
     name = "ExpectDeclarationsRemoving",
     description = "Remove expect declaration from module fragment"
 )
