@@ -476,11 +476,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
                 ?: File(outputPath).name
 
-    val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
-            && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
-            && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
-            && libraryToCache == null)
-
     /**
      * Do not compile binary when compiling framework.
      * This is useful when user care only about framework's interface.
@@ -493,6 +488,40 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
     }
+
+    /**
+     * Continue from bitcode. Skips the frontend and codegen phase of the compiler
+     * and instead reads the provided bitcode file.
+     * This option can be used for continuing the compilation from a previous invocation.
+     */
+    internal val compileFromBitcode: String? by lazy {
+        configuration.get(KonanConfigKeys.COMPILE_FROM_BITCODE)
+    }
+
+    /**
+     * Path to serialized dependencies to use for bitcode compilation.
+     */
+    internal val readSerializedDependencies: String? by lazy {
+        configuration.get(KonanConfigKeys.SERIALIZED_DEPENDENCIES).also {
+            if (compileFromBitcode.isNullOrEmpty()) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                        "Providing serialized dependencies only works in conjunction with a bitcode file to compile.")
+            }
+        }
+    }
+
+    /**
+     * Path to store backend dependency information.
+     */
+    internal val writeSerializedDependencies: String? by lazy {
+        configuration.get(KonanConfigKeys.SAVE_DEPENDENCIES_PATH)
+    }
+
+    val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
+            && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
+            && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
+            && libraryToCache == null && compileFromBitcode.isNullOrEmpty())
+
 
     /**
      * Directory to store LLVM IR from -Xsave-llvm-ir-after.

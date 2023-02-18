@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.cValuesOf
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
-import org.jetbrains.kotlin.backend.konan.ir.llvmSymbolOrigin
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrConst
 
@@ -17,7 +15,7 @@ private fun ConstPointer.add(index: LLVMValueRef): ConstPointer {
     return constPointer(LLVMConstGEP(llvm, cValuesOf(index), 1)!!)
 }
 
-internal class KotlinStaticData(override val generationState: NativeGenerationState, override val llvm: Llvm, module: LLVMModuleRef) : ContextUtils, StaticData(module, llvm) {
+internal class KotlinStaticData(override val generationState: NativeGenerationState, override val llvm: CodegenLlvmHelpers, module: LLVMModuleRef) : ContextUtils, StaticData(module, llvm) {
     private val stringLiterals = mutableMapOf<String, ConstPointer>()
 
     // Must match OBJECT_TAG_PERMANENT_CONTAINER in C++.

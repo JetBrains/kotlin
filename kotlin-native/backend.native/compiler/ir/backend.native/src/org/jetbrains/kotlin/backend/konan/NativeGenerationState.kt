@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan
 
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
+import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.BackendContextHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.llvm.*
@@ -16,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.konan.TempFiles
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -38,6 +38,19 @@ internal class FileLowerState {
             "$prefix${cStubCount++}"
 }
 
+internal interface BitcodePostProcessingContext : PhaseContext, LlvmIrHolder {
+    val llvm: BasicLlvmHelpers
+    val llvmContext: LLVMContextRef
+}
+
+internal class BitcodePostProcessingContextImpl(
+        config: KonanConfig,
+        override val llvmModule: LLVMModuleRef,
+        override val llvmContext: LLVMContextRef
+) : BitcodePostProcessingContext, BasicPhaseContext(config) {
+    override val llvm: BasicLlvmHelpers = BasicLlvmHelpers(this, llvmModule)
+}
+
 internal class NativeGenerationState(
         config: KonanConfig,
         // TODO: Get rid of this property completely once transition to the dynamic driver is complete.
@@ -48,7 +61,7 @@ internal class NativeGenerationState(
         val llvmModuleSpecification: LlvmModuleSpecification,
         val outputFiles: OutputFiles,
         val llvmModuleName: String,
-) : BasicPhaseContext(config), BackendContextHolder<Context>, LlvmIrHolder {
+) : BasicPhaseContext(config), BackendContextHolder<Context>, LlvmIrHolder, BitcodePostProcessingContext {
     val outputFile = outputFiles.mainFileName
 
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
@@ -72,12 +85,12 @@ internal class NativeGenerationState(
     val producedLlvmModuleContainsStdlib get() = llvmModuleSpecification.containsModule(context.stdlibModule)
 
     private val runtimeDelegate = lazy { Runtime(llvmContext, config.distribution.compilerInterface(config.target)) }
-    private val llvmDelegate = lazy { Llvm(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
+    private val llvmDelegate = lazy { CodegenLlvmHelpers(this, LLVMModuleCreateWithNameInContext(llvmModuleName, llvmContext)!!) }
     private val debugInfoDelegate = lazy { DebugInfo(this) }
 
-    val llvmContext = LLVMContextCreate()!!
+    override val llvmContext = LLVMContextCreate()!!
     val runtime by runtimeDelegate
-    val llvm by llvmDelegate
+    override val llvm by llvmDelegate
     val debugInfo by debugInfoDelegate
     val cStubsManager = CStubsManager(config.target, this)
     lateinit var llvmDeclarations: LlvmDeclarations

@@ -259,6 +259,9 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.testDumpOutputPath?.let { put(TEST_DUMP_OUTPUT_PATH, it) }
     put(PARTIAL_LINKAGE, arguments.partialLinkage)
     put(OMIT_FRAMEWORK_BINARY, arguments.omitFrameworkBinary)
+    putIfNotNull(COMPILE_FROM_BITCODE, arguments.compileFromBitcode)
+    putIfNotNull(SERIALIZED_DEPENDENCIES, arguments.serializedDependencies)
+    putIfNotNull(SAVE_DEPENDENCIES_PATH, arguments.saveDependenciesPath)
     putIfNotNull(SAVE_LLVM_IR_DIRECTORY, arguments.saveLlvmIrDirectory)
 }
 

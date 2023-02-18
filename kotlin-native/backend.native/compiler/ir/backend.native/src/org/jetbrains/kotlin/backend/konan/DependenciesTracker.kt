@@ -371,5 +371,49 @@ internal object DependenciesSerializer {
 data class DependenciesTrackingResult(
         val nativeDependenciesToLink: List<KonanLibrary>,
         val allNativeDependencies: List<KonanLibrary>,
-        val allCachedBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>
-)
+        val allCachedBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>) {
+
+    companion object {
+        private const val NATIVE_DEPENDENCIES_TO_LINK = "NATIVE_DEPENDENCIES_TO_LINK"
+        private const val ALL_NATIVE_DEPENDENCIES = "ALL_NATIVE_DEPENDENCIES"
+        private const val ALL_CACHED_BITCODE_DEPENDENCIES = "ALL_CACHED_BITCODE_DEPENDENCIES"
+
+        fun serialize(res: DependenciesTrackingResult): List<String> {
+            val nativeDepsToLink = DependenciesSerializer.serialize(res.nativeDependenciesToLink.map { DependenciesTracker.ResolvedDependency.wholeModule(it) })
+            val allNativeDeps = DependenciesSerializer.serialize(res.allNativeDependencies.map { DependenciesTracker.ResolvedDependency.wholeModule(it) })
+            val allCachedBitcodeDeps = DependenciesSerializer.serialize(res.allCachedBitcodeDependencies)
+            return listOf(NATIVE_DEPENDENCIES_TO_LINK) + nativeDepsToLink +
+                    listOf(ALL_NATIVE_DEPENDENCIES) + allNativeDeps +
+                    listOf(ALL_CACHED_BITCODE_DEPENDENCIES) + allCachedBitcodeDeps
+        }
+
+        fun deserialize(path: String, dependencies: List<String>, config: KonanConfig): DependenciesTrackingResult {
+
+            val nativeDepsToLinkIndex = dependencies.indexOf(NATIVE_DEPENDENCIES_TO_LINK)
+            require(nativeDepsToLinkIndex >= 0) { "Invalid dependency file at $path" }
+            val allNativeDepsIndex = dependencies.indexOf(ALL_NATIVE_DEPENDENCIES)
+            require(allNativeDepsIndex >= 0) { "Invalid dependency file at $path" }
+            val allCachedBitcodeDepsIndex = dependencies.indexOf(ALL_CACHED_BITCODE_DEPENDENCIES)
+            require(allCachedBitcodeDepsIndex >= 0) { "Invalid dependency file at $path" }
+
+            val nativeLibsToLink = DependenciesSerializer.deserialize(path, dependencies.subList(nativeDepsToLinkIndex + 1, allNativeDepsIndex)).map { it.libName }
+            val allNativeLibs = DependenciesSerializer.deserialize(path, dependencies.subList(allNativeDepsIndex + 1, allCachedBitcodeDepsIndex)).map { it.libName }
+            val allCachedBitcodeDeps = DependenciesSerializer.deserialize(path, dependencies.subList(allCachedBitcodeDepsIndex + 1, dependencies.size))
+
+            val topSortedLibraries = config.resolvedLibraries.getFullList(TopologicalLibraryOrder)
+            val nativeDependenciesToLink = topSortedLibraries.mapNotNull { if (it.uniqueName in nativeLibsToLink && it is KonanLibrary) it else null }
+            val allNativeDependencies = topSortedLibraries.mapNotNull { if (it.uniqueName in allNativeLibs && it is KonanLibrary) it else null }
+            val allCachedBitcodeDependencies = allCachedBitcodeDeps.map { unresolvedDep ->
+                val lib = topSortedLibraries.find { it.uniqueName == unresolvedDep.libName }
+                require(lib != null && lib is KonanLibrary) { "Invalid dependency ${unresolvedDep.libName} at $path" }
+                when (unresolvedDep.kind) {
+                    is DependenciesTracker.DependencyKind.CertainFiles ->
+                        DependenciesTracker.ResolvedDependency.certainFiles(lib, unresolvedDep.kind.files)
+                    else -> DependenciesTracker.ResolvedDependency.wholeModule(lib)
+                }
+            }
+
+            return DependenciesTrackingResult(nativeDependenciesToLink, allNativeDependencies, allCachedBitcodeDependencies)
+        }
+    }
+}

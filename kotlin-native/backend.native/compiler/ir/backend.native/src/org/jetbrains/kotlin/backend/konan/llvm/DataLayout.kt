@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.types.isUnit
 
-private fun PrimitiveBinaryType?.toLlvmType(llvm: Llvm) = when (this) {
+private fun PrimitiveBinaryType?.toLlvmType(llvm: CodegenLlvmHelpers) = when (this) {
     null -> llvm.kObjHeaderPtr
 
     PrimitiveBinaryType.BOOLEAN -> llvm.int1Type
@@ -26,12 +26,12 @@ private fun PrimitiveBinaryType?.toLlvmType(llvm: Llvm) = when (this) {
     PrimitiveBinaryType.POINTER -> llvm.int8PtrType
 }
 
-internal fun IrType.toLLVMType(llvm: Llvm): LLVMTypeRef =
+internal fun IrType.toLLVMType(llvm: CodegenLlvmHelpers): LLVMTypeRef =
         llvm.runtime.calculatedLLVMTypes.getOrPut(this) { computePrimitiveBinaryTypeOrNull().toLlvmType(llvm) }
 
 internal fun IrType.isVoidAsReturnType() = isUnit() || isNothing()
 
-internal fun IrType.getLLVMReturnType(llvm: Llvm) = when {
+internal fun IrType.getLLVMReturnType(llvm: CodegenLlvmHelpers) = when {
     isVoidAsReturnType() -> llvm.voidType
     else -> toLLVMType(llvm)
 }

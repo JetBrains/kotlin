@@ -12,7 +12,7 @@ import llvm.LLVMStoreSizeOfType
 import org.jetbrains.kotlin.backend.common.lower.coroutines.getOrCreateFunctionWithContinuationStub
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.llvm.Llvm
+import org.jetbrains.kotlin.backend.konan.llvm.CodegenLlvmHelpers
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
@@ -263,7 +263,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
     }
 }
 
-internal fun IrField.requiredAlignment(llvm: Llvm): Int {
+internal fun IrField.requiredAlignment(llvm: CodegenLlvmHelpers): Int {
     val llvmType = type.toLLVMType(llvm)
     val abiAlignment = if (llvmType == llvm.vector128Type) {
         8 // over-aligned objects are not supported now, and this worked somehow, so let's keep it as it for now
@@ -283,7 +283,7 @@ internal fun IrField.requiredAlignment(llvm: Llvm): Int {
 
 
 internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
-    private fun IrField.toFieldInfo(llvm: Llvm): FieldInfo {
+    private fun IrField.toFieldInfo(llvm: CodegenLlvmHelpers): FieldInfo {
         val isConst = correspondingPropertySymbol?.owner?.isConst ?: false
         require(!isConst || initializer?.expression is IrConst<*>) { "A const val field ${render()} must have constant initializer" }
         return FieldInfo(name.asString(), type, isConst, symbol, requiredAlignment(llvm))
@@ -435,7 +435,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
      * All fields of the class instance.
      * The order respects the class hierarchy, i.e. a class [fields] contains superclass [fields] as a prefix.
      */
-    fun getFields(llvm: Llvm): List<FieldInfo> = getFieldsInternal(llvm).map { fieldInfo ->
+    fun getFields(llvm: CodegenLlvmHelpers): List<FieldInfo> = getFieldsInternal(llvm).map { fieldInfo ->
         val mappedField = fieldInfo.irField?.let { context.mapping.lateInitFieldToNullableField[it] ?: it }
         if (mappedField == fieldInfo.irField)
             fieldInfo
@@ -445,7 +445,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
 
     private var fields: List<FieldInfo>? = null
 
-    private fun getFieldsInternal(llvm: Llvm): List<FieldInfo> {
+    private fun getFieldsInternal(llvm: CodegenLlvmHelpers): List<FieldInfo> {
         fields?.let { return it }
 
         val superClass = irClass.getSuperClassNotAny()
@@ -503,7 +503,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
     /**
      * Fields declared in the class.
      */
-    fun getDeclaredFields(llvm: Llvm): List<FieldInfo> {
+    fun getDeclaredFields(llvm: CodegenLlvmHelpers): List<FieldInfo> {
         val outerThisField = if (irClass.isInner)
             context.innerClassesSupport.getOuterThisField(irClass)
         else null

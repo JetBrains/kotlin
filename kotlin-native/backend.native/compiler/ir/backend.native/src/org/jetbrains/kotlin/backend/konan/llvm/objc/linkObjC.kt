@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.llvm.objc
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.isFinalBinary
 import org.jetbrains.kotlin.backend.konan.llvm.*
@@ -127,7 +126,7 @@ private fun PatchBuilder.addObjCPatches() {
     }
 }
 
-private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef, llvm: Llvm) {
+private fun PatchBuilder.buildAndApply(llvmModule: LLVMModuleRef, llvm: CodegenLlvmHelpers) {
     val nameToGlobalPatch = globalPatches.associateNonRepeatingBy { it.globalName }
 
     val sectionToValueToLiteralPatch = literalPatches.groupBy { it.generator.section }
@@ -197,10 +196,10 @@ private fun <T, K> List<T>.associateNonRepeatingBy(keySelector: (T) -> K): Map<K
                 }
 
 private fun patchLiteral(
-        global: LLVMValueRef,
-        llvm: Llvm,
-        generator: ObjCDataGenerator.CStringLiteralsGenerator,
-        newValue: String
+    global: LLVMValueRef,
+    llvm: CodegenLlvmHelpers,
+    generator: ObjCDataGenerator.CStringLiteralsGenerator,
+    newValue: String
 ) {
     val module = LLVMGetGlobalParent(global)!!
 
@@ -216,7 +215,7 @@ private fun patchLiteral(
     }
 }
 
-private fun LLVMValueRef.isFirstCharPtr(llvm: Llvm, global: LLVMValueRef): Boolean =
+private fun LLVMValueRef.isFirstCharPtr(llvm: CodegenLlvmHelpers, global: LLVMValueRef): Boolean =
         this.type == llvm.int8PtrType &&
                 LLVMIsConstant(this) != 0 && LLVMGetConstOpcode(this) == LLVMOpcode.LLVMGetElementPtr
                 && LLVMGetNumOperands(this) == 3

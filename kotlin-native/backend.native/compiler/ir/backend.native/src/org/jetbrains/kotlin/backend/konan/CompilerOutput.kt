@@ -167,7 +167,7 @@ private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvm
     }
 }
 
-private fun embedAppleLinkerOptionsToBitcode(llvm: Llvm, config: KonanConfig) {
+private fun embedAppleLinkerOptionsToBitcode(llvm: CodegenLlvmHelpers, config: KonanConfig) {
     fun findEmbeddableOptions(options: List<String>): List<List<String>> {
         val result = mutableListOf<List<String>>()
         val iterator = options.iterator()

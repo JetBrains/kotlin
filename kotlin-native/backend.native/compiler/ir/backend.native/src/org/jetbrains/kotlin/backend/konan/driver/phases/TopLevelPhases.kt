@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.impl.javaFile
-import java.io.File
+import org.jetbrains.kotlin.konan.file.File
 
 internal fun PhaseEngine<PhaseContext>.runFrontend(config: KonanConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val frontendOutput = useContext(FrontendContextImpl(config)) { it.runPhase(FrontendPhase, environment) }
@@ -80,13 +80,31 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
                     generationStateEngine.compileModule(fragment.irModule, bitcodeFile, cExportFiles)
                     // Split here
-                    val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, generationState.dependenciesTracker.collectResult())
+                    val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
+                    val depsFilePath = config.writeSerializedDependencies
+                    if (!depsFilePath.isNullOrEmpty()) {
+                        depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+                    }
+                    val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
                     compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles, isCoverageEnabled = false)
                 }
             } finally {
                 tempFiles.dispose()
             }
         }
+    }
+}
+
+internal fun <C : PhaseContext> PhaseEngine<C>.runBitcodeBackend(context: BitcodePostProcessingContext, dependencies: DependenciesTrackingResult) {
+    useContext(context) { bitcodeEngine ->
+        val tempFiles = createTempFiles(context.config, null)
+        val bitcodeFile = tempFiles.create(context.config.shortModuleName ?: "out", ".bc").javaFile()
+        val outputPath = context.config.outputPath
+        val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
+        bitcodeEngine.runBitcodePostProcessing()
+        runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
+        val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
+        compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles, isCoverageEnabled = false)
     }
 }
 
@@ -159,7 +177,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
 }
 
 internal data class ModuleCompilationOutput(
-        val bitcodeFile: File,
+        val bitcodeFile: java.io.File,
         val dependenciesTrackingResult: DependenciesTrackingResult,
 )
 
@@ -170,7 +188,7 @@ internal data class ModuleCompilationOutput(
  * 4. Optimizes it.
  * 5. Serializes it to a bitcode file.
  */
-internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFragment, bitcodeFile: File, cExportFiles: CExportFiles?) {
+internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFragment, bitcodeFile: java.io.File, cExportFiles: CExportFiles?) {
     if (context.config.produce.isCache) {
         runPhase(BuildAdditionalCacheInfoPhase, module)
     }
@@ -178,12 +196,20 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFr
         runPhase(EntryPointPhase, module)
     }
     runBackendCodegen(module, cExportFiles)
-    runBitcodePostProcessing()
+    val checkExternalCalls = context.config.configuration.getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS)
+    if (checkExternalCalls) {
+        runPhase(CheckExternalCallsPhase)
+    }
+    newEngine(context as BitcodePostProcessingContext) { it.runBitcodePostProcessing() }
+    if (checkExternalCalls) {
+        runPhase(RewriteExternalCallsCheckerGlobals)
+    }
     if (context.config.produce.isCache) {
         runPhase(SaveAdditionalCacheInfoPhase)
     }
     runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
 }
+
 
 internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
         moduleCompilationOutput: ModuleCompilationOutput,

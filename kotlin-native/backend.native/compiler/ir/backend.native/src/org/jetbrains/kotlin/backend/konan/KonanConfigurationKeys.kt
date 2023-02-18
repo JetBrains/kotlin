@@ -161,6 +161,9 @@ class KonanConfigKeys {
         val PARTIAL_LINKAGE: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("allows some symbols in klibs be missed")
         val TEST_DUMP_OUTPUT_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to a file to dump the list of all available tests")
         val OMIT_FRAMEWORK_BINARY: CompilerConfigurationKey<Boolean> = CompilerConfigurationKey.create("do not generate binary in framework")
+        val COMPILE_FROM_BITCODE: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to bitcode file to compile")
+        val SERIALIZED_DEPENDENCIES: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to serialized dependencies for native linking")
+        val SAVE_DEPENDENCIES_PATH: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("path to save serialized dependencies to")
         val SAVE_LLVM_IR_DIRECTORY: CompilerConfigurationKey<String?> = CompilerConfigurationKey.create("directory to store LLVM IR from phases")
     }
 }

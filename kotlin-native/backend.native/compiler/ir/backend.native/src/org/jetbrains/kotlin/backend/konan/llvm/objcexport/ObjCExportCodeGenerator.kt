@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.utils.DFS
 
-internal fun TypeBridge.makeNothing(llvm: Llvm) = when (this) {
+internal fun TypeBridge.makeNothing(llvm: CodegenLlvmHelpers) = when (this) {
     is ReferenceBridge, is BlockPointerBridge -> llvm.kNullInt8Ptr
     is ValueTypeBridge -> LLVMConstNull(this.objCValueType.toLlvmType(llvm))!!
 }
@@ -1929,7 +1929,7 @@ private fun objCFunctionType(generationState: NativeGenerationState, methodBridg
     return LlvmFunctionSignature(returnType, paramTypes, isVararg = false)
 }
 
-private fun ObjCValueType.toLlvmType(llvm: Llvm): LLVMTypeRef = when (this) {
+private fun ObjCValueType.toLlvmType(llvm: CodegenLlvmHelpers): LLVMTypeRef = when (this) {
     ObjCValueType.BOOL -> llvm.int8Type
     ObjCValueType.UNICHAR -> llvm.int16Type
     ObjCValueType.CHAR -> llvm.int8Type
@@ -1945,7 +1945,7 @@ private fun ObjCValueType.toLlvmType(llvm: Llvm): LLVMTypeRef = when (this) {
     ObjCValueType.POINTER -> llvm.int8PtrType
 }
 
-private fun MethodBridgeParameter.toLlvmParamType(llvm: Llvm): LlvmParamType = when (this) {
+private fun MethodBridgeParameter.toLlvmParamType(llvm: CodegenLlvmHelpers): LlvmParamType = when (this) {
     is MethodBridgeValueParameter.Mapped -> this.bridge.toLlvmParamType(llvm)
     is MethodBridgeReceiver -> ReferenceBridge.toLlvmParamType(llvm)
     MethodBridgeSelector -> LlvmParamType(llvm.int8PtrType)
@@ -1972,7 +1972,7 @@ private fun MethodBridge.ReturnValue.toLlvmRetType(
     }
 }
 
-private fun TypeBridge.toLlvmParamType(llvm: Llvm): LlvmParamType = when (this) {
+private fun TypeBridge.toLlvmParamType(llvm: CodegenLlvmHelpers): LlvmParamType = when (this) {
     is ReferenceBridge, is BlockPointerBridge -> LlvmParamType(llvm.int8PtrType)
     is ValueTypeBridge -> LlvmParamType(this.objCValueType.toLlvmType(llvm), this.objCValueType.defaultParameterAttributes)
 }

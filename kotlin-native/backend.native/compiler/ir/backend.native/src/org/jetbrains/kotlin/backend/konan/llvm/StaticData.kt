@@ -10,7 +10,7 @@ import llvm.*
 /**
  * Provides utilities to create static data.
  */
-internal open class StaticData(val module: LLVMModuleRef, private val llvm: Llvm) {
+internal open class StaticData(val module: LLVMModuleRef, private val llvm: CodegenLlvmHelpers) {
 
     /**
      * Represents the LLVM global variable.
@@ -50,6 +50,11 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Llvm
 
             fun get(staticData: StaticData, name: String): Global? {
                 val llvmGlobal = LLVMGetNamedGlobal(staticData.module, name) ?: return null
+                return Global(llvmGlobal)
+            }
+
+            fun get(module: LLVMModuleRef, name: String): Global? {
+                val llvmGlobal = LLVMGetNamedGlobal(module, name) ?: return null
                 return Global(llvmGlobal)
             }
         }
@@ -150,4 +155,8 @@ internal open class StaticData(val module: LLVMModuleRef, private val llvm: Llvm
     }
 
     internal fun cStringLiteral(value: String) = cStringLiterals.getOrPut(value) { placeCStringLiteral(value) }
+
+    companion object {
+        fun getGlobal(module: LLVMModuleRef, name: String) = Global.get(module, name)
+    }
 }

@@ -118,6 +118,15 @@ internal class PhaseEngine<C : PhaseContext>(
         }
     }
 
+    /**
+     * Create a new PhaseEngine instance for an existing context that should not be disposed after the action.
+     * This is useful for creating engines for a sub/super context type.
+     */
+    inline fun <T : PhaseContext, R> newEngine(newContext: T, action: (PhaseEngine<T>) -> R): R {
+        val newEngine = PhaseEngine(phaseConfig, phaserState, newContext)
+        return action(newEngine)
+    }
+
     fun <Input, Output, P : AbstractNamedCompilerPhase<C, Input, Output>> runPhase(
             phase: P,
             input: Input,

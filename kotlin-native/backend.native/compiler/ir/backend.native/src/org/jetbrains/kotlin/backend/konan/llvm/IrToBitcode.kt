@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
@@ -472,7 +471,7 @@ internal class CodeGeneratorVisitor(
 
     private fun createInitBody(state: ScopeInitializersGenerationState): LLVMValueRef {
         val initFunction = addLlvmFunctionWithDefaultAttributes(
-                context,
+                generationState.context,
                 llvm.module,
                 "",
                 kInitFuncType
@@ -551,7 +550,7 @@ internal class CodeGeneratorVisitor(
         // Create static object of class InitNode.
         val initNode = LLVMConstNamedStruct(kNodeInitType, argList, 2)!!
         // Create global variable with init record data.
-        return llvm.staticData.placeGlobal("init_node", constPointer(initNode), isExported = false).llvmGlobal
+        return codegen.staticData.placeGlobal("init_node", constPointer(initNode), isExported = false).llvmGlobal
     }
 
     //-------------------------------------------------------------------------//
@@ -842,7 +841,7 @@ internal class CodeGeneratorVisitor(
                             recordCoverage(body)
                             if (declaration.isReifiedInline) {
                                 callDirect(context.ir.symbols.throwIllegalStateExceptionWithMessage.owner,
-                                        listOf(llvm.staticData.kotlinStringLiteral(
+                                        listOf(codegen.staticData.kotlinStringLiteral(
                                                 "unsupported call of reified inlined function `${declaration.fqNameForIrSerialization}`").llvm),
                                         Lifetime.IRRELEVANT, null)
                                 return@usingVariableScope
@@ -1288,7 +1287,7 @@ internal class CodeGeneratorVisitor(
             functionGenerationContext.positionAtEnd(whenEmittingContext.bbExit.value)
 
         return when {
-            expression.type.isUnit() -> functionGenerationContext.theUnitInstanceRef.llvm
+            expression.type.isUnit() -> codegen.theUnitInstanceRef.llvm
             expression.type.isNothing() -> functionGenerationContext.kNothingFakeValue
             whenEmittingContext.resultPhi.isInitialized() -> whenEmittingContext.resultPhi.value
             else -> LLVMGetUndef(whenEmittingContext.llvmType)!!
@@ -1346,7 +1345,7 @@ internal class CodeGeneratorVisitor(
         }
 
         assert(loop.type.isUnit())
-        return functionGenerationContext.theUnitInstanceRef.llvm
+        return codegen.theUnitInstanceRef.llvm
     }
 
     //-------------------------------------------------------------------------//
@@ -1371,7 +1370,7 @@ internal class CodeGeneratorVisitor(
         }
 
         assert(loop.type.isUnit())
-        return functionGenerationContext.theUnitInstanceRef.llvm
+        return codegen.theUnitInstanceRef.llvm
     }
 
     //-------------------------------------------------------------------------//
@@ -1395,7 +1394,7 @@ internal class CodeGeneratorVisitor(
         val variable = currentCodeContext.getDeclaredValue(value.symbol.owner)
         functionGenerationContext.vars.store(result, variable)
         assert(value.type.isUnit())
-        return functionGenerationContext.theUnitInstanceRef.llvm
+        return codegen.theUnitInstanceRef.llvm
     }
 
     //-------------------------------------------------------------------------//
@@ -1465,7 +1464,7 @@ internal class CodeGeneratorVisitor(
             IrTypeOperator.IMPLICIT_NOTNULL          -> TODO(ir2string(value))
             IrTypeOperator.IMPLICIT_COERCION_TO_UNIT -> {
                 evaluateExpression(value.argument)
-                functionGenerationContext.theUnitInstanceRef.llvm
+                codegen.theUnitInstanceRef.llvm
             }
             IrTypeOperator.SAFE_CAST                 -> throw IllegalStateException("safe cast wasn't lowered")
             IrTypeOperator.INSTANCEOF                -> evaluateInstanceOf(value)
@@ -1533,7 +1532,7 @@ internal class CodeGeneratorVisitor(
                     val dstFullClassName = dstClass.fqNameWhenAvailable?.toString() ?: dstClass.name.toString()
                     callDirect(
                             context.ir.symbols.throwTypeCastException.owner,
-                            listOf(srcArg, llvm.staticData.kotlinStringLiteral(dstFullClassName).llvm),
+                            listOf(srcArg, codegen.staticData.kotlinStringLiteral(dstFullClassName).llvm),
                             Lifetime.GLOBAL,
                             null
                     )
@@ -1810,7 +1809,7 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
     private fun evaluateStringConst(value: IrConst<String>) =
-            llvm.staticData.kotlinStringLiteral(value.value)
+            codegen.staticData.kotlinStringLiteral(value.value)
 
     private fun evaluateConst(value: IrConst<*>): ConstValue {
         context.log{"evaluateConst                  : ${ir2string(value)}"}
@@ -1862,7 +1861,7 @@ internal class CodeGeneratorVisitor(
                         require(value.type.toLLVMType(llvm) == codegen.kObjHeaderPtr) {
                             "Can't wrap ${value.value.kind.asString} constant to type ${value.type.render()}"
                         }
-                        value.toBoxCacheValue(generationState) ?: llvm.staticData.createConstKotlinObject(
+                        value.toBoxCacheValue(generationState) ?: codegen.staticData.createConstKotlinObject(
                                 constructedType.getClass()!!,
                                 evaluateConst(value.value)
                         )
@@ -1876,7 +1875,7 @@ internal class CodeGeneratorVisitor(
                 require(clazz.symbol == symbols.array || clazz.symbol in symbols.primitiveTypesToPrimitiveArrays.values) {
                     "Statically initialized array should have array type"
                 }
-                llvm.staticData.createConstKotlinArray(
+                codegen.staticData.createConstKotlinArray(
                         value.type.getClass()!!,
                         value.elements.map { evaluateConstantValue(it) }
                 )
@@ -1937,7 +1936,7 @@ internal class CodeGeneratorVisitor(
                 }
 
                 require(value.type.toLLVMType(llvm) == codegen.kObjHeaderPtr) { "Constant object is not an object, but ${value.type.render()}" }
-                llvm.staticData.createConstKotlinObject(
+                codegen.staticData.createConstKotlinObject(
                         constructedClass,
                         *fields.toTypedArray()
                 )
@@ -2717,7 +2716,7 @@ internal class CodeGeneratorVisitor(
         if (args.isEmpty()) return
 
         val argsCasted = args.map { constPointer(it).bitcast(llvm.int8PtrType) }
-        val llvmUsedGlobal = llvm.staticData.placeGlobalArray(name, llvm.int8PtrType, argsCasted)
+        val llvmUsedGlobal = codegen.staticData.placeGlobalArray(name, llvm.int8PtrType, argsCasted)
 
         LLVMSetLinkage(llvmUsedGlobal.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
         LLVMSetSection(llvmUsedGlobal.llvmGlobal, "llvm.metadata")
@@ -2802,7 +2801,7 @@ internal class CodeGeneratorVisitor(
 
         fun addCtorFunction(ctorName: String) =
                 addLlvmFunctionWithDefaultAttributes(
-                        context,
+                        generationState.context,
                         llvm.module,
                         ctorName,
                         kVoidFuncType
@@ -2898,7 +2897,7 @@ internal class CodeGeneratorVisitor(
             LLVMSetLinkage(globalCtorFunction, LLVMLinkage.LLVMPrivateLinkage)
 
             // Append initializers of global variables in "llvm.global_ctors" array.
-            val globalCtors = llvm.staticData.placeGlobalArray("llvm.global_ctors", kCtorType,
+            val globalCtors = codegen.staticData.placeGlobalArray("llvm.global_ctors", kCtorType,
                     listOf(createGlobalCtor(globalCtorFunction)))
             LLVMSetLinkage(globalCtors.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
             if (context.config.produce == CompilerOutputKind.PROGRAM) {

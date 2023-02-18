@@ -133,7 +133,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
 
     private val K2NativeCompilerArguments.isUsefulWithoutFreeArgs: Boolean
         get() = listTargets || listPhases || checkDependencies || !includes.isNullOrEmpty() ||
-                libraryToAddToCache != null || !exportedLibraries.isNullOrEmpty()
+                libraryToAddToCache != null || !exportedLibraries.isNullOrEmpty() || !compileFromBitcode.isNullOrEmpty()
 
     // It is executed before doExecute().
     override fun setupPlatformSpecificArgumentsAndServices(
