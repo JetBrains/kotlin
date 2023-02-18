@@ -10,13 +10,12 @@ import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 
 private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
-    with(DiagnosticFactoryToRendererMap("Wasm")) {
+    DiagnosticFactoryToRendererMap("Wasm").apply {
         put(
             ErrorsWasm.NON_EXTERNAL_TYPE_EXTENDS_EXTERNAL_TYPE,
             "Non-external type extends external type {0}",
             Renderers.RENDER_TYPE
         )
-        this
     }
 }
 
