@@ -1,5 +1,3 @@
-// WASM_FAILS_IN: SM
-
 fun notNullString(x: String) {
     js("if (x !== 'abc') throw 'error'")
 }
