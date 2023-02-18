@@ -148,7 +148,7 @@ private val BlockPointerBridge.blockType: BlockType
  */
 internal data class BlockType(val numberOfParameters: Int, val returnsVoid: Boolean)
 
-private fun BlockType.toBlockInvokeLlvmType(llvm: Llvm): LlvmFunctionSignature =
+private fun BlockType.toBlockInvokeLlvmType(llvm: CodegenLlvmHelpers): LlvmFunctionSignature =
         LlvmFunctionSignature(
                 LlvmRetType(if (returnsVoid) llvm.voidType else llvm.int8PtrType),
                 (0..numberOfParameters).map { LlvmParamType(llvm.int8PtrType) }

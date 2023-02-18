@@ -1298,7 +1298,7 @@ internal abstract class FunctionGenerationContext(
         assert(!irClass.isInterface)
 
         return if (irClass.isExternalObjCClass()) {
-            llvm.dependenciesTracker.add(irClass)
+            generationState.dependenciesTracker.add(irClass)
             if (irClass.isObjCMetaClass()) {
                 val name = irClass.descriptor.getExternalObjCMetaClassBinaryName()
                 val objCClass = getObjCClass(name)
@@ -1337,7 +1337,7 @@ internal abstract class FunctionGenerationContext(
     private fun getObjCClass(binaryName: String) = load(codegen.objCDataGenerator!!.genClassRef(binaryName).llvm)
 
     fun getObjCClassFromNativeRuntime(binaryName: String): LLVMValueRef {
-        llvm.dependenciesTracker.addNativeRuntime()
+        generationState.dependenciesTracker.addNativeRuntime()
         return getObjCClass(binaryName)
     }
 

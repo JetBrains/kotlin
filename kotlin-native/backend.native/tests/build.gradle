@@ -5581,6 +5581,19 @@ standaloneTest("fake_override_0") {
     useGoldenData = true
 }
 
+standaloneTest("split_compilation_pipeline") {
+    def dir = buildDir.absolutePath
+    source = "link/private_fake_overrides/override_main.kt"
+    doBeforeBuild {
+        konanc("$projectDir/link/private_fake_overrides/override_lib.kt -p library -target ${target.name} -o $dir/lib")
+        konanc("$projectDir/$source -target ${target.name} -o $dir/out -r $dir -l lib " +
+                "-Xtemporary-files-dir=$dir/tmp/split " +
+                "-Xwrite-dependencies-to=${dir}/split_compilation_pipeline.deps")
+    }
+    flags = ["-Xread-dependencies-from=${dir}/split_compilation_pipeline.deps", "-Xcompile-from-bitcode=${dir}/tmp/split/out.bc"]
+    useGoldenData = true
+}
+
 linkTest("private_fake_overrides_0") {
     source = "link/private_fake_overrides/inherit_main.kt"
     lib = "link/private_fake_overrides/inherit_lib.kt"

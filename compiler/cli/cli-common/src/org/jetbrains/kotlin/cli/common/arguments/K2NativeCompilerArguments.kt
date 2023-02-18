@@ -421,6 +421,19 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling framework")
     var omitFrameworkBinary: Boolean = false
 
+    @Argument(value = "-Xcompile-from-bitcode", description = "Continue compilation from bitcode file", valueDescription = "<path>")
+    var compileFromBitcode: String? = null
+
+    @Argument(
+        value = "-Xread-dependencies-from",
+        description = "Serialized dependencies to use for linking",
+        valueDescription = "<path>"
+    )
+    var serializedDependencies: String? = null
+
+    @Argument(value = "-Xwrite-dependencies-to", description = "Path for writing backend dependencies")
+    var saveDependenciesPath: String? = null
+
     @Argument(value = "-Xsave-llvm-ir-directory", description = "Directory that should contain results of -Xsave-llvm-ir-after=<phase>")
     var saveLlvmIrDirectory: String? = null
 
