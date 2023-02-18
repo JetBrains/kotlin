@@ -254,6 +254,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":wasm:wasm.ir",
         ":wasm:wasm.tests",
         ":wasm:wasm.frontend",
+        ":wasm:wasm.config",
         ":repo:codebase-tests"
 
 include ":kotlinx-atomicfu-compiler-plugin",

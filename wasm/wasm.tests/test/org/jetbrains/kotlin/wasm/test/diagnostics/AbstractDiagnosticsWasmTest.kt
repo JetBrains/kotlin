@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test.diagnostics
 
-import org.jetbrains.kotlin.platform.js.WasmPlatforms
+import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.classicFrontendStep
