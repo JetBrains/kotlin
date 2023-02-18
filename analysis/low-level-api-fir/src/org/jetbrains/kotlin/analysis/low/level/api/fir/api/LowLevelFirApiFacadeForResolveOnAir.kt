@@ -146,14 +146,29 @@ object LowLevelFirApiFacadeForResolveOnAir {
         require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
 
         val dependencyNonLocalDeclaration = findNonLocalParentMaybeSelf(elementToAnalyze)
-            ?: return LLFirResolveSessionDepended(
+        if (dependencyNonLocalDeclaration == null) {
+            val mapping = if (elementToAnalyze.parentOfType<KtAnnotationEntry>(withSelf = true) != null) {
+                val copiedFirDeclaration = runBodyResolveOnAir(
+                    originalFirResolveSession,
+                    replacement = RawFirReplacement(elementToAnalyze, elementToAnalyze),
+                    onAirCreatedDeclaration = true,
+                    collector = null,
+                )
+
+                KtToFirMapping(copiedFirDeclaration, FirElementsRecorder())
+            } else {
+                null
+            }
+
+            return LLFirResolveSessionDepended(
                 originalFirResolveSession,
                 FileTowerProvider(
                     elementToAnalyze.containingKtFile,
                     onAirGetTowerContextForFile(originalFirResolveSession, originalKtFile)
                 ),
-                ktToFirMapping = null
+                ktToFirMapping = mapping,
             )
+        }
 
 
         val sameDeclarationInOriginalFile = PsiTreeUtil.findSameElementInCopy(dependencyNonLocalDeclaration, originalKtFile)
