@@ -67,7 +67,7 @@ abstract class AbstractKotlinTarget(
     override val publishable: Boolean
         get() = true
 
-    internal var publishableSources: Boolean = true
+    override var publishableSources: Boolean = true
     override fun withSourcesJar(publish: Boolean) {
         publishableSources = publish
     }

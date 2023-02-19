@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 internal interface InternalKotlinTarget : KotlinTarget, HasMutableExtras {
+    var publishableSources: Boolean
     val kotlinComponents: Set<KotlinTargetComponent>
     fun onPublicationCreated(publication: MavenPublication)
 }
