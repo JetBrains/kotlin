@@ -8,19 +8,34 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-evaluationDependsOnChildren()
+val isTeamcityBuild = project.hasProperty("teamcity.version")
 
-fun pKotlinBig() = project("kotlin_big").ext
+// kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
+val kotlin_root = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
+val kotlin_libs by extra("$buildDir/libs")
+
+val rootProperties = java.util.Properties().apply {
+    file(kotlin_root).resolve("gradle.properties").inputStream().use { stream -> load(stream) }
+}
+val defaultSnapshotVersion: String by rootProperties
+
+val githubRevision = if (isTeamcityBuild) project.property("githubRevision") else "master"
+val artifactsVersion by extra(if (isTeamcityBuild) project.property("deployVersion") as String else defaultSnapshotVersion)
+val artifactsRepo by extra(if (isTeamcityBuild) project.property("kotlinLibsRepo") as String else "$kotlin_root/build/repo")
+val dokka_version: String by project
+
+println("# Parameters summary:")
+println("    isTeamcityBuild: $isTeamcityBuild")
+println("    dokka version: $dokka_version")
+println("    githubRevision: $githubRevision")
+println("    artifacts version: $artifactsVersion")
+println("    artifacts repo: $artifactsRepo")
+
 
 val outputDir = file(findProperty("docsBuildDir") as String? ?: "$buildDir/doc")
 val inputDirPrevious = file(findProperty("docsPreviousVersionsDir") as String? ?: "$outputDir/previous")
 val outputDirPartial = outputDir.resolve("partial")
-val kotlin_root: String by pKotlinBig()
-val kotlin_libs: String by pKotlinBig()
 val kotlin_native_root = file("$kotlin_root/kotlin-native").absolutePath
-val github_revision: String by pKotlinBig()
-val localRoot = kotlin_root
-val baseUrl = URL("https://github.com/JetBrains/kotlin/tree/$github_revision")
 val templatesDir = file(findProperty("templatesDir") as String? ?: "$projectDir/templates").invariantSeparatorsPath
 
 val cleanDocs by tasks.registering(Delete::class) {
@@ -39,7 +54,6 @@ repositories {
     mavenCentral()
     maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
 }
-val dokka_version: String by project
 
 dependencies {
     dokkaPlugin(project(":plugins:dokka-samples-transformer-plugin"))
@@ -371,13 +385,13 @@ fun GradleDokkaSourceSetBuilder.perPackageOption(packageNamePrefix: String, acti
 
 fun GradleDokkaSourceSetBuilder.sourceLinksFromRoot() {
     sourceLink {
-        localDirectory.set(file(localRoot))
-        remoteUrl.set(baseUrl)
+        localDirectory.set(file(kotlin_root))
+        remoteUrl.set(URL("https://github.com/JetBrains/kotlin/tree/$githubRevision"))
         remoteLineSuffix.set("#L")
     }
 }
 
-gradle.projectsEvaluated {
+run {
     val versions = listOf(/*"1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7",*/ "1.8")
     val latestVersion = versions.last()
 
