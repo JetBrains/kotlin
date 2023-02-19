@@ -24,12 +24,11 @@ import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
 import java.util.zip.ZipFile
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.appendText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 @MppGradlePluginTests
 @DisplayName("Hierarchical multiplatform")
@@ -917,6 +916,54 @@ class HierarchicalMppIT : KGPBaseTest() {
             build("help") { // evaluate only
                 val actualReports = SourcesVariantResolutionReport.parse(output, expectedReports.keys)
                 assertEquals(expectedReports, actualReports)
+            }
+        }
+    }
+
+    @GradleTest
+    @OsCondition(enabledOnCI = [OS.LINUX, OS.MAC, OS.WINDOWS])
+    @DisplayName("Sources publication can be disabled per target")
+    fun testDisableSourcesPublication(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        project(
+            "mpp-sources-publication/producer",
+            gradleVersion = gradleVersion,
+            localRepoDir = tempDir
+        ) {
+            // Disable sources publication for all targets except JVM
+            buildGradleKts.appendText(
+                """
+                    kotlin {
+                        withSourcesJar(publish = false)
+                    }
+                    
+                    kotlin.targets.getByName("jvm").withSourcesJar()
+                """.trimIndent()
+            )
+
+            build("publish")
+
+            val gradleModuleFileContent = tempDir.resolve("test/lib/1.0/lib-1.0.module").readText()
+            fun assertNoSourcesPublished(expectedJarLocation: String, variantName: String) {
+                val jarFile = tempDir.resolve(expectedJarLocation).toFile()
+                if (jarFile.exists()) fail("Sources jar '$expectedJarLocation' shouldn't be published")
+                if (gradleModuleFileContent.contains(variantName)) fail("Variant '$variantName' shouldn't be published")
+            }
+
+            assertNoSourcesPublished("test/lib/1.0/lib-1.0-sources.jar", "metadataSourcesElements")
+            assertNoSourcesPublished("test/lib-linuxx64/1.0/lib-linuxx64-1.0-sources.jar", "linuxX64SourcesElements-published")
+            assertNoSourcesPublished("test/lib-linuxarm64/1.0/lib-linuxarm64-1.0-sources.jar", "linuxArm64SourcesElements-published")
+            if (OS.MAC.isCurrentOs) {
+                assertNoSourcesPublished("test/lib-iosx64/1.0/lib-iosx64-1.0-sources.jar", "iosX64SourcesElements-published")
+                assertNoSourcesPublished("test/lib-iosarm64/1.0/lib-iosarm64-1.0-sources.jar", "iosArm64SourcesElements-published")
+            }
+
+            // Check that JVM sources were published
+            val jvmSourcesJar = tempDir.resolve("test/lib-jvm/1.0/lib-jvm-1.0-sources.jar")
+            if (!jvmSourcesJar.exists()) {
+                fail("JVM Sources should be published")
+            }
+            if (!gradleModuleFileContent.contains("jvmSourcesElements-published")) {
+                fail("'jvmSourcesElements-published' variant should be published")
             }
         }
     }
