@@ -418,6 +418,42 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             }
         }
     }
+    @DisplayName("Sources publication can be disabled")
+    @GradleAndroidTest
+    fun testDisableSourcesPublication(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "new-mpp-android",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            subProject("lib").buildGradle.appendText(
+                //language=Gradle
+                """
+                    
+                    kotlin.android('androidLib') {
+                        withSourcesJar(false)
+                        publishLibraryVariants = ['release']
+                    }
+                """.trimIndent()
+            )
+
+            val groupDir = subProject("lib").projectPath.resolve("build/repo/com/example")
+            build("publish") {
+                val sourcesJarFile = groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0-sources.jar").toFile()
+                if (sourcesJarFile.exists()) fail("Release sources jar should not be published")
+
+                val gradleMetadataFileContent = groupDir.resolve("lib-androidlib/1.0/lib-androidlib-1.0.module").readText()
+                if (gradleMetadataFileContent.contains("releaseSourcesElements-published")) {
+                    fail("'releaseSourcesElements-published' variant should not be published")
+                }
+            }
+        }
+    }
 
     @DisplayName("android mpp lib dependencies are properly rewritten")
     @GradleAndroidTest
