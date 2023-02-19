@@ -63,7 +63,7 @@ val kotlinVersion by extra(
     } ?: buildNumber
 )
 
-val kotlinLanguageVersion by extra("1.9")
+val kotlinLanguageVersion: String by extra
 
 extra["kotlin_root"] = rootDir
 

@@ -18,6 +18,7 @@ val rootProperties = java.util.Properties().apply {
     file(kotlin_root).resolve("gradle.properties").inputStream().use { stream -> load(stream) }
 }
 val defaultSnapshotVersion: String by rootProperties
+val kotlinLanguageVersion: String by rootProperties
 
 val githubRevision = if (isTeamcityBuild) project.property("githubRevision") else "master"
 val artifactsVersion by extra(if (isTeamcityBuild) project.property("deployVersion") as String else defaultSnapshotVersion)
@@ -28,6 +29,7 @@ println("# Parameters summary:")
 println("    isTeamcityBuild: $isTeamcityBuild")
 println("    dokka version: $dokka_version")
 println("    githubRevision: $githubRevision")
+println("    language version: $kotlinLanguageVersion")
 println("    artifacts version: $artifactsVersion")
 println("    artifacts repo: $artifactsRepo")
 
@@ -387,7 +389,7 @@ fun GradleDokkaSourceSetBuilder.sourceLinksFromRoot() {
 }
 
 run {
-    val versions = listOf(/*"1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7",*/ "1.8")
+    val versions = listOf(/*"1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7",*/ kotlinLanguageVersion)
     val latestVersion = versions.last()
 
     // builds this version/all versions as historical for the next versions builds
