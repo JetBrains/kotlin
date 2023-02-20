@@ -784,6 +784,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/overloadWithDefault.kt");
         }
 
+        @TestMetadata("setWithTrailingLambda.kt")
+        public void testSetWithTrailingLambda() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/setWithTrailingLambda.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/simple.kt");
@@ -812,6 +817,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         @TestMetadata("vararg.kt")
         public void testVararg() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/arguments/vararg.kt");
+        }
+
+        @TestMetadata("varargFromJava.kt")
+        public void testVarargFromJava() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/arguments/varargFromJava.kt");
         }
 
         @TestMetadata("varargOfLambdasWithReceiver.kt")

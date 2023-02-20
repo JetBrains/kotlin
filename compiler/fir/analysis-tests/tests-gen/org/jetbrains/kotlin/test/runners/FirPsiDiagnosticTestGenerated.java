@@ -922,6 +922,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("setWithTrailingLambda.kt")
+            public void testSetWithTrailingLambda() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/arguments/setWithTrailingLambda.kt");
+            }
+
+            @Test
             @TestMetadata("simple.kt")
             public void testSimple() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/arguments/simple.kt");
@@ -955,6 +961,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             @TestMetadata("vararg.kt")
             public void testVararg() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/arguments/vararg.kt");
+            }
+
+            @Test
+            @TestMetadata("varargFromJava.kt")
+            public void testVarargFromJava() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/arguments/varargFromJava.kt");
             }
 
             @Test

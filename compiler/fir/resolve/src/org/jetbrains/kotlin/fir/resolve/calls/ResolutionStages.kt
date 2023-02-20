@@ -424,8 +424,12 @@ internal object MapArguments : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val symbol = candidate.symbol as? FirFunctionSymbol<*> ?: return sink.reportDiagnostic(HiddenCandidate)
         val function = symbol.fir
-
-        val mapping = context.bodyResolveComponents.mapArguments(callInfo.arguments, function, candidate.originScope)
+        val mapping = context.bodyResolveComponents.mapArguments(
+            callInfo.arguments,
+            function,
+            candidate.originScope,
+            callSiteIsOperatorCall = (callInfo.callSite as? FirFunctionCall)?.origin == FirFunctionCallOrigin.Operator
+        )
         candidate.argumentMapping = mapping.toArgumentToParameterMapping()
         candidate.numDefaults = mapping.numDefaults()
 

@@ -174,7 +174,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
 
     val fakeArguments = createFakeArgumentsForReference(function, expectedArgumentsCount, inputTypes, unboundReceiverCount)
     // TODO: Use correct originScope
-    val argumentMapping = mapArguments(fakeArguments, function, originScope = null)
+    val argumentMapping = mapArguments(fakeArguments, function, originScope = null, callSiteIsOperatorCall = false)
     if (argumentMapping.diagnostics.any { !it.applicability.isSuccess }) return null
 
     /**
