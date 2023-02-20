@@ -152,7 +152,7 @@ abstract class AbstractInvalidationTest(
             val expectedDTS: String?
         )
 
-        private fun setupTestStep(projStep: ProjectInfo.ProjectBuildStep, module: String, buildKlib: Boolean): TestStepInfo {
+        private fun setupTestStep(projStep: ProjectInfo.ProjectBuildStep, module: String): TestStepInfo {
             val projStepId = projStep.id
             val moduleTestDir = File(testDir, module)
             val moduleSourceDir = File(sourceDir, module)
@@ -172,7 +172,7 @@ abstract class AbstractInvalidationTest(
             val outputKlibFile = resolveModuleArtifact(module, buildDir)
 
             val friends = mutableListOf<File>()
-            if (buildKlib) {
+            if (moduleStep.rebuildKlib) {
                 val dependencies = mutableListOf(File(STDLIB_KLIB))
                 for (dep in moduleStep.dependencies) {
                     val klibFile = resolveModuleArtifact(dep.moduleName, buildDir)
@@ -313,7 +313,7 @@ abstract class AbstractInvalidationTest(
 
         fun execute() {
             for (projStep in projectInfo.steps) {
-                val testInfo = projStep.order.map { setupTestStep(projStep, it, true) }
+                val testInfo = projStep.order.map { setupTestStep(projStep, it) }
 
                 val mainModuleInfo = testInfo.last()
                 testInfo.find { it != mainModuleInfo && it.friends.isNotEmpty() }?.let {
@@ -341,7 +341,7 @@ abstract class AbstractInvalidationTest(
                     }
                 )
 
-                val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it, false) }
+                val removedModulesInfo = (projectInfo.modules - projStep.order.toSet()).map { setupTestStep(projStep, it) }
 
                 val icCaches = cacheUpdater.actualizeCaches()
                 verifyCacheUpdateStats(projStep.id, cacheUpdater.getDirtyFileLastStats(), testInfo + removedModulesInfo)
