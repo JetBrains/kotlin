@@ -40,6 +40,7 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
 
     val resolvedContextReceivers: List<FirContextReceiver>
         get() {
+            if (fir.contextReceivers.isEmpty()) return emptyList()
             lazyResolveToPhase(FirResolvePhase.TYPES)
             return fir.contextReceivers
         }
