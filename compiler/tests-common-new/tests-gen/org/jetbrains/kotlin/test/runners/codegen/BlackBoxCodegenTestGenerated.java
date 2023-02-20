@@ -12973,6 +12973,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("nothingReturnType.kt")
+            public void testNothingReturnType() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/nothingReturnType.kt");
+            }
+
+            @Test
             @TestMetadata("returnInlineClass.kt")
             public void testReturnInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/returnInlineClass.kt");

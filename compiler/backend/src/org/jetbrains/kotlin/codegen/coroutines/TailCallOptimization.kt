@@ -34,7 +34,9 @@ internal fun MethodNode.allSuspensionPointsAreTailCalls(suspensionPoints: List<S
             val insn = stack.popLast()
             // In Unit-returning functions, the last statement is followed by POP + GETSTATIC Unit.INSTANCE
             // if it is itself not Unit-returning.
-            if (insn.opcode == Opcodes.ARETURN || (optimizeReturnUnit && insn.isPopBeforeReturnUnit)) {
+            if (insn.opcode == Opcodes.ARETURN || (optimizeReturnUnit && insn.isPopBeforeReturnUnit) ||
+                insn.isPopBeforeKotlinNothingException()
+            ) {
                 if (frames[instructions.indexOf(insn)]?.top() !is FromSuspensionPointValue?) {
                     return false
                 }
@@ -57,6 +59,22 @@ internal fun MethodNode.allSuspensionPointsAreTailCalls(suspensionPoints: List<S
         tryCatchBlocks.all { index < instructions.indexOf(it.start) || instructions.indexOf(it.end) <= index } &&
                 suspensionPoint.suspensionCallEnd.transitiveSuccessorsAreSafeOrReturns()
     }
+}
+
+private fun AbstractInsnNode.isPopBeforeKotlinNothingException(): Boolean {
+    var cursor = this
+    if (cursor.opcode != Opcodes.POP) return false
+    cursor = cursor.nextMeaningful ?: return false
+    if (cursor.opcode != Opcodes.NEW ||
+        (cursor as TypeInsnNode).desc != Type.getObjectType("kotlin/KotlinNothingValueException").internalName
+    ) return false
+    cursor = cursor.nextMeaningful ?: return false
+    if (cursor.opcode != Opcodes.DUP) return false
+    cursor = cursor.nextMeaningful ?: return false
+    if (cursor.opcode != Opcodes.INVOKESPECIAL || (cursor as MethodInsnNode).name != "<init>") return false
+    cursor = cursor.nextMeaningful ?: return false
+    if (cursor.opcode != Opcodes.ATHROW) return false
+    return true
 }
 
 internal fun MethodNode.addCoroutineSuspendedChecks(suspensionPoints: List<SuspensionPoint>) {

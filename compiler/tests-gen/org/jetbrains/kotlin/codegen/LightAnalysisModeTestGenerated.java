@@ -10456,6 +10456,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/lambdaParameterInlining.kt");
             }
 
+            @TestMetadata("nothingReturnType.kt")
+            public void testNothingReturnType() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/nothingReturnType.kt");
+            }
+
             @TestMetadata("returnInlineClass.kt")
             public void testReturnInlineClass() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/tailCallOptimizations/returnInlineClass.kt");
