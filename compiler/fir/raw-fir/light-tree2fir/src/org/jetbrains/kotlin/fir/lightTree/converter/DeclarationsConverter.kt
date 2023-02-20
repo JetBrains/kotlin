@@ -1051,6 +1051,7 @@ class DeclarationsConverter(
             val (body, _) = convertFunctionBody(block, null, allowLegacyContractDescription = true)
             this.body = body
             context.firFunctionTargets.removeLast()
+            this.contextReceivers.addAll(convertContextReceivers(secondaryConstructor.getParent()!!.getParent()!!))
         }.also {
             it.containingClassForStaticMemberAttr = currentDispatchReceiverType()!!.lookupTag
             target.bind(it)
