@@ -3,7 +3,7 @@ RAW_FIR:
 FILE: parameterOfNonLocalSetter.kt
     public? final? [RAW_FIR] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [RAW_FIR] var x: Int = LAZY_EXPRESSION
@@ -16,7 +16,7 @@ IMPORTS:
 FILE: parameterOfNonLocalSetter.kt
     public? final? [RAW_FIR] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [RAW_FIR] var x: Int = LAZY_EXPRESSION
@@ -29,7 +29,7 @@ COMPILER_REQUIRED_ANNOTATIONS:
 FILE: parameterOfNonLocalSetter.kt
     public? final? [RAW_FIR] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [COMPILER_REQUIRED_ANNOTATIONS] var x: Int = LAZY_EXPRESSION
@@ -42,7 +42,7 @@ COMPANION_GENERATION:
 FILE: parameterOfNonLocalSetter.kt
     public? final? [RAW_FIR] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [COMPANION_GENERATION] var x: Int = LAZY_EXPRESSION
@@ -55,7 +55,7 @@ SUPER_TYPES:
 FILE: parameterOfNonLocalSetter.kt
     public? final? [RAW_FIR] class X : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [SUPER_TYPES] var x: Int = LAZY_EXPRESSION
@@ -68,7 +68,7 @@ TYPES:
 FILE: parameterOfNonLocalSetter.kt
     public? final? [SUPER_TYPES] class X : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? [TYPES] var x: R|kotlin/Int| = LAZY_EXPRESSION
@@ -81,7 +81,7 @@ STATUS:
 FILE: parameterOfNonLocalSetter.kt
     public final [SUPER_TYPES] class X : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public final [STATUS] var x: R|kotlin/Int| = LAZY_EXPRESSION
@@ -94,7 +94,7 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: parameterOfNonLocalSetter.kt
     public final [STATUS] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public final [ARGUMENTS_OF_ANNOTATIONS] var x: R|kotlin/Int| = LAZY_EXPRESSION
@@ -107,7 +107,7 @@ CONTRACTS:
 FILE: parameterOfNonLocalSetter.kt
     public final [STATUS] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public final [CONTRACTS] var x: R|kotlin/Int| = IntegerLiteral(2)
@@ -122,7 +122,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: parameterOfNonLocalSetter.kt
     public final [STATUS] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public final [IMPLICIT_TYPES_BODY_RESOLVE] var x: R|kotlin/Int| = IntegerLiteral(2)
@@ -137,7 +137,7 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: parameterOfNonLocalSetter.kt
     public final [STATUS] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public final [ANNOTATIONS_ARGUMENTS_MAPPING] var x: R|kotlin/Int| = IntegerLiteral(2)
@@ -152,7 +152,7 @@ EXPECT_ACTUAL_MATCHING:
 FILE: parameterOfNonLocalSetter.kt
     public final [STATUS] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public final [EXPECT_ACTUAL_MATCHING] var x: R|kotlin/Int| = IntegerLiteral(2)
@@ -167,7 +167,7 @@ BODY_RESOLVE:
 FILE: parameterOfNonLocalSetter.kt
     public final [STATUS] class X : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=X] constructor(): R|X| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public final [BODY_RESOLVE] var x: R|kotlin/Int| = Int(2)

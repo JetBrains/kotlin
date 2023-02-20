@@ -1,14 +1,15 @@
+
 RAW_FIR:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -19,13 +20,13 @@ IMPORTS:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -36,13 +37,13 @@ COMPILER_REQUIRED_ANNOTATIONS:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -53,13 +54,13 @@ COMPANION_GENERATION:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -70,13 +71,13 @@ SUPER_TYPES:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -87,13 +88,13 @@ TYPES:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -104,13 +105,13 @@ STATUS:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -121,13 +122,13 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -138,13 +139,13 @@ CONTRACTS:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -157,13 +158,13 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -176,13 +177,13 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -195,13 +196,13 @@ EXPECT_ACTUAL_MATCHING:
 FILE: functionWithGenericExpectedTypeInside.kt
     public? open [RAW_FIR] class Foo<[RAW_FIR] T : CharSequence> : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=Foo] constructor<[RAW_FIR] T : CharSequence>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? final? [RAW_FIR] class Bar : Foo<String> {
         public? [RAW_FIR] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
@@ -214,13 +215,13 @@ BODY_RESOLVE:
 FILE: functionWithGenericExpectedTypeInside.kt
     public open [TYPES] class Foo<[TYPES] T : R|kotlin/CharSequence|> : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=Foo] constructor<[TYPES] T : R|kotlin/CharSequence|>(): R|Foo<T>| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public final [TYPES] class Bar : R|Foo<kotlin/String>| {
         public [STATUS] [ContainingClassKey=Bar] constructor(): R|Bar| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }

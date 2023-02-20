@@ -9,13 +9,13 @@ FILE: typeParameters.kt
     public? final typealias AnyList = List<*>
     public? abstract class AbstractList<out T : Any> : List<T> {
         public? constructor<out T : Any>(): R|AbstractList<T>| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
     }
     public? final? class SomeList : AbstractList<Int> {
         public? constructor(): R|SomeList| {
-            super<AbstractList<Int>>()
+            LAZY_super<AbstractList<Int>>
         }
 
         public? open? override fun get(index: Int): Int { LAZY_BLOCK }

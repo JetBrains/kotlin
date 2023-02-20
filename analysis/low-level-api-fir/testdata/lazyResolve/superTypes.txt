@@ -3,19 +3,19 @@ RAW_FIR:
 FILE: superTypes.kt
     public? open [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
     public? open [RAW_FIR] class resolveMe : A {
         public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
@@ -24,19 +24,19 @@ IMPORTS:
 FILE: superTypes.kt
     public? open [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
     public? open [RAW_FIR] class resolveMe : A {
         public? [RAW_FIR] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
@@ -45,19 +45,19 @@ COMPILER_REQUIRED_ANNOTATIONS:
 FILE: superTypes.kt
     public? open [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
     public? open [COMPILER_REQUIRED_ANNOTATIONS] class resolveMe : A {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
@@ -66,19 +66,19 @@ COMPANION_GENERATION:
 FILE: superTypes.kt
     public? open [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
     public? open [COMPANION_GENERATION] class resolveMe : A {
         public? [COMPANION_GENERATION] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
@@ -87,19 +87,19 @@ SUPER_TYPES:
 FILE: superTypes.kt
     public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
     public? open [SUPER_TYPES] class resolveMe : R|A| {
         public? [SUPER_TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
@@ -108,19 +108,19 @@ TYPES:
 FILE: superTypes.kt
     public? open [SUPER_TYPES] class A : R|kotlin/Any| {
         public? [SUPER_TYPES] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
     public? open [TYPES] class resolveMe : R|A| {
         public? [TYPES] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
-            super<R|A|>()
+            LAZY_super<R|A|>
         }
 
     }
@@ -129,19 +129,19 @@ STATUS:
 FILE: superTypes.kt
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
     public open [STATUS] class resolveMe : R|A| {
         public [STATUS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
-            super<R|A|>()
+            LAZY_super<R|A|>
         }
 
     }
@@ -150,19 +150,19 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: superTypes.kt
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
     public open [ARGUMENTS_OF_ANNOTATIONS] class resolveMe : R|A| {
         public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=resolveMe] constructor(): R|resolveMe| {
-            super<R|A|>()
+            LAZY_super<R|A|>
         }
 
     }
@@ -171,13 +171,13 @@ CONTRACTS:
 FILE: superTypes.kt
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
@@ -192,13 +192,13 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: superTypes.kt
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
@@ -213,13 +213,13 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: superTypes.kt
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
@@ -234,13 +234,13 @@ EXPECT_ACTUAL_MATCHING:
 FILE: superTypes.kt
     public open [TYPES] class A : R|kotlin/Any| {
         public [TYPES] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }
@@ -255,13 +255,13 @@ BODY_RESOLVE:
 FILE: superTypes.kt
     public open [STATUS] class A : R|kotlin/Any| {
         public [STATUS] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
     public? open [RAW_FIR] class B : A {
         public? [RAW_FIR] [ContainingClassKey=B] constructor(): R|B| {
-            super<A>()
+            LAZY_super<A>
         }
 
     }

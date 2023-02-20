@@ -1,7 +1,7 @@
 FILE: propertyAccessorsContractDescription.kt
     public? final? class MyClass : R|kotlin/Any| {
         public? constructor(): R|MyClass| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? var myInt: Int = LAZY_EXPRESSION

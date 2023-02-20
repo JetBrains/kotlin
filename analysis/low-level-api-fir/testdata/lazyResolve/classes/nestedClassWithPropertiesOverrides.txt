@@ -7,7 +7,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
         public? final? [RAW_FIR] class ResolveMe : OV {
             public? [RAW_FIR] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? open? override [RAW_FIR] val originalExpressions: A
@@ -18,7 +18,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -31,7 +31,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
         public? final? [RAW_FIR] class ResolveMe : OV {
             public? [RAW_FIR] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? open? override [RAW_FIR] val originalExpressions: A
@@ -42,7 +42,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -55,7 +55,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
         public? final? [COMPILER_REQUIRED_ANNOTATIONS] class ResolveMe : OV {
             public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? open? override [COMPILER_REQUIRED_ANNOTATIONS] val originalExpressions: A
@@ -66,7 +66,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -79,7 +79,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
         public? final? [COMPANION_GENERATION] class ResolveMe : OV {
             public? [COMPANION_GENERATION] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? open? override [COMPANION_GENERATION] val originalExpressions: A
@@ -90,7 +90,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -103,7 +103,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
         public? final? [SUPER_TYPES] class ResolveMe : R|OV| {
             public? [SUPER_TYPES] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? open? override [SUPER_TYPES] val originalExpressions: A
@@ -114,7 +114,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [RAW_FIR] class A : R|kotlin/Any| {
         public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -127,7 +127,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
         public? final? [TYPES] class ResolveMe : R|OV| {
             public? [TYPES] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public? open? override [TYPES] val originalExpressions: R|A|
@@ -138,7 +138,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -151,7 +151,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
         public final [STATUS] class ResolveMe : R|OV| {
             public [STATUS] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public open override [STATUS] val originalExpressions: R|A|
@@ -162,7 +162,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -175,7 +175,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
         public final [ARGUMENTS_OF_ANNOTATIONS] class ResolveMe : R|OV| {
             public [ARGUMENTS_OF_ANNOTATIONS] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
-                super<<implicit>>()
+                LAZY_super<<implicit>>
             }
 
             public open override [ARGUMENTS_OF_ANNOTATIONS] val originalExpressions: R|A|
@@ -186,7 +186,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -210,7 +210,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -234,7 +234,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -258,7 +258,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -282,7 +282,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -306,7 +306,7 @@ FILE: nestedClassWithPropertiesOverrides.kt
     }
     public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
         public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }

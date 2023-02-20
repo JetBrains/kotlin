@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
 internal class RawFirNonLocalDeclarationBuilder private constructor(
     session: FirSession,
@@ -136,7 +138,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
 
         private fun extractContructorConversionParams(
             classOrObject: KtClassOrObject,
-            constructor: KtConstructor<*>
+            constructor: KtConstructor<*>?
         ): ConstructorConversionParams {
             val typeParameters = mutableListOf<FirTypeParameterRef>()
             context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
@@ -144,7 +146,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 withPsiEntry("constructor", constructor)
             }
             val selfType = classOrObject.toDelegatedSelfType(typeParameters, containingClass.symbol)
-            val superTypeCallEntry = classOrObject.superTypeListEntries.firstIsInstanceOrNull<KtSuperTypeCallEntry>()
+            val superTypeCallEntry = classOrObject.superTypeListEntries.lastIsInstanceOrNull<KtSuperTypeCallEntry>()
             return ConstructorConversionParams(superTypeCallEntry, selfType, typeParameters)
         }
 
@@ -163,8 +165,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             )
         }
 
-        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit?): FirElement {
-            val classOrObject = constructor.getContainingClassOrObject()
+        fun processPrimaryConstructor(classOrObject: KtClassOrObject, constructor: KtPrimaryConstructor?): FirElement {
             val params = extractContructorConversionParams(classOrObject, constructor)
             val firConstructor = originalDeclaration as FirConstructor
             val calleeReference = firConstructor.delegatedConstructor?.calleeReference as FirSuperReference?
@@ -182,6 +183,9 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             }
             return newConstructor
         }
+
+        override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor, data: Unit?): FirElement =
+            processPrimaryConstructor(constructor.getContainingClassOrObject(), constructor)
 
         override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit?): FirElement {
             val owner = containingClass ?: buildErrorWithAttachment("Enum entry outside of class") {
@@ -213,6 +217,13 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     if (containingClass == null) {
                         // Constructor outside of class, syntax error, we should not do anything
                         originalDeclaration
+                    } else {
+                        visitor.convertElement(declarationToBuild)
+                    }
+                }
+                is KtClassOrObject -> {
+                    if (originalDeclaration is FirConstructor) {
+                        visitor.processPrimaryConstructor(declarationToBuild, null)
                     } else {
                         visitor.convertElement(declarationToBuild)
                     }
