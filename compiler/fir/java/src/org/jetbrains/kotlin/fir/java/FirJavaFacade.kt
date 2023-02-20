@@ -364,7 +364,10 @@ abstract class FirJavaFacade(
                         moduleData = moduleData,
                     )
             }
-            if (javaClass.isRecord) {
+
+            // There is no need to generated synthetic declarations for java record from binary dependencies
+            //   because they are actually present in .class files
+            if (javaClass.isRecord && javaClass.isFromSource) {
                 createDeclarationsForJavaRecord(
                     javaClass,
                     classId,

@@ -341,6 +341,12 @@ public class FirLightTreeBlackBoxModernJdkCodegenTestGenerated extends AbstractF
             }
 
             @Test
+            @TestMetadata("binaryRecord.kt")
+            public void testBinaryRecord() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/binaryRecord.kt");
+            }
+
+            @Test
             @TestMetadata("bytecodeShapeForJava.kt")
             public void testBytecodeShapeForJava() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/bytecodeShapeForJava.kt");
