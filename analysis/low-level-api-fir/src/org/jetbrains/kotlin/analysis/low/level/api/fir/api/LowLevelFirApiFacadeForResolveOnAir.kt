@@ -132,7 +132,11 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val scopeSession = firResolveSession.getScopeSessionFor(session)
         firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
 
-        val importingScopes = createImportingScopes(firFile, firFile.moduleData.session, scopeSession, useCaching = false)
+        return firFile.createTowerDataContext(scopeSession)
+    }
+
+    private fun FirFile.createTowerDataContext(scopeSession: ScopeSession): FirTowerDataContext {
+        val importingScopes = createImportingScopes(this, moduleData.session, scopeSession, useCaching = false)
         val fileScopeElements = importingScopes.map { it.asTowerDataElement(isLocal = false) }
         return FirTowerDataContext().addNonLocalTowerDataElements(fileScopeElements)
     }
@@ -184,6 +188,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         replacement: RawFirReplacement,
         firFile: FirFile,
         collector: FirTowerDataContextCollector? = null,
+        firResolveSession: LLFirResolvableResolveSession,
     ): FirAnnotation {
         val annotationCall = buildFileFirAnnotation(
             session = firFile.moduleData.session,
@@ -200,13 +205,15 @@ object LowLevelFirApiFacadeForResolveOnAir {
             ?: buildErrorWithAttachment("FirFile session expected to be a resolvable session but was ${firFile.llFirSession::class.java}") {
                 withEntry("firSession", firFile.llFirSession) { it.toString() }
             }
-        val declarationResolver = llFirResolvableSession.moduleComponents.firModuleLazyDeclarationResolver
 
+        val declarationResolver = llFirResolvableSession.moduleComponents.firModuleLazyDeclarationResolver
         declarationResolver.runLazyDesignatedOnAirResolveToBodyWithoutLock(
             FirDesignationWithFile(path = emptyList(), target = fileAnnotationsContainer, firFile),
             onAirCreatedDeclaration = true,
             collector
         )
+
+        collector?.addFileContext(firFile, firFile.createTowerDataContext(firResolveSession.getScopeSessionFor(llFirResolvableSession)))
 
         return annotationCall
     }
@@ -229,6 +236,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
                     replacement = replacement,
                     firFile = originalFirFile,
                     collector = collector,
+                    firResolveSession = firResolveSession,
                 )
             } else {
                 error("Cannot find enclosing declaration for ${replacement.from.getElementTextInContext()}")

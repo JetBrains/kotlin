@@ -71,6 +71,12 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     }
 
     @Test
+    @TestMetadata("AnnotationOnFile2.kt")
+    public void testAnnotationOnFile2() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/AnnotationOnFile2.kt");
+    }
+
+    @Test
     @TestMetadata("AnnotationOnFileWithImport.kt")
     public void testAnnotationOnFileWithImport() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/AnnotationOnFileWithImport.kt");
@@ -386,6 +392,30 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
     @TestMetadata("NotEqualsOperator.kt")
     public void testNotEqualsOperator() throws Exception {
         runTest("analysis/analysis-api/testData/referenceResolve/NotEqualsOperator.kt");
+    }
+
+    @Test
+    @TestMetadata("PackageFromAnnotationOnFile.kt")
+    public void testPackageFromAnnotationOnFile() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/PackageFromAnnotationOnFile.kt");
+    }
+
+    @Test
+    @TestMetadata("PackageFromAnnotationOnFileWithUnresolvedReference.kt")
+    public void testPackageFromAnnotationOnFileWithUnresolvedReference() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/PackageFromAnnotationOnFileWithUnresolvedReference.kt");
+    }
+
+    @Test
+    @TestMetadata("PackageFromAnnotationOnFunction.kt")
+    public void testPackageFromAnnotationOnFunction() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/PackageFromAnnotationOnFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("PackageFromAnnotationOnFunctionWithUnresolvedReference.kt")
+    public void testPackageFromAnnotationOnFunctionWithUnresolvedReference() throws Exception {
+        runTest("analysis/analysis-api/testData/referenceResolve/PackageFromAnnotationOnFunctionWithUnresolvedReference.kt");
     }
 
     @Test
@@ -770,9 +800,21 @@ public class FirIdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exten
         }
 
         @Test
+        @TestMetadata("DanglingAnnotationsResolvedFile.kt")
+        public void testDanglingAnnotationsResolvedFile() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/danglingAnnotations/DanglingAnnotationsResolvedFile.kt");
+        }
+
+        @Test
         @TestMetadata("DanglingAnnotationsResolvedLocal.kt")
         public void testDanglingAnnotationsResolvedLocal() throws Exception {
             runTest("analysis/analysis-api/testData/referenceResolve/danglingAnnotations/DanglingAnnotationsResolvedLocal.kt");
+        }
+
+        @Test
+        @TestMetadata("DanglingAnnotationsResolvedPackageFile.kt")
+        public void testDanglingAnnotationsResolvedPackageFile() throws Exception {
+            runTest("analysis/analysis-api/testData/referenceResolve/danglingAnnotations/DanglingAnnotationsResolvedPackageFile.kt");
         }
 
         @Test
