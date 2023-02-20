@@ -20,7 +20,7 @@ class DokkaConfigurationJsonTest {
             )
         )
 
-        val jsonString = configuration.toJsonString()
+        val jsonString = configuration.toCompactJsonString()
         val parsedConfiguration = DokkaConfigurationImpl(jsonString)
         assertEquals(configuration, parsedConfiguration)
     }

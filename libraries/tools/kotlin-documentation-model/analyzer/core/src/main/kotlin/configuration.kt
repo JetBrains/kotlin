@@ -2,10 +2,7 @@
 
 package org.jetbrains.dokka
 
-import org.jetbrains.dokka.plugability.ConfigurableBlock
 import org.jetbrains.dokka.utilities.cast
-import org.jetbrains.dokka.utilities.parseJson
-import org.jetbrains.dokka.utilities.toJsonString
 import java.io.File
 import java.io.Serializable
 import java.net.URL
@@ -95,8 +92,6 @@ data class DokkaSourceSetID(
     }
 }
 
-fun DokkaConfigurationImpl(json: String): DokkaConfigurationImpl = parseJson(json)
-
 /**
  * Global options can be configured and applied to all packages and modules at once, overwriting package configuration.
  *
@@ -111,8 +106,6 @@ data class GlobalDokkaConfiguration(
     val sourceLinks: List<SourceLinkDefinitionImpl>?
 )
 
-fun GlobalDokkaConfiguration(json: String): GlobalDokkaConfiguration = parseJson(json)
-
 fun DokkaConfiguration.apply(globals: GlobalDokkaConfiguration): DokkaConfiguration = this.apply {
     sourceSets.forEach {
         it.perPackageOptions.cast<MutableList<DokkaConfiguration.PackageOptions>>().addAll(globals.perPackageOptions ?: emptyList())
@@ -126,9 +119,6 @@ fun DokkaConfiguration.apply(globals: GlobalDokkaConfiguration): DokkaConfigurat
         it.sourceLinks.cast<MutableSet<SourceLinkDefinitionImpl>>().addAll(globals.sourceLinks ?: emptyList())
     }
 }
-
-fun DokkaConfiguration.toJsonString(): String = toJsonString(this)
-fun <T : ConfigurableBlock> T.toJsonString(): String = toJsonString(this)
 
 interface DokkaConfiguration : Serializable {
     val moduleName: String
