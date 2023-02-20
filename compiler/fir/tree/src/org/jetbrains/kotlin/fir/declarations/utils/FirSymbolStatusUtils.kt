@@ -95,4 +95,4 @@ inline val FirPropertyAccessorSymbol.allowsToHaveFakeOverride: Boolean get() = v
 
 inline val FirPropertySymbol.allowsToHaveFakeOverride: Boolean get() = visibility.allowsToHaveFakeOverride
 
-inline val FirNamedFunctionSymbol.isLocal: Boolean get() = visibility == Visibilities.Local
+inline val FirNamedFunctionSymbol.isLocal: Boolean get() = rawStatus.visibility == Visibilities.Local
