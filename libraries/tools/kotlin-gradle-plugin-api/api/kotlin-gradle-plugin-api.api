@@ -1019,6 +1019,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTarget 
 	public abstract fun getUseDisambiguationClassifierAsSourceSetNamePrefix ()Z
 	public abstract fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun mavenPublication (Lorg/gradle/api/Action;)V
+	public abstract fun withSourcesJar (Z)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTarget$DefaultImpls {
@@ -1027,6 +1028,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTarget$DefaultImpls 
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Ljava/lang/String;
 	public static fun getName (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Ljava/lang/String;
 	public static fun mavenPublication (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;Lkotlin/jvm/functions/Function1;)V
+	public static synthetic fun withSourcesJar$default (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;ZILjava/lang/Object;)V
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetComponent : org/gradle/api/component/SoftwareComponent {
