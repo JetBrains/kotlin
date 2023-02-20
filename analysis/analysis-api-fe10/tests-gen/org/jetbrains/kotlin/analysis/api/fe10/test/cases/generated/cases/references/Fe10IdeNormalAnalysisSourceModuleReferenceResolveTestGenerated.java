@@ -1391,6 +1391,12 @@ public class Fe10IdeNormalAnalysisSourceModuleReferenceResolveTestGenerated exte
             public void testFunctionValueParameter() throws Exception {
                 runTest("analysis/analysis-api/testData/referenceResolve/kDoc/parameters/FunctionValueParameter.kt");
             }
+
+            @Test
+            @TestMetadata("FunctionValueParameter2.kt")
+            public void testFunctionValueParameter2() throws Exception {
+                runTest("analysis/analysis-api/testData/referenceResolve/kDoc/parameters/FunctionValueParameter2.kt");
+            }
         }
 
         @Nested
