@@ -1,8 +1,6 @@
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K2: JS_IR
-// IGNORE_BACKEND_K2_LIGHT_TREE: JVM_IR
-//   Reason: KT-56508
 // WITH_STDLIB
 
 class A(val ok: String)
