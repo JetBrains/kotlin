@@ -28,8 +28,21 @@ internal class TypeReference<T> private constructor(
     }
 }
 
+// not used anywhere since at least 1.7.20, but might still be referenced in previously compiled
+// inline functions. should be safe to remove after a few major releases.
 @PublishedApi
-internal fun toJsonString(value: Any): String = objectMapper.writeValueAsString(value)
+@Deprecated(
+    "Left for previously compiled public inline classes, not for use",
+    ReplaceWith("serializeAsCompactJson(value)"),
+    level = DeprecationLevel.ERROR
+)
+internal fun toJsonString(value: Any): String = serializeAsCompactJson(value)
+
+internal fun serializeAsCompactJson(value: Any): String =
+    objectMapper.writeValueAsString(value)
+
+internal fun serializeAsPrettyJson(value: Any): String =
+    objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(value)
 
 @PublishedApi
 internal inline fun <reified T : Any> parseJson(json: String): T = parseJson(json, TypeReference())
