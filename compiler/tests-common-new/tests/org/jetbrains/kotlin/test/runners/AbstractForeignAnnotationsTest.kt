@@ -108,7 +108,7 @@ private class FirForeignDiagnosticsTestDataConsistencyHandler(testServices: Test
     FirTestDataConsistencyHandler(testServices) {
 
     override fun correspondingFirTest(): AbstractKotlinCompilerTest =
-        object : AbstractFirForeignAnnotationsSourceJavaTest() {}
+        object : AbstractFirPsiForeignAnnotationsSourceJavaTest() {}
 }
 
 abstract class AbstractOldFrontendForeignAnnotationsTestBase(kind: ForeignAnnotationsTestKind) :

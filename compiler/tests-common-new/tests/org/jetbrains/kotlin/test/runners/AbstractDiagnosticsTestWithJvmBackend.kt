@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.runners
 
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -146,7 +148,9 @@ abstract class AbstractDiagnosticsTestWithJvmIrBackend :
         get() = ::JvmIrBackendFacade
 }
 
-abstract class AbstractFirDiagnosticsTestWithJvmIrBackend : AbstractDiagnosticsTestWithJvmBackend<FirOutputArtifact, IrBackendInput>() {
+abstract class AbstractFirDiagnosticsTestWithJvmIrBackendBase(
+    val parser: FirParser
+) : AbstractDiagnosticsTestWithJvmBackend<FirOutputArtifact, IrBackendInput>() {
     override val targetFrontend: FrontendKind<FirOutputArtifact>
         get() = FrontendKinds.FIR
 
@@ -169,4 +173,11 @@ abstract class AbstractFirDiagnosticsTestWithJvmIrBackend : AbstractDiagnosticsT
         if (InTextDirectivesUtils.isDirectiveDefined(wholeText, "// TARGET_BACKEND: JVM_OLD")) return
         super.runTest(filePath)
     }
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureFirParser(parser)
+    }
 }
+
+abstract class AbstractFirPsiDiagnosticsTestWithJvmIrBackend : AbstractFirDiagnosticsTestWithJvmIrBackendBase(FirParser.Psi)

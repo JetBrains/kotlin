@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -83,7 +84,7 @@ open class AbstractIrBytecodeTextTest : AbstractBytecodeTextTestBase<ClassicFron
         get() = ::JvmIrBackendFacade
 }
 
-open class AbstractFirBytecodeTextTestBase(val useLightTree: Boolean) : AbstractBytecodeTextTestBase<FirOutputArtifact, IrBackendInput>(
+open class AbstractFirBytecodeTextTestBase(val parser: FirParser) : AbstractBytecodeTextTestBase<FirOutputArtifact, IrBackendInput>(
     targetBackend = TargetBackend.JVM_IR,
     targetFrontend = FrontendKinds.FIR
 ) {
@@ -102,15 +103,13 @@ open class AbstractFirBytecodeTextTestBase(val useLightTree: Boolean) : Abstract
             defaultDirectives {
                 // See KT-44152
                 -USE_PSI_CLASS_FILES_READING
-                if (useLightTree) {
-                    +FirDiagnosticsDirectives.USE_LIGHT_TREE
-                }
+                builder.configureFirParser(parser)
             }
         }
     }
 }
 
-open class AbstractFirBytecodeTextTest : AbstractFirBytecodeTextTestBase(useLightTree = true)
+open class AbstractFirLightTreeBytecodeTextTest : AbstractFirBytecodeTextTestBase(FirParser.LightTree)
 
 @FirPsiCodegenTest
-open class AbstractFirPsiBytecodeTextTest : AbstractFirBytecodeTextTestBase(useLightTree = false)
+open class AbstractFirPsiBytecodeTextTest : AbstractFirBytecodeTextTestBase(FirParser.Psi)

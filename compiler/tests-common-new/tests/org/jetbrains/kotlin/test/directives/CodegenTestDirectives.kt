@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 
@@ -205,7 +207,9 @@ fun extractIgnoredDirectivesForTargetBackend(
         FrontendKinds.ClassicFrontend -> listOf(CodegenTestDirectives.IGNORE_BACKEND_K1)
         FrontendKinds.FIR -> listOfNotNull(
             CodegenTestDirectives.IGNORE_BACKEND_K2,
-            CodegenTestDirectives.IGNORE_BACKEND_K2_LIGHT_TREE.takeIf { module.directives.contains(FirDiagnosticsDirectives.USE_LIGHT_TREE) }
+            CodegenTestDirectives.IGNORE_BACKEND_K2_LIGHT_TREE.takeIf {
+                module.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.LightTree
+            }
         )
         else -> return emptyList()
     }

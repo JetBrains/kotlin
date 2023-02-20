@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
@@ -15,9 +16,7 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.frontend.classic.*
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
@@ -81,7 +80,7 @@ open class AbstractIrBytecodeListingTest : AbstractBytecodeListingTestBase<Class
         get() = ::JvmIrBackendFacade
 }
 
-abstract class AbstractFirBytecodeListingTestBase(val useLightTree: Boolean) :
+abstract class AbstractFirBytecodeListingTestBase(val parser: FirParser) :
     AbstractBytecodeListingTestBase<FirOutputArtifact, IrBackendInput>(
         TargetBackend.JVM_IR,
         FrontendKinds.FIR
@@ -97,13 +96,11 @@ abstract class AbstractFirBytecodeListingTestBase(val useLightTree: Boolean) :
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        if (useLightTree) {
-            builder.defaultDirectives { +FirDiagnosticsDirectives.USE_LIGHT_TREE }
-        }
+        builder.configureFirParser(parser)
     }
 }
 
-open class AbstractFirBytecodeListingTest : AbstractFirBytecodeListingTestBase(useLightTree = true)
+open class AbstractFirLightTreeBytecodeListingTest : AbstractFirBytecodeListingTestBase(FirParser.LightTree)
 
 @FirPsiCodegenTest
-open class AbstractFirPsiBytecodeListingTest : AbstractFirBytecodeListingTestBase(useLightTree = false)
+open class AbstractFirPsiBytecodeListingTest : AbstractFirBytecodeListingTestBase(FirParser.Psi)

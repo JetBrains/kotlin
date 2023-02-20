@@ -23,7 +23,7 @@ fun main(args: Array<String>) {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
 
-            testClass<AbstractSerializationFirDiagnosticTest> {
+            testClass<AbstractSerializationFirPsiDiagnosticTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
                 model("firMembers")
             }
@@ -38,7 +38,7 @@ fun main(args: Array<String>) {
                 model("codegen")
             }
 
-            testClass<AbstractSerializationFir2IrAsmLikeInstructionsListingTest> {
+            testClass<AbstractSerializationFirLightTreeAsmLikeInstructionsListingTest> {
                 model("codegen")
             }
 
@@ -48,7 +48,7 @@ fun main(args: Array<String>) {
                 model("boxIr")
             }
 
-            testClass<AbstractSerializationFirBlackBoxTest> {
+            testClass<AbstractSerializationFirLightTreeBlackBoxTest> {
                 model("boxIr")
                 model("firMembers")
             }

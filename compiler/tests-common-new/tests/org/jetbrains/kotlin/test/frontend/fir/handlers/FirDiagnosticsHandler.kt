@@ -34,11 +34,13 @@ import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
@@ -66,7 +68,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             val currentModule = part.module
 
             val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in currentModule.directives
-            val lightTreeEnabled = FirDiagnosticsDirectives.USE_LIGHT_TREE in currentModule.directives
+            val lightTreeEnabled = currentModule.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.LightTree
 
             for (file in currentModule.files) {
                 val firFile = info.mainFirFiles[file] ?: continue
@@ -491,7 +493,7 @@ class PsiLightTreeMetaInfoProcessor(testServices: TestServices) : AbstractTwoAtt
     }
 
     override fun firstAttributeEnabled(module: TestModule): Boolean {
-        return FirDiagnosticsDirectives.USE_LIGHT_TREE !in module.directives
+        return module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.Psi
     }
 }
 

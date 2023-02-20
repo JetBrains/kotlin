@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.test.builders.configureClassicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.CHECK_ASM_LIKE_INSTRUCTIONS
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LIGHT_TREE
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -100,7 +101,7 @@ open class AbstractIrAsmLikeInstructionListingTest :
         get() = ::JvmIrBackendFacade
 }
 
-abstract class AbstractFirAsmLikeInstructionListingTestBase(val useLightTree: Boolean) :
+abstract class AbstractFirAsmLikeInstructionListingTestBase(val parser: FirParser) :
     AbstractAsmLikeInstructionListingTestBase<FirOutputArtifact, IrBackendInput>(
         FrontendKinds.FIR,
         TargetBackend.JVM_IR
@@ -117,12 +118,13 @@ abstract class AbstractFirAsmLikeInstructionListingTestBase(val useLightTree: Bo
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        if (useLightTree) {
-            builder.defaultDirectives { +USE_LIGHT_TREE }
-        }
+        builder.configureFirParser(parser)
     }
 }
 
-open class AbstractFirAsmLikeInstructionListingTest : AbstractFirAsmLikeInstructionListingTestBase(useLightTree = true)
+open class AbstractFirLightTreeAsmLikeInstructionListingTest : AbstractFirAsmLikeInstructionListingTestBase(FirParser.LightTree)
+
+@FirPsiCodegenTest
+open class AbstractFirPsiAsmLikeInstructionListingTest : AbstractFirAsmLikeInstructionListingTestBase(FirParser.Psi)
 
 

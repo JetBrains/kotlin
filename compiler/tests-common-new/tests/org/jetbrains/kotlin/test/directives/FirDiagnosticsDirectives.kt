@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.test.directives
 
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
@@ -36,8 +39,8 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
-    val USE_LIGHT_TREE by directive(
-        description = "Enables light tree parser instead of PSI"
+    val FIR_PARSER by enumDirective<FirParser>(
+        description = "Defines which parser should be used for FIR compiler"
     )
 
     val FIR_DISABLE_LAZY_RESOLVE_CHECKS by directive(
@@ -45,10 +48,7 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
     )
 
     val COMPARE_WITH_LIGHT_TREE by directive(
-        description = """
-            Enable comparing diagnostics between PSI and light tree modes
-            For enabling light tree mode use $USE_LIGHT_TREE directive
-        """.trimIndent(),
+        description = "Enable comparing diagnostics between PSI and light tree modes",
         applicability = Global
     )
 
@@ -77,4 +77,10 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             Directive must contain description of ignoring in argument
         """.trimIndent()
     )
+}
+
+fun TestConfigurationBuilder.configureFirParser(parser: FirParser) {
+    defaultDirectives {
+        FIR_PARSER with parser
+    }
 }

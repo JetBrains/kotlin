@@ -18,11 +18,13 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModulePr
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifactImpl
@@ -33,12 +35,15 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 
 abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
-    @OptIn(TestInfrastructureInternals::class)
     final override fun TestConfigurationBuilder.configuration() {
         globalDefaults {
             frontend = FrontendKinds.FIR
             targetPlatform = JvmPlatforms.defaultJvmPlatform
             dependencyKind = DependencyKind.Source
+        }
+
+        defaultDirectives {
+            FIR_PARSER with FirParser.Psi
         }
 
         configureTest()

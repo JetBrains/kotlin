@@ -14,12 +14,12 @@ import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidBytecodeShapeTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidIrBoxTest
 import org.jetbrains.kotlin.android.synthetic.test.AbstractAndroidSyntheticPropertyDescriptorTest
-import org.jetbrains.kotlin.assignment.plugin.AbstractFirBlackBoxCodegenTestForAssignmentPlugin
-import org.jetbrains.kotlin.assignment.plugin.AbstractFirAssignmentPluginDiagnosticTest
 import org.jetbrains.kotlin.assignment.plugin.AbstractIrBlackBoxCodegenTestAssignmentPlugin
 import org.jetbrains.kotlin.assignment.plugin.AbstractAssignmentPluginDiagnosticTest
-import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginBlackBoxCodegenTest
-import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPluginDiagnosticTest
+import org.jetbrains.kotlin.assignment.plugin.AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin
+import org.jetbrains.kotlin.assignment.plugin.AbstractFirPsiAssignmentPluginDiagnosticTest
+import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirLightTreePluginBlackBoxCodegenTest
+import org.jetbrains.kotlin.fir.plugin.runners.AbstractFirPsiPluginDiagnosticTest
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.generators.model.annotation
@@ -226,7 +226,7 @@ fun main(args: Array<String>) {
                 model("box")
             }
 
-            testClass<AbstractParcelizeFirBoxTest> {
+            testClass<AbstractParcelizeFirLightTreeBoxTest> {
                 model("box")
             }
 
@@ -242,17 +242,17 @@ fun main(args: Array<String>) {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
 
-            testClass<AbstractFirParcelizeDiagnosticTest> {
+            testClass<AbstractFirPsiParcelizeDiagnosticTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
         }
 
         testGroup("plugins/fir-plugin-prototype/tests-gen", "plugins/fir-plugin-prototype/testData") {
-            testClass<AbstractFirPluginDiagnosticTest> {
+            testClass<AbstractFirPsiPluginDiagnosticTest> {
                 model("diagnostics")
             }
 
-            testClass<AbstractFirPluginBlackBoxCodegenTest> {
+            testClass<AbstractFirLightTreePluginBlackBoxCodegenTest> {
                 model("box")
             }
         }
@@ -284,13 +284,13 @@ fun main(args: Array<String>) {
             testClass<AbstractIrBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractFirBytecodeListingTestForAllOpen> {
+            testClass<AbstractFirPsiBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractFirDiagnosticTestForAllOpen>() {
+            testClass<AbstractFirLightTreeDiagnosticTestForAllOpen> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractFirDiagnosticsWithLightTreeTestForAllOpen>() {
+            testClass<AbstractFirPsiDiagnosticTestForAllOpen> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
         }
@@ -299,7 +299,7 @@ fun main(args: Array<String>) {
             testClass<AbstractDiagnosticsTestForNoArg> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractFirDiagnosticsTestForNoArg> {
+            testClass<AbstractFirPsiDiagnosticsTestForNoArg> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractBytecodeListingTestForNoArg> {
@@ -308,7 +308,7 @@ fun main(args: Array<String>) {
             testClass<AbstractIrBytecodeListingTestForNoArg> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractFirBytecodeListingTestForNoArg> {
+            testClass<AbstractFirLightTreeBytecodeListingTestForNoArg> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractBlackBoxCodegenTestForNoArg> {
@@ -317,7 +317,7 @@ fun main(args: Array<String>) {
             testClass<AbstractIrBlackBoxCodegenTestForNoArg> {
                 model("box")
             }
-            testClass<AbstractFirBlackBoxCodegenTestForNoArg> {
+            testClass<AbstractFirLightTreeBlackBoxCodegenTestForNoArg> {
                 model("box")
             }
         }
@@ -329,13 +329,13 @@ fun main(args: Array<String>) {
             testClass<AbstractIrBlackBoxCodegenTestForLombok> {
                 model("box")
             }
-            testClass<AbstractFirBlackBoxCodegenTestForLombok> {
+            testClass<AbstractFirLightTreeBlackBoxCodegenTestForLombok> {
                 model("box")
             }
             testClass<AbstractDiagnosticTestForLombok> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractFirDiagnosticTestForLombok> {
+            testClass<AbstractFirPsiDiagnosticTestForLombok> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
         }
@@ -344,13 +344,13 @@ fun main(args: Array<String>) {
             testClass<AbstractSamWithReceiverTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractFirSamWithReceiverTest> {
+            testClass<AbstractFirPsiSamWithReceiverDiagnosticTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractIrBlackBoxCodegenTestForSamWithReceiver> {
                 model("codegen", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractFirBlackBoxCodegenTestForSamWithReceiver> {
+            testClass<AbstractFirLightTreeBlackBoxCodegenTestForSamWithReceiver> {
                 model("codegen", excludedPattern = excludedFirTestdataPattern)
             }
         }
@@ -388,13 +388,13 @@ fun main(args: Array<String>) {
             testClass<AbstractAssignmentPluginDiagnosticTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractFirAssignmentPluginDiagnosticTest> {
+            testClass<AbstractFirPsiAssignmentPluginDiagnosticTest> {
                 model("diagnostics", excludedPattern = excludedFirTestdataPattern)
             }
             testClass<AbstractIrBlackBoxCodegenTestAssignmentPlugin> {
                 model("codegen", excludedPattern = excludedFirTestdataPattern)
             }
-            testClass<AbstractFirBlackBoxCodegenTestForAssignmentPlugin> {
+            testClass<AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin> {
                 model("codegen", excludedPattern = excludedFirTestdataPattern)
             }
         }

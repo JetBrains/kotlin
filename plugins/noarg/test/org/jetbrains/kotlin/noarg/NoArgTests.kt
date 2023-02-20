@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest
-import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.runners.configurationForClassicAndFirTestsAlongside
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -34,7 +34,7 @@ open class AbstractIrBlackBoxCodegenTestForNoArg : AbstractIrBlackBoxCodegenTest
     }
 }
 
-open class AbstractFirBlackBoxCodegenTestForNoArg : AbstractFirBlackBoxCodegenTest() {
+open class AbstractFirLightTreeBlackBoxCodegenTestForNoArg : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableNoArg()
@@ -57,7 +57,7 @@ open class AbstractIrBytecodeListingTestForNoArg : AbstractIrBytecodeListingTest
     }
 }
 
-open class AbstractFirBytecodeListingTestForNoArg : AbstractFirBytecodeListingTest() {
+open class AbstractFirLightTreeBytecodeListingTestForNoArg : AbstractFirLightTreeBytecodeListingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.enableNoArg()
@@ -73,7 +73,7 @@ abstract class AbstractDiagnosticsTestForNoArg : AbstractDiagnosticTest() {
     }
 }
 
-abstract class AbstractFirDiagnosticsTestForNoArg : AbstractFirDiagnosticTest() {
+abstract class AbstractFirPsiDiagnosticsTestForNoArg : AbstractFirPsiDiagnosticTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configurationForClassicAndFirTestsAlongside()

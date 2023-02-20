@@ -38,7 +38,9 @@ import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.getAnalyzerServices
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -261,11 +263,11 @@ open class FirFrontendFacade(
 
         PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
 
-        val lightTreeEnabled = FirDiagnosticsDirectives.USE_LIGHT_TREE in module.directives
-        val (ktFiles, lightTreeFiles) = if (lightTreeEnabled) {
-            emptyList<KtFile>() to testServices.sourceFileProvider.getLightTreeFilesForSourceFiles(module.files).values
-        } else {
-            testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
+        val parser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
+
+        val (ktFiles, lightTreeFiles) = when (parser) {
+            FirParser.LightTree -> emptyList<KtFile>() to testServices.sourceFileProvider.getLightTreeFilesForSourceFiles(module.files).values
+            FirParser.Psi -> testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
         }
 
         val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
@@ -295,7 +297,7 @@ open class FirFrontendFacade(
             ktFiles,
             lightTreeFiles,
             IrGenerationExtension.getInstances(project),
-            lightTreeEnabled,
+            parser,
             enablePluginPhases,
             generateSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE
         )

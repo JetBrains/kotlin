@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.SPEC_TEST_PATH
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTS_MAP_FILENAME
 import org.jetbrains.kotlin.spec.utils.SectionsJsonMapGenerator
 import org.jetbrains.kotlin.spec.utils.TestsJsonMapGenerator
-import org.jetbrains.kotlin.test.runners.AbstractFirDiagnosticTestSpec
+import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTestSpec
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
 import java.io.File
 import java.nio.file.Files
@@ -65,7 +65,7 @@ fun generateTests() {
 
     generateTestGroupSuiteWithJUnit5 {
         testGroup(testsRoot = "compiler/fir/analysis-tests/tests-gen", testDataRoot = SPEC_TESTDATA_PATH) {
-            testClass<AbstractFirDiagnosticTestSpec> {
+            testClass<AbstractFirPsiDiagnosticTestSpec> {
                 model(
                     "diagnostics",
                     excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),

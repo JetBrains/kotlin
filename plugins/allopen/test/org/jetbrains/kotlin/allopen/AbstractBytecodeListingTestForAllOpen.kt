@@ -17,12 +17,14 @@
 package org.jetbrains.kotlin.allopen
 
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
 import org.jetbrains.kotlin.test.backend.classic.ClassicJvmBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
@@ -69,7 +71,7 @@ open class AbstractIrBytecodeListingTestForAllOpen :
         get() = ::JvmIrBackendFacade
 }
 
-open class AbstractFirBytecodeListingTestForAllOpen :
+open class AbstractFirPsiBytecodeListingTestForAllOpen :
     AbstractBytecodeListingTestForAllOpenBase<FirOutputArtifact, IrBackendInput>(
         TargetBackend.JVM_IR, FrontendKinds.FIR
     ) {
@@ -79,4 +81,9 @@ open class AbstractFirBytecodeListingTestForAllOpen :
         get() = ::Fir2IrResultsConverter
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.Jvm>>
         get() = ::JvmIrBackendFacade
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureFirParser(FirParser.Psi)
+    }
 }

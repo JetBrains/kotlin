@@ -21,7 +21,7 @@ open class AbstractIrBlackBoxInlineCodegenTest : AbstractIrBlackBoxCodegenTest()
     }
 }
 
-open class AbstractFirBlackBoxInlineCodegenTest : AbstractFirBlackBoxCodegenTest() {
+open class AbstractFirLightTreeBlackBoxInlineCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
@@ -32,8 +32,6 @@ open class AbstractFirBlackBoxInlineCodegenTest : AbstractFirBlackBoxCodegenTest
 open class AbstractFirPsiBlackBoxInlineCodegenTest : AbstractFirPsiBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
-        with(builder) {
-            useInlineHandlers()
-        }
+        builder.useInlineHandlers()
     }
 }

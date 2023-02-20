@@ -18,8 +18,9 @@ import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
-import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -116,7 +117,7 @@ open class AbstractIrTextTest : AbstractIrTextTestBase<ClassicFrontendOutputArti
     }
 }
 
-open class AbstractFir2IrTextTestBase(val useLightTree: Boolean) : AbstractIrTextTestBase<FirOutputArtifact>() {
+open class AbstractFirIrTextTestBase(val parser: FirParser) : AbstractIrTextTestBase<FirOutputArtifact>() {
     override val frontend: FrontendKind<*>
         get() = FrontendKinds.FIR
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
@@ -127,12 +128,7 @@ open class AbstractFir2IrTextTestBase(val useLightTree: Boolean) : AbstractIrTex
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
-            if (useLightTree) {
-                defaultDirectives {
-                    +FirDiagnosticsDirectives.USE_LIGHT_TREE
-                }
-            }
-
+            configureFirParser(parser)
             useAfterAnalysisCheckers(
                 ::FirIrDumpIdenticalChecker,
                 ::BlackBoxCodegenSuppressor
@@ -147,12 +143,12 @@ open class AbstractFir2IrTextTestBase(val useLightTree: Boolean) : AbstractIrTex
     }
 }
 
-open class AbstractFir2IrTextTest : AbstractFir2IrTextTestBase(useLightTree = true)
+open class AbstractFirLightTreeIrTextTest : AbstractFirIrTextTestBase(FirParser.LightTree)
 
 @FirPsiCodegenTest
-open class AbstractFirPsi2IrTextTest : AbstractFir2IrTextTestBase(useLightTree = false)
+open class AbstractFirPsiIrTextTest : AbstractFirIrTextTestBase(FirParser.Psi)
 
-open class AbstractFir2IrJsTextTestBase(useLightTree: Boolean) : AbstractFir2IrTextTestBase(useLightTree) {
+open class AbstractFirIrJsTextTestBase(parser: FirParser) : AbstractFirIrTextTestBase(parser) {
     override fun TestConfigurationBuilder.applyConfigurators() {
         useConfigurators(
             ::CommonEnvironmentConfigurator,
@@ -175,4 +171,4 @@ open class AbstractFir2IrJsTextTestBase(useLightTree: Boolean) : AbstractFir2IrT
     }
 }
 
-open class AbstractFir2IrJsTextTest : AbstractFir2IrJsTextTestBase(useLightTree = true)
+open class AbstractFirLightTreeIrJsTextTest : AbstractFirIrJsTextTestBase(FirParser.LightTree)

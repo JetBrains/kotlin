@@ -7,10 +7,12 @@ import org.jetbrains.kotlin.js.test.converters.incremental.RecompileModuleJsIrBa
 import org.jetbrains.kotlin.js.test.handlers.JsIrRecompiledArtifactsIdentityHandler
 import org.jetbrains.kotlin.parsing.parseBoolean
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrJsResultsConverter
@@ -59,6 +61,7 @@ open class AbstractFirJsTest(
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
                 -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
                 DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
+                FirDiagnosticsDirectives.FIR_PARSER with FirParser.Psi
             }
 
             firHandlersStep {

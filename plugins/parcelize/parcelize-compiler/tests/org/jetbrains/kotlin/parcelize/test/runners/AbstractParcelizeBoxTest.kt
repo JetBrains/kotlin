@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.parcelize.test.services.ParcelizeMainClassProvider
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeRuntimeClasspathProvider
 import org.jetbrains.kotlin.parcelize.test.services.ParcelizeUtilSourcesProvider
 import org.jetbrains.kotlin.test.Constructor
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.classic.ClassicBackendInput
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.REQUIRES_SEPARATE_PROCESS
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
@@ -116,7 +118,7 @@ open class AbstractParcelizeIrBoxTest : AbstractParcelizeBoxTestBase<ClassicFron
         get() = ::JvmIrBackendFacade
 }
 
-open class AbstractParcelizeFirBoxTest : AbstractParcelizeBoxTestBase<FirOutputArtifact, IrBackendInput>(
+abstract class AbstractParcelizeFirBoxTestBase(val parser: FirParser) : AbstractParcelizeBoxTestBase<FirOutputArtifact, IrBackendInput>(
     FrontendKinds.FIR,
     TargetBackend.JVM_IR
 ) {
@@ -133,7 +135,10 @@ open class AbstractParcelizeFirBoxTest : AbstractParcelizeBoxTestBase<FirOutputA
         with(builder) {
             defaultDirectives {
                 +ENABLE_PLUGIN_PHASES
+                FirDiagnosticsDirectives.FIR_PARSER with parser
             }
         }
     }
 }
+
+open class AbstractParcelizeFirLightTreeBoxTest : AbstractParcelizeFirBoxTestBase(FirParser.LightTree)

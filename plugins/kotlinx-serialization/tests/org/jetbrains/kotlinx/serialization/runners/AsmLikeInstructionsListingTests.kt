@@ -8,7 +8,7 @@ package org.jetbrains.kotlinx.serialization.runners
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives
 import org.jetbrains.kotlin.test.runners.codegen.AbstractAsmLikeInstructionListingTest
-import org.jetbrains.kotlin.test.runners.codegen.AbstractFirAsmLikeInstructionListingTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeAsmLikeInstructionListingTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrAsmLikeInstructionListingTest
 import org.jetbrains.kotlinx.serialization.configureForKotlinxSerialization
 
@@ -28,7 +28,7 @@ open class AbstractSerializationIrAsmLikeInstructionsListingTest : AbstractIrAsm
     }
 }
 
-open class AbstractSerializationFir2IrAsmLikeInstructionsListingTest : AbstractFirAsmLikeInstructionListingTest() {
+open class AbstractSerializationFirLightTreeAsmLikeInstructionsListingTest : AbstractFirLightTreeAsmLikeInstructionListingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.defaultDirectives {
