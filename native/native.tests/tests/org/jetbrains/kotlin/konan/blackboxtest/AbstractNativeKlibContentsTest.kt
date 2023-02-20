@@ -56,8 +56,7 @@ abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
     }
 
     private fun filterContentsOutput(contents: String, linestoExclude: List<String>) =
-        StringUtilRt.convertLineSeparators(contents)
-            .split("\n")
+        contents.lines()
             .filterNot { line ->
                 linestoExclude.any { exclude -> exclude == line }
             }.joinToString(separator = "\n")
