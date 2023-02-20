@@ -43,6 +43,7 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             }
 
             val srcFile = projectPath.resolve("app/src/main/kotlin/App.kt").toFile()
+            val guardFile = projectPath.resolve("app/build/klib/cache/cache.guard").toFile()
             val badCode = srcFile.readText()
 
             var successfulBuildCacheFiles = emptyMap<String, Int>()
@@ -56,15 +57,10 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
 
             srcFile.writeText(badCode)
 
-            val guardFile = projectPath.resolve("app/build/klib/cache/cache.guard").toFile()
             for (i in 0..1) {
                 buildAndFail("nodeDevelopmentRun") {
                     assertTasksFailed(":app:compileDevelopmentExecutableKotlinJs")
-                    val failedBuildCacheFiles = readCacheFiles()
-                    val expectedFiles = successfulBuildCacheFiles.toMutableMap()
-                    expectedFiles[guardFile.absolutePath] = ByteArray(0).contentHashCode()
-                    assertEquals(expectedFiles, failedBuildCacheFiles, "The cache files should not be modified")
-                    guardFile.delete()
+                    assertTrue("guard file after compilation error expected") { guardFile.exists() }
                 }
             }
 
@@ -75,6 +71,7 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                 val successfulRebuildCacheFiles = readCacheFiles()
                 assertEquals(successfulBuildCacheFiles.size, successfulRebuildCacheFiles.size, "The number of files must be the same")
                 assertNotEquals(successfulBuildCacheFiles, successfulRebuildCacheFiles, "The cache files should be modified")
+                assertFalse("guard file after successful compilation must be removed") { guardFile.exists() }
             }
         }
     }

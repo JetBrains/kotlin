@@ -48,7 +48,8 @@ class ModuleInfo(val moduleName: String) {
         val dependencies: Collection<Dependency>,
         val modifications: List<Modification>,
         val expectedFileStats: Map<String, Set<String>>,
-        val expectedDTS: Set<String>
+        val expectedDTS: Set<String>,
+        val rebuildKlib: Boolean
     )
 
     val steps = mutableListOf<ModuleStep>()
@@ -67,6 +68,7 @@ private const val MODIFICATIONS = "modifications"
 private const val MODIFICATION_UPDATE = "U"
 private const val MODIFICATION_DELETE = "D"
 private const val EXPECTED_DTS_LIST = "expected dts"
+private const val REBUILD_KLIB = "rebuild klib"
 
 private val STEP_PATTERN = Pattern.compile("^\\s*STEP\\s+(\\d+)\\.*(\\d+)?\\s*:?$")
 
@@ -213,6 +215,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
         val friendDependencies = mutableSetOf<String>()
         val modifications = mutableListOf<ModuleInfo.Modification>()
         val expectedDTS = mutableSetOf<String>()
+        var rebuildKlib = true
 
         loop { line ->
             if (line.matches(STEP_PATTERN.toRegex()))
@@ -234,6 +237,9 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                     FRIENDS -> getOpArgs().forEach { friendDependencies += it }
                     MODIFICATIONS -> modifications += parseModifications()
                     EXPECTED_DTS_LIST -> getOpArgs().forEach { expectedDTS += it }
+                    REBUILD_KLIB -> getOpArgs().singleOrNull()?.toBooleanStrictOrNull()?.let {
+                        rebuildKlib = it
+                    } ?: error(diagnosticMessage("$op expects true or false", line))
                     else -> error(diagnosticMessage("Unknown op $op", line))
                 }
             }
@@ -255,7 +261,8 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
                 dependencies = dependencies,
                 modifications = modifications,
                 expectedFileStats = expectedFileStats,
-                expectedDTS = expectedDTS
+                expectedDTS = expectedDTS,
+                rebuildKlib = rebuildKlib
             )
         }
     }
