@@ -1,3 +1,4 @@
+
 RAW_FIR:
 FILE: typeParameterBounds.kt
     public? final? [RAW_FIR] fun resolveMe([RAW_FIR] foo: Foo): R|kotlin/Unit| { LAZY_BLOCK }
@@ -46,7 +47,7 @@ FILE: typeParameterBounds.kt
 TYPES:
 FILE: typeParameterBounds.kt
     public? final? [TYPES] fun resolveMe([TYPES] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface Foo : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
     public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
     }
@@ -55,7 +56,7 @@ FILE: typeParameterBounds.kt
 STATUS:
 FILE: typeParameterBounds.kt
     public final [STATUS] fun resolveMe([STATUS] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface Foo : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
     public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
     }
@@ -64,7 +65,7 @@ FILE: typeParameterBounds.kt
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: typeParameterBounds.kt
     public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([ARGUMENTS_OF_ANNOTATIONS] foo: R|Foo|): R|kotlin/Unit| { LAZY_BLOCK }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface Foo : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
     public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
     }
@@ -75,7 +76,7 @@ FILE: typeParameterBounds.kt
     public final [CONTRACTS] fun resolveMe([CONTRACTS] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface Foo : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
     public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
     }
@@ -86,7 +87,7 @@ FILE: typeParameterBounds.kt
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe([IMPLICIT_TYPES_BODY_RESOLVE] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface Foo : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
     public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
     }
@@ -97,7 +98,7 @@ FILE: typeParameterBounds.kt
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe([ANNOTATIONS_ARGUMENTS_MAPPING] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface Foo : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
     public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
     }
@@ -108,7 +109,7 @@ FILE: typeParameterBounds.kt
     public final [EXPECT_ACTUAL_MATCHING] fun resolveMe([EXPECT_ACTUAL_MATCHING] foo: R|Foo|): R|kotlin/Unit| {
         foo#.util#()
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface Foo : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface Foo : R|kotlin/Any| {
     }
     public? final? [RAW_FIR] interface Bar<[RAW_FIR] T : Foo> : R|kotlin/Any| {
     }

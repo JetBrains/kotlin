@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.symbols.impl
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
@@ -41,7 +42,12 @@ sealed class FirFunctionSymbol<D : FirFunction>(
 
 open class FirNamedFunctionSymbol(
     callableId: CallableId,
-) : FirFunctionSymbol<FirSimpleFunction>(callableId)
+) : FirFunctionSymbol<FirSimpleFunction>(callableId) {
+    override fun canBeDeprecated(): Boolean {
+        if (isLocal || callableId.className == null) return annotations.isNotEmpty()
+        return true
+    }
+}
 
 interface FirIntersectionCallableSymbol {
     val intersections: Collection<FirCallableSymbol<*>>
@@ -75,6 +81,10 @@ class FirConstructorSymbol(
 
     val delegatedConstructorCallIsSuper: Boolean
         get() = fir.delegatedConstructor?.isSuper ?: false
+
+    override fun canBeDeprecated(): Boolean {
+        return annotations.isNotEmpty()
+    }
 }
 
 /**
@@ -99,12 +109,20 @@ sealed class FirFunctionWithoutNameSymbol<F : FirFunction>(
 
 class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunction>(Name.identifier("anonymous")) {
     val label: FirLabel? get() = fir.label
+
+    override fun canBeDeprecated(): Boolean {
+        return annotations.isNotEmpty()
+    }
 }
 
 class FirPropertyAccessorSymbol : FirFunctionWithoutNameSymbol<FirPropertyAccessor>(Name.identifier("accessor")) {
     val isGetter: Boolean get() = fir.isGetter
     val isSetter: Boolean get() = fir.isSetter
     val propertySymbol get() = fir.propertySymbol
+
+    override fun canBeDeprecated(): Boolean {
+        return propertySymbol.canBeDeprecated()
+    }
 }
 
 class FirErrorFunctionSymbol : FirFunctionWithoutNameSymbol<FirErrorFunction>(Name.identifier("error"))

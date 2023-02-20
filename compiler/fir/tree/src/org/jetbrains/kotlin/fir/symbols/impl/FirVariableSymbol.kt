@@ -61,6 +61,15 @@ open class FirPropertySymbol(
 
     val isVar: Boolean
         get() = fir.isVar
+
+    override fun canBeDeprecated(): Boolean {
+        if (isLocal || callableId.className == null) {
+            return annotations.isNotEmpty()
+                    || getterSymbol?.annotations?.isNotEmpty() == true
+                    || setterSymbol?.annotations?.isNotEmpty() == true
+        }
+        return true
+    }
 }
 
 class FirIntersectionOverridePropertySymbol(
@@ -116,6 +125,9 @@ class FirValueParameterSymbol(name: Name) : FirVariableSymbol<FirValueParameter>
     val containingFunctionSymbol: FirFunctionSymbol<*>
         get() = fir.containingFunctionSymbol
 
+    override fun canBeDeprecated(): Boolean {
+        return false
+    }
 }
 
 class FirErrorPropertySymbol(

@@ -26,7 +26,8 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
 
     val name get() = classId.shortClassName
 
-    fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
+     fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
+        if (annotations.isEmpty()) return null
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
     }

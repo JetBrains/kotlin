@@ -126,8 +126,8 @@ FILE: enumEntry.kt
 
 TYPES:
 FILE: enumEntry.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor(): R|Anno| {
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -151,8 +151,8 @@ FILE: enumEntry.kt
 
 STATUS:
 FILE: enumEntry.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor(): R|Anno| {
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -176,8 +176,8 @@ FILE: enumEntry.kt
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: enumEntry.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor(): R|Anno| {
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -201,8 +201,8 @@ FILE: enumEntry.kt
 
 CONTRACTS:
 FILE: enumEntry.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor(): R|Anno| {
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -232,8 +232,8 @@ FILE: enumEntry.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: enumEntry.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] annotation class Anno : R|kotlin/Annotation| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=Anno] constructor(): R|Anno| {
+    public? final? [RAW_FIR] annotation class Anno : R|kotlin/Annotation| {
+        public? [RAW_FIR] [ContainingClassKey=Anno] constructor(): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 

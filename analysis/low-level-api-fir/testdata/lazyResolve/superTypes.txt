@@ -85,8 +85,8 @@ FILE: superTypes.kt
 
 SUPER_TYPES:
 FILE: superTypes.kt
-    public? open [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
+    public? open [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 

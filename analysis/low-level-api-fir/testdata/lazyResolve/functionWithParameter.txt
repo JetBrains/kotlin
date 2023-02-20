@@ -31,25 +31,25 @@ FILE: functionWithParameter.kt
 
 TYPES:
 FILE: functionWithParameter.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface I : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public? final? [TYPES] fun resolveMe([TYPES] param: R|I|): <implicit> { LAZY_BLOCK }
 
 STATUS:
 FILE: functionWithParameter.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface I : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [STATUS] fun resolveMe([STATUS] param: R|I|): <implicit> { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: functionWithParameter.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface I : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [ARGUMENTS_OF_ANNOTATIONS] fun resolveMe([ARGUMENTS_OF_ANNOTATIONS] param: R|I|): <implicit> { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: functionWithParameter.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface I : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [CONTRACTS] fun resolveMe([CONTRACTS] param: R|I|): <implicit> {
         ^resolveMe Unit#
@@ -57,7 +57,7 @@ FILE: functionWithParameter.kt
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: functionWithParameter.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface I : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [IMPLICIT_TYPES_BODY_RESOLVE] fun resolveMe([IMPLICIT_TYPES_BODY_RESOLVE] param: R|I|): R|kotlin/Unit| {
         ^resolveMe Q|kotlin/Unit|
@@ -65,7 +65,7 @@ FILE: functionWithParameter.kt
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: functionWithParameter.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface I : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [ANNOTATIONS_ARGUMENTS_MAPPING] fun resolveMe([ANNOTATIONS_ARGUMENTS_MAPPING] param: R|I|): R|kotlin/Unit| {
         ^resolveMe Q|kotlin/Unit|
@@ -73,7 +73,7 @@ FILE: functionWithParameter.kt
 
 EXPECT_ACTUAL_MATCHING:
 FILE: functionWithParameter.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface I : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [EXPECT_ACTUAL_MATCHING] fun resolveMe([EXPECT_ACTUAL_MATCHING] param: R|I|): R|kotlin/Unit| {
         ^resolveMe Q|kotlin/Unit|
@@ -81,7 +81,7 @@ FILE: functionWithParameter.kt
 
 BODY_RESOLVE:
 FILE: functionWithParameter.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface I : R|kotlin/Any| {
+    public? final? [RAW_FIR] interface I : R|kotlin/Any| {
     }
     public final [BODY_RESOLVE] fun resolveMe([BODY_RESOLVE] param: R|I|): R|kotlin/Unit| {
         ^resolveMe Q|kotlin/Unit|

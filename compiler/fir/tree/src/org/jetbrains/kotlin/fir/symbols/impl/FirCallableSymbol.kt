@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.symbols.impl
 
 import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -67,9 +66,16 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
         get() = callableId.callableName
 
     fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
+        if (!canBeDeprecated()) return null
         lazyResolveToPhase(FirResolvePhase.STATUS)
         return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
     }
+
+    /**
+     * Checks if symbol can be deprecated by syntax
+     * @return `true` if symbol might have some deprecation status, or `false` if it's definitely not deprecated
+     */
+    internal open fun canBeDeprecated(): Boolean = true
 
     private fun ensureType(typeRef: FirTypeRef?) {
         when (typeRef) {

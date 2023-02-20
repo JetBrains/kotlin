@@ -97,9 +97,9 @@ FILE: nestedClassWithPropertiesOverrides.kt
 
 SUPER_TYPES:
 FILE: nestedClassWithPropertiesOverrides.kt
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface OV : R|kotlin/Any| {
-        public? final? [COMPILER_REQUIRED_ANNOTATIONS] val originalExpressions: A
-            public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=OV] get(): A
+    public? final? [RAW_FIR] interface OV : R|kotlin/Any| {
+        public? final? [RAW_FIR] val originalExpressions: A
+            public? [RAW_FIR] [ContainingClassKey=OV] get(): A
 
         public? final? [SUPER_TYPES] class ResolveMe : R|OV| {
             public? [SUPER_TYPES] [ContainingClassKey=ResolveMe] constructor(): R|OV.ResolveMe| {
@@ -136,8 +136,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -160,8 +160,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -184,8 +184,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -208,8 +208,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -232,8 +232,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -256,8 +256,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -280,8 +280,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -304,8 +304,8 @@ FILE: nestedClassWithPropertiesOverrides.kt
         }
 
     }
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] class A : R|kotlin/Any| {
-        public? [COMPILER_REQUIRED_ANNOTATIONS] [ContainingClassKey=A] constructor(): R|A| {
+    public? final? [RAW_FIR] class A : R|kotlin/Any| {
+        public? [RAW_FIR] [ContainingClassKey=A] constructor(): R|A| {
             LAZY_super<R|kotlin/Any|>
         }
 

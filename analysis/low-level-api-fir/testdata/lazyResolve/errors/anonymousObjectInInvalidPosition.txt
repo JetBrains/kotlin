@@ -48,8 +48,8 @@ TYPES:
 FILE: anonymousObjectInInvalidPosition.kt
     private final? [TYPES] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [TYPES] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface A<[COMPILER_REQUIRED_ANNOTATIONS] T> : R|kotlin/Any| {
-        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun x(): R|kotlin/Unit|
+    public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
+        public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
 
     }
 
@@ -57,8 +57,8 @@ STATUS:
 FILE: anonymousObjectInInvalidPosition.kt
     private final [STATUS] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [STATUS] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface A<[COMPILER_REQUIRED_ANNOTATIONS] T> : R|kotlin/Any| {
-        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun x(): R|kotlin/Unit|
+    public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
+        public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
 
     }
 
@@ -66,8 +66,8 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: anonymousObjectInInvalidPosition.kt
     private final [ARGUMENTS_OF_ANNOTATIONS] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = LAZY_EXPRESSION
         private [ARGUMENTS_OF_ANNOTATIONS] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface A<[COMPILER_REQUIRED_ANNOTATIONS] T> : R|kotlin/Any| {
-        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun x(): R|kotlin/Unit|
+    public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
+        public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
 
     }
 
@@ -84,8 +84,8 @@ FILE: anonymousObjectInInvalidPosition.kt
     }
 
         private [CONTRACTS] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface A<[COMPILER_REQUIRED_ANNOTATIONS] T> : R|kotlin/Any| {
-        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun x(): R|kotlin/Unit|
+    public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
+        public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
 
     }
 
@@ -102,8 +102,8 @@ FILE: anonymousObjectInInvalidPosition.kt
     }
 
         private [IMPLICIT_TYPES_BODY_RESOLVE] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface A<[COMPILER_REQUIRED_ANNOTATIONS] T> : R|kotlin/Any| {
-        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun x(): R|kotlin/Unit|
+    public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
+        public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
 
     }
 
@@ -120,8 +120,8 @@ FILE: anonymousObjectInInvalidPosition.kt
     }
 
         private [ANNOTATIONS_ARGUMENTS_MAPPING] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface A<[COMPILER_REQUIRED_ANNOTATIONS] T> : R|kotlin/Any| {
-        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun x(): R|kotlin/Unit|
+    public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
+        public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
 
     }
 
@@ -138,8 +138,8 @@ FILE: anonymousObjectInInvalidPosition.kt
     }
 
         private [EXPECT_ACTUAL_MATCHING] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [COMPILER_REQUIRED_ANNOTATIONS] interface A<[COMPILER_REQUIRED_ANNOTATIONS] T> : R|kotlin/Any| {
-        public? final? [COMPILER_REQUIRED_ANNOTATIONS] fun x(): R|kotlin/Unit|
+    public? final? [RAW_FIR] interface A<[RAW_FIR] T> : R|kotlin/Any| {
+        public? final? [RAW_FIR] fun x(): R|kotlin/Unit|
 
     }
 
