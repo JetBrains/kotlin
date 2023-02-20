@@ -358,6 +358,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         }
 
         @Test
+        @TestMetadata("IndexerSetWithVarargAndIncrement.kt")
+        public void testIndexerSetWithVarargAndIncrement() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/IndexerSetWithVarargAndIncrement.kt");
+        }
+
+        @Test
         @TestMetadata("InferNullabilityInThenBlock.kt")
         public void testInferNullabilityInThenBlock() throws Exception {
             runTest("compiler/testData/diagnostics/tests/InferNullabilityInThenBlock.kt");
@@ -35799,6 +35805,12 @@ public class FirOldFrontendDiagnosticsTestGenerated extends AbstractFirDiagnosti
         @TestMetadata("kt55747.kt")
         public void testKt55747() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/kt55747.kt");
+        }
+
+        @Test
+        @TestMetadata("kt56725.kt")
+        public void testKt56725() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/kt56725.kt");
         }
 
         @Test

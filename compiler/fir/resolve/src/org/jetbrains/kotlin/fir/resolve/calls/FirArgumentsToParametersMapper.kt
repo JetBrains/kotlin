@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildNamedArgumentExpression
-import org.jetbrains.kotlin.fir.isIntersectionOverride
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.defaultParameterResolver
@@ -91,22 +89,6 @@ fun BodyResolveComponents.mapArguments(
             && function.isOperator
             && function.name == OperatorNameConventions.SET
             && function.origin !is FirDeclarationOrigin.DynamicScope
-
-    if (isIndexedSetOperator &&
-        function.valueParameters.any { it.defaultValue != null || it.isVararg }
-    ) {
-        val v = nonLambdaArguments.last()
-        if (v !is FirNamedArgumentExpression) {
-            val namedV = buildNamedArgumentExpression {
-                source = v.source
-                expression = v
-                isSpread = false
-                name = function.valueParameters.last().name
-            }
-            nonLambdaArguments.removeAt(nonLambdaArguments.size - 1)
-            nonLambdaArguments.add(namedV)
-        }
-    }
 
     val processor = FirCallArgumentsProcessor(session, function, this, originScope, isIndexedSetOperator)
     processor.processNonLambdaArguments(nonLambdaArguments)
@@ -213,22 +195,40 @@ private class FirCallArgumentsProcessor(
         } else {
             currentPositionedParameterIndex
         }
-        val parameter = parameters.getOrNull(assignedParameterIndex)
-        if (parameter == null) {
+        val assignedParameter = parameters.getOrNull(assignedParameterIndex)
+        if (assignedParameter == null) {
             addDiagnostic(TooManyArguments(argument, function))
             return false
         }
 
-        return if (!parameter.isVararg) {
-            currentPositionedParameterIndex++
+        val isValueArgumentOfIndexedSet = isIndexedSetOperator && isLastArgument
+        val jumpToAnotherParameter = currentPositionedParameterIndex != assignedParameterIndex
 
-            result[parameter] = ResolvedCallArgument.SimpleArgument(argument)
-            false
+        require(!jumpToAnotherParameter || isValueArgumentOfIndexedSet) {
+            "We should only jump from the current parameter to another one in case of an indexed set value argument that is not a lambda"
         }
-        // all position arguments will be mapped to current vararg parameter
-        else {
-            addVarargArgument(argument)
-            true
+
+        return when {
+            isValueArgumentOfIndexedSet -> {
+                if (state == State.VARARG_POSITION) {
+                    completeVarargPositionArguments()
+                    // Prevents duplicate completeVarargPositionArguments call.
+                    // The order of putting arguments into `result` matters.
+                    state = State.POSITION_ARGUMENTS
+                }
+                result[assignedParameter] = ResolvedCallArgument.SimpleArgument(argument)
+                false
+            }
+            !assignedParameter.isVararg -> {
+                result[assignedParameter] = ResolvedCallArgument.SimpleArgument(argument)
+                currentPositionedParameterIndex++
+                false
+            }
+            // all position arguments will be mapped to current vararg parameter
+            else -> {
+                addVarargArgument(argument)
+                true
+            }
         }
     }
 
