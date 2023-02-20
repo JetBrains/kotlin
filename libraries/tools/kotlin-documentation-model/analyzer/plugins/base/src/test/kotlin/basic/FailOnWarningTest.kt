@@ -5,6 +5,7 @@ import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
 import org.jetbrains.dokka.utilities.DokkaLogger
+import org.jetbrains.dokka.utilities.LoggingLevel
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -116,7 +117,7 @@ class FailOnWarningTest : BaseAbstractTest() {
 }
 
 private class ZeroErrorOrWarningCountDokkaLogger(
-    logger: DokkaLogger = DokkaConsoleLogger()
+    logger: DokkaLogger = DokkaConsoleLogger(LoggingLevel.DEBUG)
 ) : DokkaLogger by logger {
     override var warningsCount: Int = 0
     override var errorsCount: Int = 0

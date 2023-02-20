@@ -4,6 +4,7 @@ import org.jetbrains.dokka.base.transformers.documentables.ModuleAndPackageDocum
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
+import org.jetbrains.dokka.utilities.LoggingLevel
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import testApi.testRunner.TestDokkaConfigurationBuilder
@@ -36,7 +37,7 @@ class ContextModuleAndPackageDocumentationReaderTest3 : AbstractContextModuleAnd
     private val context by lazy {
         DokkaContext.create(
             configuration = configurationBuilder.build(),
-            logger = DokkaConsoleLogger(),
+            logger = DokkaConsoleLogger(LoggingLevel.DEBUG),
             pluginOverrides = emptyList()
         )
     }
