@@ -407,6 +407,9 @@ open class FirDeclarationsResolveTransformer(
         return variable
     }
 
+    /**
+     * This function is expected to transform everything but property accessors, backing field and delegate
+     */
     private fun FirProperty.transformChildrenWithoutComponents(returnTypeRef: FirTypeRef): FirProperty {
         val data = withExpectedType(returnTypeRef)
         return transformReturnTypeRef(transformer, data)
