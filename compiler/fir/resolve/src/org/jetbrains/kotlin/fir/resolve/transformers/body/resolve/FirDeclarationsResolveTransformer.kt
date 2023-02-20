@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubTypeTransformer
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
@@ -127,7 +126,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         if (bodyResolveState == FirPropertyBodyResolveState.EVERYTHING_RESOLVED) return property
 
         val canHaveDeepImplicitTypeRefs = property.hasExplicitBackingField
-
         if (returnTypeRefBeforeResolve !is FirImplicitTypeRef && implicitTypeOnly && !canHaveDeepImplicitTypeRefs) {
             return property
         }
@@ -164,9 +162,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
                     }
                     property.replaceBodyResolveState(FirPropertyBodyResolveState.EVERYTHING_RESOLVED)
                 } else {
-                    val hasNonDefaultAccessors = property.getter != null && property.getter !is FirDefaultPropertyAccessor ||
-                            property.setter != null && property.setter !is FirDefaultPropertyAccessor
-                    val mayResolveSetter = shouldResolveEverything || !hasNonDefaultAccessors
+                    val hasDefaultAccessors =
+                        (property.getter == null || property.getter is FirDefaultPropertyAccessor) &&
+                                (property.setter == null || property.setter is FirDefaultPropertyAccessor)
+                    val mayResolveSetter = shouldResolveEverything || hasDefaultAccessors
                     val propertyTypeRefAfterResolve = property.returnTypeRef
                     val propertyTypeIsKnown = propertyTypeRefAfterResolve is FirResolvedTypeRef
                     val mayResolveGetter = mayResolveSetter || !propertyTypeIsKnown
