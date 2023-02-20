@@ -214,6 +214,7 @@ dependencies {
     fatJarContents(commonDependency("org.lz4:lz4-java")) { isTransitive = false }
     fatJarContents(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
     fatJarContents(commonDependency("com.google.guava:guava")) { isTransitive = false }
+    fatJarContents(commonDependency("com.google.code.gson:gson")) { isTransitive = false}
 
     fatJarContentsStripServices(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
     fatJarContents(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }

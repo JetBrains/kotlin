@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.report.data
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.gradle.plugin.stat.GradleBuildStartParameters
+import org.jetbrains.kotlin.build.report.statistic.GradleBuildStartParameters
 
 class BuildExecutionData(
     val startParameters: GradleBuildStartParameters,

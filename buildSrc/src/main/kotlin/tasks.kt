@@ -81,6 +81,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":native:kotlin-klib-commonizer-api",
     ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-tools-impl",
+    ":compiler:kotlin-build-statistic"
 )
 
 fun Task.dependsOnKotlinGradlePluginInstall() {
