@@ -1,4 +1,5 @@
 STEP 0..7:
+    rebuild klib: false
 STEP 8:
     dependencies: lib1
     modifications:
