@@ -10,7 +10,7 @@ FILE: nestedClass.kt
     }
     public? final? class Outer : R|kotlin/Any| {
         public? constructor(): R|Outer| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? class Derived : Base {
@@ -22,7 +22,7 @@ FILE: nestedClass.kt
 
         public? final? object Obj : Base {
             private constructor(): R|Outer.Obj| {
-                super<Base>(String())
+                LAZY_super<Base>
             }
 
         }

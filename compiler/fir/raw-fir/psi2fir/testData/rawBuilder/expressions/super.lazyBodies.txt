@@ -11,7 +11,7 @@ FILE: super.kt
     }
     public? final? class C : A, B {
         public? constructor(): R|C| {
-            super<<implicit>>()
+            LAZY_super<<implicit>>
         }
 
         public? open? override fun bar(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -9,7 +9,7 @@ FILE: constructorInObject.kt
     }
     public? final? enum class B : R|kotlin/Enum<B>| {
         private constructor(): R|B| {
-            super<R|kotlin/Enum<B>|>()
+            LAZY_super<R|kotlin/Enum<B>|>
         }
 
         public final static enum entry X: R|B| = LAZY_EXPRESSION
@@ -25,7 +25,7 @@ FILE: constructorInObject.kt
     }
     public? final? class C : R|kotlin/Any| {
         public? constructor(): R|C| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
         public? final? companion object Companion : R|kotlin/Any| {

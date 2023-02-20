@@ -1,7 +1,7 @@
 FILE: annotation.kt
     @Target(LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? annotation class base : R|kotlin/Annotation| {
         public? constructor(): R|base| {
-            super<R|kotlin/Any|>()
+            LAZY_super<R|kotlin/Any|>
         }
 
     }
@@ -20,7 +20,7 @@ FILE: annotation.kt
     }
     @base() public? final? enum class My : R|kotlin/Enum<My>| {
         private constructor(): R|My| {
-            super<R|kotlin/Enum<My>|>()
+            LAZY_super<R|kotlin/Enum<My>|>
         }
 
         @base() public final static enum entry FIRST: R|My| = LAZY_EXPRESSION
@@ -64,7 +64,7 @@ FILE: annotation.kt
     }
     @derived(LAZY_EXPRESSION) public? final? enum class MyDerived : R|kotlin/Enum<MyDerived>| {
         private constructor(): R|MyDerived| {
-            super<R|kotlin/Enum<MyDerived>|>()
+            LAZY_super<R|kotlin/Enum<MyDerived>|>
         }
 
         @derived(LAZY_EXPRESSION) public final static enum entry FIRST: R|MyDerived| = LAZY_EXPRESSION

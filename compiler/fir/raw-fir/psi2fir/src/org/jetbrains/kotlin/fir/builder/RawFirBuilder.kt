@@ -957,7 +957,7 @@ open class RawFirBuilder(
                 } else {
                     delegatedSuperTypeRef!!
                 }
-                val delegatedConstructorCall = {
+                buildOrLazyDelegatedConstructorCall(isThis = false, constructedTypeRef) {
                     buildDelegatedConstructorCall {
                         source = constructorCall ?: constructorSource.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                         this.constructedTypeRef = constructedTypeRef
@@ -971,14 +971,6 @@ open class RawFirBuilder(
                         disabledLazyMode { superTypeCallEntry?.extractArgumentsTo(this) }
                     }
                 }
-                if (this == null && owner !is KtEnumEntry) {
-                    // primary constructor without body
-                    delegatedConstructorCall()
-                } else buildOrLazyDelegatedConstructorCall(
-                    isThis = false,
-                    constructedTypeRef,
-                    delegatedConstructorCall,
-                )
             }
 
             // See DescriptorUtils#getDefaultConstructorVisibility in core.descriptors

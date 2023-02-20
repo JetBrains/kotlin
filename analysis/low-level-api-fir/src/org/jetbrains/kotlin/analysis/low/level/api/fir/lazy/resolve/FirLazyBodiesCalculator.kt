@@ -96,14 +96,13 @@ internal object FirLazyBodiesCalculator {
 
     fun calculateLazyBodyForConstructor(designation: FirDesignation) {
         val constructor = designation.target as FirConstructor
-        require(constructor.psi is KtConstructor<*>)
         require(needCalculatingLazyBodyForConstructor(constructor))
 
         val newConstructor = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
             session = constructor.moduleData.session,
             scopeProvider = constructor.moduleData.session.kotlinScopeProvider,
             designation = designation,
-            rootNonLocalDeclaration = constructor.psi as KtConstructor<*>,
+            rootNonLocalDeclaration = constructor.psi as KtDeclaration,
         ) as FirConstructor
 
         constructor.apply {
