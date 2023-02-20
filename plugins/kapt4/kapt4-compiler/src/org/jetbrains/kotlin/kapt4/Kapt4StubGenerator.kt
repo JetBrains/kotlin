@@ -427,9 +427,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
                 checkIfValidTypeName(containingClass, type)
                 treeMaker.Select(treeMaker.SimpleName(type.qualifiedName), treeMaker.name("class"))
             }
-            is PsiExpression -> treeMaker.SimpleName(value.text)
             is PsiAnnotation -> convertAnnotation(containingClass, value, packageFqName, filtered) ?: TODO()
-            else -> error("Should not be here")
+            else -> treeMaker.SimpleName(value.text)
         }
     }
 
