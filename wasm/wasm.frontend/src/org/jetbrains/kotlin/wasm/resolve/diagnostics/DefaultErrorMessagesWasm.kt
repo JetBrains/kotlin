@@ -23,6 +23,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsWasm.WASM_IMPORT_VARARG_PARAMETER, "Vararg parameters are not supported with @WasmImport")
         put(ErrorsWasm.WASM_IMPORT_UNSUPPORTED_PARAMETER_TYPE, "Unsupported @WasmImport parameter type {0}", Renderers.RENDER_TYPE)
         put(ErrorsWasm.WASM_IMPORT_UNSUPPORTED_RETURN_TYPE, "Unsupported @WasmImport return type {0}", Renderers.RENDER_TYPE)
+
+        put(ErrorsWasm.WRONG_JS_FUN_TARGET, "Only top-level external functions can be implemented using @JsFun")
     }
 }
 
