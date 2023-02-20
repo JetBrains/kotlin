@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
 import org.jetbrains.kotlin.backend.konan.objcexport.produceObjCExportInterface
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import java.io.File
 
 /**
  * Create internal representation of Objective-C wrapper.
@@ -28,6 +29,7 @@ internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<Ph
 internal data class CreateObjCFrameworkInput(
         val moduleDescriptor: ModuleDescriptor,
         val exportedInterface: ObjCExportedInterface,
+        val frameworkDirectory: File,
 )
 
 /**
@@ -38,9 +40,7 @@ internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<PhaseCont
         "Create Objective-C framework"
 ) { context, input ->
     val config = context.config
-    // TODO: Share this instance between multiple contexts (including NativeGenerationState)?
-    val outputFiles = OutputFiles(config.outputPath, config.target, config.produce)
-    createObjCFramework(config, input.moduleDescriptor, input.exportedInterface, outputFiles.mainFile)
+    createObjCFramework(config, input.moduleDescriptor, input.exportedInterface, input.frameworkDirectory)
 }
 
 /**

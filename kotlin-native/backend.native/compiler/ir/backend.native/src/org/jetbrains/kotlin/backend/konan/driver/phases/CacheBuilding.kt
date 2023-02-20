@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.konan.CacheStorage
+import org.jetbrains.kotlin.backend.konan.DependenciesTracker
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.lower.CacheInfoBuilder
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
+import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import java.io.File
 
 internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrModuleFragment>(
         name = "BuildAdditionalCacheInfo",
@@ -30,21 +35,34 @@ internal val BuildAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<Nati
     }
 }
 
-/**
- * It is naturally a part of "produce LLVM module", so using NativeGenerationState context should be OK.
- */
-internal val SaveAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+internal data class SaveAdditionalCacheInfoInput(
+        val cacheRootDirectory: File,
+        val immediateBitcodeDependencies: List<DependenciesTracker.ResolvedDependency>,
+        val inlineFunctionBodies: List<SerializedInlineFunctionReference>,
+        val classFields: List<SerializedClassFields>,
+        val eagerInitializedFiles: List<SerializedEagerInitializedFile>,
+)
+
+internal val SaveAdditionalCacheInfoPhase = createSimpleNamedCompilerPhase<PhaseContext, SaveAdditionalCacheInfoInput>(
         name = "SaveAdditionalCacheInfo",
         description = "Save additional cache info (inline functions bodies and fields of classes)"
-) { context, _ ->
-    // TODO: Extract necessary parts of context into explicit input.
-    CacheStorage(context).saveAdditionalCacheInfo()
+) { _, input ->
+    CacheStorage(input.cacheRootDirectory).saveAdditionalCacheInfo(
+            input.immediateBitcodeDependencies,
+            input.inlineFunctionBodies,
+            input.classFields,
+            input.eagerInitializedFiles
+    )
 }
 
-internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<PhaseContext, OutputFiles>(
+internal data class FinalizeCacheInput(
+        val tempDir: File,
+        val finalDir: File,
+)
+
+internal val FinalizeCachePhase = createSimpleNamedCompilerPhase<PhaseContext, FinalizeCacheInput>(
         name = "FinalizeCache",
         description = "Finalize cache (rename temp to the final dist)"
-) { _, outputFiles ->
-    //  TODO: Explicit parameter
-    CacheStorage.renameOutput(outputFiles)
+) { _, input ->
+    CacheStorage.renameOutput(input.tempDir, input.finalDir)
 }

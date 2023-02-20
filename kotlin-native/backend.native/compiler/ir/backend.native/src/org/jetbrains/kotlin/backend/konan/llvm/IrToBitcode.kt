@@ -2814,10 +2814,10 @@ internal class CodeGeneratorVisitor(
 
             val ctorName = when {
                 // TODO: Try to not use moduleId.
-                library == null -> (if (context.config.produce.isCache) generationState.outputFiles.cacheFileName else context.config.moduleId).moduleConstructorName
+                library == null -> (if (context.config.produce.isCache) generationState.cacheFileName else context.config.moduleId).moduleConstructorName
                 library == context.config.libraryToCache?.klib
                         && context.config.producePerFileCache ->
-                    fileCtorName(library.uniqueName, generationState.outputFiles.perFileCacheFileName)
+                    fileCtorName(library.uniqueName, generationState.cacheFileName)
                 else -> library.moduleConstructorName
             }
 

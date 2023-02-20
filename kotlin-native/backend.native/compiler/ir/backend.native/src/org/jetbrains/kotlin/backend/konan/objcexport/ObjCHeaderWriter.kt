@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
-import org.jetbrains.kotlin.konan.file.File
+import java.io.File
+import java.nio.file.Files
+
 
 // For now, the object is pretty dumb.
 // Later it will accept an object with ObjC declarations instead of lines.
@@ -15,6 +17,6 @@ class ObjCHeaderWriter {
             headerLines: List<String>,
             headersDirectory: File,
     ) {
-        headersDirectory.child(headerName).writeLines(headerLines)
+        Files.write(headersDirectory.resolve(headerName).toPath(), headerLines)
     }
 }

@@ -75,7 +75,9 @@ class KonanDriver(
             konanConfig = KonanConfig(project, configuration) // TODO: Just set freshly built caches.
         }
 
-        DynamicCompilerDriver().run(konanConfig, environment)
+        DynamicCompilerDriver(konanConfig, environment).use {
+            it.run()
+        }
     }
 
     private fun ensureModuleName(config: KonanConfig) {

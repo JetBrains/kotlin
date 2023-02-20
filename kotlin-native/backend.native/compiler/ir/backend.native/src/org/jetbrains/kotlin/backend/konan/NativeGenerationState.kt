@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.backend.konan.serialization.SerializedClassFields
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedEagerInitializedFile
 import org.jetbrains.kotlin.backend.konan.serialization.SerializedInlineFunctionReference
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.konan.TempFiles
 
 internal class InlineFunctionOriginInfo(val irFunction: IrFunction, val irFile: IrFile, val startOffset: Int, val endOffset: Int)
 
@@ -46,11 +45,11 @@ internal class NativeGenerationState(
         val cacheDeserializationStrategy: CacheDeserializationStrategy?,
         val dependenciesTracker: DependenciesTracker,
         val llvmModuleSpecification: LlvmModuleSpecification,
-        val outputFiles: OutputFiles,
+        val debugInfoFileName: String,
         val llvmModuleName: String,
+        // TODO: A hack.
+        val cacheFileName: String,
 ) : BasicPhaseContext(config), BackendContextHolder<Context>, LlvmIrHolder {
-    val outputFile = outputFiles.mainFileName
-
     val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
     val classFields = mutableListOf<SerializedClassFields>()
     val eagerInitializedFiles = mutableListOf<SerializedEagerInitializedFile>()

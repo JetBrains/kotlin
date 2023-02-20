@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
-import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
@@ -20,9 +19,13 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, Seria
 ) { context, input ->
     val config = context.config
     val configuration = config.configuration
-    val outputFiles = OutputFiles(config.outputPath, config.target, config.produce)
     val nopack = configuration.getBoolean(KonanConfigKeys.NOPACK)
-    val output = outputFiles.klibOutputFileName(!nopack)
+    val output = if (nopack) {
+        config.outputPath
+    } else {
+        // TODO: Add extension iff needed?
+        "${config.outputPath}.klib"
+    }
     val libraryName = config.moduleId
     val shortLibraryName = config.shortModuleName
     val abiVersion = KotlinAbiVersion.CURRENT
@@ -37,13 +40,6 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, Seria
     )
     val target = config.target
     val manifestProperties = config.manifestProperties
-
-    if (!nopack) {
-        val suffix = outputFiles.produce.suffix(target)
-        if (!output.endsWith(suffix)) {
-            error("please specify correct output: packed: ${!nopack}, $output$suffix")
-        }
-    }
 
     /*
     metadata libraries do not have 'link' dependencies, as there are several reasons

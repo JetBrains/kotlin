@@ -143,14 +143,6 @@ data class File constructor(internal val javaPath: Path) {
         }
     }
 
-    fun createAsSymlink(target: String) {
-        val targetPath = Paths.get(target)
-        if (Files.isSymbolicLink(this.javaPath) && Files.readSymbolicLink(javaPath) == targetPath) {
-            return
-        }
-        Files.createSymbolicLink(this.javaPath, targetPath)
-    }
-
     override fun toString() = path
 
     // TODO: Consider removeing these after konanazing java.util.Properties.

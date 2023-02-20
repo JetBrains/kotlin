@@ -16,9 +16,11 @@ import org.jetbrains.kotlin.backend.konan.createLTOFinalPipelineConfig
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
+import org.jetbrains.kotlin.backend.konan.driver.utilities.CompilationFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.LlvmIrHolder
 import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultLlvmModuleActions
 import org.jetbrains.kotlin.backend.konan.insertAliasToEntryPoint
+import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.backend.konan.llvm.coverage.runCoveragePass
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
@@ -101,11 +103,15 @@ internal val ThreadSanitizerPhase = optimizationPipelinePass(
         pipeline = ::ThreadSanitizerPipeline,
 )
 
-internal val CoveragePhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
+internal data class CoverageInput(
+        val outputFileName: String
+)
+
+internal val CoveragePhase = createSimpleNamedCompilerPhase<NativeGenerationState, CoverageInput>(
         name = "Coverage",
         description = "Produce coverage information",
         postactions = getDefaultLlvmModuleActions(),
-        op = { context, _ -> runCoveragePass(context) }
+        op = { context, input -> runCoveragePass(context, input.outputFileName) }
 )
 
 internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
@@ -153,8 +159,9 @@ internal val PrintBitcodePhase = createSimpleNamedCompilerPhase<PhaseContext, LL
         op = { _, llvmModule -> LLVMDumpModule(llvmModule) }
 )
 
-internal fun PhaseEngine<NativeGenerationState>.runBitcodePostProcessing() {
-    val checkExternalCalls = context.config.configuration.getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS)
+internal fun PhaseEngine<NativeGenerationState>.runBitcodePostProcessing(compilationFiles: CompilationFiles) {
+    val config = context.config
+    val checkExternalCalls = config.configuration.getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS)
     if (checkExternalCalls) {
         runPhase(CheckExternalCallsPhase)
     }
@@ -162,24 +169,28 @@ internal fun PhaseEngine<NativeGenerationState>.runBitcodePostProcessing() {
             context,
             context.llvm.targetTriple,
             closedWorld = context.llvmModuleSpecification.isFinal,
-            timePasses = context.config.flexiblePhaseConfig.needProfiling,
+            timePasses = config.flexiblePhaseConfig.needProfiling,
     )
-    useContext(OptimizationState(context.config, optimizationConfig)) {
+    useContext(OptimizationState(config, optimizationConfig)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
         it.runPhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
         it.runPhase(ModuleBitcodeOptimizationPhase, module)
         it.runPhase(LTOBitcodeOptimizationPhase, module)
-        when (context.config.sanitizer) {
+        when (config.sanitizer) {
             SanitizerKind.THREAD -> it.runPhase(ThreadSanitizerPhase, module)
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
             null -> {}
         }
     }
-    runPhase(CoveragePhase)
-    if (context.config.memoryModel == MemoryModel.EXPERIMENTAL) {
+    if (CoverageManager.isCoverageEnabled(config)) {
+        val outputFileName = compilationFiles.getComponentOrNull<CompilationFiles.Component.CodeCoverageFiles>()?.outputFileName
+                ?: context.reportCompilationError("File for coverage output is not found.")
+        runPhase(CoveragePhase, CoverageInput(outputFileName))
+    }
+    if (config.memoryModel == MemoryModel.EXPERIMENTAL) {
         runPhase(RemoveRedundantSafepointsPhase)
     }
-    if (context.config.optimizationsEnabled) {
+    if (config.optimizationsEnabled) {
         runPhase(OptimizeTLSDataLoadsPhase)
     }
     if (checkExternalCalls) {

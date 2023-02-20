@@ -36,21 +36,21 @@ internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
 // TODO: We have a Linker.kt file in the shared module.
 internal class Linker(
         private val config: KonanConfig,
-        private val linkerOutput: LinkerOutputKind,
-        private val isCoverageEnabled: Boolean = false,
-        private val outputFiles: OutputFiles,
 ) {
     private val platform = config.platform
     private val linker = platform.linker
-    private val target = config.target
     private val optimize = config.optimizationsEnabled
     private val debug = config.debug || config.lightDebug
 
     fun linkCommands(
-            outputFile: String,
+            outputFile: java.io.File,
             objectFiles: List<ObjectFile>,
+            linkerOutput: LinkerOutputKind,
             dependenciesTrackingResult: DependenciesTrackingResult,
             caches: ResolvedCacheBinaries,
+            symbolicInfoFile: String,
+            installName: String? = null,
+            isCoverageEnabled: Boolean = false,
     ): List<Command> {
         val nativeDependencies = dependenciesTrackingResult.nativeDependenciesToLink
 
@@ -59,7 +59,28 @@ internal class Linker(
         val includedBinaries = includedBinariesLibraries.map { (it as? KonanLibrary)?.includedPaths.orEmpty() }.flatten()
 
         val libraryProvidedLinkerFlags = dependenciesTrackingResult.allNativeDependencies.map { it.linkerOpts }.flatten()
-        return runLinker(outputFile, objectFiles, includedBinaries, libraryProvidedLinkerFlags, caches)
+
+        val installNameArgument = installName?.let { listOf("-install_name", it) } ?: emptyList()
+
+        // TODO: flag to control dead strip
+        val linkerArgs = asLinkerArgs(config.configuration.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
+                BitcodeEmbedding.getLinkerOptions(config) +
+                caches.dynamic +
+                libraryProvidedLinkerFlags + installNameArgument
+
+        return linker.finalLinkCommands(
+                objectFiles = objectFiles,
+                executable = outputFile.canonicalPath,
+                libraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
+                linkerArgs = linkerArgs,
+                optimize = optimize,
+                debug = debug,
+                kind = linkerOutput,
+                outputDsymBundle = symbolicInfoFile,
+                needsProfileLibrary = isCoverageEnabled,
+                mimallocEnabled = config.allocationMode == AllocationMode.MIMALLOC,
+                sanitizer = config.sanitizer
+        )
     }
 
     private fun asLinkerArgs(args: List<String>): List<String> {
@@ -77,64 +98,6 @@ internal class Linker(
             }
         }
         return result
-    }
-
-    private fun runLinker(
-            outputFile: String,
-            objectFiles: List<ObjectFile>,
-            includedBinaries: List<String>,
-            libraryProvidedLinkerFlags: List<String>,
-            caches: ResolvedCacheBinaries,
-    ): List<Command> {
-        val additionalLinkerArgs: List<String>
-        val executable: String
-
-        if (config.produce != CompilerOutputKind.FRAMEWORK) {
-            additionalLinkerArgs = if (target.family.isAppleFamily) {
-                when (config.produce) {
-                    CompilerOutputKind.DYNAMIC_CACHE ->
-                        listOf("-install_name", outputFiles.dynamicCacheInstallName)
-                    else -> listOf("-dead_strip")
-                }
-            } else {
-                emptyList()
-            }
-            executable = outputFiles.nativeBinaryFile
-        } else {
-            val framework = File(outputFile)
-            val dylibName = framework.name.removeSuffix(".framework")
-            val dylibRelativePath = when (target.family) {
-                Family.IOS,
-                Family.TVOS,
-                Family.WATCHOS -> dylibName
-                Family.OSX -> "Versions/A/$dylibName"
-                else -> error(target)
-            }
-            additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
-            val dylibPath = framework.child(dylibRelativePath)
-            dylibPath.parentFile.mkdirs()
-            executable = dylibPath.absolutePath
-        }
-        File(executable).delete()
-
-        val linkerArgs = asLinkerArgs(config.configuration.getNotNull(KonanConfigKeys.LINKER_ARGS)) +
-                BitcodeEmbedding.getLinkerOptions(config) +
-                caches.dynamic +
-                libraryProvidedLinkerFlags + additionalLinkerArgs
-
-        return linker.finalLinkCommands(
-                objectFiles = objectFiles,
-                executable = executable,
-                libraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
-                linkerArgs = linkerArgs,
-                optimize = optimize,
-                debug = debug,
-                kind = linkerOutput,
-                outputDsymBundle = outputFiles.symbolicInfoFile,
-                needsProfileLibrary = isCoverageEnabled,
-                mimallocEnabled = config.allocationMode == AllocationMode.MIMALLOC,
-                sanitizer = config.sanitizer
-        )
     }
 }
 

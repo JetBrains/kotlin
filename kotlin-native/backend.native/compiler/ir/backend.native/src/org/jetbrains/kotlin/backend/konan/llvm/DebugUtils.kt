@@ -64,7 +64,7 @@ internal class DebugInfo(override val generationState: NativeGenerationState) : 
     val objHeaderPointerType: DITypeOpaqueRef
 
     init {
-        val path = generationState.outputFile.toFileAndFolder(config)
+        val path = generationState.debugInfoFileName.toFileAndFolder(config)
         compilationUnit = DICreateCompilationUnit(
                 builder = builder,
                 lang = DWARF.language(config),

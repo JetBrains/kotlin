@@ -8,33 +8,51 @@ package org.jetbrains.kotlin.backend.konan.driver
 import kotlinx.cinterop.usingJvmCInteropCallbacks
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanConfig
+import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
+import org.jetbrains.kotlin.backend.konan.driver.utilities.CompilationFiles
+import org.jetbrains.kotlin.backend.konan.driver.utilities.createCompilationFiles
+import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
-import org.jetbrains.kotlin.backend.konan.isCache
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
+import org.jetbrains.kotlin.library.impl.javaFile
+import java.io.Closeable
+
 
 /**
  * Dynamic driver does not "know" upfront which phases will be executed.
  */
-internal class DynamicCompilerDriver : CompilerDriver() {
+internal class DynamicCompilerDriver(
+        private val config: KonanConfig,
+        private val environment: KotlinCoreEnvironment,
+) : Closeable {
 
-    override fun run(config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private val tempFiles = createTempFiles(config)
+
+    private val outputFiles = OutputFiles(config.outputPath, config.target, config.produce)
+    private val files = createCompilationFiles(config, tempFiles, outputFiles.outputName, outputFiles)
+
+    override fun close() {
+        tempFiles.dispose()
+    }
+
+    fun run() {
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks {
                 PhaseEngine.startTopLevel(config) { engine ->
                     when (config.produce) {
-                        CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.DYNAMIC -> produceCLibrary(engine, config, environment)
-                        CompilerOutputKind.STATIC -> produceCLibrary(engine, config, environment)
-                        CompilerOutputKind.FRAMEWORK -> produceObjCFramework(engine, config, environment)
-                        CompilerOutputKind.LIBRARY -> produceKlib(engine, config, environment)
+                        CompilerOutputKind.PROGRAM -> produceBinary(engine)
+                        CompilerOutputKind.DYNAMIC -> produceCLibrary(engine)
+                        CompilerOutputKind.STATIC -> produceCLibrary(engine)
+                        CompilerOutputKind.FRAMEWORK -> produceObjCFramework(engine)
+                        CompilerOutputKind.LIBRARY -> produceKlib(engine)
                         CompilerOutputKind.BITCODE -> error("Bitcode output kind is obsolete.")
-                        CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine, config, environment)
-                        CompilerOutputKind.STATIC_CACHE -> produceBinary(engine, config, environment)
+                        CompilerOutputKind.DYNAMIC_CACHE -> produceBinary(engine)
+                        CompilerOutputKind.STATIC_CACHE -> produceBinary(engine)
                         CompilerOutputKind.PRELIMINARY_CACHE -> TODO()
                     }
                 }
@@ -48,10 +66,14 @@ internal class DynamicCompilerDriver : CompilerDriver() {
      * - Info.plist
      * - Binary (if -Xomit-framework-binary is not passed).
      */
-    private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
         val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
-        engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(frontendOutput.moduleDescriptor, objCExportedInterface))
+        engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(
+                frontendOutput.moduleDescriptor,
+                objCExportedInterface,
+                files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value
+        ))
         if (config.omitFrameworkBinary) {
             return
         }
@@ -63,10 +85,10 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             it.objCExportedInterface = objCExportedInterface
             it.objCExportCodeSpec = objCCodeSpec
         }
-        engine.runBackend(backendContext, psiToIrOutput.irModule)
+        engine.runBackend(backendContext, psiToIrOutput.irModule, files)
     }
 
-    private fun produceCLibrary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceCLibrary(engine: PhaseEngine<PhaseContext>) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
         val (psiToIrOutput, cAdapterElements) = engine.runPsiToIr(frontendOutput, isProducingLibrary = false) {
             it.runPhase(BuildCExports, frontendOutput)
@@ -75,10 +97,10 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput) {
             it.cAdapterExportedElements = cAdapterElements
         }
-        engine.runBackend(backendContext, psiToIrOutput.irModule)
+        engine.runBackend(backendContext, psiToIrOutput.irModule, files)
     }
 
-    private fun produceKlib(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceKlib(engine: PhaseEngine<PhaseContext>) {
         val serializerOutput = if (environment.configuration.getBoolean(CommonConfigurationKeys.USE_FIR))
             serializeKLibK2(engine, environment)
         else
@@ -116,12 +138,12 @@ internal class DynamicCompilerDriver : CompilerDriver() {
     /**
      * Produce a single binary artifact.
      */
-    private fun produceBinary(engine: PhaseEngine<PhaseContext>, config: KonanConfig, environment: KotlinCoreEnvironment) {
+    private fun produceBinary(engine: PhaseEngine<PhaseContext>) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
         val psiToIrOutput = engine.runPsiToIr(frontendOutput, isProducingLibrary = false)
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
-        engine.runBackend(backendContext, psiToIrOutput.irModule)
+        engine.runBackend(backendContext, psiToIrOutput.irModule, files)
     }
 
     private fun createBackendContext(

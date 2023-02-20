@@ -12,30 +12,31 @@ import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import java.io.File
 
 internal data class LinkerPhaseInput(
-        val outputFile: String,
+        val outputFile: File,
         val outputKind: LinkerOutputKind,
         val objectFiles: List<ObjectFile>,
         val dependenciesTrackingResult: DependenciesTrackingResult,
-        val outputFiles: OutputFiles,
         val resolvedCacheBinaries: ResolvedCacheBinaries,
         val isCoverageEnabled: Boolean,
+        val symbolicInfoFile: String,
+        val installName: String? = null
 )
-
 internal val LinkerPhase = createSimpleNamedCompilerPhase<PhaseContext, LinkerPhaseInput>(
         name = "Linker",
         description = "Linker"
 ) { context, input ->
     val linker = Linker(
             config = context.config,
-            linkerOutput = input.outputKind,
-            isCoverageEnabled = input.isCoverageEnabled,
-            outputFiles = input.outputFiles
     )
     val commands = linker.linkCommands(
             input.outputFile,
             input.objectFiles,
+            input.outputKind,
             input.dependenciesTrackingResult,
-            input.resolvedCacheBinaries
+            input.resolvedCacheBinaries,
+            input.symbolicInfoFile,
+            installName = input.installName,
+            isCoverageEnabled = input.isCoverageEnabled
     )
     runLinkerCommands(context, commands, cachingInvolved = !input.resolvedCacheBinaries.isEmpty())
 }

@@ -71,6 +71,42 @@ internal open class BasicPhaseContext(
     }
 }
 
+enum class DesiredState {
+    Parallel, Sequential, PendingSeq, PendingPar
+}
+
+internal interface CompoundPhaseExecutorUser {
+    var desiredState: DesiredState
+
+    fun switchTo()
+}
+
+internal interface PhaseExecutor {
+    fun <T> exec(action: () -> T): T
+}
+
+internal interface SequentialPhaseExecutor : PhaseExecutor
+
+internal interface ParallelPhaseExecutor : PhaseExecutor
+
+/**
+ * Interface that either runs actions sequentially or in parallel
+ */
+internal interface CompoundPhaseExecutor : PhaseExecutor {
+
+    val users: Set<CompoundPhaseExecutorUser>
+
+    val isParallel: Boolean get() = users.all { it.desiredState == DesiredState.Parallel || it.desiredState == DesiredState.PendingPar }
+
+    val sequentialPhaseExecutor: SequentialPhaseExecutor
+
+    val parallelPhaseExecutor: ParallelPhaseExecutor
+
+    override fun <T> exec(action: () -> T): T {
+        return if (isParallel) parallelPhaseExecutor.exec(action) else sequentialPhaseExecutor.exec(action)
+    }
+}
+
 /**
  * PhaseEngine is a heart of dynamic compiler driver. Unlike old static compiler driver that relies on predefined list of phases,
  * dynamic one requires user to write a sequence of phases by hand (thus "dynamic"). PhaseEngine provides a framework for that by tracking
