@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
+import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URLClassLoader
@@ -137,11 +139,18 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
             throwExceptionIfCompilationFailed(exitCode, executionStrategy)
         } finally {
+            val tags = HashSet<StatTag>()
+                .also {
+                    if (incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+                        it.add(StatTag.ARTIFACT_TRANSFORM)
+                    }
+                }
+                .also { tags -> incrementalCompilationEnvironment?.withAbiSnapshot?.ifTrue { tags.add(StatTag.ABI_SNAPSHOT) } }
+
             val taskInfo = TaskExecutionInfo(
                 changedFiles = incrementalCompilationEnvironment?.changedFiles,
                 compilerArguments = if (reportingSettings.includeCompilerArguments) compilerArgs else emptyArray(),
-                withAbiSnapshot = incrementalCompilationEnvironment?.withAbiSnapshot,
-                withArtifactTransform = incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
+                tags = tags
             )
             metrics.endMeasure(BuildTime.RUN_COMPILATION_IN_WORKER)
             val result = TaskExecutionResult(buildMetrics = metrics.getMetrics(), icLogLines = icLogLines, taskInfo = taskInfo)

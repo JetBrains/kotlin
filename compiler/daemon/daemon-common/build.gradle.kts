@@ -9,6 +9,7 @@ plugins {
 dependencies {
     api(project(":compiler:cli-common"))
     api(project(":kotlin-build-common"))
+    api(project(":kotlin-build-statistic"))
     api(kotlinStdlib())
 }
 

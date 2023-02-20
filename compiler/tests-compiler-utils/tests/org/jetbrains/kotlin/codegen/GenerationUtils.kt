@@ -169,8 +169,9 @@ object GenerationUtils {
 
     fun messageCollectorLogger(collector: MessageCollector) = object : Logger {
         override fun warning(message: String) = collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
-        override fun error(message: String) = collector.report(CompilerMessageSeverity.ERROR, message)
+        override fun error(message: String, throwable: Throwable?) = collector.report(CompilerMessageSeverity.ERROR, message)
         override fun log(message: String) = collector.report(CompilerMessageSeverity.LOGGING, message)
+        override fun lifecycle(message: String) = collector.report(CompilerMessageSeverity.INFO, message)
         override fun fatal(message: String): Nothing {
             collector.report(CompilerMessageSeverity.ERROR, message)
             (collector as? GroupingMessageCollector)?.flush()

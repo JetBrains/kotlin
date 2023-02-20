@@ -143,6 +143,7 @@ val commonCompilerModules = arrayOf(
     ":analysis:project-structure",
     ":analysis:kt-references",
     ":kotlin-build-common",
+    ":kotlin-build-statistic",
 ).also { extra["commonCompilerModules"] = it }
 
 val firCompilerCoreModules = arrayOf(
@@ -261,7 +262,8 @@ extra["kotlinJpsPluginMavenDependencies"] = listOf(
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
-    ":native:kotlin-native-utils"
+    ":native:kotlin-native-utils",
+    ":kotlin-build-statistic",
 )
 
 extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"] = listOf(
@@ -745,6 +747,7 @@ tasks {
         dependsOn(":kotlin-util-io:test")
         dependsOn(":kotlin-util-klib:test")
         dependsOn(":generators:test")
+        dependsOn(":kotlin-build-statistic")
     }
 
     register("incrementalCompilationTest") {

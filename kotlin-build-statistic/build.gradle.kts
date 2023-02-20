@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as GradleKotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
-description = "Kotlin Build Common"
+description = "Kotlin Build Report Common"
 
 plugins {
     kotlin("jvm")
@@ -10,26 +10,14 @@ plugins {
 
 dependencies {
     compileOnly(project(":core:util.runtime"))
-    compileOnly(project(":compiler:backend.common.jvm"))
     compileOnly(project(":compiler:util"))
-    compileOnly(project(":compiler:cli-common"))
-    compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":js:js.serializer"))
-    compileOnly(project(":js:js.config"))
-    compileOnly(project(":kotlin-util-klib-metadata"))
+    compileOnly(project(":kotlin-util-io"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
+    compileOnly(kotlinStdlib())
     compileOnly(intellijCore())
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
-    compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
-    api(project(":kotlin-build-statistic"))
-
-    testCompileOnly(project(":compiler:cli-common"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(commonDependency("junit:junit"))
-    testApi(protobufFull())
+    implementation(commonDependency("com.google.code.gson:gson"))
     testApi(kotlinStdlib())
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 sourceSets {

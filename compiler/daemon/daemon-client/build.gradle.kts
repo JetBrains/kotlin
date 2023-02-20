@@ -24,6 +24,7 @@ val nativePlatformVariants = listOf(
 dependencies {
     compileOnly(project(":daemon-common"))
     compileOnly(commonDependency("net.rubygrapefruit", "native-platform"))
+    compileOnly(project(":kotlin-build-statistic"))
 
     embedded(project(":daemon-common")) { isTransitive = false }
     embedded(commonDependency("net.rubygrapefruit", "native-platform"))

@@ -182,6 +182,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":generators:ide-iml-to-gradle-generator",
         ":generators:test-generator",
         ":tools:kotlinp",
+        ":kotlin-build-statistic",
         ":kotlin-project-model",
         ":kotlin-project-model-tests-generator",
         ":kotlin-gradle-compiler-types",
@@ -790,6 +791,7 @@ project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugin
 project(':kotlin-scripting-ide-services-test').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-test" as File
 project(':kotlin-scripting-ide-services').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-embeddable" as File
 project(':kotlin-scripting-ide-common').projectDir = "$rootDir/plugins/scripting/scripting-ide-common" as File
+project(':kotlin-build-statistic').projectDir ="$rootDir/kotlin-build-statistic" as File
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")

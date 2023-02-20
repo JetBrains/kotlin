@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -41,13 +41,14 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
         LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_HITS(parent = LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, "Number of cache hits when loading classpath entry snapshots", type = ValueType.NUMBER),
         LOAD_CLASSPATH_ENTRY_SNAPSHOT_CACHE_MISSES(parent = LOAD_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, "Number of cache misses when loading classpath entry snapshots", type = ValueType.NUMBER),
 
-    //exact time
-    START_TASK_ACTION_EXECUTION(readableString = "Start time of task action", type = ValueType.MILLISECONDS),
+    //time metrics
+    START_TASK_ACTION_EXECUTION(readableString = "Start time of task action", type = ValueType.TIME),
+    FINISH_KOTLIN_DAEMON_EXECUTION(readableString = "Finish time of kotlin daemon execution", type = ValueType.TIME),
+
     CALL_KOTLIN_DAEMON(readableString = "Finish gradle part of task execution", type = ValueType.NANOSECONDS),
     CALL_WORKER(readableString = "Worker submit time", type = ValueType.NANOSECONDS),
     START_WORKER_EXECUTION(readableString = "Start time of worker execution", type = ValueType.NANOSECONDS),
     START_KOTLIN_DAEMON_EXECUTION(readableString = "Start time of kotlin daemon task execution", type = ValueType.NANOSECONDS),
-    FINISH_KOTLIN_DAEMON_EXECUTION(readableString = "Finish kotlin daemon execution", type = ValueType.MILLISECONDS),
     ;
     companion object {
         const val serialVersionUID = 0L
@@ -63,4 +64,5 @@ enum class ValueType {
     NUMBER,
     NANOSECONDS,
     MILLISECONDS,
+    TIME
 }

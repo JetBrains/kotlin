@@ -16,9 +16,10 @@ fun resolveSingleFileKlib(
     libraryFile: File,
     logger: Logger = object : Logger {
         override fun log(message: String) {}
-        override fun error(message: String) = kotlin.error("e: $message")
+        override fun error(message: String, throwable: Throwable?) = kotlin.error("e: $message")
         override fun warning(message: String) {}
         override fun fatal(message: String) = kotlin.error("e: $message")
+        override fun lifecycle(message: String) {}
     },
     strategy: SingleFileKlibResolveStrategy = CompilerSingleFileKlibResolveStrategy
 ): KotlinLibrary = strategy.resolve(libraryFile, logger)

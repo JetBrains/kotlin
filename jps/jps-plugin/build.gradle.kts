@@ -41,6 +41,8 @@ dependencies {
     compileOnly(jpsModel())
     compileOnly(jpsBuild())
     compileOnly(jpsModelSerialization())
+    compileOnly(project(":kotlin-build-statistic"))
+
     testRuntimeOnly(jpsModel())
 
     // testFramework includes too many unnecessary dependencies. Here we manually list all we need to successfully run JPS tests

@@ -13,7 +13,8 @@ val projectsToInclude = listOf(
     ":compiler:test-infrastructure-utils",
     ":compiler:tests-common",
     ":compiler:incremental-compilation-impl",
-    ":kotlin-build-common"
+    ":kotlin-build-common",
+    ":kotlin-build-statistic"
 )
 
 dependencies {

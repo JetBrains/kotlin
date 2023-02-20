@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.build.report.FileReportSettings
+import org.jetbrains.kotlin.build.report.HttpReportSettings
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider

@@ -60,6 +60,7 @@ dependencies {
         exclude(group = "*")
     }
     commonCompileOnly(project(":kotlin-tooling-metadata"))
+    commonCompileOnly(project(":kotlin-build-statistic"))
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))

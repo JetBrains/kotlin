@@ -128,6 +128,16 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         doTest()
     }
 
+    fun testJpsBuildReport() {
+        initProject(JVM_MOCK_RUNTIME)
+        val reportBuildRir = File(workDir, "report")
+        val path = FileUtilRt.toSystemIndependentName(reportBuildRir.absolutePath)
+        System.setProperty("kotlin.build.report.file.output_dir", path)
+        buildAllModules().assertSuccessful()
+        assert(reportBuildRir.exists()) { "Cannot find build report folder " + reportBuildRir.absolutePath }
+        reportBuildRir.listFiles()?.let { assert(it.isNotEmpty()) }
+    }
+
     fun testSourcePackageLongPrefix() {
         initProject(JVM_MOCK_RUNTIME)
         val buildResult = buildAllModules()

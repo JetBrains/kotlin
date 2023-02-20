@@ -87,7 +87,7 @@ fun <PathProvider : Any> getLibraryFromHome(
 
 fun MessageCollector.toLogger(): Logger =
     object : Logger {
-        override fun error(message: String) {
+        override fun error(message: String, throwable: Throwable?) {
             report(CompilerMessageSeverity.ERROR, message)
         }
 
@@ -102,6 +102,10 @@ fun MessageCollector.toLogger(): Logger =
 
         override fun log(message: String) {
             report(CompilerMessageSeverity.LOGGING, message)
+        }
+
+        override fun lifecycle(message: String) {
+            report(CompilerMessageSeverity.INFO, message)
         }
     }
 

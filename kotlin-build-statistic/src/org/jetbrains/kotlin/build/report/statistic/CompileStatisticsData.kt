@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,8 +17,9 @@ data class CompileStatisticsData(
     val version: Int = 2,
     val projectName: String?,
     val label: String?,
-    val taskName: String?,
-    val taskResult: String,
+    val taskName: String,
+    val taskResult: String?,
+    val startTimeMs: Long,
     val durationMs: Long,
     val tags: List<String>,
     val changes: List<String>,
@@ -34,7 +35,11 @@ data class CompileStatisticsData(
     val performanceMetrics: Map<BuildPerformanceMetric, Long>,
     val gcTimeMetrics: Map<String, Long>?,
     val gcCountMetrics: Map<String, Long>?,
-    val type: String = BuildDataType.TASK_DATA.name
+    val type: String = BuildDataType.TASK_DATA.name,
+    val fromKotlinPlugin: Boolean?,
+    val compiledSources: List<String> = emptyList(),
+    val skipMessage: String?,
+    val icLogLines: List<String>,
 )
 
 
@@ -51,7 +56,8 @@ enum class StatTag {
 
 enum class BuildDataType {
     TASK_DATA,
-    BUILD_DATA
+    BUILD_DATA,
+    JPS_DATA
 }
 
 //Sensitive data. This object is used directly for statistic via http

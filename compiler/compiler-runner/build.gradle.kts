@@ -11,6 +11,7 @@ dependencies {
     api(project(":kotlin-build-common"))
     api(project(":kotlin-daemon-client"))
     api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
+    api(project(":kotlin-build-statistic"))
 
     runtimeOnly(project(":kotlin-compiler-embeddable"))
 }
