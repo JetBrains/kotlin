@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.KtTypeParameterListOwner
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.util.*
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 
@@ -159,8 +158,7 @@ private fun escapeString(s: String): String = buildString {
             else -> if (it.code in 32..128) {
                 append(it)
             } else {
-                append("\\u")
-                append("%04x".format(it.code).toUpperCaseAsciiOnly())
+                append("\\u%04X".format(it.code))
             }
         }
     }
