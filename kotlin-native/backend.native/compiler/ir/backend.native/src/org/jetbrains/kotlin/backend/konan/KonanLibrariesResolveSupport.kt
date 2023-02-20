@@ -38,12 +38,13 @@ class KonanLibrariesResolveSupport(
             object : Logger {
                 private val collector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
                 override fun warning(message: String)= collector.report(CompilerMessageSeverity.STRONG_WARNING, message)
-                override fun error(message: String) = collector.report(CompilerMessageSeverity.ERROR, message)
+                override fun error(message: String, throwable: Throwable?) = collector.report(CompilerMessageSeverity.ERROR, message)
                 override fun log(message: String) = collector.report(CompilerMessageSeverity.LOGGING, message)
                 override fun fatal(message: String): Nothing {
                     collector.report(CompilerMessageSeverity.ERROR, message)
                     throw KonanCompilationException()
                 }
+                override fun lifecycle(message: String) =collector.report(CompilerMessageSeverity.LOGGING, message)
             }
 
     private val resolver = defaultResolver(

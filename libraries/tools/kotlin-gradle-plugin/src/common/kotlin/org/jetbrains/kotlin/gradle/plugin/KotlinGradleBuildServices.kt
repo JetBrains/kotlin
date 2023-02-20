@@ -12,8 +12,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.utils.projectCacheDir
 import java.io.File
 
@@ -65,9 +63,6 @@ internal abstract class KotlinGradleBuildServices : BuildService<KotlinGradleBui
     override fun close() {
         buildHandler.buildFinished(parameters.projectCacheDir)
         log.kotlinDebug(DISPOSE_MESSAGE)
-
-        TaskLoggers.clear()
-        TaskExecutionResults.clear()
     }
 
     companion object {

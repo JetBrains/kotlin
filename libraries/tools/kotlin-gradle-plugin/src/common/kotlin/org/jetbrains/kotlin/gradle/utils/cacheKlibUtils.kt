@@ -115,8 +115,9 @@ internal fun getAllDependencies(dependency: ResolvedDependencyResult): Set<Resol
 internal class GradleLoggerAdapter(private val gradleLogger: Logger) : org.jetbrains.kotlin.util.Logger {
     override fun log(message: String) = gradleLogger.info(message)
     override fun warning(message: String) = gradleLogger.warn(message)
-    override fun error(message: String) = kotlin.error(message)
+    override fun error(message: String, throwable: Throwable?) = kotlin.error(message)
     override fun fatal(message: String): Nothing = kotlin.error(message)
+    override fun lifecycle(message: String) = gradleLogger.lifecycle(message)
 }
 
 private fun libraryFilter(artifact: ResolvedArtifactResult): Boolean = artifact.file.absolutePath.endsWith(".klib")
