@@ -518,6 +518,8 @@ fun createProjectEnvironment(
     project.registerService(MetadataFinderFactory::class.java, finderFactory)
     project.registerService(VirtualFileFinderFactory::class.java, finderFactory)
 
+    project.setupHighestLanguageLevel()
+
     return ProjectEnvironmentWithCoreEnvironmentEmulation(
         project,
         localFileSystem,

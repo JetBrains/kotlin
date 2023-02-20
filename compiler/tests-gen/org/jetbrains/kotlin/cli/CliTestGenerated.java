@@ -680,6 +680,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/irSupported.args");
         }
 
+        @TestMetadata("javaSealedClass.args")
+        public void testJavaSealedClass() throws Exception {
+            runTest("compiler/testData/cli/jvm/javaSealedClass.args");
+        }
+
         @TestMetadata("javaSrcWrongPackage.args")
         public void testJavaSrcWrongPackage() throws Exception {
             runTest("compiler/testData/cli/jvm/javaSrcWrongPackage.args");

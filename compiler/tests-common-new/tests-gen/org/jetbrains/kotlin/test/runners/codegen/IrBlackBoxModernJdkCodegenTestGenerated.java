@@ -767,6 +767,12 @@ public class IrBlackBoxModernJdkCodegenTestGenerated extends AbstractIrBlackBoxC
             }
 
             @Test
+            @TestMetadata("kotlinExhaustiveWhenOnJavaSealedClass.kt")
+            public void testKotlinExhaustiveWhenOnJavaSealedClass() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/kotlinExhaustiveWhenOnJavaSealedClass.kt");
+            }
+
+            @Test
             @TestMetadata("permittedSubclassesOfSealedKotlinClass.kt")
             public void testPermittedSubclassesOfSealedKotlinClass() throws Exception {
                 runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/sealed/permittedSubclassesOfSealedKotlinClass.kt");
