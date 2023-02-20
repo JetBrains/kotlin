@@ -247,6 +247,15 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xmake-per-file-cache", description = "Force compiler to produce per-file cache")
     var makePerFileCache: Boolean = false
 
+    @Argument(
+        value = "-Xbackend-threads",
+        valueDescription = "<N>",
+        description = "Run codegen by file in N parallel threads.\n" +
+                "0 means use a thread per processor core.\n" +
+                "Default value is 1"
+    )
+    var backendThreads: String = "1"
+
     @Argument(value = "-Xexport-kdoc", description = "Export KDoc in framework header")
     var exportKDoc: Boolean = false
 
