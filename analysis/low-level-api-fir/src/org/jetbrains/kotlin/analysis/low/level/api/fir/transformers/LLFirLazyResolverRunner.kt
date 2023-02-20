@@ -23,13 +23,12 @@ internal object LLFirLazyResolverRunner {
         val lazyResolver = LLFirLazyPhaseResolverByPhase.getByPhase(phase)
         val session = target.firFile.moduleData.session
 
-        lockProvider.withGlobalLock {
-            lockProvider.withGlobalPhaseLock(phase) {
-                executeWithoutPCE {
-                    lazyResolver.resolve(target, lockProvider, session, scopeSession, towerDataContextCollector)
-                }
+        lockProvider.withGlobalPhaseLock(phase) {
+            executeWithoutPCE {
+                lazyResolver.resolve(target, lockProvider, session, scopeSession, towerDataContextCollector)
             }
         }
+
 
         lazyResolver.checkIsResolved(target)
     }
