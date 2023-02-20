@@ -58,10 +58,10 @@ internal class ExternalKotlinTargetImpl internal constructor(
         artifactsTaskLocator.locate(this)
     }
 
-    override var publishableSources: Boolean = true
+    override var isSourcesPublishable: Boolean = true
 
     override fun withSourcesJar(publish: Boolean) {
-        publishableSources = publish
+        isSourcesPublishable = publish
     }
 
     override val artifactsTaskName: String

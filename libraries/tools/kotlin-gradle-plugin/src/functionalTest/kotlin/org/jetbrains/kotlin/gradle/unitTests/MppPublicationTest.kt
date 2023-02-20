@@ -153,7 +153,7 @@ class MppPublicationTest {
         kotlin.withSourcesJar(publish = false)
 
         for (target in kotlin.targets) {
-            assertFalse(target.internal.publishableSources)
+            assertFalse(target.internal.isSourcesPublishable)
         }
     }
 
@@ -165,9 +165,9 @@ class MppPublicationTest {
 
         for (target in kotlin.targets) {
             if (target.name == "linux") {
-                assertFalse(target.internal.publishableSources)
+                assertFalse(target.internal.isSourcesPublishable)
             } else {
-                assertTrue(target.internal.publishableSources)
+                assertTrue(target.internal.isSourcesPublishable)
             }
         }
     }

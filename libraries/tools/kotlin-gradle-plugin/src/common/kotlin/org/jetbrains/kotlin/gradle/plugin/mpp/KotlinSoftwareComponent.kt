@@ -84,13 +84,13 @@ abstract class KotlinSoftwareComponent(
             }
 
             val sourcesElements = metadataTarget.sourcesElementsConfigurationName
-            if (metadataTarget.publishableSources) {
+            if (metadataTarget.isSourcesPublishable) {
                 addSourcesJarArtifactToConfiguration(sourcesElements)
                 this += DefaultKotlinUsageContext(
                     compilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME),
                     dependencyConfigurationName = sourcesElements,
                     includeIntoProjectStructureMetadata = false,
-                    publishOnlyIf = { metadataTarget.publishableSources }
+                    publishOnlyIf = { metadataTarget.isSourcesPublishable }
                 )
             }
         }
