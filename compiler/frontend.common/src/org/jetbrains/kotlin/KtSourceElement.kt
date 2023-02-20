@@ -262,6 +262,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
 
     // Synthetic calls for if/when/try/etc.
     object SyntheticCall : KtFakeSourceElementKind()
+
+    // When property doesn't have an initializer and explicit return type, but its getter's return type is specified
+    object PropertyTypeFromGetterReturnType : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {

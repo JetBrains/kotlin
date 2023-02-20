@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import kotlinx.collections.immutable.toImmutableList
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.expressions.*
@@ -154,8 +156,16 @@ open class FirTypeResolveTransformer(
                     setAccessorTypesByPropertyType(property)
                 }
 
-                if (property.returnTypeRef is FirResolvedTypeRef && property.delegate != null) {
-                    setAccessorTypesByPropertyType(property)
+                when {
+                    property.returnTypeRef is FirResolvedTypeRef && property.delegate != null -> {
+                        setAccessorTypesByPropertyType(property)
+                    }
+                    property.returnTypeRef !is FirResolvedTypeRef && property.initializer == null &&
+                            property.getter?.returnTypeRef is FirResolvedTypeRef -> {
+                        property.replaceReturnTypeRef(
+                            property.getter!!.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
+                        )
+                    }
                 }
 
                 unboundCyclesInTypeParametersSupertypes(property)

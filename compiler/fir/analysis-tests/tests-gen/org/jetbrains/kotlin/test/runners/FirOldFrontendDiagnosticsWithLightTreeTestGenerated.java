@@ -25057,9 +25057,21 @@ public class FirOldFrontendDiagnosticsWithLightTreeTestGenerated extends Abstrac
             }
 
             @Test
+            @TestMetadata("inferPropertyTypeFromGetter.kt")
+            public void testInferPropertyTypeFromGetter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/properties/inferPropertyTypeFromGetter.kt");
+            }
+
+            @Test
             @TestMetadata("kt47621.kt")
             public void testKt47621() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/properties/kt47621.kt");
+            }
+
+            @Test
+            @TestMetadata("kt56707.kt")
+            public void testKt56707() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/properties/kt56707.kt");
             }
 
             @Test
