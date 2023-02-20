@@ -20,6 +20,8 @@ dependencies {
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 
+    compileOnly(commonDependency("com.google.code.gson:gson"))
+
     testCompileOnly(project(":compiler:cli-common"))
     testApi(projectTests(":compiler:tests-common"))
     testApi(commonDependency("junit:junit"))

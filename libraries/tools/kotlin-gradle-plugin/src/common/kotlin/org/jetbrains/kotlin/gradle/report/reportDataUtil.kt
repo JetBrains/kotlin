@@ -31,7 +31,7 @@ internal fun prepareData(
     uuid: String,
     label: String?,
     kotlinVersion: String,
-    buildOperationRecords: Collection<BuildOperationRecord>,
+    buildOperationRecord: BuildOperationRecord?,
     additionalTags: List<StatTag> = emptyList(),
     metricsToShow: Set<String>? = null
 ): CompileStatisticsData? {
@@ -54,7 +54,7 @@ internal fun prepareData(
         return null
     }
     val taskExecutionResult = TaskExecutionResults[taskPath]
-    val buildMetrics = buildOperationRecords.firstOrNull { it.path == taskPath }?.buildMetrics
+    val buildMetrics = buildOperationRecord?.buildMetrics
 
     val performanceMetrics = collectBuildPerformanceMetrics(taskExecutionResult, buildMetrics)
     val buildTimesMetrics = collectBuildMetrics(

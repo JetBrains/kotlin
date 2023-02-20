@@ -20,6 +20,9 @@ import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.jetbrains.kotlin.build.report.metrics.ValueType
+import org.jetbrains.kotlin.build.report.statistic.FileReportService
+import org.jetbrains.kotlin.build.report.statistic.HttpReportService
+import org.jetbrains.kotlin.build.report.statistic.HttpReportServiceImpl
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.stat.BuildFinishStatisticsData
@@ -49,12 +52,14 @@ internal interface UsesBuildReportsService : Task {
 abstract class BuildReportsService : BuildService<BuildReportsService.Parameters>, AutoCloseable, OperationCompletionListener {
 
     private val log = Logging.getLogger(this.javaClass)
+    private val loggerAdapter = GradleLoggerAdapter(log)
 
     private val startTime = System.nanoTime()
     private val buildUuid = UUID.randomUUID().toString()
     private var executorService: ExecutorService = Executors.newSingleThreadExecutor()
 
     private val tags = LinkedHashSet<String>()
+    private val executedTaskData = ArrayList<CompileStatisticsData>()
     private var customValues = 0 // doesn't need to be thread-safe
 
     init {
@@ -87,7 +92,8 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             executorService.submit { reportBuildFinish() } //
         }
         reportingSettings.fileReportSettings?.also {
-            reportBuildStatInFile(it, buildData)
+            FileReportService.reportBuildStatInFile(it.buildReportDir, parameters.projectName.get(), it.includeMetricsInReport,
+                                                    executedTaskData, loggerAdapter)
         }
 
         reportingSettings.singleOutputFile?.also { singleOutputFile ->
@@ -100,16 +106,6 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
 
     override fun onFinish(event: FinishEvent?) {
         addHttpReport(event)
-    }
-
-    private fun reportBuildStatInFile(fileReportSettings: FileReportSettings, buildData: BuildExecutionData) {
-        val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
-        val reportFile = fileReportSettings.buildReportDir.resolve("${parameters.projectName.get()}-build-$ts.txt")
-
-        PlainTextBuildReportWriter(
-            outputFile = reportFile,
-            printMetrics = fileReportSettings.includeMetricsInReport
-        ).process(buildData, log)
     }
 
     private fun reportBuildFinish() {
@@ -137,7 +133,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             gitBranch = branchName
         )
 
-        parameters.httpService.orNull?.sendData(buildFinishData, log)
+        parameters.httpService.orNull?.sendData(buildFinishData, loggerAdapter)
     }
 
     private fun GradleBuildStartParameters.includeVerboseEnvironment(verboseEnvironment: Boolean): GradleBuildStartParameters {
@@ -169,7 +165,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                     )
                 data?.also {
                     executorService.submit {
-                        httpService.sendData(data, log)
+                        httpService.sendData(data, loggerAdapter)
                     }
                 }
             }
@@ -336,7 +332,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
                 it.parameters.kotlinVersion.set(kotlinVersion)
                 it.parameters.startParameters.set(getStartParameters(project))
                 it.parameters.reportingSettings.set(reportingSettings)
-                reportingSettings.httpReportSettings?.let { httpSettings -> it.parameters.httpService.set(HttpReportServiceImpl(httpSettings)) }
+                reportingSettings.httpReportSettings?.let { httpSettings -> it.parameters.httpService.set(HttpReportServiceImpl(httpSettings.url, httpSettings.user, httpSettings.password)) }
                 it.parameters.buildMetricsService = buildMetricsService
                 it.parameters.projectDir.set(project.rootProject.layout.projectDirectory)
 

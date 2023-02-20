@@ -226,7 +226,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 ) : AbstractKotlinCompileTool<T>(objectFactory),
     CompileUsingKotlinDaemonWithNormalization,
     UsesBuildMetricsService,
-    UsesBuildReportsService,
     UsesIncrementalModuleInfoBuildService,
     UsesCompilerSystemPropertiesService,
     UsesVariantImplementationFactories,
@@ -278,7 +277,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     @get:Internal
     internal abstract val suppressKotlinOptionsFreeArgsModificationWarning: Property<Boolean>
 
-    internal fun reportingSettings() = buildReportsService.orNull?.parameters?.reportingSettings?.orNull ?: ReportingSettings()
+    internal fun reportingSettings() = buildMetricsService.orNull?.parameters?.reportingSettings?.orNull ?: ReportingSettings()
 
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings

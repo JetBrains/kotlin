@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.gradle.report
+package org.jetbrains.kotlin.build.report.statistic
 
 import com.google.gson.Gson
-import org.gradle.api.logging.Logger
 import java.io.IOException
 import java.io.Serializable
 import java.net.HttpURLConnection
@@ -15,7 +14,7 @@ import java.util.*
 import kotlin.system.measureTimeMillis
 
 interface HttpReportService {
-    fun sendData(data: Any, log: Logger)
+    fun sendData(data: Any, log: LoggerAdapter)
 }
 
 class HttpReportServiceImpl(
@@ -23,12 +22,12 @@ class HttpReportServiceImpl(
     private val password: String?,
     private val user: String?,
 ) : HttpReportService, Serializable {
-    constructor(httpSettings: HttpReportSettings) : this(httpSettings.url, httpSettings.password, httpSettings.user)
+//    constructor(httpSettings: HttpReportSettings) : this(httpSettings.url, httpSettings.password, httpSettings.user)
 
     private var invalidUrl = false
     private var requestPreviousFailed = false
 
-    private fun checkResponseAndLog(connection: HttpURLConnection, log: Logger) {
+    private fun checkResponseAndLog(connection: HttpURLConnection, log: LoggerAdapter) {
         val isResponseBad = connection.responseCode !in 200..299
         if (isResponseBad) {
             val message = "Failed to send statistic to ${connection.url} with ${connection.responseCode}: ${connection.responseMessage}"
@@ -41,7 +40,7 @@ class HttpReportServiceImpl(
         }
     }
 
-    override fun sendData(data: Any, log: Logger) {
+    override fun sendData(data: Any, log: LoggerAdapter) {
         val elapsedTime = measureTimeMillis {
             if (invalidUrl) {
                 return
