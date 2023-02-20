@@ -253,17 +253,21 @@ open class FirTypeResolveTransformer(
         shouldNotBeCalled()
     }
 
-    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: Any?): FirStatement = whileAnalysing(session, annotationCall) {
+    override fun transformAnnotationCall(
+        annotationCall: FirAnnotationCall,
+        data: Any?
+    ): FirStatement = whileAnalysing(session, annotationCall) {
         when (val originalTypeRef = annotationCall.annotationTypeRef) {
             is FirResolvedTypeRef -> {
                 when (annotationCall.annotationResolvePhase) {
-                    FirAnnotationResolvePhase.Unresolved -> when (originalTypeRef){
+                    FirAnnotationResolvePhase.Unresolved -> when (originalTypeRef) {
                         is FirErrorTypeRef -> return annotationCall.also { it.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types) }
                         else -> shouldNotBeCalled()
                     }
                     FirAnnotationResolvePhase.CompilerRequiredAnnotations -> {
                         annotationCall.replaceAnnotationResolvePhase(FirAnnotationResolvePhase.Types)
-                        val alternativeResolvedTypeRef = originalTypeRef.delegatedTypeRef?.transformSingle(this, data) ?: return annotationCall
+                        val alternativeResolvedTypeRef =
+                            originalTypeRef.delegatedTypeRef?.transformSingle(this, data) ?: return annotationCall
                         val coneTypeFromCompilerRequiredPhase = originalTypeRef.coneType
                         val coneTypeFromTypesPhase = alternativeResolvedTypeRef.coneType
                         if (coneTypeFromTypesPhase != coneTypeFromCompilerRequiredPhase) {

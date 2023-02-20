@@ -47,7 +47,9 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 
-open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) : FirPartialBodyResolveTransformer(transformer) {
+open class FirDeclarationsResolveTransformer(
+    transformer: FirAbstractBodyResolveTransformerDispatcher
+) : FirPartialBodyResolveTransformer(transformer) {
     private val statusResolver: FirStatusResolver = FirStatusResolver(session, scopeSession)
 
     private fun FirDeclaration.visibilityForApproximation(): Visibility {
@@ -493,7 +495,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         )
     }
 
-    override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement = whileAnalysing(session, regularClass) {
+    override fun transformRegularClass(
+        regularClass: FirRegularClass,
+        data: ResolutionMode
+    ): FirStatement = whileAnalysing(session, regularClass) {
         return context.withContainingClass(regularClass) {
             if (regularClass.isLocal && regularClass !in context.targetedLocalClasses) {
                 return regularClass.runAllPhasesForLocalClass(transformer, components, data, transformer.firTowerDataContextCollector)
@@ -628,7 +633,6 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         if (functionIsNotAnalyzed) {
             dataFlowAnalyzer.enterFunction(function)
         }
-        @Suppress("UNCHECKED_CAST")
         return transformDeclarationContent(function, data).also {
             if (functionIsNotAnalyzed) {
                 val result = it as FirFunction
@@ -638,16 +642,17 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
         } as FirStatement
     }
 
-    override fun transformConstructor(constructor: FirConstructor, data: ResolutionMode): FirConstructor = whileAnalysing(session, constructor) {
+    override fun transformConstructor(
+        constructor: FirConstructor,
+        data: ResolutionMode
+    ): FirConstructor = whileAnalysing(session, constructor) {
         if (implicitTypeOnly) return constructor
         val container = context.containerIfAny as? FirRegularClass
         if (constructor.isPrimary && container?.classKind == ClassKind.ANNOTATION_CLASS) {
             return withFirArrayOfCallTransformer {
-                @Suppress("UNCHECKED_CAST")
                 doTransformConstructor(constructor, data)
             }
         }
-        @Suppress("UNCHECKED_CAST")
         return doTransformConstructor(constructor, data)
     }
 
@@ -996,7 +1001,10 @@ open class FirDeclarationsResolveTransformer(transformer: FirAbstractBodyResolve
             return element
         }
 
-        override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): FirStatement = whileAnalysing(valueParameter.moduleData.session, valueParameter) {
+        override fun transformValueParameter(
+            valueParameter: FirValueParameter,
+            data: Any?
+        ): FirStatement = whileAnalysing(valueParameter.moduleData.session, valueParameter) {
             if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
                 valueParameter.replaceReturnTypeRef(
                     valueParameter.returnTypeRef.resolvedTypeFromPrototype(
