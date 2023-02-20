@@ -7,6 +7,7 @@ import org.jetbrains.dokka.model.doc.DocumentationNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.testApi.logger.TestLogger
 import org.jetbrains.dokka.utilities.DokkaConsoleLogger
+import org.jetbrains.dokka.utilities.LoggingLevel
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -75,7 +76,7 @@ class ContextModuleAndPackageDocumentationReaderTest1 : AbstractContextModuleAnd
     private val context by lazy {
         DokkaContext.create(
             configuration = configurationBuilder.build(),
-            logger = TestLogger(DokkaConsoleLogger()),
+            logger = TestLogger(DokkaConsoleLogger(LoggingLevel.DEBUG)),
             pluginOverrides = emptyList()
         )
     }
