@@ -6,29 +6,66 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.ProjectRootModificationTracker
+import com.intellij.openapi.util.LowMemoryWatcher
+import com.intellij.psi.util.PsiModificationTracker
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
-import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
-import org.jetbrains.kotlin.analysis.api.impl.base.CachingKtAnalysisSessionProvider
-import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
+import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
+import org.jetbrains.kotlin.analysis.utils.caches.SoftCachedMap
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
+import kotlin.reflect.KClass
 
 @OptIn(KtAnalysisApiInternals::class)
-class KtFirAnalysisSessionProvider(project: Project) : CachingKtAnalysisSessionProvider<LLFirResolveSession>(project) {
-    override fun getFirResolveSession(contextModule: KtModule): LLFirResolveSession {
-        return contextModule.getFirResolveSession(project)
+class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
+    private val cache = KtAnalysisSessionCache(project)
+
+    override fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+        return getAnalysisSessionByUseSiteKtModule(useSiteKtElement.getKtModule(project), factory)
     }
 
-    override fun createAnalysisSession(
-        firResolveSession: LLFirResolveSession,
-        token: KtLifetimeToken,
-    ): KtAnalysisSession = KtFirAnalysisSession.createAnalysisSessionByFirResolveSession(firResolveSession, token)
+    override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {
+        return cache.getAnalysisSession(useSiteKtModule to factory.identifier) {
+            val firResolveSession = useSiteKtModule.getFirResolveSession(project)
+            val validityToken = factory.create(project)
+            KtFirAnalysisSession.createAnalysisSessionByFirResolveSession(firResolveSession, validityToken)
+        }
+    }
+
+    @TestOnly
+    override fun clearCaches() {
+        cache.clear()
+    }
 }
 
+private class KtAnalysisSessionCache(project: Project) {
+    private val cache = SoftCachedMap.create<Pair<KtModule, KClass<out KtLifetimeToken>>, KtAnalysisSession>(
+        project,
+        SoftCachedMap.Kind.STRONG_KEYS_SOFT_VALUES,
+        listOf(
+            PsiModificationTracker.MODIFICATION_COUNT,
+            ProjectRootModificationTracker.getInstance(project),
+            project.createProjectWideOutOfBlockModificationTracker()
+        )
+    )
 
+    init {
+        LowMemoryWatcher.register({ cache.clearCachedValues() }, project)
+    }
+
+    @TestOnly
+    fun clear() {
+        cache.clear()
+    }
+
+    fun getAnalysisSession(key: Pair<KtModule, KClass<out KtLifetimeToken>>, create: () -> KtAnalysisSession): KtAnalysisSession {
+        return cache.getOrPut(key) { create() }
+    }
+}
