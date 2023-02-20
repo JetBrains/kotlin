@@ -122,9 +122,18 @@ private class LLFirBodyTargetResolver(
     }
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
-        if (target is FirDeclaration) {
-            transformer.firTowerDataContextCollector?.addDeclarationContext(target, transformer.context.towerDataContext)
+        val contextCollector = transformer.firTowerDataContextCollector
+        if (contextCollector != null && target is FirDeclaration) {
+            val bodyResolveContext = transformer.context
+            if (target is FirFunction) {
+                bodyResolveContext.forFunctionBody(target, transformer.components) {
+                    contextCollector.addDeclarationContext(target, bodyResolveContext.towerDataContext)
+                }
+            } else {
+                contextCollector.addDeclarationContext(target, bodyResolveContext.towerDataContext)
+            }
         }
+
         when (target) {
             is FirRegularClass -> {
                 error("should be resolved in ${::doResolveWithoutLock.name}")
