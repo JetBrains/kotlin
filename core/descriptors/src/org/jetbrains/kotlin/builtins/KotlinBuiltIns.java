@@ -699,6 +699,7 @@ public abstract class KotlinBuiltIns {
                     type.getArguments().get(0).getType().getConstructor().getDeclarationDescriptor().getName();
             return FqNames.fqNameToPrimitiveType.get(BUILT_INS_PACKAGE_FQ_NAME.child(primitiveTypeName).toUnsafe());
         }
+        if (type.getConstructor().getDeclarationDescriptor() == null) return null;
         return getPrimitiveArrayType(type.getConstructor().getDeclarationDescriptor());
     }
 

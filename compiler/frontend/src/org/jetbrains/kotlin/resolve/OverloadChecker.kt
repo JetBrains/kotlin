@@ -16,12 +16,13 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl
 import org.jetbrains.kotlin.resolve.calls.results.*
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
-import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
-import org.jetbrains.kotlin.resolve.descriptorUtil.varargParameterPosition
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
@@ -45,7 +46,23 @@ class OverloadChecker(val specificityComparator: TypeSpecificityComparator) {
     }
 
     private fun checkOverloadability(a: CallableDescriptor, b: CallableDescriptor): Boolean {
+
+        fun isOldPrimitiveArrayConstructor(descriptor: CallableDescriptor) =
+            (descriptor is ConstructorDescriptor)
+                    && descriptor.constructedClass.fqNameUnsafe in StandardNames.FqNames.arrayClassFqNameToPrimitiveType.keys
+
+        fun isNewPrimitiveArrayFactoryFunction(descriptor: CallableDescriptor, simpleName: Name): Boolean {
+            val packageName = ((descriptor as? SimpleFunctionDescriptor)?.containingDeclaration as? PackageFragmentDescriptor)?.fqName
+            if (packageName != StandardNames.BUILT_INS_PACKAGE_FQ_NAME) return false
+            return descriptor.name == simpleName && descriptor.valueParameters.size == 1
+        }
+
+        fun isOldAndNewConstructorsOfPrimitiveArray(a: CallableDescriptor, b: CallableDescriptor) =
+            isOldPrimitiveArrayConstructor(a) && isNewPrimitiveArrayFactoryFunction(b, (a as ConstructorDescriptor).constructedClass.name)
+
         if (a.hasLowPriorityInOverloadResolution() != b.hasLowPriorityInOverloadResolution()) return true
+        if (isOldAndNewConstructorsOfPrimitiveArray(a, b)) return true
+        if (isOldAndNewConstructorsOfPrimitiveArray(b, a)) return true
 
         // NB this makes generic and non-generic declarations with equivalent signatures non-conflicting
         // E.g., 'fun <T> foo()' and 'fun foo()'.

@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 val varargPhase = makeIrModulePhase(
@@ -64,8 +65,12 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
         return expression
     }
 
-    override fun visitVararg(expression: IrVararg): IrExpression =
-        createBuilder(expression.startOffset, expression.endOffset).irArray(expression.type) { addVararg(expression) }
+    override fun visitVararg(expression: IrVararg): IrExpression {
+        if ((currentClass?.irElement as? IrClass)?.name == Name.identifier("BuiltInsBinaryVersion")) {
+            println()
+        }
+        return createBuilder(expression.startOffset, expression.endOffset).irArray(expression.type) { addVararg(expression) }
+    }
 
     private fun IrArrayBuilder.addVararg(expression: IrVararg) {
         loop@ for (element in expression.elements) {
