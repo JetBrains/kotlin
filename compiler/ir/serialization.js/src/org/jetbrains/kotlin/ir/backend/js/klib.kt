@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForJS
+import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -506,7 +506,7 @@ class ModulesStructure(
     fun runAnalysis(
         errorPolicy: ErrorTolerancePolicy,
         analyzer: AbstractAnalyzerWithCompilerReport,
-        analyzerFacade: AbstractTopDownAnalyzerFacadeForJS
+        analyzerFacade: AbstractTopDownAnalyzerFacadeForWeb
     ) {
         require(mainModule is MainModule.SourceFiles)
         val files = mainModule.files
