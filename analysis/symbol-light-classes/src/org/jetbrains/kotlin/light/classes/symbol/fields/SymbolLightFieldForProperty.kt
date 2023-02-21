@@ -188,7 +188,7 @@ internal class SymbolLightFieldForProperty private constructor(
                         // NB: not as?, since _initializerValue already checks that
                         (propertySymbol as KtKotlinPropertySymbol).isConst &&
                         // javac rejects all non-primitive and non String constants
-                        (propertySymbol.returnType.isPrimitive || propertySymbol.returnType.isString)
+                        (propertySymbol.returnType.isPrimitiveBacked || propertySymbol.returnType.isString)
             }
         }
     }
