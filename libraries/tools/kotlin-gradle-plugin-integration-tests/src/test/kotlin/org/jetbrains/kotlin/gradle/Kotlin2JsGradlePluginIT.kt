@@ -177,7 +177,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     fun testJsIrIncrementalMultipleArtifacts(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
             build("compileDevelopmentExecutableKotlinJs") {
-                val cacheDir = projectPath.resolve("app/build/klib/cache/").toFile()
+                val cacheDir = projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile()
                 val cacheRootDirName = cacheDir.list()?.singleOrNull()
                 assertTrue("Lib cache root dir should contain 1 element 'version.hash'") {
                     cacheRootDirName?.startsWith("version.") ?: false
@@ -263,7 +263,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                 assertOutputContains(">>> TEST OUT: Hello, Gradle.")
             }
 
-            val cacheGuard = projectPath.resolve("build/klib/cache/cache.guard").toFile()
+            val cacheGuard = projectPath.resolve("build/klib/cache/js/developmentExecutable/cache.guard").toFile()
             assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
 
             val srcFile = projectPath.resolve("src/main/kotlin/Main.kt").toFile()
