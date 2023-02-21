@@ -42,7 +42,10 @@ fun createTypeAliasStub(
     }
 
     if (Flags.HAS_ANNOTATIONS.get(typeAliasProto.flags)) {
-        createAnnotationStubs(typeAliasProto.annotationList.map { c.nameResolver.getClassId(it.id) }, modifierList)
+        createAnnotationStubs(
+            typeAliasProto.annotationList.map { AnnotationWithArgs(c.nameResolver.getClassId(it.id), emptyMap()) },
+            modifierList
+        )
     }
 
     val typeAliasUnderlyingType = typeAliasProto.underlyingType(c.typeTable)

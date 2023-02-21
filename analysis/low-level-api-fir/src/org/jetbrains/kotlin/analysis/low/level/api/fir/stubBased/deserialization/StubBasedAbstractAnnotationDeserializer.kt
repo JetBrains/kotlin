@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.FirConstExpression
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
@@ -25,8 +26,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -178,17 +181,53 @@ abstract class StubBasedAbstractAnnotationDeserializer(
                 constructor.valueParameters.associateBy { it.name }
             }
 
-            ktAnnotation.valueArguments.mapNotNull {
-                val name = it.getArgumentName()?.asName ?: error("Default value should be present")
-                val value = resolveValue(it.getArgumentExpression()) { parameterByName?.get(name)?.returnTypeRef?.coneType }
-                name to value
-            }.toMap(mapping)
+            ktAnnotation.valueArguments.groupBy { it.getArgumentName()?.asName ?: Name.identifier("value") }
+                .mapNotNull { (name, valueArguments) ->
+                    val expectedType = { parameterByName?.get(name)?.returnTypeRef?.coneType }
+                    val values = valueArguments.map {
+                        resolveValue(it.getArgumentExpression(), expectedType)
+                    }
+                    val value = if (values.size == 1) values[0] else buildArrayOfCall {
+                        argumentList = buildArgumentList {
+                            arguments.addAll(values)
+                        }
+                        typeRef = buildResolvedTypeRef {
+                            type = (/*expectedType() ?: */session.builtinTypes.anyType.type).createArrayType()
+                        }
+                    }
+                    name to value
+                }.toMap(mapping)
         }
     }
 
     private fun resolveValue(
         value: KtExpression?, expectedType: () -> ConeKotlinType?
     ): FirExpression {
+        if (value == null) error("Unexpected")
+        if (value is KtQualifiedExpression) {
+            val receiverExpression = value.receiverExpression
+            if (receiverExpression is KtQualifiedExpression) {
+                val selectorExpression = value.selectorExpression
+                return traverseClassId(receiverExpression)
+                    .toEnumEntryReferenceExpression((selectorExpression as KtNameReferenceExpression).getReferencedNameAsName())
+            }
+            if (receiverExpression is KtClassLiteralExpression) {
+                val classId = receiverExpression.receiverExpression?.let { traverseClassId(it) } ?: error("Unresolved class reference")
+                return buildGetClassCall {
+                    val lookupTag = classId.toLookupTag()
+                    val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
+                    val resolvedTypeRef = buildResolvedTypeRef {
+                        type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
+                    }
+                    argumentList = buildUnaryArgumentList(
+                        buildClassReferenceExpression {
+                            classTypeRef = buildResolvedTypeRef { type = referencedType }
+                            typeRef = resolvedTypeRef
+                        }
+                    )
+                }
+            }
+        }
 //        val isUnsigned = Flags.IS_UNSIGNED.get(value.flags)
 //
 //        return when (value.type) {
@@ -272,7 +311,56 @@ abstract class StubBasedAbstractAnnotationDeserializer(
         error("Not yet implemented $value $expectedType")
     }
 
+    private fun traverseClassId(receiverExpression: KtExpression): ClassId {
+        var receiver = receiverExpression
+        val classIdSegments = mutableListOf<String>()
+        while (receiver is KtQualifiedExpression) {
+            val rExpr = receiver.receiverExpression
+            if (rExpr is KtNameReferenceExpression) {
+                classIdSegments.add(rExpr.getReferencedName())
+                break
+            }
+            classIdSegments.add((receiver.selectorExpression as KtNameReferenceExpression).getReferencedName())
+            receiver = receiver.receiverExpression
+        }
+        return ClassId.fromString(classIdSegments.joinToString("/"))
+    }
+
     private fun <T> const(kind: ConstantValueKind<T>, value: T, typeRef: FirResolvedTypeRef): FirConstExpression<T> {
         return buildConstExpression(null, kind, value, setType = true).apply { this.replaceTypeRef(typeRef) }
+    }
+
+    private fun ClassId.toEnumEntryReferenceExpression(name: Name): FirExpression {
+        return buildFunctionCall {
+            val entryPropertySymbol =
+                session.symbolProvider.getClassDeclaredPropertySymbols(
+                    this@toEnumEntryReferenceExpression, name,
+                ).firstOrNull()
+
+            calleeReference = when {
+                entryPropertySymbol != null -> {
+                    buildResolvedNamedReference {
+                        this.name = name
+                        resolvedSymbol = entryPropertySymbol
+                    }
+                }
+                else -> {
+                    buildErrorNamedReference {
+                        diagnostic = ConeSimpleDiagnostic(
+                            "Strange deserialized enum value: ${this@toEnumEntryReferenceExpression}.$name",
+                            DiagnosticKind.Java,
+                        )
+                    }
+                }
+            }
+
+            typeRef = buildResolvedTypeRef {
+                type = ConeClassLikeTypeImpl(
+                    this@toEnumEntryReferenceExpression.toLookupTag(),
+                    emptyArray(),
+                    isNullable = false
+                )
+            }
+        }
     }
 }

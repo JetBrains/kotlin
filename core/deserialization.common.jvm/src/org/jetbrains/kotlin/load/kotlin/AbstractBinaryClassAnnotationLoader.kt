@@ -306,6 +306,12 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     }
 }
 
+class AnnotationsContainerWithConstants<out A, out C>(
+    override val memberAnnotations: Map<MemberSignature, List<A>>,
+    val propertyConstants: Map<MemberSignature, C>,
+    val annotationParametersDefaultValues: Map<MemberSignature, C>
+) : AbstractBinaryClassAnnotationLoader.AnnotationsContainer<A>()
+
 fun getPropertySignature(
     proto: ProtoBuf.Property,
     nameResolver: NameResolver,

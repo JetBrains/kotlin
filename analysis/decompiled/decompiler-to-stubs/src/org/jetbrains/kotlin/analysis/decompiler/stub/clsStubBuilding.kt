@@ -23,6 +23,10 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.resolve.constants.ArrayValue
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
+import org.jetbrains.kotlin.resolve.constants.EnumValue
+import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -192,22 +196,22 @@ fun createEmptyModifierListStub(parent: KotlinStubBaseImpl<*>): KotlinModifierLi
     )
 }
 
-fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>) {
-    return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent)
+fun createAnnotationStubs(annotations: List<AnnotationWithArgs>, parent: KotlinStubBaseImpl<*>) {
+    return createTargetedAnnotationStubs(annotations.map { AnnotationWithTarget(it, null) }, parent)
 }
 
 fun createTargetedAnnotationStubs(
-    annotationIds: List<ClassIdWithTarget>,
+    annotations: List<AnnotationWithTarget>,
     parent: KotlinStubBaseImpl<*>
 ) {
-    if (annotationIds.isEmpty()) return
+    if (annotations.isEmpty()) return
 
-    annotationIds.forEach { annotation ->
-        val (annotationClassId, target) = annotation
+    annotations.forEach { annotation ->
+        val (annotationWithArgs, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
             parent,
-            shortName = annotationClassId.shortClassName.ref(),
-            hasValueArguments = false
+            shortName = annotationWithArgs.classId.shortClassName.ref(),
+            hasValueArguments = annotationWithArgs.args.isNotEmpty()
         )
         if (target != null) {
             KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
@@ -215,7 +219,60 @@ fun createTargetedAnnotationStubs(
         val constructorCallee =
             KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
-        createStubForTypeName(annotationClassId, typeReference)
+        createStubForTypeName(annotationWithArgs.classId, typeReference)
+        if (annotationWithArgs.args.isNotEmpty()) {
+            val valueArgumentListStub =
+                KotlinPlaceHolderStubImpl<KtValueArgumentList>(annotationEntryStubImpl, KtStubElementTypes.VALUE_ARGUMENT_LIST)
+            for (entry in annotation.annotationWithArgs.args) {
+                createAnnotationMappingByConstantValue(entry.key, entry.value, valueArgumentListStub)
+            }
+        }
+    }
+}
+
+private fun createAnnotationMappingByConstantValue(
+    name: Name,
+    constantValue: ConstantValue<*>,
+    parent: StubElement<out PsiElement>
+) {
+    when (constantValue) {
+        is EnumValue -> {
+            val valueArg = KotlinValueArgumentStubImpl<KtValueArgument>(parent, KtStubElementTypes.VALUE_ARGUMENT, false)
+            val qStub =
+                KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(valueArg, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
+            val segments = constantValue.enumClassId.asSingleFqName().pathSegments()
+            var last = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(qStub, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
+            segments.forEachIndexed { index, segment ->
+                if (index == segments.size - 1) {
+                    KotlinNameReferenceExpressionStubImpl(last, segment.ref())
+                    return@forEachIndexed
+                }
+                val current = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(last, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
+                KotlinNameReferenceExpressionStubImpl(last, segment.ref())
+                last = current
+            }
+            KotlinNameReferenceExpressionStubImpl(qStub, constantValue.enumEntryName.ref())
+            val argName = KotlinPlaceHolderStubImpl<KtValueArgumentName>(valueArg, KtStubElementTypes.VALUE_ARGUMENT_NAME)
+            KotlinNameReferenceExpressionStubImpl(argName, name.ref())
+        }
+//        KtClassLiteralExpression is not stubbed thus we can't get the class name without ast loading
+//        is KClassValue -> {
+//            val valueArg = KotlinValueArgumentStubImpl<KtValueArgument>(parent, KtStubElementTypes.VALUE_ARGUMENT, false)
+//            when (val value = constantValue.value) {
+//                is KClassValue.Value.LocalClass -> error("Local classes are not reachable in annotation arguments, $value")
+//                is KClassValue.Value.NormalClass -> createStubForTypeName(value.value.classId, valueArg, false)
+//            }
+//        }
+        is ArrayValue -> {
+            val values = constantValue.value
+            for (value in values) {
+                createAnnotationMappingByConstantValue(name, value, parent)
+            }
+            if (values.size == 1) {
+                //repeat to get the array as a result!
+                createAnnotationMappingByConstantValue(name, values[0], parent)
+            }
+        }
     }
 }
 
