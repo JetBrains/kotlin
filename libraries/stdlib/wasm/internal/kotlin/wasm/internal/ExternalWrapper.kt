@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
+
 package kotlin.wasm.internal
 
 import kotlin.wasm.internal.reftypes.anyref
@@ -31,6 +33,7 @@ internal class JsExternalBox @WasmPrimitiveConstructor constructor(val ref: Exte
     }
 }
 
+@Suppress("DEPRECATION")
 //language=js
 @JsFun("""
 (() => {

@@ -5,6 +5,7 @@
 
 package kotlin.wasm.internal
 
+@Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
 private fun throwJsError(message: String?, wasmTypeName: String?, stack: String): Nothing {
     js("""
     const error = new Error();
