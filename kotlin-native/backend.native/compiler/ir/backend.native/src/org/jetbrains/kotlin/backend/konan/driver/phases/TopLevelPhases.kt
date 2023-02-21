@@ -10,6 +10,12 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.*
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
+import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
+import org.jetbrains.kotlin.backend.konan.objcexport.generateWorkaroundForSwiftSR10177
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -47,6 +53,34 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
     }
     runPhase(CopyDefaultValuesToActualPhase, psiToIrOutput.irModule)
     return psiToIrOutput to additionalOutput
+}
+
+internal fun <C: PhaseContext> PhaseEngine<C>.runObjCExportCodegen(
+        backendContext: Context,
+        objCExportedInterface: ObjCExportedInterface,
+        objCExportCodeSpec: ObjCExportCodeSpec,
+        compilationFiles: CompilationFiles,
+        llvmModuleName: String,
+) {
+    val config = context.config
+    val llvmModuleSpecification = ObjCExportLlvmModuleSpecification()
+    val dependenciesTracker = DependenciesTrackerImpl(llvmModuleSpecification, config, backendContext)
+    val generationState = NativeGenerationState(
+            config, backendContext, null, dependenciesTracker, llvmModuleSpecification,
+            debugInfoFileName = compilationFiles.getComponent<CompilationFiles.Component.DebugInfo>().debugInfoFileName,
+            llvmModuleName = llvmModuleName,
+            cacheFileName = "should_not_reach_here",
+    )
+    val codegen = CodeGenerator(generationState)
+    val objCCodeGenerator = ObjCExportCodeGenerator(codegen, objCExportedInterface.namer, objCExportedInterface.mapper)
+    objCExportedInterface.generateWorkaroundForSwiftSR10177(generationState)
+    objCCodeGenerator.generate(objCExportCodeSpec)
+    objCCodeGenerator.dispose()
+
+    runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(
+            generationState.llvmModule,
+            compilationFiles.getComponent<CompilationFiles.Component.ModuleBitcode>().file()
+    ))
 }
 
 internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(
@@ -196,7 +230,11 @@ internal data class ModuleCompilationOutput(
  * 4. Optimizes it.
  * 5. Serializes it to a bitcode file.
  */
-internal fun PhaseEngine<NativeGenerationState>.compileModule(module: IrModuleFragment, bitcodeFile: File, compilationFiles: CompilationFiles) {
+internal fun PhaseEngine<NativeGenerationState>.compileModule(
+        module: IrModuleFragment,
+        bitcodeFile: File,
+        compilationFiles: CompilationFiles
+) {
     if (context.config.produce.isCache) {
         runPhase(BuildAdditionalCacheInfoPhase, module)
     }

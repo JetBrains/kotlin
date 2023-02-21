@@ -94,7 +94,7 @@ internal fun createObjCFramework(
 // TODO: No need for such class in dynamic driver.
 internal class ObjCExport(
         private val generationState: NativeGenerationState,
-        private val moduleDescriptor: ModuleDescriptor,
+        moduleDescriptor: ModuleDescriptor,
         private val exportedInterface: ObjCExportedInterface?,
         private val codeSpec: ObjCExportCodeSpec?
 ) {
@@ -102,7 +102,15 @@ internal class ObjCExport(
     private val target get() = config.target
     private val topLevelNamePrefix get() = generationState.objCExportTopLevelNamePrefix
 
-    lateinit var namer: ObjCExportNamer
+    val mapper: ObjCExportMapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
+
+    val namer: ObjCExportNamer = exportedInterface?.namer ?: ObjCExportNamerImpl(
+            setOf(moduleDescriptor),
+            moduleDescriptor.builtIns,
+            mapper,
+            topLevelNamePrefix,
+            local = false
+    )
 
     internal fun generate(codegen: CodeGenerator) {
         if (!target.family.isAppleFamily) return
@@ -112,15 +120,6 @@ internal class ObjCExport(
         }
 
         if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
-
-        val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
-        namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
-                setOf(moduleDescriptor),
-                moduleDescriptor.builtIns,
-                mapper,
-                topLevelNamePrefix,
-                local = false
-        )
 
         val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
 
@@ -132,7 +131,7 @@ internal class ObjCExport(
 }
 
 // See https://bugs.swift.org/browse/SR-10177
-private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationState: NativeGenerationState) {
+internal fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationState: NativeGenerationState) {
     // Code for all protocols from the header should get into the binary.
     // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
     // so the easiest way to achieve this (quickly) is to compile a stub by clang.

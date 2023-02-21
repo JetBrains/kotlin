@@ -18,13 +18,13 @@ internal fun patchObjCRuntimeModule(generationState: NativeGenerationState): LLV
     val config = generationState.config
     if (!(config.isFinalBinary && config.target.family.isAppleFamily)) return null
 
-    val patchBuilder = PatchBuilder(generationState.objCExport.namer)
-    patchBuilder.addObjCPatches()
-
     val bitcodeFile = config.objCNativeLibrary
     val parsedModule = parseBitcodeFile(generationState.llvmContext, bitcodeFile)
 
-    patchBuilder.buildAndApply(parsedModule, generationState.llvm)
+//    PatchBuilder(generationState.objCExport.namer).apply {
+//        addObjCPatches()
+//        buildAndApply(parsedModule, generationState.llvm)
+//    }
     return parsedModule
 }
 

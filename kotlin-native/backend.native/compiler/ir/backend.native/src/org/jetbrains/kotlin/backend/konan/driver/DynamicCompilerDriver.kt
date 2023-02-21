@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CompilationFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createCompilationFiles
+import org.jetbrains.kotlin.backend.konan.driver.utilities.createObjCExportCompilationFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
@@ -85,7 +86,9 @@ internal class DynamicCompilerDriver(
             it.objCExportedInterface = objCExportedInterface
             it.objCExportCodeSpec = objCCodeSpec
         }
-        engine.runBackend(backendContext, psiToIrOutput.irModule, files)
+//        engine.runBackend(backendContext, psiToIrOutput.irModule, files)
+        val objcExportCompilationFiles = createObjCExportCompilationFiles(tempFiles, outputFiles)
+        engine.runObjCExportCodegen(backendContext, objCExportedInterface, objCCodeSpec, objcExportCompilationFiles, "objcexport")
     }
 
     private fun produceCLibrary(engine: PhaseEngine<PhaseContext>) {

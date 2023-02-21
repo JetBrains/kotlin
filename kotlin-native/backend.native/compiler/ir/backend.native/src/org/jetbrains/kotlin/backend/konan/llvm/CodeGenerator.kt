@@ -31,7 +31,6 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
     fun llvmFunctionOrNull(function: IrFunction): LlvmCallable? =
             function.llvmFunctionOrNull
 
-    val llvmDeclarations = generationState.llvmDeclarations
     val intPtrType = LLVMIntPtrTypeInContext(llvm.llvmContext, llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
     internal val immThreeIntPtrType = LLVMConstInt(intPtrType, 3, 1)!!
@@ -276,7 +275,7 @@ internal class StackLocalsManagerImpl(
             if (context.memoryModel == MemoryModel.EXPERIMENTAL) alloca(kObjHeaderPtr) else null
 
     override fun alloc(irClass: IrClass): LLVMValueRef = with(functionGenerationContext) {
-        val classInfo = llvmDeclarations.forClass(irClass)
+        val classInfo = generationState.llvmDeclarations.forClass(irClass)
         val type = classInfo.bodyType
         val stackLocal = appendingTo(bbInitStackLocals) {
             val stackSlot = LLVMBuildAlloca(builder, type, "")!!
@@ -375,7 +374,7 @@ internal class StackLocalsManagerImpl(
                 )
             }
         } else {
-            val info = llvmDeclarations.forClass(stackLocal.irClass)
+            val info = generationState.llvmDeclarations.forClass(stackLocal.irClass)
             val type = info.bodyType
             for (fieldIndex in info.fieldIndices.values.sorted()) {
                 val fieldType = LLVMStructGetTypeAtIndex(type, fieldIndex)!!
@@ -454,7 +453,6 @@ internal abstract class FunctionGenerationContext(
     )
 
     override val generationState = codegen.generationState
-    val llvmDeclarations = generationState.llvmDeclarations
     val vars = VariableManager(this)
     private val basicBlockToLastLocation = mutableMapOf<LLVMBasicBlockRef, LocationInfoRange>()
 

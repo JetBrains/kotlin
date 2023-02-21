@@ -160,6 +160,6 @@ internal fun CodeGenerator.kotlinObjCClassInfo(irClass: IrClass): LLVMValueRef {
     return if (isExternal(irClass)) {
         importGlobal(irClass.kotlinObjCClassInfoSymbolName, runtime.kotlinObjCClassInfo, irClass)
     } else {
-        llvmDeclarations.forClass(irClass).objCDeclarations!!.classInfoGlobal.llvmGlobal
+        generationState.llvmDeclarations.forClass(irClass).objCDeclarations!!.classInfoGlobal.llvmGlobal
     }
 }

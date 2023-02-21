@@ -198,3 +198,15 @@ internal fun createModuleCompilationFiles(
     }
     return CompilationFiles(components)
 }
+
+internal fun createObjCExportCompilationFiles(
+        temporaryFiles: TempFiles,
+        outputFiles: OutputFiles,
+): CompilationFiles {
+    val components = mutableSetOf<CompilationFiles.Component>()
+    components += CompilationFiles.Component.ModuleBitcode {
+        temporaryFiles.create("objcexport", ".bc").javaFile()
+    }
+    components += CompilationFiles.Component.DebugInfo(outputFiles.mainFileName)
+    return CompilationFiles(components)
+}

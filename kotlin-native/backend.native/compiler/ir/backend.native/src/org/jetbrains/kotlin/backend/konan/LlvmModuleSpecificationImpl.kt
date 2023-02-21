@@ -59,3 +59,29 @@ internal class CacheLlvmModuleSpecification(
                 ?.filePath.let { it == null || it == declaration.fileOrNull?.path }
     }
 }
+
+/**
+ * [LlvmModuleSpecification] for Objective-C interface which is compiled separately.
+ * It does not contain any Kotlin declarations, so it is pretty dumb.
+ */
+internal class ObjCExportLlvmModuleSpecification() : LlvmModuleSpecification {
+    override val isFinal: Boolean
+        get() = TODO("Not yet implemented")
+
+    override fun importsKotlinDeclarationsFromOtherObjectFiles(): Boolean =
+            true
+
+    override fun importsKotlinDeclarationsFromOtherSharedLibraries(): Boolean =
+            false
+
+    //
+    override fun containsLibrary(library: KotlinLibrary): Boolean = false
+
+    override fun containsModule(module: ModuleDescriptor): Boolean = false
+
+    override fun containsModule(module: IrModuleFragment): Boolean = false
+
+    override fun containsPackageFragment(packageFragment: IrPackageFragment): Boolean = false
+
+    override fun containsDeclaration(declaration: IrDeclaration): Boolean = false
+}
