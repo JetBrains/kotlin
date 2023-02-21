@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 
-object IdeRawTypeProjectionProvider : RawTypeProjectionProvider() {
+internal object LLFirRawTypeProjectionProvider : RawTypeProjectionProvider() {
     override fun typeParameters(classSymbol: FirRegularClassSymbol, session: FirSession): Array<ConeTypeProjection> {
         return Array(classSymbol.fir.typeParameters.size) { ConeStarProjection }
     }

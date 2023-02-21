@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdePredica
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.IdeRawTypeProjectionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirRawTypeProjectionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.moduleScopeProvider
@@ -44,7 +44,7 @@ internal fun LLFirSession.registerIdeComponents(project: Project) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory)
     register(SealedClassInheritorsProvider::class, project.createSealedInheritorsProvider())
     register(FirExceptionHandler::class, LLFirExceptionHandler)
-    register(RawTypeProjectionProvider::class, IdeRawTypeProjectionProvider)
+    register(RawTypeProjectionProvider::class, LLFirRawTypeProjectionProvider)
 }
 
 internal inline fun createCompositeSymbolProvider(
