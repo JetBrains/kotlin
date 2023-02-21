@@ -400,6 +400,9 @@ internal class ObjCExportTranslatorImpl(
                     descriptor.getEnumValuesFunctionDescriptor()?.let { enumValues ->
                         add { buildEnumValuesMethod(enumValues, genericExportScope) }
                     }
+                    descriptor.getEnumEntriesPropertyDescriptor()?.let { enumEntries ->
+                        add { buildEnumEntriesProperty(enumEntries, genericExportScope) }
+                    }
                 }
                 else -> {
                     // Nothing special.
@@ -463,7 +466,7 @@ internal class ObjCExportTranslatorImpl(
             enumValues: SimpleFunctionDescriptor,
             genericExportScope: ObjCExportScope
     ): ObjCMethod {
-        val selector = namer.getEnumValuesSelector(enumValues)
+        val selector = namer.getEnumStaticMemberSelector(enumValues)
         return ObjCMethod(
                 enumValues,
                 isInstanceMethod = false,
@@ -471,6 +474,20 @@ internal class ObjCExportTranslatorImpl(
                 selectors = splitSelector(selector),
                 parameters = emptyList(),
                 attributes = listOf(swiftNameAttribute("$selector()"))
+        )
+    }
+
+    private fun buildEnumEntriesProperty(
+            enumEntries: PropertyDescriptor,
+            genericExportScope: ObjCExportScope
+    ): ObjCProperty {
+        val selector = namer.getEnumStaticMemberSelector(enumEntries)
+        return ObjCProperty(
+                selector,
+                enumEntries,
+                type = mapReferenceType(enumEntries.type, genericExportScope),
+                propertyAttributes = listOf("class", "readonly"),
+                declarationAttributes = listOf(swiftNameAttribute("$selector"))
         )
     }
 

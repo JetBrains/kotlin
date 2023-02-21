@@ -88,9 +88,15 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                 }
 
                 descriptor.getEnumValuesFunctionDescriptor()?.let {
-                    methods += ObjCClassMethodForKotlinEnumValues(
+                    methods += ObjCClassMethodForKotlinEnumValuesOrEntries(
                             symbolTable.referenceSimpleFunction(it),
-                            namer.getEnumValuesSelector(it)
+                            namer.getEnumStaticMemberSelector(it)
+                    )
+                }
+                descriptor.getEnumEntriesPropertyDescriptor()?.let {
+                    methods += ObjCClassMethodForKotlinEnumValuesOrEntries(
+                            symbolTable.referenceSimpleFunction(it.getter!!),
+                            namer.getEnumStaticMemberSelector(it)
                     )
                 }
             }
@@ -165,7 +171,7 @@ internal class ObjCGetterForKotlinEnumEntry(
             "ObjC spec of getter `$selector` for `$irEnumEntrySymbol`"
 }
 
-internal class ObjCClassMethodForKotlinEnumValues(
+internal class ObjCClassMethodForKotlinEnumValuesOrEntries(
         val valuesFunctionSymbol: IrFunctionSymbol,
         val selector: String
 ) : ObjCMethodSpec() {

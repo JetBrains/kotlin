@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -72,7 +71,7 @@ interface ObjCExportNamer {
     fun getObjectInstanceSelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySelector(descriptor: ClassDescriptor): String
     fun getEnumEntrySwiftName(descriptor: ClassDescriptor): String
-    fun getEnumValuesSelector(descriptor: FunctionDescriptor): String
+    fun getEnumStaticMemberSelector(descriptor: CallableMemberDescriptor): String
     fun getTypeParameterName(typeParameterDescriptor: TypeParameterDescriptor): String
 
     fun numberBoxName(classId: ClassId): ClassOrProtocolName
@@ -647,13 +646,11 @@ internal class ObjCExportNamerImpl(
         }
     }
 
-    override fun getEnumValuesSelector(descriptor: FunctionDescriptor): String {
+    override fun getEnumStaticMemberSelector(descriptor: CallableMemberDescriptor): String {
         val containingDeclaration = descriptor.containingDeclaration
         require(containingDeclaration is ClassDescriptor && containingDeclaration.kind == ClassKind.ENUM_CLASS)
-        require(descriptor.name == StandardNames.ENUM_VALUES)
         require(descriptor.dispatchReceiverParameter == null) { "must be static" }
         require(descriptor.extensionReceiverParameter == null) { "must be static" }
-        require(descriptor.valueParameters.isEmpty())
 
         return enumClassSelectors.getOrPut(descriptor) {
             StringBuilder(descriptor.name.asString()).mangledBySuffixUnderscores()
