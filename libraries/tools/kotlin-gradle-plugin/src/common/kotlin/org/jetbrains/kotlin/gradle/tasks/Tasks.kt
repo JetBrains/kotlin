@@ -68,6 +68,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.io.File
 import java.nio.file.Files.*
 import javax.inject.Inject
+import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState as cleanOutputsAndLocalStateUtil
 
 const val KOTLIN_BUILD_DIR_NAME = "kotlin"
 const val USING_JVM_INCREMENTAL_COMPILATION_MESSAGE = "Using Kotlin/JVM incremental compilation"
@@ -405,6 +406,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
         }
 
         buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
+    }
+
+    protected open fun cleanOutputsAndLocalState(reason: String?) {
+        cleanOutputsAndLocalStateUtil(reason)
     }
 
     protected open fun skipCondition(): Boolean = sources.isEmpty
