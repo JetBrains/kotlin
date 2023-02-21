@@ -136,6 +136,24 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @DisplayName("KT-56789: Kotlin daemon does not triggers OOM in Metaspace on multiple invocations")
+    @JdkVersions(versions = [JavaVersion.VERSION_11])
+    @GradleWithJdkTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    fun testMultipleCompilations(gradleVersion: GradleVersion, jdk: JdkVersions.ProvidedJdk) {
+        project(
+            "daemonJvmResourceLimits",
+            gradleVersion,
+            buildJdk = jdk.location
+        ) {
+            for (iteration in 0..300) {
+                build("clean", "assemble") {
+                    assertKotlinDaemonReusesOnlyOneSession()
+                }
+            }
+        }
+    }
+
 
     private fun BuildResult.assertGradleClasspathNotLeaked() {
         assertOutputContains("Kotlin compiler classpath:")
