@@ -257,6 +257,10 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         return expressionsTransformer.transformArrayOfCall(arrayOfCall, data)
     }
 
+    override fun transformSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: ResolutionMode): FirStatement {
+        return expressionsTransformer.transformSmartCastExpression(smartCastExpression, data)
+    }
+
     // ------------------------------------- Declarations -------------------------------------
 
     override fun transformDeclaration(declaration: FirDeclaration, data: ResolutionMode): FirDeclaration {

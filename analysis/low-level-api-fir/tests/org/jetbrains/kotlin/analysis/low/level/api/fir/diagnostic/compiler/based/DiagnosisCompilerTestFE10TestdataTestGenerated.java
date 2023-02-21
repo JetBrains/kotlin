@@ -40199,6 +40199,12 @@ public class DiagnosisCompilerTestFE10TestdataTestGenerated extends AbstractDiag
             }
 
             @Test
+            @TestMetadata("unsoundSmartcast.kt")
+            public void testUnsoundSmartcast() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/smartcasts/unsoundSmartcast.kt");
+            }
+
+            @Test
             @TestMetadata("withChangesToNull.kt")
             public void testWithChangesToNull() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/smartcasts/withChangesToNull.kt");

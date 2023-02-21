@@ -40263,6 +40263,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("unsoundSmartcast.kt")
+            public void testUnsoundSmartcast() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/smartcasts/unsoundSmartcast.kt");
+            }
+
+            @Test
             @TestMetadata("withChangesToNull.kt")
             public void testWithChangesToNull() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/smartcasts/withChangesToNull.kt");

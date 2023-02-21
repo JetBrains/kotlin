@@ -80,6 +80,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         return (expression.transformChildren(transformer, data) as FirStatement)
     }
 
+    override fun transformSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: ResolutionMode): FirStatement {
+        return smartCastExpression
+    }
+
     override fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
@@ -92,6 +96,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         data: ResolutionMode,
         isUsedAsReceiver: Boolean,
     ): FirStatement {
+        if (qualifiedAccessExpression.typeRef is FirResolvedTypeRef && qualifiedAccessExpression.calleeReference !is FirSimpleNamedReference) {
+            return qualifiedAccessExpression
+        }
+
         qualifiedAccessExpression.transformAnnotations(this, data)
         qualifiedAccessExpression.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
 
@@ -1420,7 +1428,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 session.moduleData,
                 source = index.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment),
                 name = SpecialNames.subscribeOperatorIndex(i),
-                initializer = index
+                initializer = index,
+                typeRef = index.typeRef,
             )
         }
 

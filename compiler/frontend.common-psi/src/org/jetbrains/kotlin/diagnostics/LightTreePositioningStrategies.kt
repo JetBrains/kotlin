@@ -683,6 +683,12 @@ object LightTreePositioningStrategies {
             endOffset: Int,
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
+            if (node.tokenType == KtNodeTypes.BINARY_EXPRESSION) {
+                tree.findDescendantByTypes(node, KtTokens.AUGMENTED_ASSIGNMENTS)?.let {
+                    return markElement(it, startOffset, endOffset, tree, node)
+                }
+            }
+
             when {
                 node.tokenType == KtNodeTypes.BINARY_EXPRESSION && tree.findDescendantByType(node, KtTokens.EQ, followFunctions = false) != null -> {
                     // Look for reference in LHS of variable assignment.
