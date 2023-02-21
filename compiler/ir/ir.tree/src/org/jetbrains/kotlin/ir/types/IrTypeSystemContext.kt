@@ -450,6 +450,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         if (!isVArray()) return null
         val argument = getArgument(0)
         if (argument.getVariance() != TypeVariance.INV) return null
+        if (argument.getType().isNullableType()) return null
         return argument.getType().getPrimitiveType()
     }
 
