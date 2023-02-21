@@ -14,7 +14,3 @@ kotlin {
         binaries.executable()
     }
 }
-
-configurations["compileClasspath"].apply {
-    attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage::class.java, "kotlin-runtime"))
-}
