@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.wasm.resolve
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useImpl
 import org.jetbrains.kotlin.container.useInstance
-import org.jetbrains.kotlin.js.analyze.JsNativeDiagnosticSuppressor
 import org.jetbrains.kotlin.js.naming.NameSuggestion
 import org.jetbrains.kotlin.js.resolve.ExtensionFunctionToExternalIsInlinable
 import org.jetbrains.kotlin.js.resolve.diagnostics.*
 import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.calls.checkers.LateinitIntrinsicApplicabilityChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
+import org.jetbrains.kotlin.wasm.analyze.WasmDiagnosticSuppressor
 import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmExternalDeclarationChecker
 import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmExternalInheritanceChecker
 import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmImportAnnotationChecker
@@ -50,7 +50,7 @@ object WasmPlatformConfigurator : PlatformConfiguratorBase(
         container.useImpl<JsReifiedNativeChecker>()
         container.useInstance(ExtensionFunctionToExternalIsInlinable)
         container.useInstance(JsQualifierChecker)
-        container.useInstance(JsNativeDiagnosticSuppressor)
+        container.useInstance(WasmDiagnosticSuppressor)
     }
 
     override fun configureModuleDependentCheckers(container: StorageComponentContainer) {
