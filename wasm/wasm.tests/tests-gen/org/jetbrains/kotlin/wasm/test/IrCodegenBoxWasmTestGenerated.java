@@ -22147,6 +22147,21 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/primitiveTypes/conversions.kt");
         }
 
+        @TestMetadata("customNumberInheritor.kt")
+        public void testCustomNumberInheritor() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/customNumberInheritor.kt");
+        }
+
+        @TestMetadata("customNumberInheritor_callToSuper.kt")
+        public void testCustomNumberInheritor_callToSuper() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/customNumberInheritor_callToSuper.kt");
+        }
+
+        @TestMetadata("customNumberInheritor_interfaceInheritance.kt")
+        public void testCustomNumberInheritor_interfaceInheritance() throws Exception {
+            runTest("compiler/testData/codegen/box/primitiveTypes/customNumberInheritor_interfaceInheritance.kt");
+        }
+
         @TestMetadata("ea35963.kt")
         public void testEa35963() throws Exception {
             runTest("compiler/testData/codegen/box/primitiveTypes/ea35963.kt");

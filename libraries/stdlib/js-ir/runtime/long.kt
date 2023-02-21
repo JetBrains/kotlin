@@ -307,7 +307,7 @@ public class Long internal constructor(
 
     public override fun toByte(): Byte = low.toByte()
     @Deprecated("Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.", ReplaceWith("this.toInt().toChar()"))
-    @DeprecatedSinceKotlin(warningSince = "1.5")
+    @DeprecatedSinceKotlin(warningSince = "1.5", errorSince = "2.3")
     public override fun toChar(): Char = low.toChar()
     public override fun toShort(): Short = low.toShort()
     public override fun toInt(): Int = low

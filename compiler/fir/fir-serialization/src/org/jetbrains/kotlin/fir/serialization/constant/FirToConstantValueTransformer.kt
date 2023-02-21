@@ -128,7 +128,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
                     "toShort" -> ShortValue((dispatchReceiverValue!!.value as Number).toShort())
                     "toFloat" -> FloatValue((dispatchReceiverValue!!.value as Number).toFloat())
                     "toDouble" -> DoubleValue((dispatchReceiverValue!!.value as Number).toDouble())
-                    "toChar" -> CharValue((dispatchReceiverValue!!.value as Number).toChar())
+                    "toChar" -> CharValue((dispatchReceiverValue!!.value as Number).toInt().toChar())
                     "unaryMinus" -> {
                         when (val receiverValue = dispatchReceiverValue) {
                             is ByteValue -> ByteValue((-receiverValue.value).toByte())

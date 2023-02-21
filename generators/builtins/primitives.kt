@@ -437,10 +437,6 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             return kind in PrimitiveType.floatingPoint && otherKind in listOf(PrimitiveType.BYTE, PrimitiveType.SHORT)
         }
 
-        fun isCharConversionDeprecated(otherKind: PrimitiveType): Boolean {
-            return kind != PrimitiveType.INT && otherKind == PrimitiveType.CHAR
-        }
-
         val thisName = kind.capitalized
         for (otherKind in PrimitiveType.exceptBoolean) {
             val otherName = otherKind.capitalized
@@ -469,9 +465,13 @@ class GeneratePrimitives(out: PrintWriter) : BuiltInsSourceGenerator(out) {
                 out.println("    @Deprecated(\"Unclear conversion. To achieve the same result convert to Int explicitly and then to $otherName.\", ReplaceWith(\"toInt().to$otherName()\"))")
                 out.println("    @DeprecatedSinceKotlin(warningSince = \"1.3\", errorSince = \"1.5\")")
             }
-            if (isCharConversionDeprecated(otherKind)) {
-                out.println("    @Deprecated(\"Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.\", ReplaceWith(\"this.toInt().toChar()\"))")
-                out.println("    @DeprecatedSinceKotlin(warningSince = \"1.5\")")
+            if (otherKind == PrimitiveType.CHAR) {
+                if (kind == PrimitiveType.INT) {
+                    out.println("    @Suppress(\"OVERRIDE_DEPRECATION\")")
+                } else {
+                    out.println("    @Deprecated(\"Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.\", ReplaceWith(\"this.toInt().toChar()\"))")
+                    out.println("    @DeprecatedSinceKotlin(warningSince = \"1.5\", errorSince = \"2.3\")")
+                }
             }
 
             out.println("    @kotlin.internal.IntrinsicConstEvaluation")

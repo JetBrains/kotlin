@@ -214,7 +214,7 @@ public final class Byte : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Byte>|, R
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
@@ -521,7 +521,7 @@ public final class Double : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Double>
 
     @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
@@ -714,7 +714,7 @@ public final class Float : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Float>|,
 
     @R|kotlin/Deprecated|(message = String(Unclear conversion. To achieve the same result convert to Int explicitly and then to Byte.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(toInt().toByte())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.3), errorSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
@@ -1049,7 +1049,7 @@ public final class Long : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Long>|, R
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
@@ -1101,7 +1101,9 @@ public final class Nothing {
 public abstract class Number : R|kotlin/Any|, R|java/io/Serializable| {
     public abstract fun toByte(): R|kotlin/Byte|
 
-    public abstract fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
+If you override toChar() function in your Number inheritor, it's recommended to gradually deprecate the overriding function and then remove it.
+See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.9), errorSince = String(2.3)) public open fun toChar(): R|kotlin/Char|
 
     public abstract fun toDouble(): R|kotlin/Double|
 
@@ -1290,7 +1292,7 @@ public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|,
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toByte(): R|kotlin/Byte|
 
-    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
+    @R|kotlin/Deprecated|(message = String(Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.), replaceWith = @R|kotlin/ReplaceWith|(imports = <implicitArrayOf>(), expression = String(this.toInt().toChar())) ) @R|kotlin/DeprecatedSinceKotlin|(warningSince = String(1.5), errorSince = String(2.3)) @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toChar(): R|kotlin/Char|
 
     @R|kotlin/internal/IntrinsicConstEvaluation|() public open fun toDouble(): R|kotlin/Double|
 
