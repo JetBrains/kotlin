@@ -28,21 +28,25 @@ class DefaultInMemoryStorageWrapper<K, V>(
     private val removedKeys = hashSetOf<K>()
     private var isCleanRequested = false
 
+    @get:Synchronized
     override val keys: Collection<K>
         get() = if (isCleanRequested) inMemoryStorage.keys else (origin.keys - removedKeys) + inMemoryStorage.keys
 
+    @Synchronized
     override fun resetInMemoryChanges() {
         isCleanRequested = false
         inMemoryStorage.clear()
         removedKeys.clear()
     }
 
+    @Synchronized
     override fun clean() {
         inMemoryStorage.clear()
         removedKeys.clear()
         isCleanRequested = true
     }
 
+    @Synchronized
     override fun flush(memoryCachesOnly: Boolean) {
         if (isCleanRequested) {
             origin.clean()
@@ -66,10 +70,12 @@ class DefaultInMemoryStorageWrapper<K, V>(
         origin.flush(memoryCachesOnly)
     }
 
+    @Synchronized
     override fun close() {
         origin.close()
     }
 
+    @Synchronized
     override fun append(key: K, value: V) {
         check(valueExternalizer is AppendableDataExternalizer<V>) {
             "`valueExternalizer` should implement the `AppendableDataExternalizer` interface to be able to call `append`"
@@ -89,15 +95,18 @@ class DefaultInMemoryStorageWrapper<K, V>(
         }
     }
 
+    @Synchronized
     override fun remove(key: K) {
         removedKeys.add(key)
         inMemoryStorage.remove(key)
     }
 
+    @Synchronized
     override fun set(key: K, value: V) {
         inMemoryStorage[key] = ValueWrapper(value)
     }
 
+    @Synchronized
     override fun get(key: K): V? {
         return when (key) {
             in inMemoryStorage -> {
@@ -117,6 +126,7 @@ class DefaultInMemoryStorageWrapper<K, V>(
         }
     }
 
+    @Synchronized
     override fun contains(key: K) = key in inMemoryStorage || (key !in removedKeys && key in origin)
 
     private fun <K, V> Map<K, V>.getValue(key: K) =
