@@ -240,6 +240,15 @@ internal fun ClassDescriptor.getEnumValuesFunctionDescriptor(): SimpleFunctionDe
     ).singleOrNull { it.extensionReceiverParameter == null && it.valueParameters.size == 0 }
 }
 
+internal fun ClassDescriptor.getEnumEntriesPropertyDescriptor(): PropertyDescriptor? {
+    require(this.kind == ClassKind.ENUM_CLASS)
+
+    return this.staticScope.getContributedVariables(
+            StandardNames.ENUM_ENTRIES,
+            NoLookupLocation.FROM_BACKEND
+    ).singleOrNull { it.extensionReceiverParameter == null }
+}
+
 internal fun ObjCExportMapper.doesThrow(method: FunctionDescriptor): Boolean = method.allOverriddenDescriptors.any {
     it.overriddenDescriptors.isEmpty() && it.annotations.hasAnnotation(KonanFqNames.throws)
 }

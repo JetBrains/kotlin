@@ -5676,6 +5676,7 @@ Task objcExportTest(
         }
 
         def libraryName = frameworkName + "Library"
+        def noEnumEntriesLibraryName = frameworkName + "NoEnumEntriesLibrary"
         konanArtifacts {
             library(libraryName, targets: [target.name]) {
                 srcDir "objcexport/library"
@@ -5687,13 +5688,23 @@ Task objcExportTest(
                 extraOpts "-Xshort-module-name=MyLibrary"
                 extraOpts "-module-name", "org.jetbrains.kotlin.native.test-library"
             }
+            library(noEnumEntriesLibraryName, targets: [target.name]) {
+                srcDir "objcexport/noEnumEntries"
+                artifactName "test-no-enum-entries-$libraryName"
+                delegate.getByTarget(target.name).configure{
+                    UtilsKt.dependsOnDist(it)
+                }
 
+                extraOpts "-Xshort-module-name=NoEnumEntriesLibrary"
+                extraOpts "-module-name", "org.jetbrains.kotlin.native.test-no-enum-entries-library"
+                extraOpts "-XXLanguage:-EnumEntries"
+            }
         }
         codesign = !isStaticFramework
         framework(frameworkName) {
             enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
-            libraries = [libraryName]
+            libraries = [libraryName, noEnumEntriesLibraryName]
             artifact = 'Kt'
             bitcode = !isStaticFramework
             isStatic = isStaticFramework
@@ -5703,6 +5714,7 @@ Task objcExportTest(
             opts += [
                     "-Xexport-kdoc",
                     "-Xbinary=bundleId=foo.bar",
+                    "-Xexport-library=test-no-enum-entries-${libraryName}.klib"
             ]
             opts += frameworkOpts
         }
@@ -5772,6 +5784,7 @@ if (isAppleTarget(project)) {
             true,
             false
     )
+
 
     frameworkTest('testValuesGenericsFramework') {
         framework('ValuesGenerics') {

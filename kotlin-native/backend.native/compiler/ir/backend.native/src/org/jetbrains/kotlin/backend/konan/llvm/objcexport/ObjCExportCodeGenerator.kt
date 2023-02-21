@@ -1601,8 +1601,8 @@ private fun ObjCExportCodeGenerator.createTypeAdapter(
             is ObjCGetterForKotlinEnumEntry -> {
                 classAdapters += createEnumEntryAdapter(it.irEnumEntrySymbol.owner, it.selector)
             }
-            is ObjCClassMethodForKotlinEnumValues -> {
-                classAdapters += createEnumValuesAdapter(it.valuesFunctionSymbol.owner, it.selector)
+            is ObjCClassMethodForKotlinEnumValuesOrEntries -> {
+                classAdapters += createEnumValuesOrEntriesAdapter(it.valuesFunctionSymbol.owner, it.selector)
             }
             is ObjCGetterForObjectInstance -> {
                 classAdapters += if (it.classSymbol.owner.isUnit()) {
@@ -1892,8 +1892,8 @@ private fun ObjCExportCodeGenerator.createEnumEntryAdapter(
     }
 }
 
-private fun ObjCExportCodeGenerator.createEnumValuesAdapter(
-        valuesFunction: IrFunction,
+private fun ObjCExportCodeGenerator.createEnumValuesOrEntriesAdapter(
+        function: IrFunction,
         selector: String
 ): ObjCExportCodeGenerator.ObjCToKotlinMethodAdapter {
     val methodBridge = MethodBridge(
@@ -1902,7 +1902,7 @@ private fun ObjCExportCodeGenerator.createEnumValuesAdapter(
             valueParameters = emptyList()
     )
 
-    val imp = generateObjCImp(valuesFunction, valuesFunction, methodBridge, isVirtual = false)
+    val imp = generateObjCImp(function, function, methodBridge, isVirtual = false)
 
     return objCToKotlinMethodAdapter(selector, methodBridge, imp)
 }
