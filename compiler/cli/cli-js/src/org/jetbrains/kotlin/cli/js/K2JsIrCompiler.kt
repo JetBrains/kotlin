@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageUtil
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -427,7 +429,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 environmentForJS.configuration,
                 libraries,
                 friendLibraries,
-                AnalyzerWithCompilerReport(environmentForJS.configuration)
+                AnalyzerWithCompilerReport(environmentForJS.configuration),
+                analyzerFacade = if (arguments.wasm) TopDownAnalyzerFacadeForWasm else TopDownAnalyzerFacadeForJSIR
             )
             val result = sourceModule.jsFrontEndResult.jsAnalysisResult
             if (result is JsAnalysisResult.RetryWithAdditionalRoots) {

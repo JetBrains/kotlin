@@ -19,7 +19,6 @@ dependencies {
     api(project(":analysis:symbol-light-classes"))
     api(project(":analysis:decompiled:light-classes-for-decompiled"))
     api(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
-
     testApi(projectTests(":analysis:analysis-test-framework"))
     testApi(projectTests(":analysis:analysis-api-impl-base"))
     testApi(projectTests(":analysis:analysis-api-fir"))
