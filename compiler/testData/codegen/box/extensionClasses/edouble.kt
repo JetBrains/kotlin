@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // !LANGUAGE: +ContextReceivers
 // TARGET_BACKEND: JVM_IR
 

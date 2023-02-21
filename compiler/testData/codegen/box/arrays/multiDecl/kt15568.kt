@@ -1,3 +1,4 @@
+// WITH_STDLIB
 fun box(): String {
     val a = Array(2) { DoubleArray(3) }
 

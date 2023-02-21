@@ -1,3 +1,4 @@
+// WITH_STDLIB
 //KT-2997 Automatically cast error (Array)
 
 fun foo(a: Any): Int {

@@ -1,3 +1,4 @@
+// WITH_STDLIB
 operator fun IntArray.set(index: Long, elem: Int) { this[index.toInt()] = elem }
 operator fun IntArray.get(index: Long) = this[index.toInt()]
 

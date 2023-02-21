@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // !LANGUAGE: +AllowBreakAndContinueInsideWhen
 
 fun testFor() {

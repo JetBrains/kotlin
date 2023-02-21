@@ -1,3 +1,4 @@
+// WITH_STDLIB
 fun booleanVararg(vararg xs: Boolean) {
     if (xs.size != 1 && xs[0] != true) throw AssertionError()
 }

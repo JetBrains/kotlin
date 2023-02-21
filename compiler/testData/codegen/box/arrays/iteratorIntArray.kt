@@ -1,3 +1,4 @@
+// WITH_STDLIB
 fun box(): String {
     val a = IntArray(5)
     val x = a.iterator()

@@ -1,3 +1,4 @@
+// WITH_STDLIB
 fun IntArray.swap(i:Int, j:Int) {
     val temp = this[i]
     this[i] = this[j]

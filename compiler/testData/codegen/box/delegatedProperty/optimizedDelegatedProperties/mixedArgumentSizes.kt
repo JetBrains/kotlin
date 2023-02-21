@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // IGNORE_BACKEND: WASM
 inline operator fun Double.provideDelegate(thisRef: Any?, kProp: Any?) = this.toLong()
 

@@ -1,3 +1,4 @@
+// WITH_STDLIB
 package array_test
 
 fun box() : String {
