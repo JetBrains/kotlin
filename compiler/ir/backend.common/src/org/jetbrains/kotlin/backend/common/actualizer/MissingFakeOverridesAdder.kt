@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
-import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
@@ -49,36 +48,34 @@ class MissingFakeOverridesAdder(
             for (expectMember in expectClass.declarations) {
                 if (expectMember.isBuiltinMember()) continue
                 val actualMember = expectActualMap[expectMember.symbol]?.owner as? IrDeclaration ?: continue
-                addFakeOverrideIfNeeded(actualMember, members, declaration, expectMember)
+
+                // Do not add FAKE_OVERRIDE if the subclass already has overridden member
+                if (declaration.declarations.filterIsInstance<IrOverridableDeclaration<*>>()
+                        .any { expectMember.symbol in it.overriddenSymbols }
+                ) {
+                    continue
+                }
+                addFakeOverride(actualMember, members, declaration)
                 added += actualMember
             }
             val actualClass = expectActualMap[expectClass.symbol]?.owner as? IrClass ?: continue
             for (actualMember in actualClass.declarations) {
                 if (actualMember.isBuiltinMember() || actualMember in added) continue
-                addFakeOverrideIfNeeded(actualMember, members, declaration, null)
+                addFakeOverride(actualMember, members, declaration)
             }
         }
     }
 
-    private fun addFakeOverrideIfNeeded(
+    private fun addFakeOverride(
         actualMember: IrDeclaration,
         members: Map<String, IrDeclaration>,
-        declaration: IrClass,
-        expectMember: IrDeclaration?
+        declaration: IrClass
     ) {
         when (actualMember) {
             is IrFunctionImpl,
             is IrPropertyImpl -> {
                 if (members[generateIrElementFullName(actualMember, expectActualMap, typeAliasMap)] != null) {
                     reportManyInterfacesMembersNotImplemented(declaration, actualMember as IrDeclarationWithName)
-                    return
-                }
-
-                // Do not add FAKE_OVERRIDE if the subclass already has overridden member
-                if (expectMember != null &&
-                    declaration.declarations.filterIsInstance<IrOverridableDeclaration<*>>()
-                        .any { expectMember.symbol in it.overriddenSymbols }
-                ) {
                     return
                 }
 
