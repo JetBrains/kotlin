@@ -5,4 +5,5 @@ $TEMP_DIR$
 -language-version
 2.0
 -XXLanguage\:+MultiPlatformProjects
--Xmodule=a;a.kt;b.kt
+-Xfragments=a,b,c
+-Xfragment-sources=a;a.kt;

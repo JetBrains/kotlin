@@ -4,7 +4,8 @@ $TESTDATA_DIR$/src/c.kt
 -d
 $TEMP_DIR$
 -language-version
-1.9
+2.0
 -XXLanguage\:+MultiPlatformProjects
 -Xfragments=a,b,c
--Xcommon-sources=$TESTDATA_DIR$/src/a.kt,$TESTDATA_DIR$/src/b.kt
+-Xfragment-sources=a;$TESTDATA_DIR$/src/a.kt,b;$TESTDATA_DIR$/src/b.kt,c;$TESTDATA_DIR$/src/c.kt
+-Xdepends-on=b\:a,c\:b

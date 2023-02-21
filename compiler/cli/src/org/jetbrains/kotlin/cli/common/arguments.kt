@@ -130,7 +130,8 @@ private fun <A : CommonToolArguments> MessageCollector.reportUnsafeInternalArgum
 }
 
 private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
-    val rawModules = arguments.modulesDescription
+    val rawFragments = arguments.fragments
+    val rawFragmentSources = arguments.fragmentSources
     val rawDependencies = arguments.dependsOnDependencies
 
     val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -143,32 +144,40 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         messageCollector.report(CompilerMessageSeverity.WARNING, message)
     }
 
-    if (rawModules == null) {
+    if (rawFragments == null) {
         if (rawDependencies != null) {
-            reportError("-Xdepends-on flag can not be used without -Xmodule")
+            reportError("-Xdepends-on flag can not be used without -Xfragments")
         }
         return null
     }
 
     if (!languageVersionSettings.languageVersion.usesK2) {
-        reportWarning("-Xmodule flag is not supported for language version < 2.0")
+        reportWarning("-Xfragments flag is not supported for language version < 2.0")
         return null
     }
 
-    var modules = rawModules.mapNotNull { arg ->
-        val split = arg.split(";")
-        val name = split.first()
-        when (split.size) {
-            1 -> reportWarning("Incorrect syntax for -Xmodule argument. Module $name has no sources")
-            2 -> {} // OK
-            else -> {
-                reportError("Incorrect syntax for -Xmodule argument. `<module name>;<source file[,source file...]>` expected but got `$arg`")
-                return@mapNotNull null
+
+    val sourcesByFragmentName: Map<String, Set<String>> = rawFragments.associateWith { mutableSetOf<String>() }.apply {
+        rawFragmentSources.orEmpty().forEach { rawFragmentSourceArg ->
+            val split = rawFragmentSourceArg.split(";")
+            if (split.size != 2) {
+                reportError(
+                    "Incorrect syntax for -Xfragment-sources argument. " +
+                            "`<module name>;<source file>` expected but got `$rawFragmentSourceArg`"
+                )
+                return@forEach
             }
+            val fragmentName = split[0]
+            val fragmentSource = split[1]
+
+            getOrElse(fragmentName) {
+                reportError("fragment `$fragmentName` of source file $fragmentSource is not specified in -Xfragments")
+                return@forEach
+            }.add(fragmentSource)
         }
-        val sources = split.getOrNull(1)?.split(",")?.toSet().orEmpty()
-        HmppCliModule(name, sources)
     }
+
+    var modules = sourcesByFragmentName.map { (fragmentName, sources) -> HmppCliModule(fragmentName, sources) }
 
     var wasError = false
     // check sources mapping
@@ -185,7 +194,10 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
                         append("Files ")
                         append(commonFiles.joinToString(", ") { "'$it'" })
                     }
-                    append(" can be a part of only one module, but is listed as a source for both `${m1.name}` and `${m2.name}`, please check you -Xmodule options.")
+                    append(
+                        " can be a part of only one module, but is listed as a source for both `${m1.name}` and `${m2.name}`, " +
+                                "please check you -Xfragment-sources options."
+                    )
                 }
                 reportError(message)
                 wasError = true
@@ -233,7 +245,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         fun findModule(name: String): HmppCliModule? {
             return moduleByName[name].also { module ->
                 if (module == null) {
-                    reportError("Module `$name` not found in -Xmodule arguments")
+                    reportError("Module `$name` not found in -Xfragments arguments")
                 }
             }
         }

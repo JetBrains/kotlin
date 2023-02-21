@@ -189,6 +189,9 @@ where advanced options include:
                              Use 'warning' level to issue warnings instead of errors.
   -Xextended-compiler-checks Enable additional compiler checks that might provide verbose diagnostic information for certain errors.
                              Warning: this mode is not backward-compatible and might cause compilation errors in previously compiled code.
+  -Xfragment-sources=<fragment name>;<path>
+                             Adds sources to a specific fragment of a multiplatform compilation
+  -Xfragments=<fragment name> Declares all known fragments of a multiplatform compilation
   -Xenable-incremental-compilation
                              Enable incremental compilation
   -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm
@@ -197,8 +200,6 @@ where advanced options include:
   -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
   -Xlist-phases              List backend phases
   -Xmetadata-version         Change metadata version of the generated binary files
-  -Xmodule=<module name>;<source file[,source file...]>
-                             Describes module with specific sources. Usage of this arguments requires to specify module for each source file from free args
   -Xmulti-platform           Enable experimental language support for multi-platform projects
   -Xnew-inference            Enable new experimental generic type inference algorithm
   -Xno-check-actual          Do not check presence of 'actual' modifier in multi-platform projects

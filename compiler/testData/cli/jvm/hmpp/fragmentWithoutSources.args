@@ -4,5 +4,4 @@ $TEMP_DIR$
 -language-version
 2.0
 -XXLanguage\:+MultiPlatformProjects
--Xmodule=a
--Xmodule=b;
+-Xfragments=a,b

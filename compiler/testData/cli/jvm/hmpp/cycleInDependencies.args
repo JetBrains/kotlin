@@ -6,9 +6,10 @@ $TEMP_DIR$
 -language-version
 2.0
 -XXLanguage\:+MultiPlatformProjects
--Xmodule=a;$TESTDATA_DIR$/src/a.kt
--Xmodule=b;$TESTDATA_DIR$/src/b.kt
--Xmodule=c;$TESTDATA_DIR$/src/c.kt
+-Xfragments=a,b,c
+-Xfragment-sources=a;$TESTDATA_DIR$/src/a.kt
+-Xfragment-sources=b;$TESTDATA_DIR$/src/b.kt
+-Xfragment-sources=c;$TESTDATA_DIR$/src/c.kt
 -Xdepends-on=b\:a
 -Xdepends-on=c\:b
 -Xdepends-on=a\:c
