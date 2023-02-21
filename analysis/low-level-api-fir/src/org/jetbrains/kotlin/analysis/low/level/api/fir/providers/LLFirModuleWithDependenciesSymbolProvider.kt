@@ -5,11 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProviderByKtModule
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.extensions.FirSwitchableExtensionDeclarationsSymbolProvider
+import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirSyntheticFunctionInterfaceProviderBase
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -23,10 +29,15 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.SmartSet
 
 internal class LLFirModuleWithDependenciesSymbolProvider(
-    session: FirSession,
+    session: LLFirSession,
     val dependencyProvider: LLFirDependentModuleProviders,
-    private val providers: List<FirSymbolProvider>,
+    val mainProvider: FirSymbolProvider,
+    val additionalProviders: List<FirSymbolProvider>,
 ) : FirSymbolProvider(session) {
+
+    private val storage by lazy {
+        LLFirCallablesStorage(session.project, listOf(session))
+    }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         getClassLikeSymbolByFqNameWithoutDependencies(classId)
@@ -34,7 +45,8 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
 
 
     fun getClassLikeSymbolByFqNameWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
-        providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
+        mainProvider.getClassLikeSymbolByClassId(classId)
+            ?: additionalProviders.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
@@ -44,7 +56,7 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
 
     @FirSymbolProviderInternals
     fun getTopLevelCallableSymbolsToWithoutDependencies(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-        providers.forEach { it.getTopLevelCallableSymbolsTo(destination, packageFqName, name) }
+        storage.getProvidersByPackage(packageFqName).forEach { it.getTopLevelCallableSymbolsTo(destination, packageFqName, name) }
     }
 
     @FirSymbolProviderInternals
@@ -65,12 +77,12 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
         packageFqName: FqName,
         name: Name
     ) {
-        providers.forEach { it.getTopLevelFunctionSymbolsTo(destination, packageFqName, name) }
+        storage.getProvidersByPackage(packageFqName).forEach { it.getTopLevelFunctionSymbolsTo(destination, packageFqName, name) }
     }
 
     @FirSymbolProviderInternals
     fun getTopLevelPropertySymbolsToWithoutDependencies(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-        providers.forEach { it.getTopLevelPropertySymbolsTo(destination, packageFqName, name) }
+        storage.getProvidersByPackage(packageFqName).forEach { it.getTopLevelPropertySymbolsTo(destination, packageFqName, name) }
     }
 
     override fun getPackage(fqName: FqName): FqName? =
@@ -85,15 +97,20 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
 
 
     fun getPackageWithoutDependencies(fqName: FqName): FqName? =
-        providers.firstNotNullOfOrNull { it.getPackage(fqName) }
+        mainProvider.getPackage(fqName)
+            ?: additionalProviders.firstNotNullOfOrNull { it.getPackage(fqName) }
 }
 
 internal abstract class LLFirDependentModuleProviders(
-    session: FirSession,
+    session: LLFirSession,
 ) : FirSymbolProvider(session) {
 
     abstract val dependentProviders: List<FirSymbolProvider>
     abstract val dependentSessions: List<LLFirSession>
+
+    private val storage by lazy {
+        LLFirCallablesStorage(session.project, dependentSessions)
+    }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         dependentProviders.firstNotNullOfOrNull { provider ->
@@ -107,7 +124,7 @@ internal abstract class LLFirDependentModuleProviders(
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
         val facades = SmartSet.create<JvmClassName>()
-        for (provider in dependentProviders) {
+        for (provider in storage.getProvidersByPackage(packageFqName)) {
             val newSymbols = buildSmartList {
                 when (provider) {
                     is LLFirModuleWithDependenciesSymbolProvider -> provider.getTopLevelCallableSymbolsToWithoutDependencies(this, packageFqName, name)
@@ -121,7 +138,7 @@ internal abstract class LLFirDependentModuleProviders(
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
         val facades = SmartSet.create<JvmClassName>()
-        for (provider in dependentProviders) {
+        for (provider in storage.getProvidersByPackage(packageFqName)) {
             val newSymbols = buildSmartList {
                 when (provider) {
                     is LLFirModuleWithDependenciesSymbolProvider -> provider.getTopLevelFunctionSymbolsToWithoutDependencies(this, packageFqName, name)
@@ -137,7 +154,7 @@ internal abstract class LLFirDependentModuleProviders(
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
         val facades = SmartSet.create<JvmClassName>()
-        for (provider in dependentProviders) {
+        for (provider in storage.getProvidersByPackage(packageFqName)) {
             val newSymbols = buildSmartList {
                 when (provider) {
                     is LLFirModuleWithDependenciesSymbolProvider -> provider.getTopLevelPropertySymbolsToWithoutDependencies(this, packageFqName, name)
@@ -190,7 +207,7 @@ internal abstract class LLFirDependentModuleProviders(
 }
 
 internal class LLFirDependentModuleProvidersBySessions(
-    session: FirSession,
+    session: LLFirSession,
     override val dependentSessions: List<LLFirSession>
 ) : LLFirDependentModuleProviders(session) {
 
@@ -198,19 +215,69 @@ internal class LLFirDependentModuleProvidersBySessions(
         dependentSessions.map { it.symbolProvider }
     }
 
-    constructor(session: FirSession, createSessions: MutableList<LLFirSession>.() -> Unit)
+    constructor(session: LLFirSession, createSessions: MutableList<LLFirSession>.() -> Unit)
             : this(session, buildList { createSessions() })
 }
 
 
 internal class LLFirDependentModuleProvidersByProviders(
-    session: FirSession,
+    session: LLFirSession,
     override val dependentProviders: List<FirSymbolProvider>,
 ) : LLFirDependentModuleProviders(session) {
 
     override val dependentSessions: List<LLFirSession>
         get() = dependentProviders.map { it.session as LLFirSession }
 
-    constructor(session: FirSession, createProviders: MutableList<FirSymbolProvider>.() -> Unit)
+    constructor(session: LLFirSession, createProviders: MutableList<FirSymbolProvider>.() -> Unit)
             : this(session, buildList { createProviders() })
+}
+
+internal class LLFirCallablesStorage(project: Project, sessions: List<LLFirSession>) {
+    private val moduleByPackageWithCallables: Map<FqName, List<FirSymbolProvider>> = run {
+        val packageProvider = KotlinPackageProviderByKtModule.getInstance(project)
+        buildMap {
+            for (session in sessions) {
+                collectMappings(session.symbolProvider, packageProvider)
+            }
+        }.mapValues { it.value.toList() }
+    }
+
+    fun getProvidersByPackage(packageFqName: FqName): List<FirSymbolProvider> =
+        moduleByPackageWithCallables[packageFqName].orEmpty()
+
+    private fun MutableMap<FqName, MutableSet<FirSymbolProvider>>.collectMappings(
+        symbolProvider: FirSymbolProvider,
+        packageProvider: KotlinPackageProviderByKtModule
+    ) {
+        when (symbolProvider) {
+            is LLFirModuleWithDependenciesSymbolProvider -> {
+                val session = symbolProvider.session as LLFirSession
+                val ktModule = session.ktModule
+                for (packageFqName in packageProvider.getContainedPackages(ktModule)) {
+                    getOrPut(packageFqName) { mutableSetOf() }.add(symbolProvider.mainProvider)
+                }
+                for (additionalProvider in symbolProvider.additionalProviders) {
+                    collectMappings(additionalProvider, packageProvider)
+                }
+            }
+            is JavaSymbolProvider -> {
+                // no top-level callables
+            }
+            is FirSyntheticFunctionInterfaceProviderBase -> {
+                // no top-level callables
+            }
+            is OptionalAnnotationClassesProvider -> {
+                // no top-level callables
+            }
+            is FirCloneableSymbolProvider -> {
+                // no top-level callables
+            }
+            is FirSwitchableExtensionDeclarationsSymbolProvider -> {
+                // TODO support later
+            }
+            else -> {
+                error("Unknown $symbolProvider")
+            }
+        }
+    }
 }

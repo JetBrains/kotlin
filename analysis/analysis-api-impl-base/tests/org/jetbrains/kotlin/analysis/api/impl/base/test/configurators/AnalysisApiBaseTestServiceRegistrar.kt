@@ -33,12 +33,18 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
     }
 
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
-        val allKtFiles = testServices.ktModuleProvider.getModuleStructure().mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
+        val moduleStructure = testServices.ktModuleProvider.getModuleStructure()
+        val allKtFiles = moduleStructure.mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
+        val moduleToFiles = moduleStructure.mainModules.map { it.ktModule to it.files }
 
         project.apply {
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(allKtFiles))
             registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(project, allKtFiles))
+            registerService(
+                KotlinPackageProviderByKtModule::class.java,
+                KotlinStaticPackageProviderByKtModule(project, moduleToFiles, moduleStructure.binaryModules.toList())
+            )
             registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
             registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)

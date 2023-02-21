@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependentM
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirJavaFacadeForBinaries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -37,15 +36,15 @@ internal object LLFirLibraryProviderFactory {
         return LLFirModuleWithDependenciesSymbolProvider(
             session,
             LLFirDependentModuleProvidersByProviders(session, listOf(builtinSymbolProvider)),
-            providers = listOf(
-                JvmClassFileBasedSymbolProvider(
-                    session,
-                    moduleDataProvider,
-                    kotlinScopeProvider,
-                    packagePartProvider,
-                    VirtualFileFinderFactory.getInstance(project).create(scope),
-                    LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
-                ),
+            JvmClassFileBasedSymbolProvider(
+                session,
+                moduleDataProvider,
+                kotlinScopeProvider,
+                packagePartProvider,
+                VirtualFileFinderFactory.getInstance(project).create(scope),
+                LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
+            ),
+            additionalProviders = listOf(
                 OptionalAnnotationClassesProvider(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider),
             ),
         )

@@ -30,8 +30,11 @@ import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.*
+import org.jetbrains.kotlin.fir.resolve.providers.DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY
+import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.*
@@ -155,8 +158,8 @@ internal object LLFirSessionFactory {
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
                     dependencyProvider,
-                    providers = listOfNotNull(
-                        provider.symbolProvider,
+                    provider.symbolProvider,
+                    additionalProviders = listOfNotNull(
                         switchableExtensionDeclarationsSymbolProvider,
                         javaSymbolProvider,
                         syntheticFunctionalInterfaceProvider,
@@ -250,8 +253,8 @@ internal object LLFirSessionFactory {
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
                     dependencyProvider,
-                    providers = listOf(
-                        provider.symbolProvider,
+                    provider.symbolProvider,
+                    additionalProviders = listOf(
                         javaSymbolProvider,
                     ),
                 )
@@ -320,9 +323,8 @@ internal object LLFirSessionFactory {
                 LLFirModuleWithDependenciesSymbolProvider(
                     this,
                     dependencyProvider,
-                    providers = listOfNotNull(
-                        provider.symbolProvider,
-                    )
+                    provider.symbolProvider,
+                    additionalProviders = emptyList()
                 )
             )
 

@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.fir.extensions.FirPredicateBasedProvider
 import org.jetbrains.kotlin.fir.extensions.FirRegisteredPluginAnnotations
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 
@@ -43,12 +41,6 @@ internal fun LLFirSession.registerIdeComponents(project: Project) {
     register(SealedClassInheritorsProvider::class, project.createSealedInheritorsProvider())
     register(FirExceptionHandler::class, LLFirExceptionHandler)
 }
-
-internal inline fun createCompositeSymbolProvider(
-    session: FirSession,
-    createSubProviders: MutableList<FirSymbolProvider>.() -> Unit
-): FirCompositeSymbolProvider =
-    FirCompositeSymbolProvider(session, buildList(createSubProviders))
 
 @SessionConfiguration
 internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KtSourceModule) {

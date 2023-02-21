@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependentModuleProvidersBySessions
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
@@ -62,11 +64,16 @@ class LLFirBuiltinsSessionFactory(
 
             val kotlinScopeProvider = FirKotlinScopeProvider(::wrapScopeWithJvmMapped)
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
-            val symbolProvider = createCompositeSymbolProvider(this) {
-                add(LLFirBuiltinSymbolProvider(this@session, moduleData, kotlinScopeProvider))
-                add(FirExtensionSyntheticFunctionInterfaceProvider(this@session, moduleData, kotlinScopeProvider))
-                add(FirCloneableSymbolProvider(this@session, moduleData, kotlinScopeProvider))
-            }
+
+            val symbolProvider = LLFirModuleWithDependenciesSymbolProvider(
+                this,
+                LLFirDependentModuleProvidersBySessions(this, dependentSessions = emptyList()),
+                LLFirBuiltinSymbolProvider(this@session, moduleData, kotlinScopeProvider),
+                additionalProviders = listOf(
+                    FirExtensionSyntheticFunctionInterfaceProvider(this@session, moduleData, kotlinScopeProvider),
+                    FirCloneableSymbolProvider(this@session, moduleData, kotlinScopeProvider)
+                )
+            )
 
             register(FirSymbolProvider::class, symbolProvider)
             register(FirProvider::class, LLFirBuiltinsAndCloneableSessionProvider(symbolProvider))
