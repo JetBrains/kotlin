@@ -25,6 +25,18 @@ private fun availableForStat(taskPath: String): Boolean {
     return taskPath.contains("Kotlin") && (TaskExecutionResults[taskPath] != null)
 }
 
+internal fun getTaskResult(event: TaskFinishEvent) = when (val result = event.result) {
+        is TaskSuccessResult -> when {
+            result.isFromCache -> TaskExecutionState.FROM_CACHE
+            result.isUpToDate -> TaskExecutionState.UP_TO_DATE
+            else -> TaskExecutionState.SUCCESS
+        }
+
+        is TaskSkippedResult -> TaskExecutionState.SKIPPED
+        is TaskFailureResult -> TaskExecutionState.FAILED
+        else -> TaskExecutionState.UNKNOWN
+    }
+
 internal fun prepareData(
     event: TaskFinishEvent,
     projectName: String,
@@ -37,28 +49,32 @@ internal fun prepareData(
 ): CompileStatisticsData? {
     val result = event.result
     val taskPath = event.descriptor.taskPath
-    val durationMs = result.endTime - result.startTime
-    val taskResult = when (result) {
-        is TaskSuccessResult -> when {
-            result.isFromCache -> TaskExecutionState.FROM_CACHE
-            result.isUpToDate -> TaskExecutionState.UP_TO_DATE
-            else -> TaskExecutionState.SUCCESS
-        }
+    return prepareData(getTaskResult(event), taskPath, result.startTime, result.endTime, projectName, uuid, label,kotlinVersion, buildOperationRecord, additionalTags, metricsToShow)
+}
 
-        is TaskSkippedResult -> TaskExecutionState.SKIPPED
-        is TaskFailureResult -> TaskExecutionState.FAILED
-        else -> TaskExecutionState.UNKNOWN
-    }
-
+internal fun prepareData(
+    taskResult: TaskExecutionState?,
+    taskPath: String,
+    startTime: Long,
+    finishTime: Long,
+    projectName: String,
+    uuid: String,
+    label: String?,
+    kotlinVersion: String,
+    buildOperationRecord: BuildOperationRecord?,
+    additionalTags: List<StatTag> = emptyList(),
+    metricsToShow: Set<String>? = null
+): CompileStatisticsData? {
     if (!availableForStat(taskPath)) {
         return null
     }
+    val durationMs = finishTime - startTime
     val taskExecutionResult = TaskExecutionResults[taskPath]
     val buildMetrics = buildOperationRecord?.buildMetrics
 
     val performanceMetrics = collectBuildPerformanceMetrics(taskExecutionResult, buildMetrics)
     val buildTimesMetrics = collectBuildMetrics(
-        taskExecutionResult, buildMetrics, performanceMetrics, result.startTime,
+        taskExecutionResult, buildMetrics, performanceMetrics, startTime,
         System.currentTimeMillis()
     )
     val buildAttributes = collectBuildAttributes(taskExecutionResult, buildMetrics)
@@ -68,7 +84,7 @@ internal fun prepareData(
     }
     return CompileStatisticsData(
         durationMs = durationMs,
-        taskResult = taskResult.name,
+        taskResult = taskResult?.name,
         label = label,
         buildTimesMetrics = filterMetrics(metricsToShow, buildTimesMetrics),
         performanceMetrics = filterMetrics(metricsToShow, performanceMetrics),
@@ -80,8 +96,12 @@ internal fun prepareData(
         hostName = BuildReportsService.hostName,
         kotlinVersion = kotlinVersion,
         buildUuid = uuid,
-        finishTime = System.currentTimeMillis(),
-        compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList()
+        finishTime = finishTime,
+        startTimeMs = startTime,
+        fromKotlinPlugin = buildOperationRecord?.isFromKotlinPlugin,
+        compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList(),
+        skipMessage = buildOperationRecord?.skipMessage,
+        icLogLines = buildOperationRecord?.icLogLines ?: emptyList()
     )
 }
 
