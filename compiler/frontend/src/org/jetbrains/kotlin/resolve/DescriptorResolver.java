@@ -77,6 +77,7 @@ import static org.jetbrains.kotlin.resolve.BindingContext.*;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveMemberModalityFromModifiers;
 import static org.jetbrains.kotlin.resolve.ModifiersChecker.resolveVisibilityFromModifiers;
+import static org.jetbrains.kotlin.resolve.InlineClassesUtilsKt.isInlineClassType;
 
 public class DescriptorResolver {
     private final TypeResolver typeResolver;
@@ -419,6 +420,7 @@ public class DescriptorResolver {
         if (primitiveArrayType != null) {
             return primitiveArrayType;
         }
+        if (isInlineClassType(elementType)) return builtIns.getVArrayType(Variance.OUT_VARIANCE, elementType);
         return builtIns.getArrayType(Variance.OUT_VARIANCE, elementType);
     }
 

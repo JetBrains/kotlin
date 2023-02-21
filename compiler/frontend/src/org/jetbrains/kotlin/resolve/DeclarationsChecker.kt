@@ -995,11 +995,7 @@ class DeclarationsChecker(
         val nullableNothing = callableDescriptor.builtIns.nullableNothingType
         for (parameter in varargParameters) {
             val varargElementType = parameter.varargElementType!!.upperIfFlexible()
-            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(varargElementType, nullableNothing) ||
-                (varargElementType.isInlineClassType() &&
-                        !UnsignedTypes.isUnsignedType(varargElementType) &&
-                        !KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(varargElementType))
-            ) {
+            if (KotlinTypeChecker.DEFAULT.isSubtypeOf(varargElementType, nullableNothing)) {
                 val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtParameter ?: continue
                 trace.report(FORBIDDEN_VARARG_PARAMETER_TYPE.on(parameterDeclaration, varargElementType))
             }
