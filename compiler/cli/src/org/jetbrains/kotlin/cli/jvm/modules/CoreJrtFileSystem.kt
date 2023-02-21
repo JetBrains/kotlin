@@ -34,20 +34,17 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
             val jdkHome = File(jdkHomePath)
             val rootUri = URI.create(StandardFileSystems.JRT_PROTOCOL + ":/")
             val jrtFsJar = loadJrtFsJar(jdkHome) ?: return@createMap null
-            val fileSystem =
-                if (isAtLeastJava9()) {
-                    FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
-                } else {
-                    /*
-                    This ClassLoader actually lives as long as current thread due to ThreadLocal leak in jrtfs,
-                    See https://bugs.openjdk.java.net/browse/JDK-8260621
-                    So that cache allows us to avoid creating too many classloaders for same JDK and reduce severity of that leak
-                    */
-                    val classLoader = jrtFsClassLoaderCache.computeIfAbsent(jrtFsJar) {
-                        URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
-                    }
-                    FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
-                }
+
+            /*
+              This ClassLoader actually lives as long as current thread due to ThreadLocal leak in jrt-fs,
+              See https://bugs.openjdk.java.net/browse/JDK-8260621
+              So that cache allows us to avoid creating too many classloaders for same JDK and reduce severity of that leak
+            */
+            val classLoader = globalJrtFsClassLoaderCache.computeIfAbsent(jrtFsJar) {
+                URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
+            }
+
+            val fileSystem = FileSystems.newFileSystem(rootUri, emptyMap<String, Nothing>(), classLoader)
             CoreJrtVirtualFile(this, jdkHomePath, fileSystem.getPath(""), parent = null)
         }
 
@@ -87,6 +84,6 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
             return Pair(localPath, pathInJar)
         }
 
-        private val jrtFsClassLoaderCache = ContainerUtil.createConcurrentWeakValueMap<File, URLClassLoader>()
+        private val globalJrtFsClassLoaderCache = ContainerUtil.createConcurrentWeakValueMap<File, URLClassLoader>()
     }
 }
