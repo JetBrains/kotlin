@@ -22,8 +22,11 @@ interface LazyStorage<K, V> {
     operator fun get(key: K): V?
     operator fun set(key: K, value: V)
     fun remove(key: K)
-    fun append(key: K, value: V)
     fun clean()
     fun flush(memoryCachesOnly: Boolean)
     fun close()
+}
+
+interface AppendableLazyStorage<K, V> : LazyStorage<K, V> {
+    fun append(key: K, value: V)
 }

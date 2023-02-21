@@ -12,7 +12,7 @@ import java.io.File
 class SourceToJsOutputMap(
     storageFile: File,
     icContext: IncrementalCompilationContext,
-) : BasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer, icContext) {
+) : AppendableBasicStringMap<Collection<String>>(storageFile, StringCollectionExternalizer, icContext) {
     override fun dumpValue(value: Collection<String>): String = value.dumpCollection()
 
     @Synchronized

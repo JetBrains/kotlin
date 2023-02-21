@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.incremental.storage
 
+import com.intellij.util.io.DataExternalizer
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
-interface InMemoryStorageWrapper<K, V> : LazyStorage<K, V> {
+interface InMemoryStorageWrapper<K, V> : AppendableLazyStorage<K, V> {
     fun resetInMemoryChanges()
 }
 
@@ -17,7 +18,12 @@ interface InMemoryStorageWrapper<K, V> : LazyStorage<K, V> {
  * Flushes all the changes to the [origin] on [flush] invocation.
  * [resetInMemoryChanges] should be called to reset in-memory changes of this wrapper.
  */
-class DefaultInMemoryStorageWrapper<K, V>(private val origin: LazyStorage<K, V>) : InMemoryStorageWrapper<K, V> {
+class DefaultInMemoryStorageWrapper<K, V>(
+    private val origin: CachingLazyStorage<K, V>,
+    private val valueExternalizer: DataExternalizer<V>
+) :
+    InMemoryStorageWrapper<K, V> {
+    // These state properties keep the current diff that will be applied to the [origin] on flush if [resetInMemoryChanges] is not called
     private val inMemoryStorage = LinkedHashMap<K, ValueWrapper<V>>()
     private val removedKeys = hashSetOf<K>()
     private var isCleanRequested = false
@@ -65,25 +71,21 @@ class DefaultInMemoryStorageWrapper<K, V>(private val origin: LazyStorage<K, V>)
     }
 
     override fun append(key: K, value: V) {
-        @Suppress("UNCHECKED_CAST")
-        when (value) {
-            is Collection<*> -> {
-                when {
-                    key in inMemoryStorage -> {
-                        // the key's value was set in-memory, so we keep changing it without additional marking as append
-                        (inMemoryStorage.getValue(key).value as MutableCollection<Any?>).addAll(value)
-                    }
-                    key !in removedKeys && key in origin -> {
-                        val collection = copyCollection(origin[key] as Collection<*>)
-                        collection.addAll(value)
-                        inMemoryStorage[key] = ValueWrapper(collection as V, isAppend = true)
-                    }
-                    else -> {
-                        set(key, value)
-                    }
-                }
+        check(valueExternalizer is AppendableDataExternalizer<V>) {
+            "`valueExternalizer` should implement the `AppendableDataExternalizer` interface to be able to call `append`"
+        }
+        when {
+            key in inMemoryStorage -> {
+                val currentEntry = inMemoryStorage.getValue(key)
+                // should we avoid new allocations by performing appends in-place?
+                inMemoryStorage[key] = ValueWrapper(valueExternalizer.append(currentEntry.value, value), isAppend = currentEntry.isAppend)
             }
-            else -> error("The value is expected to implement the Collection interface")
+            key !in removedKeys && key in origin -> {
+                inMemoryStorage[key] = ValueWrapper(value, isAppend = true)
+            }
+            else -> {
+                set(key, value)
+            }
         }
     }
 
@@ -93,23 +95,26 @@ class DefaultInMemoryStorageWrapper<K, V>(private val origin: LazyStorage<K, V>)
     }
 
     override fun set(key: K, value: V) {
-        @Suppress("UNCHECKED_CAST")
-        inMemoryStorage[key] = ValueWrapper(if (value is Collection<*>) copyCollection(value) as V else value)
+        inMemoryStorage[key] = ValueWrapper(value)
     }
 
-    private fun copyCollection(collection: Collection<*>): MutableCollection<Any?> {
-        val newCollection = when (collection) {
-            is Set<*> -> TreeSet<Any?>()
-            else -> ArrayList<Any?>(collection.size)
+    override fun get(key: K): V? {
+        return when (key) {
+            in inMemoryStorage -> {
+                val entry = inMemoryStorage.getValue(key)
+                val originValue = origin[key]
+                if (entry.isAppend && originValue != null) {
+                    check(valueExternalizer is AppendableDataExternalizer<V>) {
+                        "`valueExternalizer` should implement the `AppendableDataExternalizer` interface to be able to handle `append`"
+                    }
+                    valueExternalizer.append(originValue, entry.value)
+                } else {
+                    entry.value
+                }
+            }
+            !in removedKeys -> origin[key]
+            else -> null
         }
-        newCollection.addAll(collection)
-        return newCollection
-    }
-
-    override fun get(key: K): V? = when (key) {
-        in inMemoryStorage -> inMemoryStorage.getValue(key).value
-        !in removedKeys -> origin[key]
-        else -> null
     }
 
     override fun contains(key: K) = key in inMemoryStorage || (key !in removedKeys && key in origin)

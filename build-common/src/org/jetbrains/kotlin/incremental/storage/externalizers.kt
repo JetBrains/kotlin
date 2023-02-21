@@ -31,6 +31,18 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.*
 
+/**
+ * Externalizer that works correctly when [PersistentHashMap.appendData] is called
+ *
+ * Besides the [append] method, it should support incremental [save] and [read]. E.g. if [save] was called multiple times, [read] should be able to collect them together
+ */
+interface AppendableDataExternalizer<T> : DataExternalizer<T> {
+    /**
+     * Combines two non-serialized values
+     */
+    fun append(currentValue: T, appendData: T): T
+}
+
 class LookupSymbolKeyDescriptor(
     /** If `true`, original values are saved; if `false`, only hashes are saved. */
     private val storeFullFqNames: Boolean = false
@@ -276,7 +288,7 @@ class DelegateDataExternalizer<T>(
 open class CollectionExternalizer<T>(
     private val elementExternalizer: DataExternalizer<T>,
     private val newCollection: () -> MutableCollection<T>
-) : DataExternalizer<Collection<T>> {
+) : AppendableDataExternalizer<Collection<T>> {
     override fun read(input: DataInput): Collection<T> {
         val result = newCollection()
         val stream = input as DataInputStream
@@ -291,6 +303,8 @@ open class CollectionExternalizer<T>(
     override fun save(output: DataOutput, value: Collection<T>) {
         value.forEach { elementExternalizer.save(output, it) }
     }
+
+    override fun append(currentValue: Collection<T>, appendData: Collection<T>) = currentValue + appendData
 }
 
 object StringCollectionExternalizer : CollectionExternalizer<String>(EnumeratorStringDescriptor(), { HashSet() })
