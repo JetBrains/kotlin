@@ -195,7 +195,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
         val <unary>: Int = <this>.<get-size>()
         <this>.<set-size>(<set-?> = <unary>.inc())
         <unary>
-      }
+      } /*~> Unit */
     }
     <this>.<get-data>().set(index = index, value = value)
   }
@@ -251,7 +251,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
         val <unary>: Int = <this>.<get-size>()
         <this>.<set-size>(<set-?> = <unary>.dec())
         <unary>
-      }
+      } /*~> Unit */
     }
     <this>.<get-data>().set(index = index, value = null)
   }
