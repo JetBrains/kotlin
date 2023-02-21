@@ -24,7 +24,10 @@ class KtContextReceiver : KtElementImplStub<KotlinContextReceiverStub> {
         return targetLabel()?.getReferencedName()
     }
 
-    fun labelNameAsName(): Name? = targetLabel()?.getReferencedNameAsName()
+    fun labelNameAsName(): Name? {
+        stub?.let { stub -> return stub.getLabel()?.let { Name.identifier(it) } }
+        return targetLabel()?.getReferencedNameAsName()
+    }
 
     fun typeReference(): KtTypeReference? = getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
 
