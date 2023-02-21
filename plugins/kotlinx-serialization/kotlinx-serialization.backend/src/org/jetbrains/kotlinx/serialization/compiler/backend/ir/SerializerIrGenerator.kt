@@ -630,7 +630,7 @@ open class SerializerIrGenerator(
         ) {
             val serializableDesc = context.getSerializableClassDescriptorBySerializer(irClass) ?: return
             val generator = when {
-                serializableDesc.isEnumWithLegacyGeneratedSerializer(context) -> SerializerForEnumsGenerator(
+                serializableDesc.isEnumWithLegacyGeneratedSerializer() -> SerializerForEnumsGenerator(
                     irClass,
                     context
                 )
