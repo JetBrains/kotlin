@@ -142,6 +142,7 @@ abstract class AbstractKotlinTarget(
         classifierPrefix: String? = null,
         sourcesElementsConfigurationName: String = this.sourcesElementsConfigurationName,
         overrideConfigurationAttributes: AttributeContainer? = null,
+        mavenScope: KotlinUsageContext.MavenScope? = null,
     ): DefaultKotlinUsageContext? {
         // We want to create task anyway, even if sources are not going to be published by KGP
         // So users or other plugins can still use it
@@ -160,6 +161,7 @@ abstract class AbstractKotlinTarget(
             compilation = producingCompilation,
             dependencyConfigurationName = sourcesElementsConfigurationName,
             overrideConfigurationAttributes = overrideConfigurationAttributes,
+            mavenScope = mavenScope,
             includeIntoProjectStructureMetadata = false,
             publishOnlyIf = { isSourcesPublishable }
         )

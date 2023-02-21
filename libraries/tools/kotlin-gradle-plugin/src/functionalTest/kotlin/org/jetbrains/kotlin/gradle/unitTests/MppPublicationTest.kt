@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.util.addBuildEventsListenerRegistryMock
 import org.jetbrains.kotlin.gradle.util.disableLegacyWarning
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import kotlin.test.*
 
 class MppPublicationTest {
@@ -126,6 +127,16 @@ class MppPublicationTest {
                 message = "Sources Elements of target $targetName doesn't have 'userAttribute'"
             ) { sourceElements.attributes.toMapOfStrings().containsKey("userAttribute") }
         }
+    }
+
+    @Test
+    fun `sources elements should not have any dependencies`() {
+        project.evaluate()
+        project.configurations
+            .filter { it.name.toLowerCaseAsciiOnly().contains("sourceselements") }
+            .forEach { configuration ->
+                if (configuration.dependencies.isNotEmpty()) fail("Configuration $configuration should not have dependencies")
+            }
     }
 
 
