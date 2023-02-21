@@ -7927,6 +7927,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/coroutines/indirectInlineUsedAsNonInline.kt");
         }
 
+        @TestMetadata("infiniteLoopInNextMeaningful.kt")
+        public void testInfiniteLoopInNextMeaningful() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/infiniteLoopInNextMeaningful.kt");
+        }
+
         @TestMetadata("inlineFunInGenericClass.kt")
         public void testInlineFunInGenericClass() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/inlineFunInGenericClass.kt");

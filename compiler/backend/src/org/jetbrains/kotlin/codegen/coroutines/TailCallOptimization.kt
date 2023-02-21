@@ -76,11 +76,18 @@ internal fun MethodNode.addCoroutineSuspendedChecks(suspensionPoints: List<Suspe
     }
 }
 
-private tailrec fun AbstractInsnNode?.skipUntilMeaningful(): AbstractInsnNode? = when {
-    this == null -> null
-    opcode == Opcodes.NOP || !isMeaningful -> next.skipUntilMeaningful()
-    opcode == Opcodes.GOTO -> (this as JumpInsnNode).label.skipUntilMeaningful()
-    else -> this
+private fun AbstractInsnNode?.skipUntilMeaningful(): AbstractInsnNode? {
+    var cursor: AbstractInsnNode? = this ?: return null
+    val visited = mutableSetOf<AbstractInsnNode>()
+    while (cursor != null) {
+        if (!visited.add(cursor)) return null
+        when {
+            cursor.opcode == Opcodes.NOP || !cursor.isMeaningful -> cursor = cursor.next
+            cursor.opcode == Opcodes.GOTO -> cursor = (cursor as JumpInsnNode).label
+            else -> return cursor
+        }
+    }
+    return null
 }
 
 private val AbstractInsnNode.nextMeaningful: AbstractInsnNode?
