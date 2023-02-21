@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.util.normalizePath
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.zip.ZipFile
@@ -365,6 +366,54 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 
                 assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt")
                 assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/sync-hashes/foo/foo.txt.hash")
+            }
+        }
+    }
+
+    @DisplayName("Separate caches for different binaries")
+    @GradleTest
+    fun testSeparateCachesForDifferentBinaries(gradleVersion: GradleVersion) {
+        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
+            val filesToModified = mutableMapOf<File, Long>()
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                val cacheDir = projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile()
+                val cacheRootDirName = cacheDir.list()?.singleOrNull()
+                val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
+
+                cacheRootDir.listFiles()!!
+                    .forEach {
+                        it.listFiles()!!
+                            .filter { it.isFile }
+                            .filter { it.name == "module.js" }
+                            .forEach {
+                                filesToModified[it] = it.lastModified()
+                            }
+
+                    }
+
+                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
+            }
+
+            build("compileTestDevelopmentExecutableKotlinJs") {
+                val cacheDir = projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile()
+                val cacheRootDirName = cacheDir.list()?.singleOrNull()
+                val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
+
+                val allUpToDate = cacheRootDir.listFiles()!!
+                    .all {
+                        it.listFiles()!!
+                            .filter { it.isFile }
+                            .filter { it.name == "module.js" }
+                            .all {
+                                filesToModified[it] == it.lastModified()
+                            }
+
+                    }
+
+                assertTrue { allUpToDate }
+
+                assertTasksExecuted(":app:compileTestDevelopmentExecutableKotlinJs")
             }
         }
     }
