@@ -1,0 +1,64 @@
+irFile("/47424.kt") {
+  packageName("com.example")
+  irClass("Aa") {
+    kindInterface()
+    modalityAbstract()
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrValueParameterImpl
+  }
+  irClass("Ab") {
+    kindInterface()
+    modalityAbstract()
+    // IrTypeParameterImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrValueParameterImpl
+  }
+  irClass("Ba") {
+    kindInterface()
+    modalityAbstract()
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrValueParameterImpl
+  }
+  irClass("Bb") {
+    kindInterface()
+    modalityAbstract()
+    // IrTypeParameterImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrValueParameterImpl
+  }
+  irClass("Ca") {
+    kindInterface()
+    modalityAbstract()
+    // IrPropertyImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrValueParameterImpl
+  }
+  irClass("Cb") {
+    kindInterface()
+    modalityAbstract()
+    // IrPropertyImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrValueParameterImpl
+  }
+  irClass("C") {
+    kindInterface()
+    modalityAbstract()
+    // IrPropertyImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrFunctionImpl
+    // IrValueParameterImpl
+  }
+}
