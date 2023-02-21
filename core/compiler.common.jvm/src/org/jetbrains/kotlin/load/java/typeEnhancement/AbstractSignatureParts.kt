@@ -204,7 +204,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
     private fun KotlinTypeMarker.toIndexed(): List<TypeAndDefaultQualifiers> = with(typeSystem) {
         TypeAndDefaultQualifiers(this@toIndexed, extractAndMergeDefaultQualifiers(containerDefaultTypeQualifiers), null).flattenTree {
             // Enhancement of raw type arguments may enter a loop in FE1.0.
-            if (skipRawTypeArguments && it.type?.asFlexibleType()?.asRawType() != null) return@flattenTree null
+            if (skipRawTypeArguments && it.type?.isRawType() == true) return@flattenTree null
 
             it.type?.typeConstructor()?.getParameters()?.zip(it.type.getArguments()) { parameter, arg ->
                 if (arg.isStarProjection()) {

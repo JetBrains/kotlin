@@ -356,7 +356,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.isUninferredParameter(): Boolean
     fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker?
 
-    fun FlexibleTypeMarker.asRawType(): RawTypeMarker?
+    fun KotlinTypeMarker.isRawType(): Boolean
     fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker
 
     fun FlexibleTypeMarker.lowerBound(): SimpleTypeMarker

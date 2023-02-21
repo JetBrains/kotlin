@@ -118,7 +118,7 @@ abstract class AbstractTypeApproximator(
             is FlexibleTypeMarker -> {
                 if (type.isDynamic()) {
                     return if (conf.dynamic) null else type.bound()
-                } else if (type.asRawType() != null) {
+                } else if (type.isRawType()) {
                     return if (conf.rawType) null else type.bound()
                 }
 

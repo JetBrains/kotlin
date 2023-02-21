@@ -153,9 +153,9 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this as? DynamicType
     }
 
-    override fun FlexibleTypeMarker.asRawType(): RawTypeMarker? {
-        require(this is FlexibleType, this::errorMessage)
-        return this as? RawType
+    override fun KotlinTypeMarker.isRawType(): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return this is RawType
     }
 
     override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {

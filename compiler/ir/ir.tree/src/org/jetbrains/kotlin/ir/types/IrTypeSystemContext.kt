@@ -54,7 +54,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun FlexibleTypeMarker.asDynamicType() = this as? IrDynamicType
 
-    override fun FlexibleTypeMarker.asRawType(): RawTypeMarker? = null
+    override fun KotlinTypeMarker.isRawType(): Boolean = false
 
     override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {
         return when (this) {
