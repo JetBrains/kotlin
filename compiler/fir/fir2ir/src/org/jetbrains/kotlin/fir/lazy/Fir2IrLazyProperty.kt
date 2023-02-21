@@ -55,57 +55,38 @@ class Fir2IrLazyProperty(
 
     override var isVar: Boolean
         get() = fir.isVar
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var isConst: Boolean
         get() = fir.isConst
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var isLateinit: Boolean
         get() = fir.isLateInit
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var isDelegated: Boolean
         get() = fir.delegate != null
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var isExternal: Boolean
         get() = fir.isExternal
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var isExpect: Boolean
         get() = fir.isExpect
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var name: Name
         get() = fir.name
-        set(_) {
-            throw UnsupportedOperationException()
-        }
+        set(_) = mutationNotSupported()
 
-    @Suppress("SetterBackingFieldAssignment")
     override var visibility: DescriptorVisibility = components.visibilityConverter.convertToDescriptorVisibility(fir.visibility)
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var modality: Modality
         get() = fir.modality!!
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     private val type: IrType by lazy {
         with(typeConverter) { fir.returnTypeRef.toIrType() }
