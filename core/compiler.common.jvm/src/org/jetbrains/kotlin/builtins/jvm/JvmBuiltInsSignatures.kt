@@ -183,4 +183,6 @@ object JvmBuiltInsSignatures {
     fun isArrayOrPrimitiveArray(fqName: FqNameUnsafe): Boolean {
         return fqName == StandardNames.FqNames.array || StandardNames.isPrimitiveArray(fqName)
     }
+    
+    fun isVArray(fqName: FqNameUnsafe) = fqName == StandardNames.FqNames.vArray
 }

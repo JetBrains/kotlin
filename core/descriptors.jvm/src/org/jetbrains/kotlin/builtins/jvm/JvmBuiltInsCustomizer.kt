@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.VISIBLE_CONSTRUCT
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.isArrayOrPrimitiveArray
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.isSerializableInJava
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.isVArray
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.createDeprecatedAnnotation
@@ -94,7 +95,7 @@ class JvmBuiltInsCustomizer(
     override fun getSupertypes(classDescriptor: ClassDescriptor): Collection<KotlinType> {
         val fqName = classDescriptor.fqNameUnsafe
         return when {
-            isArrayOrPrimitiveArray(fqName) -> listOf(cloneableType, mockSerializableType)
+            isArrayOrPrimitiveArray(fqName) || isVArray(fqName) -> listOf(cloneableType, mockSerializableType)
             isSerializableInJava(fqName) -> listOf(mockSerializableType)
             else -> listOf()
         }
