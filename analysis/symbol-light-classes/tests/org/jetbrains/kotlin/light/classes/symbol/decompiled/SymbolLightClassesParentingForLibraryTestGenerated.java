@@ -484,6 +484,12 @@ public class SymbolLightClassesParentingForLibraryTestGenerated extends Abstract
         }
 
         @Test
+        @TestMetadata("PrimitiveBackedInlineClasses.kt")
+        public void testPrimitiveBackedInlineClasses() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/PrimitiveBackedInlineClasses.kt");
+        }
+
+        @Test
         @TestMetadata("Primitives.kt")
         public void testPrimitives() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Primitives.kt");

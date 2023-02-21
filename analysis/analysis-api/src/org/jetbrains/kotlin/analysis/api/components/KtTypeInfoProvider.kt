@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.org.objectweb.asm.Type
 
 public abstract class KtTypeInfoProvider : KtAnalysisSessionComponent() {
     public abstract fun isFunctionalInterfaceType(type: KtType): Boolean
@@ -141,6 +142,16 @@ public interface KtTypeInfoProviderMixIn : KtAnalysisSessionMixIn {
         get() = withValidityAssertion {
             if (this !is KtNonErrorClassType) return false
             return this.classId in DefaultTypeClassIds.PRIMITIVES
+        }
+
+    context(KtJvmTypeMapperMixIn)
+    public val KtType.isPrimitiveBacked: Boolean
+        get() = withValidityAssertion {
+            if (this !is KtNonErrorClassType) return false
+            return when (this.mapTypeToJvmType().sort) {
+                Type.BOOLEAN, Type.CHAR, Type.BYTE, Type.SHORT, Type.INT, Type.FLOAT, Type.LONG, Type.DOUBLE -> true
+                else -> false
+            }
         }
 
     public val KtType.defaultInitializer: String?
