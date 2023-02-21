@@ -10070,6 +10070,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("infiniteLoopInNextMeaningful.kt")
+        public void testInfiniteLoopInNextMeaningful() throws Exception {
+            runTest("compiler/testData/codegen/box/coroutines/infiniteLoopInNextMeaningful.kt");
+        }
+
+        @Test
         @TestMetadata("inlineFunInGenericClass.kt")
         public void testInlineFunInGenericClass() throws Exception {
             runTest("compiler/testData/codegen/box/coroutines/inlineFunInGenericClass.kt");
