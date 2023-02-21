@@ -54,14 +54,19 @@ private fun reportTargetsWithNonUniqueConsumableConfigurations(project: Project)
         val allTargets = project.multiplatformExtension.targets
 
         val nonDistinguishableTargets = allTargets
-            .groupBy { target -> project.configurations.getByName(target.apiElementsConfigurationName).attributes.toMap() }
+            .mapNotNull { target ->
+                val configuration = project.configurations.findByName(target.apiElementsConfigurationName) ?: return@mapNotNull null
+                target.name to configuration
+            }
+            .groupBy { (_, consumableConfiguration) -> consumableConfiguration.attributes.toMap() }
             .values
             .filter { targetGroup -> targetGroup.size > 1 }
+            .map { targetGroup -> targetGroup.map { (targetName, _) -> targetName } }
 
         if (nonDistinguishableTargets.isEmpty()) return@afterEvaluate
 
         val nonUniqueTargetsString = nonDistinguishableTargets.joinToString(separator = "\n") { targets ->
-            val targetsListString = targets.joinToString { "'${it.name}'" }
+            val targetsListString = targets.joinToString { targetName -> "'$targetName'" }
             "  * $targetsListString"
         }
 
