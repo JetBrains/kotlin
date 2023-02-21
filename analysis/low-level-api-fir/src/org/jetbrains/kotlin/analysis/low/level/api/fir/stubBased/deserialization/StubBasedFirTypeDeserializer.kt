@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -29,7 +27,6 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
@@ -152,12 +149,9 @@ class StubBasedFirTypeDeserializer(
         }
         if (constructor !is ConeClassLikeLookupTag) return null
 
-        fun KtUserType.collectAllArguments(): List<KtTypeProjection> =
-            typeArguments// + outerType(typeTable)?.collectAllArguments().orEmpty()
-
         val typeElement = typeReference.typeElement?.unwrapNullability()
         val arguments = when (typeElement) {
-            is KtUserType -> typeElement.collectAllArguments().map { typeArgument(it) }.toTypedArray()
+            is KtUserType -> typeElement.typeArguments.map { typeArgument(it) }.toTypedArray()
             is KtFunctionType -> buildList {
                 typeElement.receiver?.let { add(type(it.typeReference).toTypeProjection(Variance.INVARIANT)) }
                 addAll(typeElement.parameters.map { type(it.typeReference!!).toTypeProjection(Variance.INVARIANT) })
@@ -166,78 +160,18 @@ class StubBasedFirTypeDeserializer(
             else -> error("not supported $typeElement")
         }
 
-        val simpleType = if (typeReference.getAllModifierLists().any { it.hasSuspendModifier() }) {
-            createSuspendFunctionType(constructor, arguments, isNullable = isNullable, attributes)
-        } else {
-            ConeClassLikeTypeImpl(
-                constructor,
-                arguments,
-                isNullable = isNullable,
-                if (typeElement is KtFunctionType && typeElement.receiver != null) ConeAttributes.WithExtensionFunctionType else attributes
-            )
-        }
-        return simpleType
+        return ConeClassLikeTypeImpl(
+            constructor,
+            arguments,
+            isNullable = isNullable,
+            if (typeElement is KtFunctionType && typeElement.receiver != null) ConeAttributes.WithExtensionFunctionType else attributes
+        )
 //        val abbreviatedTypeProto = typeReference.abbreviatedType(typeTable) ?: return simpleType
 //        return simpleType(abbreviatedTypeProto, attributes)
     }
 
     private fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
         getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
-
-    private fun createSuspendFunctionTypeForBasicCase(
-        functionTypeConstructor: ConeClassLikeLookupTag,
-        arguments: Array<ConeTypeProjection>,
-        isNullable: Boolean,
-        attributes: ConeAttributes
-    ): ConeClassLikeType? {
-        fun ConeClassLikeType.isContinuation(): Boolean {
-            if (this.typeArguments.size != 1) return false
-            if (this.lookupTag.classId != StandardClassIds.Continuation) return false
-            return true
-        }
-
-        val continuationType = arguments.getOrNull(arguments.lastIndex - 1) as? ConeClassLikeType ?: return null
-        if (!continuationType.isContinuation()) return ConeClassLikeTypeImpl(functionTypeConstructor, arguments, isNullable, attributes)
-        val suspendReturnType = continuationType.typeArguments.single() as ConeKotlinTypeProjection
-        val valueParameters = arguments.dropLast(2)
-
-        val kind = FunctionTypeKind.SuspendFunction
-        return ConeClassLikeTypeImpl(
-            ClassId(kind.packageFqName, kind.numberedClassName(valueParameters.size)).toLookupTag(),
-            (valueParameters + suspendReturnType).toTypedArray(),
-            isNullable,
-            attributes
-        )
-    }
-
-    private fun createSuspendFunctionType(
-        functionTypeConstructor: ConeClassLikeLookupTag,
-        arguments: Array<ConeTypeProjection>,
-        isNullable: Boolean,
-        attributes: ConeAttributes
-    ): ConeClassLikeType {
-        val result =
-            when ((functionTypeConstructor.toSymbol(moduleData.session)?.fir as FirTypeParameterRefsOwner).typeParameters.size - arguments.size) {
-                0 -> createSuspendFunctionTypeForBasicCase(functionTypeConstructor, arguments, isNullable, attributes)
-                1 -> {
-                    val arity = arguments.size - 1
-                    if (arity >= 0) {
-                        val kind = FunctionTypeKind.SuspendFunction
-                        ConeClassLikeTypeImpl(
-                            ClassId(kind.packageFqName, kind.numberedClassName(arity)).toLookupTag(), arguments, isNullable, attributes
-                        )
-                    } else {
-                        null
-                    }
-                }
-                else -> null
-            }
-        return result ?: ConeErrorType(
-            ConeSimpleDiagnostic(
-                "Bad suspend function in metadata with constructor: $functionTypeConstructor", DiagnosticKind.DeserializationError
-            )
-        )
-    }
 
     private fun typeSymbol(typeReference: KtTypeReference): ConeClassifierLookupTag? {
         val typeElement = typeReference.typeElement?.unwrapNullability()
