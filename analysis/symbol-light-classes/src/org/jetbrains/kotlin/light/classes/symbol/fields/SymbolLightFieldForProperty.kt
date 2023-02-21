@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.light.classes.symbol.modifierLists.with
 import org.jetbrains.kotlin.name.JvmNames.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
-import org.jetbrains.kotlin.psi.KtClassLiteralExpression
 import org.jetbrains.kotlin.psi.KtProperty
 
 internal class SymbolLightFieldForProperty private constructor(
@@ -178,7 +177,8 @@ internal class SymbolLightFieldForProperty private constructor(
     private val _initializer by lazyPub {
         _initializerValue?.createPsiExpression(this) ?: withPropertySymbol { propertySymbol ->
             if (propertySymbol !is KtKotlinPropertySymbol) return@withPropertySymbol null
-            (propertySymbol.psi as? KtProperty)?.initializer?.evaluateAsAnnotationValue()?.let(::toPsiExpression)
+            (propertySymbol.psi as? KtProperty)?.initializer?.evaluateAsAnnotationValue()
+                ?.let(::toPsiExpression)
         }
     }
 
@@ -187,8 +187,6 @@ internal class SymbolLightFieldForProperty private constructor(
             value.constantValue.createPsiExpression(this)
         is KtEnumEntryAnnotationValue ->
             PsiElementFactory.getInstance(project).createExpressionFromText(value.callableId!!.asSingleFqName().asString(), this)
-        is KtKClassAnnotationValue.KtNonLocalKClassAnnotationValue ->
-            PsiElementFactory.getInstance(project).createExpressionFromText("${value.classId.asFqNameString()}.class", this)
         is KtArrayAnnotationValue ->
             PsiElementFactory.getInstance(project).createExpressionFromText(
                 value.values

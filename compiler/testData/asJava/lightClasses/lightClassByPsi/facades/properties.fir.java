@@ -1,7 +1,3 @@
-public final class C /* C*/ {
-  public  C();//  .ctor()
-}
-
 public final class PropertiesKt /* PropertiesKt*/ {
   @org.jetbrains.annotations.NotNull()
   private static final error.NonExistentClass delegatedProp$delegate;
@@ -19,13 +15,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static final kotlin.Lazy<java.lang.String> lazyProp$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private static final kotlin.annotation.AnnotationTarget[] enums = {kotlin.annotation.AnnotationTarget.PROPERTY, kotlin.annotation.AnnotationTarget.FIELD} /* initializer type: null */;
-
-  @org.jetbrains.annotations.NotNull()
   private static final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> sum;
-
-  @org.jetbrains.annotations.NotNull()
-  private static final kotlin.reflect.KClass<? extends java.lang.Object>[] classes = {kotlin.String.class, C.class} /* initializer type: null */;
 
   @org.jetbrains.annotations.NotNull()
   private static java.lang.String name = "x" /* initializer type: java.lang.String */;
@@ -116,13 +106,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
   public static final java.lang.String getX();//  getX()
 
   @org.jetbrains.annotations.NotNull()
-  public static final kotlin.annotation.AnnotationTarget[] getEnums();//  getEnums()
-
-  @org.jetbrains.annotations.NotNull()
   public static final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> getSum();//  getSum()
-
-  @org.jetbrains.annotations.NotNull()
-  public static final kotlin.reflect.KClass<? extends java.lang.Object>[] getClasses();//  getClasses()
 
   @org.jetbrains.annotations.Nullable()
   public static final java.lang.Boolean getIslowercase();//  getIslowercase()
