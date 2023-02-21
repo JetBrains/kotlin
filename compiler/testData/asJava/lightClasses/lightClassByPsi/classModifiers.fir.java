@@ -1,10 +1,10 @@
 public static abstract interface INestedInternal /* pkg.Open.INestedInternal*/ {
 }
 
-private static abstract interface INestedPrivate /* pkg.Open.INestedPrivate*/ {
+static abstract interface INestedPrivate /* pkg.Open.INestedPrivate*/ {
 }
 
-protected static abstract interface INestedProtected /* pkg.Open.INestedProtected*/ {
+public static abstract interface INestedProtected /* pkg.Open.INestedProtected*/ {
 }
 
 public static abstract interface INestedPublic /* pkg.Open.INestedPublic*/ {
@@ -20,57 +20,57 @@ public abstract interface ITopLevelPublic /* pkg.ITopLevelPublic*/ {
 }
 
 public static final class Nested /* pkg.Season.Nested*/ extends pkg.Season {
-    public  Nested();//  .ctor()
+  public  Nested();//  .ctor()
 }
 
 public class Open /* pkg.Open*/ {
-    public  Open();//  .ctor()
+  public  Open();//  .ctor()
 
-    class INestedInternal ...
+  class INestedInternal ...
 
-    class INestedPrivate ...
+  class INestedPrivate ...
 
-    class INestedProtected ...
+  class INestedProtected ...
 
-    class INestedPublic ...
+  class INestedPublic ...
 
-    class Private ...
+  class Private ...
 
-    class Private2 ...
+  class Private2 ...
 
-    class StaticInternal ...
+  class StaticInternal ...
 }
 
 public final class OuterInternal /* pkg.OuterInternal*/ {
-    public  OuterInternal();//  .ctor()
+  public  OuterInternal();//  .ctor()
 }
 
 private static final class Private /* pkg.Open.Private*/ extends pkg.Open {
-    public  Private();//  .ctor()
+  public  Private();//  .ctor()
 }
 
 protected final class Private2 /* pkg.Open.Private2*/ {
-    public  Private2();//  .ctor()
+  public  Private2();//  .ctor()
 }
 
 public abstract class SealedWithArgs /* pkg.SealedWithArgs*/ {
-    private final int a;
+  private final int a;
 
-    protected  SealedWithArgs(int);//  .ctor(int)
+  protected  SealedWithArgs(int);//  .ctor(int)
 
-    public final int getA();//  getA()
+  public final int getA();//  getA()
 }
 
 public abstract class Season /* pkg.Season*/ {
-    protected  Season();//  .ctor()
+  protected  Season();//  .ctor()
 
-    class Nested ...
+  class Nested ...
 }
 
 public static final class StaticInternal /* pkg.Open.StaticInternal*/ {
-    public  StaticInternal();//  .ctor()
+  public  StaticInternal();//  .ctor()
 }
 
 final class TopLevelPrivate /* pkg.TopLevelPrivate*/ {
-    public  TopLevelPrivate();//  .ctor()
+  public  TopLevelPrivate();//  .ctor()
 }
