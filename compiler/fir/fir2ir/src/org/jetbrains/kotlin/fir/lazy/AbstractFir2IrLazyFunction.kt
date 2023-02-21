@@ -46,27 +46,19 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override var isTailrec: Boolean
         get() = fir.isTailRec
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var isSuspend: Boolean
         get() = fir.isSuspend
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var isOperator: Boolean
         get() = fir.isOperator
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var isInfix: Boolean
         get() = fir.isInfix
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
@@ -74,21 +66,15 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override var isInline: Boolean
         get() = fir.isInline
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var isExternal: Boolean
         get() = fir.isExternal
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var isExpect: Boolean
         get() = fir.isExpect
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var body: IrBody? by lazyVar(lock) {
         if (tryLoadIr()) body else null
@@ -100,9 +86,7 @@ abstract class AbstractFir2IrLazyFunction<F : FirCallableDeclaration>(
 
     override var modality: Modality
         get() = fir.modality!!
-        set(_) {
-            error("Mutating Fir2Ir lazy elements is not possible")
-        }
+        set(_) = mutationNotSupported()
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 

@@ -40,4 +40,7 @@ interface AbstractFir2IrLazyDeclaration<F> :
         get() = shouldNotBeCalled()
     override val typeTranslator: TypeTranslator
         get() = shouldNotBeCalled()
+
+    fun mutationNotSupported(): Nothing =
+        error("Mutation of Fir2Ir lazy elements is not possible")
 }
