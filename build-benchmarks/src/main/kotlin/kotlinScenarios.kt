@@ -4,7 +4,7 @@ fun historyFilesBenchmarks() = kotlinBenchmarks(additionalDefaultProperties = ar
 fun abiSnapshotBenchmarks() = kotlinBenchmarks(prefix = "ABI_SNAPSHOT: ", arrayOf("-Pkotlin.incremental.classpath.snapshot.enabled=true"))
 fun artifactTransformBenchmarks() = kotlinBenchmarks(prefix = "TRANSFORMATION: ", arrayOf("-Pkotlin.incremental.useClasspathSnapshot=true"), withLatestLtsJdk = true)
 
-fun artifactTransformWithK2Benchmarks() = kotlinBenchmarks(prefix = "TRANSFORMATION, K2: ", arrayOf("-Pkotlin.incremental.useClasspathSnapshot=true", "-Pkotlin.build.useFir=true"), withLatestLtsJdk = true)
+fun artifactTransformWithK2Benchmarks() = kotlinBenchmarks(prefix = "TRANSFORMATION, K2: ", arrayOf("-Pkotlin.incremental.useClasspathSnapshot=true", "-Pkotlin.build.useFir=true", "-Pkotlin.build.useFirForLibraries=true"), withLatestLtsJdk = true)
 
 //move prefix to suite
 fun kotlinBenchmarks(prefix: String = "", additionalDefaultProperties: Array<String> = emptyArray(), withLatestLtsJdk: Boolean = false) =
