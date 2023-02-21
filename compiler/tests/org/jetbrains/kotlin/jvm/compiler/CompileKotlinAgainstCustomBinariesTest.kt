@@ -396,6 +396,30 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
         compileKotlin("source.kt", tmpdir, listOf(library))
     }
 
+    fun testModuleMetadataHasCorrectHeaderK2() {
+        val library = compileLibrary(
+            "library",
+            File(tmpdir, "library"),
+            listOf("-language-version", "2.0")
+        )
+
+        val kotlinModule = File(library, "META-INF/main.kotlin_module")
+        val bytes = kotlinModule.readBytes().toList()
+
+        // First 16 bytes contain the metadata version, which is 4 ints: 3, 2, 0, 0.
+        assertEquals(
+            listOf<Byte>(
+                0, 0, 0, 3,
+                0, 0, 0, 2,
+                0, 0, 0, 0,
+                0, 0, 0, 0,
+            ), bytes.take(16)
+        )
+
+        // Next 4 bytes should contain the flags, which is 0 in this case.
+        assertEquals(listOf<Byte>(0, 0, 0, 0), bytes.drop(16).take(4))
+    }
+
     fun testMetadataVersionDerivedFromLanguage() {
         for (languageVersion in LanguageVersion.values()) {
             if (languageVersion.isUnsupported) continue
