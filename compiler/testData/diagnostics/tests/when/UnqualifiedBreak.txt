@@ -1,0 +1,28 @@
+package
+
+public fun inControlStructureBody(/*0*/ arr: kotlin.Array<Move>): Move
+public fun inControlStructureBody2(/*0*/ arr: kotlin.Array<Move>): Move
+public fun inWhenCondition(/*0*/ arr: kotlin.Array<Move>): Move
+public fun inWhenCondition2(/*0*/ arr: kotlin.Array<Move>): Move
+public fun inWhenSubject(/*0*/ arr: kotlin.Array<Move>): Move
+
+public final enum class Move : kotlin.Enum<Move> {
+    enum entry LEFT
+
+    enum entry RIGHT
+
+    private constructor Move()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: Move): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<Move!>!
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): Move
+    public final /*synthesized*/ fun values(): kotlin.Array<Move>
+}
