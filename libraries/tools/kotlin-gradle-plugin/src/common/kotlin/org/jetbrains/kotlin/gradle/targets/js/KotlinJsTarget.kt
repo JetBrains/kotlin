@@ -86,7 +86,8 @@ constructor(
                 createSourcesJarAndUsageContextIfPublishable(
                     mainCompilation,
                     componentName,
-                    dashSeparatedName(targetName.toLowerCaseAsciiOnly())
+                    dashSeparatedName(targetName.toLowerCaseAsciiOnly()),
+                    mavenScope = KotlinUsageContext.MavenScope.RUNTIME
                 )
             )
 
