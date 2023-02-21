@@ -9,6 +9,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
+import java.io.File
 import kotlin.io.path.appendText
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -34,7 +35,7 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
         project("kotlin-js-ir-ic-rebuild-after-error", gradleVersion) {
             fun readCacheFiles(): Map<String, Int> {
                 val cacheFiles = mutableMapOf<String, Int>()
-                projectPath.resolve("app/build/klib/cache/").toFile().walk().forEach { cachedFile ->
+                projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile().walk().forEach { cachedFile ->
                     if (cachedFile.isFile) {
                         cacheFiles[cachedFile.absolutePath] = cachedFile.readBytes().contentHashCode()
                     }
@@ -43,7 +44,7 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             }
 
             val srcFile = projectPath.resolve("app/src/main/kotlin/App.kt").toFile()
-            val guardFile = projectPath.resolve("app/build/klib/cache/cache.guard").toFile()
+            val guardFile = projectPath.resolve("app/build/klib/cache/js/developmentExecutable/cache.guard").toFile()
             val badCode = srcFile.readText()
 
             var successfulBuildCacheFiles = emptyMap<String, Int>()
@@ -126,7 +127,7 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     fun testMultipleArtifacts(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
             build("compileDevelopmentExecutableKotlinJs") {
-                val cacheDir = projectPath.resolve("app/build/klib/cache/").toFile()
+                val cacheDir = projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile()
                 val cacheRootDirName = cacheDir.list()?.singleOrNull()
                 assertTrue("Lib cache root dir should contain 1 element 'version.hash'") {
                     cacheRootDirName?.startsWith("version.") ?: false
@@ -213,7 +214,7 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
                 assertOutputContains(">>> TEST OUT: Hello, Gradle.")
             }
 
-            val cacheGuard = projectPath.resolve("build/klib/cache/cache.guard").toFile()
+            val cacheGuard = projectPath.resolve("build/klib/cache/js/developmentExecutable/cache.guard").toFile()
             assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
 
             val srcFile = projectPath.resolve("src/main/kotlin/Main.kt").toFile()
@@ -228,6 +229,54 @@ class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
             }
 
             assertFalse(cacheGuard.exists(), "Cache guard file should be removed after successful build")
+        }
+    }
+
+    @DisplayName("Separate caches for different binaries")
+    @GradleTest
+    fun testSeparateCachesForDifferentBinaries(gradleVersion: GradleVersion) {
+        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion) {
+            val filesToModified = mutableMapOf<File, Long>()
+
+            build("compileDevelopmentExecutableKotlinJs") {
+                val cacheDir = projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile()
+                val cacheRootDirName = cacheDir.list()?.singleOrNull()
+                val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
+
+                cacheRootDir.listFiles()!!
+                    .forEach {
+                        it.listFiles()!!
+                            .filter { it.isFile }
+                            .filter { it.name == "module.js" }
+                            .forEach {
+                                filesToModified[it] = it.lastModified()
+                            }
+
+                    }
+
+                assertTasksExecuted(":app:compileDevelopmentExecutableKotlinJs")
+            }
+
+            build("compileTestDevelopmentExecutableKotlinJs") {
+                val cacheDir = projectPath.resolve("app/build/klib/cache/js/developmentExecutable").toFile()
+                val cacheRootDirName = cacheDir.list()?.singleOrNull()
+                val cacheRootDir = cacheDir.resolve(cacheRootDirName!!)
+
+                val allUpToDate = cacheRootDir.listFiles()!!
+                    .all {
+                        it.listFiles()!!
+                            .filter { it.isFile }
+                            .filter { it.name == "module.js" }
+                            .all {
+                                filesToModified[it] == it.lastModified()
+                            }
+
+                    }
+
+                assertTrue { allUpToDate }
+
+                assertTasksExecuted(":app:compileTestDevelopmentExecutableKotlinJs")
+            }
         }
     }
 }

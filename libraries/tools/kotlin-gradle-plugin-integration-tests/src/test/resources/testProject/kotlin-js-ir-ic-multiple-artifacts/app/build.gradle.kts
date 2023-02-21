@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     implementation(project(":lib"))
+    testImplementation(kotlin("test-js"))
 }
 
 kotlin {

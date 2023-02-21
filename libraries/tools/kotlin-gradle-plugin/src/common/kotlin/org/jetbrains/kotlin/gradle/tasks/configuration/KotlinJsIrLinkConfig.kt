@@ -34,7 +34,7 @@ internal open class KotlinJsIrLinkConfig(
                     }
                 }
             ).disallowChanges()
-            task.compilation = compilation
+            task.rootCacheDirectory.set(project.layout.buildDirectory.map { it.dir("klib/cache/js/${binary.name}") })
             task.destinationDirectory.convention(
                 project.layout.buildDirectory
                     .dir(COMPILE_SYNC)
