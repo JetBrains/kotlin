@@ -30,16 +30,22 @@ FILE: unsafeAssignmentExtra.fir.kt
         lval value: R|Foo<kotlin/Int>| = R|/myBuilder|<R|kotlin/Int|>(<L> = myBuilder@fun R|Foo<kotlin/Int>|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.b: R|kotlin/Array<Stub (chain inference): TypeVariable(T)>|>|.R|SubstitutionOverride<kotlin/Array.set: R|kotlin/Unit|>|(Int(0), Int(123))
             this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(45)
-            lval <unary>: R|kotlin/Int| = this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|
-            this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = R|<local>/<unary>|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
-            R|<local>/<unary>|
+             {
+                lval <unary>: R|kotlin/Int| = this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|
+                this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = R|<local>/<unary>|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/<unary>|
+            }
+
             R|/bar|(::R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|)
             when () {
                 (this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| is R|kotlin/Int|) ->  {
                     this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = Int(67)
-                    lval <unary>: R|kotlin/Int| = this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|
-                    this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = R|<local>/<unary>|.<Ambiguity: dec, [kotlin/dec, kotlin/dec]>#()
-                    R|<local>/<unary>|
+                     {
+                        lval <unary>: R|kotlin/Int| = this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|
+                        this@R|special/anonymous|.R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>| = R|<local>/<unary>|.<Ambiguity: dec, [kotlin/dec, kotlin/dec]>#()
+                        R|<local>/<unary>|
+                    }
+
                     R|/bar|(::R|SubstitutionOverride</Foo.a: R|Stub (chain inference): TypeVariable(T)|>|)
                 }
             }

@@ -104,6 +104,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val comparisonExpression by element(Expression, expression)
     val typeOperatorCall by element(Expression, expression, call)
     val assignmentOperatorStatement by element(Expression, statement)
+    val incrementDecrementExpression by element(Expression, expression)
     val equalityOperatorCall by element(Expression, expression, call)
     val whenExpression by element(Expression, expression, resolvable)
     val whenBranch by element(Expression)

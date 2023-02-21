@@ -317,6 +317,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(assignmentOperatorStatement)
 
+        impl(incrementDecrementExpression)
+
         impl(equalityOperatorCall) {
             default("typeRef", "FirImplicitBooleanTypeRef(null)")
             useTypes(implicitBooleanTypeRefType)

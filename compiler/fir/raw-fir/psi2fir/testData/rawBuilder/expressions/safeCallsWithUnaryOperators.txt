@@ -1,23 +1,8 @@
 FILE: safeCallsWithUnaryOperators.kt
     public? final? fun foo(): R|kotlin/Unit| {
-        a#?.{  {
-            lval <receiver>: <implicit> = $subj$
-            lval <unary>: <implicit> = R|<local>/<receiver>|.b#
-            R|<local>/<receiver>|.b# = R|<local>/<unary>|.inc#()
-            R|<local>/<unary>|
-        }
-         }
-        a#?.{ $subj$.b# }?.{  {
-            lval <receiver>: <implicit> = $subj$
-            lval <unary>: <implicit> = R|<local>/<receiver>|.c#
-            R|<local>/<receiver>|.c# = R|<local>/<unary>|.inc#()
-            R|<local>/<unary>|
-        }
-         }
-        lval <receiver>: <implicit> = a#?.{ $subj$.b# }
-        lval <unary>: <implicit> = R|<local>/<receiver>|.c#
-        R|<local>/<receiver>|.c# = R|<local>/<unary>|.inc#()
-        R|<local>/<unary>|
+        a#?.{ $subj$.b# }++
+        a#?.{ $subj$.b# }?.{ $subj$.c# }++
+        a#?.{ $subj$.b# }.c#++
         a#?.{  {
             lval <array>: <implicit> = $subj$.b#
             lval <index_0>: <implicit> = IntegerLiteral(0)
@@ -60,30 +45,12 @@ FILE: safeCallsWithUnaryOperators.kt
         lval <unary>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|)
         R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary>|.inc#())
         R|<local>/<unary>|
-        lval <receiver>: <implicit> = a#?.{ $subj$.b# }
-        lval <unary>: <implicit> = R|<local>/<receiver>|.d#()
-        R|<local>/<receiver>|.d#() = R|<local>/<unary>|.inc#()
-        R|<local>/<unary>|
+        a#?.{ $subj$.b# }.d#()++
     }
     public? final? fun foo2(): R|kotlin/Unit| {
-        a#?.{  {
-            lval <receiver>: <implicit> = $subj$
-            lval <unary-result>: <implicit> = R|<local>/<receiver>|.b#.inc#()
-            R|<local>/<receiver>|.b# = R|<local>/<unary-result>|
-            R|<local>/<unary-result>|
-        }
-         }
-        a#?.{ $subj$.b# }?.{  {
-            lval <receiver>: <implicit> = $subj$
-            lval <unary-result>: <implicit> = R|<local>/<receiver>|.c#.inc#()
-            R|<local>/<receiver>|.c# = R|<local>/<unary-result>|
-            R|<local>/<unary-result>|
-        }
-         }
-        lval <receiver>: <implicit> = a#?.{ $subj$.b# }
-        lval <unary-result>: <implicit> = R|<local>/<receiver>|.c#.inc#()
-        R|<local>/<receiver>|.c# = R|<local>/<unary-result>|
-        R|<local>/<unary-result>|
+        ++a#?.{ $subj$.b# }
+        ++a#?.{ $subj$.b# }?.{ $subj$.c# }
+        ++a#?.{ $subj$.b# }.c#
         a#?.{  {
             lval <array>: <implicit> = $subj$.b#
             lval <index_0>: <implicit> = IntegerLiteral(0)
@@ -126,8 +93,5 @@ FILE: safeCallsWithUnaryOperators.kt
         lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
         R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
         R|<local>/<unary-result>|
-        lval <receiver>: <implicit> = a#?.{ $subj$.b# }
-        lval <unary-result>: <implicit> = R|<local>/<receiver>|.d#().inc#()
-        R|<local>/<receiver>|.d#() = R|<local>/<unary-result>|
-        R|<local>/<unary-result>|
+        ++a#?.{ $subj$.b# }.d#()
     }

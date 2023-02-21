@@ -22,9 +22,9 @@ class WrongIncDec() {
 
 fun testWrongIncDec() {
   var x = WrongIncDec()
-  <!RESULT_TYPE_MISMATCH!>x++<!>
+  x<!RESULT_TYPE_MISMATCH!>++<!>
   <!RESULT_TYPE_MISMATCH!>++x<!>
-  <!RESULT_TYPE_MISMATCH!>x--<!>
+  x<!RESULT_TYPE_MISMATCH!>--<!>
   <!RESULT_TYPE_MISMATCH!>--x<!>
 }
 
@@ -41,6 +41,6 @@ fun testUnitIncDec() {
   <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>x
   x = x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>
   x = x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>
-  x = <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>x
-  x = <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>x
+  x = <!INC_DEC_SHOULD_NOT_RETURN_UNIT, INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>x
+  x = <!INC_DEC_SHOULD_NOT_RETURN_UNIT, INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>x
 }

@@ -358,6 +358,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("incrementDecrementOnFullyQualified.kt")
+        public void testIncrementDecrementOnFullyQualified() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/incrementDecrementOnFullyQualified.kt");
+        }
+
+        @Test
+        @TestMetadata("incrementDecrementOnObject.kt")
+        public void testIncrementDecrementOnObject() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/incrementDecrementOnObject.kt");
+        }
+
+        @Test
         @TestMetadata("InferNullabilityInThenBlock.kt")
         public void testInferNullabilityInThenBlock() throws Exception {
             runTest("compiler/testData/diagnostics/tests/InferNullabilityInThenBlock.kt");

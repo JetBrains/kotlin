@@ -469,7 +469,7 @@ fun checkTypeMismatch(
                     context
                 )
             }
-            source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
+            source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement || assignment?.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
                 if (!lValueType.isNullable && rValueType.isNullable) {
                     val tempType = rValueType
                     rValueType = lValueType

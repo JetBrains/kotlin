@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
+import org.jetbrains.kotlin.fir.expressions.FirIncrementDecrementExpression
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
@@ -309,6 +310,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: D): R  = visitElement(typeOperatorCall, data)
 
     open fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: D): R  = visitElement(assignmentOperatorStatement, data)
+
+    open fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression, data: D): R  = visitElement(incrementDecrementExpression, data)
 
     open fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: D): R  = visitElement(equalityOperatorCall, data)
 

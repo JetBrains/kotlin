@@ -224,11 +224,11 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
 
         protected override fun computeNext() {
           { // BLOCK
-            do// COMPOSITE {
-            val <unary>: Int = <this>.<get-index>()
-            <this>.<set-index>(<set-?> = <unary>.inc())
-            <unary>
-            // }            while (when {
+            do{ // BLOCK
+              val <unary>: Int = <this>.<get-index>()
+              <this>.<set-index>(<set-?> = <unary>.inc())
+              <unary>
+            }            while (when {
               less(arg0 = <this>.<get-index>(), arg1 = <this>.<get-data>().<get-size>()) -> EQEQ(arg0 = <this>.<get-data>().get(index = <this>.<get-index>()), arg1 = null)
               else -> false
             })

@@ -254,6 +254,13 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("rightArgument", expression).withTransform()
         }
 
+        incrementDecrementExpression.configure {
+            +booleanField("isPrefix")
+            +field("operationName", nameType)
+            +field("expression", expression)
+            +field("operationSource", sourceElementType, nullable = true)
+        }
+
         equalityOperatorCall.configure {
             +field("operation", operationType)
         }

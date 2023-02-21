@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
 class FirRenderer(
@@ -1020,6 +1021,14 @@ class FirRenderer(
             print(", ")
             assignmentOperatorStatement.rightArgument.accept(visitor)
             print(")")
+        }
+
+        override fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression) {
+            annotationRenderer?.render(incrementDecrementExpression)
+            val operator = if (incrementDecrementExpression.operationName == OperatorNameConventions.INC) "++" else "--"
+            if (incrementDecrementExpression.isPrefix) print(operator)
+            incrementDecrementExpression.expression.accept(visitor)
+            if (!incrementDecrementExpression.isPrefix) print(operator)
         }
 
         override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall) {

@@ -1,5 +1,7 @@
-// IGNORE_BACKEND_K2: ANY
+// IGNORE_BACKEND_K1: ANY
 // Behavior changed in K2, see KT-42077
+// IGNORE_BACKEND: WASM
+// SKIP_NODE_JS
 
 public var inc: Int = 0
 
@@ -21,11 +23,11 @@ public var propDec: Int = 0
 
 fun box(): String {
     ++propInc
-    if (inc != 3) return "fail in prefix increment: ${inc} != 3"
+    if (inc != 2) return "fail in prefix increment: ${inc} != 2"
     if (propInc != 1) return "fail in prefix increment: ${propInc} != 1"
 
     --propDec
-    if (dec != -3) return "fail in prefix decrement: ${dec} != -3"
+    if (dec != -2) return "fail in prefix decrement: ${dec} != -2"
     if (propDec != -1) return "fail in prefix decrement: ${propDec} != -1"
 
     return "OK"

@@ -160,6 +160,13 @@ abstract class FirAbstractBodyResolveTransformerDispatcher(
         return expressionsTransformer.transformAssignmentOperatorStatement(assignmentOperatorStatement, data)
     }
 
+    override fun transformIncrementDecrementExpression(
+        incrementDecrementExpression: FirIncrementDecrementExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        return expressionsTransformer.transformIncrementDecrementExpression(incrementDecrementExpression, data)
+    }
+
     override fun transformEqualityOperatorCall(
         equalityOperatorCall: FirEqualityOperatorCall,
         data: ResolutionMode

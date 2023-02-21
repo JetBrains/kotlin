@@ -21,13 +21,10 @@ import org.jetbrains.kotlin.fir.extensions.assignAltererExtensions
 import org.jetbrains.kotlin.fir.extensions.expressionResolutionExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.builder.*
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.inference.FirStubInferenceSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -678,6 +675,124 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         }
     }
 
+    @OptIn(FirContractViolation::class)
+    override fun transformIncrementDecrementExpression(
+        incrementDecrementExpression: FirIncrementDecrementExpression,
+        data: ResolutionMode
+    ): FirStatement {
+        incrementDecrementExpression.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
+
+        val originalExpression = incrementDecrementExpression.expression.transformSingle(transformer, ResolutionMode.ContextIndependent)
+        val expression = when (originalExpression) {
+            is FirSafeCallExpression -> originalExpression.selector as? FirExpression ?: buildErrorExpression {
+                source = originalExpression.source
+                diagnostic = ConeSimpleDiagnostic("Safe call selector expected to be an expression here", DiagnosticKind.Syntax)
+            }
+            else -> originalExpression
+        }
+
+        val desugaredSource = incrementDecrementExpression.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
+
+        fun generateTemporaryVariable(name: Name, initializer: FirExpression): FirProperty = generateTemporaryVariable(
+            moduleData = session.moduleData,
+            source = desugaredSource,
+            name = name,
+            initializer = initializer,
+            typeRef = initializer.typeRef.copyWithNewSource(desugaredSource),
+        )
+
+        fun buildAndResolveOperatorCall(receiver: FirExpression): FirFunctionCall = buildFunctionCall {
+            source = incrementDecrementExpression.operationSource
+            explicitReceiver = receiver
+            calleeReference = buildSimpleNamedReference {
+                val referenceSourceKind = when {
+                    incrementDecrementExpression.isPrefix -> KtFakeSourceElementKind.DesugaredPrefixNameReference
+                    else -> KtFakeSourceElementKind.DesugaredPostfixNameReference
+                }
+                source = incrementDecrementExpression.operationSource?.fakeElement(referenceSourceKind)
+                name = incrementDecrementExpression.operationName
+            }
+            origin = FirFunctionCallOrigin.Operator
+        }.transformSingle(transformer, ResolutionMode.ContextIndependent)
+
+        fun buildAndResolveVariableAssignment(rValue: FirExpression): FirVariableAssignment = buildVariableAssignment {
+            source = desugaredSource
+            lValue = buildDesugaredAssignmentValueReferenceExpression {
+                source = ((expression as? FirErrorExpression)?.expression ?: expression).source
+                    ?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement)
+                expressionRef = FirExpressionRef<FirExpression>().apply { bind(expression.unwrapSmartcastExpression()) }
+            }
+            this.rValue = rValue
+        }.transformSingle(transformer, ResolutionMode.ContextIndependent)
+
+        val block = buildBlock {
+            source = desugaredSource
+            annotations += incrementDecrementExpression.annotations
+
+            (expression as? FirQualifiedAccessExpression)?.explicitReceiver
+                // If a receiver x exists, write it to a temporary variable to prevent multiple calls to it.
+                // Exceptions: ResolvedQualifiers and ThisReceivers as they can't have side effects when called.
+                ?.takeIf { it is FirQualifiedAccessExpression && it !is FirThisReceiverExpression }
+                ?.let { receiver ->
+                    // val <receiver> = x
+                    statements += generateTemporaryVariable(SpecialNames.RECEIVER, receiver).also { property ->
+                        // Change the expression from x.a to <receiver>.a
+                        val newReceiverAccess =
+                            property.toQualifiedAccess(fakeSource = receiver.source?.fakeElement(KtFakeSourceElementKind.DesugaredIncrementOrDecrement))
+
+                        if (expression.explicitReceiver == expression.dispatchReceiver) {
+                            expression.replaceDispatchReceiver(newReceiverAccess)
+                        } else {
+                            expression.replaceExtensionReceiver(newReceiverAccess)
+                        }
+                        expression.replaceExplicitReceiver(newReceiverAccess)
+                    }
+                }
+
+            if (incrementDecrementExpression.isPrefix) {
+                val targetProperty = expression.calleeReference?.toResolvedPropertySymbol()?.fir
+                val operatorCall = buildAndResolveOperatorCall(expression)
+
+                // Special case for prefix inc/dec on local variable without delegate where unary-result variable generation is skipped.
+                if (targetProperty?.isLocal == true && targetProperty.delegate == null) {
+                    // a = a.inc()
+                    statements += buildAndResolveVariableAssignment(operatorCall)
+                    // ^a
+                    statements += targetProperty.toQualifiedAccess(fakeSource = desugaredSource, typeRef = noExpectedType)
+                        // If inc() returns a subtype of its receiver type, the variable access should be smart-casted.
+                        .transform<FirStatement, ResolutionMode>(transformer, withExpectedType(operatorCall.typeRef.coneType))
+                } else {
+                    val unaryResultVariable = generateTemporaryVariable(SpecialNames.UNARY_RESULT, operatorCall)
+
+                    // val <unary-result> = a.inc()
+                    statements += unaryResultVariable
+                    // a = <unary-result>
+                    statements += buildAndResolveVariableAssignment(unaryResultVariable.toQualifiedAccess(fakeSource = desugaredSource))
+                    // ^<unary-result>
+                    statements += unaryResultVariable.toQualifiedAccess(fakeSource = desugaredSource)
+                }
+            } else {
+                val unaryVariable = generateTemporaryVariable(SpecialNames.UNARY, expression)
+
+                // val <unary> = a
+                statements += unaryVariable
+                // a = <unary>.inc()
+                statements += buildAndResolveVariableAssignment(buildAndResolveOperatorCall(unaryVariable.toQualifiedAccess()))
+                // ^<unary>
+                statements += unaryVariable.toQualifiedAccess()
+            }
+        }.apply {
+            replaceTypeRef((statements.last() as FirExpression).typeRef.copyWithNewSource(null))
+        }
+
+        return if (originalExpression is FirSafeCallExpression) {
+            originalExpression.replaceSelector(block)
+            originalExpression
+        } else {
+            block
+        }
+    }
+
     override fun transformEqualityOperatorCall(
         equalityOperatorCall: FirEqualityOperatorCall,
         data: ResolutionMode
@@ -891,14 +1006,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     ): FirStatement = whileAnalysing(session, variableAssignment) {
         variableAssignment.transformAnnotations(transformer, ResolutionMode.ContextIndependent)
 
-        val isDesugaredIncrementDecrement = variableAssignment.source?.kind == KtFakeSourceElementKind.DesugaredIncrementOrDecrement
-
-        // Expressions like `++a` are desugared into `a = a.inc()` where the LHS is a FirDesugaredAssignmentValueReferenceExpression
-        // that's pointing to the not yet resolved `a` on the RHS. For the resolution to work, the RHS must therefore be resolved first.
-        if (isDesugaredIncrementDecrement) {
-            variableAssignment.transformRValue(transformer, ResolutionMode.ContextIndependent)
-        }
-
         variableAssignment.transformLValue(transformer, ResolutionMode.AssignmentLValue(variableAssignment))
 
         val resolvedReference = variableAssignment.calleeReference
@@ -926,14 +1033,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
-        val result = if (!isDesugaredIncrementDecrement) {
-            variableAssignment.transformRValue(
-                transformer,
-                withExpectedType(variableAssignment.lValue.typeRef, expectedTypeMismatchIsReportedInChecker = true),
-            )
-        } else {
-            variableAssignment
-        }
+        val result = variableAssignment.transformRValue(
+            transformer,
+            withExpectedType(variableAssignment.lValue.typeRef, expectedTypeMismatchIsReportedInChecker = true),
+        )
 
         (result as? FirVariableAssignment)?.let { dataFlowAnalyzer.exitVariableAssignment(it) }
 

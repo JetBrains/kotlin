@@ -82,6 +82,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
 import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirAssignmentOperatorStatement
+import org.jetbrains.kotlin.fir.expressions.FirIncrementDecrementExpression
 import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
@@ -460,6 +461,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement) {
         visitElement(assignmentOperatorStatement)
+    }
+
+    open fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression) {
+        visitElement(incrementDecrementExpression)
     }
 
     open fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall) {
@@ -1036,6 +1041,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitAssignmentOperatorStatement(assignmentOperatorStatement: FirAssignmentOperatorStatement, data: Nothing?) {
         visitAssignmentOperatorStatement(assignmentOperatorStatement)
+    }
+
+    final override fun visitIncrementDecrementExpression(incrementDecrementExpression: FirIncrementDecrementExpression, data: Nothing?) {
+        visitIncrementDecrementExpression(incrementDecrementExpression)
     }
 
     final override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: Nothing?) {

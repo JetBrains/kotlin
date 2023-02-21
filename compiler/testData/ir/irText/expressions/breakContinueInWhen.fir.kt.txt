@@ -60,8 +60,10 @@ fun testContinueDoWhile() {
   var s: String = ""
   { // BLOCK
     do// COMPOSITE {
-    k = k.inc()
-    k /*~> Unit */
+    { // BLOCK
+      k = k.inc()
+      k
+    } /*~> Unit */
     when {
       greater(arg0 = k, arg1 = 2) -> continue
     }
