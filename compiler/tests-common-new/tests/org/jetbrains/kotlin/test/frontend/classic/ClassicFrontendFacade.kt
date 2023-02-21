@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForJSIR
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
 import org.jetbrains.kotlin.cli.jvm.compiler.JvmPackagePartProvider
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
@@ -65,6 +67,7 @@ import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProvid
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.MultiplatformDiagnosticsDirectives.ENABLE_MULTIPLATFORM_COMPOSITE_ANALYSIS_MODE
 import org.jetbrains.kotlin.test.model.DependencyRelation
@@ -73,6 +76,7 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.types.typeUtil.closure
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -159,6 +163,9 @@ class ClassicFrontendFacade(
                     module, project, configuration, compilerEnvironment, files, dependencyDescriptors, friendsDescriptors
                 )
             }
+            targetPlatform.isWasm() -> performWasmModuleResolve(
+                module, project, configuration, compilerEnvironment, files, dependencyDescriptors, friendsDescriptors
+            )
             targetPlatform.isNative() -> performNativeModuleResolve(
                 module, project, compilerEnvironment, files, dependencyDescriptors, friendsDescriptors, dependsOnDescriptors
             )
@@ -329,6 +336,43 @@ class ClassicFrontendFacade(
         }
 
         return analyzer.analysisResult
+    }
+
+    private fun performWasmModuleResolve(
+        module: TestModule,
+        project: Project,
+        configuration: CompilerConfiguration,
+        compilerEnvironment: TargetEnvironment,
+        files: List<KtFile>,
+        dependencyDescriptors: List<ModuleDescriptor>,
+        friendsDescriptors: List<ModuleDescriptor>,
+    ): AnalysisResult {
+        val needsKotlinTest = ConfigurationDirectives.WITH_STDLIB in module.directives
+
+        val runtimeKlibsNames =
+            listOfNotNull(
+                System.getProperty("kotlin.wasm.stdlib.path")!!,
+                System.getProperty("kotlin.wasm.kotlin.test.path")!!.takeIf { needsKotlinTest }
+            ).map {
+                File(it).absolutePath
+            }
+
+        val runtimeKlibs = loadKlib(runtimeKlibsNames, configuration)
+        val transitiveLibraries = WasmEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.RegularDependency)
+        val friendLibraries = WasmEnvironmentConfigurator.getDependencies(module, testServices, DependencyRelation.FriendDependency)
+        val allDependencies = runtimeKlibs + dependencyDescriptors + friendLibraries + friendsDescriptors + transitiveLibraries
+
+        val builtInModuleDescriptor = allDependencies.firstNotNullOfOrNull { it.builtIns }?.builtInsModule
+        return TopDownAnalyzerFacadeForWasm.analyzeFiles(
+            files,
+            project,
+            configuration,
+            allDependencies,
+            friendsDescriptors + friendLibraries,
+            compilerEnvironment,
+            thisIsBuiltInsModule = builtInModuleDescriptor == null,
+            customBuiltInsModule = builtInModuleDescriptor
+        )
     }
 
     private fun performNativeModuleResolve(

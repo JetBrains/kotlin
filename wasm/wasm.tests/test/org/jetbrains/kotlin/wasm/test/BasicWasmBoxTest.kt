@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.backend.wasm.*
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
+import org.jetbrains.kotlin.cli.js.klib.TopDownAnalyzerFacadeForWasm
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
@@ -140,7 +141,8 @@ abstract class BasicWasmBoxTest(
                 // TODO: Bypass the resolver fow wasm.
                 listOf(System.getProperty("kotlin.wasm.stdlib.path")!!, System.getProperty("kotlin.wasm.kotlin.test.path")!!),
                 emptyList(),
-                AnalyzerWithCompilerReport(config.configuration)
+                AnalyzerWithCompilerReport(config.configuration),
+                analyzerFacade = TopDownAnalyzerFacadeForWasm
             )
 
             val (allModules, backendContext) = compileToLoweredIr(

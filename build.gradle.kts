@@ -219,6 +219,8 @@ val fe10CompilerModules = arrayOf(
     ":js:js.dce",
     ":native:frontend.native",
     ":native:kotlin-native-utils",
+    ":wasm:wasm.frontend",
+    ":wasm:wasm.config",
     ":kotlin-build-common",
     ":compiler:backend.common.jvm",
     ":analysis:decompiled:light-classes-for-decompiled-fe10",
@@ -667,6 +669,7 @@ tasks {
 
     register("wasmCompilerTest") {
         dependsOn(":wasm:wasm.tests:test")
+        dependsOn(":wasm:wasm.tests:diagnosticsTest")
         // Windows WABT release requires Visual C++ Redistributable
         if (!kotlinBuildProperties.isTeamcityBuild || !org.gradle.internal.os.OperatingSystem.current().isWindows) {
             dependsOn(":wasm:wasm.ir:test")
