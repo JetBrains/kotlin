@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.container.*
 import org.jetbrains.kotlin.resolve.calls.checkers.*
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 import org.jetbrains.kotlin.resolve.checkers.*
+import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
@@ -94,7 +95,9 @@ private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>
      */
     PlatformExtensionsClashResolver.FallbackToDefault(TypeSpecificityComparator.NONE, TypeSpecificityComparator::class.java),
 
-    PlatformExtensionsClashResolver.FallbackToDefault(DynamicTypesSettings(), DynamicTypesSettings::class.java)
+    PlatformExtensionsClashResolver.FallbackToDefault(DynamicTypesSettings(), DynamicTypesSettings::class.java),
+
+    PlatformExtensionsClashResolver.FirstWins(AbsentDescriptorHandler::class.java)
 )
 
 fun StorageComponentContainer.configureDefaultCheckers() {

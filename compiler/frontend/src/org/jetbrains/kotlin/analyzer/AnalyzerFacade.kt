@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.SealedClassInheritorsProvider
+import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
@@ -136,6 +137,32 @@ abstract class ResolverForModuleFactory {
         languageVersionSettings: LanguageVersionSettings,
         sealedInheritorsProvider: SealedClassInheritorsProvider,
         resolveOptimizingOptions: OptimizingOptions?,
+        absentDescriptorHandlerClass: Class<out AbsentDescriptorHandler>?
+    ): ResolverForModule {
+        @Suppress("DEPRECATION")
+        return createResolverForModule(
+            moduleDescriptor,
+            moduleContext,
+            moduleContent,
+            resolverForProject,
+            languageVersionSettings,
+            sealedInheritorsProvider,
+            resolveOptimizingOptions
+        )
+    }
+
+    @Deprecated(
+        "Left only for compatibility, please use full version",
+        ReplaceWith("createResolverForModule(moduleDescriptor, moduleContext, moduleContent, resolverForProject, languageVersionSettings, sealedInheritorsProvider, null, null)")
+    )
+    open fun <M : ModuleInfo> createResolverForModule(
+        moduleDescriptor: ModuleDescriptorImpl,
+        moduleContext: ModuleContext,
+        moduleContent: ModuleContent<M>,
+        resolverForProject: ResolverForProject<M>,
+        languageVersionSettings: LanguageVersionSettings,
+        sealedInheritorsProvider: SealedClassInheritorsProvider,
+        resolveOptimizingOptions: OptimizingOptions?,
     ): ResolverForModule {
         @Suppress("DEPRECATION")
         return createResolverForModule(
@@ -150,7 +177,7 @@ abstract class ResolverForModuleFactory {
 
     @Deprecated(
         "Left only for compatibility, please use full version",
-        ReplaceWith("createResolverForModule(moduleDescriptor, moduleContext, moduleContent, resolverForProject, languageVersionSettings, sealedInheritorsProvider, null)")
+        ReplaceWith("createResolverForModule(moduleDescriptor, moduleContext, moduleContent, resolverForProject, languageVersionSettings, sealedInheritorsProvider, null, null)")
     )
     open fun <M : ModuleInfo> createResolverForModule(
         moduleDescriptor: ModuleDescriptorImpl,
@@ -167,7 +194,8 @@ abstract class ResolverForModuleFactory {
             resolverForProject,
             languageVersionSettings,
             sealedInheritorsProvider,
-            null
+            resolveOptimizingOptions = null,
+            absentDescriptorHandlerClass = null
         )
     }
 }

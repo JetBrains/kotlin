@@ -58,7 +58,9 @@ fun createContainerForJS(
             JsPlatforms.defaultJsPlatform,
             JsPlatformAnalyzerServices,
             bindingTrace,
-            languageVersionSettings
+            languageVersionSettings,
+            optimizingOptions = null,
+            absentDescriptorHandlerClass = null
         )
 
         configureIncrementalCompilation(lookupTracker, expectActualTracker, inlineConstTracker, enumWhenTracker)

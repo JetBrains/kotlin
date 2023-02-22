@@ -48,5 +48,10 @@ abstract class PlatformExtensionsClashResolver<E : PlatformSpecificExtension<E>>
 
         override fun resolveExtensionsClash(extensions: List<E>): E = defaultValue
     }
+
+    class FirstWins<E : PlatformSpecificExtension<E>>(applicableTo: Class<E>) : PlatformExtensionsClashResolver<E>(applicableTo) {
+
+        override fun resolveExtensionsClash(extensions: List<E>): E = extensions.first()
+    }
 }
 

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.FakeCallResolver
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
+import org.jetbrains.kotlin.resolve.lazy.BasicAbsentDescriptorHandler
 
 fun createContainerForTests(project: Project, module: ModuleDescriptor): ContainerForTests {
     return ContainerForTests(createContainer("Tests", JvmPlatformAnalyzerServices) {
@@ -41,7 +42,9 @@ fun createContainerForTests(project: Project, module: ModuleDescriptor): Contain
             JvmPlatforms.defaultJvmPlatform,
             JvmPlatformAnalyzerServices,
             BindingTraceContext(),
-            LanguageVersionSettingsImpl.DEFAULT
+            LanguageVersionSettingsImpl.DEFAULT,
+            optimizingOptions = null,
+            absentDescriptorHandlerClass = BasicAbsentDescriptorHandler::class.java
         )
         useImpl<AnnotationResolverImpl>()
         useInstance(ModuleStructureOracle.SingleModule)
