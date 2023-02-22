@@ -43,7 +43,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512) {
+projectTest(minHeapSizeMb = 6144, maxHeapSizeMb = 6144, reservedCodeCacheSizeMb = 512) {
     dependsOn(":dist")
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
