@@ -109,6 +109,14 @@ class KtLightMethodForDecompiledDeclaration(
                 another is KtLightMethodForDecompiledDeclaration && funDelegate.isEquivalentTo(another.funDelegate) ||
                 funDelegate.isEquivalentTo(another)
     }
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitMethod(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
 }
 
 private fun KtLightMethod.checkIsMangled(): Boolean {

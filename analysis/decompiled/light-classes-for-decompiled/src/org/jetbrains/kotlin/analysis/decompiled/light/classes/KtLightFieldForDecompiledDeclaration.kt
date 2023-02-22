@@ -77,4 +77,12 @@ open class KtLightFieldForDecompiledDeclaration(
                 another is KtLightFieldForDecompiledDeclaration && fldDelegate.isEquivalentTo(another.fldDelegate) ||
                 fldDelegate.isEquivalentTo(another)
     }
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitField(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
 }

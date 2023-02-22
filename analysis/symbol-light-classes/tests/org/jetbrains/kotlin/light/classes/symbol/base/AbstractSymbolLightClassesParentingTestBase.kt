@@ -40,15 +40,20 @@ open class AbstractSymbolLightClassesParentingTestBase(
     protected fun createLightElementsVisitor(directives: RegisteredDirectives, assertions: AssertionsService): JavaElementVisitor {
         Assume.assumeFalse("The test is not supported", Directives.IGNORE_PARENTING_CHECK in directives)
 
+        // drop after KT-56882
+        val ignoreDecompiledClasses = stopIfCompilationErrorDirectivePresent
         return object : JavaElementVisitor() {
             private val declarationStack = ArrayDeque<PsiElement>()
 
             private fun <T : PsiElement> checkParentAndVisitChildren(
                 declaration: T?,
+                notCheckItself: Boolean = false,
                 action: T.(visitor: JavaElementVisitor) -> Unit = {},
             ) {
                 if (declaration == null) return
-                checkDeclarationParent(declaration)
+                if (!notCheckItself) {
+                    checkDeclarationParent(declaration)
+                }
 
                 declarationStack.addLast(declaration)
                 try {
@@ -72,19 +77,19 @@ open class AbstractSymbolLightClassesParentingTestBase(
             }
 
             override fun visitModifierList(list: PsiModifierList?) {
-                checkParentAndVisitChildren(list) { visitor ->
+                checkParentAndVisitChildren(list, notCheckItself = ignoreDecompiledClasses) { visitor ->
                     annotations.forEach { it.accept(visitor) }
                 }
             }
 
             override fun visitParameterList(list: PsiParameterList?) {
-                checkParentAndVisitChildren(list) { visitor ->
+                checkParentAndVisitChildren(list, notCheckItself = ignoreDecompiledClasses) { visitor ->
                     parameters.forEach { it.accept(visitor) }
                 }
             }
 
             override fun visitTypeParameterList(list: PsiTypeParameterList?) {
-                checkParentAndVisitChildren(list) { visitor ->
+                checkParentAndVisitChildren(list, notCheckItself = ignoreDecompiledClasses) { visitor ->
                     typeParameters.forEach { it.accept(visitor) }
                 }
             }
@@ -108,6 +113,8 @@ open class AbstractSymbolLightClassesParentingTestBase(
             }
 
             override fun visitMethod(method: PsiMethod?) {
+                if (method is SyntheticElement) return
+
                 checkParentAndVisitChildren(method) { visitor ->
                     annotations.forEach { it.accept(visitor) }
 
@@ -150,17 +157,19 @@ open class AbstractSymbolLightClassesParentingTestBase(
                     (lastDeclaration as PsiModifierList).parent
                 } as PsiModifierListOwner
 
-                when (psiModifierListOwner) {
-                    is PsiClass,
-                    is PsiParameter ->
-                        assertions.assertTrue(owner is SymbolLightClassModifierList<*>)
+                if (!ignoreDecompiledClasses) {
+                    when (psiModifierListOwner) {
+                        is PsiClass,
+                        is PsiParameter ->
+                            assertions.assertTrue(owner is SymbolLightClassModifierList<*>)
 
-                    is PsiField,
-                    is PsiMethod ->
-                        assertions.assertTrue(owner is SymbolLightMemberModifierList<*>)
+                        is PsiField,
+                        is PsiMethod ->
+                            assertions.assertTrue(owner is SymbolLightMemberModifierList<*>)
 
-                    else ->
-                        throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class.java}")
+                        else ->
+                            throw IllegalStateException("Unexpected annotation owner kind: ${lastDeclaration::class.java}")
+                    }
                 }
 
                 val modifierList = psiModifierListOwner.modifierList!!

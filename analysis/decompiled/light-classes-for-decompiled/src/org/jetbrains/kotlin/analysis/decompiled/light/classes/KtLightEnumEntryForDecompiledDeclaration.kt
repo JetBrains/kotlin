@@ -44,4 +44,12 @@ internal class KtLightEnumEntryForDecompiledDeclaration(
             fldDelegate == other.fldDelegate
 
     override fun hashCode(): Int = super.hashCode()
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitEnumConstant(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
 }

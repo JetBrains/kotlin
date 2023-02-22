@@ -34,4 +34,12 @@ internal class KtLightEnumClassForDecompiledDeclaration(
 
     override fun equals(other: Any?): Boolean = this === other || other is KtLightEnumClassForDecompiledDeclaration && super.equals(other)
     override fun hashCode(): Int = super.hashCode()
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitEnumConstantInitializer(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
 }
