@@ -49,19 +49,19 @@ public interface KtTypeProviderMixIn : KtAnalysisSessionMixIn {
         get() = withValidityAssertion { analysisSession.typeProvider.builtinTypes }
 
     /**
-     * Approximates [KtType] with the a supertype which can be rendered in a source code
+     * Approximates [KtType] with a supertype which can be rendered in a source code
      *
      * Return `null` if the type do not need approximation and can be rendered as is
-     * Otherwise, for type `T` return type `S` such `T <: S` and `T` and every it type argument is denotable
+     * Otherwise, for type `T` return type `S` such `T <: S` and `T` and every type argument is denotable
      */
     public fun KtType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KtType? =
         withValidityAssertion { analysisSession.typeProvider.approximateToSuperPublicDenotableType(this, approximateLocalTypes) }
 
     /**
-     * Approximates [KtType] with the a subtype which can be rendered in a source code
+     * Approximates [KtType] with a subtype which can be rendered in a source code
      *
      * Return `null` if the type do not need approximation and can be rendered as is
-     * Otherwise, for type `T` return type `S` such `S <: T` and `T` and every it type argument is denotable
+     * Otherwise, for type `T` return type `S` such `S <: T` and `T` and every type argument is denotable
      */
     public fun KtType.approximateToSubPublicDenotable(approximateLocalTypes: Boolean): KtType? =
         withValidityAssertion { analysisSession.typeProvider.approximateToSubPublicDenotableType(this, approximateLocalTypes) }
