@@ -110,6 +110,12 @@ public class FirIdeDependentAnalysisSourceModuleAnalysisApiAnnotationsOnDeclarat
         }
 
         @Test
+        @TestMetadata("unsignedParameter.kt")
+        public void testUnsignedParameter() throws Exception {
+            runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/unsignedParameter.kt");
+        }
+
+        @Test
         @TestMetadata("varargComplexParameter.kt")
         public void testVarargComplexParameter() throws Exception {
             runTest("analysis/analysis-api/testData/annotations/annotationsOnDeclaration/direct/varargComplexParameter.kt");

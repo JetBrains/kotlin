@@ -30,6 +30,8 @@ val ConeKotlinType.isString: Boolean get() = isBuiltinType(StandardClassIds.Stri
 
 val ConeKotlinType.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
 
+val ConeKotlinType.isUByte: Boolean get() = isBuiltinType(StandardClassIds.UByte, false)
+val ConeKotlinType.isUShort: Boolean get() = isBuiltinType(StandardClassIds.UShort, false)
 val ConeKotlinType.isUInt: Boolean get() = isBuiltinType(StandardClassIds.UInt, false)
 val ConeKotlinType.isULong: Boolean get() = isBuiltinType(StandardClassIds.ULong, false)
 val ConeKotlinType.isPrimitiveOrNullablePrimitive: Boolean get() = isAnyOfBuiltinType(StandardClassIds.primitiveTypes)
