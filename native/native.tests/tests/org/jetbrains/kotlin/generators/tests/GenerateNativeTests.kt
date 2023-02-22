@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
@@ -122,7 +123,12 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "LldbTestGenerated",
-                annotations = listOf(debugger(), provider<UseStandardTestCaseGroupProvider>(), debugOnly())
+                annotations = listOf(
+                    debugger(),
+                    provider<UseStandardTestCaseGroupProvider>(),
+                    debugOnly(),
+                    hostOnly()
+                )
             ) {
                 model("lldb")
             }
@@ -137,6 +143,8 @@ private fun debugOnly() = annotation(
     "property" to ClassLevelProperty.OPTIMIZATION_MODE,
     "propertyValue" to "DEBUG"
 )
+
+private fun hostOnly() = provider<EnforcedHostTarget>()
 
 private fun codegen() = annotation(Tag::class.java, "codegen")
 private fun codegenK2() = annotation(Tag::class.java, "codegenK2")
