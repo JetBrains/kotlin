@@ -23,7 +23,9 @@ import kotlin.time.Duration.Companion.seconds
 /**
  * The tested and the host Kotlin/Native targets.
  */
-internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: KonanTarget)
+internal class KotlinNativeTargets(val testTarget: KonanTarget, val hostTarget: KonanTarget) {
+    fun areDifferentTargets() = testTarget != hostTarget
+}
 
 /**
  * The Kotlin/Native home.

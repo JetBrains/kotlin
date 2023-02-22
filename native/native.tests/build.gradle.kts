@@ -18,6 +18,8 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(project(":native:kotlin-native-utils"))
+    testImplementation(project(":native:executors"))
     testApiJUnit5()
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 

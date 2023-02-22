@@ -108,10 +108,10 @@ data class SimulatorRuntimeDescriptor(
 }
 
 data class DeviceType(
-    @Expose val bundlePath: String,
-    @Expose val name: String,
-    @Expose val identifier: String,
-    @Expose val productFamily: String
+        @Expose val bundlePath: String,
+        @Expose val name: String,
+        @Expose val identifier: String,
+        @Expose val productFamily: String
 )
 
 /**
