@@ -30,12 +30,15 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.scopes.utils.getImplicitReceiversHierarchy
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.NewCapturedType
@@ -65,18 +68,19 @@ internal class KtFe10TypeProvider(
 
     override fun approximateToSuperPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
         require(type is KtFe10Type)
-        return typeApproximator.approximateToSuperType(type.fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))?.toKtType(analysisContext)
+        return typeApproximator.approximateToSuperType(type.fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))
+            ?.toKtType(analysisContext)
     }
 
     override fun approximateToSubPublicDenotableType(type: KtType, approximateLocalTypes: Boolean): KtType? {
         require(type is KtFe10Type)
-        return typeApproximator.approximateToSubType(type.fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))?.toKtType(analysisContext)
+        return typeApproximator.approximateToSubType(type.fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))
+            ?.toKtType(analysisContext)
     }
 
     override fun buildSelfClassType(symbol: KtNamedClassOrObjectSymbol): KtType {
         val kotlinType = (getSymbolDescriptor(symbol) as? ClassDescriptor)?.defaultType
             ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, symbol.nameOrAnonymous.toString())
-
         return kotlinType.toKtType(analysisContext)
     }
 
@@ -88,8 +92,19 @@ internal class KtFe10TypeProvider(
     override fun getKtType(ktTypeReference: KtTypeReference): KtType {
         val bindingContext = analysisContext.analyze(ktTypeReference, AnalysisMode.PARTIAL)
         val kotlinType = bindingContext[BindingContext.TYPE, ktTypeReference]
+            ?: getKtTypeAsTypeArgument(ktTypeReference)
             ?: ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, ktTypeReference.text)
         return kotlinType.toKtType(analysisContext)
+    }
+
+    private fun getKtTypeAsTypeArgument(ktTypeReference: KtTypeReference): KotlinType? {
+        val call = ktTypeReference.getParentOfType<KtCallElement>(strict = true) ?: return null
+        val bindingContext = analysisContext.analyze(ktTypeReference, AnalysisMode.PARTIAL)
+        val resolvedCall = call.getResolvedCall(bindingContext) ?: return null
+        val typeProjection = call.typeArguments.find { it.typeReference == ktTypeReference } ?: return null
+        val index = call.typeArguments.indexOf(typeProjection)
+        val paramDescriptor = resolvedCall.candidateDescriptor.typeParameters.find { it.index == index } ?: return null
+        return resolvedCall.typeArguments[paramDescriptor]
     }
 
     override fun getReceiverTypeForDoubleColonExpression(expression: KtDoubleColonExpression): KtType? {
