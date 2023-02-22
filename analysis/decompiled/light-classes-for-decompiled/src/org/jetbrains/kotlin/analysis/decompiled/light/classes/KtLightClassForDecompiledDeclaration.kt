@@ -40,34 +40,21 @@ open class KtLightClassForDecompiledDeclaration(
         )
     }
 
-    override fun getOwnMethods(): List<PsiMethod> = _methods
-
-    override fun getOwnFields(): List<PsiField> = _fields
-
-    override fun getOwnInnerClasses(): List<PsiClass> = _innerClasses
-
     override fun getFields(): Array<PsiField> = myInnersCache.fields
-
     override fun getMethods(): Array<PsiMethod> = myInnersCache.methods
-
     override fun getConstructors(): Array<PsiMethod> = myInnersCache.constructors
-
     override fun getInnerClasses(): Array<PsiClass> = myInnersCache.innerClasses
-
     override fun findFieldByName(name: String, checkBases: Boolean): PsiField? = myInnersCache.findFieldByName(name, checkBases)
-
     override fun findMethodsByName(name: String, checkBases: Boolean): Array<PsiMethod> = myInnersCache.findMethodsByName(name, checkBases)
-
     override fun findInnerClassByName(name: String, checkBases: Boolean): PsiClass? = myInnersCache.findInnerClassByName(name, checkBases)
-
-    override fun hasModifierProperty(name: String): Boolean =
-        clsDelegate.hasModifierProperty(name)
+    override fun hasModifierProperty(name: String): Boolean = clsDelegate.hasModifierProperty(name)
 
     override fun findMethodBySignature(patternMethod: PsiMethod?, checkBases: Boolean): PsiMethod? =
         patternMethod?.let { PsiClassImplUtil.findMethodBySignature(this, it, checkBases) }
 
-    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod?> =
-        patternMethod?.let { PsiClassImplUtil.findMethodsBySignature(this, it, checkBases) } ?: emptyArray()
+    override fun findMethodsBySignature(patternMethod: PsiMethod?, checkBases: Boolean): Array<PsiMethod> = patternMethod?.let {
+        PsiClassImplUtil.findMethodsBySignature(this, it, checkBases)
+    } ?: PsiMethod.EMPTY_ARRAY
 
     override fun findMethodsAndTheirSubstitutorsByName(@NonNls name: String?, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
         PsiClassImplUtil.findMethodsAndTheirSubstitutorsByName(this, name, checkBases)
@@ -89,77 +76,50 @@ open class KtLightClassForDecompiledDeclaration(
         PsiClassImplUtil.getAllWithSubstitutorsByMap<PsiMethod>(this, PsiClassImplUtil.MemberType.METHOD)
 
     override fun isInterface(): Boolean = clsDelegate.isInterface
-
     override fun getTypeParameters(): Array<PsiTypeParameter> = clsDelegate.typeParameters
-
-    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean =
-        clsDelegate.isInheritor(baseClass, checkDeep)
+    override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean = clsDelegate.isInheritor(baseClass, checkDeep)
 
     override fun processDeclarations(
         processor: PsiScopeProcessor,
         state: ResolveState,
         lastParent: PsiElement?,
         place: PsiElement
-    ): Boolean {
-        return PsiClassImplUtil.processDeclarationsInClass(
-            this, processor, state, null,
-            lastParent, place, PsiUtil.getLanguageLevel(place), false
-        )
-    }
+    ): Boolean = PsiClassImplUtil.processDeclarationsInClass(
+        /* aClass = */ this,
+        /* processor = */ processor,
+        /* state = */ state,
+        /* visited = */ null,
+        /* last = */ lastParent,
+        /* place = */ place,
+        /* languageLevel = */ PsiUtil.getLanguageLevel(place),
+        /* isRaw = */ false,
+    )
 
     override fun isEnum(): Boolean = clsDelegate.isEnum
-
-    override fun getExtendsListTypes(): Array<PsiClassType?> =
-        PsiClassImplUtil.getExtendsListTypes(this)
-
+    override fun getExtendsListTypes(): Array<PsiClassType> = PsiClassImplUtil.getExtendsListTypes(this)
     override fun getTypeParameterList(): PsiTypeParameterList? = clsDelegate.typeParameterList
-
     override fun isAnnotationType(): Boolean = clsDelegate.isAnnotationType
-
     override fun getNameIdentifier(): PsiIdentifier? = clsDelegate.nameIdentifier
-
-    override fun getInterfaces(): Array<PsiClass> =
-        PsiClassImplUtil.getInterfaces(this)
-
-    override fun getSuperClass(): PsiClass? =
-        PsiClassImplUtil.getSuperClass(this)
-
-    override fun getSupers(): Array<PsiClass> =
-        PsiClassImplUtil.getSupers(this)
-
-    override fun getSuperTypes(): Array<PsiClassType> =
-        PsiClassImplUtil.getSuperTypes(this)
-
-    override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> =
-        PsiSuperMethodImplUtil.getVisibleSignatures(this)
-
+    override fun getInterfaces(): Array<PsiClass> = PsiClassImplUtil.getInterfaces(this)
+    override fun getSuperClass(): PsiClass? = PsiClassImplUtil.getSuperClass(this)
+    override fun getSupers(): Array<PsiClass> = PsiClassImplUtil.getSupers(this)
+    override fun getSuperTypes(): Array<PsiClassType> = PsiClassImplUtil.getSuperTypes(this)
+    override fun getVisibleSignatures(): Collection<HierarchicalMethodSignature> = PsiSuperMethodImplUtil.getVisibleSignatures(this)
     override fun getQualifiedName(): String? = clsDelegate.qualifiedName
-
-    override fun getImplementsListTypes(): Array<PsiClassType?> =
-        PsiClassImplUtil.getImplementsListTypes(this)
-
+    override fun getImplementsListTypes(): Array<PsiClassType> = PsiClassImplUtil.getImplementsListTypes(this)
     override fun isDeprecated(): Boolean = clsDelegate.isDeprecated
-
     override fun setName(name: String): PsiElement = clsDelegate.setName(name)
-
-    override fun hasTypeParameters(): Boolean =
-        PsiImplUtil.hasTypeParameters(this)
-
+    override fun hasTypeParameters(): Boolean = PsiImplUtil.hasTypeParameters(this)
     override fun getExtendsList(): PsiReferenceList? = clsDelegate.extendsList
-
     override fun getDocComment(): PsiDocComment? = clsDelegate.docComment
-
     override fun getModifierList(): PsiModifierList? = clsDelegate.modifierList
-
     override fun getScope(): PsiElement = clsDelegate.scope
-
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClassImplUtil.getAllInnerClasses(this)
-
     override fun getAllMethods(): Array<PsiMethod> = PsiClassImplUtil.getAllMethods(this)
-
     override fun getAllFields(): Array<PsiField> = PsiClassImplUtil.getAllFields(this)
 
-    private val _methods: List<PsiMethod> by lazyPub {
+    override fun getOwnMethods(): List<PsiMethod> = _ownMethods
+    private val _ownMethods: List<PsiMethod> by lazyPub {
         val isEnum = isEnum
         this.clsDelegate.methods.mapNotNull { psiMethod ->
             if (isSyntheticValuesOrValueOfMethod(psiMethod)) return@mapNotNull null
@@ -175,26 +135,28 @@ open class KtLightClassForDecompiledDeclaration(
         }
     }
 
-    private val _fields: List<PsiField> by lazyPub {
+    override fun getOwnFields(): List<PsiField> = _ownFields
+    private val _ownFields: List<PsiField> by lazyPub {
         this.clsDelegate.fields.map { psiField ->
-            if (psiField !is PsiEnumConstant) {
-                KtLightFieldForDecompiledDeclaration(
-                    fldDelegate = psiField,
-                    fldParent = this,
-                    lightMemberOrigin = LightMemberOriginForCompiledField(psiField, file)
-                )
-            } else {
+            if (psiField is PsiEnumConstant) {
                 KtLightEnumEntryForDecompiledDeclaration(
                     fldDelegate = psiField,
                     fldParent = this,
                     lightMemberOrigin = LightMemberOriginForCompiledField(psiField, file),
-                    file = file
+                    file = file,
+                )
+            } else {
+                KtLightFieldForDecompiledDeclaration(
+                    fldDelegate = psiField,
+                    fldParent = this,
+                    lightMemberOrigin = LightMemberOriginForCompiledField(psiField, file),
                 )
             }
         }
     }
 
-    private val _innerClasses: List<PsiClass> by lazyPub {
+    override fun getOwnInnerClasses(): List<PsiClass> = _ownInnerClasses
+    private val _ownInnerClasses: List<PsiClass> by lazyPub {
         this.clsDelegate.innerClasses.map { psiClass ->
             val innerDeclaration = this.kotlinOrigin
                 ?.declarations
@@ -211,24 +173,18 @@ open class KtLightClassForDecompiledDeclaration(
     }
 
     override val originKind: LightClassOriginKind = LightClassOriginKind.BINARY
-
     override fun getNavigationElement() = kotlinOrigin?.navigationElement ?: file
 
     override fun equals(other: Any?): Boolean {
         return this === other || other is KtLightClassForDecompiledDeclaration &&
                 qualifiedName == other.qualifiedName &&
-                kotlinOrigin?.fqName == other.kotlinOrigin?.fqName
+                file == other.file
     }
 
     override fun hashCode(): Int = qualifiedName?.hashCode() ?: kotlinOrigin?.fqName?.hashCode() ?: 0
-
     override fun copy(): PsiElement = this
-
     override fun clone(): Any = this
-
     override fun toString(): String = "${this.javaClass.simpleName} of $parent"
-
     override fun getName(): String? = clsDelegate.name
-
     override fun isValid(): Boolean = file.isValid && clsDelegate.isValid && (kotlinOrigin?.isValid != false)
 }

@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.analysis.decompiled.light.classes
 
 import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
+import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 internal class KtLightEnumClassForDecompiledDeclaration(
     private val psiConstantInitializer: PsiEnumConstantInitializer,
     private val enumConstant: KtLightEnumEntryForDecompiledDeclaration,
-    clsParent: KtLightClassForDecompiledDeclaration,
+    clsParent: KtLightClass,
     file: KtClsFile,
     kotlinOrigin: KtClassOrObject?
 ) : KtLightClassForDecompiledDeclaration(
@@ -31,6 +32,6 @@ internal class KtLightEnumClassForDecompiledDeclaration(
 
     override fun isInQualifiedNew(): Boolean = psiConstantInitializer.isInQualifiedNew
 
-    override fun equals(other: Any?): Boolean = other is KtLightEnumClassForDecompiledDeclaration && super.equals(other)
+    override fun equals(other: Any?): Boolean = this === other || other is KtLightEnumClassForDecompiledDeclaration && super.equals(other)
     override fun hashCode(): Int = super.hashCode()
 }
