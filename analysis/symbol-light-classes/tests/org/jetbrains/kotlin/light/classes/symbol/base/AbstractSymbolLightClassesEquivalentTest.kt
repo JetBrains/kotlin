@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractSymbolLightClassesEqualityTest : AbstractAnalysisApiBasedSingleModuleTest() {
+abstract class AbstractSymbolLightClassesEquivalentTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val lightQName = LightClassTestCommon.fqNameInTestDataFile(testDataPath.toFile())
         val ktFile = ktFiles.first()
