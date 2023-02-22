@@ -17,6 +17,7 @@ class AsyncProfilerControl {
     private val asyncProfiler = if (ASYNC_PROFILER_LIB != null) {
         try {
             AsyncProfilerHelper.getInstance(ASYNC_PROFILER_LIB)
+            updateSysctlValues()
         } catch (e: ExceptionInInitializerError) {
             if (e.cause is ClassNotFoundException) {
                 throw IllegalStateException("Async-profiler initialization error, make sure async-profiler.jar is on classpath", e.cause)
@@ -25,6 +26,11 @@ class AsyncProfilerControl {
         }
     } else {
         null
+    }
+
+    private fun updateSysctlValues() {
+        ProcessBuilder().command("sysctl", "kernel.kptr_restrict=0").inheritIO().start().waitFor()
+        ProcessBuilder().command("sysctl", "kernel.perf_event_paranoid=1").inheritIO().start().waitFor()
     }
 
     private fun executeAsyncProfilerCommand(command: String?, pass: Int, reportDateStr: String) {
