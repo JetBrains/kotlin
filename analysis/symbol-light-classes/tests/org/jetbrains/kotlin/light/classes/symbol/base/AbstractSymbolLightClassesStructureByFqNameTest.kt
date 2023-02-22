@@ -20,7 +20,7 @@ abstract class AbstractSymbolLightClassesStructureByFqNameTest(
     configurator: AnalysisApiTestConfigurator,
     testPrefix: String,
     stopIfCompilationErrorDirectivePresent: Boolean,
-) : AbstractSymbolLightClassesStructureTest(configurator, testPrefix, stopIfCompilationErrorDirectivePresent) {
+) : AbstractSymbolLightClassesStructureTestBase(configurator, testPrefix, stopIfCompilationErrorDirectivePresent) {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         builder.useDirectives(Directives)
