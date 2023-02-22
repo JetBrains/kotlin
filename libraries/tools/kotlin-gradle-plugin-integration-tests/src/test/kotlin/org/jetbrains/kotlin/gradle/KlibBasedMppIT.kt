@@ -16,7 +16,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class KlibBasedMppIT : BaseGradleIT() {
+open class KlibBasedMppIT : BaseGradleIT() {
     companion object {
         private const val MODULE_GROUP = "com.example"
     }

@@ -32,7 +32,7 @@ import kotlin.test.fail
 
 @MppGradlePluginTests
 @DisplayName("Hierarchical multiplatform")
-class HierarchicalMppIT : KGPBaseTest() {
+open class HierarchicalMppIT : KGPBaseTest() {
 
     private val String.withPrefix get() = "hierarchical-mpp-published-modules/$this"
 

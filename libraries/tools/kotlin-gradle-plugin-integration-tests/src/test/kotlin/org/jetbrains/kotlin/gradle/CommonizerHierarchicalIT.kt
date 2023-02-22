@@ -9,7 +9,7 @@ import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.konan.file.File
 import org.junit.Test
 
-class CommonizerHierarchicalIT : BaseGradleIT() {
+open class CommonizerHierarchicalIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired = GradleVersionRequired.FOR_MPP_SUPPORT
 
     @Test

@@ -33,7 +33,7 @@ import java.util.jar.JarFile
 import java.util.zip.ZipFile
 import kotlin.test.*
 
-class NewMultiplatformIT : BaseGradleIT() {
+open class NewMultiplatformIT : BaseGradleIT() {
     private val gradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
 
     private val nativeHostTargetName = MPPNativeTargets.current
