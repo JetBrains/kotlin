@@ -30,8 +30,8 @@ class AsyncProfilerControl {
     }
 
     private fun updateSysctlValues() {
-        ProcessBuilder().command("sudo", "sysctl", "kernel.kptr_restrict=0").inheritIO().start().waitFor()
-        ProcessBuilder().command("sudo", "sysctl", "kernel.perf_event_paranoid=1").inheritIO().start().waitFor()
+        ProcessBuilder().command("sysctl", "kernel.kptr_restrict=0").inheritIO().start().waitFor()
+        ProcessBuilder().command("sysctl", "kernel.perf_event_paranoid=1").inheritIO().start().waitFor()
     }
 
     private fun executeAsyncProfilerCommand(command: String?, pass: Int, reportDateStr: String) {
