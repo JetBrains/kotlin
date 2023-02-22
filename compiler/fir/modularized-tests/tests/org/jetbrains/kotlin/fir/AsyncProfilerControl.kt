@@ -16,8 +16,9 @@ private val PROFILER_SNAPSHOT_DIR = System.getProperty("fir.bench.snapshot.dir")
 class AsyncProfilerControl {
     private val asyncProfiler = if (ASYNC_PROFILER_LIB != null) {
         try {
-            AsyncProfilerHelper.getInstance(ASYNC_PROFILER_LIB)
-            updateSysctlValues()
+            AsyncProfilerHelper.getInstance(ASYNC_PROFILER_LIB).also {
+                updateSysctlValues()
+            }
         } catch (e: ExceptionInInitializerError) {
             if (e.cause is ClassNotFoundException) {
                 throw IllegalStateException("Async-profiler initialization error, make sure async-profiler.jar is on classpath", e.cause)
