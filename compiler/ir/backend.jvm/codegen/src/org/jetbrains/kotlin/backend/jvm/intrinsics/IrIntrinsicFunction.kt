@@ -123,7 +123,7 @@ open class IrIntrinsicFunction(
         fun createWithResult(
             expression: IrFunctionAccessExpression, signature: JvmMethodSignature,
             classCodegen: ClassCodegen,
-            argsTypes: List<Type> = expression.argTypes(classCodegen ),
+            argsTypes: List<Type> = expression.argTypes(classCodegen),
             invokeInstruction: IrIntrinsicFunction.(InstructionAdapter) -> Type
         ): IrIntrinsicFunction {
             return object : IrIntrinsicFunction(expression, signature, classCodegen, argsTypes) {
@@ -144,12 +144,24 @@ open class IrIntrinsicFunction(
     }
 }
 
-fun IrFunctionAccessExpression.argTypes(classCodegen: ClassCodegen): ArrayList<Type> {
+enum class DispatchReceiverMappingMode {
+    MAP_CALLEE_CLASS, MAP_DISPATCH_RECEIVER_TYPE
+}
+
+fun IrFunctionAccessExpression.argTypes(
+    classCodegen: ClassCodegen,
+    mode: DispatchReceiverMappingMode = DispatchReceiverMappingMode.MAP_CALLEE_CLASS
+): ArrayList<Type> {
     val callee = symbol.owner
     val signature = classCodegen.methodSignatureMapper.mapSignatureSkipGeneric(callee)
     return arrayListOf<Type>().apply {
         if (dispatchReceiver != null) {
-            add(classCodegen.typeMapper.mapClass(callee.parentAsClass))
+            val dispatchReceiverTypeMapped = if (mode == DispatchReceiverMappingMode.MAP_CALLEE_CLASS) {
+                classCodegen.typeMapper.mapClass(callee.parentAsClass)
+            } else {
+                classCodegen.typeMapper.mapType(dispatchReceiver!!.type)
+            }
+            add(dispatchReceiverTypeMapped)
         }
         addAll(signature.asmMethod.argumentTypes)
     }

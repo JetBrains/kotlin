@@ -23,13 +23,20 @@ import org.jetbrains.org.objectweb.asm.Type
 
 object ArraySize : IntrinsicMethod() {
 
-    override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen): IrIntrinsicFunction {
-        val argTypes = arrayListOf<Type>().apply {
-            add(classCodegen.typeMapper.mapType(expression.dispatchReceiver!!.type))
-            val signatureMapped = classCodegen.methodSignatureMapper.mapSignatureSkipGeneric(expression.symbol.owner)
-            addAll(signatureMapped.asmMethod.argumentTypes)
-        }
-        return IrIntrinsicFunction.create(expression, signature, classCodegen, argsTypes = argTypes) {
+    override fun toCallable(
+        expression: IrFunctionAccessExpression,
+        signature: JvmMethodSignature,
+        classCodegen: ClassCodegen
+    ): IrIntrinsicFunction {
+        return IrIntrinsicFunction.create(
+            expression,
+            signature,
+            classCodegen,
+            argsTypes = expression.argTypes(
+                classCodegen,
+                DispatchReceiverMappingMode.MAP_DISPATCH_RECEIVER_TYPE
+            )
+        ) {
             it.arraylength()
         }
     }
