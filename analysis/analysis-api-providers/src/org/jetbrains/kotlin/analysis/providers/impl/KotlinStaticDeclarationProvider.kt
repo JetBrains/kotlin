@@ -108,6 +108,7 @@ public class KotlinStaticDeclarationProviderFactory(
     private val project: Project,
     files: Collection<KtFile>,
     private val jarFileSystem: CoreJarFileSystem = CoreJarFileSystem(),
+    additionalRoots: List<VirtualFile> = emptyList(),
 ) : KotlinDeclarationProviderFactory() {
 
     private val index = KotlinStaticDeclarationIndex()
@@ -260,6 +261,28 @@ public class KotlinStaticDeclarationProviderFactory(
 
             // top-level functions and properties, built-in classes
             ktFileStub.childrenStubs.forEach(::indexStub)
+        }
+
+        loadBuiltIns().forEach { processStub(it) }
+
+        val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
+        for (root in additionalRoots) {
+            VfsUtilCore.visitChildrenRecursively(root, object : VirtualFileVisitor<Void>() {
+                override fun visitFile(file: VirtualFile): Boolean {
+                    if (!file.isDirectory && file.fileType == JavaClassFileType.INSTANCE) {
+                        val fileContent = FileContentImpl.createByFile(file)
+                        if (!binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content)) return true
+                        val stub = KotlinClsStubBuilder().buildFileStub(fileContent) as? KotlinFileStubImpl ?: return true
+                        val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, fileContent.file), isCompiled = true) {
+                            override fun getStub() = stub
+                            override fun isPhysical() = false
+                        }
+                        stub.psi = fakeFile
+                        processStub(stub)
+                    }
+                    return true
+                }
+            })
         }
 
         // Indexing user source files

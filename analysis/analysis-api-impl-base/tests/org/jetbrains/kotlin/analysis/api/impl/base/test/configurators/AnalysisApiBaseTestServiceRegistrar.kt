@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.providers.*
 import org.jetbrains.kotlin.analysis.providers.impl.*
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
+import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
 import org.jetbrains.kotlin.psi.KtFile
@@ -36,6 +37,11 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
         val moduleStructure = testServices.ktModuleProvider.getModuleStructure()
         val allKtFiles = moduleStructure.mainModules.flatMap { it.files.filterIsInstance<KtFile>() }
         val moduleToFiles = moduleStructure.mainModules.map { it.ktModule to it.files }
+
+        val roots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
+            moduleStructure.binaryModules.flatMap { binary -> binary.getBinaryRoots() },
+            testServices.environmentManager.getProjectEnvironment()
+        ).distinct()
 
         project.apply {
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())

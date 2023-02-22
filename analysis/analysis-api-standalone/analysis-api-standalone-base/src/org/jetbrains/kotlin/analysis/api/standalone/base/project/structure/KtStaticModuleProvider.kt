@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.analysis.project.structure.*
+import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
@@ -20,6 +22,10 @@ class KtStaticModuleProvider(
         if (containingFileAsVirtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
             return builtinsModule
         }
+
+        projectStructure.binaryModules.firstOrNull { binaryModule ->
+            containingFileAsVirtualFile in binaryModule.contentScope
+        }?.let { return it }
 
         return projectStructure.mainModules
             .first { module ->
