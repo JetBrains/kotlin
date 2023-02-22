@@ -6,6 +6,9 @@ public static abstract class Base /* Container.Base*/ {
   private final Container.Delegate b$delegate;
 
   @org.jetbrains.annotations.NotNull()
+  private final Container.Delegate mutable$delegate;
+
+  @org.jetbrains.annotations.NotNull()
   private final java.lang.String c;
 
   @org.jetbrains.annotations.NotNull()
@@ -20,7 +23,12 @@ public static abstract class Base /* Container.Base*/ {
   @org.jetbrains.annotations.NotNull()
   public java.lang.String getC();//  getC()
 
+  @org.jetbrains.annotations.Nullable()
+  public final java.lang.String getMutable();//  getMutable()
+
   public  Base();//  .ctor()
+
+  public final void setMutable(@org.jetbrains.annotations.Nullable() java.lang.String);//  setMutable(java.lang.String)
 }
 
 public static final class Companion /* Container.Companion*/ {

@@ -3,6 +3,9 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static final error.NonExistentClass delegatedProp$delegate;
 
   @org.jetbrains.annotations.NotNull()
+  private static final error.NonExistentClass delegatedProp2$delegate;
+
+  @org.jetbrains.annotations.NotNull()
   private static final java.lang.Object arrayConst;
 
   @org.jetbrains.annotations.NotNull()
@@ -37,8 +40,6 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   @org.jetbrains.annotations.Nullable()
   private static java.lang.Integer isEmptyInt;
-
-  private static final error.NonExistentClass delegatedProp2$delegate;
 
   private static final error.NonExistentClass intConst = 30 /* initializer type: int */;
 

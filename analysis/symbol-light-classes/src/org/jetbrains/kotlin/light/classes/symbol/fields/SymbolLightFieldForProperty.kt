@@ -98,12 +98,10 @@ internal class SymbolLightFieldForProperty private constructor(
         in GranularModifiersBox.VISIBILITY_MODIFIERS -> GranularModifiersBox.computeVisibilityForMember(ktModule, propertySymbolPointer)
         in GranularModifiersBox.MODALITY_MODIFIERS -> {
             val modality = withPropertySymbol { propertySymbol ->
-                if (propertySymbol.isVal) {
+                if (propertySymbol.isVal || propertySymbol.isDelegatedProperty) {
                     PsiModifier.FINAL
                 } else {
-                    propertySymbol.computeSimpleModality()?.takeIf {
-                        it != PsiModifier.FINAL || isTopLevel && propertySymbol.isDelegatedProperty
-                    }
+                    propertySymbol.computeSimpleModality()?.takeIf { it != PsiModifier.FINAL }
                 }
             }
 
@@ -154,10 +152,10 @@ internal class SymbolLightFieldForProperty private constructor(
                 ),
                 additionalAnnotationsProvider = NullabilityAnnotationsProvider {
                     withPropertySymbol { propertySymbol ->
-                        if (!(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit)) {
-                            getTypeNullability(propertySymbol.returnType)
-                        } else {
-                            NullabilityType.Unknown
+                        when {
+                            propertySymbol.isDelegatedProperty -> NullabilityType.NotNull
+                            !(propertySymbol is KtKotlinPropertySymbol && propertySymbol.isLateInit) -> getTypeNullability(propertySymbol.returnType)
+                            else -> NullabilityType.Unknown
                         }
                     }
                 }
