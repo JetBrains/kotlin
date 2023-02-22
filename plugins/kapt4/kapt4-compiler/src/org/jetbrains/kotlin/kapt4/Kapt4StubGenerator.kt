@@ -397,7 +397,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         }
 
         val values = mapJList<_, JCExpression>(annotation.parameterList.attributes) {
-            val name = it.name ?: return@mapJList null
+            val name = it.name?.takeIf { name -> isValidIdentifier(name) } ?: return@mapJList null
             val value = it.value ?: return@mapJList null
             val expr = convertPsiAnnotationMemberValue(containingClass, value, packageFqName, filtered)
             treeMaker.Assign(treeMaker.SimpleName(name), expr)
