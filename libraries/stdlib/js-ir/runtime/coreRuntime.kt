@@ -103,7 +103,8 @@ internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?
 }
 
 internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, cause: Throwable?) {
-    if (!hasOwnPrototypeProperty(this_, "message")) {
+    val errorInfo = calculateErrorInfo(JsObject.getPrototypeOf(this_))
+    if ((errorInfo and 0x1) == 0) {
         @Suppress("IfThenToElvis")
         this_.message = if (message == null) {
             @Suppress("SENSELESS_COMPARISON")
@@ -116,7 +117,7 @@ internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, 
             }
         } else message
     }
-    if (!hasOwnPrototypeProperty(this_, "cause")) {
+    if ((errorInfo and 0x2) == 0) {
         this_.cause = cause
     }
     this_.name = JsObject.getPrototypeOf(this_).constructor.name
