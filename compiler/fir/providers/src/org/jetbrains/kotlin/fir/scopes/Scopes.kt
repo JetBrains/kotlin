@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 
 fun ConeClassLikeLookupTag.getNestedClassifierScope(session: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? {
     val klass = toSymbol(session)?.fir as? FirRegularClass ?: return null
@@ -55,4 +53,25 @@ fun debugCollectOverrides(symbol: FirCallableSymbol<*>, scope: FirTypeScope): Ma
         return result
     }
     return process(scope, symbol)
+}
+
+fun FirNamedFunctionSymbol.overriddenFunctions(
+    containingClass: FirClassSymbol<*>,
+    session: FirSession,
+    scopeSession: ScopeSession
+): List<FirFunctionSymbol<*>> {
+    val firTypeScope = containingClass.unsubstitutedScope(
+        session,
+        scopeSession,
+        withForcedTypeCalculator = true
+    )
+
+    val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
+    firTypeScope.processFunctionsByName(callableId.callableName) { }
+    firTypeScope.processOverriddenFunctions(this) {
+        overriddenFunctions.add(it)
+        ProcessorAction.NEXT
+    }
+
+    return overriddenFunctions
 }

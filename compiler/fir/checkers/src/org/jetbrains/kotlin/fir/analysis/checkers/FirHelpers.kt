@@ -189,20 +189,7 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     context: CheckerContext
 ): List<FirFunctionSymbol<*>> {
-    val firTypeScope = containingClass.unsubstitutedScope(
-        context.sessionHolder.session,
-        context.sessionHolder.scopeSession,
-        withForcedTypeCalculator = true
-    )
-
-    val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
-    firTypeScope.processFunctionsByName(callableId.callableName) { }
-    firTypeScope.processOverriddenFunctions(this) {
-        overriddenFunctions.add(it)
-        ProcessorAction.NEXT
-    }
-
-    return overriddenFunctions
+    return overriddenFunctions(containingClass, context.session, context.scopeSession)
 }
 
 fun FirClass.collectSupertypesWithDelegates(): Map<FirTypeRef, FirFieldSymbol?> {

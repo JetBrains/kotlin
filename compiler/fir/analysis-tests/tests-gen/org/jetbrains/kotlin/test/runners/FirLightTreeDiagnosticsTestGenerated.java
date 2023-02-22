@@ -1084,6 +1084,12 @@ public class FirLightTreeDiagnosticsTestGenerated extends AbstractFirLightTreeDi
             }
 
             @Test
+            @TestMetadata("incorrectPlusOperatorFromJava.kt")
+            public void testIncorrectPlusOperatorFromJava() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/incorrectPlusOperatorFromJava.kt");
+            }
+
+            @Test
             @TestMetadata("invokeAmbiguity.kt")
             public void testInvokeAmbiguity() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/callResolution/invokeAmbiguity.kt");

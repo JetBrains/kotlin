@@ -15,12 +15,12 @@ FILE fqName:<root> fileName:/kt43217.kt
                 BLOCK_BODY
                   DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DoubleExpression'
                   INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.DoubleExpression]'
-              FUN name:get visibility:public modality:OPEN <> ($this:<root>.A.b.<no name provided>) returnType:kotlin.Double [operator]
+              FUN name:get visibility:public modality:OPEN <> ($this:<root>.A.b.<no name provided>) returnType:kotlin.Double
                 overridden:
-                  public abstract fun get (): @[EnhancedNullability] kotlin.Double [fake_override,operator] declared in <root>.DoubleExpression
+                  public abstract fun get (): @[EnhancedNullability] kotlin.Double [fake_override] declared in <root>.DoubleExpression
                 $this: VALUE_PARAMETER name:<this> type:<root>.A.b.<no name provided>
                 BLOCK_BODY
-                  RETURN type=kotlin.Nothing from='public open fun get (): kotlin.Double [operator] declared in <root>.A.b.<no name provided>'
+                  RETURN type=kotlin.Nothing from='public open fun get (): kotlin.Double declared in <root>.A.b.<no name provided>'
                     CONST Double type=kotlin.Double value=0.0
               FUN FAKE_OVERRIDE name:isEqualTo visibility:public modality:OPEN <> ($this:<root>.DoubleExpression, value:kotlin.Double) returnType:@[EnhancedNullability] kotlin.Any [fake_override]
                 annotations:
@@ -79,12 +79,12 @@ FILE fqName:<root> fileName:/kt43217.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.DoubleExpression'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[<root>.DoubleExpression]'
-    FUN name:get visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Double [operator]
+    FUN name:get visibility:public modality:OPEN <> ($this:<root>.C) returnType:kotlin.Double
       overridden:
-        public abstract fun get (): @[EnhancedNullability] kotlin.Double [fake_override,operator] declared in <root>.DoubleExpression
+        public abstract fun get (): @[EnhancedNullability] kotlin.Double [fake_override] declared in <root>.DoubleExpression
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun get (): kotlin.Double [operator] declared in <root>.C'
+        RETURN type=kotlin.Nothing from='public open fun get (): kotlin.Double declared in <root>.C'
           CONST Double type=kotlin.Double value=0.0
     FUN FAKE_OVERRIDE name:isEqualTo visibility:public modality:OPEN <> ($this:<root>.DoubleExpression, value:kotlin.Double) returnType:@[EnhancedNullability] kotlin.Any [fake_override]
       annotations:

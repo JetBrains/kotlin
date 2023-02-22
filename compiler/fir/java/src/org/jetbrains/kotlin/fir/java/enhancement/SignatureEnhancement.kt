@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirConstExpression
 import org.jetbrains.kotlin.fir.expressions.unexpandedClassId
+import org.jetbrains.kotlin.fir.java.*
 import org.jetbrains.kotlin.fir.java.FirJavaTypeConversionMode
-import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.resolveIfJavaType
 import org.jetbrains.kotlin.fir.java.symbols.FirJavaOverriddenSyntheticPropertySymbol
@@ -339,9 +339,18 @@ class FirSignatureEnhancement(
             if (isJavaRecordComponent) {
                 this.isJavaRecordComponent = true
             }
+            updateIsOperatorFlagIfNeeded(this)
         }
 
         return function.symbol
+    }
+
+    private fun updateIsOperatorFlagIfNeeded(function: FirFunction) {
+        if (function !is FirSimpleFunction) return
+        val isOperator = OperatorFunctionChecks.isOperator(function, session, scopeSession = null).isSuccess
+        if (!isOperator) return
+        val newStatus = function.status.copy(isOperator = true)
+        function.replaceStatus(newStatus)
     }
 
     /**

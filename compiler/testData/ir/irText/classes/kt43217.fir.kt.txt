@@ -14,7 +14,7 @@ class A {
 
         }
 
-        override operator fun get(): Double {
+        override fun get(): Double {
           return 0.0
         }
 
@@ -33,7 +33,7 @@ class C : DoubleExpression {
 
   }
 
-  override operator fun get(): Double {
+  override fun get(): Double {
     return 0.0
   }
 
