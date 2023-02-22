@@ -45,7 +45,7 @@ internal open class KotlinAndroidPlugin(
     }
 
     companion object {
-        private val minimalSupportedAgpVersion = AndroidGradlePluginVersion(4, 1, 3)
+        private val minimalSupportedAgpVersion = AndroidGradlePluginVersion(4, 2, 2)
         fun androidTargetHandler(): AndroidProjectHandler {
             val tasksProvider = KotlinTasksProvider()
             val androidGradlePluginVersion = AndroidGradlePluginVersion.currentOrNull
