@@ -97,6 +97,12 @@ internal class KtFirTypeProvider(
         return when (val fir = ktTypeReference.getOrBuildFir(firResolveSession)) {
             is FirResolvedTypeRef -> fir.coneType.asKtType()
             is FirDelegatedConstructorCall -> fir.constructedTypeRef.coneType.asKtType()
+            is FirTypeProjectionWithVariance -> {
+                when (val typeRef = fir.typeRef) {
+                    is FirResolvedTypeRef -> typeRef.coneType.asKtType()
+                    else -> throwUnexpectedFirElementError(fir, ktTypeReference)
+                }
+            }
             else -> throwUnexpectedFirElementError(fir, ktTypeReference)
         }
     }
