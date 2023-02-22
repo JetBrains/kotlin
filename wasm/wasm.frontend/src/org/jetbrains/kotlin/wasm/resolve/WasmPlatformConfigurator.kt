@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.resolve.PlatformConfiguratorBase
 import org.jetbrains.kotlin.resolve.calls.checkers.LateinitIntrinsicApplicabilityChecker
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.wasm.analyze.WasmDiagnosticSuppressor
-import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmExternalDeclarationChecker
-import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmExternalInheritanceChecker
-import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmImportAnnotationChecker
-import org.jetbrains.kotlin.wasm.resolve.diagnostics.WasmJsFunAnnotationChecker
+import org.jetbrains.kotlin.wasm.resolve.diagnostics.*
 
 // TODO: Review the list of used K/JS checkers.
 //       Refactor useful checkers into common module.
@@ -41,7 +38,7 @@ object WasmPlatformConfigurator : PlatformConfiguratorBase(
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useInstance(NameSuggestion())
-        container.useImpl<JsCallChecker>()
+        container.useImpl<WasmJsCallChecker>()
         container.useImpl<JsNameClashChecker>()
         container.useImpl<JsNameCharsChecker>()
         container.useInstance(JsModuleClassLiteralChecker)
