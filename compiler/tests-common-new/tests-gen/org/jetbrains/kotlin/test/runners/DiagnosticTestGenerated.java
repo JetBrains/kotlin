@@ -1405,6 +1405,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("javaAnnotationAndJavaClassWithIt.kt")
+            public void testJavaAnnotationAndJavaClassWithIt() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/javaAnnotationAndJavaClassWithIt.kt");
+            }
+
+            @Test
             @TestMetadata("JavaAnnotationConstructors.kt")
             public void testJavaAnnotationConstructors() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/JavaAnnotationConstructors.kt");
