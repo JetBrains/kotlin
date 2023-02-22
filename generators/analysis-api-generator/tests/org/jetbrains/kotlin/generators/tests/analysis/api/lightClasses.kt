@@ -56,6 +56,14 @@ internal fun TestGroupSuite.generateSymbolLightClassesTests() {
             testClass<AbstractSymbolLightClassesByPsiForLibraryTest> {
                 model("asJava/lightClasses/lightClassByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
             }
+
+            testClass<AbstractSymbolLightClassesParentingByPsiForSourceTest> {
+                model("asJava/lightClasses/lightClassByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
+            }
+
+            testClass<AbstractSymbolLightClassesParentingByPsiForLibraryTest> {
+                model("asJava/lightClasses/lightClassByPsi", pattern = TestGeneratorUtil.KT_OR_KTS)
+            }
         }
     }
 

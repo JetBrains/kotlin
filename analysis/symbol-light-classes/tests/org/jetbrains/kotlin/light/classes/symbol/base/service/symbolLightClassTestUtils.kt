@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.base.service
 
+import com.intellij.psi.PsiClass
+import com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.asJava.PsiClassRenderer
+import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtFile
 import java.nio.file.Path
 
 internal inline fun <R> withExtendedTypeRenderer(testDataFile: Path, action: () -> R): R {
@@ -16,4 +21,9 @@ internal inline fun <R> withExtendedTypeRenderer(testDataFile: Path, action: () 
     } finally {
         PsiClassRenderer.extendedTypeRenderer = extendedTypeRendererOld
     }
+}
+
+internal fun getLightClassesFromFile(ktFile: KtFile): List<PsiClass> {
+    val ktClasses = SyntaxTraverser.psiTraverser(ktFile).filter(KtClassOrObject::class.java).toList()
+    return ktClasses.plus(ktFile).flatMap { it.toLightElements() }.filterIsInstance<PsiClass>()
 }

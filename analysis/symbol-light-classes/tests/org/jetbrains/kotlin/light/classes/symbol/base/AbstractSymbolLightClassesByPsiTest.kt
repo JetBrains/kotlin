@@ -6,14 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol.base
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiClass
-import com.intellij.psi.SyntaxTraverser
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.asJava.LightClassTestCommon
 import org.jetbrains.kotlin.asJava.renderClass
-import org.jetbrains.kotlin.asJava.toLightElements
+import org.jetbrains.kotlin.light.classes.symbol.base.service.getLightClassesFromFile
 import org.jetbrains.kotlin.light.classes.symbol.base.service.withExtendedTypeRenderer
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import java.nio.file.Path
@@ -29,10 +26,5 @@ abstract class AbstractSymbolLightClassesByPsiTest(
         return withExtendedTypeRenderer(testDataFile) {
             lightClasses.sortedBy { it.name }.joinToString("\n\n") { it.renderClass() }
         }
-    }
-
-    private fun getLightClassesFromFile(ktFile: KtFile): List<PsiClass> {
-        val ktClasses = SyntaxTraverser.psiTraverser(ktFile).filter(KtClassOrObject::class.java).toList()
-        return ktClasses.plus(ktFile).flatMap { it.toLightElements() }.filterIsInstance<PsiClass>()
     }
 }
