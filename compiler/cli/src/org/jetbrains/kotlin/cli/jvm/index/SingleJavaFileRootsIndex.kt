@@ -58,6 +58,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
             start(String(file.contentsToByteArray()))
         }
         private var braceBalance = 0
+        private var parenthesisBalance = 0
 
         private fun at(type: IElementType): Boolean = lexer.tokenType == type
 
@@ -67,6 +68,8 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
             when {
                 at(ElementType.LBRACE) -> braceBalance++
                 at(ElementType.RBRACE) -> braceBalance--
+                at(ElementType.LPARENTH) -> parenthesisBalance++
+                at(ElementType.RPARENTH) -> parenthesisBalance--
             }
             lexer.advance()
         }
@@ -74,7 +77,7 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
         private fun tokenText(): String = lexer.tokenText
 
         private fun atClass(): Boolean =
-            braceBalance == 0 && (lexer.tokenType in CLASS_KEYWORDS || atRecord())
+            braceBalance == 0 && parenthesisBalance == 0 && (lexer.tokenType in CLASS_KEYWORDS || atRecord())
 
         private fun atRecord(): Boolean {
             // Note that the soft keyword "record" is lexed as IDENTIFIER instead of RECORD_KEYWORD.
@@ -112,7 +115,6 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
                 if (end()) break
                 result.add(ClassId(packageFqName, Name.identifier(tokenText())))
             }
-
             return result
         }
 
