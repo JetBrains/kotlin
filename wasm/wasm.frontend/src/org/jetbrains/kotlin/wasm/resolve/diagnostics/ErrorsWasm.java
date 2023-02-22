@@ -28,6 +28,10 @@ public interface ErrorsWasm {
 
     DiagnosticFactory0<PsiElement> WRONG_JS_FUN_TARGET = DiagnosticFactory0.create(ERROR);
 
+    DiagnosticFactory0<PsiElement> JSCODE_WRONG_CONTEXT = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory1<PsiElement, String> JSCODE_UNSUPPORTED_FUNCTION_KIND = DiagnosticFactory1.create(ERROR);
+    DiagnosticFactory0<PsiElement> JSCODE_INVALID_PARAMETER_NAME = DiagnosticFactory0.create(ERROR);
+
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {
         {
