@@ -295,7 +295,8 @@ internal class ObjCExportBlockCodeGenerator(codegen: CodeGenerator) : ObjCExport
 internal class ObjCExportCodeGenerator(
         codegen: CodeGenerator,
         val namer: ObjCExportNamer,
-        val mapper: ObjCExportMapper
+        val mapper: ObjCExportMapper,
+        val stdlibNamer: ObjCExportStdlibNamer,
 ) : ObjCExportCodeGeneratorBase(codegen) {
 
     inline fun <reified T: IrFunction> T.getLowered(): T = when (this) {
@@ -445,7 +446,7 @@ internal class ObjCExportCodeGenerator(
 
         spec?.files?.forEach {
             objCTypeAdapters += createTypeAdapterForFileClass(it)
-            dataGenerator.emitEmptyClass(it.binaryName, namer.kotlinAnyName.binaryName)
+            dataGenerator.emitEmptyClass(it.binaryName, stdlibNamer.kotlinAnyName.binaryName)
         }
 
         emitTypeAdapters(objCTypeAdapters)
@@ -455,18 +456,18 @@ internal class ObjCExportCodeGenerator(
         generateTypeAdapters(spec)
 
         NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
-            dataGenerator.exportClass(namer.numberBoxName(it).binaryName)
+            dataGenerator.exportClass(stdlibNamer.numberBoxName(it).binaryName)
         }
-        dataGenerator.exportClass(namer.mutableSetName.binaryName)
-        dataGenerator.exportClass(namer.mutableMapName.binaryName)
-        dataGenerator.exportClass(namer.kotlinAnyName.binaryName)
+        dataGenerator.exportClass(stdlibNamer.mutableSetName.binaryName)
+        dataGenerator.exportClass(stdlibNamer.mutableMapName.binaryName)
+        dataGenerator.exportClass(stdlibNamer.kotlinAnyName.binaryName)
 
         emitSpecialClassesConvertions()
 
         // Replace runtime global with weak linkage:
         codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
                 "Kotlin_ObjCInterop_uniquePrefix",
-                codegen.staticData.cStringLiteral(namer.topLevelNamePrefix)
+                codegen.staticData.cStringLiteral(stdlibNamer.stdlibTopLevelPrefix)
         )
 
         emitSelectorsHolder()
@@ -546,7 +547,7 @@ internal class ObjCExportCodeGenerator(
 
     // TODO: consider including this into ObjCExportCodeSpec.
     private val objCClassForAny = ObjCClassForKotlinClass(
-            namer.kotlinAnyName.binaryName,
+            stdlibNamer.kotlinAnyName.binaryName,
             symbols.any,
             methods = listOf("equals", "hashCode", "toString").map { nameString ->
                 val name = Name.identifier(nameString)
@@ -576,7 +577,7 @@ internal class ObjCExportCodeGenerator(
         }
 
         dataGenerator.emitClass(
-                "${namer.topLevelNamePrefix}KotlinSelectorsHolder",
+                "${stdlibNamer.stdlibTopLevelPrefix}KotlinSelectorsHolder",
                 superName = "NSObject",
                 instanceMethods = methods
         )
@@ -766,7 +767,7 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
         val valueParameterTypes: List<LlvmParamType> = listOf(
                 LlvmParamType(value.type, objCValueType.defaultParameterAttributes)
         )
-        val nsNumberSubclass = genGetLinkedClass(namer.numberBoxName(boxClass.classId!!).binaryName)
+        val nsNumberSubclass = genGetLinkedClass(stdlibNamer.numberBoxName(boxClass.classId!!).binaryName)
         // We consider this function fast enough, so don't switch thread state to Native.
         val instance = callFromBridge(objcAlloc, listOf(nsNumberSubclass))
         val returnType = LlvmRetType(llvm.int8PtrType)

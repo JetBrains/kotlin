@@ -55,7 +55,7 @@ internal fun <T> PhaseEngine<PhaseContext>.runPsiToIr(
     return psiToIrOutput to additionalOutput
 }
 
-internal fun <C: PhaseContext> PhaseEngine<C>.runObjCExportCodegen(
+internal fun <C : PhaseContext> PhaseEngine<C>.runObjCExportCodegen(
         backendContext: Context,
         objCExportedInterface: ObjCExportedInterface,
         objCExportCodeSpec: ObjCExportCodeSpec,
@@ -72,7 +72,7 @@ internal fun <C: PhaseContext> PhaseEngine<C>.runObjCExportCodegen(
             cacheFileName = "should_not_reach_here",
     )
     val codegen = CodeGenerator(generationState)
-    val objCCodeGenerator = ObjCExportCodeGenerator(codegen, objCExportedInterface.namer, objCExportedInterface.mapper)
+    val objCCodeGenerator = ObjCExportCodeGenerator(codegen, objCExportedInterface.namer, objCExportedInterface.mapper, objCExportedInterface.stdlibNamer)
     objCExportedInterface.generateWorkaroundForSwiftSR10177(generationState)
     objCCodeGenerator.generate(objCExportCodeSpec)
     objCCodeGenerator.dispose()

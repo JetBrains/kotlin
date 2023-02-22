@@ -54,15 +54,16 @@ internal class ObjCExportTranslatorImpl(
         private val generator: ObjCExportHeaderGenerator?,
         val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
+        val stdlibNamer: ObjCExportStdlibNamer,
         val problemCollector: ObjCExportProblemCollector,
         val objcGenerics: Boolean
 ) : ObjCExportTranslator {
 
-    private val kotlinAnyName = namer.kotlinAnyName
+    private val kotlinAnyName = stdlibNamer.kotlinAnyName
 
     override fun generateBaseDeclarations(): List<ObjCTopLevel<*>> = buildTopLevel {
         add {
-            objCInterface(namer.kotlinAnyName, superClass = "NSObject", members = buildMembers {
+            objCInterface(stdlibNamer.kotlinAnyName, superClass = "NSObject", members = buildMembers {
                 add { ObjCMethod(null, true, ObjCInstanceType, listOf("init"), emptyList(), listOf("unavailable")) }
                 add { ObjCMethod(null, false, ObjCInstanceType, listOf("new"), emptyList(), listOf("unavailable")) }
                 add { ObjCMethod(null, false, ObjCVoidType, listOf("initialize"), emptyList(), listOf("objc_requires_super")) }
@@ -72,9 +73,9 @@ internal class ObjCExportTranslatorImpl(
         // TODO: add comment to the header.
         add {
             ObjCInterfaceImpl(
-                    namer.kotlinAnyName.objCName,
+                    stdlibNamer.kotlinAnyName.objCName,
                     superProtocols = listOf("NSCopying"),
-                    categoryName = "${namer.kotlinAnyName.objCName}Copying"
+                    categoryName = "${stdlibNamer.kotlinAnyName.objCName}Copying"
             )
         }
 
@@ -82,7 +83,7 @@ internal class ObjCExportTranslatorImpl(
         add {
             val generics = listOf("ObjectType")
             objCInterface(
-                    namer.mutableSetName,
+                    stdlibNamer.mutableSetName,
                     generics = generics,
                     superClass = "NSMutableSet",
                     superClassGenerics = generics
@@ -93,14 +94,14 @@ internal class ObjCExportTranslatorImpl(
         add {
             val generics = listOf("KeyType", "ObjectType")
             objCInterface(
-                    namer.mutableMapName,
+                    stdlibNamer.mutableMapName,
                     generics = generics,
                     superClass = "NSMutableDictionary",
                     superClassGenerics = generics
             )
         }
 
-        val nsErrorCategoryName = "NSError${namer.topLevelNamePrefix}KotlinException"
+        val nsErrorCategoryName = "NSError${stdlibNamer.stdlibTopLevelPrefix}KotlinException"
         add {
             ObjCInterfaceImpl("NSError", categoryName = nsErrorCategoryName, members = buildMembers {
                 add { ObjCProperty("kotlinException", null, ObjCNullableReferenceType(ObjCIdType), listOf("readonly")) }
@@ -121,7 +122,7 @@ internal class ObjCExportTranslatorImpl(
         }
         add {
             objCInterface(
-                    namer.kotlinNumberName,
+                    stdlibNamer.kotlinNumberName,
                     superClass = "NSNumber",
                     members = members
             )
@@ -135,7 +136,7 @@ internal class ObjCExportTranslatorImpl(
     }
 
     private fun genKotlinNumber(kotlinClassId: ClassId, kind: NSNumberKind): ObjCInterface {
-        val name = namer.numberBoxName(kotlinClassId)
+        val name = stdlibNamer.numberBoxName(kotlinClassId)
 
         val members = buildMembers {
             add { nsNumberFactory(kind) }
@@ -143,7 +144,7 @@ internal class ObjCExportTranslatorImpl(
         }
         return objCInterface(
                 name,
-                superClass = namer.kotlinNumberName.objCName,
+                superClass = stdlibNamer.kotlinNumberName.objCName,
                 members = members
         )
     }
@@ -274,7 +275,7 @@ internal class ObjCExportTranslatorImpl(
         }
         return objCInterface(
                 name,
-                superClass = namer.kotlinAnyName.objCName,
+                superClass = stdlibNamer.kotlinAnyName.objCName,
                 members = members,
                 attributes = listOf(OBJC_SUBCLASSING_RESTRICTED)
         )
@@ -1077,6 +1078,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
         val moduleDescriptors: List<ModuleDescriptor>,
         internal val mapper: ObjCExportMapper,
         val namer: ObjCExportNamer,
+        val stdlibNamer: ObjCExportStdlibNamer,
         val objcGenerics: Boolean,
         problemCollector: ObjCExportProblemCollector
 ) {
@@ -1086,7 +1088,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
     private val protocolForwardDeclarations = linkedSetOf<String>()
     private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
 
-    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics)
+    private val translator = ObjCExportTranslatorImpl(this, mapper, namer, stdlibNamer, problemCollector, objcGenerics)
 
     private val generatedClasses = mutableSetOf<ClassDescriptor>()
     private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
@@ -1152,7 +1154,7 @@ abstract class ObjCExportHeaderGenerator internal constructor(
 
     internal fun buildInterface(): ObjCExportedInterface {
         val headerLines = build()
-        return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, mapper)
+        return ObjCExportedInterface(generatedClasses, extensions, topLevel, headerLines, namer, stdlibNamer, mapper)
     }
 
     fun getExportStubs(): ObjCExportedStubs =
@@ -1222,11 +1224,11 @@ abstract class ObjCExportHeaderGenerator internal constructor(
             packageFragment.getMemberScope().translateClasses()
         }
 
-        extensions.forEach { classDescriptor, declarations ->
+        extensions.forEach { (classDescriptor, declarations) ->
             generateExtensions(classDescriptor, declarations)
         }
 
-        topLevel.forEach { sourceFile, declarations ->
+        topLevel.forEach { (sourceFile, declarations) ->
             generateFile(sourceFile, declarations)
         }
     }

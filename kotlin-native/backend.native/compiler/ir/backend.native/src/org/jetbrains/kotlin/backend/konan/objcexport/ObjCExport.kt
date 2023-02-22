@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.konan.exec.Command
 import org.jetbrains.kotlin.konan.file.createTempFile
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import java.io.File
 
 internal class ObjCExportedInterface(
@@ -26,41 +25,39 @@ internal class ObjCExportedInterface(
         val topLevel: Map<SourceFile, List<CallableMemberDescriptor>>,
         val headerLines: List<String>,
         val namer: ObjCExportNamer,
+        val stdlibNamer: ObjCExportStdlibNamer,
         val mapper: ObjCExportMapper
 )
 
 internal fun produceObjCExportInterface(
         context: PhaseContext,
-        moduleDescriptor: ModuleDescriptor,
-        frontendServices: FrontendServices,
+        exportConfig: ObjCExportGlobalConfig,
+        headerInfo: ObjCExportHeaderInfo,
+        stdlibNamer: ObjCExportStdlibNamer,
 ): ObjCExportedInterface {
-    val config = context.config
-    require(config.target.family.isAppleFamily)
-    require(config.produce == CompilerOutputKind.FRAMEWORK)
-
-    val topLevelNamePrefix = context.objCExportTopLevelNamePrefix
+    require(headerInfo.modules.isNotEmpty())
 
     // TODO: emit RTTI to the same modules as classes belong to.
     //   Not possible yet, since ObjCExport translates the entire "world" API at once
     //   and can't do this per-module, e.g. due to global name conflict resolution.
 
-    val unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport
-    val mapper = ObjCExportMapper(frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
-    val moduleDescriptors = listOf(moduleDescriptor) + moduleDescriptor.getExportedDependencies(config)
-    val objcGenerics = config.configuration.getBoolean(KonanConfigKeys.OBJC_GENERICS)
-    val disableSwiftMemberNameMangling = config.configuration.getBoolean(BinaryOptions.objcExportDisableSwiftMemberNameMangling)
-    val ignoreInterfaceMethodCollisions = config.configuration.getBoolean(BinaryOptions.objcExportIgnoreInterfaceMethodCollisions)
+    val unitSuspendFunctionExport = exportConfig.unitSuspendFunctionExport
+    val mapper = ObjCExportMapper(exportConfig.frontendServices.deprecationResolver, unitSuspendFunctionExport = unitSuspendFunctionExport)
+    val objcGenerics = exportConfig.objcGenerics
+    val disableSwiftMemberNameMangling = exportConfig.disableSwiftMemberNameMangling
+    val ignoreInterfaceMethodCollisions = exportConfig.ignoreInterfaceMethodCollisions
     val namer = ObjCExportNamerImpl(
-            moduleDescriptors.toSet(),
-            moduleDescriptor.builtIns,
+            headerInfo.modules.toSet(),
+            headerInfo.modules.first().builtIns,
+            stdlibNamer,
             mapper,
-            topLevelNamePrefix,
+            headerInfo.topLevelPrefix,
             local = false,
             objcGenerics = objcGenerics,
             disableSwiftMemberNameMangling = disableSwiftMemberNameMangling,
             ignoreInterfaceMethodCollisions = ignoreInterfaceMethodCollisions,
     )
-    val headerGenerator = ObjCExportHeaderGeneratorImpl(context, moduleDescriptors, mapper, namer, objcGenerics)
+    val headerGenerator = ObjCExportHeaderGeneratorImpl(context, headerInfo.modules, mapper, namer, stdlibNamer, objcGenerics)
     headerGenerator.translateModule()
     return headerGenerator.buildInterface()
 }
@@ -107,9 +104,14 @@ internal class ObjCExport(
     val namer: ObjCExportNamer = exportedInterface?.namer ?: ObjCExportNamerImpl(
             setOf(moduleDescriptor),
             moduleDescriptor.builtIns,
+            ObjCExportStdlibNamer.create(topLevelNamePrefix),
             mapper,
             topLevelNamePrefix,
             local = false
+    )
+
+    val stdlibNamer: ObjCExportStdlibNamer = exportedInterface?.stdlibNamer ?: ObjCExportStdlibNamer.create(
+            topLevelNamePrefix
     )
 
     internal fun generate(codegen: CodeGenerator) {
@@ -121,7 +123,7 @@ internal class ObjCExport(
 
         if (!config.isFinalBinary) return // TODO: emit RTTI to the same modules as classes belong to.
 
-        val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper)
+        val objCCodeGenerator = ObjCExportCodeGenerator(codegen, namer, mapper, stdlibNamer)
 
         exportedInterface?.generateWorkaroundForSwiftSR10177(generationState)
 

@@ -6,15 +6,18 @@
 package org.jetbrains.kotlin.backend.konan.driver
 
 import kotlinx.cinterop.usingJvmCInteropCallbacks
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfig
-import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CompilationFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createCompilationFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createObjCExportCompilationFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportGlobalConfig
+import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportHeaderInfo
+import org.jetbrains.kotlin.backend.konan.objcexport.abbreviate
+import org.jetbrains.kotlin.backend.konan.objcexport.objCExportTopLevelNamePrefix
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -69,7 +72,18 @@ internal class DynamicCompilerDriver(
      */
     private fun produceObjCFramework(engine: PhaseEngine<PhaseContext>) {
         val frontendOutput = engine.runFrontend(config, environment) ?: return
-        val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, frontendOutput)
+        val objCExportGlobalConfig = ObjCExportGlobalConfig.create(config, frontendOutput.frontendServices,
+                stdlibPrefix = "Kotlin")
+        val headerInfo = ObjCExportHeaderInfo(
+                topLevelPrefix = abbreviate(config.fullExportedNamePrefix),
+                modules = listOf(frontendOutput.moduleDescriptor) + frontendOutput.moduleDescriptor.getExportedDependencies(config),
+                frameworkName = "",
+                headerName = ""
+        )
+        val objCExportedInterface = engine.runPhase(ProduceObjCExportInterfacePhase, ProduceObjCExportInterfaceInput(
+                globalConfig = objCExportGlobalConfig,
+                headerInfos = listOf(headerInfo),
+        ))
         engine.runPhase(CreateObjCFrameworkPhase, CreateObjCFrameworkInput(
                 frontendOutput.moduleDescriptor,
                 objCExportedInterface,
@@ -164,5 +178,11 @@ internal class DynamicCompilerDriver(
             psiToIrOutput.symbols
     ).also {
         additionalDataSetter(it)
+    }
+
+    private fun readObjCExportConfig(): List<ObjCExportHeaderInfo> {
+        val result = mutableListOf<ObjCExportHeaderInfo>()
+
+        return result
     }
 }

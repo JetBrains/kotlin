@@ -96,12 +96,14 @@ internal class ObjCExportLazyImpl(
 
     private val mapper = ObjCExportMapper(deprecationResolver, local = true, configuration.unitSuspendFunctionExport)
 
-    private val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, local = true)
+    private val stdlibNamer = ObjCExportStdlibNamer.create(namerConfiguration.topLevelNamePrefix)
+    private val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, stdlibNamer, mapper, local = true)
 
     private val translator: ObjCExportTranslator = ObjCExportTranslatorImpl(
             null,
             mapper,
             namer,
+            stdlibNamer,
             problemCollector,
             configuration.objcGenerics
     )

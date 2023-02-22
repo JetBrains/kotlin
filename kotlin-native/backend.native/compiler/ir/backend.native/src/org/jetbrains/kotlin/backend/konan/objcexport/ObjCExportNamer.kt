@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.konan.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.metadata.CurrentKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
@@ -61,8 +60,6 @@ interface ObjCExportNamer {
             get() = false
     }
 
-    val topLevelNamePrefix: String
-
     fun getFileClassName(file: SourceFile): ClassOrProtocolName
     fun getClassOrProtocolName(descriptor: ClassDescriptor): ClassOrProtocolName
     fun getSelector(method: FunctionDescriptor): String
@@ -75,13 +72,6 @@ interface ObjCExportNamer {
     fun getEnumValuesSelector(descriptor: FunctionDescriptor): String
     fun getTypeParameterName(typeParameterDescriptor: TypeParameterDescriptor): String
 
-    fun numberBoxName(classId: ClassId): ClassOrProtocolName
-
-    val kotlinAnyName: ClassOrProtocolName
-    val mutableSetName: ClassOrProtocolName
-    val mutableMapName: ClassOrProtocolName
-    val kotlinNumberName: ClassOrProtocolName
-
     fun getObjectPropertySelector(descriptor: ClassDescriptor): String
     fun getCompanionObjectPropertySelector(descriptor: ClassDescriptor): String
 
@@ -92,17 +82,27 @@ interface ObjCExportNamer {
     }
 }
 
+/**
+ * Namer that is aware about how entities should be prefixed.
+ */
+interface LocalObjCExportNamer : ObjCExportNamer {
+    val topLevelNamePrefix: String
+}
+
 fun createNamer(moduleDescriptor: ModuleDescriptor,
-                topLevelNamePrefix: String): ObjCExportNamer =
-        createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix)
+                topLevelNamePrefix: String,
+                stdlibNamer: ObjCExportStdlibNamer): ObjCExportNamer =
+        createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix, stdlibNamer)
 
 fun createNamer(
         moduleDescriptor: ModuleDescriptor,
         exportedDependencies: List<ModuleDescriptor>,
-        topLevelNamePrefix: String
+        topLevelNamePrefix: String,
+        stdlibNamer: ObjCExportStdlibNamer,
 ): ObjCExportNamer = ObjCExportNamerImpl(
         (exportedDependencies + moduleDescriptor).toSet(),
         moduleDescriptor.builtIns,
+        stdlibNamer,
         ObjCExportMapper(local = true, unitSuspendFunctionExport = UnitSuspendFunctionObjCExport.DEFAULT),
         topLevelNamePrefix,
         local = true
@@ -273,13 +273,15 @@ private class ObjCExportNamingHelper(
 internal class ObjCExportNamerImpl(
         private val configuration: ObjCExportNamer.Configuration,
         builtIns: KotlinBuiltIns,
+        stdlibNamer: ObjCExportStdlibNamer,
         private val mapper: ObjCExportMapper,
         private val local: Boolean
-) : ObjCExportNamer {
+) : LocalObjCExportNamer {
 
     constructor(
             moduleDescriptors: Set<ModuleDescriptor>,
             builtIns: KotlinBuiltIns,
+            stdlibNamer: ObjCExportStdlibNamer,
             mapper: ObjCExportMapper,
             topLevelNamePrefix: String,
             local: Boolean,
@@ -304,6 +306,7 @@ internal class ObjCExportNamerImpl(
                     get() = ignoreInterfaceMethodCollisions
             },
             builtIns,
+            stdlibNamer,
             mapper,
             local
     )
@@ -311,21 +314,6 @@ internal class ObjCExportNamerImpl(
     private val objcGenerics get() = configuration.objcGenerics
     override val topLevelNamePrefix get() = configuration.topLevelNamePrefix
     private val helper = ObjCExportNamingHelper(configuration.topLevelNamePrefix, objcGenerics)
-
-    private fun String.toSpecialStandardClassOrProtocolName() = ObjCExportNamer.ClassOrProtocolName(
-            swiftName = "Kotlin$this",
-            objCName = "${topLevelNamePrefix}$this"
-    )
-
-    override val kotlinAnyName = "Base".toSpecialStandardClassOrProtocolName()
-
-    override val mutableSetName = "MutableSet".toSpecialStandardClassOrProtocolName()
-    override val mutableMapName = "MutableDictionary".toSpecialStandardClassOrProtocolName()
-
-    override fun numberBoxName(classId: ClassId): ObjCExportNamer.ClassOrProtocolName =
-            classId.shortClassName.asString().toSpecialStandardClassOrProtocolName()
-
-    override val kotlinNumberName = "Number".toSpecialStandardClassOrProtocolName()
 
     private val methodSelectors = object : Mapping<FunctionDescriptor, String>() {
 
@@ -682,20 +670,20 @@ internal class ObjCExportNamerImpl(
 
     init {
         if (!local) {
-            forceAssignPredefined(builtIns)
+            forceAssignPredefined(builtIns, stdlibNamer)
         }
     }
 
-    private fun forceAssignPredefined(builtIns: KotlinBuiltIns) {
+    private fun forceAssignPredefined(builtIns: KotlinBuiltIns, stdlibNamer: ObjCExportStdlibNamer) {
         val any = builtIns.any
 
         val predefinedClassNames = mapOf(
-                builtIns.any to kotlinAnyName,
-                builtIns.mutableSet to mutableSetName,
-                builtIns.mutableMap to mutableMapName
+                builtIns.any to stdlibNamer.kotlinAnyName,
+                builtIns.mutableSet to stdlibNamer.mutableSetName,
+                builtIns.mutableMap to stdlibNamer.mutableMapName
         )
 
-        predefinedClassNames.forEach { descriptor, name ->
+        predefinedClassNames.forEach { (descriptor, name) ->
             objCClassNames.forceAssign(descriptor, name.objCName)
             swiftClassAndProtocolNames.forceAssign(descriptor, name.swiftName)
         }
@@ -706,11 +694,11 @@ internal class ObjCExportNamerImpl(
                         NoLookupLocation.FROM_BACKEND
                 ).single()
 
-        Predefined.anyMethodSelectors.forEach { name, selector ->
+        Predefined.anyMethodSelectors.forEach { (name, selector) ->
             methodSelectors.forceAssign(any.method(name), selector)
         }
 
-        Predefined.anyMethodSwiftNames.forEach { name, swiftName ->
+        Predefined.anyMethodSwiftNames.forEach { (name, swiftName) ->
             methodSwiftNames.forceAssign(any.method(name), swiftName)
         }
     }

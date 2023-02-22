@@ -37,15 +37,15 @@ internal object CustomTypeMappers {
         result += Collection(list, "NSArray")
         result += Collection(mutableList, "NSMutableArray")
         result += Collection(set, "NSSet")
-        result += Collection(mutableSet, { namer.mutableSetName.objCName })
+        result += Collection(mutableSet, { stdlibNamer.mutableSetName.objCName })
         result += Collection(map, "NSDictionary")
-        result += Collection(mutableMap, { namer.mutableMapName.objCName })
+        result += Collection(mutableMap, { stdlibNamer.mutableMapName.objCName })
 
         NSNumberKind.values().forEach {
             // TODO: NSNumber seem to have different equality semantics.
             val classId = it.mappedKotlinClassId
             if (classId != null) {
-                result += Simple(classId, { namer.numberBoxName(classId).objCName })
+                result += Simple(classId, { stdlibNamer.numberBoxName(classId).objCName })
             }
 
         }

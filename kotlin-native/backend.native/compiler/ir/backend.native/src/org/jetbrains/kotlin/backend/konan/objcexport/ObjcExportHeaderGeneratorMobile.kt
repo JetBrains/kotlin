@@ -10,10 +10,11 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
         moduleDescriptors: List<ModuleDescriptor>,
         mapper: ObjCExportMapper,
         namer: ObjCExportNamer,
+        stdlibNamer: ObjCExportStdlibNamer,
         problemCollector: ObjCExportProblemCollector,
         objcGenerics: Boolean,
         private val restrictToLocalModules: Boolean
-) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, objcGenerics, problemCollector) {
+) : ObjCExportHeaderGenerator(moduleDescriptors, mapper, namer, stdlibNamer, objcGenerics, problemCollector) {
 
     companion object {
         fun createInstance(
@@ -26,12 +27,14 @@ class ObjcExportHeaderGeneratorMobile internal constructor(
                 restrictToLocalModules: Boolean = false): ObjCExportHeaderGenerator {
             val mapper = ObjCExportMapper(deprecationResolver, local, configuration.unitSuspendFunctionExport)
             val namerConfiguration = createNamerConfiguration(configuration)
-            val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, mapper, local)
+            val stdlibNamer = ObjCExportStdlibNamer.create(namerConfiguration.topLevelNamePrefix)
+            val namer = ObjCExportNamerImpl(namerConfiguration, builtIns, stdlibNamer, mapper, local)
 
             return ObjcExportHeaderGeneratorMobile(
                 moduleDescriptors,
                 mapper,
                 namer,
+                stdlibNamer,
                 problemCollector,
                 configuration.objcGenerics,
                 restrictToLocalModules

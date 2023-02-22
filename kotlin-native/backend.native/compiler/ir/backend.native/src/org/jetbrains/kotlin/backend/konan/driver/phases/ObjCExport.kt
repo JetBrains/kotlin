@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.backend.konan.OutputFiles
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
+import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
 import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
@@ -15,15 +15,34 @@ import org.jetbrains.kotlin.backend.konan.objcexport.produceObjCExportInterface
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import java.io.File
 
+internal data class ProduceObjCExportInterfaceInput(
+        val globalConfig: ObjCExportGlobalConfig,
+        val headerInfos: List<ObjCExportHeaderInfo>,
+)
+
 /**
  * Create internal representation of Objective-C wrapper.
  */
-internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<PhaseContext, FrontendPhaseOutput.Full, ObjCExportedInterface>(
+internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<PhaseContext, ProduceObjCExportInterfaceInput, ObjCExportedInterface>(
         "ObjCExportInterface",
         "Objective-C header generation",
         outputIfNotEnabled = { _, _, _, _ -> error("Cannot disable `ObjCExportInterface` phase when producing ObjC framework") }
 ) { context, input ->
-    produceObjCExportInterface(context, input.moduleDescriptor, input.frontendServices)
+    require(input.headerInfos.size == 1)
+    val stdlibNamer = ObjCExportStdlibNamer.create(input.globalConfig.stdlibPrefix)
+    produceObjCExportInterface(context, input.globalConfig, input.headerInfos.first(), stdlibNamer)
+}
+
+internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompilerPhase<PhaseContext, ProduceObjCExportInterfaceInput, List<ObjCExportedInterface>>(
+        "ObjCExportInterface",
+        "Objective-C header generation",
+        outputIfNotEnabled = { _, _, _, _ -> error("Cannot disable `ObjCExportInterface` phase when producing ObjC framework") }
+) { context, input ->
+    val stdlibNamer = ObjCExportStdlibNamer.create(input.globalConfig.stdlibPrefix)
+    val objcInterfaces = input.headerInfos.map { headerInfo ->
+        produceObjCExportInterface(context, input.globalConfig, headerInfo, stdlibNamer)
+    }
+    objcInterfaces
 }
 
 internal data class CreateObjCFrameworkInput(
