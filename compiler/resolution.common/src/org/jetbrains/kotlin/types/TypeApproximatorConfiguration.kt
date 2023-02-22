@@ -27,6 +27,12 @@ open class TypeApproximatorConfiguration {
     open val localTypes = false
 
     /**
+     * Is only expected to be true for FinalApproximationAfterResolutionAndInference
+     * But it's only used for K2 to reproduce K1 behavior for the approximation of resolved calls
+     */
+    open val convertToNonRawVersionAfterApproximationInK2 get() = false
+
+    /**
      * Whether to approximate anonymous type. This flag does not have any effect if `localTypes` is true because all anonymous types are
      * local.
      */
@@ -88,6 +94,8 @@ open class TypeApproximatorConfiguration {
         AbstractCapturedTypesApproximation(CaptureStatus.FROM_EXPRESSION) {
         override val integerLiteralConstantType: Boolean get() = true
         override val intersectionTypesInContravariantPositions: Boolean get() = true
+
+        override val convertToNonRawVersionAfterApproximationInK2: Boolean get() = true
     }
 
     object TypeArgumentApproximation : AbstractCapturedTypesApproximation(null) {

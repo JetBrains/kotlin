@@ -158,6 +158,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return this is RawType
     }
 
+    override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
+        error("Is not expected to be called in K1")
+    }
+
     override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {
         require(this is FlexibleType, this::errorMessage)
         return this.upperBound

@@ -312,6 +312,11 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      */
     fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean
 
+    /**
+     * It's only relevant for K2 (and is not expected to be implemented properly in other contexts)
+     */
+    fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker
+
     fun createCapturedStarProjectionForSelfType(
         typeVariable: TypeVariableTypeConstructorMarker,
         typesForRecursiveTypeParameters: List<KotlinTypeMarker>,
@@ -357,6 +362,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker?
 
     fun KotlinTypeMarker.isRawType(): Boolean
+
     fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker
 
     fun FlexibleTypeMarker.lowerBound(): SimpleTypeMarker

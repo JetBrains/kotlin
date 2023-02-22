@@ -558,6 +558,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = true
 
+    override fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker {
+        require(this is ConeKotlinType)
+        return this.convertToNonRawVersion()
+    }
+
     override fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker? =
         if (baseType is ConeLookupTagBasedType) createSubstitutionForSupertype(baseType, session) else null
 

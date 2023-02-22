@@ -19403,6 +19403,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("rawTypesFromCaptured.kt")
+            public void testRawTypesFromCaptured() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/rawTypesFromCaptured.kt");
+            }
+
+            @Test
+            @TestMetadata("rawTypesFromCapturedOriginal.kt")
+            public void testRawTypesFromCapturedOriginal() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/rawTypesFromCapturedOriginal.kt");
+            }
+
+            @Test
             @TestMetadata("rawUpperBounds.kt")
             public void testRawUpperBounds() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/rawUpperBounds.kt");
