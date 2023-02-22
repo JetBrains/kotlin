@@ -134,24 +134,26 @@ internal fun annotateByKtType(
     psiType: PsiType,
     ktType: KtType,
     psiContext: PsiTypeElement,
+    modifierListAsParent: PsiModifierList?,
 ): PsiType {
-
-    fun KtType.getAnnotationsSequence(): Sequence<List<PsiAnnotation>> =
-        sequence {
-            yield(annotations.map { annoApp ->
+    fun KtType.getAnnotationsSequence(modifierList: PsiModifierList?): Sequence<List<PsiAnnotation>> = sequence {
+        yield(
+            annotations.map { annoApp ->
                 SymbolLightSimpleAnnotation(
                     annoApp.classId?.asFqNameString(),
-                    psiContext,
+                    modifierList ?: psiContext,
                     annoApp.arguments,
-                    annoApp.psi
+                    annoApp.psi,
                 )
-            })
-            (this@getAnnotationsSequence as? KtNonErrorClassType)?.ownTypeArguments?.forEach { typeProjection ->
-                typeProjection.type?.let {
-                    yieldAll(it.getAnnotationsSequence())
-                }
+            }
+        )
+
+        (this@getAnnotationsSequence as? KtNonErrorClassType)?.ownTypeArguments?.forEach { typeProjection ->
+            typeProjection.type?.let {
+                yieldAll(it.getAnnotationsSequence(modifierList = null))
             }
         }
+    }
 
-    return psiType.annotateByTypeAnnotationProvider(ktType.getAnnotationsSequence())
+    return psiType.annotateByTypeAnnotationProvider(ktType.getAnnotationsSequence(modifierListAsParent))
 }

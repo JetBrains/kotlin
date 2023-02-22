@@ -21,8 +21,8 @@ abstract class AbstractSymbolLightClassesParentingTestByFqName(
         val fqName = LightClassTestCommon.fqNameInTestDataFile(testDataPath.toFile())
 
         val ktFile = ktFiles.first()
-        val lightClass = findLightClass(fqName, ktFile.project)
+        val lightClass = findLightClass(fqName, ktFile.project) ?: return
 
-        lightClass?.accept(createLightElementsVisitor(testServices.assertions))
+        lightClass.accept(createLightElementsVisitor(module.directives, testServices.assertions))
     }
 }

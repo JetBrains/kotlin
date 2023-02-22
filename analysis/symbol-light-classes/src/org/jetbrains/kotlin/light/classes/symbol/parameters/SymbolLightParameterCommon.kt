@@ -83,7 +83,7 @@ internal abstract class SymbolLightParameterCommon(
                     allowErrorTypes = true,
                     typeMappingMode
                 )?.let {
-                    annotateByKtType(it.type, ktType, it)
+                    annotateByKtType(it.type, ktType, it, modifierList)
                 }
             } ?: nonExistentType()
 

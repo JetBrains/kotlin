@@ -193,7 +193,7 @@ internal class SymbolLightSimpleMethod(
                 KtTypeMappingMode.RETURN_TYPE,
                 this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
             )?.let {
-                annotateByKtType(it.type, ktType, it)
+                annotateByKtType(it.type, ktType, it, modifierList)
             }
         } ?: nonExistentType()
     }

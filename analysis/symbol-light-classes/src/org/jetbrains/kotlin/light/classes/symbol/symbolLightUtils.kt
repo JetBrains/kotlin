@@ -48,7 +48,7 @@ internal fun KtAnalysisSession.mapType(
         mode,
     )
     return (psiTypeElement?.type as? PsiClassType)?.let {
-        annotateByKtType(it, type, psiTypeElement) as? PsiClassType
+        annotateByKtType(it, type, psiTypeElement, modifierListAsParent = null) as? PsiClassType
     }
 }
 

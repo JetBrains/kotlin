@@ -84,7 +84,7 @@ internal class SymbolLightParameterForReceiver private constructor(
         withReceiverSymbol { receiver ->
             val ktType = receiver.type
             ktType.asPsiTypeElement(this, allowErrorTypes = true)?.let {
-                annotateByKtType(it.type, ktType, it)
+                annotateByKtType(it.type, ktType, it, modifierList)
             }
         } ?: nonExistentType()
     }
