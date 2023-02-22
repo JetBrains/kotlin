@@ -129,3 +129,6 @@ fun openNonInlineToInlineFunctionWithDelegationInOpenClassImpl(oci: OpenClassImp
 fun newInlineFunction1InOpenClassImpl(oci: OpenClassImpl, x: Int): String = oci.newInlineFunction1(x)
 fun newInlineFunction2InOpenClassImpl(oci: OpenClassImpl, x: Int): String = oci.newInlineFunction2(x)
 fun newNonInlineFunctionInOpenClassImpl(oci: OpenClassImpl, x: Int): String = oci.newNonInlineFunction(x)
+
+fun inlineLambdaToNoinlineLambda(x: Int): String = Functions.inlineLambdaToNoinlineLambda(x) { if (it > 0) it.toString() else return "inlineLambdaToNoinlineLambda($x)" }
+fun inlineLambdaToCrossinlineLambda(x: Int): String = Functions.inlineLambdaToCrossinlineLambda(x) { if (it > 0) it.toString() else return "inlineLambdaToCrossinlineLambda($x)" }

@@ -54,6 +54,9 @@ object Functions {
     fun suspendToNonSuspendFunction(x: Int): Int = -x
     suspend fun nonSuspendToSuspendFunction(x: Int): Int = wrapCoroutine { -x }
 
+    inline fun inlineLambdaToNoinlineLambda(x: Int, noinline lambda: (Int) -> String): String = "Functions.inlineLambdaToNoinlineLambda($x) { ${lambda(x * 2)} }"
+    inline fun inlineLambdaToCrossinlineLambda(x: Int, crossinline lambda: (Int) -> String): String = "Functions.inlineLambdaToCrossinlineLambda($x) { ${lambda(x * 2)} }"
+
     fun removedDefaultValue(a: Int, b: Int): Int = a + b
 }
 

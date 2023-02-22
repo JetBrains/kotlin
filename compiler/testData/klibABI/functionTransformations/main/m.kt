@@ -61,4 +61,9 @@ fun box() = abiTest {
     expectSuccess("OpenClassImpl.newInlineFunction1(8)") { newInlineFunction1InOpenClassImpl(oci, 8) }
     expectSuccess("OpenClassImpl.newInlineFunction2(9)") { newInlineFunction2InOpenClassImpl(oci, 9) }
     expectSuccess("OpenClassImpl.newNonInlineFunction(10)") { newNonInlineFunctionInOpenClassImpl(oci, 10) }
+
+    expectSuccess("Functions.inlineLambdaToNoinlineLambda(3) { 6 }") { inlineLambdaToNoinlineLambda(3) }
+    expectFailure(linkage("Illegal non-local return: The return target is function 'inlineLambdaToNoinlineLambda' while only the following return targets are allowed: lambda in function 'inlineLambdaToNoinlineLambda'")) { inlineLambdaToNoinlineLambda(-3) }
+    expectSuccess("Functions.inlineLambdaToCrossinlineLambda(5) { 10 }") { inlineLambdaToCrossinlineLambda(5) }
+    expectFailure(linkage("Illegal non-local return: The return target is function 'inlineLambdaToCrossinlineLambda' while only the following return targets are allowed: lambda in function 'inlineLambdaToCrossinlineLambda'")) { inlineLambdaToCrossinlineLambda(-5) }
 }
