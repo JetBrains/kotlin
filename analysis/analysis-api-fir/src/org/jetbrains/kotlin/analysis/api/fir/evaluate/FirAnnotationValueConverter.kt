@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.evaluate
 
 import org.jetbrains.kotlin.analysis.api.annotations.*
-import org.jetbrains.kotlin.analysis.api.base.KtConstantValueFactory
+import org.jetbrains.kotlin.analysis.api.base.KtConstantValue
 import org.jetbrains.kotlin.analysis.api.components.KtConstantEvaluationMode
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
@@ -23,8 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
-import org.jetbrains.kotlin.fir.types.ConeErrorType
-import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -44,7 +43,27 @@ internal object FirAnnotationValueConverter {
         }
 
     private fun <T> FirConstExpression<T>.convertConstantExpression(): KtConstantAnnotationValue? {
-        val constantValue = KtConstantValueFactory.createConstantValue(value, psi as? KtElement) ?: return null
+        val expression = psi as? KtElement
+        val type = (typeRef as? FirResolvedTypeRef)?.type
+        val constantValue = when {
+            value == null -> KtConstantValue.KtNullConstantValue(expression)
+            type == null -> return null
+            type.isBoolean -> KtConstantValue.KtBooleanConstantValue(value as Boolean, expression)
+            type.isChar -> KtConstantValue.KtCharConstantValue((value as? Char) ?: (value as Number).toInt().toChar(), expression)
+            type.isByte -> KtConstantValue.KtByteConstantValue((value as Number).toByte(), expression)
+            type.isUByte -> KtConstantValue.KtUnsignedByteConstantValue((value as Number).toByte().toUByte(), expression)
+            type.isShort -> KtConstantValue.KtShortConstantValue((value as Number).toShort(), expression)
+            type.isUShort -> KtConstantValue.KtUnsignedShortConstantValue((value as Number).toShort().toUShort(), expression)
+            type.isInt -> KtConstantValue.KtIntConstantValue((value as Number).toInt(), expression)
+            type.isUInt -> KtConstantValue.KtUnsignedIntConstantValue((value as Number).toInt().toUInt(), expression)
+            type.isLong -> KtConstantValue.KtLongConstantValue((value as Number).toLong(), expression)
+            type.isULong -> KtConstantValue.KtUnsignedLongConstantValue((value as Number).toLong().toULong(), expression)
+            type.isString -> KtConstantValue.KtStringConstantValue(value.toString(), expression)
+            type.isFloat -> KtConstantValue.KtFloatConstantValue((value as Number).toFloat(), expression)
+            type.isDouble -> KtConstantValue.KtDoubleConstantValue((value as Number).toDouble(), expression)
+            else -> return null
+        }
+
         return KtConstantAnnotationValue(constantValue)
     }
 
