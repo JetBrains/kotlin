@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.decompiled
 
-import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesParentingTest
+import org.jetbrains.kotlin.light.classes.symbol.base.AbstractSymbolLightClassesParentingTestByFqName
 import org.jetbrains.kotlin.light.classes.symbol.decompiled.test.configurators.AnalysisApiSymbolLightClassesDecompiledTestConfigurator
 
-abstract class AbstractSymbolLightClassesParentingForLibraryTest :
-    AbstractSymbolLightClassesParentingTest(
+abstract class AbstractSymbolLightClassesParentingByFqNameForLibraryTest :
+    AbstractSymbolLightClassesParentingTestByFqName(
         AnalysisApiSymbolLightClassesDecompiledTestConfigurator,
         EXTENSIONS.LIB_JAVA,
         stopIfCompilationErrorDirectivePresent = true
