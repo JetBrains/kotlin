@@ -19,11 +19,17 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.org.objectweb.asm.Type
 
 object ArraySize : IntrinsicMethod() {
 
     override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen): IrIntrinsicFunction {
-        return IrIntrinsicFunction.create(expression, signature, classCodegen) {
+        val argTypes = arrayListOf<Type>().apply {
+            add(classCodegen.typeMapper.mapType(expression.dispatchReceiver!!.type))
+            val signatureMapped = classCodegen.methodSignatureMapper.mapSignatureSkipGeneric(expression.symbol.owner)
+            addAll(signatureMapped.asmMethod.argumentTypes)
+        }
+        return IrIntrinsicFunction.create(expression, signature, classCodegen, argsTypes = argTypes) {
             it.arraylength()
         }
     }
