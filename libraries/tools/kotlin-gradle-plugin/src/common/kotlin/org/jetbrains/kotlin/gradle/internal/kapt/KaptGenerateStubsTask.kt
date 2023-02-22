@@ -108,6 +108,10 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             )
         )
 
+        // Workaround for freeCompiler args duplication when they were configured for both this task
+        // and linked KotlinCompile task with the same values. For now linked KotlinCompile task
+        // freeCompilerArgs is used as convention for this task freeCompilerArgs
+        args.freeArgs = emptyList()
         // Also use KotlinOptions configuration that was directly set to this task
         // as 'compileKotlinArgumentsContributor' has KotlinOptions from linked KotlinCompile task
         (compilerOptions as KotlinJvmCompilerOptionsDefault).fillCompilerArguments(args)

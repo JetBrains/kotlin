@@ -556,7 +556,7 @@ open class Kapt3IT : Kapt3BaseIT() {
                 assertKaptSuccessful()
                 val regex = "(?m)^.*Kotlin compiler args.*-P plugin:org\\.jetbrains\\.kotlin\\.kapt3.*$".toRegex()
                 val kaptArgs = regex.find(output)?.value ?: error("Kapt compiler arguments are not found!")
-                assert(kaptArgs.contains(arg)) { "Kapt compiler arguments should contain '$arg'" }
+                assert(kaptArgs.contains(arg)) { "Kapt compiler arguments should contain '$arg': $kaptArgs" }
             }
         }
     }
@@ -1063,6 +1063,61 @@ open class Kapt3IT : Kapt3BaseIT() {
             build("build") {
                 assertKaptSuccessful()
                 assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+            }
+        }
+    }
+
+    @DisplayName("KT-55452: KaptGenerateStubs task compiler options are not duplicated")
+    @GradleTest
+    fun testKaptGenerateStubsCompilerOptionsDup(gradleVersion: GradleVersion) {
+        project(
+            "simple".withPrefix,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8
+                |        freeCompilerArgs.addAll([
+                |            "-P",
+                |            "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true",
+                |            "-P",
+                |            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
+                |            project.buildDir.absolutePath + "/compose_metrics"
+                |        ])
+                |    }
+                |}
+                |
+                """.trimMargin()
+            )
+
+            build(":kaptGenerateStubsKotlin") {
+                val compilerArguments = output
+                    .lineSequence()
+                    .first { it.contains("Kotlin compiler args:") }
+                    .substringAfter("Kotlin compiler args:")
+                    .split(" ")
+
+                val pOption = compilerArguments.filter { it == "-P" }.size
+                // 2 from freeArgs and 1 for kapt itself
+                assert(pOption <= 3) {
+                    printBuildOutput()
+                    "KaptGenerateStubs task compiler arguments contains $pOption times '-P' option: ${compilerArguments.joinToString("\n")}"
+                }
+
+                val composeSuppressOption = compilerArguments
+                    .filter {
+                        it == "plugin:androidx.compose.compiler.plugins.kotlin:suppressKotlinVersionCompatibilityCheck=true"
+                    }
+                    .size
+                assert(composeSuppressOption == 1) {
+                    printBuildOutput()
+                    "KaptGenerateStubs task compiler arguments contains $composeSuppressOption times option to suppress compose warning:" +
+                            " ${compilerArguments.joinToString("\n")}"
+                }
             }
         }
     }

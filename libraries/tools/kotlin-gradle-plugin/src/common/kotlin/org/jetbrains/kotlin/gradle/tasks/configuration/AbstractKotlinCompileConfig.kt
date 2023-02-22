@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
-import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoProvider
+import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
@@ -46,6 +46,9 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
         configureTaskProvider { taskProvider ->
             project.runOnceAfterEvaluated("apply properties and language settings to ${taskProvider.name}") {
                 taskProvider.configure {
+                    // KaptGenerateStubs will receive value from linked KotlinCompile task
+                    if (it is KaptGenerateStubsTask) return@configure
+
                     applyLanguageSettingsToCompilerOptions(
                         languageSettings.get(), (it as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>).compilerOptions
                     )
