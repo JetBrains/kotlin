@@ -1,8 +1,10 @@
-// FIR_DISABLE_LAZY_RESOLVE_CHECKS
 // DUMP_IR
 // WITH_STDLIB
 // WITH_REFLECT
 // FULL_JDK
+
+// ignored, see KT-56861, looks like the bytecode for the generated constructor is invalid and blackbox test fails on runtime
+// IGNORE_BACKEND_K2: JVM_IR
 
 // MODULE: a
 import org.jetbrains.kotlin.fir.plugin.AllPropertiesConstructor
