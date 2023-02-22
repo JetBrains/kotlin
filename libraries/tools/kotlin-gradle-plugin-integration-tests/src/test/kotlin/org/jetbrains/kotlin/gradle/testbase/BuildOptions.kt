@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMEN
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.report.BuildReportType
-import org.jetbrains.kotlin.gradle.suppressDeprecationWarningsOn
-import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.junit.jupiter.api.condition.OS
 import java.util.*
 
@@ -38,6 +36,7 @@ data class BuildOptions(
     val buildReport: List<BuildReportType> = emptyList(),
     val useFir: Boolean = false,
     val usePreciseJavaTracking: Boolean? = null,
+    val languageVersion: String? = null,
     val freeArgs: List<String> = emptyList(),
     val statisticsForceValidation: Boolean = true,
     val usePreciseOutputsBackup: Boolean? = null,
@@ -142,6 +141,10 @@ data class BuildOptions(
 
         if (useFir) {
             arguments.add("-Pkotlin.useK2=true")
+        }
+
+        if (languageVersion != null) {
+            arguments.add("-Pkotlin.internal.languageVersion=$languageVersion")
         }
 
         if (usePreciseJavaTracking != null) {

@@ -195,6 +195,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val useK2: Boolean?
         get() = booleanProperty("kotlin.useK2")
 
+    val languageVersion: String?
+        get() = property("kotlin.internal.languageVersion")
+
     val keepMppDependenciesIntactInPoms: Boolean?
         get() = booleanProperty("kotlin.mpp.keepMppDependenciesIntactInPoms")
 
