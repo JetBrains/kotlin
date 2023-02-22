@@ -625,7 +625,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val assignmentLeftArgument = buildDesugaredAssignmentValueReferenceExpression {
                 expressionRef = FirExpressionRef<FirExpression>().apply { bind(unwrappedLeftArgument) }
                 source = leftArgument.source?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
-            }.also { storeTypeFromCallee(it) }
+            }
 
             val assignment =
                 buildVariableAssignment {
@@ -861,7 +861,19 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression,
         data: ResolutionMode
     ): FirStatement {
-        storeTypeFromCallee(desugaredAssignmentValueReferenceExpression)
+        val referencedExpression = desugaredAssignmentValueReferenceExpression.expressionRef.value
+        if (referencedExpression is FirQualifiedAccessExpression) {
+            val typeFromCallee = components.typeFromCallee(referencedExpression)
+            desugaredAssignmentValueReferenceExpression.resultType = typeFromCallee.withReplacedConeType(
+                session.typeApproximator.approximateToSubType(
+                    typeFromCallee.type,
+                    TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+                )
+            )
+        } else {
+            desugaredAssignmentValueReferenceExpression.resultType =
+                referencedExpression.resultType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
+        }
         return desugaredAssignmentValueReferenceExpression
     }
 
@@ -1539,19 +1551,4 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         )
     }
 
-    private fun storeTypeFromCallee(expression: FirDesugaredAssignmentValueReferenceExpression) {
-        val referencedExpression = expression.expressionRef.value
-
-        if (referencedExpression is FirQualifiedAccessExpression) {
-            val typeFromCallee = components.typeFromCallee(referencedExpression)
-            expression.resultType = typeFromCallee.withReplacedConeType(
-                session.typeApproximator.approximateToSubType(
-                    typeFromCallee.type,
-                    TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-                )
-            )
-        } else {
-            expression.resultType = referencedExpression.resultType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
-        }
-    }
 }
