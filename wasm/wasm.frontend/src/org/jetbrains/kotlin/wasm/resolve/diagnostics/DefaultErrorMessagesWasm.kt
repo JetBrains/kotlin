@@ -25,6 +25,11 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         put(ErrorsWasm.WASM_IMPORT_UNSUPPORTED_RETURN_TYPE, "Unsupported @WasmImport return type {0}", Renderers.RENDER_TYPE)
 
         put(ErrorsWasm.WRONG_JS_FUN_TARGET, "Only top-level external functions can be implemented using @JsFun")
+
+        put(
+            ErrorsWasm.JSCODE_WRONG_CONTEXT,
+            "Calls to js(code) should be a single expression inside a top-level function body or a property initializer in Kotlin/Wasm"
+        )
     }
 }
 
