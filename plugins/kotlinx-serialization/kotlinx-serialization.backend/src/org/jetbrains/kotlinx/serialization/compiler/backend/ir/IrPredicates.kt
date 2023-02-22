@@ -63,7 +63,17 @@ internal fun IrClass.findPluginGeneratedMethod(name: String, afterK2: Boolean): 
     }
 }
 
-internal fun IrClass.isEnumWithLegacyGeneratedSerializer(context: SerializationBaseContext): Boolean = isInternallySerializableEnum() && !context.runtimeHasEnumSerializerFactoryFunctions
+internal fun IrClass.isEnumWithLegacyGeneratedSerializer(): Boolean {
+    return findEnumLegacySerializer() != null
+}
+
+internal fun IrClass.findEnumLegacySerializer(): IrClass? {
+    return if (kind == ClassKind.ENUM_CLASS) {
+        declarations.filterIsInstance<IrClass>().singleOrNull { it.name == SerialEntityNames.SERIALIZER_CLASS_NAME }
+    } else {
+        null
+    }
+}
 
 internal val IrClass.isSealedSerializableInterface: Boolean
     get() = kind == ClassKind.INTERFACE && modality == Modality.SEALED && hasSerializableOrMetaAnnotation()
@@ -102,9 +112,9 @@ internal val IrClass.isSerialInfoAnnotation: Boolean
 internal val IrClass.isInheritableSerialInfoAnnotation: Boolean
     get() = annotations.hasAnnotation(SerializationAnnotations.inheritableSerialInfoFqName)
 
-internal fun IrClass.shouldHaveGeneratedSerializer(context: SerializationBaseContext): Boolean
-    = (isInternalSerializable && (modality == Modality.FINAL || modality == Modality.OPEN))
-            || isEnumWithLegacyGeneratedSerializer(context)
+internal fun IrClass.shouldHaveGeneratedSerializer(): Boolean =
+    (isInternalSerializable && (modality == Modality.FINAL || modality == Modality.OPEN))
+            || isEnumWithLegacyGeneratedSerializer()
 
 internal val IrClass.shouldHaveGeneratedMethodsInCompanion: Boolean
     get() = this.isSerializableObject || this.isSerializableEnum() || (this.kind == ClassKind.CLASS && hasSerializableOrMetaAnnotation()) || this.isSealedSerializableInterface

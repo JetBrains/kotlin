@@ -127,9 +127,13 @@ fun findTypeSerializer(context: SerializationBaseContext, type: IrType): IrClass
 
 fun findEnumTypeSerializer(context: SerializationBaseContext, type: IrType): IrClassSymbol? {
     val classSymbol = type.classOrNull?.owner ?: return null
-    return if (classSymbol.kind == ClassKind.ENUM_CLASS && !classSymbol.isEnumWithLegacyGeneratedSerializer(context))
-        context.referenceClassId(enumSerializerId)
-    else null
+
+    // in any case, the function returns the serializer for the enum
+    if (classSymbol.kind != ClassKind.ENUM_CLASS) return null
+
+    val legacySerializer = classSymbol.findEnumLegacySerializer()
+    // $serializer for legacy compiled enums, or EnumSerializer for factories
+    return legacySerializer?.symbol ?: context.referenceClassId(enumSerializerId)
 }
 
 internal fun IrClass?.classSerializer(context: SerializationBaseContext): IrClassSymbol? = this?.let {
@@ -140,7 +144,7 @@ internal fun IrClass?.classSerializer(context: SerializationBaseContext): IrClas
     // can infer @Poly?
     polymorphicSerializerIfApplicableAutomatically(context)?.let { return it }
     // default serializable?
-    if (shouldHaveGeneratedSerializer(context)) {
+    if (shouldHaveGeneratedSerializer()) {
         // $serializer nested class
         return this.declarations
             .filterIsInstance<IrClass>()
@@ -237,7 +241,7 @@ internal fun SerializationBaseContext.getSerializableClassDescriptorBySerializer
         )
     ) return null
     val classDescriptor = (serializer.parent as? IrClass) ?: return null
-    if (!classDescriptor.shouldHaveGeneratedSerializer(this)) return null
+    if (!classDescriptor.shouldHaveGeneratedSerializer()) return null
     return classDescriptor
 }
 
