@@ -5,25 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.providers.impl
 
+import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileVisitor
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
+import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
 public class KotlinStaticDeclarationProvider internal constructor(
@@ -233,26 +237,25 @@ public class KotlinStaticDeclarationProviderFactory(
         val recorder = KtDeclarationRecorder()
 
         // Indexing built-ins
-        fun indexStub(stub: StubElement<*>) {
-            when (stub) {
-                is KotlinClassStubImpl -> {
-                    addToClassMap(stub.psi)
+        fun indexDeclaration(psi: PsiElement) {
+            when (psi) {
+                is KtClassOrObject -> {
+                    addToClassMap(psi)
                     // member functions and properties
-                    stub.childrenStubs.forEach(::indexStub)
+                    psi.declarations.forEach(::indexDeclaration)
                 }
-                is KotlinTypeAliasStubImpl -> addToTypeAliasMap(stub.psi)
-                is KotlinFunctionStubImpl -> addToFunctionMap(stub.psi)
-                is KotlinPropertyStubImpl -> addToPropertyMap(stub.psi)
+                is KtTypeAlias -> addToTypeAliasMap(psi)
+                is KtNamedFunction -> addToFunctionMap(psi)
+                is KtProperty -> addToPropertyMap(psi)
             }
         }
 
-        loadBuiltIns().forEach { ktFileStub ->
-            val ktFile: KtFile = ktFileStub.psi
+        fun processFile(ktFile: KtFile) {
             addToFacadeFileMap(ktFile)
 
-            val partNames = ktFileStub.facadePartSimpleNames
+            val partNames = (ktFile.stub as? KotlinFileStubImpl)?.facadePartSimpleNames
             if (partNames != null) {
-                val packageFqName = ktFileStub.getPackageFqName()
+                val packageFqName = ktFile.packageFqName
                 for (partName in partNames) {
                     val multiFileClassPartFqName: FqName = packageFqName.child(Name.identifier(partName))
                     index.multiFileClassPartMap.computeIfAbsent(multiFileClassPartFqName) { mutableSetOf() }.add(ktFile)
@@ -260,10 +263,10 @@ public class KotlinStaticDeclarationProviderFactory(
             }
 
             // top-level functions and properties, built-in classes
-            ktFileStub.childrenStubs.forEach(::indexStub)
+            ktFile.declarations.forEach(::indexDeclaration)
         }
 
-        loadBuiltIns().forEach { processStub(it) }
+        loadBuiltIns().forEach { processFile(it.psi) }
 
         val binaryClassCache = ClsKotlinBinaryClassCache.getInstance()
         for (root in additionalRoots) {
@@ -272,13 +275,8 @@ public class KotlinStaticDeclarationProviderFactory(
                     if (!file.isDirectory && file.fileType == JavaClassFileType.INSTANCE) {
                         val fileContent = FileContentImpl.createByFile(file)
                         if (!binaryClassCache.isKotlinJvmCompiledFile(file, fileContent.content)) return true
-                        val stub = KotlinClsStubBuilder().buildFileStub(fileContent) as? KotlinFileStubImpl ?: return true
-                        val fakeFile = object : KtFile(KtClassFileViewProvider(psiManager, fileContent.file), isCompiled = true) {
-                            override fun getStub() = stub
-                            override fun isPhysical() = false
-                        }
-                        stub.psi = fakeFile
-                        processStub(stub)
+                        val stub = psiManager.findViewProvider(file)?.allFiles?.singleOrNull() as? KtClsFile ?: return true
+                        processFile(stub)
                     }
                     return true
                 }

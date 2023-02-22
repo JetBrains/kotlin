@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.lifetime.KtDefaultLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementDefaultLifetimeTokenProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.providers.*
@@ -46,7 +48,10 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
         project.apply {
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(allKtFiles))
-            registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(project, allKtFiles))
+            registerService(
+                KotlinDeclarationProviderFactory::class.java,
+                KotlinStaticDeclarationProviderFactory(project, allKtFiles, additionalRoots = roots)
+            )
             registerService(
                 KotlinPackageProviderByKtModule::class.java,
                 KotlinStaticPackageProviderByKtModule(project, moduleToFiles, moduleStructure.binaryModules.toList())
@@ -54,6 +59,7 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
             registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(allKtFiles))
             registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
+            registerService(ClsJavaStubByVirtualFileCache::class.java)
         }
     }
 

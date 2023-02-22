@@ -24,6 +24,7 @@ dependencies {
     testApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testApi(project(":analysis:decompiled:decompiler-to-psi"))
     testApi(projectTests(":analysis:analysis-test-framework"))
+    testApi(project(":analysis:decompiled:light-classes-for-decompiled"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(toolsJar())
 }
