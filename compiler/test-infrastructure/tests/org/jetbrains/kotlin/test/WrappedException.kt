@@ -13,6 +13,13 @@ sealed class WrappedException(
     val priority: Int,
     val additionalPriority: Int
 ) : Exception(cause), Comparable<WrappedException> {
+    /**
+     * If [failureDisablesNextSteps] is `true`,
+     * then the following test steps might not be run considering this exception as critical.
+     * If false, the next steps will ignore this exception and continue running.
+     */
+    open val failureDisablesNextSteps: Boolean get() = true
+
     class FromFacade(cause: Throwable, val facade: AbstractTestFacade<*, *>) : WrappedException(cause, 0, 1) {
         override val message: String
             get() = "Exception was thrown"
@@ -20,7 +27,10 @@ sealed class WrappedException(
 
     class FromMetaInfoHandler(cause: Throwable) : WrappedException(cause, 1, 1)
 
-    class FromHandler(cause: Throwable, val handler: AnalysisHandler<*>) : WrappedException(cause, 1, 2)
+    class FromHandler(cause: Throwable, val handler: AnalysisHandler<*>) : WrappedException(cause, 1, 2) {
+        override val failureDisablesNextSteps: Boolean
+            get() = handler.failureDisablesNextSteps
+    }
 
     class FromAfterAnalysisChecker(cause: Throwable) : WrappedException(cause, 2, 1)
 

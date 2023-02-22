@@ -134,7 +134,8 @@ class TestRunner(private val testConfiguration: TestConfiguration) {
         for (step in testConfiguration.steps) {
             if (!step.shouldProcessModule(module, inputArtifact)) continue
 
-            when (val result = step.hackyProcessModule(module, inputArtifact, allFailedExceptions.isNotEmpty())) {
+            val thereWereCriticalExceptionsOnPreviousSteps = allFailedExceptions.any { it.failureDisablesNextSteps }
+            when (val result = step.hackyProcessModule(module, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)) {
                 is TestStep.StepResult.Artifact<*> -> {
                     require(step is TestStep.FacadeStep<*, *>)
                     if (step.inputArtifactKind != step.outputArtifactKind) {
