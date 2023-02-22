@@ -42,7 +42,7 @@ internal class KotlinCompilationImplFactory(
         DefaultProcessResourcesTaskNameFactory,
 
     private val preConfigureAction: PreConfigure =
-        EmptyPreConfigure,
+        KotlinCompilationK2MultiplatformConfigurator,
 
     private val postConfigureAction: PostConfigure =
         DefaultKotlinCompilationPostConfigure

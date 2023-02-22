@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmNativeCompilationData
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.tcsOrNull
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.targets.native.tasks.*
@@ -314,6 +313,7 @@ internal constructor(
     private val execOperations: ExecOperations
 ) : AbstractKotlinNativeCompile<KotlinCommonOptions, StubK2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
+    K2Compile,
     KotlinCompilationTask<KotlinNativeCompilerOptions> {
 
     @get:Input
@@ -353,6 +353,9 @@ internal constructor(
 
     @get:Internal // these sources are normally a subset of `source` ones which are already tracked
     val commonSources: ConfigurableFileCollection = project.files()
+
+    @get:Nested
+    override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
 
     private val commonSourcesTree: FileTree
         get() = commonSources.asFileTree
@@ -454,33 +457,33 @@ internal constructor(
         return SharedCompilationData(manifestFile, isAllowCommonizer, refinesModule)
     }
 
+    internal fun buildKotlinNativeKlibCompilerArgs(): List<String> = buildKotlinNativeKlibCompilerArgs(
+        outFile = outputFile.get(),
+        optimized = optimized,
+        debuggable = debuggable,
+        target = konanTarget,
+        libraries = libraries.files.filterKlibsPassedToCompiler(),
+        languageSettings = languageSettings,
+        compilerOptions = compilerOptions,
+        compilerPlugins = listOfNotNull(
+            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
+            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
+        ),
+        shortModuleName = shortModuleName,
+        friendModule = friendModule,
+        libraryVersion = artifactVersion,
+        sharedCompilationData = createSharedCompilationDataOrNull(),
+        source = sources.asFileTree,
+        commonSourcesTree = commonSourcesTree,
+        k2MultiplatformCompilationData = multiplatformStructure
+    )
 
     @TaskAction
     fun compile() {
         val output = outputFile.get()
         output.parentFile.mkdirs()
 
-        val plugins = listOfNotNull(
-            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
-            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
-        )
-
-        val buildArgs = buildKotlinNativeKlibCompilerArgs(
-            output,
-            optimized,
-            debuggable,
-            konanTarget,
-            libraries.files.filterKlibsPassedToCompiler(),
-            languageSettings,
-            compilerOptions,
-            plugins,
-            shortModuleName,
-            friendModule,
-            artifactVersion,
-            createSharedCompilationDataOrNull(),
-            sources.asFileTree,
-            commonSourcesTree
-        )
+        val buildArgs = buildKotlinNativeKlibCompilerArgs()
 
         KotlinNativeCompilerRunner(
             settings = runnerSettings,

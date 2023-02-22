@@ -526,6 +526,7 @@ abstract class KotlinCompile @Inject constructor(
     workerExecutor: WorkerExecutor,
     objectFactory: ObjectFactory
 ) : AbstractKotlinCompile<K2JVMCompilerArguments>(objectFactory, workerExecutor),
+    K2Compile,
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") KotlinJvmCompileDsl,
     KotlinCompilationTask<KotlinJvmCompilerOptions>,
     UsesKotlinJavaToolchain {
@@ -545,6 +546,9 @@ abstract class KotlinCompile @Inject constructor(
     override val parentKotlinOptions: Property<KotlinJvmOptions> = objectFactory
         .property(kotlinOptions)
         .chainedDisallowChanges()
+
+    @get:Nested
+    override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
 
     /** A package prefix that is used for locating Java sources in a directory structure with non-full-depth packages.
      *
@@ -689,6 +693,12 @@ abstract class KotlinCompile @Inject constructor(
             )
         )
 
+        args.configureMultiplatform(
+            compilerOptions,
+            k1CommonSources = commonSourceSet.asFileTree,
+            k2MultiplatformFragments = multiplatformStructure
+        )
+
         if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
             args.reportPerf = true
         }
@@ -714,7 +724,7 @@ abstract class KotlinCompile @Inject constructor(
 
         val scriptSources = scriptSources.asFileTree.files
         val javaSources = javaSources.files
-        val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors,)
+        val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
         val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
@@ -751,7 +761,6 @@ abstract class KotlinCompile @Inject constructor(
         logger.info("Script file extensions: ${scriptExtensions.get().joinToString()}")
         compilerRunner.runJvmCompilerAsync(
             (kotlinSources + scriptSources + javaSources).toList(),
-            commonSourceSet.toList(),
             javaPackagePrefix,
             args,
             environment,
@@ -913,7 +922,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
 ) : AbstractKotlinCompile<K2JSCompilerArguments>(objectFactory, workerExecutor),
     KotlinCompilationTask<KotlinJsCompilerOptions>,
     UsesLibraryFilterCachingService,
-    KotlinJsCompile {
+    KotlinJsCompile,
+    K2Compile {
 
     init {
         incremental = true
@@ -977,6 +987,9 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
 
+    @get:Nested
+    override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
+
     override fun createCompilerArgs(): K2JSCompilerArguments =
         K2JSCompilerArguments()
 
@@ -1003,6 +1016,13 @@ abstract class Kotlin2JsCompile @Inject constructor(
         } else {
             args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
         }
+
+        args.configureMultiplatform(
+            compilerOptions,
+            k1CommonSources = commonSourceSet.asFileTree,
+            k2MultiplatformFragments = multiplatformStructure
+        )
+
         // Overriding freeArgs from compilerOptions with enhanced one + additional one set on execution phase
         // containing additional arguments based on the js compilation configuration
         val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
@@ -1155,7 +1175,6 @@ abstract class Kotlin2JsCompile @Inject constructor(
         processArgs(args)
         compilerRunner.runJsCompilerAsync(
             kotlinSources.toList(),
-            commonSourceSet.toList(),
             args,
             environment,
             taskOutputsBackup
